@@ -1,0 +1,30 @@
+name: Report a bug
+description: Use this template for reporting a bug
+labels: bug
+
+body:
+  - type: input
+    attributes:
+      label: Summary
+      description: Brief summary of what went wrong
+    validations:
+      required: true
+
+  - type: textarea
+    attributes:
+      label: Reproduction steps
+      description: How can we reproduce the issue you ended up with?
+    validations:
+      required: true
+
+  - type: textarea
+    attributes:
+      label: System information
+      description: Run `python -m discord_http -v` in the terminal and paste the output.
+    validations:
+      required: true
+
+  - type: textarea
+    attributes:
+      label: Anything else?
+      description: Something we need to know that was not an option above?

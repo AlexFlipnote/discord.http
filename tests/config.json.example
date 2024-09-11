@@ -1,0 +1,7 @@
+{
+  "token": "str:bot_token",
+  "public_key": "str:pub_key",
+  "application_id": int:bot_id,
+  "guild_id": optional[int|null],
+  "debug_events": bool
+}
