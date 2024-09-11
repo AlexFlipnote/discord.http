@@ -68,4 +68,5 @@ Automatically generated documentation index for your convenience:
 
   pages/contribute
   pages/license
+  pages/discord
   pages/github
