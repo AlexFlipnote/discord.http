@@ -816,8 +816,8 @@ class View(InteractionStorage):
             8: ChannelSelect,
         }
 
-        for i, comp in enumerate(data["components"]):
-            for c in comp["components"]:
+        for i, comp in enumerate(data.get("components", [])):
+            for c in comp.get("components", []):
                 cls = cls_table[c.get("type", 2)]
 
                 if c.get("url", None):
