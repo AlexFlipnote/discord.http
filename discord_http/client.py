@@ -157,6 +157,8 @@ class Client:
         This will run prepare_setup() before boot
         to make the user set up needed vars
         """
+        await self.state.http._create_session()
+
         client_object = await self._prepare_me()
 
         await self.setup_hook()
@@ -176,6 +178,10 @@ class Client:
                 "✨ Your bot invite URL: "
                 f"{utils.oauth_url(self.application_id)}"
             )
+
+    async def __cleanup(self) -> None:
+        """ Called when the bot is shutting down """
+        await self.state.http._close_session()
 
     def _update_ids(self, data: dict) -> None:
         for g in data:
@@ -386,6 +392,7 @@ class Client:
             )
 
         self.backend.before_serving(self._prepare_bot)
+        self.backend.after_serving(self.__cleanup)
         self.backend.start(host=host, port=port)
 
     async def wait_until_ready(self) -> None:

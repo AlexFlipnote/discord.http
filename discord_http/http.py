@@ -2,6 +2,7 @@ import aiohttp
 import asyncio
 import json
 import logging
+import random
 import sys
 
 from aiohttp.client_exceptions import ContentTypeError
@@ -33,15 +34,21 @@ __all__ = (
 )
 
 
+class HTTPSession(aiohttp.ClientSession):
+    async def __aexit__(self):
+        if not self.closed:
+            await self.close()
+
+
 class HTTPResponse(Generic[ResponseT]):
     def __init__(
         self,
         *,
         status: int,
         response: ResponseT,
-        reason: str,
+        reason: Optional[str],
         res_method: ResMethodTypes,
-        headers: dict[str, str],
+        headers: aiohttp.multipart.CIMultiDictProxy[str],
     ):
         self.status = status
         self.response = response
@@ -56,103 +63,123 @@ class HTTPResponse(Generic[ResponseT]):
         )
 
 
-@overload
-async def query(
-    method: MethodTypes,
-    url: str,
-    *,
-    res_method: Literal["text"],
-    **kwargs
-) -> HTTPResponse[str]:
-    ...
-
-
-@overload
-async def query(
-    method: MethodTypes,
-    url: str,
-    *,
-    res_method: Literal["json"],
-    **kwargs
-) -> HTTPResponse[dict[Any, Any]]:
-    ...
-
-
-@overload
-async def query(
-    method: MethodTypes,
-    url: str,
-    *,
-    res_method: Literal["read"],
-    **kwargs
-) -> HTTPResponse[bytes]:
-    ...
-
-
-async def query(
-    method: MethodTypes,
-    url: str,
-    *,
-    res_method: ResMethodTypes = "text",
-    **kwargs
-) -> HTTPResponse:
+class HTTPClient:
     """
-    Make a request using the aiohttp library
-
-    Parameters
-    ----------
-    method: `Optional[str]`
-        The HTTP method to use, defaults to GET
-    url: `str`
-        The URL to make the request to
-    res_method: `Optional[str]`
-        The method to use to get the response, defaults to text
-
-    Returns
-    -------
-    `HTTPResponse`
-        The response from the request
+    Used to make HTTP requests, but with a session
+    Can be used to make requests outside of the usual Discord API
     """
-    session = aiohttp.ClientSession()
+    def __init__(self):
+        self.__session: Optional[HTTPSession] = None
 
-    if not res_method:
-        res_method = "text"
-
-    session_method = getattr(session, str(method).lower(), None)
-    if not session_method:
-        raise ValueError(f"Invalid HTTP method: {method}")
-
-    if res_method not in ("text", "read", "json"):
-        raise ValueError(
-            f"Invalid res_method: {res_method}, "
-            "must be either text, read or json"
+    async def _create_session(self) -> None:
+        """ Creates a new session for the library """
+        if self.__session:
+            await self.__session.close()
+        self.__session = HTTPSession(
+            timeout=aiohttp.ClientTimeout(total=60)
         )
 
-    async with session_method(str(url), **kwargs) as res:
-        try:
-            r = await getattr(res, res_method.lower())()
-        except ContentTypeError:
-            if res_method == "json":
-                try:
-                    r = json.loads(await res.text())
-                except json.JSONDecodeError:
-                    # Give up trying, something is really wrong...
+    async def _close_session(self) -> None:
+        """ Closes the session for the library """
+        if self.__session:
+            await self.__session.close()
+        self.__session = None
+
+    @overload
+    async def request(
+        self,
+        method: MethodTypes,
+        url: str,
+        *,
+        res_method: Literal["text"],
+        **kwargs
+    ) -> HTTPResponse[str]:
+        ...
+
+    @overload
+    async def request(
+        self,
+        method: MethodTypes,
+        url: str,
+        *,
+        res_method: Literal["json"],
+        **kwargs
+    ) -> HTTPResponse[dict[Any, Any]]:
+        ...
+
+    @overload
+    async def request(
+        self,
+        method: MethodTypes,
+        url: str,
+        *,
+        res_method: Literal["read"],
+        **kwargs
+    ) -> HTTPResponse[bytes]:
+        ...
+
+    async def request(
+        self,
+        method: MethodTypes,
+        url: str,
+        *,
+        res_method: Optional[ResMethodTypes] = "text",
+        **kwargs
+    ) -> HTTPResponse:
+        """
+        Make a request using the aiohttp library.
+        However, it handles response methods for you
+
+        Parameters
+        ----------
+        method: `Optional[str]`
+            The HTTP method to use, defaults to GET
+        url: `str`
+            The URL to make the request to
+        res_method: `Optional[str]`
+            The method to use to get the response, defaults to text
+
+        Returns
+        -------
+        `HTTPResponse`
+            The response from the request
+        """
+        if not res_method:
+            res_method = "text"
+
+        if method.upper() not in MethodTypes.__args__:
+            raise ValueError(f"Invalid HTTP method: {method}")
+
+        if res_method.lower() not in ResMethodTypes.__args__:
+            raise ValueError(
+                f"Invalid res_method: {res_method}, "
+                "must be either text, read or json"
+            )
+
+        async with self.__session.request(method.upper(), str(url), **kwargs) as res:
+            try:
+                r = await getattr(res, res_method.lower())()
+            except ContentTypeError:
+                if res_method == "json":
+                    try:
+                        r = json.loads(await res.text())
+                    except json.JSONDecodeError:
+                        # Give up trying, something is really wrong...
+                        r = await res.text()
+                        res_method = "text"
+                else:
                     r = await res.text()
                     res_method = "text"
-            else:
-                r = await res.text()
-                res_method = "text"
 
-        output = HTTPResponse(
-            status=res.status,
-            response=r,
-            res_method=res_method,
-            reason=res.reason,
-            headers=res.headers
-        )
+            output = HTTPResponse(
+                status=res.status,
+                response=r,
+                res_method=res_method,
+                reason=res.reason,
+                headers=res.headers
+            )
 
-    await session.close()
-    return output
+        return output
 
 
 class Ratelimit:
@@ -276,6 +303,7 @@ class DiscordAPI:
 
         self.base_url: str = "https://discord.com/api"
         self.api_url: str = f"{self.base_url}/v{self.api_version}"
+        self.http: HTTPClient = HTTPClient()
 
         self._buckets: dict[str, Ratelimit] = {}
 
@@ -297,6 +325,10 @@ class DiscordAPI:
             self._clear_old_ratelimits()
 
         return value
+
+    def create_jitter(self) -> float:
+        """ `float`: Simply returns a random float between 0 and 1 """
+        return random.random()
 
     @overload
     async def query(
@@ -401,10 +433,13 @@ class DiscordAPI:
             200001: AutomodBlock,
         }
 
+        async def _sleep(tries: int) -> None:
+            await asyncio.sleep(1 + (tries * 2) + self.create_jitter())
+
         async with ratelimit:
             for tries in range(5):
                 try:
-                    r: HTTPResponse = await query(
+                    r: HTTPResponse = await self.http.request(
                         method,
                         f"{_api_url}{path}",
                         res_method=res_method,
@@ -433,7 +468,7 @@ class DiscordAPI:
                                 raise DiscordServerError(r)
 
                             # Try again, maybe it will work next time, surely...
-                            await asyncio.sleep(1 + tries * 2)
+                            await _sleep(tries)
                             continue
 
                         case 400:
@@ -453,7 +488,7 @@ class DiscordAPI:
 
                 except OSError as e:
                     if tries < 4 and e.errno in (54, 10054):
-                        await asyncio.sleep(1 + tries * 2)
+                        await _sleep(tries)
                         continue
                     raise
             else:

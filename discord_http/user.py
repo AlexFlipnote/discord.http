@@ -189,12 +189,12 @@ class User(PartialUser):
     def _from_data(self, data: dict):
         if data.get("avatar", None):
             self.avatar = Asset._from_avatar(
-                self.id, data["avatar"]
+                self._state, self.id, data["avatar"]
             )
 
         if data.get("banner", None):
             self.banner = Asset._from_banner(
-                self.id, data["banner"]
+                self._state, self.id, data["banner"]
             )
 
         if data.get("accent_color", None):
@@ -205,7 +205,7 @@ class User(PartialUser):
 
         if data.get("avatar_decoration", None):
             self.avatar_decoration = Asset._from_avatar_decoration(
-                data["avatar_decoration"]
+                self._state, data["avatar_decoration"]
             )
 
         if data.get("public_flags", None):

@@ -1800,14 +1800,14 @@ class Guild(PartialGuild):
         """ `Optional[Asset]`: The guild's icon """
         if self._icon is None:
             return None
-        return Asset._from_guild_icon(self.id, self._icon)
+        return Asset._from_guild_icon(self._state, self.id, self._icon)
 
     @property
     def banner(self) -> Optional[Asset]:
         """ `Optional[Asset]`: The guild's banner """
         if self._banner is None:
             return None
-        return Asset._from_guild_banner(self.id, self._banner)
+        return Asset._from_guild_banner(self._state, self.id, self._banner)
 
     @property
     def default_role(self) -> Role:

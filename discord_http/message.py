@@ -2,7 +2,7 @@ from datetime import timedelta, datetime
 from io import BytesIO
 from typing import TYPE_CHECKING, Optional, Union, AsyncIterator, Self, Callable
 
-from . import http, utils
+from . import utils
 from .embeds import Embed
 from .emoji import EmojiParser
 from .errors import HTTPException
@@ -452,7 +452,7 @@ class Attachment:
         `HTTPException`
             If the request returned anything other than 2XX
         """
-        r = await http.query(
+        r = await self._state.http.request(
             "GET",
             self.proxy_url if use_cached else self.url,
             res_method="read"

@@ -531,7 +531,7 @@ class Member(PartialMember):
         has_avatar = data.get("avatar", None)
         if has_avatar:
             self.avatar = Asset._from_guild_avatar(
-                self.guild.id, self.id, has_avatar
+                self._state, self.guild.id, self.id, has_avatar
             )
 
     def get_role(

@@ -1,7 +1,9 @@
-from typing import Self
+from typing import Self, TYPE_CHECKING
 
-from . import http
 from .errors import HTTPException
+
+if TYPE_CHECKING:
+    from .http import DiscordAPI
 
 __all__ = (
     "Asset",
@@ -14,10 +16,12 @@ class Asset:
     def __init__(
         self,
         *,
+        state: "DiscordAPI",
         url: str,
         key: str,
         animated: bool = False
     ):
+        self._state = state
         self._url: str = url
         self._animated: bool = animated
         self._key: str = key
@@ -38,7 +42,7 @@ class Asset:
         `bytes`
             The asset data
         """
-        r = await http.query(
+        r = await self._state.http.request(
             "GET", self.url, res_method="read"
         )
 
@@ -104,12 +108,14 @@ class Asset:
     @classmethod
     def _from_avatar(
         cls,
+        state: "DiscordAPI",
         user_id: int,
         avatar: str
     ) -> Self:
         animated = avatar.startswith("a_")
         format = "gif" if animated else "png"
         return cls(
+            state=state,
             url=f"{cls.BASE}/avatars/{user_id}/{avatar}.{format}?size=1024",
             key=avatar,
             animated=animated
@@ -118,6 +124,7 @@ class Asset:
     @classmethod
     def _from_guild_avatar(
         cls,
+        state: "DiscordAPI",
         guild_id: int,
         member_id: int,
         avatar: str
@@ -125,6 +132,7 @@ class Asset:
         animated = avatar.startswith("a_")
         format = "gif" if animated else "png"
         return cls(
+            state=state,
             url=f"{cls.BASE}/guilds/{guild_id}/users/{member_id}/avatars/{avatar}.{format}?size=1024",
             key=avatar,
             animated=animated
@@ -133,12 +141,14 @@ class Asset:
     @classmethod
     def _from_guild_icon(
         cls,
+        state: "DiscordAPI",
         guild_id: int,
         icon_hash: str
     ) -> Self:
         animated = icon_hash.startswith('a_')
         format = 'gif' if animated else 'png'
         return cls(
+            state=state,
             url=f'{cls.BASE}/icons/{guild_id}/{icon_hash}.{format}?size=1024',
             key=icon_hash,
             animated=animated,
@@ -147,12 +157,14 @@ class Asset:
     @classmethod
     def _from_guild_banner(
         cls,
+        state: "DiscordAPI",
         guild_id: int,
         banner_hash: str
     ) -> Self:
         animated = banner_hash.startswith('a_')
         format = 'gif' if animated else 'png'
         return cls(
+            state=state,
             url=f'{cls.BASE}/banners/{guild_id}/{banner_hash}.{format}?size=1024',
             key=banner_hash,
             animated=animated,
@@ -161,6 +173,7 @@ class Asset:
     @classmethod
     def _from_avatar_decoration(
         cls,
+        state: "DiscordAPI",
         decoration: str
     ) -> Self:
         animated = (
@@ -169,6 +182,7 @@ class Asset:
         )
 
         return cls(
+            state=state,
             url=f"{cls.BASE}/avatar-decoration-presets/{decoration}.png?size=96&passthrough=true",
             key=decoration,
             animated=animated
@@ -177,12 +191,14 @@ class Asset:
     @classmethod
     def _from_banner(
         cls,
+        state: "DiscordAPI",
         user_id: int,
         banner: str
     ) -> Self:
         animated = banner.startswith("a_")
         format = "gif" if animated else "png"
         return cls(
+            state=state,
             url=f"{cls.BASE}/banners/{user_id}/{banner}.{format}?size=1024",
             key=banner,
             animated=animated
