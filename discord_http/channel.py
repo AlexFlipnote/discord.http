@@ -9,7 +9,7 @@ from .enums import (
     SortOrderType, ForumLayoutType
 )
 from .file import File
-from .flag import PermissionOverwrite, ChannelFlags
+from .flags import PermissionOverwrite, ChannelFlags
 from .member import ThreadMember
 from .mentions import AllowedMentions
 from .multipart import MultipartData

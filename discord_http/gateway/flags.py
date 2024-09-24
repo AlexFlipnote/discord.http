@@ -1,6 +1,7 @@
-from .. import BaseFlag
+from ..flags import BaseFlag
 
 __all__ = (
+    "GatewayCacheFlags",
     "Intents",
 )
 
@@ -9,7 +10,7 @@ class Intents(BaseFlag):
     guilds = 1 << 0
     guild_members = 1 << 1
     guild_bans = 1 << 2
-    guild_emojis_and_stickers = 1 << 3
+    guild_expressions = 1 << 3
     guild_integrations = 1 << 4
     guild_webhooks = 1 << 5
     guild_invites = 1 << 6
@@ -27,3 +28,12 @@ class Intents(BaseFlag):
     auto_moderation_execution = 1 << 21
     guild_message_polls = 1 << 24
     direct_message_polls = 1 << 25
+
+
+class GatewayCacheFlags(BaseFlag):
+    partial_guild = 1 << 0
+    guild = 1 << 1
+    partial_member = 1 << 2
+    member = 1 << 3
+    partial_channel = 1 << 4
+    channel = 1 << 5

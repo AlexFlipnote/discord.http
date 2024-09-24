@@ -7,37 +7,24 @@ import time
 import yarl
 import websockets as ws
 
-from datetime import datetime, UTC
-from typing import Optional, Union, Any
+from datetime import datetime
+from typing import Optional, Union, Any, TYPE_CHECKING
 
-from .. import Client, utils
+from .. import utils
 
-from .intents import Intents
 from .parser import Parser
+from .enums import PayloadType, ShardCloseType
+
+if TYPE_CHECKING:
+    from ..client import Client
+    from .flags import GatewayCacheFlags, Intents
 
 DEFAULT_GATEWAY = yarl.URL("wss://gateway.discord.gg/")
 _log = logging.getLogger("discord_http")
 
 __all__ = (
-    "WebSocket",
-    "PayloadType",
+    "Shard",
 )
-
-
-class PayloadType(utils.Enum):
-    dispatch = 0
-    heartbeat = 1
-    identify = 2
-    presence = 3
-    voice_state = 4
-    voice_ping = 5
-    resume = 6
-    reconnect = 7
-    request_guild_members = 8
-    invalidate_session = 9
-    hello = 10
-    heartbeat_ack = 11
-    guild_sync = 12
 
 
 class Status:
@@ -96,25 +83,27 @@ class Status:
             _log.warning(f"Shard {self.shard_id} latency is {self.latency:.2f}s behind")
 
 
-class WebSocket:
+class Shard:
     def __init__(
         self,
-        bot: Client,
-        intents: Intents,
+        bot: "Client",
+        intents: Optional["Intents"],
         shard_id: int,
         *,
+        cache_flags: Optional["GatewayCacheFlags"] = None,
         shard_count: Optional[int] = None,
-        raw_events: bool = False,
+        debug_events: bool = False,
         api_version: Optional[int] = 8
     ):
         self.bot = bot
 
         self.intents = intents
+        self.cache_flags = cache_flags
 
         self.api_version = api_version
         self.shard_id = shard_id
         self.shard_count = shard_count
-        self.raw_events = raw_events
+        self.debug_events = debug_events
 
         self.ws: Optional[ws.WebSocketClientProtocol] = None
 
@@ -122,13 +111,14 @@ class WebSocket:
         self.status = Status(shard_id)
 
         self._connection = None
+        self._should_kill = False
 
         self._buffer: bytearray = bytearray()
         self._zlib: zlib._Decompress = zlib.decompressobj()
 
         self._heartbeat_interval: float = 41_250 / 1000  # 41.25 seconds
         self._close_code: Optional[int] = None
-        self._last_activity: datetime = datetime.now(UTC)
+        self._last_activity: datetime = utils.utcnow()
 
     @property
     def url(self) -> str:
@@ -159,7 +149,14 @@ class WebSocket:
         return code == 1000
 
     async def send_message(self, message: Union[dict, PayloadType]) -> None:
-        """ Sends a message to the websocket """
+        """
+        Sends a message to the websocket
+
+        Parameters
+        ----------
+        message: `Union[dict, PayloadType]`
+            The message to send to the websocket
+        """
         if isinstance(message, PayloadType):
             message = self.payload(message)
 
@@ -169,29 +166,52 @@ class WebSocket:
         _log.debug(f"Sending message: {message}")
         await self.ws.send(json.dumps(message))
 
-        self._last_activity = datetime.now(UTC)
+        self._last_activity = utils.utcnow()
         self.status.update_send()
 
-    async def close(self, code: Optional[int] = 1000) -> None:
-        """ Closes the websocket for good, or forcefully """
+    async def close(
+        self,
+        code: Optional[int] = 1000,
+        *,
+        kill: bool = False
+    ) -> None:
+        """
+        Closes the websocket for good, or forcefully
+
+        Parameters
+        ----------
+        code: `Optional[int]`
+            The close code to use
+        kill: `bool`
+            Whether to kill the shard and never reconnect instance
+        """
         code = code or 1000
         self._close_code = code
+        self._should_kill = kill
         await self.ws.close(code=code)
 
-    async def received_message(self, msg: Any) -> None:
-        self._last_activity = datetime.now(UTC)
+    async def received_message(self, raw_msg: Union[bytes, str]) -> None:
+        """
+        Handling the recieved data from the websocket
 
-        if type(msg) is bytes:
-            self._buffer.extend(msg)
+        Parameters
+        ----------
+        msg: `Union[bytes, str]`
+            The message to receive
+        """
+        self._last_activity = utils.utcnow()
 
-            if len(msg) < 4 or msg[-4:] != b"\x00\x00\xff\xff":
+        if type(raw_msg) is bytes:
+            self._buffer.extend(raw_msg)
+
+            if len(raw_msg) < 4 or raw_msg[-4:] != b"\x00\x00\xff\xff":
                 return None
 
-            msg = self._zlib.decompress(self._buffer)
-            msg = msg.decode("utf-8")
+            raw_msg = self._zlib.decompress(self._buffer)
+            raw_msg = raw_msg.decode("utf-8")
             self._buffer = bytearray()
 
-        msg = json.loads(msg)
+        msg: dict = json.loads(raw_msg)
 
         event = msg.get("t", None)
 
@@ -257,13 +277,26 @@ class WebSocket:
             case "READY":
                 self.status.update_sequence(msg["s"])
                 self.status.update_ready_data(data)  # type: ignore
-                _log.info(f"Shard {self.shard_id} ready")
+
+                if self.bot.has_any_dispatch("shard_ready"):
+                    self.bot.dispatch("shard_ready", self)
+                else:
+                    _log.info(f"Shard {self.shard_id} ready")
 
             case "RESUMED":
-                _log.info(f"Shard {self.shard_id} resumed")
+                if self.bot.has_any_dispatch("shard_resumed"):
+                    self.bot.dispatch("shard_resumed", self)
+                else:
+                    _log.info(f"Shard {self.shard_id} resumed")
 
             case _:
                 pass
+
+    def _dispatch_close_reason(self, reason: str, enum: ShardCloseType) -> None:
+        if self.bot.has_any_dispatch("shard_closed"):
+            self.bot.dispatch("shard_closed", self.shard_id, enum)
+        else:
+            _log.warning(reason)
 
     async def _socket_manager(self) -> None:
         try:
@@ -302,15 +335,27 @@ class WebSocket:
                 except Exception as e:
                     keep_waiting = False
 
+                    if self._should_kill is True:
+                        # Custom close code, only used when shutting down
+                        return None
+
                     if self._can_handle_close():
                         self._reset_buffer()
-                        _log.warning(f"Shard {self.shard_id} closed, attempting reconnect")
+
+                        self._dispatch_close_reason(
+                            f"Shard {self.shard_id} closed, attempting reconnect",
+                            ShardCloseType.resume
+                        )
 
                     else:  # Something went wrong, reset the instance
                         self._reset_instance()
                         if self._was_normal_close():
                             # Possibly Discord closed the connection due to load balancing
-                            _log.warning(f"Shard {self.shard_id} closed, attempting new connection")
+                            self._dispatch_close_reason(
+                                f"Shard {self.shard_id} closed, attempting new connection",
+                                ShardCloseType.reconnect
+                            )
+
                         else:
                             _log.error(f"Shard {self.shard_id} crashed", exc_info=e)
 
@@ -327,21 +372,17 @@ class WebSocket:
         if not data:
             return None
 
-        if self.raw_events:
+        if self.debug_events:
             self.bot.dispatch("raw_socket_received", event)
-            return
 
-        match name:
-            case "MESSAGE_CREATE" | "MESSAGE_UPDATE":
-                event = self.parser.message_create(data)
-                self.bot.dispatch(new_name, event)
+        _parse_event = getattr(self.parser, new_name, None)
+        if not _parse_event:
+            return None
 
-            case "MESSAGE_DELETE":
-                event = self.parser.message_delete(data)
-                self.bot.dispatch(new_name, event)
-
-            case _:
-                self.bot.dispatch(new_name, event)
+        self.bot.dispatch(
+            new_name,
+            _parse_event(data)
+        )
 
     def connect(self) -> None:
         """ Connect the websocket """
@@ -382,7 +423,10 @@ class WebSocket:
                     "op": int(op),
                     "d": {
                         "token": self.bot.token,
-                        "intents": self.intents.value,
+                        "intents": (
+                            self.intents.value
+                            if self.intents else 0
+                        ),
                         "properties": {
                             "os": sys.platform,
                             "browser": "discord.http",

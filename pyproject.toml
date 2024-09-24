@@ -21,6 +21,8 @@ dependencies = [
   "quart>=0.18.4",
   "PyNaCl",
   "aiohttp",
+  "yarl",
+  "websockets",
 ]
 
 [project.optional-dependencies]
@@ -29,7 +31,10 @@ docs = ["sphinx", "furo", "myst-parser"]
 maintainer = ["twine", "wheel", "build"]
 
 [tool.setuptools]
-packages = ["discord_http"]
+packages = [
+  "discord_http",
+  "discord_http.gateway",
+]
 
 [tool.setuptools.dynamic]
 version = {attr = "discord_http.__version__"}

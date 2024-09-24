@@ -1,6 +1,6 @@
 from typing import TYPE_CHECKING
 
-from .flag import Permissions
+from .flags import Permissions
 from .cooldowns import Cooldown
 
 if TYPE_CHECKING:

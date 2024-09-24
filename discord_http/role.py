@@ -6,7 +6,7 @@ from .file import File
 from .object import PartialBase
 
 if TYPE_CHECKING:
-    from .flag import Permissions
+    from .flags import Permissions
     from .guild import PartialGuild, Guild
     from .http import DiscordAPI
 

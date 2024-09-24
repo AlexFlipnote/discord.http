@@ -1,8 +1,13 @@
-from .utils import Enum
+import random
+import numbers
+
+from typing import Self
+from enum import Enum as _Enum
 
 __all__ = (
     "ApplicationCommandType",
     "AuditLogType",
+    "BaseEnum",
     "ButtonStyles",
     "ChannelType",
     "CommandOptionType",
@@ -30,41 +35,130 @@ __all__ = (
 )
 
 
-class IntegrationType(Enum):
+class BaseEnum(_Enum):
+    """ Enum, but with more comparison operators to make life easier """
+    @classmethod
+    def random(cls) -> Self:
+        """ `Enum`: Return a random enum """
+        return random.choice(list(cls))
+
+    def __str__(self) -> str:
+        """ `str` Return the name of the enum """
+        return self.name
+
+    def __int__(self) -> int:
+        """ `int` Return the value of the enum """
+        return self.value
+
+    def __gt__(self, other) -> bool:
+        """ `bool` Greater than """
+        try:
+            return self.value > other.value
+        except Exception:
+            pass
+        try:
+            if isinstance(other, numbers.Real):
+                return self.value > other
+        except Exception:
+            pass
+        return NotImplemented
+
+    def __lt__(self, other) -> bool:
+        """ `bool` Less than """
+        try:
+            return self.value < other.value
+        except Exception:
+            pass
+        try:
+            if isinstance(other, numbers.Real):
+                return self.value < other
+        except Exception:
+            pass
+        return NotImplemented
+
+    def __ge__(self, other) -> bool:
+        """ `bool` Greater than or equal to """
+        try:
+            return self.value >= other.value
+        except Exception:
+            pass
+        try:
+            if isinstance(other, numbers.Real):
+                return self.value >= other
+            if isinstance(other, str):
+                return self.name == other
+        except Exception:
+            pass
+        return NotImplemented
+
+    def __le__(self, other) -> bool:
+        """ `bool` Less than or equal to """
+        try:
+            return self.value <= other.value
+        except Exception:
+            pass
+        try:
+            if isinstance(other, numbers.Real):
+                return self.value <= other
+            if isinstance(other, str):
+                return self.name == other
+        except Exception:
+            pass
+        return NotImplemented
+
+    def __eq__(self, other) -> bool:
+        """ `bool` Equal to """
+        if self.__class__ is other.__class__:
+            return self.value == other.value
+        try:
+            return self.value == other.value
+        except Exception:
+            pass
+        try:
+            if isinstance(other, numbers.Real):
+                return self.value == other
+            if isinstance(other, str):
+                return self.name == other
+        except Exception:
+            pass
+        return NotImplemented
+
+
+class IntegrationType(BaseEnum):
     guild = 0
     user = 1
 
 
-class InviteType(Enum):
+class InviteType(BaseEnum):
     guild = 0
     group = 1
     dm = 2
     unknown = 3
 
 
-class ApplicationCommandType(Enum):
+class ApplicationCommandType(BaseEnum):
     chat_input = 1
     user = 2
     message = 3
 
 
-class DefaultNotificationLevel(Enum):
+class DefaultNotificationLevel(BaseEnum):
     all_messages = 0
     only_mentions = 1
 
 
-class MFALevel(Enum):
+class MFALevel(BaseEnum):
     none = 0
     elevated = 1
 
 
-class ContentFilterLevel(Enum):
+class ContentFilterLevel(BaseEnum):
     disabled = 0
     members_without_roles = 1
     all_members = 2
 
 
-class AuditLogType(Enum):
+class AuditLogType(BaseEnum):
     guild_update = 1
     channel_create = 10
     channel_update = 11
@@ -123,24 +217,24 @@ class AuditLogType(Enum):
     creator_monetization_terms_accepted = 151
 
 
-class ScheduledEventPrivacyType(Enum):
+class ScheduledEventPrivacyType(BaseEnum):
     guild_only = 2
 
 
-class ScheduledEventEntityType(Enum):
+class ScheduledEventEntityType(BaseEnum):
     stage_instance = 1
     voice = 2
     external = 3
 
 
-class ScheduledEventStatusType(Enum):
+class ScheduledEventStatusType(BaseEnum):
     scheduled = 1
     active = 2
     completed = 3
     canceled = 4
 
 
-class VerificationLevel(Enum):
+class VerificationLevel(BaseEnum):
     none = 0
     low = 1
     medium = 2
@@ -148,7 +242,7 @@ class VerificationLevel(Enum):
     very_high = 4
 
 
-class ChannelType(Enum):
+class ChannelType(BaseEnum):
     unknown = -1
     guild_text = 0
     dm = 1
@@ -165,7 +259,7 @@ class ChannelType(Enum):
     guild_forum = 15
 
 
-class CommandOptionType(Enum):
+class CommandOptionType(BaseEnum):
     sub_command = 1
     sub_command_group = 2
     string = 3
@@ -179,7 +273,7 @@ class CommandOptionType(Enum):
     attachment = 11
 
 
-class ResponseType(Enum):
+class ResponseType(BaseEnum):
     pong = 1
     channel_message_with_source = 4
     deferred_channel_message_with_source = 5
@@ -189,23 +283,23 @@ class ResponseType(Enum):
     modal = 9
 
 
-class VideoQualityType(Enum):
+class VideoQualityType(BaseEnum):
     auto = 1
     full = 2
 
 
-class ForumLayoutType(Enum):
+class ForumLayoutType(BaseEnum):
     not_set = 0
     list_view = 1
     gallery_view = 2
 
 
-class SortOrderType(Enum):
+class SortOrderType(BaseEnum):
     latest_activity = 0
     creation_date = 1
 
 
-class EntitlementType(Enum):
+class EntitlementType(BaseEnum):
     purchase = 1
     premium_subscription = 2
     developer_gift = 3
@@ -216,19 +310,19 @@ class EntitlementType(Enum):
     application_subscription = 8
 
 
-class EntitlementOwnerType(Enum):
+class EntitlementOwnerType(BaseEnum):
     guild = 1
     user = 2
 
 
-class SKUType(Enum):
+class SKUType(BaseEnum):
     durable = 2
     consumable = 3
     subscription = 5
     subscription_group = 6
 
 
-class InteractionType(Enum):
+class InteractionType(BaseEnum):
     ping = 1
     application_command = 2
     message_component = 3
@@ -236,19 +330,19 @@ class InteractionType(Enum):
     modal_submit = 5
 
 
-class StickerType(Enum):
+class StickerType(BaseEnum):
     standard = 1
     guild = 2
 
 
-class StickerFormatType(Enum):
+class StickerFormatType(BaseEnum):
     png = 1
     apng = 2
     lottie = 3
     gif = 4
 
 
-class ComponentType(Enum):
+class ComponentType(BaseEnum):
     action_row = 1
     button = 2
     string_select = 3
@@ -259,7 +353,7 @@ class ComponentType(Enum):
     channel_select = 8
 
 
-class ButtonStyles(Enum):
+class ButtonStyles(BaseEnum):
     # Original names
     primary = 1
     secondary = 2
@@ -278,11 +372,11 @@ class ButtonStyles(Enum):
     url = 5
 
 
-class TextStyles(Enum):
+class TextStyles(BaseEnum):
     short = 1
     paragraph = 2
 
 
-class PermissionType(Enum):
+class PermissionType(BaseEnum):
     role = 0
     member = 1

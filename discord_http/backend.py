@@ -420,7 +420,7 @@ class DiscordHTTP(Quart):
         self.config["JSON_SORT_KEYS"] = False
 
         try:
-            _log.info(f"🌍 Serving on http://{host}:{port}")
+            _log.info(f"Serving on http://{host}:{port}")
             self.run(host=host, port=port, loop=self.loop)
         except KeyboardInterrupt:
             pass  # Just don't bother showing errors...

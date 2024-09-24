@@ -13,7 +13,7 @@ from .enums import (
 )
 from .emoji import Emoji, PartialEmoji
 from .file import File
-from .flag import Permissions, SystemChannelFlags, PermissionOverwrite
+from .flags import Permissions, SystemChannelFlags, PermissionOverwrite
 from .multipart import MultipartData
 from .object import PartialBase, Snowflake
 from .role import Role, PartialRole

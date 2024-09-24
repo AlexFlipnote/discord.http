@@ -1,4 +1,4 @@
-__version__ = "1.3.20"
+__version__ = "2.0.0"
 
 # flake8: noqa: F401
 from .asset import *
@@ -13,8 +13,8 @@ from .emoji import *
 from .enums import *
 from .errors import *
 from .file import *
-from .flag import *
-from .flag import *
+from .flags import *
+from .flags import *
 from .guild import *
 from .http import *
 from .invite import *

@@ -3,7 +3,7 @@ from typing import TYPE_CHECKING, Optional, Union
 
 from . import utils
 from .enums import EntitlementType, EntitlementOwnerType, SKUType
-from .flag import SKUFlags
+from .flags import SKUFlags
 from .guild import PartialGuild
 from .object import PartialBase, Snowflake
 from .user import PartialUser

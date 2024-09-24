@@ -4,7 +4,10 @@ import inspect
 import logging
 
 from datetime import datetime
-from typing import Dict, Optional, Any, Callable, Union, AsyncIterator
+from typing import (
+    Dict, Optional, Any, Callable,
+    Union, AsyncIterator, TYPE_CHECKING
+)
 
 from . import utils
 from .backend import DiscordHTTP
@@ -15,6 +18,7 @@ from .emoji import PartialEmoji, Emoji
 from .entitlements import PartialSKU, SKU, PartialEntitlements, Entitlements
 from .enums import ApplicationCommandType
 from .file import File
+from .gateway.cache import Cache
 from .guild import PartialGuild, Guild, PartialScheduledEvent, ScheduledEvent
 from .http import DiscordAPI
 from .invite import PartialInvite, Invite
@@ -27,6 +31,9 @@ from .sticker import PartialSticker, Sticker
 from .user import User, PartialUser
 from .view import InteractionStorage
 from .webhook import PartialWebhook, Webhook
+
+if TYPE_CHECKING:
+    from .gateway import GatewayClient, GatewayCacheFlags, Intents
 
 _log = logging.getLogger(__name__)
 
@@ -47,9 +54,11 @@ class Client:
         api_version: Optional[int] = None,
         loop: Optional[asyncio.AbstractEventLoop] = None,
         allowed_mentions: AllowedMentions = AllowedMentions.all(),
+        enable_gateway: bool = False,
+        gateway_cache: Optional["GatewayCacheFlags"] = None,
+        intents: Optional["Intents"] = None,
         logging_level: int = logging.INFO,
         disable_default_get_path: bool = False,
-        disable_oauth_hint: bool = False,
         debug_events: bool = False
     ):
         """
@@ -73,6 +82,13 @@ class Client:
             Event loop to use, if not provided, it will use `asyncio.get_running_loop()`
         allowed_mentions: `AllowedMentions`
             Allowed mentions to use, if not provided, it will use `AllowedMentions.all()`
+        enable_gateway: `bool`
+            Whether to enable the gateway or not, which runs in the background
+        gateway_cache: `Optional[GatewayCacheFlags]`
+            How the gateway should cache, only used if `enable_gateway` is `True`.
+            Leave empty to use no cache.
+        intents: `Optional[Intents]`
+            Intents to use, only used if `enable_gateway` is `True`
         logging_level: `int`
             Logging level to use, if not provided, it will use `logging.INFO`
         debug_events: `bool`
@@ -81,9 +97,6 @@ class Client:
             Whether to disable the default GET path or not, if not provided, it will use `False`.
             The default GET path only provides information about the bot and when it was last rebooted.
             Usually a great tool to just validate that your bot is online.
-        disable_oauth_hint: `bool`
-            Whether to disable the OAuth2 hint or not on boot.
-            If not provided, it will use `False`.
         """
         self.application_id: Optional[int] = application_id
         self.public_key: Optional[str] = public_key
@@ -92,8 +105,10 @@ class Client:
         self.sync: bool = sync
         self.logging_level: int = logging_level
         self.debug_events: bool = debug_events
+        self.enable_gateway: bool = enable_gateway
+        self.intents: Optional["Intents"] = intents
 
-        self.disable_oauth_hint: bool = disable_oauth_hint
+        self.gateway: Optional["GatewayClient"] = None
         self.disable_default_get_path: bool = disable_default_get_path
 
         try:
@@ -113,10 +128,14 @@ class Client:
         self.interactions: Dict[str, Interaction] = {}
         self.interactions_regex: Dict[str, Interaction] = {}
 
+        self._gateway_cache: Optional["GatewayCacheFlags"] = gateway_cache
         self._ready: Optional[asyncio.Event] = asyncio.Event()
+        self._shards_ready: Optional[asyncio.Event] = asyncio.Event()
         self._user_object: Optional[User] = None
 
         self._context: Callable = Context
+
+        self.cache: Cache = Cache(client=self)
         self.backend: DiscordHTTP = DiscordHTTP(client=self)
 
         self._view_storage: dict[int, InteractionStorage] = {}
@@ -167,21 +186,27 @@ class Client:
         self._ready.set()
 
         if self.has_any_dispatch("ready"):
-            return self.dispatch("ready", client_object)
+            self.dispatch("ready", client_object)
+        else:
+            _log.info("discord.http is now ready")
 
-        _log.info("✅ discord.http is now ready")
-        if (
-            not self.disable_oauth_hint and
-            self.application_id
-        ):
-            _log.info(
-                "✨ Your bot invite URL: "
-                f"{utils.oauth_url(self.application_id)}"
+        if self.enable_gateway:
+            # To avoid circular import, import here
+            from .gateway import GatewayClient
+            self.gateway = GatewayClient(
+                bot=self,
+                intents=self.intents,
+                cache_flags=self._gateway_cache
             )
+            self.gateway.start()
+            _log.info("Starting discord.http/gateway client")
 
     async def __cleanup(self) -> None:
         """ Called when the bot is shutting down """
         await self.state.http._close_session()
+
+        if self.gateway:
+            await self.gateway.close()
 
     def _update_ids(self, data: dict) -> None:
         for g in data:
@@ -290,6 +315,12 @@ class Client:
         return (
             self._ready is not None and
             self._ready.is_set()
+        )
+
+    def is_shards_ready(self) -> bool:
+        return (
+            self._shards_ready is not None and
+            self._shards_ready.is_set()
         )
 
     def set_context(
@@ -404,6 +435,16 @@ class Client:
             )
 
         await self._ready.wait()
+
+    async def wait_until_shards_ready(self) -> None:
+        """ Waits until the client is ready using `asyncio.Event.wait()`. """
+        if self._shards_ready is None:
+            raise RuntimeError(
+                "Client has not been initialized yet, "
+                "please use Client.start() to initialize the client."
+            )
+
+        await self._shards_ready.wait()
 
     def dispatch(
         self,

@@ -3,22 +3,27 @@ import logging
 import asyncio
 
 from datetime import datetime, UTC
-from typing import Optional, Coroutine
+from typing import Optional, Coroutine, TYPE_CHECKING
 
-from .. import Client
+from .shard import Shard
 
-from .intents import Intents
-from .websocket import WebSocket
+if TYPE_CHECKING:
+    from ..client import GatewayCacheFlags, Client, Intents
 
 _log = logging.getLogger("discord_http")
 
+__all__ = (
+    "GatewayClient",
+)
 
-class SocketClient:
+
+class GatewayClient:
     def __init__(
         self,
-        bot: Client,
-        intents: Intents,
+        bot: "Client",
         *,
+        cache_flags: Optional["GatewayCacheFlags"] = None,
+        intents: Optional["Intents"] = None,
         shard_id: Optional[int] = None,
         shard_count: Optional[int] = None,
         shard_ids: Optional[list[int]] = None,
@@ -27,6 +32,7 @@ class SocketClient:
     ):
         self.bot = bot
         self.intents = intents
+        self.cache_flags = cache_flags
 
         self.api_version = api_version
         self.shard_id = shard_id
@@ -34,7 +40,7 @@ class SocketClient:
         self.shard_ids = shard_ids
         self.max_concurrency = max_concurrency
 
-        self.__shards: dict[int, WebSocket] = {}
+        self.__shards: dict[int, Shard] = {}
 
         self.bot.backend.add_url_rule(
             "/shards",
@@ -43,7 +49,7 @@ class SocketClient:
             methods=["GET"]
         )
 
-    def get_shard(self, shard_id: int) -> Optional[WebSocket]:
+    def get_shard(self, shard_id: int) -> Optional[Shard]:
         return self.__shards.get(shard_id, None)
 
     async def _index_websocket_status(self) -> dict[int, dict]:
@@ -71,13 +77,23 @@ class SocketClient:
         )
 
     async def _launch_shard(self, shard_id: int) -> None:
+        """
+        Individual shard launching
+
+        Parameters
+        ----------
+        shard_id: `int`
+            The shard ID to launch
+        """
         try:
-            shard = WebSocket(
+            shard = Shard(
                 bot=self.bot,
                 intents=self.intents,
+                cache_flags=self.cache_flags,
                 shard_id=shard_id,
                 shard_count=self.shard_count,
-                api_version=self.api_version
+                api_version=self.api_version,
+                debug_events=self.bot.debug_events
             )
             shard.connect()
             while not shard.status.session_id:
@@ -90,6 +106,7 @@ class SocketClient:
         self.__shards[shard_id] = shard
 
     async def launch_shards(self) -> None:
+        """ Launch all theshards """
         if self.shard_count is None:
             self.shard_count, self.max_concurrency = await self._fetch_gateway()
 
@@ -115,20 +132,25 @@ class SocketClient:
                 await asyncio.gather(*_booting)
 
                 if i != len(chunks):
-                    _log.info(f"Bucket {i}/{len(chunks)} shards launched, waiting (5s/bucket)")
+                    _log.debug(f"Bucket {i}/{len(chunks)} shards launched, waiting (5s/bucket)")
                     await asyncio.sleep(5)
                 else:
-                    _log.info(f"Bucket {i}/{len(chunks)} shards launched, last bucket, skipping wait")
+                    _log.debug(f"Bucket {i}/{len(chunks)} shards launched, last bucket, skipping wait")
 
-        _log.info(f"All {len(chunks)} bucket(s) have launched a total of {self.shard_count} shard(s)")
+        _log.debug(f"All {len(chunks)} bucket(s) have launched a total of {self.shard_count} shard(s)")
+
+        self.bot._shards_ready.set()
+        _log.info("discord.http/gateway is now ready")
 
     def start(self) -> None:
+        """ Start the gateway client """
         self.bot.loop.create_task(self.launch_shards())
 
     async def close(self) -> None:
+        """ Close the gateway client """
         async def _close():
             to_close = [
-                asyncio.ensure_future(shard.close())
+                asyncio.ensure_future(shard.close(kill=True))
                 for shard in self.__shards.values()
             ]
 

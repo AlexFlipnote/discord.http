@@ -2,7 +2,7 @@ import time
 
 from typing import TYPE_CHECKING, Union, Optional
 
-from . import utils
+from .enums import BaseEnum
 
 if TYPE_CHECKING:
     from .context import Context
@@ -14,7 +14,7 @@ __all__ = (
 )
 
 
-class BucketType(utils.Enum):
+class BucketType(BaseEnum):
     default = 0
     user = 1
     member = 2

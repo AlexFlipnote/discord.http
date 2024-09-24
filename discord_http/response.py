@@ -4,7 +4,7 @@ from . import utils
 from .embeds import Embed
 from .enums import ResponseType
 from .file import File
-from .flag import MessageFlags
+from .flags import MessageFlags
 from .mentions import AllowedMentions
 from .multipart import MultipartData
 from .object import Snowflake

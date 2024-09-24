@@ -5,7 +5,7 @@ from . import utils
 from .asset import Asset
 from .embeds import Embed
 from .file import File
-from .flag import Permissions, PublicFlags, GuildMemberFlags
+from .flags import Permissions, PublicFlags, GuildMemberFlags
 from .guild import PartialGuild
 from .mentions import AllowedMentions
 from .object import PartialBase, Snowflake

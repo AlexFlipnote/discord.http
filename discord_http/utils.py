@@ -1,18 +1,17 @@
-import enum
 import logging
-import numbers
-import random
 import re
 import sys
 import traceback
 import unicodedata
 
 from base64 import b64encode
-from datetime import datetime, timezone, timedelta
-from typing import Optional, Any, Union, Iterator, Self
+from datetime import datetime, timedelta, UTC
+from typing import Optional, Any, Union, Iterator, TYPE_CHECKING
 
 from .file import File
-from .object import Snowflake
+
+if TYPE_CHECKING:
+    from .object import Snowflake
 
 DISCORD_EPOCH = 1420070400000
 
@@ -53,7 +52,7 @@ def traceback_maker(
     return error if advance else f"{type(err).__name__}: {err}"
 
 
-def snowflake_time(id: Union[Snowflake, int]) -> datetime:
+def snowflake_time(id: Union["Snowflake", int]) -> datetime:
     """
     Get the datetime from a discord snowflake
 
@@ -69,7 +68,7 @@ def snowflake_time(id: Union[Snowflake, int]) -> datetime:
     """
     return datetime.fromtimestamp(
         ((int(id) >> 22) + DISCORD_EPOCH) / 1000,
-        tz=timezone.utc
+        tz=UTC
     )
 
 
@@ -149,7 +148,7 @@ def unicode_name(text: str) -> str:
 
 
 def oauth_url(
-    client_id: Union[Snowflake, int],
+    client_id: Union["Snowflake", int],
     /,
     scope: Optional[str] = None,
     user_install: bool = False,
@@ -220,14 +219,14 @@ def divide_chunks(
 
 def utcnow() -> datetime:
     """
-    Alias for `datetime.now(timezone.utc)`
+    Alias for `datetime.now(UTC)`
 
     Returns
     -------
     `datetime`
         The current time in UTC
     """
-    return datetime.now(timezone.utc)
+    return datetime.now(UTC)
 
 
 def add_to_datetime(
@@ -256,6 +255,8 @@ def add_to_datetime(
     `TypeError`
         Invalid type for timestamp provided
     """
+    _now = utcnow()
+
     match ts:
         case x if isinstance(x, datetime):
             if x.tzinfo is None:
@@ -263,16 +264,16 @@ def add_to_datetime(
                     "datetime object must be timezone aware"
                 )
 
-            if x.tzinfo is timezone.utc:
+            if x.tzinfo is UTC:
                 return x
 
-            return x.astimezone(timezone.utc)
+            return x.astimezone(UTC)
 
         case x if isinstance(x, timedelta):
-            return utcnow() + x
+            return _now + x
 
         case x if isinstance(x, int):
-            return utcnow() + timedelta(seconds=x)
+            return _now + timedelta(seconds=x)
 
         case _:
             raise TypeError(
@@ -436,95 +437,6 @@ class _MissingType:
 
 
 MISSING: Any = _MissingType()
-
-
-class Enum(enum.Enum):
-    """ Enum, but with more comparison operators to make life easier """
-    @classmethod
-    def random(cls) -> Self:
-        """ `Enum`: Return a random enum """
-        return random.choice(list(cls))
-
-    def __str__(self) -> str:
-        """ `str` Return the name of the enum """
-        return self.name
-
-    def __int__(self) -> int:
-        """ `int` Return the value of the enum """
-        return self.value
-
-    def __gt__(self, other) -> bool:
-        """ `bool` Greater than """
-        try:
-            return self.value > other.value
-        except Exception:
-            pass
-        try:
-            if isinstance(other, numbers.Real):
-                return self.value > other
-        except Exception:
-            pass
-        return NotImplemented
-
-    def __lt__(self, other) -> bool:
-        """ `bool` Less than """
-        try:
-            return self.value < other.value
-        except Exception:
-            pass
-        try:
-            if isinstance(other, numbers.Real):
-                return self.value < other
-        except Exception:
-            pass
-        return NotImplemented
-
-    def __ge__(self, other) -> bool:
-        """ `bool` Greater than or equal to """
-        try:
-            return self.value >= other.value
-        except Exception:
-            pass
-        try:
-            if isinstance(other, numbers.Real):
-                return self.value >= other
-            if isinstance(other, str):
-                return self.name == other
-        except Exception:
-            pass
-        return NotImplemented
-
-    def __le__(self, other) -> bool:
-        """ `bool` Less than or equal to """
-        try:
-            return self.value <= other.value
-        except Exception:
-            pass
-        try:
-            if isinstance(other, numbers.Real):
-                return self.value <= other
-            if isinstance(other, str):
-                return self.name == other
-        except Exception:
-            pass
-        return NotImplemented
-
-    def __eq__(self, other) -> bool:
-        """ `bool` Equal to """
-        if self.__class__ is other.__class__:
-            return self.value == other.value
-        try:
-            return self.value == other.value
-        except Exception:
-            pass
-        try:
-            if isinstance(other, numbers.Real):
-                return self.value == other
-            if isinstance(other, str):
-                return self.name == other
-        except Exception:
-            pass
-        return NotImplemented
 
 
 class CustomFormatter(logging.Formatter):

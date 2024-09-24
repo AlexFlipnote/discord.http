@@ -20,7 +20,7 @@ from .enums import (
     ResponseType, ChannelType, InteractionType
 )
 from .file import File
-from .flag import Permissions
+from .flags import Permissions
 from .guild import PartialGuild
 from .member import Member
 from .mentions import AllowedMentions

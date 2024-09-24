@@ -23,7 +23,7 @@ from .errors import (
     UserMissingPermissions, BotMissingPermissions, CheckFailed,
     InvalidMember, CommandOnCooldown
 )
-from .flag import Permissions
+from .flags import Permissions
 from .member import Member
 from .message import Attachment
 from .object import PartialBase, Snowflake

@@ -35,7 +35,6 @@ client = Client(
     guild_id=config.get("guild_id", None),
     sync=True,
     logging_level=logging.DEBUG,
-    disable_oauth_hint=True,
     allowed_mentions=AllowedMentions(
         everyone=False, roles=False, users=True
     )

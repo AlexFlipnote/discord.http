@@ -5,7 +5,7 @@ from .asset import Asset
 from .colour import Colour
 from .embeds import Embed
 from .file import File
-from .flag import PublicFlags
+from .flags import PublicFlags
 from .mentions import AllowedMentions
 from .object import PartialBase
 from .response import ResponseType, MessageResponse

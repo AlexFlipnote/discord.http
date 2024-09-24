@@ -1,10 +1,10 @@
-from typing import Optional
+from typing import Optional, Union, TYPE_CHECKING
 
-from .. import PartialGuild
+from .flags import GatewayCacheFlags
 
-# TODO
-# - Add an optional cache for multiple data types
-# - Be able to dynamically update the cache
+if TYPE_CHECKING:
+    from ..client import Client
+    from ..guild import PartialGuild, Guild
 
 __all__ = (
     "Cache",
@@ -13,14 +13,34 @@ __all__ = (
 
 class Cache:
     # This is subject to change, and should not be relied on
-    def __init__(self):
-        self.guilds: dict[int, PartialGuild] = {}
+    def __init__(
+        self,
+        *,
+        client: "Client"
+    ):
+        self.client = client
+        self.cache_flags = client._gateway_cache
 
-    def get_guild(self, guild_id: int) -> Optional[PartialGuild]:
-        return self.guilds.get(guild_id, None)
+        self.__guilds: dict[int, Union["PartialGuild", "Guild"]] = {}
 
-    def add_guild(self, guild_id: int, guild: PartialGuild) -> None:
-        self.guilds[guild_id] = guild
+    @property
+    def guilds(self) -> list[Union["PartialGuild", "Guild"]]:
+        return list(self.__guilds.values())
 
-    def remove_guild(self, guild_id: int) -> Optional[PartialGuild]:
-        return self.guilds.pop(guild_id, None)
+    def get_guild(self, guild_id: int) -> Optional[Union["PartialGuild", "Guild"]]:
+        return self.__guilds.get(guild_id, None)
+
+    def add_guild(self, guild_id: int, guild: Union["PartialGuild", "Guild"]) -> None:
+        if self.cache_flags is None:
+            return None
+
+        if GatewayCacheFlags.guild in self.cache_flags:
+            self.__guilds[guild_id] = guild
+        elif GatewayCacheFlags.partial_guild in self.cache_flags:
+            self.__guilds[guild_id] = self.client.get_partial_guild(guild_id)
+
+    def remove_guild(self, guild_id: int) -> Optional[Union["PartialGuild", "Guild"]]:
+        if self.cache_flags is None:
+            return None
+
+        return self.__guilds.pop(guild_id, None)
