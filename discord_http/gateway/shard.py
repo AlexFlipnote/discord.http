@@ -339,6 +339,8 @@ class Shard:
                         # Custom close code, only used when shutting down
                         return None
 
+                    print(utils.traceback_maker(e))
+
                     if self._can_handle_close():
                         self._reset_buffer()
 
@@ -379,10 +381,13 @@ class Shard:
         if not _parse_event:
             return None
 
-        self.bot.dispatch(
-            new_name,
-            _parse_event(data)
-        )
+        try:
+            self.bot.dispatch(
+                new_name,
+                *_parse_event(data)
+            )
+        except Exception as e:
+            _log.error(f"Error while parsing event {name}", exc_info=e)
 
     def connect(self) -> None:
         """ Connect the websocket """

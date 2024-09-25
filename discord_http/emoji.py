@@ -73,6 +73,9 @@ class EmojiParser:
 
     @classmethod
     def from_dict(cls, data: dict) -> Self:
+        if data["id"] is None:
+            return cls(data["name"])
+
         return cls(
             f"<{'a' if data.get('animated', None) else ''}:"
             f"{data['name']}:{data['id']}>"

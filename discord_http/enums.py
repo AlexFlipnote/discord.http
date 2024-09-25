@@ -21,6 +21,7 @@ __all__ = (
     "InteractionType",
     "InviteType",
     "MFALevel",
+    "ReactionType",
     "ResponseType",
     "SKUType",
     "ScheduledEventEntityType",
@@ -140,6 +141,11 @@ class ApplicationCommandType(BaseEnum):
     chat_input = 1
     user = 2
     message = 3
+
+
+class ReactionType(BaseEnum):
+    normal = 0
+    burst = 1
 
 
 class DefaultNotificationLevel(BaseEnum):

@@ -35,4 +35,5 @@ Here are all the things you can find on discord.http, packed in one page
   ../api/tasks
   ../api/user
   ../api/view
+  ../api/voice
   ../api/webhook

@@ -1,10 +1,10 @@
 from datetime import datetime
-from typing import Optional, TYPE_CHECKING
+from typing import Optional, TYPE_CHECKING, Union
 
 from . import utils
 from .channel import PartialChannel
 from .enums import InviteType
-from .guild import Guild
+from .guild import PartialGuild, Guild
 from .user import User
 
 if TYPE_CHECKING:
@@ -19,15 +19,48 @@ __all__ = (
 class PartialInvite:
     BASE = "https://discord.gg"
 
-    def __init__(self, *, state: "DiscordAPI", code: str):
+    def __init__(
+        self,
+        *,
+        state: "DiscordAPI",
+        code: str,
+        channel_id: Optional[int] = None,
+        guild_id: Optional[int] = None
+    ):
         self._state = state
         self.code = code
+
+        self.channel_id = channel_id
+        self.guild_id = guild_id
 
     def __str__(self) -> str:
         return self.url
 
     def __repr__(self) -> str:
         return f"<PartialInvite code='{self.code}'>"
+
+    @property
+    def guild(self) -> Optional[PartialGuild]:
+        """ `Optional[PartialGuild]`: The guild the invite is in """
+        if not self.guild_id:
+            return None
+
+        return PartialGuild(
+            state=self._state,
+            id=self.guild_id
+        )
+
+    @property
+    def channel(self) -> Optional["PartialChannel"]:
+        """ `Optional[PartialChannel]`: The channel the invite is in """
+        if not self.channel_id:
+            return None
+
+        return PartialChannel(
+            state=self._state,
+            id=self.channel_id,
+            guild_id=self.guild_id
+        )
 
     async def fetch(self) -> "Invite":
         """
@@ -96,7 +129,7 @@ class Invite(PartialInvite):
 
         self.inviter: Optional["User"] = None
         self.expires_at: Optional[datetime] = None
-        self.guild: Optional[Guild] = None
+        self.guild: Optional[Union[Guild, PartialGuild]] = None
         self.channel: Optional["PartialChannel"] = None
 
         self._from_data(data)
@@ -110,12 +143,23 @@ class Invite(PartialInvite):
 
         if data.get("guild", None):
             self.guild = Guild(state=self._state, data=data["guild"])
+        elif data.get("guild_id", None):
+            self.guild = PartialGuild(
+                state=self._state,
+                id=int(data["guild_id"])
+            )
 
+        guild_id = data.get("guild", {}).get("id", None)
         if data.get("channel", None):
-            guild_id = data.get("guild", {}).get("id", None)
             self.channel = PartialChannel(
                 state=self._state,
                 id=int(data["channel"]["id"]),
+                guild_id=int(guild_id) if guild_id else None,
+            )
+        elif data.get("channel_id", None):
+            self.channel = PartialChannel(
+                state=self._state,
+                id=int(data["channel_id"]),
                 guild_id=int(guild_id) if guild_id else None,
             )
 
@@ -125,5 +169,7 @@ class Invite(PartialInvite):
     def is_vanity(self) -> bool:
         """ `bool`: Whether the invite is a vanity invite """
         if not self.guild:
+            return False
+        if not isinstance(self.guild, Guild):
             return False
         return self.guild.vanity_url_code == self.code

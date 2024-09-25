@@ -15,6 +15,7 @@ from .channel import PartialChannel, BaseChannel
 from .commands import Command, Interaction, Listener, Cog, SubGroup
 from .context import Context
 from .emoji import PartialEmoji, Emoji
+from .voice import PartialVoiceState, VoiceState
 from .entitlements import PartialSKU, SKU, PartialEntitlements, Entitlements
 from .enums import ApplicationCommandType
 from .file import File
@@ -850,7 +851,10 @@ class Client:
 
     def get_partial_invite(
         self,
-        invite_code: str
+        invite_code: str,
+        *,
+        channel_id: Optional[int] = None,
+        guild_id: Optional[int] = None
     ) -> PartialInvite:
         """
         Creates a partial invite object.
@@ -867,8 +871,66 @@ class Client:
         """
         return PartialInvite(
             state=self.state,
-            code=invite_code
+            code=invite_code,
+            channel_id=channel_id,
+            guild_id=guild_id
         )
+
+    def get_partial_voice_state(
+        self,
+        member_id: int,
+        *,
+        guild_id: Optional[int] = None,
+        channel_id: Optional[int] = None
+    ) -> PartialVoiceState:
+        """
+        Creates a partial voice state object.
+
+        Parameters
+        ----------
+        member_id: `int`
+            The ID of the member to create the partial voice state from
+        guild_id: `Optional[int]`
+            Guild ID to create the partial voice state from
+
+        Returns
+        -------
+        `PartialVoiceState`
+            The partial voice state object.
+        """
+        return PartialVoiceState(
+            state=self.state,
+            id=member_id,
+            guild_id=guild_id,
+            channel_id=channel_id
+        )
+
+    async def fetch_voice_state(
+        self,
+        member_id: int,
+        guild_id: Optional[int] = None
+    ) -> VoiceState:
+        """
+        Fetches a voice state object.
+
+        Parameters
+        ----------
+        member_id: `int`
+            The ID of the member to fetch the voice state from
+        guild_id: `Optional[int]`
+            Guild ID to fetch the voice state from
+
+        Returns
+        -------
+        `VoiceState`
+            The voice state object.
+        """
+        vs = self.get_partial_voice_state(
+            member_id,
+            guild_id=guild_id
+        )
+
+        return await vs.fetch()
 
     def get_partial_emoji(
         self,

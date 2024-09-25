@@ -1264,6 +1264,31 @@ class BaseChannel(PartialChannel):
         """ `ChannelType`: Returns the channel's type """
         return ChannelType.guild_text
 
+    @classmethod
+    def from_dict(cls, *, state: "DiscordAPI", data: dict) -> "BaseChannel":
+        """
+        Create a channel object from a dictionary
+        Requires the state to be set
+
+        Parameters
+        ----------
+        state: `DiscordAPI`
+            The state to use
+        data: `dict`
+            Data provided by Discord API
+
+        Returns
+        -------
+        `BaseChannel`
+            The channel object
+        """
+        _class = cls(state=state, data=data)._class_to_return(
+            data=data,
+            state=state,
+        )
+
+        return _class
+
 
 class TextChannel(BaseChannel):
     def __init__(self, *, state: "DiscordAPI", data: dict):
@@ -1518,10 +1543,10 @@ class PublicThread(BaseChannel):
 
         self.name: str = data["name"]
 
-        self.message_count: int = int(data["message_count"])
-        self.member_count: int = int(data["member_count"])
-        self.rate_limit_per_user: int = int(data["rate_limit_per_user"])
-        self.total_message_sent: int = int(data["total_message_sent"])
+        self.message_count: int = utils.get_int(data, "message_count") or 0
+        self.member_count: int = utils.get_int(data, "member_count") or 0
+        self.rate_limit_per_user: int = utils.get_int(data, "rate_limit_per_user") or 0
+        self.total_message_sent: int = utils.get_int(data, "total_message_sent") or 0
 
         self._metadata: dict = data.get("thread_metadata", {})
 
@@ -1530,8 +1555,8 @@ class PublicThread(BaseChannel):
         self.auto_archive_duration: int = self._metadata.get("auto_archive_duration", 60)
 
         self.channel_id: int = int(data["id"])
-        self.guild_id: int = int(data["guild_id"])
-        self.owner_id: int = int(data["owner_id"])
+        self.guild_id: Optional[int] = utils.get_int(data, "guild_id")
+        self.owner_id: Optional[int] = utils.get_int(data, "owner_id")
         self.last_message_id: Optional[int] = utils.get_int(data, "last_message_id")
         self.parent_id: Optional[int] = utils.get_int(data, "parent_id")
 
@@ -1545,14 +1570,20 @@ class PublicThread(BaseChannel):
         return PartialChannel(state=self._state, id=self.channel_id)
 
     @property
-    def guild(self) -> "PartialGuild":
+    def guild(self) -> Optional["PartialGuild"]:
         """ `PartialGuild`: Returns a partial guild object """
+        if not self.guild_id:
+            return None
+
         from .guild import PartialGuild
         return PartialGuild(state=self._state, id=self.guild_id)
 
     @property
-    def owner(self) -> "PartialUser":
+    def owner(self) -> Optional["PartialUser"]:
         """ `PartialUser`: Returns a partial user object """
+        if not self.owner_id:
+            return None
+
         from .user import PartialUser
         return PartialUser(state=self._state, id=self.owner_id)
 

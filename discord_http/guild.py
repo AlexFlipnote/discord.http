@@ -18,6 +18,7 @@ from .multipart import MultipartData
 from .object import PartialBase, Snowflake
 from .role import Role, PartialRole
 from .sticker import Sticker, PartialSticker
+from .voice import VoiceState, PartialVoiceState
 
 if TYPE_CHECKING:
     from .channel import (
@@ -28,7 +29,7 @@ if TYPE_CHECKING:
     )
     from .http import DiscordAPI
     from .invite import Invite
-    from .member import PartialMember, Member, VoiceState
+    from .member import PartialMember, Member
     from .user import User
 
 MISSING = utils.MISSING
@@ -273,8 +274,169 @@ class PartialGuild(PartialBase):
         super().__init__(id=int(id))
         self._state = state
 
+        self._cache_members: dict[int, Union["Member", "PartialMember"]] = {}
+        self._cache_channels: dict[int, Union["BaseChannel", "PartialChannel"]] = {}
+        self._cache_roles: dict[int, Union["Role", "PartialRole"]] = {}
+        self._cache_emojis: dict[int, Union["Emoji", "PartialEmoji"]] = {}
+        self._cache_stickers: dict[int, Union["Sticker", "PartialSticker"]] = {}
+        self._cache_voice_states: dict[int, Union["VoiceState", "PartialVoiceState"]] = {}
+
     def __repr__(self) -> str:
         return f"<PartialGuild id={self.id}>"
+
+    def get_member(self, member_id: int) -> Optional[Union["Member", "PartialMember"]]:
+        """
+        Returns the member from cache if it exists.
+
+        Parameters
+        ----------
+        member_id: `int`
+            The ID of the member to get.
+
+        Returns
+        -------
+        `Optional[Union["Member", "PartialMember"]`
+            The member with the given ID, if it exists.
+        """
+        return self._cache_members.get(member_id, None)
+
+    def get_channel(self, channel_id: int) -> Optional[Union["BaseChannel", "PartialChannel"]]:
+        """
+        Returns the channel from cache if it exists.
+
+        Parameters
+        ----------
+        channel_id: `int`
+            The ID of the channel to get.
+
+        Returns
+        -------
+        `Optional[Union["BaseChannel", "PartialChannel"]`
+            The channel with the given ID, if it exists.
+        """
+        return self._cache_channels.get(channel_id, None)
+
+    def get_channel_voice_state(
+        self,
+        channel_id: int
+    ) -> list[Union["VoiceState", "PartialVoiceState"]]:
+        return [
+            state
+            for state in self._cache_voice_states.values()
+            if state.channel_id == channel_id
+        ]
+
+    def get_member_voice_state(
+        self,
+        member_id: int
+    ) -> Optional[Union["VoiceState", "PartialVoiceState"]]:
+        """
+        Returns the voice state of a member from cache if it exists.
+
+        Parameters
+        ----------
+        member_id: `int`
+            The ID of the member to get the voice state of.
+
+        Returns
+        -------
+        `Optional[Union["VoiceState", "PartialVoiceState"]`
+            The voice state of the member, if it exists.
+        """
+        return self._cache_voice_states.get(member_id, None)
+
+    def get_role(self, role_id: int) -> Optional[Union["Role", "PartialRole"]]:
+        """
+        Returns the role from cache if it exists.
+
+        Parameters
+        ----------
+        role_id: `int`
+            The ID of the role to get.
+
+        Returns
+        -------
+        `Optional[Union["Role", "PartialRole"]`
+            The role with the given ID, if it exists.
+        """
+        return self._cache_roles.get(role_id, None)
+
+    @property
+    def members(self) -> list[Union["Member", "PartialMember"]]:
+        """
+        `list[Union[Member, PartialMember]]`:
+        Returns a list of all the members in the guild if they are cached.
+        """
+        return list(self._cache_members.values())
+
+    @property
+    def channels(self) -> list[Union["BaseChannel", "PartialChannel"]]:
+        """
+        `list[Union[BaseChannel, PartialChannel]]`:
+        Returns a list of all the channels in the guild if they are cached.
+        """
+        return list(self._cache_channels.values())
+
+    @property
+    def roles(self) -> list[Union["Role", "PartialRole"]]:
+        """
+        `list[Union[Role, PartialRole]]`:
+        Returns a list of all the roles in the guild if they are cached or
+        if the guild was fetched
+        """
+        return list(self._cache_roles.values())
+
+    @property
+    def emojis(self) -> list[Union["Emoji", "PartialEmoji"]]:
+        """
+        `list[Union[Emoji, PartialEmoji]]`:
+        Returns a list of all the emojis in the guild if they are cached.
+        """
+        return list(self._cache_emojis.values())
+
+    @property
+    def stickers(self) -> list[Union["Sticker", "PartialSticker"]]:
+        """
+        `list[Union[Sticker, PartialSticker]]`:
+        Returns a list of all the stickers in the guild if they are cached.
+        """
+        return list(self._cache_stickers.values())
+
+    @property
+    def text_channels(self) -> list["TextChannel"]:
+        """
+        `list[TextChannel]`:
+        Returns a list of all the text channels in the guild if they are cached.
+        """
+        return [
+            channel
+            for channel in self.channels
+            if isinstance(channel, (TextChannel))
+        ]
+
+    @property
+    def voice_channels(self) -> list["VoiceChannel"]:
+        """
+        `list[VoiceChannel]`:
+        Returns a list of all the voice channels in the guild if they are cached.
+        """
+        return [
+            channel
+            for channel in self.channels
+            if isinstance(channel, (VoiceChannel))
+        ]
+
+    @property
+    def categories(self) -> list["CategoryChannel"]:
+        """
+        `list[CategoryChannel]`:
+        Returns a list of all the category channels in the guild if they are cached.
+        """
+        return [
+            channel
+            for channel in self.channels
+            if isinstance(channel, (CategoryChannel))
+        ]
 
     @property
     def default_role(self) -> PartialRole:
@@ -1464,34 +1626,6 @@ class PartialGuild(PartialBase):
             for data in r.response
         ]
 
-    async def fetch_voice_state(self, member: Snowflake) -> "VoiceState":
-        """
-        Fetches the voice state of the member
-
-        Parameters
-        ----------
-        member: `Snowflake`
-            The member to fetch the voice state from
-
-        Returns
-        -------
-        `VoiceState`
-            The voice state of the member
-
-        Raises
-        ------
-        `NotFound`
-            - If the member is not in the guild
-            - If the member is not in a voice channel
-        """
-        r = await self._state.query(
-            "GET",
-            f"/guilds/{self.id}/voice-states/{int(member)}"
-        )
-
-        from .member import VoiceState
-        return VoiceState(state=self._state, data=r.response)
-
     async def search_members(
         self,
         query: str,
@@ -1719,14 +1853,6 @@ class Guild(PartialGuild):
         self.afk_timeout: int = data.get("afk_timeout", 0)
         self.default_message_notifications: int = data.get("default_message_notifications", 0)
         self.description: Optional[str] = data.get("description", None)
-        self.emojis: list[Emoji] = [
-            Emoji(state=self._state, guild=self, data=e)
-            for e in data.get("emojis", [])
-        ]
-        self.stickers: list[Sticker] = [
-            Sticker(state=self._state, guild=self, data=s)
-            for s in data.get("stickers", [])
-        ]
 
         self._icon = data.get("icon", None)
         self._banner = data.get("banner", None)
@@ -1748,10 +1874,6 @@ class Guild(PartialGuild):
         self.premium_tier: int = data.get("premium_tier", 0)
         self.public_updates_channel_id: Optional[int] = utils.get_int(data, "public_updates_channel_id")
         self.region: Optional[str] = data.get("region", None)
-        self.roles: list[Role] = [
-            Role(state=self._state, guild=self, data=r)
-            for r in data.get("roles", [])
-        ]
         self.safety_alerts_channel_id: Optional[int] = utils.get_int(data, "safety_alerts_channel_id")
         self.system_channel_flags: int = data.get("system_channel_flags", 0)
         self.system_channel_id: Optional[int] = utils.get_int(data, "system_channel_id")
@@ -1760,11 +1882,71 @@ class Guild(PartialGuild):
         self.widget_channel_id: Optional[int] = utils.get_int(data, "widget_channel_id")
         self.widget_enabled: bool = data.get("widget_enabled", False)
 
+        self._from_data(data)
+
     def __str__(self) -> str:
         return self.name
 
     def __repr__(self) -> str:
         return f"<Guild id={self.id} name='{self.name}'>"
+
+    def _from_data(self, data: dict) -> None:
+        self._cache_roles = {
+            int(g["id"]): Role(
+                state=self._state,
+                guild=self,
+                data=g
+            )
+            for g in data["roles"]
+        }
+
+        self._cache_emojis = {
+            int(g["id"]): Emoji(
+                state=self._state,
+                guild=self,
+                data=g
+            )
+            for g in data["emojis"]
+        }
+
+        self._cache_stickers = {
+            int(g["id"]): Sticker(
+                state=self._state,
+                guild=self,
+                data=g
+            )
+            for g in data["stickers"]
+        }
+
+        self._cache_voice_states = {
+            int(g["user_id"]): VoiceState(
+                state=self._state,
+                data=g
+            )
+            for g in data["voice_states"]
+        }
+
+        if data.get("channels", None):
+            # Only triggered when getting guild from GUILD_CREATE
+            from .channel import BaseChannel
+            self._cache_channels = {
+                int(g["id"]): BaseChannel.from_dict(
+                    state=self._state,
+                    data=g
+                )
+                for g in data["channels"]
+            }
+
+    def _update(self, data: dict) -> None:
+        for g in data:
+            if g in ("roles", "channels", "emojis", "stickers"):
+                continue
+
+            name = g
+            if g in ("icon", "banner"):
+                name = f"_{g}"
+
+            setattr(self, name, data[g])
 
     @property
     def emojis_limit(self) -> int:
@@ -1821,7 +2003,7 @@ class Guild(PartialGuild):
     def premium_subscriber_role(self) -> Optional[Role]:
         """ `Optional[Role]`: The guild's premium subscriber role if available """
         return next(
-            (r for r in self.roles if r.is_premium_subscriber()),
+            (r for r in self.roles if isinstance(r, Role) and r.is_premium_subscriber()),
             None
         )
 
@@ -1831,7 +2013,8 @@ class Guild(PartialGuild):
         return next(
             (
                 r for r in self.roles
-                if r.bot_id and
+                if isinstance(r, Role) and
+                r.bot_id and
                 r.bot_id == self._state.application_id
             ),
             None
@@ -1855,7 +2038,8 @@ class Guild(PartialGuild):
         """
         return next((
             r for r in self.roles
-            if r.id == role_id
+            if isinstance(r, Role) and
+            r.id == role_id
         ), None)
 
     def get_role_by_name(self, role_name: str) -> Optional[Role]:
@@ -1874,7 +2058,8 @@ class Guild(PartialGuild):
         """
         return next((
             r for r in self.roles
-            if r.name == role_name
+            if isinstance(r, Role) and
+            r.name == role_name
         ), None)
 
     def get_member_top_role(self, member: "Member") -> Optional[Role]:
@@ -1895,7 +2080,7 @@ class Guild(PartialGuild):
             return None
 
         _roles_sorted = sorted(
-            self.roles,
+            [r for r in self.roles if isinstance(r, Role)],
             key=lambda r: r.position,
             reverse=True
         )

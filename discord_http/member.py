@@ -1,5 +1,5 @@
 from datetime import datetime, timedelta
-from typing import Union, TYPE_CHECKING, Optional, Any
+from typing import Union, TYPE_CHECKING, Optional
 
 from . import utils
 from .asset import Asset
@@ -17,89 +17,15 @@ from .view import View
 MISSING = utils.MISSING
 
 if TYPE_CHECKING:
-    from .channel import DMChannel, PartialChannel
+    from .channel import DMChannel
     from .http import DiscordAPI
     from .message import Message
 
 __all__ = (
     "PartialMember",
     "Member",
-    "VoiceState",
     "ThreadMember",
 )
-
-
-class VoiceState:
-    def __init__(self, *, state: "DiscordAPI", data: dict):
-        self._state = state
-        self.session_id: str = data["session_id"]
-        self.guild: Optional[PartialGuild] = None
-        self.channel: Optional[PartialChannel] = None
-        self.user: PartialUser = PartialUser(state=state, id=int(data["user_id"]))
-        self.member: Optional[Member] = None
-
-        self.deaf: bool = data["deaf"]
-        self.mute: bool = data["mute"]
-        self.self_deaf: bool = data["self_deaf"]
-        self.self_mute: bool = data["self_mute"]
-        self.self_stream: bool = data.get("self_stream", False)
-        self.self_video: bool = data["self_video"]
-        self.suppress: bool = data["suppress"]
-        self.request_to_speak_timestamp: Optional[datetime] = None
-
-        self._from_data(data)
-
-    def __repr__(self) -> str:
-        return f"<VoiceState id={self.user} session_id='{self.session_id}'>"
-
-    def _from_data(self, data: dict) -> None:
-        if data.get("guild_id", None):
-            self.guild = PartialGuild(
-                state=self._state, id=int(data["guild_id"])
-            )
-
-        if data.get("channel_id", None):
-            from .channel import PartialChannel
-            self.channel = PartialChannel(
-                state=self._state, id=int(data["channel_id"])
-            )
-
-        if data.get("member", None) and self.guild:
-            self.member = Member(
-                state=self._state,
-                guild=self.guild,
-                data=data["member"]
-            )
-
-        if data.get("request_to_speak_timestamp", None):
-            self.request_to_speak_timestamp = utils.parse_time(
-                data["request_to_speak_timestamp"]
-            )
-
-    async def edit(
-        self,
-        *,
-        suppress: bool = MISSING,
-    ) -> None:
-        """
-        Updates the voice state of the member
-
-        Parameters
-        ----------
-        suppress: `bool`
-            Whether to suppress the user
-        """
-        data: dict[str, Any] = {}
-
-        if suppress is not MISSING:
-            data["suppress"] = bool(suppress)
-
-        await self._state.query(
-            "PATCH",
-            f"/guilds/{self.guild.id}/voice-states/{int(self.user)}",
-            json=data,
-            res_method="text"
-        )
 
 
 class PartialMember(PartialBase):
@@ -123,56 +49,6 @@ class PartialMember(PartialBase):
     def guild(self) -> PartialGuild:
         """ `PartialGuild`: The guild of the member """
         return PartialGuild(state=self._state, id=self.guild_id)
-
-    async def fetch_voice_state(self) -> VoiceState:
-        """
-        Fetches the voice state of the member
-
-        Returns
-        -------
-        `VoiceState`
-            The voice state of the member
-
-        Raises
-        ------
-        `NotFound`
-            - If the member is not in the guild
-            - If the member is not in a voice channel
-        """
-        r = await self._state.query(
-            "GET",
-            f"/guilds/{self.guild_id}/voice-states/{self.id}"
-        )
-
-        return VoiceState(state=self._state, data=r.response)
-
-    async def edit_voice_state(
-        self,
-        channel: Snowflake,
-        *,
-        suppress: bool = MISSING,
-    ) -> None:
-        """
-        Updates another user's voice state in a stage channel
-
-        Parameters
-        ----------
-        channel: `Snowflake`
-            The channel that the member is in (it must be the same channel as the current one)
-        suppress: `bool`
-            Whether to suppress the user
-        """
-        data: dict[str, Any] = {"channel_id": str(int(channel))}
-
-        if suppress is not MISSING:
-            data["suppress"] = bool(suppress)
-
-        await self._state.query(
-            "PATCH",
-            f"/guilds/{self.guild_id}/voice-states/{self.id}",
-            json=data,
-            res_method="text"
-        )
 
     async def fetch(self) -> "Member":
         """ `Fetch`: Fetches the member from the API """

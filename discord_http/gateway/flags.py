@@ -31,9 +31,17 @@ class Intents(BaseFlag):
 
 
 class GatewayCacheFlags(BaseFlag):
-    partial_guild = 1 << 0
-    guild = 1 << 1
-    partial_member = 1 << 2
-    member = 1 << 3
-    partial_channel = 1 << 4
-    channel = 1 << 5
+    partial_guilds = 1 << 0
+    partial_members = 1 << 1
+    partial_channels = 1 << 2
+    partial_roles = 1 << 3
+    partial_emojis = 1 << 4
+    partial_stickers = 1 << 5
+    partial_voice_states = 1 << 6
+    guilds = 1 << 10
+    members = 1 << 11
+    channels = 1 << 12
+    roles = 1 << 13
+    emojis = 1 << 14
+    stickers = 1 << 15
+    voice_states = 1 << 16
