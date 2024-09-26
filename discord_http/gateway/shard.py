@@ -339,8 +339,6 @@ class Shard:
                         # Custom close code, only used when shutting down
                         return None
 
-                    print(utils.traceback_maker(e))
-
                     if self._can_handle_close():
                         self._reset_buffer()
 
