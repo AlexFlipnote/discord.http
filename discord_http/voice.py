@@ -98,7 +98,8 @@ class VoiceState(PartialVoiceState):
         super().__init__(
             state=state,
             id=int(data["user_id"]),
-            guild_id=int(data["guild_id"])
+            guild_id=utils.get_int(data, "guild_id"),
+            channel_id=utils.get_int(data, "channel_id")
         )
 
         self.session_id: str = data["session_id"]

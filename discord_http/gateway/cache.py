@@ -1,14 +1,16 @@
 from typing import Optional, Union, TYPE_CHECKING
 
+from ..channel import BaseChannel
+from ..voice import VoiceState, PartialVoiceState
+
 from .flags import GatewayCacheFlags
 
 if TYPE_CHECKING:
-    from ..channel import PartialChannel, BaseChannel
+    from ..channel import PartialChannel
     from ..client import Client
     from ..guild import PartialGuild, Guild
     from ..member import PartialMember, Member
     from ..role import PartialRole, Role
-    from ..voice import VoiceState, PartialVoiceState
 
 __all__ = (
     "Cache",
@@ -33,7 +35,12 @@ class Cache:
     def get_guild(self, guild_id: int) -> Optional[Union["PartialGuild", "Guild"]]:
         return self.__guilds.get(guild_id, None)
 
-    def add_guild(self, guild_id: int, guild: Union["PartialGuild", "Guild"]) -> None:
+    def add_guild(
+        self,
+        guild_id: int,
+        guild: Union["PartialGuild", "Guild"],
+        data: dict
+    ) -> None:
         if self.cache_flags is None:
             return None
 
@@ -45,71 +52,83 @@ class Cache:
             # (Partial)Guild is not cached, nowhere to store it
             return None
 
-        g = self.__guilds[guild_id]
+        _guild = self.__guilds[guild_id]
 
         # When GUILD_CREATE is received, the cache is already created
         # Make sure we respect what the cache flags are
         if GatewayCacheFlags.channels in self.cache_flags:
-            pass
-        elif GatewayCacheFlags.partial_channels in self.cache_flags:
-            g._cache_channels = {
-                k: self.client.get_partial_channel(
-                    v.id, guild_id=guild_id
+            _guild._cache_channels = {  # type: ignore
+                int(g["id"]): BaseChannel.from_dict(
+                    state=self.client.state,
+                    data=g
                 )
-                for k, v in dict(g._cache_channels).items()
+                for g in data["channels"]
+            }
+        elif GatewayCacheFlags.partial_channels in self.cache_flags:
+            _guild._cache_channels = {
+                int(g["id"]): self.client.get_partial_channel(
+                    g["id"], guild_id=guild_id
+                )
+                for g in data["channels"]
             }
         else:
-            g._cache_channels = {}
+            _guild._cache_channels = {}
 
         if GatewayCacheFlags.roles in self.cache_flags:
             pass
         elif GatewayCacheFlags.partial_roles in self.cache_flags:
-            g._cache_roles = {
+            _guild._cache_roles = {
                 k: self.client.get_partial_role(
                     v.id, guild_id
                 )
-                for k, v in dict(g._cache_roles).items()
+                for k, v in dict(_guild._cache_roles).items()
             }
         else:
-            g._cache_roles = {}
+            _guild._cache_roles = {}
 
         if GatewayCacheFlags.emojis in self.cache_flags:
             pass
         elif GatewayCacheFlags.partial_emojis in self.cache_flags:
-            g._cache_emojis = {
+            _guild._cache_emojis = {
                 k: self.client.get_partial_emoji(
                     v.id, guild_id=guild_id
                 )
-                for k, v in dict(g._cache_emojis).items()
+                for k, v in dict(_guild._cache_emojis).items()
             }
         else:
-            g._cache_emojis = {}
+            _guild._cache_emojis = {}
 
         if GatewayCacheFlags.stickers in self.cache_flags:
             pass
         elif GatewayCacheFlags.partial_stickers in self.cache_flags:
-            g._cache_stickers = {
+            _guild._cache_stickers = {
                 k: self.client.get_partial_sticker(
                     v.id, guild_id=guild_id
                 )
-                for k, v in dict(g._cache_stickers).items()
+                for k, v in dict(_guild._cache_stickers).items()
             }
         else:
-            g._cache_stickers = {}
+            _guild._cache_stickers = {}
 
         if GatewayCacheFlags.voice_states in self.cache_flags:
-            pass
-        elif GatewayCacheFlags.partial_voice_states in self.cache_flags:
-            g._cache_voice_states = {
-                k: self.client.get_partial_voice_state(
-                    v.id,
-                    guild_id=guild_id,
-                    channel_id=v.channel_id
+            _guild._cache_voice_states = {  # type: ignore
+                int(g["user_id"]): VoiceState(
+                    state=self.client.state,
+                    data=g
                 )
-                for k, v in dict(g._cache_voice_states).items()
+                for g in data["voice_states"]
+            }
+        elif GatewayCacheFlags.partial_voice_states in self.cache_flags:
+            _guild._cache_voice_states = {
+                int(g["user_id"]): self.client.get_partial_voice_state(
+                    int(g["user_id"]),
+                    guild_id=guild_id,
+                    channel_id=g["channel_id"]
+                )
+                for g in data["voice_states"]
             }
         else:
-            g._cache_voice_states = {}
+            _guild._cache_voice_states = {}
 
     def update_guild(self, guild_id: int, data: dict) -> None:
         if self.cache_flags is None:

@@ -31,7 +31,7 @@ class Parser:
 
     def guild_create(self, data: dict) -> tuple[Guild]:
         guild = self._guild(data)
-        self.bot.cache.add_guild(guild.id, guild)
+        self.bot.cache.add_guild(guild.id, guild, data)
 
         for channel in guild.channels:
             self.bot.cache.add_channel(channel)

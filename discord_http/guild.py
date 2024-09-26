@@ -316,7 +316,14 @@ class PartialGuild(PartialBase):
         """
         return self._cache_channels.get(channel_id, None)
 
-    def get_channel_voice_state(
+    def get_voice_states(self) -> list[Union["VoiceState", "PartialVoiceState"]]:
+        """
+        `Optional[Union[VoiceState, PartialVoiceState]]`:
+        Returns the voice state of the guild
+        """
+        return list(self._cache_voice_states.values())
+
+    def get_channel_voice_states(
         self,
         channel_id: int
     ) -> list[Union["VoiceState", "PartialVoiceState"]]:
@@ -1917,25 +1924,6 @@ class Guild(PartialGuild):
             )
             for g in data["stickers"]
         }
-
-        self._cache_voice_states = {
-            int(g["user_id"]): VoiceState(
-                state=self._state,
-                data=g
-            )
-            for g in data["voice_states"]
-        }
-
-        if data.get("channels", None):
-            # Only triggered when getting guild from GUILD_CREATE
-            from .channel import BaseChannel
-            self._cache_channels = {
-                int(g["id"]): BaseChannel.from_dict(
-                    state=self._state,
-                    data=g
-                )
-                for g in data["channels"]
-            }
 
     def _update(self, data: dict) -> None:
         for g in data:
