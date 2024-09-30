@@ -6,7 +6,7 @@ from ..voice import VoiceState, PartialVoiceState
 from .flags import GatewayCacheFlags
 
 if TYPE_CHECKING:
-    from ..channel import PartialChannel
+    from ..channel import PartialChannel, PublicThread, PrivateThread
     from ..client import Client
     from ..guild import PartialGuild, Guild
     from ..member import PartialMember, Member
@@ -231,6 +231,35 @@ class Cache:
             return None
 
         guild._cache_channels.pop(channel.id, None)
+
+    def add_thread(self, thread: Union["PublicThread", "PrivateThread"]) -> None:
+        if self.cache_flags is None:
+            return None
+        if not thread.guild_id:
+            return None
+
+        guild = self.get_guild(thread.guild_id)
+        if not guild:
+            return None
+
+        if GatewayCacheFlags.threads in self.cache_flags:
+            guild._cache_threads[thread.id] = thread
+        elif GatewayCacheFlags.partial_threads in self.cache_flags:
+            guild._cache_threads[thread.id] = self.client.get_partial_channel(
+                thread.id, guild_id=thread.guild_id
+            )
+
+    def remove_thread(self, thread: Union["PublicThread", "PrivateThread"]) -> None:
+        if self.cache_flags is None:
+            return None
+        if not thread.guild_id:
+            return None
+
+        guild = self.get_guild(thread.guild_id)
+        if not guild:
+            return None
+
+        guild._cache_threads.pop(thread.id, None)
 
     def add_role(self, role: Union["Role", "PartialRole"]) -> None:
         if self.cache_flags is None:

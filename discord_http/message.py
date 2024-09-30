@@ -796,22 +796,6 @@ class PartialMessage(PartialBase):
         if isinstance(answer, PollAnswer):
             answer_id = answer.id
 
-        def _resolve_id(entry) -> int:
-            match entry:
-                case x if isinstance(x, Snowflake):
-                    return int(x)
-
-                case x if isinstance(x, int):
-                    return x
-
-                case x if isinstance(x, str):
-                    if not x.isdigit():
-                        raise TypeError("Got a string that was not a Snowflake ID for after")
-                    return int(x)
-
-                case _:
-                    raise TypeError("Got an unknown type for after")
-
         async def _get_history(limit: int, **kwargs):
             params = {"limit": min(limit, 100)}
             for key, value in kwargs.items():
@@ -835,7 +819,7 @@ class PartialMessage(PartialBase):
             return r.response, after_id, limit
 
         if after:
-            strategy, state = _after_http, _resolve_id(after)
+            strategy, state = _after_http, utils.normalize_entity_id(after)
         else:
             strategy, state = _after_http, None
 

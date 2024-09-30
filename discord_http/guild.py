@@ -1,6 +1,6 @@
 from dataclasses import dataclass
 from datetime import datetime, timedelta
-from typing import TYPE_CHECKING, Union, Optional, AsyncIterator
+from typing import TYPE_CHECKING, Union, Optional, AsyncIterator, Callable
 
 from . import utils
 from .asset import Asset
@@ -9,7 +9,7 @@ from .enums import (
     ChannelType, VerificationLevel,
     DefaultNotificationLevel, ContentFilterLevel,
     ScheduledEventEntityType, ScheduledEventPrivacyType,
-    ScheduledEventStatusType, VideoQualityType
+    ScheduledEventStatusType, VideoQualityType, AuditLogType
 )
 from .emoji import Emoji, PartialEmoji
 from .file import File
@@ -25,8 +25,9 @@ if TYPE_CHECKING:
         TextChannel, VoiceChannel,
         PartialChannel, BaseChannel,
         CategoryChannel, PublicThread,
-        VoiceRegion, StageChannel
+        VoiceRegion, StageChannel, PrivateThread
     )
+    from .audit import AuditLogEntry
     from .http import DiscordAPI
     from .invite import Invite
     from .member import PartialMember, Member
@@ -276,6 +277,7 @@ class PartialGuild(PartialBase):
 
         self._cache_members: dict[int, Union["Member", "PartialMember"]] = {}
         self._cache_channels: dict[int, Union["BaseChannel", "PartialChannel"]] = {}
+        self._cache_threads: dict[int, Union["PublicThread", "PrivateThread", "PartialChannel"]] = {}
         self._cache_roles: dict[int, Union["Role", "PartialRole"]] = {}
         self._cache_emojis: dict[int, Union["Emoji", "PartialEmoji"]] = {}
         self._cache_stickers: dict[int, Union["Sticker", "PartialSticker"]] = {}
@@ -1633,6 +1635,140 @@ class PartialGuild(PartialBase):
             for data in r.response
         ]
 
+    async def fetch_audit_logs(
+        self,
+        *,
+        before: Optional[Union[datetime, "AuditLogEntry", Snowflake, int]] = None,
+        after: Optional[Union[datetime, "AuditLogEntry", Snowflake, int]] = None,
+        user: Optional[Union[Snowflake, int]] = None,
+        action: Optional[AuditLogType] = None,
+        limit: Optional[int] = 100,
+    ) -> AsyncIterator["AuditLogEntry"]:
+        """
+        Fetches the audit logs for the guild
+
+        Returns
+        -------
+        `list[AuditLogEntry]`
+            The audit logs for the guild
+        """
+
+        """r = await self._state.query(
+            "GET",
+            f"/guilds/{self.id}/audit-logs"
+        )
+
+        from .user import User
+        _users = {
+            int(g["id"]): User(
+                state=self._state,
+                data=g
+            )
+            for g in r.response.get("users", [])
+        }
+
+        from .audit import AuditLogEntry
+        return [
+            AuditLogEntry(
+                state=self._state,
+                data=data,
+                users=_users,
+                guild=self
+            )
+            for data in r.response["audit_log_entries"]
+        ]"""
+
+        async def _get_history(limit: int, **kwargs):
+            params = {"limit": limit}
+            for key, value in kwargs.items():
+                if value is None:
+                    continue
+                params[key] = utils.normalize_entity_id(value)
+
+            return await self._state.query(
+                "GET",
+                f"/guilds/{self.id}/audit-logs",
+                params=params
+            )
+
+        async def _after_http(
+            http_limit: int,
+            after_id: Optional[int],
+            limit: Optional[int],
+            **kwargs
+        ):
+            r = await _get_history(limit=http_limit, after=after_id, **kwargs)
+            _data = r.response.get("audit_log_entries", [])
+
+            if _data:
+                if limit is not None:
+                    limit -= len(_data)
+                after_id = int(_data[0]["id"])
+
+            return r.response, after_id, limit
+
+        async def _before_http(
+            http_limit: int,
+            before_id: Optional[int],
+            limit: Optional[int],
+            **kwargs
+        ):
+            r = await _get_history(limit=http_limit, before=before_id, **kwargs)
+            _data = r.response.get("audit_log_entries", [])
+
+            if _data:
+                if limit is not None:
+                    limit -= len(_data)
+                before_id = int(_data[-1]["id"])
+
+            return r.response, before_id, limit
+
+        if after:
+            strategy, state = _after_http, utils.normalize_entity_id(after)
+        elif before:
+            strategy, state = _before_http, utils.normalize_entity_id(before)
+        else:
+            strategy, state = _before_http, None
+
+        # Avoid circular import, fun times...
+        from .audit import AuditLogEntry
+        from .user import User
+
+        search_kwargs = {}
+
+        if user is not None:
+            search_kwargs["user_id"] = utils.normalize_entity_id(user)
+        if action is not None:
+            search_kwargs["action_type"] = int(action)
+
+        while True:
+            http_limit: int = 100 if limit is None else min(limit, 100)
+            if http_limit <= 0:
+                break
+
+            strategy: Callable
+            data, state, limit = await strategy(http_limit, state, limit, **search_kwargs)
+
+            _users = {
+                int(g["id"]): User(
+                    state=self._state,
+                    data=g
+                )
+                for g in data.get("users", [])
+            }
+
+            i = 0
+            for i, entry in enumerate(data["audit_log_entries"], start=1):
+                yield AuditLogEntry(
+                    state=self._state,
+                    data=entry,
+                    guild=self,
+                    users=_users
+                )
+
+            if i < 100:
+                break
+
     async def search_members(
         self,
         query: str,
@@ -1970,14 +2106,14 @@ class Guild(PartialGuild):
         """ `Optional[Asset]`: The guild's icon """
         if self._icon is None:
             return None
-        return Asset._from_guild_icon(self._state, self.id, self._icon)
+        return Asset._from_guild_image(self._state, self.id, self._icon, path="icons")
 
     @property
     def banner(self) -> Optional[Asset]:
         """ `Optional[Asset]`: The guild's banner """
         if self._banner is None:
             return None
-        return Asset._from_guild_banner(self._state, self.id, self._banner)
+        return Asset._from_guild_image(self._state, self.id, self._banner, path="banners")
 
     @property
     def default_role(self) -> Role:

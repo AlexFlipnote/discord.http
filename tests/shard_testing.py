@@ -3,7 +3,8 @@ import json
 from discord_http.gateway import Intents, GatewayCacheFlags
 from discord_http import (
     Client, Message, Reaction, Member, User, BulkDeletePayload,
-    PartialGuild, Role, PartialRole, PartialMessage, VoiceState
+    PartialGuild, Role, PartialRole, PartialMessage, VoiceState,
+    AuditLogEntry
 )
 
 
@@ -31,7 +32,8 @@ client = Client(
         Intents.direct_messages |
         Intents.message_content |
         Intents.guild_message_reactions |
-        Intents.guild_voice_states
+        Intents.guild_voice_states |
+        Intents.guild_moderation
     ),
 )
 
@@ -94,6 +96,11 @@ async def on_guild_role_delete(role: PartialRole):
 @client.listener()
 async def on_voice_state_update(voice_state: VoiceState):
     print(f"Voice state updated: {voice_state.channel_id}")
+
+
+@client.listener()
+async def on_guild_audit_log_entry_create(entry: AuditLogEntry):
+    print(f"Audit log entry created: {entry}")
 
 
 client.start(host="0.0.0.0", port=8080)

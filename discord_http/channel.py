@@ -10,7 +10,6 @@ from .enums import (
 )
 from .file import File
 from .flags import PermissionOverwrite, ChannelFlags
-from .member import ThreadMember
 from .mentions import AllowedMentions
 from .multipart import MultipartData
 from .object import PartialBase, Snowflake
@@ -19,6 +18,7 @@ from .view import View
 from .webhook import Webhook
 
 if TYPE_CHECKING:
+    from .member import ThreadMember
     from .guild import PartialGuild
     from .http import DiscordAPI
     from .invite import Invite
@@ -61,6 +61,8 @@ class PartialChannel(PartialBase):
         super().__init__(id=int(id))
         self._state = state
         self.guild_id: Optional[int] = guild_id
+
+        self.parent_id: Optional[int] = None
 
         self._raw_type: ChannelType = ChannelType.unknown
 
@@ -1016,31 +1018,13 @@ class PartialChannel(PartialBase):
         `Message`
             The message object
         """
-        def _resolve_id(entry) -> int:
-            match entry:
-                case x if isinstance(x, Snowflake):
-                    return int(x)
-
-                case x if isinstance(x, int):
-                    return x
-
-                case x if isinstance(x, str):
-                    if not x.isdigit():
-                        raise TypeError("Got a string that was not a Snowflake ID for before/after/around")
-                    return int(x)
-
-                case x if isinstance(x, datetime):
-                    return utils.time_snowflake(x)
-
-                case _:
-                    raise TypeError("Got an unknown type for before/after/around")
 
         async def _get_history(limit: int, **kwargs):
             params = {"limit": limit}
             for key, value in kwargs.items():
                 if value is None:
                     continue
-                params[key] = _resolve_id(value)
+                params[key] = utils.normalize_entity_id(value)
 
             return await self._state.query(
                 "GET",
@@ -1090,11 +1074,11 @@ class PartialChannel(PartialBase):
             if limit > 100:
                 raise ValueError("limit must be less than or equal to 100 when using around")
 
-            strategy, state = _around_http, _resolve_id(around)
+            strategy, state = _around_http, utils.normalize_entity_id(around)
         elif after:
-            strategy, state = _after_http, _resolve_id(after)
+            strategy, state = _after_http, utils.normalize_entity_id(after)
         elif before:
-            strategy, state = _before_http, _resolve_id(before)
+            strategy, state = _before_http, utils.normalize_entity_id(before)
         else:
             strategy, state = _before_http, None
 
@@ -1176,7 +1160,7 @@ class PartialChannel(PartialBase):
     async def fetch_thread_member(
         self,
         user_id: int
-    ) -> ThreadMember:
+    ) -> "ThreadMember":
         """
         Fetch a thread member
 
@@ -1196,12 +1180,13 @@ class PartialChannel(PartialBase):
             params={"with_member": "true"}
         )
 
+        from .member import ThreadMember
         return ThreadMember(
             state=self._state,
             data=r.response,
         )
 
-    async def fetch_thread_members(self) -> list[ThreadMember]:
+    async def fetch_thread_members(self) -> list["ThreadMember"]:
         """
         Fetch all thread members
 
@@ -1216,6 +1201,7 @@ class PartialChannel(PartialBase):
             params={"with_member": "true"},
         )
 
+        from .member import ThreadMember
         return [
             ThreadMember(
                 state=self._state,
@@ -1555,6 +1541,7 @@ class PublicThread(BaseChannel):
         self.auto_archive_duration: int = self._metadata.get("auto_archive_duration", 60)
 
         self.channel_id: int = int(data["id"])
+        self.newly_created: bool = data.get("newly_created", False)
         self.guild_id: Optional[int] = utils.get_int(data, "guild_id")
         self.owner_id: Optional[int] = utils.get_int(data, "owner_id")
         self.last_message_id: Optional[int] = utils.get_int(data, "last_message_id")
@@ -1606,7 +1593,7 @@ class ForumTag:
         self.id: Optional[int] = utils.get_int(data, "id")
 
         self.name: str = data["name"]
-        self.moderated: bool = data["moderated"]
+        self.moderated: bool = data.get("moderated", False)
 
         self.emoji_id: Optional[int] = utils.get_int(data, "emoji_id")
         self.emoji_name: Optional[str] = data.get("emoji_name", None)
@@ -1675,6 +1662,18 @@ class ForumTag:
             payload["emoji_name"] = self.emoji_name
 
         return payload
+
+    @classmethod
+    def from_data(cls, *, data: dict) -> Self:
+        self = cls.__new__(cls)
+        self.name = data["name"]
+        self.id = int(data["id"])
+        self.moderated = data.get("moderated", False)
+
+        self.emoji_id = utils.get_int(data, "emoji_id")
+        self.emoji_name = data.get("emoji_name", None)
+
+        return self
 
 
 class ForumChannel(PublicThread):

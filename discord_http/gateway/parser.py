@@ -1,7 +1,9 @@
 from typing import TYPE_CHECKING
 
-from ..channel import BaseChannel
+from ..audit import AuditLogEntry
+from ..channel import BaseChannel, PartialChannel
 from ..emoji import Emoji
+from ..enums import ChannelType
 from ..guild import Guild, PartialGuild
 from ..invite import Invite, PartialInvite
 from ..member import Member
@@ -117,11 +119,34 @@ class Parser:
             ]
         )
 
+    def guild_audit_log_entry_create(self, data: dict) -> tuple[AuditLogEntry]:
+        _guild = self.bot.get_partial_guild(int(data["guild_id"]))
+        return (
+            AuditLogEntry(
+                state=self.bot.state,
+                data=data,
+                guild=_guild
+            ),
+        )
+
     def _channel(self, data: dict) -> BaseChannel:
         return BaseChannel.from_dict(
             state=self.bot.state,
             data=data,
         )
+
+    def _partial_channel(self, data: dict) -> PartialChannel:
+        channel = PartialChannel.from_dict(
+            state=self.bot.state,
+            data=data,
+        )
+
+        if data.get("parent_id", None):
+            channel.parent_id = int(data["parent_id"])
+        if data.get("type", None):
+            channel._raw_type = ChannelType(int(data["type"]))
+
+        return channel
 
     def channel_create(self, data: dict) -> tuple[BaseChannel]:
         channel = self._channel(data)
@@ -133,10 +158,25 @@ class Parser:
         self.bot.cache.add_channel(channel)
         return (channel,)
 
-    def channel_delete(self, data: dict) -> tuple[BaseChannel]:
-        channel = self._channel(data)
+    def channel_delete(self, data: dict) -> tuple[PartialChannel]:
+        channel = self._partial_channel(data)
         self.bot.cache.remove_channel(channel)
         return (channel,)
+
+    def thread_create(self, data: dict) -> tuple[BaseChannel]:
+        channel = self._channel(data)
+        self.bot.cache.add_channel(channel)
+        return (channel,)
+
+    def thread_update(self, data: dict) -> tuple[BaseChannel]:
+        channel = self._channel(data)
+        self.bot.cache.add_channel(channel)
+        return (channel,)
+
+    def thread_delete(self, data: dict) -> tuple[PartialChannel]:
+        thread = self._partial_channel(data)
+        self.bot.cache.remove_channel(thread)
+        return (thread,)
 
     def _message(self, data: dict) -> Message:
         guild_id = data.get("guild_id", None)

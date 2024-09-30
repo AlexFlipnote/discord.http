@@ -571,7 +571,7 @@ class DiscordAPI:
         if r.status >= 200 and r.status <= 299:
             _log.info(f"🔁 Successfully synced commands {target}")
         else:
-            _log.warn(f"🔁 Failed to sync commands {target}: {r.response}")
+            _log.warning(f"🔁 Failed to sync commands {target}: {r.response}")
 
         return r.response
 

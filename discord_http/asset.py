@@ -139,35 +139,49 @@ class Asset:
         )
 
     @classmethod
-    def _from_guild_icon(
+    def _from_guild_image(
         cls,
         state: "DiscordAPI",
         guild_id: int,
-        icon_hash: str
+        image: str,
+        path: str
     ) -> Self:
-        animated = icon_hash.startswith('a_')
-        format = 'gif' if animated else 'png'
+        animated = image.startswith("a_")
+        format = "gif" if animated else "png"
         return cls(
             state=state,
-            url=f'{cls.BASE}/icons/{guild_id}/{icon_hash}.{format}?size=1024',
-            key=icon_hash,
+            url=f"{cls.BASE}/{path}/{guild_id}/{image}.{format}?size=1024",
+            key=image,
             animated=animated,
         )
 
     @classmethod
-    def _from_guild_banner(
+    def _from_scheduled_event_cover_image(
         cls,
         state: "DiscordAPI",
-        guild_id: int,
-        banner_hash: str
+        scheduled_event_id: int,
+        cover_image: str
     ) -> Self:
-        animated = banner_hash.startswith('a_')
-        format = 'gif' if animated else 'png'
         return cls(
             state=state,
-            url=f'{cls.BASE}/banners/{guild_id}/{banner_hash}.{format}?size=1024',
-            key=banner_hash,
-            animated=animated,
+            url=f"{cls.BASE}/guild-events/{scheduled_event_id}/{cover_image}.png?size=1024",
+            key=cover_image,
+            animated=False,
+        )
+
+    @classmethod
+    def _from_icon(
+        cls,
+        state: "DiscordAPI",
+        object_id: int,
+        icon_hash: str,
+        path: str
+    ) -> Self:
+        return cls(
+            state=state,
+            url=f"{cls.BASE}/{path}-icons/{object_id}/{icon_hash}.png?size=1024",
+            key=icon_hash,
+            animated=False,
         )
 
     @classmethod

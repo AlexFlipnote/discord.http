@@ -7,6 +7,9 @@ from enum import Enum as _Enum
 __all__ = (
     "ApplicationCommandType",
     "AuditLogType",
+    "AutoModRuleActionType",
+    "AutoModRuleEventType",
+    "AutoModRuleTriggerType",
     "BaseEnum",
     "ButtonStyles",
     "ChannelType",
@@ -16,6 +19,7 @@ __all__ = (
     "DefaultNotificationLevel",
     "EntitlementOwnerType",
     "EntitlementType",
+    "ExpireBehaviour",
     "ForumLayoutType",
     "IntegrationType",
     "InteractionType",
@@ -33,6 +37,7 @@ __all__ = (
     "TextStyles",
     "VerificationLevel",
     "VideoQualityType",
+    "WebhookType",
 )
 
 
@@ -221,6 +226,89 @@ class AuditLogType(BaseEnum):
     auto_moderation_user_communication_disabled = 145
     creator_monetization_request_created = 150
     creator_monetization_terms_accepted = 151
+    onboarding_prompt_create = 163
+    onboarding_prompt_update = 164
+    onboarding_prompt_delete = 165
+    onboarding_create = 166
+    onboarding_update = 167
+    home_settings_create = 190
+    home_settings_update = 191
+
+    # These are not documented, but are returned by Discord
+    # I could be wrong, but they seem to be correct
+    voice_channel_status_create = 192
+    voice_channel_status_delete = 193
+
+    @property
+    def target_type(self):
+        category_map: dict[int, str] = {
+            -1: "all",
+            73: "channel"
+        }
+
+        range_map: list[tuple[int, int, str]] = [
+            (0, 9, "guild"),
+            (10, 19, "channel"),
+            (20, 29, "user"),
+            (30, 39, "role"),
+            (40, 49, "invite"),
+            (50, 59, "webhook"),
+            (60, 69, "emoji"),
+            (70, 79, "message"),
+            (80, 82, "integration"),
+            (83, 89, "stage_instance"),
+            (90, 92, "sticker"),
+            (93, 102, "guild_scheduled_event"),
+            (103, 112, "thread"),
+            (113, 121, "integration_or_app_command"),
+            (140, 142, "auto_moderation"),
+            (143, 145, "user"),
+            (146, 151, "creator_monetization")
+        ]
+
+        if self.value in category_map:
+            return category_map[self.value]
+
+        return next((
+            category
+            for start, end, category in range_map
+            if start <= self.value <= end
+        ), None)
+
+
+class Locale(BaseEnum):
+    american_english = "en-US"
+    british_english = "en-GB"
+    bulgarian = "bg"
+    chinese = "zh-CN"
+    taiwan_chinese = "zh-TW"
+    croatian = "hr"
+    czech = "cs"
+    indonesian = "id"
+    danish = "da"
+    dutch = "nl"
+    finnish = "fi"
+    french = "fr"
+    german = "de"
+    greek = "el"
+    hindi = "hi"
+    hungarian = "hu"
+    italian = "it"
+    japanese = "ja"
+    korean = "ko"
+    latin_american_spanish = "es-419"
+    lithuanian = "lt"
+    norwegian = "no"
+    polish = "pl"
+    brazil_portuguese = "pt-BR"
+    romanian = "ro"
+    russian = "ru"
+    spain_spanish = "es-ES"
+    swedish = "sv-SE"
+    thai = "th"
+    turkish = "tr"
+    ukrainian = "uk"
+    vietnamese = "vi"
 
 
 class ScheduledEventPrivacyType(BaseEnum):
@@ -246,6 +334,11 @@ class VerificationLevel(BaseEnum):
     medium = 2
     high = 3
     very_high = 4
+
+
+class ExpireBehaviour(BaseEnum):
+    remove_role = 0
+    kick = 1
 
 
 class ChannelType(BaseEnum):
@@ -277,6 +370,12 @@ class CommandOptionType(BaseEnum):
     mentionable = 9
     number = 10
     attachment = 11
+
+
+class WebhookType(BaseEnum):
+    incoming = 1
+    channel_follower = 2
+    application = 3
 
 
 class ResponseType(BaseEnum):
@@ -314,6 +413,27 @@ class EntitlementType(BaseEnum):
     user_gift = 6
     premium_purchase = 7
     application_subscription = 8
+
+
+class AutoModRuleTriggerType(BaseEnum):
+    keyword = 1
+    harmful_link = 2
+    spam = 3
+    keyword_preset = 4
+    mention_spam = 5
+    member_profile = 6
+
+
+class AutoModRuleEventType(BaseEnum):
+    message_send = 1
+    member_update = 2
+
+
+class AutoModRuleActionType(BaseEnum):
+    block_message = 1
+    send_alert_message = 2
+    timeout = 3
+    block_member_interactions = 4
 
 
 class EntitlementOwnerType(BaseEnum):

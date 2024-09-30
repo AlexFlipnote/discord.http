@@ -123,6 +123,49 @@ def parse_time(ts: str) -> datetime:
     return datetime.fromisoformat(ts)
 
 
+def normalize_entity_id(
+    entry: Union[datetime, int, str, "Snowflake"]
+) -> int:
+    """
+    Translates a search ID or datetime to a Snowflake
+    Mostly used for audit-logs, messages, and similar API calls
+
+    Parameters
+    ----------
+    entry: `Union[datetime, int, str, Snowflake]`
+        The entry to translate
+
+    Returns
+    -------
+    `Snowflake`
+        The translated
+
+    Raises
+    ------
+    `TypeError`
+        If the entry is not a datetime, int, str, or Snowflake
+    """
+    match entry:
+        case x if isinstance(x, int):
+            return x
+
+        case x if getattr(x, "id", None):
+            # This is potentially a Snowflake
+            # Due to circular imports, can't 100% check it, just trust it
+            return int(x)  # type: ignore
+
+        case x if isinstance(x, str):
+            if not x.isdigit():
+                raise TypeError("Got a string that was not a Snowflake ID")
+            return int(x)
+
+        case x if isinstance(x, datetime):
+            return time_snowflake(x)
+
+        case _:
+            raise TypeError(f"Expected datetime, int, str, or Snowflake, got {type(entry)}")
+
+
 def unicode_name(text: str) -> str:
     """
     Get the unicode name of a string
