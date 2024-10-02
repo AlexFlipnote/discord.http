@@ -1,3 +1,4 @@
+from datetime import datetime
 from typing import TYPE_CHECKING
 
 from ..audit import AuditLogEntry
@@ -12,9 +13,14 @@ from ..role import Role, PartialRole
 from ..sticker import Sticker
 from ..user import User
 from ..voice import VoiceState
+from .object import ChannelPinsUpdate, TypingStartEvent
+
+from .. import utils
 
 if TYPE_CHECKING:
     from ..client import Client
+    from ..user import User, PartialUser
+    from ..member import Member, PartialMember
 
 __all__ = (
     "Parser",
@@ -24,6 +30,27 @@ __all__ = (
 class Parser:
     def __init__(self, bot: "Client"):
         self.bot = bot
+
+    def _get_guild_or_partial(self, guild_id: int | None) -> "PartialGuild | Guild | None":
+        if not guild_id:
+            return None
+
+        return self.bot.cache.get_guild(guild_id) or PartialGuild(state=self.bot.state, id=guild_id)
+
+    def _get_channel_or_partial(self, channel_id: int, guild_id: int | None) -> "BaseChannel | PartialChannel":
+        if not guild_id:
+            return PartialChannel(state=self.bot.state, id=channel_id)
+
+        guild = self._get_guild_or_partial(guild_id)
+        return guild.get_channel(channel_id) or PartialChannel(state=self.bot.state, id=channel_id, guild_id=guild_id)
+
+    def _get_user_or_partial(self, user_id: int, guild_id: int | None) -> "PartialUser | User | Member | PartialMember":
+        state = self.bot.state
+        if not guild_id:
+            return PartialUser(state=state, id=user_id)
+
+        guild = self._get_guild_or_partial(guild_id)
+        return guild.get_member(user_id) or PartialMember(state=state, id=user_id, guild_id=guild_id)
 
     def _guild(self, data: dict) -> Guild:
         return Guild(
@@ -163,6 +190,21 @@ class Parser:
         self.bot.cache.remove_channel(channel)
         return (channel,)
 
+    def channel_pins_update(self, data: dict) -> tuple[ChannelPinsUpdate]:
+        guild_id: int | None = data.get("guild_id", None)
+        channel_id: int = int(data["channel_id"])
+        last_pin_timestamp: datetime | None= (
+            utils.parse_time(_last_pin_timestamp)
+            if (_last_pin_timestamp := data.get("last_pin_timestamp", None)) else None
+        )
+        return (
+            ChannelPinsUpdate(
+                channel=self._get_channel_or_partial(channel_id, guild_id),
+                last_pin_timestamp=last_pin_timestamp,
+                guild=self._get_guild_or_partial(guild_id)
+            ),
+        )
+
     def thread_create(self, data: dict) -> tuple[BaseChannel]:
         channel = self._channel(data)
         self.bot.cache.add_channel(channel)
@@ -278,3 +320,18 @@ class Parser:
 
         self.bot.cache.update_voice_state(vs)
         return (vs,)
+
+    def typing_start(self, data: dict) -> tuple[TypingStartEvent]:
+        guild_id: int | None = data.get("guild_id", None)
+        channel_id: int = int(data["channel_id"])
+        user_id: int = int(data["user_id"])
+        timestamp: datetime = utils.parse_time(data["timestamp"])
+
+        return (
+            TypingStartEvent(
+            guild=self._get_guild_or_partial(guild_id),
+            channel=self._get_channel_or_partial(channel_id, guild_id),
+            user=self._get_user_or_partial(user_id, guild_id),
+            timestamp=timestamp
+            ),
+        )
