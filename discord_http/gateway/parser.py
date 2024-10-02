@@ -173,23 +173,19 @@ class Parser:
         guild_id: int | None = data.get("guild_id", None)
         channel_id: int = int(data["channel_id"])
         last_pin_timestamp: datetime | None= (
-            utils.parse_time(last_pin_timestamp)
-            if (last_pin_timestamp := data.get("last_pin_timestamp", None)) else None
+            utils.parse_time(_last_pin_timestamp)
+            if (_last_pin_timestamp := data.get("last_pin_timestamp", None)) else None
         )
-        channel: "BaseChannel | PartialChannel | None" = None
-
-        if guild_id:
-            guild = self.bot.cache.get_guild(guild_id) or (
+        guild = (
+            self.bot.cache.get_guild(guild_id) or (
                 PartialGuild(state=self.bot.state, id=guild_id)
-            )
+            ) if guild_id else None
+        )
 
-        if guild:
-            channel = guild.get_channel(channel_id)
-        else:
-            channel = PartialChannel(state=self.bot.state, id=channel_id, guild_id=guild_id)
-
-        if not channel:
-            raise ValueError("TODO: Failed to parse ChannelPinsUpdate")
+        channel: "BaseChannel | PartialChannel" = (
+            guild.get_channel(channel_id) if guild else None) or (
+            PartialChannel(state=self.bot.state, id=channel_id, guild_id=guild_id)
+        )
 
         return (
             ChannelPinsUpdate(
@@ -321,32 +317,24 @@ class Parser:
         user_id: int = int(data["user_id"])
         timestamp: datetime = utils.parse_time(data["timestamp"])
 
-        guild: "PartialGuild | Guild | None" = None
-        if guild_id:
-            guild = self.bot.cache.get_guild(guild_id) or (
+        guild: "PartialGuild | Guild | None" = self.bot.cache.get_guild(guild_id) or (
                 PartialGuild(state=self.bot.state, id=guild_id)
-            )
+            ) if guild_id else None
 
-        channel: "BaseChannel | PartialChannel | None" = None
-        if guild:
-            channel = guild.get_channel(channel_id)
-        else:
-            channel = PartialChannel(state=self.bot.state, id=channel_id, guild_id=guild_id)
+        channel: "BaseChannel | PartialChannel" = (
+            (guild.get_channel(channel_id) if guild else None) or
+            PartialChannel(state=self.bot.state, id=channel_id, guild_id=guild_id)
+        )
 
-        user: "PartialUser | User | Member | PartialMember | None" = None
-        if guild:
-            user = guild.get_member(user_id)
-        else:
-            user = PartialUser(state=self.bot.state, id=user_id)
-
-        if not any([channel, user]):
-            raise ValueError("TODO: Failed to parse TypingStartEvent")
-
+        user: "PartialUser | User | Member | PartialMember" = (
+            (guild.get_member(user_id) if guild else None) or
+            PartialUser(state=self.bot.state, id=user_id)
+        )
         return (
             TypingStartEvent(
             guild=guild,
-            channel=channel,  # type: ignore # TODO
-            user=user, # type: ignore # TODO
+            channel=channel,
+            user=user,
             timestamp=timestamp
             ),
         )
