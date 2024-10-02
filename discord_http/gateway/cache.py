@@ -232,7 +232,7 @@ class Cache:
 
         guild._cache_channels.pop(channel.id, None)
 
-    def add_thread(self, thread: Union["PublicThread", "PrivateThread"]) -> None:
+    def add_thread(self, thread: "PublicThread | PrivateThread") -> None:
         if self.cache_flags is None:
             return None
         if not thread.guild_id:

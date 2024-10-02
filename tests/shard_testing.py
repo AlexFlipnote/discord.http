@@ -1,8 +1,8 @@
 import json
 
-from discord_http.gateway import Intents, GatewayCacheFlags
+from discord_http.gateway import Intents, GatewayCacheFlags, Reaction, BulkDeletePayload
 from discord_http import (
-    Client, Message, Reaction, Member, User, BulkDeletePayload,
+    Client, Message, Member, User,
     PartialGuild, Role, PartialRole, PartialMessage, VoiceState,
     AuditLogEntry
 )

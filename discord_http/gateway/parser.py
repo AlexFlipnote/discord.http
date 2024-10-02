@@ -1,26 +1,27 @@
 from datetime import datetime
 from typing import TYPE_CHECKING
 
+from .object import (
+    ChannelPinsUpdate, TypingStartEvent,
+    Reaction, BulkDeletePayload
+)
+
+from .. import utils
 from ..audit import AuditLogEntry
 from ..channel import BaseChannel, PartialChannel
 from ..emoji import Emoji
 from ..enums import ChannelType
 from ..guild import Guild, PartialGuild
 from ..invite import Invite, PartialInvite
-from ..member import Member
-from ..message import Message, PartialMessage, Reaction, BulkDeletePayload
+from ..member import Member, PartialMember
+from ..message import Message, PartialMessage
 from ..role import Role, PartialRole
 from ..sticker import Sticker
-from ..user import User
+from ..user import User, PartialUser
 from ..voice import VoiceState
-from .object import ChannelPinsUpdate, TypingStartEvent
-
-from .. import utils
 
 if TYPE_CHECKING:
     from ..client import Client
-    from ..user import User, PartialUser
-    from ..member import Member, PartialMember
 
 __all__ = (
     "Parser",
@@ -35,7 +36,10 @@ class Parser:
         if not guild_id:
             return None
 
-        return self.bot.cache.get_guild(guild_id) or PartialGuild(state=self.bot.state, id=guild_id)
+        return (
+            self.bot.cache.get_guild(guild_id) or
+            PartialGuild(state=self.bot.state, id=guild_id)
+        )
 
     def _get_channel_or_partial(self, channel_id: int, guild_id: int | None) -> "BaseChannel | PartialChannel":
         if not guild_id:
@@ -193,7 +197,7 @@ class Parser:
     def channel_pins_update(self, data: dict) -> tuple[ChannelPinsUpdate]:
         guild_id: int | None = data.get("guild_id", None)
         channel_id: int = int(data["channel_id"])
-        last_pin_timestamp: datetime | None= (
+        last_pin_timestamp: datetime | None = (
             utils.parse_time(_last_pin_timestamp)
             if (_last_pin_timestamp := data.get("last_pin_timestamp", None)) else None
         )
@@ -247,10 +251,16 @@ class Parser:
         )
 
     def message_delete_bulk(self, data: dict) -> tuple[BulkDeletePayload]:
+        _guild = self._get_guild_or_partial(data.get("guild_id", None))
+
+        if _guild is None:
+            raise ValueError("guild_id somehow was not provided by Discord")
+
         return (
             BulkDeletePayload(
                 state=self.bot.state,
-                data=data
+                data=data,
+                guild=_guild
             ),
         )
 
@@ -329,9 +339,9 @@ class Parser:
 
         return (
             TypingStartEvent(
-            guild=self._get_guild_or_partial(guild_id),
-            channel=self._get_channel_or_partial(channel_id, guild_id),
-            user=self._get_user_or_partial(user_id, guild_id),
-            timestamp=timestamp
+                guild=self._get_guild_or_partial(guild_id),
+                channel=self._get_channel_or_partial(channel_id, guild_id),
+                user=self._get_user_or_partial(user_id, guild_id),
+                timestamp=timestamp
             ),
         )

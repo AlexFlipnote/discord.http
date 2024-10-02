@@ -6,6 +6,7 @@ import random
 import sys
 
 from aiohttp.client_exceptions import ContentTypeError
+from multidict import CIMultiDictProxy
 from collections import deque
 from typing import (
     Optional, Any, Union, Self, overload,
@@ -48,7 +49,7 @@ class HTTPResponse(Generic[ResponseT]):
         response: ResponseT,
         reason: Optional[str],
         res_method: ResMethodTypes,
-        headers: aiohttp.multipart.CIMultiDictProxy[str],
+        headers: CIMultiDictProxy[str],
     ):
         self.status = status
         self.response = response
