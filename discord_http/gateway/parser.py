@@ -38,12 +38,19 @@ class Parser:
         return self.bot.cache.get_guild(guild_id) or PartialGuild(state=self.bot.state, id=guild_id)
 
     def _get_channel_or_partial(self, channel_id: int, guild_id: int | None) -> "BaseChannel | PartialChannel":
+        if not guild_id:
+            return PartialChannel(state=self.bot.state, id=channel_id)
+
         guild = self._get_guild_or_partial(guild_id)
-        return (guild.get_channel(channel_id) if guild else None) or PartialChannel(state=self.bot.state, id=channel_id, guild_id=guild_id)
+        return guild.get_channel(channel_id) or PartialChannel(state=self.bot.state, id=channel_id, guild_id=guild_id)
 
     def _get_user_or_partial(self, user_id: int, guild_id: int | None) -> "PartialUser | User | Member | PartialMember":
+        state = self.bot.state
+        if not guild_id:
+            return PartialUser(state=state, id=user_id)
+
         guild = self._get_guild_or_partial(guild_id)
-        return (guild.get_member(user_id) if guild else None) or PartialUser(state=self.bot.state, id=user_id)
+        return guild.get_member(user_id) or PartialMember(state=state, id=user_id, guild_id=guild_id)
 
     def _guild(self, data: dict) -> Guild:
         return Guild(
