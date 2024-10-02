@@ -13,7 +13,7 @@ More will be handled in `discord_http/gateway/parser.py`
   - [x] CHANNEL_CREATE
   - [x] CHANNEL_UPDATE
   - [x] CHANNEL_DELETE
-  - [ ] CHANNEL_PINS_UPDATE
+  - [x] CHANNEL_PINS_UPDATE
   - [x] THREAD_CREATE
   - [x] THREAD_UPDATE
   - [x] THREAD_DELETE
@@ -91,7 +91,7 @@ More will be handled in `discord_http/gateway/parser.py`
   - [ ] MESSAGE_REACTION_REMOVE_EMOJI
 
 ## DIRECT_MESSAGE_TYPING (1 << 14)
-  - [ ] TYPING_START
+  - [x] TYPING_START
 
 ## MESSAGE_CONTENT (1 << 15) ***
 

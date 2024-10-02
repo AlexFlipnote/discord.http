@@ -1,3 +1,4 @@
+from datetime import datetime
 from typing import TYPE_CHECKING
 
 from ..audit import AuditLogEntry
@@ -12,9 +13,14 @@ from ..role import Role, PartialRole
 from ..sticker import Sticker
 from ..user import User
 from ..voice import VoiceState
+from .object import ChannelPinsUpdate, TypingStartEvent
+
+from .. import utils
 
 if TYPE_CHECKING:
     from ..client import Client
+    from ..user import User, PartialUser
+    from ..member import Member, PartialMember
 
 __all__ = (
     "Parser",
@@ -163,6 +169,36 @@ class Parser:
         self.bot.cache.remove_channel(channel)
         return (channel,)
 
+    def channel_pins_update(self, data: dict) -> tuple[ChannelPinsUpdate]:
+        guild_id: int | None = data.get("guild_id", None)
+        channel_id: int = int(data["channel_id"])
+        last_pin_timestamp: datetime | None= (
+            utils.parse_time(last_pin_timestamp)
+            if (last_pin_timestamp := data.get("last_pin_timestamp", None)) else None
+        )
+        channel: "BaseChannel | PartialChannel | None" = None
+
+        if guild_id:
+            guild = self.bot.cache.get_guild(guild_id) or (
+                PartialGuild(state=self.bot.state, id=guild_id)
+            )
+
+        if guild:
+            channel = guild.get_channel(channel_id)
+        else:
+            channel = PartialChannel(state=self.bot.state, id=channel_id, guild_id=guild_id)
+
+        if not channel:
+            raise ValueError("TODO: Failed to parse ChannelPinsUpdate")
+
+        return (
+            ChannelPinsUpdate(
+                channel=channel,
+                last_pin_timestamp=last_pin_timestamp,
+                guild=guild
+            ),
+        )
+
     def thread_create(self, data: dict) -> tuple[BaseChannel]:
         channel = self._channel(data)
         self.bot.cache.add_channel(channel)
@@ -278,3 +314,39 @@ class Parser:
 
         self.bot.cache.update_voice_state(vs)
         return (vs,)
+
+    def typing_start(self, data: dict) -> tuple[TypingStartEvent]:
+        guild_id: int | None = data.get("guild_id", None)
+        channel_id: int = int(data["channel_id"])
+        user_id: int = int(data["user_id"])
+        timestamp: datetime = utils.parse_time(data["timestamp"])
+
+        guild: "PartialGuild | Guild | None" = None
+        if guild_id:
+            guild = self.bot.cache.get_guild(guild_id) or (
+                PartialGuild(state=self.bot.state, id=guild_id)
+            )
+
+        channel: "BaseChannel | PartialChannel | None" = None
+        if guild:
+            channel = guild.get_channel(channel_id)
+        else:
+            channel = PartialChannel(state=self.bot.state, id=channel_id, guild_id=guild_id)
+
+        user: "PartialUser | User | Member | PartialMember | None" = None
+        if guild:
+            user = guild.get_member(user_id)
+        else:
+            user = PartialUser(state=self.bot.state, id=user_id)
+
+        if not any([channel, user]):
+            raise ValueError("TODO: Failed to parse TypingStartEvent")
+
+        return (
+            TypingStartEvent(
+            guild=guild,
+            channel=channel,  # type: ignore # TODO
+            user=user, # type: ignore # TODO
+            timestamp=timestamp
+            ),
+        )
