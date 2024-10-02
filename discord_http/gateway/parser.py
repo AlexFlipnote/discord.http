@@ -31,6 +31,20 @@ class Parser:
     def __init__(self, bot: "Client"):
         self.bot = bot
 
+    def _get_guild_or_partial(self, guild_id: int | None) -> "PartialGuild | Guild | None":
+        if not guild_id:
+            return None
+
+        return self.bot.cache.get_guild(guild_id) or PartialGuild(state=self.bot.state, id=guild_id)
+
+    def _get_channel_or_partial(self, channel_id: int, guild_id: int | None) -> "BaseChannel | PartialChannel":
+        guild = self._get_guild_or_partial(guild_id)
+        return (guild.get_channel(channel_id) if guild else None) or PartialChannel(state=self.bot.state, id=channel_id, guild_id=guild_id)
+
+    def _get_user_or_partial(self, user_id: int, guild_id: int | None) -> "PartialUser | User | Member | PartialMember":
+        guild = self._get_guild_or_partial(guild_id)
+        return (guild.get_member(user_id) if guild else None) or PartialUser(state=self.bot.state, id=user_id)
+
     def _guild(self, data: dict) -> Guild:
         return Guild(
             state=self.bot.state,
@@ -176,22 +190,11 @@ class Parser:
             utils.parse_time(_last_pin_timestamp)
             if (_last_pin_timestamp := data.get("last_pin_timestamp", None)) else None
         )
-        guild = (
-            self.bot.cache.get_guild(guild_id) or (
-                PartialGuild(state=self.bot.state, id=guild_id)
-            ) if guild_id else None
-        )
-
-        channel: "BaseChannel | PartialChannel" = (
-            guild.get_channel(channel_id) if guild else None) or (
-            PartialChannel(state=self.bot.state, id=channel_id, guild_id=guild_id)
-        )
-
         return (
             ChannelPinsUpdate(
-                channel=channel,
+                channel=self._get_channel_or_partial(channel_id, guild_id),
                 last_pin_timestamp=last_pin_timestamp,
-                guild=guild
+                guild=self._get_guild_or_partial(guild_id)
             ),
         )
 
@@ -317,24 +320,11 @@ class Parser:
         user_id: int = int(data["user_id"])
         timestamp: datetime = utils.parse_time(data["timestamp"])
 
-        guild: "PartialGuild | Guild | None" = self.bot.cache.get_guild(guild_id) or (
-                PartialGuild(state=self.bot.state, id=guild_id)
-            ) if guild_id else None
-
-        channel: "BaseChannel | PartialChannel" = (
-            (guild.get_channel(channel_id) if guild else None) or
-            PartialChannel(state=self.bot.state, id=channel_id, guild_id=guild_id)
-        )
-
-        user: "PartialUser | User | Member | PartialMember" = (
-            (guild.get_member(user_id) if guild else None) or
-            PartialUser(state=self.bot.state, id=user_id)
-        )
         return (
             TypingStartEvent(
-            guild=guild,
-            channel=channel,
-            user=user,
+            guild=self._get_guild_or_partial(guild_id),
+            channel=self._get_channel_or_partial(channel_id, guild_id),
+            user=self._get_user_or_partial(user_id, guild_id),
             timestamp=timestamp
             ),
         )
