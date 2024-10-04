@@ -1076,7 +1076,7 @@ class Client:
         guild_id: int
     ) -> SoundboardSound:
         """
-        Fetches a sticker object.
+        Fetches a soundboard sound object.
 
         Parameters
         ----------
