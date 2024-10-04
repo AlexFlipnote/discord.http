@@ -5,6 +5,7 @@ from typing import TYPE_CHECKING, Optional, Union, AsyncIterator, Self, Callable
 from . import utils
 from .embeds import Embed
 from .emoji import EmojiParser
+from .enums import MessageReferenceType
 from .errors import HTTPException
 from .file import File
 from .mentions import AllowedMentions
@@ -339,9 +340,10 @@ class MessageReference:
     def __init__(self, *, state: "DiscordAPI", data: dict):
         self._state = state
 
-        self.guild_id: Optional[int] = utils.get_int(data, "guild_id")
-        self.channel_id: Optional[int] = utils.get_int(data, "channel_id")
-        self.message_id: Optional[int] = utils.get_int(data, "message_id")
+        self.type: MessageReferenceType = MessageReferenceType(data["type"])
+        self.guild_id: int | None = utils.get_int(data, "guild_id")
+        self.channel_id: int | None = utils.get_int(data, "channel_id")
+        self.message_id: int | None = utils.get_int(data, "message_id")
 
     def __repr__(self) -> str:
         return (
@@ -350,7 +352,7 @@ class MessageReference:
         )
 
     @property
-    def guild(self) -> Optional["PartialGuild"]:
+    def guild(self) -> "PartialGuild | None":
         """ `Optional[PartialGuild]`: The guild the message was sent in """
         if not self.guild_id:
             return None
@@ -362,7 +364,7 @@ class MessageReference:
         )
 
     @property
-    def channel(self) -> Optional["PartialChannel"]:
+    def channel(self) -> "PartialChannel | None":
         """ `Optional[PartialChannel]`: Returns the channel the message was sent in """
         if not self.channel_id:
             return None
@@ -375,7 +377,7 @@ class MessageReference:
         )
 
     @property
-    def message(self) -> Optional["PartialMessage"]:
+    def message(self) -> "PartialMessage | None":
         """ `Optional[PartialMessage]`: Returns the message if a message_id and channel_id is available """
         if not self.channel_id or not self.message_id:
             return None
@@ -396,6 +398,8 @@ class MessageReference:
             payload["channel_id"] = self.channel_id
         if self.message_id:
             payload["message_id"] = self.message_id
+        if self.type:
+            payload["type"] = int(self.type)
 
         return payload
 
@@ -1069,11 +1073,12 @@ class Message(PartialMessage):
             for g in data.get("mentions", [])
         ]
 
-        self.view: Optional[View] = View.from_dict(data)
-        self.edited_timestamp: Optional[datetime] = None
+        self.view: View | None = None
+        self.edited_timestamp: datetime | None = None
 
-        self.message_reference: Optional[MessageReference] = None
-        self.referenced_message: Optional[Message] = None
+        self.message_reference: MessageReference | None = None
+
+        self.referenced_message: Message | None = None
 
         self._from_data(data)
 
@@ -1084,6 +1089,9 @@ class Message(PartialMessage):
         return self.content or ""
 
     def _from_data(self, data: dict):
+        if data.get("components", None):
+            self.view = View.from_dict(data)
+
         if data.get("message_reference", None):
             self.message_reference = MessageReference(
                 state=self._state,
