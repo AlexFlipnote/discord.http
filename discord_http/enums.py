@@ -25,6 +25,7 @@ __all__ = (
     "InteractionType",
     "InviteType",
     "MFALevel",
+    "MessageReferenceType",
     "ReactionType",
     "ResponseType",
     "SKUType",
@@ -161,6 +162,11 @@ class DefaultNotificationLevel(BaseEnum):
 class MFALevel(BaseEnum):
     none = 0
     elevated = 1
+
+
+class MessageReferenceType(BaseEnum):
+    default = 0
+    forward = 1
 
 
 class ContentFilterLevel(BaseEnum):
