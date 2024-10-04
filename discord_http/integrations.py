@@ -13,6 +13,21 @@ if TYPE_CHECKING:
     from .guild import PartialGuild, Guild
 
 class PartialIntegration(PartialBase):
+    """Represents a partial integration object.
+
+    This is mosly used to get the ids of objects if not in cache.
+
+    Attributes
+    ----------
+    id: :class:`int`
+        The ID of the integration.
+    guild: :class:`PartialGuild` | :class:`Guild`
+        The guild associated with this integration.
+    application_id: Optional[:class:`int`]
+        The ID of the application associated with this integration.
+    """
+
+    __slots__ = ("id", "guild", "application_id")
     def __init__(
         self,
         *,
@@ -166,9 +181,9 @@ class Integration(PartialIntegration):
         "_user",
         "_application",
         "_account",
+        "id",
         "name",
         "type",
-        "guild",
         "enabled",
         "syncing",
         "role_id",
@@ -199,7 +214,6 @@ class Integration(PartialIntegration):
 
         self.name: str = data["name"]
         self.type: str = data["type"]
-        self.guild: "PartialGuild | Guild" = guild
 
         self.enabled: bool = data["enabled"]
         self.syncing: bool = data.get("syncing", False)
