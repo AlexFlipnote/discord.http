@@ -14,10 +14,16 @@ class File:
         *,
         filename: Optional[str] = None,
         spoiler: bool = False,
-        description: Optional[str] = None
+        title: Optional[str] = None,
+        description: Optional[str] = None,
+        duration_secs: Optional[int] = None,
+        waveform: Optional[str] = None
     ):
         self.spoiler = spoiler
+        self.title = title
         self.description = description
+        self.duration_secs = duration_secs
+        self.waveform = waveform
         self._filename = filename
 
         if isinstance(data, io.IOBase):
@@ -68,7 +74,13 @@ class File:
             "filename": self.filename
         }
 
+        if self.title:
+            payload["title"] = self.title
         if self.description:
             payload["description"] = self.description
+        if self.duration_secs:
+            payload["duration_secs"] = self.duration_secs
+        if self.waveform:
+            payload["waveform"] = self.waveform
 
         return payload
