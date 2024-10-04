@@ -174,7 +174,7 @@ class ReactionRemoveEvent:
         ID of the channel the reaction was removed in.
     message_id: `int`
         ID of the message the reaction was removed from.
-    guild_id: `int` | `None`
+    guild_id: `Optional[int]`
         ID of the guild the message was sent in, if any.
     """
     def __init__(
@@ -200,13 +200,13 @@ class ReactionRemoveEvent:
 
     @property
     def channel(self) -> "PartialChannel | None":
-        """`Optional[PartialChannel]`: Returns the reaction was removed in."""
+        """`PartialChannel`: Returns the reaction was removed in."""
         from ..channel import PartialChannel
         return PartialChannel(state=self._state, id=self.channel_id)
 
     @property
     def message(self) -> "PartialMessage | None":
-        """`Optional[PartialMessage]`: Returns the message the reaction was removed from."""
+        """`PartialMessage`: Returns the message the reaction was removed from."""
         return PartialMessage(
             state=self._state,
             channel_id=self.channel_id,
