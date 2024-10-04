@@ -36,7 +36,7 @@ More will be handled in `discord_http/gateway/parser.py`
   - [x] GUILD_BAN_REMOVE
 
 ## GUILD_EXPRESSIONS (1 << 3)
-  - [ ] GUILD_EMOJIS_UPDATE
+  - [x] GUILD_EMOJIS_UPDATE
   - [ ] GUILD_STICKERS_UPDATE
   - [ ] GUILD_SOUNDBOARD_SOUND_CREATE
   - [ ] GUILD_SOUNDBOARD_SOUND_UPDATE
@@ -76,7 +76,7 @@ More will be handled in `discord_http/gateway/parser.py`
   - [ ] MESSAGE_REACTION_REMOVE_EMOJI
 
 ## GUILD_MESSAGE_TYPING (1 << 11)
-  - [ ] TYPING_START
+  - [x] TYPING_START
 
 ## DIRECT_MESSAGES (1 << 12)
   - [x] MESSAGE_CREATE
