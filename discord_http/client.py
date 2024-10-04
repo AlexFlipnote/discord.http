@@ -1120,7 +1120,8 @@ class Client:
     def get_partial_message(
         self,
         message_id: int,
-        channel_id: int
+        channel_id: int,
+        guild_id: int | None = None
     ) -> PartialMessage:
         """
         Creates a partial message object.
@@ -1131,6 +1132,8 @@ class Client:
             Message ID to create the partial message object with.
         channel_id: `int`
             Channel ID to create the partial message object with.
+        guild_id: `Optional[int]`
+            Guild ID to create the partial message object with.
 
         Returns
         -------
@@ -1141,12 +1144,14 @@ class Client:
             state=self.state,
             id=message_id,
             channel_id=channel_id,
+            guild_id=guild_id
         )
 
     async def fetch_message(
         self,
         message_id: int,
-        channel_id: int
+        channel_id: int,
+        guild_id: int | None = None
     ) -> Message:
         """
         Fetches a message object.
@@ -1157,13 +1162,15 @@ class Client:
             Message ID to fetch the message object with.
         channel_id: `int`
             Channel ID to fetch the message object with.
+        guild_id: `Optional[int]`
+            Guild ID to fetch the message object from.
 
         Returns
         -------
         `Message`
             The message object
         """
-        msg = self.get_partial_message(message_id, channel_id)
+        msg = self.get_partial_message(message_id, channel_id, guild_id)
         return await msg.fetch()
 
     def get_partial_webhook(
