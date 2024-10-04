@@ -620,11 +620,13 @@ class PartialMessage(PartialBase):
         state: "DiscordAPI",
         id: int,
         channel_id: int,
+        guild_id: int | None = None
     ):
         super().__init__(id=int(id))
         self._state = state
 
         self.channel_id: int = int(channel_id)
+        self.guild_id: int | None = guild_id
 
     def __repr__(self) -> str:
         return f"<PartialMessage id={self.id}>"
@@ -634,6 +636,14 @@ class PartialMessage(PartialBase):
         """ `PartialChannel`: Returns the channel the message was sent in """
         from .channel import PartialChannel
         return PartialChannel(state=self._state, id=self.channel_id)
+
+    @property
+    def guild(self) -> "PartialGuild | None":
+        """ `PartialGuild` | `None`: Returns the guild the message was sent in """
+        if not self.guild_id:
+            return None
+        from .guild import PartialGuild
+        return PartialGuild(state=self._state, id=self.guild_id)
 
     @property
     def jump_url(self) -> JumpURL:
@@ -1047,16 +1057,14 @@ class Message(PartialMessage):
         *,
         state: "DiscordAPI",
         data: dict,
-        guild: Optional["PartialGuild"] = None
+        guild: "PartialGuild | None" = None
     ):
         super().__init__(
             state=state,
+            id=int(data["id"]),
             channel_id=int(data["channel_id"]),
-            id=int(data["id"])
+            guild_id=guild.id if guild else None
         )
-
-        self.guild = guild
-        self.guild_id: Optional[int] = guild.id if guild is not None else None
 
         self.content: Optional[str] = data.get("content", None)
         self.author: Union[User, "Member"] = User(state=state, data=data["author"])
