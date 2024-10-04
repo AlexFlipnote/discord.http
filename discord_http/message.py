@@ -416,11 +416,16 @@ class Attachment:
         self.ephemeral: bool = data.get("ephemeral", False)
 
         self.content_type: Optional[str] = data.get("content_type", None)
+        self.title: Optional[str] = data.get("title", None)
         self.description: Optional[str] = data.get("description", None)
 
         self.height: Optional[int] = data.get("height", None)
         self.width: Optional[int] = data.get("width", None)
         self.ephemeral: bool = data.get("ephemeral", False)
+
+        self.duration_secs: Optional[int] = data.get("duration_secs", None)
+        self.waveform: Optional[str] = data.get("waveform", None)
+        self.flags: int = data.get("flags", 0)
 
     def __str__(self) -> str:
         return self.filename or ""
@@ -536,8 +541,11 @@ class Attachment:
             "url": self.url,
             "proxy_url": self.proxy_url,
             "spoiler": self.is_spoiler(),
+            "flags": self.flags
         }
 
+        if self.title is not None:
+            data["title"] = self.title
         if self.description is not None:
             data["description"] = self.description
         if self.height:
@@ -546,6 +554,10 @@ class Attachment:
             data["width"] = self.width
         if self.content_type:
             data["content_type"] = self.content_type
+        if self.duration_secs:
+            data["duration_secs"] = self.duration_secs
+        if self.waveform:
+            data["waveform"] = self.waveform
 
         return data
 
