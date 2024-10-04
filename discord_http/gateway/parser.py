@@ -1,5 +1,4 @@
 from datetime import datetime
-from email.mime import application
 from typing import TYPE_CHECKING
 
 from .object import (
