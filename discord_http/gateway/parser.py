@@ -16,6 +16,7 @@ from ..invite import Invite, PartialInvite
 from ..member import Member, PartialMember
 from ..message import Message, PartialMessage
 from ..role import Role, PartialRole
+from ..soundboard import SoundboardSound
 from ..sticker import Sticker
 from ..user import User, PartialUser
 from ..voice import VoiceState
@@ -147,6 +148,20 @@ class Parser:
                     data=e
                 )
                 for e in data["stickers"]
+            ]
+        )
+
+    def guild_soundboard_sounds_update(self, data: list[dict]) -> tuple[PartialGuild, list[SoundboardSound]]:
+        _guild = self.bot.get_partial_guild(int(data[0]["guild_id"]))
+        return (
+            _guild,
+            [
+                SoundboardSound(
+                    state=self.bot.state,
+                    guild=_guild,
+                    data=e
+                )
+                for e in data
             ]
         )
 
