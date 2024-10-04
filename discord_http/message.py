@@ -1073,11 +1073,12 @@ class Message(PartialMessage):
             for g in data.get("mentions", [])
         ]
 
-        self.view: Optional[View] = View.from_dict(data)
-        self.edited_timestamp: Optional[datetime] = None
+        self.view: View | None = None
+        self.edited_timestamp: datetime | None = None
 
-        self.message_reference: Optional[MessageReference] = None
-        self.referenced_message: Optional[Message] = None
+        self.message_reference: MessageReference | None = None
+
+        self.referenced_message: Message | None = None
 
         self._from_data(data)
 
@@ -1088,6 +1089,9 @@ class Message(PartialMessage):
         return self.content or ""
 
     def _from_data(self, data: dict):
+        if data.get("components", None):
+            self.view = View.from_dict(data)
+
         if data.get("message_reference", None):
             self.message_reference = MessageReference(
                 state=self._state,
