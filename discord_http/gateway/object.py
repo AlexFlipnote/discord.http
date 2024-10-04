@@ -163,3 +163,55 @@ class BulkDeletePayload:
         ]
 
         self.guild: "PartialGuild" = guild
+
+
+class ReactionRemoveEvent:
+    """Represents a reaction remove event.
+
+    Attributes
+    ----------
+    channel_id: `int`
+        ID of the channel the reaction was removed in.
+    message_id: `int`
+        ID of the message the reaction was removed from.
+    guild_id: `int` | `None`
+        ID of the guild the message was sent in, if any.
+    """
+    def __init__(
+        self,
+        *,
+        state: "DiscordAPI",
+        data: dict,
+    ) -> None:
+        self._state = state
+
+        self.channel_id: int = int(data["channel_id"])
+        self.message_id: int = int(data["message_id"])
+        self.guild_id: int | None = utils.get_int(data, "guild_id")
+
+    @property
+    def guild(self) -> "PartialGuild | None":
+        """`Optional[PartialGuild]`: The guild the reaction was removed in, if any."""
+        if not self.guild_id:
+            return None
+
+        from ..guild import PartialGuild
+        return PartialGuild(state=self._state, id=self.guild_id)
+
+    @property
+    def channel(self) -> "PartialChannel | None":
+        """`Optional[PartialChannel]`: Returns the reaction was removed in."""
+        from ..channel import PartialChannel
+        return PartialChannel(state=self._state, id=self.channel_id)
+
+    @property
+    def message(self) -> "PartialMessage | None":
+        """`Optional[PartialMessage]`: Returns the message the reaction was removed from."""
+        return PartialMessage(
+            state=self._state,
+            channel_id=self.channel_id,
+            id=self.message_id
+        )
+
+    def __repr__(self) -> str:
+        return f"<{self.__class__.__name__} channel_id={self.channel_id} message_id={self.message_id}>"

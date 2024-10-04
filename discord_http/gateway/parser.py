@@ -3,7 +3,7 @@ from typing import TYPE_CHECKING
 
 from .object import (
     ChannelPinsUpdate, TypingStartEvent,
-    Reaction, BulkDeletePayload
+    Reaction, BulkDeletePayload, ReactionRemoveEvent
 )
 
 from .. import utils
@@ -278,6 +278,15 @@ class Parser:
                 state=self.bot.state,
                 data=data
             ),
+        )
+
+    def message_reaction_remove_all(self, data: dict) -> tuple[ReactionRemoveEvent]:
+        return (ReactionRemoveEvent(state=self.bot.state, data=data),)
+
+    def message_reaction_remove_emoji(self, data: dict) -> tuple[ReactionRemoveEvent, Emoji]:
+        return (
+            ReactionRemoveEvent(state=self.bot.state, data=data),
+            Emoji(state=self.bot.state, data=data["emoji"],)
         )
 
     def guild_role_create(self, data: dict) -> tuple[Role]:
