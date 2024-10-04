@@ -364,6 +364,40 @@ def mime_type_image(image: bytes) -> str:
             raise ValueError("Image bytes provided is not supported sadly")
 
 
+def mime_type_audio(audio: bytes) -> str:
+    """
+    Get the mime type of an audio
+
+    Parameters
+    ----------
+    audio: `bytes`
+        The audio to get the mime type from
+
+    Returns
+    -------
+    `str`
+        The mime type of the audio
+
+    Raises
+    ------
+    `ValueError`
+        The audio bytes provided is not supported sadly
+    """
+    match audio:
+        case x if x.startswith(b"OggS"):
+            return "audio/ogg"
+
+        case x if (
+            x.startswith(b"ID3") or
+            x.startswith(b"\xff\xd8\xff") or
+            (x[0] == 0xff and (x[1] & 0xe0) == 0xe0)
+        ):
+            return "audio/mpeg"
+
+        case _:
+            raise ValueError("Audio bytes provided is not supported sadly")
+
+
 def bytes_to_base64(image: Union[File, bytes]) -> str:
     """
     Convert bytes to base64

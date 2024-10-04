@@ -28,6 +28,7 @@ from .mentions import AllowedMentions
 from .message import PartialMessage, Message
 from .object import Snowflake
 from .role import PartialRole
+from .soundboard import SoundboardSound, PartialSoundboardSound
 from .sticker import PartialSticker, Sticker
 from .user import User, PartialUser
 from .view import InteractionStorage
@@ -1041,6 +1042,60 @@ class Client:
         )
 
         return await sticker.fetch()
+
+    def get_partial_soundboard_sound(
+        self,
+        sound_id: int,
+        *,
+        guild_id: Optional[int] = None
+    ) -> PartialSoundboardSound:
+        """
+        Creates a partial sticker object.
+
+        Parameters
+        ----------
+        sticker_id: `int`
+            Sound ID to create the partial soundboard sound object with.
+        guild_id: `Optional[int]`
+            Guild ID to create the partial soundboard sound object with.
+
+        Returns
+        -------
+        `PartialSoundboardSound`
+            The partial soundboard sound object.
+        """
+        return PartialSoundboardSound(
+            state=self.state,
+            id=sound_id,
+            guild_id=guild_id
+        )
+
+    async def fetch_soundboard_sound(
+        self,
+        sound_id: int,
+        guild_id: int
+    ) -> SoundboardSound:
+        """
+        Fetches a soundboard sound object.
+
+        Parameters
+        ----------
+        sticker_id: `int`
+            Sound ID to fetch the soundboard sound object with.
+        guild_id: `int`
+            Guild ID to fetch the soundboard sound object from.
+
+        Returns
+        -------
+        `SoundboardSound`
+            The soundboard sound object.
+        """
+        sound = self.get_partial_soundboard_sound(
+            sound_id,
+            guild_id=guild_id
+        )
+
+        return await sound.fetch()
 
     async def fetch_invite(
         self,
