@@ -18,7 +18,7 @@ from . import utils
 from .commands import Command, SubGroup
 from .enums import InteractionType
 from .errors import CheckFailed
-from .response import BaseResponse, Ping, MessageResponse
+from .response import BaseResponse, Ping, MessageResponse, EmptyResponse
 
 if TYPE_CHECKING:
     from .client import Client
@@ -180,6 +180,9 @@ class DiscordHTTP(Quart):
             payload = await cmd._make_context_and_run(
                 context=ctx
             )
+
+            if isinstance(payload, EmptyResponse):
+                return QuartResponse("", status=202)
 
             return QuartResponse(
                 payload.to_multipart(),

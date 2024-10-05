@@ -20,6 +20,7 @@ from .enums import (
     ResponseType, ChannelType, InteractionType
 )
 from .file import File
+from .multipart import MultipartData
 from .flags import Permissions, MessageFlags
 from .guild import PartialGuild
 from .member import Member
@@ -27,7 +28,8 @@ from .mentions import AllowedMentions
 from .message import Message, Attachment, Poll
 from .response import (
     MessageResponse, DeferResponse,
-    AutocompleteResponse, ModalResponse
+    AutocompleteResponse, ModalResponse,
+    EmptyResponse
 )
 from .role import Role
 from .user import User
@@ -240,6 +242,34 @@ class InteractionResponse:
             )
 
         return ModalResponse(modal=modal)
+
+    def send_empty(
+        self,
+        *,
+        call_after: Optional[Callable] = None
+    ) -> EmptyResponse:
+        """
+        Send an empty response to the interaction
+
+        Parameters
+        ----------
+        call_after: `Optional[Callable]`
+            A coroutine to run after the response is sent
+
+        Returns
+        -------
+        `EmptyResponse`
+            The response to the interaction
+        """
+        if call_after:
+            if not inspect.iscoroutinefunction(call_after):
+                raise TypeError("call_after must be a coroutine")
+
+            self._parent.bot.loop.create_task(
+                self._parent._background_task_manager(call_after)
+            )
+
+        return EmptyResponse()
 
     def send_message(
         self,
@@ -610,6 +640,110 @@ class Context:
         return Webhook.from_state(
             state=self.bot.state,
             data=payload
+        )
+
+    async def send(
+        self,
+        content: Optional[str] = MISSING,
+        *,
+        embed: Optional[Embed] = MISSING,
+        embeds: Optional[list[Embed]] = MISSING,
+        file: Optional[File] = MISSING,
+        files: Optional[list[File]] = MISSING,
+        ephemeral: Optional[bool] = False,
+        view: Optional[View] = MISSING,
+        tts: Optional[bool] = False,
+        type: Union[ResponseType, int] = 4,
+        allowed_mentions: Optional[AllowedMentions] = MISSING,
+        poll: Optional[Poll] = MISSING,
+        flags: Optional[MessageFlags] = MISSING
+    ) -> Message:
+        """
+        Send a message after responding with an empty response in the initial interaction
+
+        Parameters
+        ----------
+        content: `Optional[str]`
+            Content of the message
+        embed: `Optional[Embed]`
+            Embed of the message
+        embeds: `Optional[list[Embed]]`
+            Embeds of the message
+        file: `Optional[File]`
+            File of the message
+        files: `Optional[Union[list[File], File]]`
+            Files of the message
+        ephemeral: `bool`
+            Whether the message should be sent as ephemeral
+        view: `Optional[View]`
+            Components of the message
+        type: `Optional[ResponseType]`
+            Which type of response should be sent
+        allowed_mentions: `Optional[AllowedMentions]`
+            Allowed mentions of the message
+        wait: `bool`
+            Whether to wait for the message to be sent
+        thread_id: `Optional[int]`
+            Thread ID to send the message to
+        poll: `Optional[Poll]`
+            Poll to send with the message
+
+        Returns
+        -------
+        `Message`
+            Returns the message that was sent
+        """
+        if embed is not MISSING and embeds is not MISSING:
+            raise ValueError("Cannot pass both embed and embeds")
+        if file is not MISSING and files is not MISSING:
+            raise ValueError("Cannot pass both file and files")
+
+        if isinstance(embed, Embed):
+            embeds = [embed]
+        if isinstance(file, File):
+            files = [file]
+
+        payload = MessageResponse(
+            content=content,
+            embeds=embeds,
+            ephemeral=ephemeral,
+            view=view,
+            tts=tts,
+            attachments=files,
+            type=type,
+            poll=poll,
+            flags=flags,
+            allowed_mentions=(
+                allowed_mentions or
+                self.bot._default_allowed_mentions
+            )
+        )
+
+        multidata = MultipartData()
+
+        if isinstance(payload.files, list):
+            for i, file in enumerate(payload.files):
+                multidata.attach(
+                    f"file{i}",
+                    file,  # type: ignore
+                    filename=file.filename
+                )
+
+        _modified_payload = payload.to_dict()
+        multidata.attach("payload_json", _modified_payload)
+
+        r = await self.bot.state.query(
+            "POST",
+            f"/interactions/{self.id}/{self.followup_token}/callback",
+            data=multidata.finish(),
+            params={"with_response": "true"},
+            headers={"Content-Type": multidata.content_type}
+        )
+
+        return Message(
+            state=self.bot.state,
+            data=r.response["resource"]["message"],
+            guild=self.guild
         )
 
     async def original_response(self) -> Message:

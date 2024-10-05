@@ -837,6 +837,16 @@ async def test_button_change(ctx: Context):
     )
 
 
+@client.command()
+async def test_empty_response(ctx: Context):
+    async def call_after():
+        msg = await ctx.send("Hello there")
+        print(msg)
+        await msg.add_reaction("👍")
+
+    return ctx.response.send_empty(call_after=call_after)
+
+
 @client.interaction(r"test_button_change:[0-9]{1}", regex=True)
 async def on_test_button_change(ctx: Context):
     view = ctx.message.view

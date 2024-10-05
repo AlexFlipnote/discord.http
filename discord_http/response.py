@@ -156,6 +156,19 @@ class ModalResponse(BaseResponse):
         return multidata.finish()
 
 
+class EmptyResponse(BaseResponse):
+    def __init__(self):
+        pass
+
+    def to_dict(self) -> dict:
+        """ `dict`: Returns the response as a `dict` """
+        return {}
+
+    def to_multipart(self) -> bytes:
+        """ `bytes`: Returns the response as a `bytes` """
+        return b""
+
+
 class MessageResponse(BaseResponse):
     def __init__(
         self,
