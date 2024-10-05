@@ -20,7 +20,7 @@ Here are all the things you can find on discord.http, packed in one page
   ../api/enums
   ../api/errors
   ../api/file
-  ../api/flag
+  ../api/flags
   ../api/guild
   ../api/http
   ../api/invite

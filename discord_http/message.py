@@ -5,6 +5,7 @@ from typing import TYPE_CHECKING, Optional, Union, AsyncIterator, Self, Callable
 from . import utils
 from .embeds import Embed
 from .emoji import EmojiParser
+from .enums import MessageReferenceType
 from .errors import HTTPException
 from .file import File
 from .mentions import AllowedMentions
@@ -339,9 +340,10 @@ class MessageReference:
     def __init__(self, *, state: "DiscordAPI", data: dict):
         self._state = state
 
-        self.guild_id: Optional[int] = utils.get_int(data, "guild_id")
-        self.channel_id: Optional[int] = utils.get_int(data, "channel_id")
-        self.message_id: Optional[int] = utils.get_int(data, "message_id")
+        self.type: MessageReferenceType = MessageReferenceType(data["type"])
+        self.guild_id: int | None = utils.get_int(data, "guild_id")
+        self.channel_id: int | None = utils.get_int(data, "channel_id")
+        self.message_id: int | None = utils.get_int(data, "message_id")
 
     def __repr__(self) -> str:
         return (
@@ -350,7 +352,7 @@ class MessageReference:
         )
 
     @property
-    def guild(self) -> Optional["PartialGuild"]:
+    def guild(self) -> "PartialGuild | None":
         """ `Optional[PartialGuild]`: The guild the message was sent in """
         if not self.guild_id:
             return None
@@ -362,7 +364,7 @@ class MessageReference:
         )
 
     @property
-    def channel(self) -> Optional["PartialChannel"]:
+    def channel(self) -> "PartialChannel | None":
         """ `Optional[PartialChannel]`: Returns the channel the message was sent in """
         if not self.channel_id:
             return None
@@ -375,7 +377,7 @@ class MessageReference:
         )
 
     @property
-    def message(self) -> Optional["PartialMessage"]:
+    def message(self) -> "PartialMessage | None":
         """ `Optional[PartialMessage]`: Returns the message if a message_id and channel_id is available """
         if not self.channel_id or not self.message_id:
             return None
@@ -396,6 +398,8 @@ class MessageReference:
             payload["channel_id"] = self.channel_id
         if self.message_id:
             payload["message_id"] = self.message_id
+        if self.type:
+            payload["type"] = int(self.type)
 
         return payload
 
@@ -412,11 +416,16 @@ class Attachment:
         self.ephemeral: bool = data.get("ephemeral", False)
 
         self.content_type: Optional[str] = data.get("content_type", None)
+        self.title: Optional[str] = data.get("title", None)
         self.description: Optional[str] = data.get("description", None)
 
         self.height: Optional[int] = data.get("height", None)
         self.width: Optional[int] = data.get("width", None)
         self.ephemeral: bool = data.get("ephemeral", False)
+
+        self.duration_secs: Optional[int] = data.get("duration_secs", None)
+        self.waveform: Optional[str] = data.get("waveform", None)
+        self.flags: int = data.get("flags", 0)
 
     def __str__(self) -> str:
         return self.filename or ""
@@ -532,8 +541,11 @@ class Attachment:
             "url": self.url,
             "proxy_url": self.proxy_url,
             "spoiler": self.is_spoiler(),
+            "flags": self.flags
         }
 
+        if self.title is not None:
+            data["title"] = self.title
         if self.description is not None:
             data["description"] = self.description
         if self.height:
@@ -542,6 +554,10 @@ class Attachment:
             data["width"] = self.width
         if self.content_type:
             data["content_type"] = self.content_type
+        if self.duration_secs:
+            data["duration_secs"] = self.duration_secs
+        if self.waveform:
+            data["waveform"] = self.waveform
 
         return data
 
@@ -604,11 +620,13 @@ class PartialMessage(PartialBase):
         state: "DiscordAPI",
         id: int,
         channel_id: int,
+        guild_id: int | None = None
     ):
         super().__init__(id=int(id))
         self._state = state
 
         self.channel_id: int = int(channel_id)
+        self.guild_id: int | None = guild_id
 
     def __repr__(self) -> str:
         return f"<PartialMessage id={self.id}>"
@@ -618,6 +636,14 @@ class PartialMessage(PartialBase):
         """ `PartialChannel`: Returns the channel the message was sent in """
         from .channel import PartialChannel
         return PartialChannel(state=self._state, id=self.channel_id)
+
+    @property
+    def guild(self) -> "PartialGuild | None":
+        """ `PartialGuild` | `None`: Returns the guild the message was sent in """
+        if not self.guild_id:
+            return None
+        from .guild import PartialGuild
+        return PartialGuild(state=self._state, id=self.guild_id)
 
     @property
     def jump_url(self) -> JumpURL:
@@ -1031,16 +1057,14 @@ class Message(PartialMessage):
         *,
         state: "DiscordAPI",
         data: dict,
-        guild: Optional["PartialGuild"] = None
+        guild: "PartialGuild | None" = None
     ):
         super().__init__(
             state=state,
+            id=int(data["id"]),
             channel_id=int(data["channel_id"]),
-            id=int(data["id"])
+            guild_id=guild.id if guild else None
         )
-
-        self.guild = guild
-        self.guild_id: Optional[int] = guild.id if guild is not None else None
 
         self.content: Optional[str] = data.get("content", None)
         self.author: Union[User, "Member"] = User(state=state, data=data["author"])
@@ -1069,11 +1093,12 @@ class Message(PartialMessage):
             for g in data.get("mentions", [])
         ]
 
-        self.view: Optional[View] = View.from_dict(data)
-        self.edited_timestamp: Optional[datetime] = None
+        self.view: View | None = None
+        self.edited_timestamp: datetime | None = None
 
-        self.message_reference: Optional[MessageReference] = None
-        self.referenced_message: Optional[Message] = None
+        self.message_reference: MessageReference | None = None
+
+        self.referenced_message: Message | None = None
 
         self._from_data(data)
 
@@ -1084,6 +1109,9 @@ class Message(PartialMessage):
         return self.content or ""
 
     def _from_data(self, data: dict):
+        if data.get("components", None):
+            self.view = View.from_dict(data)
+
         if data.get("message_reference", None):
             self.message_reference = MessageReference(
                 state=self._state,

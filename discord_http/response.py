@@ -80,10 +80,15 @@ class DeferResponse(BaseResponse):
         self,
         *,
         ephemeral: bool = False,
-        thinking: bool = False
+        thinking: bool = False,
+        flags: MessageFlags | None = None,
     ):
         self.ephemeral = ephemeral
         self.thinking = thinking
+        self.flags = flags or MessageFlags(0)
+
+        if self.ephemeral:
+            self.flags |= MessageFlags.ephemeral
 
     def to_dict(self) -> dict:
         """ `dict`: Returns the response as a `dict` """
@@ -93,10 +98,7 @@ class DeferResponse(BaseResponse):
                 if self.thinking else int(ResponseType.deferred_update_message)
             ),
             "data": {
-                "flags": (
-                    MessageFlags.ephemeral.value
-                    if self.ephemeral else 0
-                )
+                "flags": int(self.flags)
             }
         }
 
@@ -154,6 +156,19 @@ class ModalResponse(BaseResponse):
         return multidata.finish()
 
 
+class EmptyResponse(BaseResponse):
+    def __init__(self):
+        pass
+
+    def to_dict(self) -> dict:
+        """ `dict`: Returns the response as a `dict` """
+        return {}
+
+    def to_multipart(self) -> bytes:
+        """ `bytes`: Returns the response as a `bytes` """
+        return b""
+
+
 class MessageResponse(BaseResponse):
     def __init__(
         self,
@@ -172,6 +187,7 @@ class MessageResponse(BaseResponse):
         poll: Optional["Poll"] = MISSING,
         type: Union[ResponseType, int] = 4,
         ephemeral: Optional[bool] = False,
+        flags: MessageFlags | None = MISSING,
     ):
         self.content = content
         self.files = files
@@ -184,6 +200,7 @@ class MessageResponse(BaseResponse):
         self.allowed_mentions = allowed_mentions
         self.message_reference = message_reference
         self.poll = poll
+        self.flags = flags or MessageFlags(0)
 
         if file is not MISSING and files is not MISSING:
             raise TypeError("Cannot pass both file and files")
@@ -215,6 +232,9 @@ class MessageResponse(BaseResponse):
                 if self.attachments is not None else None
             )
 
+        if self.ephemeral:
+            self.flags |= MessageFlags.ephemeral
+
     def to_dict(self, is_request: bool = False) -> dict:
         """
         The JSON data that is sent to Discord.
@@ -231,10 +251,7 @@ class MessageResponse(BaseResponse):
             to Discord or forwarded to a new parser
         """
         output: dict[str, Any] = {
-            "flags": (
-                MessageFlags.ephemeral.value
-                if self.ephemeral else 0
-            )
+            "flags": int(self.flags)
         }
 
         if self.content is not MISSING:

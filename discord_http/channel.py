@@ -101,7 +101,8 @@ class PartialChannel(PartialBase):
         return PartialMessage(
             state=self._state,
             channel_id=self.id,
-            id=message_id
+            guild_id=self.guild_id,
+            id=message_id,
         )
 
     async def fetch_message(self, message_id: int) -> "Message":
