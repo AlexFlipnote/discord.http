@@ -25,6 +25,7 @@ __all__ = (
     "InteractionType",
     "InviteType",
     "MFALevel",
+    "MessageReferenceType",
     "ReactionType",
     "ResponseType",
     "SKUType",
@@ -165,6 +166,11 @@ class DefaultNotificationLevel(BaseEnum):
 class MFALevel(BaseEnum):
     none = 0
     elevated = 1
+
+
+class MessageReferenceType(BaseEnum):
+    default = 0
+    forward = 1
 
 
 class ContentFilterLevel(BaseEnum):
@@ -390,6 +396,8 @@ class ResponseType(BaseEnum):
     update_message = 7
     application_command_autocomplete_result = 8
     modal = 9
+    premium_required = 10
+    launch_activity = 12
 
 
 class VideoQualityType(BaseEnum):

@@ -27,6 +27,7 @@ from .multipart import *
 from .object import *
 from .response import *
 from .role import *
+from .soundboard import *
 from .sticker import *
 from .user import *
 from .utils import MISSING, DISCORD_EPOCH, _MissingType

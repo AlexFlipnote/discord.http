@@ -1,3 +1,4 @@
+from base64 import b64encode
 from dataclasses import dataclass
 from datetime import datetime, timedelta
 from typing import TYPE_CHECKING, Union, Optional, AsyncIterator, Callable
@@ -17,6 +18,7 @@ from .flags import Permissions, SystemChannelFlags, PermissionOverwrite
 from .multipart import MultipartData
 from .object import PartialBase, Snowflake
 from .role import Role, PartialRole
+from .soundboard import SoundboardSound, PartialSoundboardSound
 from .sticker import Sticker, PartialSticker
 from .voice import VoiceState, PartialVoiceState
 
@@ -281,6 +283,7 @@ class PartialGuild(PartialBase):
         self._cache_threads: dict[int, Union["PublicThread", "PrivateThread", "PartialChannel"]] = {}
         self._cache_roles: dict[int, Union["Role", "PartialRole"]] = {}
         self._cache_emojis: dict[int, Union["Emoji", "PartialEmoji"]] = {}
+        self._cache_soundboard_sounds: dict[int, Union["SoundboardSound", "PartialSoundboardSound"]] = {}
         self._cache_stickers: dict[int, Union["Sticker", "PartialSticker"]] = {}
         self._cache_voice_states: dict[int, Union["VoiceState", "PartialVoiceState"]] = {}
 
@@ -371,6 +374,22 @@ class PartialGuild(PartialBase):
         """
         return self._cache_roles.get(role_id, None)
 
+    def get_soundboard_sound(self, sound_id: int) -> Optional[Union["SoundboardSound", "PartialSoundboardSound"]]:
+        """
+        Returns the soundboard sound from cache if it exists.
+
+        Parameters
+        ----------
+        sound_id: `int`
+            The ID of the soundboard sound to get.
+
+        Returns
+        -------
+        `Optional[Union["SoundboardSound", "PartialSoundboardSound"]`
+            The soundboard sound with the given ID, if it exists.
+        """
+        return self._cache_soundboard_sounds.get(sound_id, None)
+
     @property
     def members(self) -> list[Union["Member", "PartialMember"]]:
         """
@@ -403,6 +422,14 @@ class PartialGuild(PartialBase):
         Returns a list of all the emojis in the guild if they are cached.
         """
         return list(self._cache_emojis.values())
+
+    @property
+    def soundboard_sounds(self) -> list[Union["SoundboardSound", "PartialSoundboardSound"]]:
+        """
+        `list[Union[SoundboardSound, PartialSoundboardSound]]`:
+        Returns a list of all the soundboard sounds in the guild if they are cached.
+        """
+        return list(self._cache_soundboard_sounds.values())
 
     @property
     def stickers(self) -> list[Union["Sticker", "PartialSticker"]]:
@@ -525,6 +552,22 @@ class PartialGuild(PartialBase):
 
         return [
             Emoji(
+                state=self._state,
+                guild=self,
+                data=data
+            )
+            for data in r.response
+        ]
+
+    async def fetch_soundboard_sounds(self) -> list[SoundboardSound]:
+        """ `list[SoundboardSound]`: Fetches all the soundboard sounds in the guild """
+        r = await self._state.query(
+            "GET",
+            f"/guilds/{self.id}/soundboard-sounds"
+        )
+
+        return [
+            SoundboardSound(
                 state=self._state,
                 guild=self,
                 data=data
@@ -1070,6 +1113,83 @@ class PartialGuild(PartialBase):
             data=r.response
         )
 
+    async def create_soundboard_sound(
+        self,
+        name: str,
+        *,
+        sound: Union[File, bytes],
+        volume: Optional[int] = None,
+        emoji_id: Optional[str] = None,
+        emoji_name: Optional[str] = None,
+        reason: Optional[str] = None
+    ) -> SoundboardSound:
+        """
+        Create a soundboard sound
+
+        Parameters
+        ----------
+        name: `str`
+            Name of the soundboard sound
+        sound: `File`
+            File object to create a soundboard sound from
+        volume: `Optional[int]`
+            The volume of the soundboard sound
+        emoji_name: `Optional[str]`
+            The unicode emoji of the soundboard sound
+        emoji_id: `Optional[str]`
+            The ID of the custom emoji of the soundboard sound
+        reason: `Optional[str]`
+            The reason for creating the soundboard sound
+
+        Returns
+        -------
+        `SoundboardSound`
+            The created soundboard sound
+
+        Raises
+        ------
+        `ValueError`
+            If both `emoji_name` and `emoji_id` are set
+        """
+        mime_type = None
+        if isinstance(sound, File):
+            mime_type = "audio/mpeg" if sound.filename.endswith(".mp3") else None
+            sound = sound.data.read()
+
+        if not mime_type:
+            mime_type = utils.mime_type_audio(sound)
+
+        payload: dict[str, Union[str, int]] = {
+            "name": name,
+            "sound": f"data:{mime_type};base64,{b64encode(sound).decode('ascii')}"
+        }
+
+        if volume is not None:
+            payload["volume"] = volume
+        if emoji_name is not None:
+            payload["emoji_name"] = emoji_name
+        if emoji_id is not None:
+            payload["emoji_id"] = emoji_id
+
+        if (
+            emoji_name is not MISSING and
+            emoji_id is not MISSING
+        ):
+            raise ValueError("Cannot set both emoji_name and emoji_id")
+
+        r = await self._state.query(
+            "POST",
+            f"/guilds/{self.id}/soundboard-sounds",
+            reason=reason,
+            json=payload
+        )
+
+        return SoundboardSound(
+            state=self._state,
+            guild=self,
+            data=r.response
+        )
+
     async def create_sticker(
         self,
         name: str,
@@ -1349,6 +1469,31 @@ class PartialGuild(PartialBase):
             id=emoji_id,
             guild_id=self.id
         )
+
+    def get_partial_soundboard_sound(self, sound_id: int) -> PartialSoundboardSound:
+        """
+        Get a partial soundboard sound object
+
+        Parameters
+        ----------
+        sound_id: `int`
+            The ID of the sound
+
+        Returns
+        -------
+        `PartialEmoji`
+            The partial soundboard sound object
+        """
+        return PartialSoundboardSound(
+            state=self._state,
+            id=sound_id,
+            guild_id=self.id
+        )
+
+    async def fetch_soundboard_sound(self, sound_id: int) -> SoundboardSound:
+        """ `SoundboardSound`: Fetches a soundboard sound from the guild """
+        sound = self.get_partial_soundboard_sound(sound_id)
+        return await sound.fetch()
 
     async def fetch_emoji(self, emoji_id: int) -> Emoji:
         """ `Emoji`: Fetches an emoji from the guild """
