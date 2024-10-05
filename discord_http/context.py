@@ -164,6 +164,7 @@ class InteractionResponse:
         self,
         ephemeral: bool = False,
         thinking: bool = False,
+        flags: Optional[int] = MISSING,
         call_after: Optional[Callable] = None
     ) -> DeferResponse:
         """
@@ -175,6 +176,8 @@ class InteractionResponse:
             If the response should be ephemeral (show only to the user)
         thinking: `bool`
             If the response should show the "thinking" status
+        flags: `Optional[int]`
+            The flags of the message (overrides ephemeral)
         call_after: `Optional[Callable]`
             A coroutine to run after the response is sent
 
@@ -196,7 +199,7 @@ class InteractionResponse:
                 self._parent._background_task_manager(call_after)
             )
 
-        return DeferResponse(ephemeral=ephemeral, thinking=thinking)
+        return DeferResponse(ephemeral=ephemeral, thinking=thinking, flags=flags)
 
     def send_modal(
         self,
@@ -252,6 +255,7 @@ class InteractionResponse:
         type: Union[ResponseType, int] = 4,
         allowed_mentions: Optional[AllowedMentions] = MISSING,
         poll: Optional[Poll] = MISSING,
+        flags: Optional[int] = MISSING,
         call_after: Optional[Callable] = None
     ) -> MessageResponse:
         """
@@ -279,6 +283,8 @@ class InteractionResponse:
             The type of response to send
         allowed_mentions: `Optional[AllowedMentions]`
             Allowed mentions for the message
+        flags: `Optional[int]`
+            The flags of the message (overrides ephemeral)
         call_after: `Optional[Callable]`
             A coroutine to run after the response is sent
 
@@ -322,6 +328,7 @@ class InteractionResponse:
             attachments=files,
             type=type,
             poll=poll,
+            flags=flags,
             allowed_mentions=(
                 allowed_mentions or
                 self._parent.bot._default_allowed_mentions
@@ -338,6 +345,7 @@ class InteractionResponse:
         attachment: Optional[File] = MISSING,
         attachments: Optional[list[File]] = MISSING,
         allowed_mentions: Optional[AllowedMentions] = MISSING,
+        flags: Optional[int] = MISSING,
         call_after: Optional[Callable] = None
     ) -> MessageResponse:
         """
@@ -359,6 +367,8 @@ class InteractionResponse:
             Multiple new files to edit the message with
         allowed_mentions: `Optional[AllowedMentions]`
             Allowed mentions for the message
+        flags: `Optional[int]`
+            The flags of the message
         call_after: `Optional[Callable]`
             A coroutine to run after the response is sent
 
@@ -399,6 +409,7 @@ class InteractionResponse:
             attachments=attachments,
             view=view,
             type=int(ResponseType.update_message),
+            flags=flags,
             allowed_mentions=(
                 allowed_mentions or
                 self._parent.bot._default_allowed_mentions
