@@ -52,7 +52,7 @@ class IntegrationAccount(PartialBase):
     name: :class:`str`
         The name of the account.
     """
-    __slots__ = ("name",)
+    __slots__ = ("id", "name",)
     def __init__(
         self,
         *,
@@ -78,10 +78,11 @@ class IntegrationApplication(PartialBase):
     """
     __slots__ = (
         "_state",
-        "name",
-        "_icon",
-        "description",
         "_bot"
+        "_icon",
+        "id",
+        "name",
+        "description",
     )
     def __init__(
         self,
