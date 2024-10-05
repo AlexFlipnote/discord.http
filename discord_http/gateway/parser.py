@@ -3,7 +3,7 @@ from typing import TYPE_CHECKING
 
 from .object import (
     ChannelPinsUpdate, TypingStartEvent,
-    Reaction, BulkDeletePayload, ReactionRemoveEvent
+    Reaction, BulkDeletePayload
 )
 
 from .. import utils
@@ -324,12 +324,25 @@ class Parser:
             ),
         )
 
-    def message_reaction_remove_all(self, data: dict) -> tuple[ReactionRemoveEvent]:
-        return (ReactionRemoveEvent(state=self.bot.state, data=data),)
-
-    def message_reaction_remove_emoji(self, data: dict) -> tuple[ReactionRemoveEvent, Emoji]:
+    def message_reaction_remove_all(self, data: dict) -> tuple[PartialMessage]:
         return (
-            ReactionRemoveEvent(state=self.bot.state, data=data),
+            PartialMessage(
+                state=self.bot.state,
+                id=int(data["message_id"]),
+                channel_id=int(data["channel_id"]),
+                guild_id=utils.get_int(data, "guild_id")
+            ),
+        )
+
+    def message_reaction_remove_emoji(self, data: dict) -> tuple[PartialMessage, Emoji]:
+        _message = PartialMessage(
+            state=self.bot.state,
+            id=int(data["message_id"]),
+            channel_id=int(data["channel_id"]),
+            guild_id=utils.get_int(data, "guild_id")
+        )
+        return (
+            _message,
             Emoji(state=self.bot.state, data=data["emoji"],)
         )
 
