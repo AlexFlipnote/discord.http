@@ -20,7 +20,7 @@ from .enums import (
     ResponseType, ChannelType, InteractionType
 )
 from .file import File
-from .flags import Permissions
+from .flags import Permissions, MessageFlags
 from .guild import PartialGuild
 from .member import Member
 from .mentions import AllowedMentions
@@ -164,8 +164,8 @@ class InteractionResponse:
         self,
         ephemeral: bool = False,
         thinking: bool = False,
-        flags: Optional[int] = MISSING,
-        call_after: Optional[Callable] = None
+        flags: MessageFlags | None = MISSING,
+        call_after: Callable | None = None
     ) -> DeferResponse:
         """
         Defer the response to the interaction
@@ -255,7 +255,7 @@ class InteractionResponse:
         type: Union[ResponseType, int] = 4,
         allowed_mentions: Optional[AllowedMentions] = MISSING,
         poll: Optional[Poll] = MISSING,
-        flags: Optional[int] = MISSING,
+        flags: Optional[MessageFlags] = MISSING,
         call_after: Optional[Callable] = None
     ) -> MessageResponse:
         """
@@ -345,7 +345,7 @@ class InteractionResponse:
         attachment: Optional[File] = MISSING,
         attachments: Optional[list[File]] = MISSING,
         allowed_mentions: Optional[AllowedMentions] = MISSING,
-        flags: Optional[int] = MISSING,
+        flags: Optional[MessageFlags] = MISSING,
         call_after: Optional[Callable] = None
     ) -> MessageResponse:
         """
