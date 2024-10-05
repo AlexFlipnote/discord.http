@@ -80,10 +80,12 @@ class DeferResponse(BaseResponse):
         self,
         *,
         ephemeral: bool = False,
-        thinking: bool = False
+        thinking: bool = False,
+        flags: Optional[int] = MISSING,
     ):
         self.ephemeral = ephemeral
         self.thinking = thinking
+        self.flags = flags if flags else MessageFlags.ephemeral.value if self.ephemeral else 0
 
     def to_dict(self) -> dict:
         """ `dict`: Returns the response as a `dict` """
@@ -93,10 +95,7 @@ class DeferResponse(BaseResponse):
                 if self.thinking else int(ResponseType.deferred_update_message)
             ),
             "data": {
-                "flags": (
-                    MessageFlags.ephemeral.value
-                    if self.ephemeral else 0
-                )
+                "flags": self.flags
             }
         }
 
@@ -172,6 +171,7 @@ class MessageResponse(BaseResponse):
         poll: Optional["Poll"] = MISSING,
         type: Union[ResponseType, int] = 4,
         ephemeral: Optional[bool] = False,
+        flags: Optional[int] = MISSING,
     ):
         self.content = content
         self.files = files
@@ -184,6 +184,7 @@ class MessageResponse(BaseResponse):
         self.allowed_mentions = allowed_mentions
         self.message_reference = message_reference
         self.poll = poll
+        self.flags = flags if flags else MessageFlags.ephemeral.value if self.ephemeral else 0
 
         if file is not MISSING and files is not MISSING:
             raise TypeError("Cannot pass both file and files")
@@ -231,10 +232,7 @@ class MessageResponse(BaseResponse):
             to Discord or forwarded to a new parser
         """
         output: dict[str, Any] = {
-            "flags": (
-                MessageFlags.ephemeral.value
-                if self.ephemeral else 0
-            )
+            "flags": self.flags
         }
 
         if self.content is not MISSING:
