@@ -391,13 +391,12 @@ class Parser:
             ),
         )
 
-    def integration_create(self, data: dict) -> tuple["PartialGuild | Guild", Integration]:
+    def integration_create(self, data: dict) -> tuple[Integration]:
         _guild = self._get_guild_or_partial(int(data.pop("guild_id")))
         if _guild is None:
             raise ValueError("guild_id somehow was not provided by Discord")
 
         return (
-            _guild,
             Integration(
                 state=self.bot.state,
                 data=data,
@@ -405,16 +404,15 @@ class Parser:
             ),
         )
 
-    def integration_update(self, data: dict) -> tuple["PartialGuild | Guild", Integration]:
+    def integration_update(self, data: dict) -> tuple[Integration]:
         return self.integration_create(data)
 
-    def integration_delete(self, data: dict) -> tuple["PartialGuild | Guild", PartialIntegration]:
+    def integration_delete(self, data: dict) -> tuple[PartialIntegration]:
         _guild = self._get_guild_or_partial(int(data.pop("guild_id")))
         if _guild is None:
             raise ValueError("guild_id somehow was not provided by Discord")
 
         return (
-            _guild,
             PartialIntegration(
                 id=data["id"],
                 guild=_guild,
