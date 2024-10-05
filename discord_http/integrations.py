@@ -4,7 +4,7 @@ from typing import TYPE_CHECKING
 from . import utils
 from .object import PartialBase
 from .asset import Asset
-from .enums import IntegrationExpireBehaviour
+from .enums import ExpireBehaviour
 from .user import User
 
 if TYPE_CHECKING:
@@ -155,7 +155,7 @@ class Integration(PartialIntegration):
         integration (twitch only currently)
 
         This is not applicable to bot integrations.
-    expire_behavior: Optional[:class:`IntegrationExpireBehaviour`]
+    expire_behavior: Optional[:class:`ExpireBehaviour`]
         The behavior of expiring subscribers.
 
         This is not applicable to bot integrations.
@@ -219,8 +219,8 @@ class Integration(PartialIntegration):
         self.syncing: bool = data.get("syncing", False)
         self.role_id: int | None = data.get("role_id")
         self.enable_emoticons: bool = data.get("enable_emoticons", False)
-        self.expire_behavior: IntegrationExpireBehaviour | None = (
-            IntegrationExpireBehaviour(expire_behavior)
+        self.expire_behavior: ExpireBehaviour | None = (
+            ExpireBehaviour(expire_behavior)
             if (expire_behavior := data.get("expire_behavior"))
             else None
         )

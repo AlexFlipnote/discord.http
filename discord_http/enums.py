@@ -135,10 +135,6 @@ class IntegrationType(BaseEnum):
     guild = 0
     user = 1
 
-class IntegrationExpireBehaviour(BaseEnum):
-    remove_role = 0
-    kick = 1
-
 
 class InviteType(BaseEnum):
     guild = 0
