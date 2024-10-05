@@ -39,6 +39,7 @@ __all__ = (
     "VerificationLevel",
     "VideoQualityType",
     "WebhookType",
+    "PrivacyLevel",
 )
 
 
@@ -514,3 +515,8 @@ class TextStyles(BaseEnum):
 class PermissionType(BaseEnum):
     role = 0
     member = 1
+
+
+class PrivacyLevel(BaseEnum):
+    public = 1
+    guild_only = 2

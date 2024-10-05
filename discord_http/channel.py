@@ -6,7 +6,7 @@ from .embeds import Embed
 from .emoji import EmojiParser
 from .enums import (
     ChannelType, ResponseType, VideoQualityType,
-    SortOrderType, ForumLayoutType
+    SortOrderType, ForumLayoutType, PrivacyLevel
 )
 from .file import File
 from .flags import PermissionOverwrite, ChannelFlags
@@ -18,8 +18,10 @@ from .view import View
 from .webhook import Webhook
 
 if TYPE_CHECKING:
+    from .types import channels
+
     from .member import ThreadMember
-    from .guild import PartialGuild
+    from .guild import PartialGuild, PartialScheduledEvent
     from .http import DiscordAPI
     from .invite import Invite
     from .message import PartialMessage, Message, Poll
@@ -1784,9 +1786,139 @@ class VoiceChannel(BaseChannel):
         return ChannelType.guild_voice
 
 
+class StageInstance(PartialBase):
+    """Represents a stage instance for a stage channel.
+    This holds information about a live stage.
+
+    Attributes
+    ----------
+    id: `int`
+        The ID of the stage instance
+    channel_id: `int`
+        The ID of the stage channel
+    guild_id: `int`
+        The associated guild ID of the stage channel
+    topic: `str`
+        The topic of the stage instance
+    privacy_level: `PrivacyLevel`
+        The privacy level of the stage instance
+    guild_scheduled_event_id: `Optional[int]`
+        The guild scheduled event ID associated with this stage instance
+    """
+    def __init__(
+        self,
+        *,
+        state: "DiscordAPI",
+        data: channels.StageInstance,
+        guild: "PartialGuild | None" = None,
+    ) -> None:
+        super().__init__(id=int(data["id"]))
+        self._state: "DiscordAPI" = state
+        self._guild: "PartialGuild | None" = guild
+        self._from_data(data)
+
+    def _from_data(self, data: channels.StageInstance) -> None:
+        self.channel_id: int = int(data["channel_id"])
+        self.guild_id: int = int(data["guild_id"])
+        self.topic: str = data["topic"]
+        self.privacy_level: PrivacyLevel = PrivacyLevel(data["privacy_level"])
+        self.guild_scheduled_event_id: Optional[int] = utils.get_int(data, "guild_scheduled_event_id")  # type: ignore # todo types
+
+    @property
+    def guild(self) -> "PartialGuild":
+        if self._guild:
+            return self._guild
+
+        from .guild import PartialGuild
+        return PartialGuild(state=self._state, id=self.guild_id)
+
+    @property
+    def channel(self) -> "PartialChannel | StageChannel":
+        channel = self.guild.get_channel(self.channel_id) or (
+            PartialChannel(state=self._state, id=self.channel_id)
+        )
+        return channel
+
+    @property
+    def scheduled_event(self) -> "PartialScheduledEvent | None":
+        if not self.guild_scheduled_event_id:
+            return None
+
+        from .guild import PartialScheduledEvent
+        return PartialScheduledEvent(
+            state=self._state,
+            id=self.guild_scheduled_event_id,
+            guild_id=self.guild_id
+        )
+
+    def __repr__(self) -> str:
+        return f"<StageInstance id={self.id!r} topic={self.topic!r}>"
+
+    async def edit(
+        self,
+        *,
+        topic: str = MISSING,
+        privacy_level: PrivacyLevel = MISSING,
+        reason: Optional[str] = None
+    ) -> Self:
+        """Edit this stage instance
+
+        Parameters
+        ----------
+        topic: `str`
+            The new topic of this stage instance.
+        privacy_level: `PrivacyLevel`
+            The new privacy level of this stage instance.
+        reason: `Optional[str]`
+            The reason for editing the stage instance.
+
+        Returns
+        -------
+        `StageInstance`
+            The edited stage instance
+        """
+        payload = {}
+
+        if topic is not MISSING:
+            payload["topic"] = str(topic)
+
+        if privacy_level is not MISSING:
+            payload["privacy_level"] = int(privacy_level)
+
+        r = await self._state.query(
+            "PATCH",
+            f"/stage-instances/{self.id}",
+            json=payload,
+            reason=reason
+        )
+
+        return self.__class__(
+            state=self._state,
+            data=r.response,  # type: ignore # todo types
+            guild=self._guild,
+        )
+
+
+    async def delete(self, *, reason: Optional[str] = None) -> None:
+        """Delete this stage instance
+
+        Parameters
+        ----------
+        reason: `Optional[str]`
+            The reason for deleting the stage instance
+        """
+        await self._state.query(
+            "DELETE",
+            f"/stage-instances/{self.id}",
+            reason=reason
+        )
+
+
 class StageChannel(VoiceChannel):
     def __init__(self, *, state: "DiscordAPI", data: dict):
         super().__init__(state=state, data=data)
+
+        self._stage_instance: Optional[StageInstance] = None
 
     def __repr__(self) -> str:
         return f"<StageChannel id={self.id} name='{self.name}'>"
@@ -1795,3 +1927,67 @@ class StageChannel(VoiceChannel):
     def type(self) -> ChannelType:
         """ `ChannelType`: Returns the channel's type """
         return ChannelType.guild_stage_voice
+
+    @property
+    def stage_instance(self) -> Optional[StageInstance]:
+        """ `Optional[StageInstance]`: Returns the stage instance of the channel, if available and cached."""
+        return self._stage_instance
+
+    async def create_stage_instance(
+        self,
+        *,
+        topic: str,
+        privacy_level: PrivacyLevel = MISSING,
+        send_start_notification: bool = MISSING,
+        guild_scheduled_event: Snowflake | int = MISSING,
+        reason: Optional[str] = None
+    ) -> StageInstance:
+        """
+        Create a stage instance
+
+        Parameters
+        ----------
+        topic: `str`
+            The topic of the stage instance
+        privacy_level: `PrivacyLevel`
+            The privacy level of the stage instance.
+            Defaults to `PrivacyLevel.guild_only`
+        send_start_notification: `bool`
+            Whether to notify @everyone that the stage instance has started.
+        guild_scheduled_event: `Optional[Snowflake | int]`
+            The guild scheduled event to associate with this stage instance.
+        reason: `Optional[str]`
+            The reason for creating the stage instance
+
+        Returns
+        -------
+        `StageInstance`
+            The created stage instance
+        """
+        payload = {
+            "channel_id": self.id,
+            "topic": topic,
+        }
+
+        if privacy_level is not MISSING:
+            payload["privacy_level"] = int(privacy_level)
+
+        if send_start_notification is not MISSING:
+            payload["send_start_notification"] = send_start_notification
+
+        if guild_scheduled_event is not MISSING:
+            payload["guild_scheduled_event_id"] = utils.normalize_entity_id(guild_scheduled_event)
+
+        r = await self._state.query(
+            "POST",
+            "/stage-instances",
+            json=payload,
+            reason=reason
+        )
+
+        self._stage_instance = StageInstance(
+            state=self._state,
+            data=r.response,  # type: ignore # todo types
+            guild=self.guild
+        )
+        return self._stage_instance
