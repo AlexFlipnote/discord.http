@@ -20,6 +20,7 @@ from ..soundboard import PartialSoundboardSound, SoundboardSound
 from ..sticker import Sticker
 from ..user import User, PartialUser
 from ..voice import VoiceState
+from ..integrations import Integration, PartialIntegration
 
 if TYPE_CHECKING:
     from ..types import (
@@ -328,6 +329,29 @@ class Parser:
             ),
         )
 
+    def message_reaction_remove_all(self, data: dict) -> tuple[PartialMessage]:
+        return (
+            PartialMessage(
+                state=self.bot.state,
+                id=int(data["message_id"]),
+                channel_id=int(data["channel_id"]),
+                guild_id=utils.get_int(data, "guild_id")
+            ),
+        )
+
+    def message_reaction_remove_emoji(self, data: dict) -> tuple[PartialMessage, Emoji]:
+        _message = PartialMessage(
+            state=self.bot.state,
+            id=int(data["message_id"]),
+            channel_id=int(data["channel_id"]),
+            guild_id=utils.get_int(data, "guild_id")
+        )
+
+        return (
+            _message,
+            Emoji(state=self.bot.state, data=data["emoji"],)
+        )
+
     def guild_role_create(self, data: dict) -> tuple[Role]:
         _guild = self.bot.get_partial_guild(int(data["guild_id"]))
         _role = Role(
@@ -435,3 +459,35 @@ class Parser:
             channel._stage_instance = None # type: ignore # should be fine?
 
         return (stage_instance,)
+    def integration_create(self, data: dict) -> tuple[Integration]:
+        _guild = self._get_guild_or_partial(int(data.pop("guild_id")))
+        if _guild is None:
+            raise ValueError("guild_id somehow was not provided by Discord")
+
+        return (
+            Integration(
+                state=self.bot.state,
+                data=data,
+                guild=_guild
+            ),
+        )
+
+    def integration_update(self, data: dict) -> tuple[Integration]:
+        return self.integration_create(data)
+
+    def integration_delete(self, data: dict) -> tuple[PartialIntegration]:
+        _guild = self._get_guild_or_partial(int(data.pop("guild_id")))
+        if _guild is None:
+            raise ValueError("guild_id somehow was not provided by Discord")
+
+        return (
+            PartialIntegration(
+                state=self.bot.state,
+                id=data["id"],
+                guild=_guild,
+                application_id=data.get("application_id")
+            ),
+        )
+
+    def guild_integrations_update(self, data: dict) -> tuple["PartialGuild | Guild"]:
+        return (self._get_guild_or_partial(int(data["guild_id"])),)  # type: ignore # guild_id is always provided

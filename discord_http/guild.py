@@ -34,6 +34,7 @@ if TYPE_CHECKING:
     from .invite import Invite
     from .member import PartialMember, Member
     from .user import User
+    from .integrations import Integration
 
 MISSING = utils.MISSING
 
@@ -1960,6 +1961,31 @@ class PartialGuild(PartialBase):
                 data=m
             )
             for m in r.response
+        ]
+
+    async def fetch_integrations(self) -> list["Integration"]:
+        """Fetches the integrations for the guild.
+
+        This requires the `MANAGE_GUILD` permission.
+
+        Returns
+        -------
+        `list[Integration]`
+            The integrations in the guild.
+        """
+        r = await self._state.query(
+            "GET",
+            f"/guilds/{self.id}/integrations"
+        )
+
+        from .integrations import Integration
+        return [
+            Integration(
+                state=self._state,
+                data=data,
+                guild=self
+            )
+            for data in r.response
         ]
 
     async def delete(self) -> None:
