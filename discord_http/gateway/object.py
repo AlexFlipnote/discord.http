@@ -1,5 +1,7 @@
-from datetime import datetime
 from typing import TYPE_CHECKING
+
+from collections import defaultdict
+from datetime import datetime
 
 from .. import utils
 from ..colour import Colour
@@ -256,11 +258,9 @@ class ThreadListSyncPayload:
         return f"<ThreadListSyncPayload guild_id={self.guild_id}>"
 
     def combined(self, with_members: bool = False,) -> tuple[tuple[PartialChannel, tuple[list[Thread], list[PartialThreadMember]]], ...]:
-        channels = self.channels.copy()
-        threads = self.threads.copy()
-        members = self.members.copy()
-
-        from collections import defaultdict
+        channels = self.channels
+        threads = self.threads
+        members = self.members
 
         _mapping: dict[PartialChannel, tuple[list[Thread], list[PartialThreadMember]]] = defaultdict(lambda: ([], []))
 
