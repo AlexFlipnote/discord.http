@@ -431,18 +431,21 @@ class Parser:
         return self.integration_create(data)
 
     def integration_delete(self, data: dict) -> tuple[PartialIntegration]:
-        _guild = self._get_guild_or_partial(int(data.pop("guild_id")))
-        if _guild is None:
+        guild_id = utils.get_int(data, "guild_id")
+        if guild_id is None:
             raise ValueError("guild_id somehow was not provided by Discord")
 
         return (
             PartialIntegration(
                 state=self.bot.state,
                 id=data["id"],
-                guild=_guild,
+                guild_id=guild_id,
                 application_id=data.get("application_id")
             ),
         )
 
     def guild_integrations_update(self, data: dict) -> tuple["PartialGuild | Guild"]:
-        return (self._get_guild_or_partial(int(data["guild_id"])),)  # type: ignore # guild_id is always provided
+        return (
+            # guild_id is always provided
+            self._get_guild_or_partial(int(data["guild_id"])),  # type: ignore
+        )

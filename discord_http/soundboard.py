@@ -163,6 +163,8 @@ class PartialSoundboardSound(PartialBase):
             payload["emoji_name"] = emoji_name
         if emoji_id is not MISSING:
             payload["emoji_id"] = emoji_id
+        if icon is not MISSING:
+            payload["icon"] = utils.bytes_to_base64(icon)  # type: ignore
 
         if (
             emoji_name is not MISSING and

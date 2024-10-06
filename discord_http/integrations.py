@@ -120,17 +120,23 @@ class PartialIntegration(PartialBase):
         self,
         *,
         state: "DiscordAPI",
-        id: str,
-        guild: "PartialGuild | Guild",
+        id: int,
+        guild_id: int,
         application_id: int | None = None,
     ) -> None:
         super().__init__(id=int(id))
         self._state = state
-        self.guild: "PartialGuild | Guild" = guild
+        self.guild_id: int = guild_id
         self.application_id: int | None = (
             int(application_id)
             if application_id else None
         )
+
+    @property
+    def guild(self) -> "PartialGuild | Guild":
+        """:class:`PartialGuild` | :class:`Guild`: The guild associated with this integration."""
+        from .guild import PartialGuild
+        return PartialGuild(state=self._state, id=self.guild_id)
 
     async def delete(self) -> None:
         """Delete this integration for the guild.
@@ -225,10 +231,11 @@ class Integration(PartialIntegration):
     ) -> None:
         super().__init__(
             state=state,
-            id=data["id"],
-            guild=guild,
+            id=int(data["id"]),
+            guild_id=guild.id,
             application_id=data.get("application", {}.get("id"))
         )
+
         self._application: dict | None = data.get("application")
         self._state: "DiscordAPI" = state
         self._user: dict | None = data.get("user")
