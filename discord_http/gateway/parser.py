@@ -342,6 +342,7 @@ class Parser:
             channel_id=int(data["channel_id"]),
             guild_id=utils.get_int(data, "guild_id")
         )
+
         return (
             _message,
             Emoji(state=self.bot.state, data=data["emoji"],)
@@ -436,6 +437,7 @@ class Parser:
 
         return (
             PartialIntegration(
+                state=self.bot.state,
                 id=data["id"],
                 guild=_guild,
                 application_id=data.get("application_id")

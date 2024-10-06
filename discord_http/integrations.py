@@ -9,38 +9,8 @@ from .user import User
 
 if TYPE_CHECKING:
     from .http import DiscordAPI
-
     from .guild import PartialGuild, Guild
 
-class PartialIntegration(PartialBase):
-    """Represents a partial integration object.
-
-    This is mosly used to get the ids of objects if not in cache.
-
-    Attributes
-    ----------
-    id: :class:`int`
-        The ID of the integration.
-    guild: :class:`PartialGuild` | :class:`Guild`
-        The guild associated with this integration.
-    application_id: Optional[:class:`int`]
-        The ID of the application associated with this integration.
-    """
-
-    __slots__ = ("id", "guild", "application_id")
-    def __init__(
-        self,
-        *,
-        id: str,
-        guild: "PartialGuild | Guild",
-        application_id: int | None = None,
-    ) -> None:
-        super().__init__(id=int(id))
-        self.guild: "PartialGuild | Guild" = guild
-        self.application_id: int | None = (
-            int(application_id)
-            if application_id else None
-        )
 
 class IntegrationAccount(PartialBase):
     """Represents an integration's account.
@@ -53,13 +23,16 @@ class IntegrationAccount(PartialBase):
         The name of the account.
     """
     __slots__ = ("id", "name",)
+
     def __init__(
         self,
         *,
+        state: "DiscordAPI",
         id: str,
         name: str
     ) -> None:
         super().__init__(id=int(id))
+        self._state = state
         self.name: str = name
 
 
@@ -84,6 +57,7 @@ class IntegrationApplication(PartialBase):
         "name",
         "description",
     )
+
     def __init__(
         self,
         *,
@@ -126,6 +100,51 @@ class IntegrationApplication(PartialBase):
         )
 
 
+class PartialIntegration(PartialBase):
+    """Represents a partial integration object.
+
+    This is mosly used to get the ids of objects if not in cache.
+
+    Attributes
+    ----------
+    id: :class:`int`
+        The ID of the integration.
+    guild: :class:`PartialGuild` | :class:`Guild`
+        The guild associated with this integration.
+    application_id: Optional[:class:`int`]
+        The ID of the application associated with this integration.
+    """
+    __slots__ = ("id", "guild", "application_id",)
+
+    def __init__(
+        self,
+        *,
+        state: "DiscordAPI",
+        id: str,
+        guild: "PartialGuild | Guild",
+        application_id: int | None = None,
+    ) -> None:
+        super().__init__(id=int(id))
+        self._state = state
+        self.guild: "PartialGuild | Guild" = guild
+        self.application_id: int | None = (
+            int(application_id)
+            if application_id else None
+        )
+
+    async def delete(self) -> None:
+        """Delete this integration for the guild.
+
+        This deletes any associated webhooks and
+        kicks the associated bot if there is one.
+
+        This requires the `MANAGE_GUILD` permission.
+        """
+        await self._state.query(
+            "DELETE",
+            f"/guilds/{self.guild.id}/integrations/{self.id}"
+        )
+
 
 class Integration(PartialIntegration):
     """Represents a guild integration.
@@ -152,7 +171,7 @@ class Integration(PartialIntegration):
 
         TThis is not applicable to bot integrations.
     enable_emoticons: :class:`bool`
-    	Whether emoticons should be synced for this
+        Whether emoticons should be synced for this
         integration (twitch only currently)
 
         This is not applicable to bot integrations.
@@ -194,8 +213,9 @@ class Integration(PartialIntegration):
         "synced_at",
         "subscriber_count",
         "revoked",
-        "scopes"
+        "scopes",
     )
+
     def __init__(
         self,
         *,
@@ -204,6 +224,7 @@ class Integration(PartialIntegration):
         guild: "PartialGuild | Guild"
     ) -> None:
         super().__init__(
+            state=state,
             id=data["id"],
             guild=guild,
             application_id=data.get("application", {}.get("id"))
@@ -235,7 +256,6 @@ class Integration(PartialIntegration):
         self.revoked: bool = data.get("revoked", False)
         self.scopes: list[str] = data.get("scopes", [])
 
-
     @property
     def user(self) -> User | None:
         """Optional[:class:`User`]: The user associated with this integration, if available."""
@@ -254,6 +274,7 @@ class Integration(PartialIntegration):
             return None
 
         return IntegrationAccount(
+            state=self._state,
             id=self._account["id"],
             name=self._account["name"]
         )
@@ -268,17 +289,3 @@ class Integration(PartialIntegration):
             state=self._state,
             data=self._application
         )
-
-    async def delete(self) -> None:
-        """Delete this integration for the guild.
-
-        This deletes any associated webhooks and
-        kicks the associated bot if there is one.
-
-        This requires the `MANAGE_GUILD` permission.
-        """
-        await self._state.query(
-            "DELETE",
-            f"/guilds/{self.guild.id}/integrations/{self.id}"
-        )
-
