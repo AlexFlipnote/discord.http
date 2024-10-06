@@ -20,6 +20,7 @@ from ..soundboard import PartialSoundboardSound, SoundboardSound
 from ..sticker import Sticker
 from ..user import User, PartialUser
 from ..voice import VoiceState
+from ..integrations import Integration, PartialIntegration
 
 if TYPE_CHECKING:
     from ..client import Client
@@ -389,3 +390,35 @@ class Parser:
                 timestamp=timestamp
             ),
         )
+
+    def integration_create(self, data: dict) -> tuple[Integration]:
+        _guild = self._get_guild_or_partial(int(data.pop("guild_id")))
+        if _guild is None:
+            raise ValueError("guild_id somehow was not provided by Discord")
+
+        return (
+            Integration(
+                state=self.bot.state,
+                data=data,
+                guild=_guild
+            ),
+        )
+
+    def integration_update(self, data: dict) -> tuple[Integration]:
+        return self.integration_create(data)
+
+    def integration_delete(self, data: dict) -> tuple[PartialIntegration]:
+        _guild = self._get_guild_or_partial(int(data.pop("guild_id")))
+        if _guild is None:
+            raise ValueError("guild_id somehow was not provided by Discord")
+
+        return (
+            PartialIntegration(
+                id=data["id"],
+                guild=_guild,
+                application_id=data.get("application_id")
+            ),
+        )
+
+    def guild_integrations_update(self, data: dict) -> tuple["PartialGuild | Guild"]:
+        return (self._get_guild_or_partial(int(data["guild_id"])),)  # type: ignore # guild_id is always provided
