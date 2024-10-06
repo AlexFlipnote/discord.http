@@ -1805,6 +1805,18 @@ class StageInstance(PartialBase):
     guild_scheduled_event_id: `Optional[int]`
         The guild scheduled event ID associated with this stage instance
     """
+
+    __slots__ = (
+        "_state",
+        "_guild",
+        "id",
+        "channel_id",
+        "guild_id",
+        "topic",
+        "privacy_level",
+        "guild_scheduled_event_id",
+    )
+
     def __init__(
         self,
         *,
