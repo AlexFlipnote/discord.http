@@ -114,7 +114,7 @@ class PartialIntegration(PartialBase):
     application_id: Optional[:class:`int`]
         The ID of the application associated with this integration.
     """
-    __slots__ = ("id", "guild", "application_id",)
+    __slots__ = ("id", "guild_id", "application_id",)
 
     def __init__(
         self,
