@@ -349,21 +349,6 @@ class PartialMember(PartialBase):
         return f"<@!{self.id}>"
 
 
-class ThreadMember(PartialBase):
-    def __init__(self, *, state: "DiscordAPI", data: dict):
-        super().__init__(id=int(data["user_id"]))
-        self._state = state
-
-        self.flags: int = data["flags"]
-        self.join_timestamp: datetime = utils.parse_time(data["join_timestamp"])
-
-    def __str__(self) -> str:
-        return str(self.id)
-
-    def __int__(self) -> int:
-        return self.id
-
-
 class Member(PartialMember):
     def __init__(
         self,
@@ -539,3 +524,15 @@ class Member(PartialMember):
     def display_avatar(self) -> Optional[Asset]:
         """ `Optional[Asset]`: Returns the display avatar of the member """
         return self.avatar or self._user.avatar
+
+
+class ThreadMember(Member):
+    def __init__(self, *, state: "DiscordAPI", guild: "PartialGuild", data: dict):
+        super().__init__(
+            state=state,
+            guild=guild,
+            data=data["member"]
+        )
+
+        self.flags: int = data["flags"]
+        self.join_timestamp: datetime = utils.parse_time(data["join_timestamp"])

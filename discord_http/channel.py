@@ -72,10 +72,10 @@ class PartialChannel(PartialBase):
     @property
     def guild(self) -> Optional["PartialGuild"]:
         """ `Optional[PartialGuild]`: The guild the channel belongs to (if available) """
-        from .guild import PartialGuild
-
         if not self.guild_id:
             return None
+
+        from .guild import PartialGuild
         return PartialGuild(state=self._state, id=self.guild_id)
 
     @property
@@ -1175,6 +1175,9 @@ class PartialChannel(PartialBase):
         `ThreadMember`
             The thread member object
         """
+        if not self.guild:
+            raise ValueError("Cannot fetch thread member without guild_id")
+
         r = await self._state.query(
             "GET",
             f"/channels/{self.id}/thread-members/{user_id}",
@@ -1184,6 +1187,7 @@ class PartialChannel(PartialBase):
         from .member import ThreadMember
         return ThreadMember(
             state=self._state,
+            guild=self.guild,
             data=r.response,
         )
 
@@ -1196,6 +1200,9 @@ class PartialChannel(PartialBase):
         `list[ThreadMember]`
             The list of thread members
         """
+        if not self.guild:
+            raise ValueError("Cannot fetch thread member without guild_id")
+
         r = await self._state.query(
             "GET",
             f"/channels/{self.id}/thread-members",
@@ -1206,6 +1213,7 @@ class PartialChannel(PartialBase):
         return [
             ThreadMember(
                 state=self._state,
+                guild=self.guild,
                 data=data
             )
             for data in r.response
