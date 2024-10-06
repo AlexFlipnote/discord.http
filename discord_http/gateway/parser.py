@@ -3,7 +3,8 @@ from typing import TYPE_CHECKING
 
 from .object import (
     ChannelPinsUpdate, TypingStartEvent,
-    Reaction, BulkDeletePayload
+    Reaction, BulkDeletePayload, ThreadListSyncPayload,
+    ThreadMembersUpdatePayload
 )
 
 from .. import utils
@@ -13,7 +14,7 @@ from ..emoji import Emoji
 from ..enums import ChannelType
 from ..guild import Guild, PartialGuild
 from ..invite import Invite, PartialInvite
-from ..member import Member, PartialMember
+from ..member import Member, PartialMember, PartialThreadMember
 from ..message import Message, PartialMessage
 from ..role import Role, PartialRole
 from ..soundboard import PartialSoundboardSound, SoundboardSound
@@ -23,6 +24,12 @@ from ..voice import VoiceState
 from ..integrations import Integration, PartialIntegration
 
 if TYPE_CHECKING:
+    from ..types.channels import (
+        ThreadListSync,
+        ThreadMembersUpdate,
+        ThreadMemberUpdate
+    )
+
     from ..client import Client
 
 __all__ = (
@@ -268,6 +275,21 @@ class Parser:
         thread = self._partial_channel(data)
         self.bot.cache.remove_channel(thread)
         return (thread,)
+
+    def thread_list_sync(self, data: ThreadListSync) -> tuple[ThreadListSyncPayload]:
+        return (ThreadListSyncPayload(state=self.bot.state, data=data),)
+
+    def thread_member_update(self, data: ThreadMemberUpdate) -> tuple[PartialThreadMember]:
+        return (
+            PartialThreadMember(
+                state=self.bot.state,
+                data=data,
+                guild_id=data["guild_id"]
+            ),
+        )
+
+    def thread_members_update(self, data: ThreadMembersUpdate) -> tuple[ThreadMembersUpdatePayload]:
+        return (ThreadMembersUpdatePayload(state=self.bot.state, data=data),)
 
     def _message(self, data: dict) -> Message:
         guild_id = data.get("guild_id", None)

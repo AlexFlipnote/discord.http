@@ -1,4 +1,5 @@
 from datetime import datetime, timedelta
+from re import S
 from typing import Union, TYPE_CHECKING, Optional
 
 from . import utils
@@ -17,9 +18,13 @@ from .view import View
 MISSING = utils.MISSING
 
 if TYPE_CHECKING:
-    from .channel import DMChannel
+    from types.guilds import (
+        ThreadMember as ThreadMemberPayload,
+        ThreadMemberWithMember as ThreadMemberWithMemberPayload,
+    )
     from .http import DiscordAPI
     from .message import Message
+    from .channel import DMChannel, PartialChannel, Thread
 
 __all__ = (
     "PartialMember",
@@ -525,14 +530,47 @@ class Member(PartialMember):
         """ `Optional[Asset]`: Returns the display avatar of the member """
         return self.avatar or self._user.avatar
 
+class PartialThreadMember(PartialMember):
+    __slots__ = (
+        "_state",
+        "_user",
+        "id",
+        "guild_id",
+        "thread_id",
+    )
+    def __init__(
+        self,
+        *,
+        state: "DiscordAPI",
+        data: "ThreadMemberPayload",
+        guild_id: int,
+    ) -> None:
+        super().__init__(
+            state=state,
+            id=data["user_id"],
+            guild_id=guild_id,
+        )
+        self.thread_id: int = data["id"]
+        self.join_timestamp: datetime = utils.parse_time(data["join_timestamp"])
+        self.flags: int = data["flags"]
 
-class ThreadMember(Member):
-    def __init__(self, *, state: "DiscordAPI", guild: "PartialGuild", data: dict):
+    @property
+    def thread(self) -> "PartialChannel | Thread":
+        """ `PartialChannel | Thread"`: The thread the member is in """
+        return self.guild.get_channel(self.thread_id) or self.guild.get_partial_channel(self.thread_id)
+
+
+class ThreadMember(Member, PartialThreadMember):
+    # __slots__ = PartialThreadMember.__slots__ + Member.__slots__
+    def __init__(self, *, state: "DiscordAPI", guild: "PartialGuild", data: ThreadMemberWithMemberPayload) -> None:
         super().__init__(
             state=state,
             guild=guild,
             data=data["member"]
         )
-
-        self.flags: int = data["flags"]
-        self.join_timestamp: datetime = utils.parse_time(data["join_timestamp"])
+        PartialThreadMember.__init__(
+            self,
+            state=state,
+            data=data,  # type: ignore
+            guild_id=guild.id,
+        )
