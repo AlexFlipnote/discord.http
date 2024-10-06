@@ -23,7 +23,7 @@ class Cache:
         *,
         client: "Client"
     ):
-        self.client = client
+        self.bot = client
         self.cache_flags = client._gateway_cache
 
         self.__guilds: dict[int, Union["PartialGuild", "Guild"]] = {}
@@ -47,7 +47,7 @@ class Cache:
         if GatewayCacheFlags.guilds in self.cache_flags:
             self.__guilds[guild_id] = guild
         elif GatewayCacheFlags.partial_guilds in self.cache_flags:
-            self.__guilds[guild_id] = self.client.get_partial_guild(guild_id)
+            self.__guilds[guild_id] = self.bot.get_partial_guild(guild_id)
         else:
             # (Partial)Guild is not cached, nowhere to store it
             return None
@@ -59,14 +59,14 @@ class Cache:
         if GatewayCacheFlags.channels in self.cache_flags:
             _guild._cache_channels = {  # type: ignore
                 int(g["id"]): BaseChannel.from_dict(
-                    state=self.client.state,
+                    state=self.bot.state,
                     data=g
                 )
                 for g in data["channels"]
             }
         elif GatewayCacheFlags.partial_channels in self.cache_flags:
             _guild._cache_channels = {
-                int(g["id"]): self.client.get_partial_channel(
+                int(g["id"]): self.bot.get_partial_channel(
                     g["id"], guild_id=guild_id
                 )
                 for g in data["channels"]
@@ -78,7 +78,7 @@ class Cache:
             pass
         elif GatewayCacheFlags.partial_roles in self.cache_flags:
             _guild._cache_roles = {
-                k: self.client.get_partial_role(
+                k: self.bot.get_partial_role(
                     v.id, guild_id
                 )
                 for k, v in dict(_guild._cache_roles).items()
@@ -90,7 +90,7 @@ class Cache:
             pass
         elif GatewayCacheFlags.partial_emojis in self.cache_flags:
             _guild._cache_emojis = {
-                k: self.client.get_partial_emoji(
+                k: self.bot.get_partial_emoji(
                     v.id, guild_id=guild_id
                 )
                 for k, v in dict(_guild._cache_emojis).items()
@@ -102,7 +102,7 @@ class Cache:
             pass
         elif GatewayCacheFlags.partial_stickers in self.cache_flags:
             _guild._cache_stickers = {
-                k: self.client.get_partial_sticker(
+                k: self.bot.get_partial_sticker(
                     v.id, guild_id=guild_id
                 )
                 for k, v in dict(_guild._cache_stickers).items()
@@ -113,14 +113,14 @@ class Cache:
         if GatewayCacheFlags.voice_states in self.cache_flags:
             _guild._cache_voice_states = {  # type: ignore
                 int(g["user_id"]): VoiceState(
-                    state=self.client.state,
+                    state=self.bot.state,
                     data=g
                 )
                 for g in data["voice_states"]
             }
         elif GatewayCacheFlags.partial_voice_states in self.cache_flags:
             _guild._cache_voice_states = {
-                int(g["user_id"]): self.client.get_partial_voice_state(
+                int(g["user_id"]): self.bot.get_partial_voice_state(
                     int(g["user_id"]),
                     guild_id=guild_id,
                     channel_id=g["channel_id"]
@@ -159,7 +159,7 @@ class Cache:
             _vs_update = voice_state
 
         elif GatewayCacheFlags.partial_voice_states in self.cache_flags:
-            _vs_update = self.client.get_partial_voice_state(
+            _vs_update = self.bot.get_partial_voice_state(
                 voice_state.id,
                 guild_id=voice_state.guild_id,
                 channel_id=voice_state.channel_id
@@ -189,7 +189,7 @@ class Cache:
         if GatewayCacheFlags.members in self.cache_flags:
             guild._cache_members[member.id] = member
         elif GatewayCacheFlags.partial_members in self.cache_flags:
-            guild._cache_members[member.id] = self.client.get_partial_member(
+            guild._cache_members[member.id] = self.bot.get_partial_member(
                 member.id, member.guild_id
             )
 
@@ -216,7 +216,7 @@ class Cache:
         if GatewayCacheFlags.channels in self.cache_flags:
             guild._cache_channels[channel.id] = channel
         elif GatewayCacheFlags.partial_channels in self.cache_flags:
-            guild._cache_channels[channel.id] = self.client.get_partial_channel(
+            guild._cache_channels[channel.id] = self.bot.get_partial_channel(
                 channel.id, guild_id=channel.guild_id
             )
 
@@ -245,7 +245,7 @@ class Cache:
         if GatewayCacheFlags.threads in self.cache_flags:
             guild._cache_threads[thread.id] = thread
         elif GatewayCacheFlags.partial_threads in self.cache_flags:
-            guild._cache_threads[thread.id] = self.client.get_partial_channel(
+            guild._cache_threads[thread.id] = self.bot.get_partial_channel(
                 thread.id, guild_id=thread.guild_id
             )
 
@@ -272,7 +272,7 @@ class Cache:
         if GatewayCacheFlags.roles in self.cache_flags:
             guild._cache_roles[role.id] = role
         elif GatewayCacheFlags.partial_roles in self.cache_flags:
-            guild._cache_roles[role.id] = self.client.get_partial_role(
+            guild._cache_roles[role.id] = self.bot.get_partial_role(
                 role.id, role.guild_id
             )
 

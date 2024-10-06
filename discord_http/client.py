@@ -101,6 +101,7 @@ class Client:
             Usually a great tool to just validate that your bot is online.
         """
         self.application_id: Optional[int] = application_id
+        self.api_version: Optional[int] = api_version
         self.public_key: Optional[str] = public_key
         self.token: str = token
         self.guild_id: Optional[int] = guild_id
@@ -119,12 +120,6 @@ class Client:
             self.loop: asyncio.AbstractEventLoop = asyncio.new_event_loop()
             asyncio.set_event_loop(self.loop)
 
-        self.state: DiscordAPI = DiscordAPI(
-            application_id=application_id,
-            token=token,
-            api_version=api_version
-        )
-
         self.commands: Dict[str, Command] = {}
         self.listeners: list[Listener] = []
         self.interactions: Dict[str, Interaction] = {}
@@ -138,6 +133,7 @@ class Client:
         self._context: Callable = Context
 
         self.cache: Cache = Cache(client=self)
+        self.state: DiscordAPI = DiscordAPI(client=self)
         self.backend: DiscordHTTP = DiscordHTTP(client=self)
 
         self._view_storage: dict[int, InteractionStorage] = {}

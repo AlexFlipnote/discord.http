@@ -70,10 +70,8 @@ class DiscordHTTP(Quart):
 
         self.bot: "Client" = client
 
-        # Shortcuts for bot attributes
+        # Aliases
         self.loop = self.bot.loop
-        self.cache = self.bot.cache
-
         self.debug_events = self.bot.debug_events
 
         super().__init__(__name__)

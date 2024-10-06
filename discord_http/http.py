@@ -21,6 +21,7 @@ from .errors import (
 )
 
 if TYPE_CHECKING:
+    from .client import Client
     from .user import User
 
 MethodTypes = Literal["GET", "POST", "DELETE", "PUT", "HEAD", "PATCH", "OPTIONS"]
@@ -288,17 +289,15 @@ class Ratelimit:
 
 
 class DiscordAPI:
-    def __init__(
-        self,
-        *,
-        token: str,
-        application_id: Optional[int],
-        api_version: Optional[int] = None
-    ):
-        self.token: str = token
-        self.application_id: Optional[int] = application_id
+    def __init__(self, *, client: "Client"):
+        self.bot: "Client" = client
+        self.cache = self.bot.cache
 
-        self.api_version: int = api_version or 10
+        # Aliases
+        self.token: str = self.bot.token
+        self.application_id: Optional[int] = self.bot.application_id
+        self.api_version: int = self.bot.api_version or 10
+
         if not isinstance(self.api_version, int):
             raise TypeError("api_version must be an integer")
 
