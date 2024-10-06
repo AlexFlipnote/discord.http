@@ -1925,13 +1925,32 @@ class StageChannel(VoiceChannel):
 
     @property
     def type(self) -> ChannelType:
-        """ `ChannelType`: Returns the channel's type """
+        """`ChannelType`: Returns the channel's type """
         return ChannelType.guild_stage_voice
 
     @property
     def stage_instance(self) -> Optional[StageInstance]:
-        """ `Optional[StageInstance]`: Returns the stage instance of the channel, if available and cached."""
+        """`Optional[StageInstance]`: Returns the stage instance for this channel, if available and cached."""
         return self._stage_instance
+
+    async def fetch_stage_instance(self) -> StageInstance:
+        """Fetch the stage instance associated with this stage channel
+
+        Returns
+        -------
+        `StageInstance`
+            The stage instance of the channel
+        """
+        r = await self._state.query(
+            "GET",
+            f"/stage-instances/{self.id}"
+        )
+
+        return StageInstance(
+            state=self._state,
+            data=r.response,  # type: ignore # todo types
+            guild=self.guild
+        )
 
     async def create_stage_instance(
         self,
