@@ -1,4 +1,4 @@
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Generator
 
 from collections import defaultdict
 from datetime import datetime
@@ -257,33 +257,28 @@ class ThreadListSyncPayload:
     def __repr__(self) -> str:
         return f"<ThreadListSyncPayload guild_id={self.guild_id}>"
 
-    def combined(self, with_members: bool = False,) -> tuple[tuple[PartialChannel, tuple[list[Thread], list[PartialThreadMember]]], ...]:
+    def combined(self) -> Generator[tuple["PartialChannel", tuple["Thread", list["PartialThreadMember"]]]]:
         channels = self.channels
         threads = self.threads
         members = self.members
 
-        _mapping: dict[PartialChannel, tuple[list[Thread], list[PartialThreadMember]]] = defaultdict(lambda: ([], []))
+        channels_per_id = {c.id: c for c in channels}
 
-        for channel in channels:
-            parent_id: int = channel.id
+        for thread in threads:
+            parent_id = thread.parent_id
+            if not parent_id:
+                continue
 
-            # parent_id: list[Thread]
-            _threads: dict[int, list[Thread]] = {}
-            # thread_id: ThreadMember
-            _members: dict[int, list[PartialThreadMember]] = {}
+            parent_channel = channels_per_id.get(parent_id)
+            if not parent_channel:
+                continue
 
-            for thread in threads:
-                if thread.parent_id == parent_id:
-                    _threads.setdefault(parent_id, []).append(thread)
+            thread_members = []
+            for member in members:
+                if member.id == thread.id:
+                    thread_members.append(member)
 
-                if with_members and members:
-                    for member in members:
-                        if member.thread_id == thread.id:
-                            _members.setdefault(thread.id, []).append(member)
-
-            _mapping[channel] = (_threads.get(parent_id, []), _members.get(parent_id, []))
-
-        return tuple(_mapping.items())
+            yield (parent_channel, (thread, thread_members))
 
 
 class ThreadMembersUpdatePayload:
