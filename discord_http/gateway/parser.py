@@ -325,6 +325,28 @@ class Parser:
             ),
         )
 
+    def message_reaction_remove_all(self, data: dict) -> tuple[PartialMessage]:
+        return (
+            PartialMessage(
+                state=self.bot.state,
+                id=int(data["message_id"]),
+                channel_id=int(data["channel_id"]),
+                guild_id=utils.get_int(data, "guild_id")
+            ),
+        )
+
+    def message_reaction_remove_emoji(self, data: dict) -> tuple[PartialMessage, Emoji]:
+        _message = PartialMessage(
+            state=self.bot.state,
+            id=int(data["message_id"]),
+            channel_id=int(data["channel_id"]),
+            guild_id=utils.get_int(data, "guild_id")
+        )
+        return (
+            _message,
+            Emoji(state=self.bot.state, data=data["emoji"],)
+        )
+
     def guild_role_create(self, data: dict) -> tuple[Role]:
         _guild = self.bot.get_partial_guild(int(data["guild_id"]))
         _role = Role(

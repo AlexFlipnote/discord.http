@@ -163,3 +163,4 @@ class BulkDeletePayload:
         ]
 
         self.guild: "PartialGuild" = guild
+
