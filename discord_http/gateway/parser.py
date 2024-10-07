@@ -8,7 +8,7 @@ from .object import (
 
 from .. import utils
 from ..audit import AuditLogEntry
-from ..channel import BaseChannel, PartialChannel
+from ..channel import BaseChannel, PartialChannel, StageInstance
 from ..emoji import Emoji
 from ..enums import ChannelType
 from ..guild import Guild, PartialGuild
@@ -23,6 +23,10 @@ from ..voice import VoiceState
 from ..integrations import Integration, PartialIntegration
 
 if TYPE_CHECKING:
+    from ..types import (
+        channels
+    )
+
     from ..client import Client
 
 __all__ = (
@@ -414,6 +418,47 @@ class Parser:
             ),
         )
 
+    def stage_instance_create(self, data: channels.StageInstance) -> tuple[StageInstance]:
+        guild = self.bot.cache.get_guild(int(data["guild_id"]))
+        stage_instance = StageInstance(
+                state=self.bot.state,
+                data=data,
+                guild=guild
+            )
+
+        if guild and (channel := guild.get_channel(int(data["channel_id"]))):
+            channel._stage_instance = stage_instance # type: ignore # should be fine?
+
+        return (stage_instance,)
+
+    def stage_instance_update(self, data: channels.StageInstance) -> tuple[StageInstance]:
+        guild = self.bot.cache.get_guild(int(data["guild_id"]))
+
+        # try updating the existing stage instance from cache if it exists
+        if guild and (channel := guild.get_channel(int(data["channel_id"]))):
+            channel._stage_instance._from_data(data)  # type: ignore # should be fine?
+            return (channel._stage_instance,)  # type: ignore # should be fine?
+        else:
+            return (
+                StageInstance(
+                    state=self.bot.state,
+                    data=data,
+                    guild=guild
+                ),
+            )
+
+    def stage_instance_delete(self, data: channels.StageInstance) -> tuple[StageInstance]:
+        guild = self.bot.cache.get_guild(int(data["guild_id"]))
+        stage_instance = StageInstance(
+                state=self.bot.state,
+                data=data,
+                guild=guild
+            )
+
+        if guild and (channel := guild.get_channel(int(data["channel_id"]))):
+            channel._stage_instance = None # type: ignore # should be fine?
+
+        return (stage_instance,)
     def integration_create(self, data: dict) -> tuple[Integration]:
         _guild = self._get_guild_or_partial(int(data.pop("guild_id")))
         if _guild is None:
