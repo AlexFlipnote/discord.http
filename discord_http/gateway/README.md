@@ -17,9 +17,9 @@ More will be handled in `discord_http/gateway/parser.py`
   - [x] THREAD_CREATE
   - [x] THREAD_UPDATE
   - [x] THREAD_DELETE
-  - [ ] THREAD_LIST_SYNC
-  - [ ] THREAD_MEMBER_UPDATE
-  - [ ] THREAD_MEMBERS_UPDATE *
+  - [x] THREAD_LIST_SYNC
+  - [x] THREAD_MEMBER_UPDATE
+  - [x] THREAD_MEMBERS_UPDATE *
   - [x] STAGE_INSTANCE_CREATE
   - [x] STAGE_INSTANCE_UPDATE
   - [x] STAGE_INSTANCE_DELETE
@@ -28,7 +28,7 @@ More will be handled in `discord_http/gateway/parser.py`
   - [x] GUILD_MEMBER_ADD
   - [x] GUILD_MEMBER_UPDATE
   - [x] GUILD_MEMBER_REMOVE
-  - [ ] THREAD_MEMBERS_UPDATE *
+  - [x] THREAD_MEMBERS_UPDATE *
 
 ## GUILD_MODERATION (1 << 2)
   - [x] GUILD_AUDIT_LOG_ENTRY_CREATE

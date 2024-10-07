@@ -1,5 +1,7 @@
+from typing import TYPE_CHECKING, Generator
+
+from collections import defaultdict
 from datetime import datetime
-from typing import TYPE_CHECKING
 
 from .. import utils
 from ..colour import Colour
@@ -8,17 +10,28 @@ from ..enums import ReactionType
 from ..message import PartialMessage
 
 if TYPE_CHECKING:
-    from ..channel import BaseChannel, PartialChannel
+    from ..types.channels import (
+        ThreadListSync,
+        ThreadMembersUpdate
+    )
+    from ..types.guilds import (
+        ThreadMember as ThreadMemberPayload,
+        ThreadMemberWithMember as ThreadMemberWithMember
+    )
+
     from ..guild import Guild, PartialGuild
     from ..http import DiscordAPI
-    from ..member import Member, PartialMember
+    from ..member import Member, PartialMember, PartialThreadMember, ThreadMember
     from ..user import User, PartialUser
+    from ..channel import BaseChannel, PartialChannel, Thread
 
 __all__ = (
     "ChannelPinsUpdate",
     "TypingStartEvent",
     "BulkDeletePayload",
     "Reaction",
+    "ThreadListSyncPayload",
+    "ThreadMembersUpdatePayload",
 )
 
 
@@ -163,3 +176,188 @@ class BulkDeletePayload:
         ]
 
         self.guild: "PartialGuild" = guild
+
+
+class ThreadListSyncPayload:
+    """Represents a thread list sync payload.
+
+    Attributes
+    ----------
+    guild_id: `int`
+        The guild ID the threads are in.
+    channel_ids: `list`[`int`]
+        The parent channel IDs whose threads are being synced.
+        If this is empty, it means all threads in the guild are being synced.
+
+        This may contains ids of channels that have no active threads.
+    """
+    __slots__ = (
+        "_state",
+        "guild_id",
+        "channel_ids",
+        "_threads",
+        "_members",
+    )
+    def __init__(
+        self,
+        *,
+        state: "DiscordAPI",
+        data: ThreadListSync,
+    ) -> None:
+        self._state = state
+
+        self.guild_id: int = int(data["guild_id"])
+        self.channel_ids: list[int] = [int(c) for c in data.get("channel_ids", [])]
+        self._threads: list[dict] = data["threads"]
+        self._members: list[ThreadMemberPayload] = data["members"]
+
+    @property
+    def guild(self) -> "PartialGuild":
+        bot = self._state.bot
+        return bot.cache.get_guild(self.guild_id) or bot.get_partial_guild(self.guild_id)
+
+    @property
+    def threads(self) -> list["Thread"]:
+        if not self._threads:
+            return []
+
+        from ..channel import Thread
+
+        state = self._state
+        return [Thread(state=state, data=t) for t in self._threads]
+
+    @property
+    def members(self) -> list["PartialThreadMember"]:
+        if not self._members:
+            return []
+
+        from ..member import PartialThreadMember
+
+        guild = self.guild
+        state = self._state
+        return [
+            PartialThreadMember(
+                state=state,
+                data=m,
+                guild_id=guild.id,
+            )
+            for m in self._members
+        ]
+
+    @property
+    def channels(self) -> list["PartialChannel"]:
+        if not self.channel_ids:
+            return []
+
+        return [
+            self.guild.get_channel(c) or self.guild.get_partial_channel(c)
+            for c in self.channel_ids
+        ]
+
+    def __repr__(self) -> str:
+        return f"<ThreadListSyncPayload guild_id={self.guild_id}>"
+
+    def combined(self) -> Generator[tuple["PartialChannel", tuple["Thread", list["PartialThreadMember"]]]]:
+        channels = self.channels
+        threads = self.threads
+        members = self.members
+
+        channels_per_id = {c.id: c for c in channels}
+
+        for thread in threads:
+            parent_id = thread.parent_id
+            if not parent_id:
+                continue
+
+            parent_channel = channels_per_id.get(parent_id)
+            if not parent_channel:
+                continue
+
+            thread_members = []
+            for member in members:
+                if member.id == thread.id:
+                    thread_members.append(member)
+
+            yield (parent_channel, (thread, thread_members))
+
+
+class ThreadMembersUpdatePayload:
+    """Represents a thread members update's payload.
+
+    Attributes
+    ----------
+    id: `int`
+        The ID of the thread.
+    guild_id: `int`
+        The guild ID the thread is in.
+    member_count: `int`
+        The total number of members in the thread, capped at 50.
+    removed_member_ids: `list[int]`
+        The IDs of the members that were removed from the thread.
+    """
+    __slots__ = (
+        "_state",
+        "id",
+        "guild_id",
+        "member_count",
+        "_added_members",
+        "removed_member_ids",
+    )
+    def __init__(
+        self,
+        *,
+        state: "DiscordAPI",
+        data: ThreadMembersUpdate,
+    ) -> None:
+        self._state = state
+
+        self.id: int = int(data["id"])
+        self.guild_id: int = int(data["guild_id"])
+        self.member_count: int = data["member_count"]
+        self.removed_member_ids: list[int] = data.get("removed_member_ids", [])
+
+        self._added_members: list[ThreadMemberWithMember] = data.get("added_members", [])
+
+    @property
+    def guild(self) -> "PartialGuild":
+        """ `PartialGuild`: The guild the thread is in """
+        bot = self._state.bot
+        return bot.cache.get_guild(self.guild_id) or bot.get_partial_guild(self.guild_id)
+
+    @property
+    def thread(self) -> "PartialChannel | Thread":
+        """ `PartialChannel` | `Thread`: The thread the members were updated in """
+        return self.guild.get_channel(self.id) or self.guild.get_partial_channel(self.id)
+
+    @property
+    def added_members(self) -> list["ThreadMember"]:
+        """ list[PartialThreadMember]: The members that were added to the thread """
+        if not self._added_members:
+            return []
+
+        from ..member import ThreadMember
+
+        guild = self.guild
+        state = self._state
+        return [
+            ThreadMember(
+                state=state,
+                guild=guild,
+                data=m,
+            )
+            for m in self._added_members
+        ]
+
+    @property
+    def removed_members(self) -> list[PartialMember]:
+        """ list[PartialMember]: The members that were removed from the thread """
+        if not self.removed_member_ids:
+            return []
+
+        return [
+            self.guild.get_member(m) or self.guild.get_partial_member(m)
+            for m in self.removed_member_ids
+        ]
+
+    def __repr__(self) -> str:
+        return f"<ThreadMembersUpdatePayload id={self.id} guild_id={self.guild_id}>"
