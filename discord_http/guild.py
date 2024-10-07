@@ -9,7 +9,7 @@ from .colour import Colour, Color
 from .enums import (
     ChannelType, VerificationLevel,
     DefaultNotificationLevel, ContentFilterLevel,
-    ScheduledEventEntityType, ScheduledEventPrivacyType,
+    ScheduledEventEntityType, PrivacyLevelType,
     ScheduledEventStatusType, VideoQualityType, AuditLogType
 )
 from .emoji import Emoji, PartialEmoji
@@ -107,7 +107,7 @@ class PartialScheduledEvent(PartialBase):
         description: Optional[str] = MISSING,
         channel: Optional[Union["PartialChannel", int]] = MISSING,
         external_location: Optional[str] = MISSING,
-        privacy_level: Optional[ScheduledEventPrivacyType] = MISSING,
+        privacy_level: Optional[PrivacyLevelType] = MISSING,
         entity_type: Optional[ScheduledEventEntityType] = MISSING,
         status: Optional[ScheduledEventStatusType] = MISSING,
         start_time: Optional[Union[datetime, timedelta, int]] = MISSING,
@@ -126,7 +126,7 @@ class PartialScheduledEvent(PartialBase):
             New description of the event
         channel: `Optional[Union[&quot;PartialChannel&quot;, int]]`
             New channel of the event
-        privacy_level: `Optional[ScheduledEventPrivacyType]`
+        privacy_level: `Optional[PrivacyLevelType]`
             New privacy level of the event
         entity_type: `Optional[ScheduledEventEntityType]`
             New entity type of the event
@@ -173,7 +173,7 @@ class PartialScheduledEvent(PartialBase):
         if privacy_level is not MISSING:
             payload["privacy_level"] = int(
                 privacy_level or
-                ScheduledEventPrivacyType.guild_only
+                PrivacyLevelType.guild_only
             )
 
         if entity_type is not MISSING:
@@ -235,7 +235,7 @@ class ScheduledEvent(PartialScheduledEvent):
         self.description: Optional[str] = data.get("description", None)
         self.user_count: Optional[int] = utils.get_int(data, "user_count")
 
-        self.privacy_level: ScheduledEventPrivacyType = ScheduledEventPrivacyType(data["privacy_level"])
+        self.privacy_level: PrivacyLevelType = PrivacyLevelType(data["privacy_level"])
         self.status: ScheduledEventStatusType = ScheduledEventStatusType(data["status"])
         self.entity_type: ScheduledEventEntityType = ScheduledEventEntityType(data["entity_type"])
 
@@ -703,7 +703,7 @@ class PartialGuild(PartialBase):
         end_time: Optional[Union[datetime, timedelta, int]] = None,
         channel: Optional[Union["PartialChannel", int]] = None,
         description: Optional[str] = None,
-        privacy_level: Optional[ScheduledEventPrivacyType] = None,
+        privacy_level: Optional[PrivacyLevelType] = None,
         entity_type: Optional[ScheduledEventEntityType] = None,
         external_location: Optional[str] = None,
         image: Optional[Union[File, bytes]] = None,
@@ -724,7 +724,7 @@ class PartialGuild(PartialBase):
             The channel of the event
         description: `Optional[str]`
             The description of the event
-        privacy_level: `Optional[ScheduledEventPrivacyType]`
+        privacy_level: `Optional[PrivacyLevelType]`
             The privacy level of the event (default is guild_only)
         entity_type: `Optional[ScheduledEventEntityType]`
             The entity type of the event (default is voice)
@@ -752,7 +752,7 @@ class PartialGuild(PartialBase):
             "name": name,
             "privacy_level": int(
                 privacy_level or
-                ScheduledEventPrivacyType.guild_only
+                PrivacyLevelType.guild_only
             ),
             "scheduled_start_time": utils.add_to_datetime(start_time).isoformat(),
             "channel_id": str(int(channel)) if channel else None,

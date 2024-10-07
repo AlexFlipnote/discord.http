@@ -30,7 +30,6 @@ __all__ = (
     "ResponseType",
     "SKUType",
     "ScheduledEventEntityType",
-    "ScheduledEventPrivacyType",
     "ScheduledEventStatusType",
     "SortOrderType",
     "StickerFormatType",
@@ -39,7 +38,7 @@ __all__ = (
     "VerificationLevel",
     "VideoQualityType",
     "WebhookType",
-    "PrivacyLevel",
+    "PrivacyLevelType",
 )
 
 
@@ -318,10 +317,6 @@ class Locale(BaseEnum):
     vietnamese = "vi"
 
 
-class ScheduledEventPrivacyType(BaseEnum):
-    guild_only = 2
-
-
 class ScheduledEventEntityType(BaseEnum):
     stage_instance = 1
     voice = 2
@@ -517,6 +512,6 @@ class PermissionType(BaseEnum):
     member = 1
 
 
-class PrivacyLevel(BaseEnum):
+class PrivacyLevelType(BaseEnum):
     public = 1
     guild_only = 2

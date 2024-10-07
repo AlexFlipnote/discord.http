@@ -2,6 +2,13 @@ from typing import Literal, NotRequired, TypedDict
 
 from .guilds import ThreadMember, ThreadMemberWithMember
 
+__all__ = (
+    "StageInstance",
+    "ThreadListSync",
+    "ThreadMemberUpdate",
+    "ThreadMembersUpdate",
+)
+
 PrivacyLevel = Literal[
     1,  # PUBLIC
     2,  # GUILD_ONLY
@@ -19,8 +26,8 @@ class StageInstance(TypedDict):
 
 class ThreadListSync(TypedDict):
     guild_id: int
-    threads: list[dict] # channel objs
-    members: list[ThreadMember] # thread member objs
+    threads: list[dict]  # channel objs
+    members: list[ThreadMember]  # thread member objs
     channel_ids: NotRequired[list[int]]
 
 

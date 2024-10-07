@@ -1,5 +1,4 @@
 from datetime import datetime, timedelta
-from re import S
 from typing import Union, TYPE_CHECKING, Optional
 
 from . import utils
@@ -18,9 +17,8 @@ from .view import View
 MISSING = utils.MISSING
 
 if TYPE_CHECKING:
-    from types.guilds import (
-        ThreadMember as ThreadMemberPayload,
-        ThreadMemberWithMember as ThreadMemberWithMemberPayload,
+    from .types.guilds import (
+        ThreadMember as ThreadMemberPayload
     )
     from .http import DiscordAPI
     from .message import Message
@@ -530,6 +528,7 @@ class Member(PartialMember):
         """ `Optional[Asset]`: Returns the display avatar of the member """
         return self.avatar or self._user.avatar
 
+
 class PartialThreadMember(PartialMember):
     __slots__ = (
         "_state",
@@ -538,6 +537,7 @@ class PartialThreadMember(PartialMember):
         "guild_id",
         "thread_id",
     )
+
     def __init__(
         self,
         *,
@@ -562,7 +562,13 @@ class PartialThreadMember(PartialMember):
 
 class ThreadMember(Member, PartialThreadMember):
     # __slots__ = PartialThreadMember.__slots__ + Member.__slots__
-    def __init__(self, *, state: "DiscordAPI", guild: "PartialGuild", data: ThreadMemberWithMemberPayload) -> None:
+    def __init__(
+        self,
+        *,
+        state: "DiscordAPI",
+        guild: "PartialGuild",
+        data: dict
+    ) -> None:
         super().__init__(
             state=state,
             guild=guild,

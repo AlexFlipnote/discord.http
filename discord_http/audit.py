@@ -252,7 +252,7 @@ class AuditChange:
         "tags": None,
         "default_message_notifications": _handle_enum(enums.DefaultNotificationLevel),
         "video_quality_mode": _handle_enum(enums.VideoQualityType),
-        "privacy_level": _handle_enum(enums.ScheduledEventPrivacyType),
+        "privacy_level": _handle_enum(enums.PrivacyLevelType),
         "format_type": _handle_enum(enums.StickerFormatType),
         "type": _handle_type,
         "communication_disabled_until": _handle_timestamp,

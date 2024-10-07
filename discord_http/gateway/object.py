@@ -1,6 +1,4 @@
-from typing import TYPE_CHECKING, Generator
-
-from collections import defaultdict
+from typing import TYPE_CHECKING, Iterator
 from datetime import datetime
 
 from .. import utils
@@ -198,11 +196,12 @@ class ThreadListSyncPayload:
         "_threads",
         "_members",
     )
+
     def __init__(
         self,
         *,
         state: "DiscordAPI",
-        data: ThreadListSync,
+        data: "ThreadListSync",
     ) -> None:
         self._state = state
 
@@ -257,7 +256,9 @@ class ThreadListSyncPayload:
     def __repr__(self) -> str:
         return f"<ThreadListSyncPayload guild_id={self.guild_id}>"
 
-    def combined(self) -> Generator[tuple["PartialChannel", tuple["Thread", list["PartialThreadMember"]]]]:
+    def combined(self) -> Iterator[
+        tuple["PartialChannel", tuple["Thread", list["PartialThreadMember"]]]
+    ]:
         channels = self.channels
         threads = self.threads
         members = self.members
@@ -303,11 +304,12 @@ class ThreadMembersUpdatePayload:
         "_added_members",
         "removed_member_ids",
     )
+
     def __init__(
         self,
         *,
         state: "DiscordAPI",
-        data: ThreadMembersUpdate,
+        data: "ThreadMembersUpdate",
     ) -> None:
         self._state = state
 
@@ -349,7 +351,7 @@ class ThreadMembersUpdatePayload:
         ]
 
     @property
-    def removed_members(self) -> list[PartialMember]:
+    def removed_members(self) -> list["PartialMember"]:
         """ list[PartialMember]: The members that were removed from the thread """
         if not self.removed_member_ids:
             return []

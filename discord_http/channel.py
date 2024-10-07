@@ -6,7 +6,7 @@ from .embeds import Embed
 from .emoji import EmojiParser
 from .enums import (
     ChannelType, ResponseType, VideoQualityType,
-    SortOrderType, ForumLayoutType, PrivacyLevel
+    SortOrderType, ForumLayoutType, PrivacyLevelType
 )
 from .file import File
 from .flags import PermissionOverwrite, ChannelFlags
@@ -19,7 +19,6 @@ from .webhook import Webhook
 
 if TYPE_CHECKING:
     from .types import channels
-
     from .member import ThreadMember
     from .guild import PartialGuild, PartialScheduledEvent
     from .http import DiscordAPI
@@ -1829,7 +1828,7 @@ class StageInstance(PartialBase):
         self,
         *,
         state: "DiscordAPI",
-        data: channels.StageInstance,
+        data: "channels.StageInstance",
         guild: "PartialGuild | None" = None,
     ) -> None:
         super().__init__(id=int(data["id"]))
@@ -1837,11 +1836,11 @@ class StageInstance(PartialBase):
         self._guild: "PartialGuild | None" = guild
         self._from_data(data)
 
-    def _from_data(self, data: channels.StageInstance) -> None:
+    def _from_data(self, data: "channels.StageInstance") -> None:
         self.channel_id: int = int(data["channel_id"])
         self.guild_id: int = int(data["guild_id"])
         self.topic: str = data["topic"]
-        self.privacy_level: PrivacyLevel = PrivacyLevel(data["privacy_level"])
+        self.privacy_level: PrivacyLevelType = PrivacyLevelType(data["privacy_level"])
         self.guild_scheduled_event_id: Optional[int] = utils.get_int(data, "guild_scheduled_event_id")  # type: ignore # todo types
 
     @property
@@ -1878,7 +1877,7 @@ class StageInstance(PartialBase):
         self,
         *,
         topic: str = MISSING,
-        privacy_level: PrivacyLevel = MISSING,
+        privacy_level: PrivacyLevelType = MISSING,
         reason: Optional[str] = None
     ) -> Self:
         """Edit this stage instance
@@ -1917,7 +1916,6 @@ class StageInstance(PartialBase):
             data=r.response,  # type: ignore # todo types
             guild=self._guild,
         )
-
 
     async def delete(self, *, reason: Optional[str] = None) -> None:
         """Delete this stage instance
@@ -1976,7 +1974,7 @@ class StageChannel(VoiceChannel):
         self,
         *,
         topic: str,
-        privacy_level: PrivacyLevel = MISSING,
+        privacy_level: PrivacyLevelType = MISSING,
         send_start_notification: bool = MISSING,
         guild_scheduled_event: Snowflake | int = MISSING,
         reason: Optional[str] = None
@@ -1988,9 +1986,9 @@ class StageChannel(VoiceChannel):
         ----------
         topic: `str`
             The topic of the stage instance
-        privacy_level: `PrivacyLevel`
+        privacy_level: `PrivacyLevelType`
             The privacy level of the stage instance.
-            Defaults to `PrivacyLevel.guild_only`
+            Defaults to `PrivacyLevelType.guild_only`
         send_start_notification: `bool`
             Whether to notify @everyone that the stage instance has started.
         guild_scheduled_event: `Optional[Snowflake | int]`

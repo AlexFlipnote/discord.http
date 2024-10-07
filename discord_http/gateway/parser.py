@@ -24,12 +24,7 @@ from ..voice import VoiceState
 from ..integrations import Integration, PartialIntegration
 
 if TYPE_CHECKING:
-    from ..types.channels import (
-        ThreadListSync,
-        ThreadMembersUpdate,
-        ThreadMemberUpdate
-    )
-
+    from ..types import channels
     from ..client import Client
 
 __all__ = (
@@ -276,10 +271,10 @@ class Parser:
         self.bot.cache.remove_channel(thread)
         return (thread,)
 
-    def thread_list_sync(self, data: ThreadListSync) -> tuple[ThreadListSyncPayload]:
+    def thread_list_sync(self, data: "channels.ThreadListSync") -> tuple[ThreadListSyncPayload]:
         return (ThreadListSyncPayload(state=self.bot.state, data=data),)
 
-    def thread_member_update(self, data: ThreadMemberUpdate) -> tuple[PartialThreadMember]:
+    def thread_member_update(self, data: "channels.ThreadMemberUpdate") -> tuple[PartialThreadMember]:
         return (
             PartialThreadMember(
                 state=self.bot.state,
@@ -288,7 +283,7 @@ class Parser:
             ),
         )
 
-    def thread_members_update(self, data: ThreadMembersUpdate) -> tuple[ThreadMembersUpdatePayload]:
+    def thread_members_update(self, data: "channels.ThreadMembersUpdate") -> tuple[ThreadMembersUpdatePayload]:
         return (ThreadMembersUpdatePayload(state=self.bot.state, data=data),)
 
     def _message(self, data: dict) -> Message:
@@ -436,20 +431,20 @@ class Parser:
             ),
         )
 
-    def stage_instance_create(self, data: channels.StageInstance) -> tuple[StageInstance]:
+    def stage_instance_create(self, data: "channels.StageInstance") -> tuple[StageInstance]:
         guild = self.bot.cache.get_guild(int(data["guild_id"]))
         stage_instance = StageInstance(
-                state=self.bot.state,
-                data=data,
-                guild=guild
-            )
+            state=self.bot.state,
+            data=data,
+            guild=guild
+        )
 
         if guild and (channel := guild.get_channel(int(data["channel_id"]))):
-            channel._stage_instance = stage_instance # type: ignore # should be fine?
+            channel._stage_instance = stage_instance  # type: ignore # should be fine?
 
         return (stage_instance,)
 
-    def stage_instance_update(self, data: channels.StageInstance) -> tuple[StageInstance]:
+    def stage_instance_update(self, data: "channels.StageInstance") -> tuple[StageInstance]:
         guild = self.bot.cache.get_guild(int(data["guild_id"]))
 
         # try updating the existing stage instance from cache if it exists
@@ -465,18 +460,19 @@ class Parser:
                 ),
             )
 
-    def stage_instance_delete(self, data: channels.StageInstance) -> tuple[StageInstance]:
+    def stage_instance_delete(self, data: "channels.StageInstance") -> tuple[StageInstance]:
         guild = self.bot.cache.get_guild(int(data["guild_id"]))
         stage_instance = StageInstance(
-                state=self.bot.state,
-                data=data,
-                guild=guild
-            )
+            state=self.bot.state,
+            data=data,
+            guild=guild
+        )
 
         if guild and (channel := guild.get_channel(int(data["channel_id"]))):
-            channel._stage_instance = None # type: ignore # should be fine?
+            channel._stage_instance = None  # type: ignore # should be fine?
 
         return (stage_instance,)
+
     def integration_create(self, data: dict) -> tuple[Integration]:
         _guild = self._get_guild_or_partial(int(data.pop("guild_id")))
         if _guild is None:

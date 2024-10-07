@@ -11,16 +11,15 @@ from .context import *
 from .cooldowns import *
 from .embeds import *
 from .emoji import *
+from .entitlements import *
 from .enums import *
 from .errors import *
 from .file import *
-from .flags import *
 from .flags import *
 from .guild import *
 from .http import *
 from .invite import *
 from .member import *
-from .mentions import *
 from .mentions import *
 from .message import *
 from .multipart import *

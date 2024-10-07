@@ -33,6 +33,7 @@ maintainer = ["twine", "wheel", "build"]
 [tool.setuptools]
 packages = [
   "discord_http",
+  "discord_http.types",
   "discord_http.gateway",
 ]
 
