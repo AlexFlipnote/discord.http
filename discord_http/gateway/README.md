@@ -20,9 +20,9 @@ More will be handled in `discord_http/gateway/parser.py`
   - [x] THREAD_LIST_SYNC
   - [x] THREAD_MEMBER_UPDATE
   - [x] THREAD_MEMBERS_UPDATE *
-  - [ ] STAGE_INSTANCE_CREATE
-  - [ ] STAGE_INSTANCE_UPDATE
-  - [ ] STAGE_INSTANCE_DELETE
+  - [x] STAGE_INSTANCE_CREATE
+  - [x] STAGE_INSTANCE_UPDATE
+  - [x] STAGE_INSTANCE_DELETE
 
 ## GUILD_MEMBERS (1 << 1) **
   - [x] GUILD_MEMBER_ADD
