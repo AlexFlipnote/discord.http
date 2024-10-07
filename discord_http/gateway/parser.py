@@ -1,10 +1,10 @@
 from datetime import datetime
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, overload
 
 from .object import (
     ChannelPinsUpdate, TypingStartEvent,
     Reaction, BulkDeletePayload, ThreadListSyncPayload,
-    ThreadMembersUpdatePayload
+    ThreadMembersUpdatePayload, Presence
 )
 
 from .. import utils
@@ -36,6 +36,14 @@ class Parser:
     def __init__(self, bot: "Client"):
         self.bot = bot
 
+    @overload
+    def _get_guild_or_partial(self, guild_id: None) -> None:
+        ...
+
+    @overload
+    def _get_guild_or_partial(self, guild_id: int) -> "PartialGuild | Guild":
+        ...
+
     def _get_guild_or_partial(self, guild_id: int | None) -> "PartialGuild | Guild | None":
         if not guild_id:
             return None
@@ -45,14 +53,42 @@ class Parser:
             PartialGuild(state=self.bot.state, id=guild_id)
         )
 
-    def _get_channel_or_partial(self, channel_id: int, guild_id: int | None) -> "BaseChannel | PartialChannel":
+    def _get_channel_or_partial(
+        self,
+        channel_id: int,
+        guild_id: int | None
+    ) -> "BaseChannel | PartialChannel":
         if not guild_id:
             return PartialChannel(state=self.bot.state, id=channel_id)
 
         guild = self._get_guild_or_partial(guild_id)
-        return guild.get_channel(channel_id) or PartialChannel(state=self.bot.state, id=channel_id, guild_id=guild_id)
+        return guild.get_channel(channel_id) or PartialChannel(
+            state=self.bot.state,
+            id=channel_id,
+            guild_id=guild_id
+        )
 
-    def _get_user_or_partial(self, user_id: int, guild_id: int | None) -> "PartialUser | User | Member | PartialMember":
+    @overload
+    def _get_user_or_partial(
+        self,
+        user_id: int,
+        guild_id: None
+    ) -> "PartialUser | User":
+        ...
+
+    @overload
+    def _get_user_or_partial(
+        self,
+        user_id: int,
+        guild_id: int
+    ) -> "Member | PartialMember":
+        ...
+
+    def _get_user_or_partial(
+        self,
+        user_id: int,
+        guild_id: int | None
+    ) -> "PartialUser | User | Member | PartialMember":
         state = self.bot.state
         if not guild_id:
             return PartialUser(state=state, id=user_id)
@@ -503,8 +539,33 @@ class Parser:
             ),
         )
 
+    def webhooks_update(self, data: dict) -> tuple["PartialChannel"]:
+        return (
+            self._get_channel_or_partial(
+                int(data["channel_id"]),
+                int(data["guild_id"])
+            ),
+        )
+
+    def presence_update(self, data: dict) -> tuple[Presence]:
+        p = Presence(
+            state=self.bot.state,
+            user=self._get_user_or_partial(
+                int(data["user"]["id"]),
+                int(data["guild_id"])
+            ),
+            guild=self._get_guild_or_partial(int(data["guild_id"])),
+            data=data
+        )
+
+        self.bot.cache.update_presence(p)
+
+        return (p,)
+
     def guild_integrations_update(self, data: dict) -> tuple["PartialGuild | Guild"]:
         return (
             # guild_id is always provided
-            self._get_guild_or_partial(int(data["guild_id"])),  # type: ignore
+            self._get_guild_or_partial(
+                int(data["guild_id"])
+            ),
         )

@@ -12,6 +12,7 @@ __all__ = (
 
 class Asset:
     BASE = "https://cdn.discordapp.com"
+    PROXY = "https://media.discordapp.net"
 
     def __init__(
         self,
@@ -216,4 +217,21 @@ class Asset:
             url=f"{cls.BASE}/banners/{user_id}/{banner}.{format}?size=1024",
             key=banner,
             animated=animated
+        )
+
+    @classmethod
+    def _from_activity_asset(
+        cls,
+        state: "DiscordAPI",
+        activity_id: int,
+        image: str
+    ) -> Self:
+        url = f"{cls.BASE}/app-assets/{activity_id}/{image}.png"
+        if image.startswith("mp:"):
+            url = f"{cls.PROXY}/{image}"
+
+        return cls(
+            state=state,
+            url=url,
+            key=image
         )

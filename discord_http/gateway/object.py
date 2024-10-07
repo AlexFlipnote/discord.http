@@ -1,6 +1,9 @@
 from typing import TYPE_CHECKING, Iterator
 from datetime import datetime
 
+from .activity import Activity
+from .enums import StatusType
+
 from .. import utils
 from ..colour import Colour
 from ..emoji import EmojiParser
@@ -29,6 +32,7 @@ __all__ = (
     "BulkDeletePayload",
     "Reaction",
     "ThreadListSyncPayload",
+    "Presence",
     "ThreadMembersUpdatePayload",
 )
 
@@ -50,10 +54,53 @@ class ChannelPinsUpdate:
         channel: "BaseChannel | PartialChannel",
         last_pin_timestamp: "datetime | None",
         guild: "PartialGuild | Guild | None",
-    ) -> None:
+    ):
         self.channel: "BaseChannel | PartialChannel" = channel
         self.guild: "PartialGuild | Guild | None" = guild
         self.last_pin_timestamp: "datetime | None" = last_pin_timestamp
+
+
+class Presence:
+    def __init__(
+        self,
+        *,
+        state: "DiscordAPI",
+        user: "Member | PartialMember",
+        guild: "PartialGuild | Guild",
+        data: dict
+    ):
+        self._state = state
+
+        self.user = user
+        self.guild = guild
+        self.status: StatusType = StatusType[data["status"]]
+        self.activities: list[Activity] = [
+            Activity(state=self._state, data=g)
+            for g in data.get("activities", [])
+        ]
+
+        self.desktop: StatusType | None = None
+        self.mobile: StatusType | None = None
+        self.web: StatusType | None = None
+
+        self._from_data(data)
+
+    def __repr__(self) -> str:
+        return (
+            f"<Presence user={self.user} "
+            f"guild={self.guild} activities={len(self.activities)}>"
+        )
+
+    def _from_data(self, data: dict) -> None:
+        _client_status = data.get("client_status", {})
+        if _client_status.get("desktop", None):
+            self.desktop = StatusType[_client_status["desktop"]]
+
+        if _client_status.get("mobile", None):
+            self.mobile = StatusType[_client_status["mobile"]]
+
+        if _client_status.get("web", None):
+            self.web = StatusType[_client_status["web"]]
 
 
 class TypingStartEvent:
@@ -77,7 +124,7 @@ class TypingStartEvent:
         channel: "BaseChannel | PartialChannel",
         user: "PartialUser | User | Member | PartialMember",
         timestamp: "datetime",
-    ) -> None:
+    ):
         self.guild: "PartialGuild | Guild | None" = guild
         self.channel: "BaseChannel | PartialChannel" = channel
         self.user: "PartialUser | User | Member | PartialMember" = user
@@ -202,7 +249,7 @@ class ThreadListSyncPayload:
         *,
         state: "DiscordAPI",
         data: "ThreadListSync",
-    ) -> None:
+    ):
         self._state = state
 
         self.guild_id: int = int(data["guild_id"])
@@ -310,7 +357,7 @@ class ThreadMembersUpdatePayload:
         *,
         state: "DiscordAPI",
         data: "ThreadMembersUpdate",
-    ) -> None:
+    ):
         self._state = state
 
         self.id: int = int(data["id"])

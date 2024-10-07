@@ -26,6 +26,7 @@ __all__ = (
     "InviteType",
     "MFALevel",
     "MessageReferenceType",
+    "PrivacyLevelType",
     "ReactionType",
     "ResponseType",
     "SKUType",
@@ -38,7 +39,6 @@ __all__ = (
     "VerificationLevel",
     "VideoQualityType",
     "WebhookType",
-    "PrivacyLevelType",
 )
 
 

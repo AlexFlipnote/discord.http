@@ -73,7 +73,7 @@ class EmojiParser:
 
     @classmethod
     def from_dict(cls, data: dict) -> Self:
-        if data["id"] is None:
+        if data.get("id", None) is None:
             return cls(data["name"])
 
         return cls(

@@ -14,9 +14,11 @@ from .role import PartialRole, Role
 from .user import User, PartialUser
 from .view import View
 
+
 MISSING = utils.MISSING
 
 if TYPE_CHECKING:
+    from .gateway.object import Presence
     from .types.guilds import (
         ThreadMember as ThreadMemberPayload
     )
@@ -43,10 +45,15 @@ class PartialMember(PartialBase):
         self._state = state
 
         self._user = PartialUser(state=state, id=self.id)
+
         self.guild_id: int = int(guild_id)
+        self.presence: "Presence | None" = None
 
     def __repr__(self) -> str:
         return f"<PartialMember id={self.id} guild_id={self.guild_id}>"
+
+    def _update_presence(self, obj: "Presence | None") -> None:
+        self.presence = obj
 
     @property
     def guild(self) -> PartialGuild:

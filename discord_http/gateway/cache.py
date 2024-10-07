@@ -6,6 +6,7 @@ from ..voice import VoiceState, PartialVoiceState
 from .flags import GatewayCacheFlags
 
 if TYPE_CHECKING:
+    from .object import Presence
     from ..channel import PartialChannel, PublicThread, PrivateThread
     from ..client import Client
     from ..guild import PartialGuild, Guild
@@ -202,6 +203,23 @@ class Cache:
             return None
 
         guild._cache_members.pop(member.id, None)
+
+    def update_presence(self, presence: "Presence | None") -> None:
+        if self.cache_flags is None:
+            return None
+
+        if GatewayCacheFlags.presences not in self.cache_flags:
+            return None
+
+        guild = self.get_guild(presence.guild.id)
+        if not guild:
+            return None
+
+        member = guild.get_member(presence.user.id)
+        if not member:
+            return None
+
+        member._update_presence(presence)
 
     def add_channel(self, channel: Union["BaseChannel", "PartialChannel"]) -> None:
         if self.cache_flags is None:

@@ -3,6 +3,8 @@ from ..enums import BaseEnum
 __all__ = (
     "PayloadType",
     "ShardCloseType",
+    "StatusType",
+    "ActivityType",
 )
 
 
@@ -26,3 +28,20 @@ class ShardCloseType(BaseEnum):
     resume = 0
     reconnect = 1
     invalid_session = 2
+
+
+class StatusType(BaseEnum):
+    offline = 0
+    online = 1
+    idle = 2
+    dnd = 3
+    streaming = 4
+
+
+class ActivityType(BaseEnum):
+    playing = 0
+    streaming = 1
+    listening = 2
+    watching = 3
+    custom = 4
+    competing = 5

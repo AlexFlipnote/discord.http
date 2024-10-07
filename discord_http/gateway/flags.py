@@ -3,7 +3,20 @@ from ..flags import BaseFlag
 __all__ = (
     "GatewayCacheFlags",
     "Intents",
+    "ActivityFlags",
 )
+
+
+class ActivityFlags(BaseFlag):
+    instance = 1 << 0
+    join = 1 << 1
+    spectate = 1 << 2
+    join_request = 1 << 3
+    sync = 1 << 4
+    play = 1 << 5
+    party_privacy_friends = 1 << 6
+    party_privacy_voice_channel = 1 << 7
+    embedded = 1 << 8
 
 
 class Intents(BaseFlag):
@@ -39,11 +52,12 @@ class GatewayCacheFlags(BaseFlag):
     partial_emojis = 1 << 5
     partial_stickers = 1 << 6
     partial_voice_states = 1 << 7
-    guilds = 1 << 10
-    members = 1 << 11
-    channels = 1 << 12
-    threads = 1 << 13
-    roles = 1 << 14
-    emojis = 1 << 15
-    stickers = 1 << 16
-    voice_states = 1 << 17
+    guilds = 1 << 50
+    members = 1 << 51
+    channels = 1 << 52
+    threads = 1 << 53
+    roles = 1 << 54
+    emojis = 1 << 55
+    stickers = 1 << 56
+    voice_states = 1 << 57
+    presences = 1 << 100

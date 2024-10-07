@@ -37,7 +37,7 @@ More will be handled in `discord_http/gateway/parser.py`
 
 ## GUILD_EXPRESSIONS (1 << 3)
   - [x] GUILD_EMOJIS_UPDATE
-  - [ ] GUILD_STICKERS_UPDATE
+  - [x] GUILD_STICKERS_UPDATE
   - [x] GUILD_SOUNDBOARD_SOUND_CREATE
   - [x] GUILD_SOUNDBOARD_SOUND_UPDATE
   - [x] GUILD_SOUNDBOARD_SOUND_DELETE
@@ -50,18 +50,18 @@ More will be handled in `discord_http/gateway/parser.py`
   - [x] INTEGRATION_DELETE
 
 ## GUILD_WEBHOOKS (1 << 5)
-  - [ ] WEBHOOKS_UPDATE
+  - [x] WEBHOOKS_UPDATE
 
 ## GUILD_INVITES (1 << 6)
   - [x] INVITE_CREATE
   - [x] INVITE_DELETE
 
 ## GUILD_VOICE_STATES (1 << 7)
-  - [ ] VOICE_CHANNEL_EFFECT_SEND
-  - [ ] VOICE_STATE_UPDATE
+  - [ ] VOICE_CHANNEL_EFFECT_SEND ( This probably needs bot in voice, not worth? )
+  - [x] VOICE_STATE_UPDATE
 
 ## GUILD_PRESENCES (1 << 8) **
-  - [ ] PRESENCE_UPDATE
+  - [x] PRESENCE_UPDATE
 
 ## GUILD_MESSAGES (1 << 9)
   - [x] MESSAGE_CREATE
@@ -82,13 +82,13 @@ More will be handled in `discord_http/gateway/parser.py`
   - [x] MESSAGE_CREATE
   - [x] MESSAGE_UPDATE
   - [x] MESSAGE_DELETE
-  - [ ] CHANNEL_PINS_UPDATE
+  - [x] CHANNEL_PINS_UPDATE
 
 ## DIRECT_MESSAGE_REACTIONS (1 << 13)
   - [x] MESSAGE_REACTION_ADD
   - [x] MESSAGE_REACTION_REMOVE
-  - [ ] MESSAGE_REACTION_REMOVE_ALL
-  - [ ] MESSAGE_REACTION_REMOVE_EMOJI
+  - [x] MESSAGE_REACTION_REMOVE_ALL
+  - [x] MESSAGE_REACTION_REMOVE_EMOJI
 
 ## DIRECT_MESSAGE_TYPING (1 << 14)
   - [x] TYPING_START

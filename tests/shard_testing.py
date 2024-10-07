@@ -1,10 +1,13 @@
 import json
 
-from discord_http.gateway import Intents, GatewayCacheFlags, Reaction, BulkDeletePayload
+from discord_http.gateway import (
+    Intents, GatewayCacheFlags, Reaction,
+    BulkDeletePayload
+)
 from discord_http import (
     Client, Message, Member, User,
     PartialGuild, Role, PartialRole, PartialMessage, VoiceState,
-    AuditLogEntry
+    AuditLogEntry, PartialChannel
 )
 
 
@@ -23,7 +26,8 @@ client = Client(
         GatewayCacheFlags.members |
         GatewayCacheFlags.roles |
         GatewayCacheFlags.channels |
-        GatewayCacheFlags.voice_states
+        GatewayCacheFlags.voice_states |
+        GatewayCacheFlags.presences
     ),
     intents=(
         Intents.guilds |
@@ -33,7 +37,9 @@ client = Client(
         Intents.message_content |
         Intents.guild_message_reactions |
         Intents.guild_voice_states |
-        Intents.guild_moderation
+        Intents.guild_moderation |
+        Intents.guild_webhooks |
+        Intents.guild_presences
     ),
 )
 
@@ -61,6 +67,11 @@ async def on_message_reaction_add(reaction: Reaction):
 @client.listener()
 async def on_message_reaction_remove(reaction: Reaction):
     print(f"Reaction: {reaction.emoji}")
+
+
+@client.listener()
+async def on_webhooks_update(channel: PartialChannel):
+    print(channel)
 
 
 @client.listener()

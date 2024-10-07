@@ -106,21 +106,33 @@ def time_snowflake(
     )
 
 
-def parse_time(ts: str) -> datetime:
+def parse_time(ts: str | int) -> datetime:
     """
-    Parse a timestamp from a string
+    Parse a timestamp from a string or int
 
     Parameters
     ----------
-    ts: `str`
+    ts: `str` | `int`
         The timestamp to parse
 
     Returns
     -------
     `datetime`
         The datetime of the timestamp
+
+    Raises
+    ------
+    `TypeError`
+        If the provided timestamp is not a string or int
     """
-    return datetime.fromisoformat(ts)
+    if isinstance(ts, int):
+        if len(str(ts)) >= 13:
+            ts = ts // 1000
+        return datetime.fromtimestamp(ts, tz=UTC)
+    elif isinstance(ts, str):
+        return datetime.fromisoformat(ts)
+
+    raise TypeError("ts must be a str or int")
 
 
 def normalize_entity_id(
