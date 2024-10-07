@@ -57,7 +57,12 @@ reportUnnecessaryTypeIgnoreComment = "warning"
 typeCheckingMode = "basic"
 pythonVersion = "3.11"
 
-include = ["discord_http"]
+include = [
+  "discord_http",
+  "discord_http.types",
+  "discord_http.gateway",
+]
+
 exclude = [
   "**/__pycache__", "**/*.pyc", "*.egg-info",
   ".venv", "build", "docs", "dist",

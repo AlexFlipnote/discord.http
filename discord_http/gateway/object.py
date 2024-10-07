@@ -337,15 +337,16 @@ class ThreadMembersUpdatePayload:
         if not self._added_members:
             return []
 
-        from ..member import ThreadMember
-
         guild = self.guild
         state = self._state
+
+        from ..member import ThreadMember
+
         return [
             ThreadMember(
                 state=state,
                 guild=guild,
-                data=m,
+                data=m,  # type: ignore
             )
             for m in self._added_members
         ]
