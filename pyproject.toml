@@ -25,6 +25,10 @@ dependencies = [
   "websockets",
 ]
 
+[project.urls]
+Homepage = "https://discordhttp.alexflipnote.dev"
+Repository = "https://github.com/AlexFlipnote/discord.http"
+
 [project.optional-dependencies]
 dev = ["pyright", "flake8", "toml"]
 docs = ["sphinx", "furo", "myst-parser"]
