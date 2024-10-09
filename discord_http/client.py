@@ -36,7 +36,9 @@ from .view import InteractionStorage
 from .webhook import PartialWebhook, Webhook
 
 if TYPE_CHECKING:
-    from .gateway import GatewayClient, GatewayCacheFlags, Intents
+    from .gateway.client import GatewayClient
+    from .gateway.flags import GatewayCacheFlags, Intents
+    from .gateway.object import PlayingStatus
 
 _log = logging.getLogger(__name__)
 
@@ -58,6 +60,7 @@ class Client:
         loop: Optional[asyncio.AbstractEventLoop] = None,
         allowed_mentions: AllowedMentions = AllowedMentions.all(),
         enable_gateway: bool = False,
+        playing_status: "PlayingStatus | None" = None,
         chunk_guilds: bool = False,
         guild_ready_timeout: float = 2.0,
         gateway_cache: Optional["GatewayCacheFlags"] = None,
@@ -89,6 +92,9 @@ class Client:
             Allowed mentions to use, if not provided, it will use `AllowedMentions.all()`
         enable_gateway: `bool`
             Whether to enable the gateway or not, which runs in the background
+        playing_status: `Optional[PlayingStatus]`
+            The playing status to use, if not provided, it will use `None`.
+            This is only used if `enable_gateway` is `True`.
         chunk_guilds: `bool`
             Whether to chunk guilds or not, which will reduce the amount of requests
         guild_ready_timeout: `float`
@@ -117,6 +123,7 @@ class Client:
         self.logging_level: int = logging_level
         self.debug_events: bool = debug_events
         self.enable_gateway: bool = enable_gateway
+        self.playing_status: Optional["PlayingStatus"] = playing_status
         self.guild_ready_timeout: float = guild_ready_timeout
         self.chunk_guilds: bool = chunk_guilds
         self.intents: Optional["Intents"] = intents
@@ -186,7 +193,13 @@ class Client:
         """
         await self.state.http._create_session()
 
-        client_object = await self._prepare_me()
+        try:
+            client_object = await self._prepare_me()
+        except RuntimeError as e:
+            # Make sure the error is readable and stop HTTP server here
+            _log.error(e)
+            await self.backend.shutdown()
+            return None
 
         await self.setup_hook()
         await self._prepare_commands()
@@ -242,11 +255,7 @@ class Client:
 
     async def _prepare_me(self) -> User:
         """ Gets the bot's user data, mostly used to validate token """
-        try:
-            self._user_object = await self.state.me()
-        except KeyError:
-            raise RuntimeError("Invalid token")
-
+        self._user_object = await self.state.me()
         _log.debug(f"/users/@me verified: {self.user} ({self.user.id})")
 
         return self.user

@@ -14,11 +14,14 @@ from typing import (
 )
 
 from . import __version__
+from .flags import ApplicationFlags
 from .errors import (
     NotFound, DiscordServerError,
     Forbidden, HTTPException, Ratelimited,
     AutomodBlock
 )
+
+from .gateway.flags import Intents
 
 if TYPE_CHECKING:
     from .client import Client
@@ -495,13 +498,66 @@ class DiscordAPI:
                 raise RuntimeError("Unreachable code, reached max tries (5)")
 
     async def me(self) -> "User":
-        """ `User`: Fetches the bot's user information """
-        r = await self.query("GET", "/users/@me")
+        """
+        `User`: Fetches the bot's user information
+
+        Returns
+        -------
+        `User`
+            The bot's user object
+
+        Raises
+        ------
+        `RuntimeError`
+            - If the bot token is not valid
+            - If the bot is not allowed to use the some intents
+        """
+        try:
+            r = await self.query("GET", "/applications/@me")
+        except HTTPException as e:
+            raise RuntimeError(
+                "Bot token is not valid, please check your token and try again. "
+                f"({e.text})"
+            )
+
+        flags = ApplicationFlags(r.response["flags"])
+        denied_intents: Intents = Intents(0)
+
+        if (
+            self.bot.intents and
+            self.bot.enable_gateway
+        ):
+            if Intents.guild_presences in self.bot.intents:
+                if (
+                    flags.gateway_presence not in flags and
+                    flags.gateway_presence_limited not in flags
+                ):
+                    denied_intents |= Intents.guild_presences
+
+            if Intents.message_content in self.bot.intents:
+                if (
+                    flags.gateway_message_content not in flags and
+                    flags.gateway_message_content_limited not in flags
+                ):
+                    denied_intents |= Intents.message_content
+
+            if Intents.guild_members in self.bot.intents:
+                if (
+                    flags.gateway_guild_members not in flags and
+                    flags.gateway_guild_members_limited not in flags
+                ):
+                    denied_intents |= Intents.guild_members
+
+        if denied_intents != Intents(0):
+            raise RuntimeError(
+                "You attempted to boot the bot with intents that are not allowed "
+                f"by the application. Denied intents: {repr(denied_intents)}"
+            )
 
         from .user import User
         return User(
             state=self,
-            data=r.response
+            data=r.response["bot"]
         )
 
     async def _app_command_query(

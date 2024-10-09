@@ -16,7 +16,8 @@ pip install git+https://github.com/AlexFlipnote/discord.http.git@feat/gateway
 ## Todo list
 - [x] Handling of all gateway intent events
 - [x] Prevent `GUILD_CREATE` from being dispatched before `SHARD_READY`
-- [ ] Ability to set playing status on boot and change later
+- [x] Ability to set playing status on boot and change later
+- [x] Check if bot is allowed to use special intents
 - [ ] Properly handle all needed cache flags
 - [ ] Handling of chunking members
 - [ ] Handling of ratelimits

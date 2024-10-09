@@ -1,8 +1,10 @@
+import time
+
 from typing import TYPE_CHECKING, Iterator
 from datetime import datetime
 
 from .activity import Activity
-from .enums import StatusType, PollVoteActionType
+from .enums import StatusType, PollVoteActionType, ActivityType
 
 from .. import utils
 from ..automod import AutoModRuleAction, PartialAutoModRule
@@ -31,6 +33,7 @@ __all__ = (
     "AutomodExecution",
     "BulkDeletePayload",
     "ChannelPinsUpdate",
+    "PlayingStatus",
     "PollVoteEvent",
     "Presence",
     "Reaction",
@@ -38,6 +41,67 @@ __all__ = (
     "ThreadMembersUpdatePayload",
     "TypingStartEvent",
 )
+
+
+class PlayingStatus:
+    def __init__(
+        self,
+        *,
+        name: str | None = None,
+        status: StatusType | str | int | None = None,
+        type: ActivityType | str | int | None = None,
+        url: str | None = None,
+    ):
+        self.since = 0
+        self.name = name
+        self.status: StatusType | str | int | None = status
+        self.type: ActivityType | str | int | None = type
+
+        if isinstance(self.status, str):
+            self.status = StatusType[self.status]
+        elif isinstance(self.status, int):
+            self.status = StatusType(self.status)
+
+        if isinstance(self.type, str):
+            self.type = ActivityType[self.type]
+        elif isinstance(self.type, int):
+            self.type = ActivityType(self.type)
+
+        self.url = None
+        if self.type == ActivityType.streaming:
+            self.url = str(url)
+
+        if self.status == StatusType.idle:
+            self.since = int(time.time() * 1_000)
+
+    def __repr__(self) -> str:
+        return (
+            f"<PlayingStatus name={self.name} "
+            f"status={self.status} type={self.type}>"
+        )
+
+    def to_dict(self) -> dict:
+        payload = {
+            "afk": False,
+            "since": self.since,
+            "status": str(self.status),
+            "activities": [{}]
+        }
+
+        if self.url:
+            payload["activities"][0]["url"] = self.url
+
+        if self.type is not None:
+            payload["activities"][0]["type"] = int(self.type)
+
+        if self.name is not None:
+            payload["activities"][0]["name"] = self.name
+
+            if self.type is None:
+                # Fallback to playing if no type is provided but name is
+                payload["activities"][0]["type"] = int(ActivityType.playing)
+
+        return payload
 
 
 class ChannelPinsUpdate:

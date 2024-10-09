@@ -2,7 +2,8 @@ import json
 
 from discord_http.gateway import (
     Intents, GatewayCacheFlags, Reaction,
-    BulkDeletePayload, AutomodExecution, PollVoteEvent
+    BulkDeletePayload, AutomodExecution, PollVoteEvent,
+    PlayingStatus
 )
 from discord_http import (
     Client, Message, Member, User,
@@ -22,6 +23,10 @@ client = Client(
     debug_events=config["debug_events"],
     guild_id=config.get("guild_id", None),
     enable_gateway=True,
+    playing_status=PlayingStatus(
+        name="Testing status",
+        status="dnd"
+    ),
     gateway_cache=(
         GatewayCacheFlags.guilds |
         GatewayCacheFlags.members |

@@ -6,6 +6,7 @@ from datetime import datetime, UTC
 from typing import Optional, Coroutine, TYPE_CHECKING
 
 from .shard import Shard
+from .object import PlayingStatus
 
 if TYPE_CHECKING:
     from ..client import GatewayCacheFlags, Client, Intents
@@ -50,7 +51,32 @@ class GatewayClient:
         )
 
     def get_shard(self, shard_id: int) -> Optional[Shard]:
+        """
+        Returns the shard object of the shard with the specified ID.
+
+        Parameters
+        ----------
+        shard_id: `int`
+            The ID of the shard to get.
+
+        Returns
+        -------
+        `Optional[Shard]`
+            The shard object with the specified ID, or `None` if not found.
+        """
         return self.__shards.get(shard_id, None)
+
+    async def change_presence(self, status: PlayingStatus) -> None:
+        """
+        Changes the presence of all shards to the specified status.
+
+        Parameters
+        ----------
+        status: `PlayingStatus`
+            The status to change to.
+        """
+        for shard in self.__shards.values():
+            await shard.change_presence(status)
 
     async def _index_websocket_status(self) -> dict[int, dict]:
         _now = datetime.now(UTC)

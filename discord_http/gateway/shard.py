@@ -13,6 +13,7 @@ from typing import Optional, Union, Any, TYPE_CHECKING
 from .. import utils
 
 from .parser import Parser
+from .object import PlayingStatus
 from .enums import PayloadType, ShardCloseType
 
 if TYPE_CHECKING:
@@ -111,8 +112,10 @@ class Shard:
         self.parser = Parser(bot)
         self.status = Status(shard_id)
 
+        self.playing_status: Optional[PlayingStatus] = bot.playing_status
+
         self._ready: asyncio.Event = asyncio.Event()
-        self._guild_ready_timeout: float = float(self.bot.guild_ready_timeout)
+        self._guild_ready_timeout: float = float(bot.guild_ready_timeout)
         self._guild_create_queue: asyncio.Queue["Guild | PartialGuild"] = asyncio.Queue()
 
         self._connection = None
@@ -466,6 +469,21 @@ class Shard:
             self._socket_manager()
         )
 
+    async def change_presence(self, status: PlayingStatus) -> None:
+        """
+        Changes the presence of the shard to the specified status.
+
+        Parameters
+        ----------
+        status: `PlayingStatus`
+            The status to change to.
+        """
+        _log.debug(f"Changing presence in Shard {self.shard_id} to {status}")
+        await self.send_message({
+            "op": int(PayloadType.presence),
+            "d": status.to_dict()
+        })
+
     def payload(self, op: PayloadType) -> dict:
         """ Returns a payload for the websocket """
         if not isinstance(op, PayloadType):
@@ -515,5 +533,8 @@ class Shard:
 
                 if self.shard_count is not None:
                     payload["d"]["shard"] = [self.shard_id, self.shard_count]
+
+                if self.playing_status is not None:
+                    payload["d"]["presence"] = self.playing_status.to_dict()
 
                 return payload
