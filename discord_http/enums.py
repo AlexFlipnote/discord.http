@@ -9,6 +9,7 @@ __all__ = (
     "AuditLogType",
     "AutoModRuleActionType",
     "AutoModRuleEventType",
+    "AutoModRulePresetType",
     "AutoModRuleTriggerType",
     "BaseEnum",
     "ButtonStyles",
@@ -438,6 +439,12 @@ class AutoModRuleActionType(BaseEnum):
     send_alert_message = 2
     timeout = 3
     block_member_interactions = 4
+
+
+class AutoModRulePresetType(BaseEnum):
+    profanity = 1
+    sexual_content = 2
+    slurs = 3
 
 
 class EntitlementOwnerType(BaseEnum):

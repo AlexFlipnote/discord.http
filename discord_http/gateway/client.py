@@ -45,8 +45,7 @@ class GatewayClient:
         self.bot.backend.add_url_rule(
             "/shards",
             "shards",
-            # It does accept dict, pyright is wrong
-            self._index_websocket_status,  # type: ignore
+            self._index_websocket_status,
             methods=["GET"]
         )
 
@@ -96,7 +95,9 @@ class GatewayClient:
                 api_version=self.api_version,
                 debug_events=self.bot.debug_events
             )
+
             shard.connect()
+
             while not shard.status.session_id:
                 await asyncio.sleep(0.5)
 
@@ -106,8 +107,8 @@ class GatewayClient:
 
         self.__shards[shard_id] = shard
 
-    async def launch_shards(self) -> None:
-        """ Launch all theshards """
+    async def _launch_all_shards(self) -> None:
+        """ Launches all the shards """
         if self.shard_count is None:
             self.shard_count, self.max_concurrency = await self._fetch_gateway()
 
@@ -139,13 +140,23 @@ class GatewayClient:
                     _log.debug(f"Bucket {i}/{len(chunks)} shards launched, last bucket, skipping wait")
 
         _log.debug(f"All {len(chunks)} bucket(s) have launched a total of {self.shard_count} shard(s)")
+        asyncio.create_task(self._delay_full_ready())
+
+    async def _delay_full_ready(self) -> None:
+        _waiting: list[Coroutine] = [
+            g.wait_until_ready()
+            for g in self.__shards.values()
+        ]
+
+        # Gather all shards to now wait until they are ready
+        await asyncio.gather(*_waiting)
 
         self.bot._shards_ready.set()
         _log.info("discord.http/gateway is now ready")
 
     def start(self) -> None:
         """ Start the gateway client """
-        self.bot.loop.create_task(self.launch_shards())
+        self.bot.loop.create_task(self._launch_all_shards())
 
     async def close(self) -> None:
         """ Close the gateway client """

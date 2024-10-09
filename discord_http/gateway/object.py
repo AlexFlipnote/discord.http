@@ -2,12 +2,13 @@ from typing import TYPE_CHECKING, Iterator
 from datetime import datetime
 
 from .activity import Activity
-from .enums import StatusType
+from .enums import StatusType, PollVoteActionType
 
 from .. import utils
+from ..automod import AutoModRuleAction, PartialAutoModRule
 from ..colour import Colour
 from ..emoji import EmojiParser
-from ..enums import ReactionType
+from ..enums import ReactionType, AutoModRuleTriggerType
 from ..message import PartialMessage
 
 if TYPE_CHECKING:
@@ -27,13 +28,15 @@ if TYPE_CHECKING:
     from ..channel import BaseChannel, PartialChannel, Thread
 
 __all__ = (
-    "ChannelPinsUpdate",
-    "TypingStartEvent",
+    "AutomodExecution",
     "BulkDeletePayload",
+    "ChannelPinsUpdate",
+    "PollVoteEvent",
+    "Presence",
     "Reaction",
     "ThreadListSyncPayload",
-    "Presence",
     "ThreadMembersUpdatePayload",
+    "TypingStartEvent",
 )
 
 
@@ -131,6 +134,82 @@ class TypingStartEvent:
         self.timestamp: "datetime" = timestamp
 
 
+class AutomodExecution:
+    def __init__(
+        self,
+        *,
+        state: "DiscordAPI",
+        guild: "PartialGuild | Guild",
+        channel: "PartialChannel | None",
+        user: "Member | PartialMember",
+        data: dict
+    ):
+        self._state = state
+
+        self.action: AutoModRuleAction = AutoModRuleAction.from_dict(data["action"])
+        self.rule_id: int = int(data["rule_id"])
+        self.rule_trigger_type: AutoModRuleTriggerType = AutoModRuleTriggerType(data["rule_trigger_type"])
+
+        self.guild: "Guild | PartialGuild" = guild
+        self.channel: "PartialChannel | None" = channel
+        self.user: "Member | PartialMember" = user
+
+        self.message_id: int | None = utils.get_int(data, "message_id")
+        self.alert_system_message_id: int | None = utils.get_int(data, "alert_system_message_id")
+        self.content: str | None = data.get("content", None)
+
+        self.matched_keyword: str | None = data.get("matched_keyword", None)
+        self.matched_content: str | None = data.get("matched_content", None)
+
+    def __repr__(self) -> str:
+        return (
+            f"<AutomodExecution guild={self.guild} "
+            f"user={self.user} action={self.action}>"
+        )
+
+    @property
+    def rule(self) -> PartialAutoModRule:
+        """ `PartialAutoModRule`: Returns a partial object of automod rule """
+        return PartialAutoModRule(
+            state=self._state,
+            id=self.rule_id,
+            guild_id=self.guild.id
+        )
+
+
+class PollVoteEvent:
+    def __init__(
+        self,
+        *,
+        state: "DiscordAPI",
+        user: "Member | PartialMember | PartialUser",
+        channel: "PartialChannel",
+        guild: "PartialGuild | None",
+        type: PollVoteActionType,
+        data: dict
+    ):
+        self._state = state
+
+        self.user: "Member | PartialMember | PartialUser" = user
+        self.guild: "PartialGuild | None" = guild
+        self.channel: "PartialChannel" = channel
+        self.message: PartialMessage = PartialMessage(
+            state=self._state,
+            id=int(data["message_id"]),
+            channel_id=self.channel.id,
+            guild_id=self.guild.id if self.guild else None
+        )
+
+        self.type: PollVoteActionType = type
+        self.answer_id: int = int(data["answer_id"])
+
+    def __repr__(self) -> str:
+        return (
+            f"<PollVoteEvent user={self.user} "
+            f"answer={self.answer_id} type={self.type}>"
+        )
+
+
 class Reaction:
     def __init__(self, *, state: "DiscordAPI", data: dict):
         self._state = state
@@ -197,6 +276,7 @@ class Reaction:
         return PartialMessage(
             state=self._state,
             channel_id=self.channel_id,
+            guild_id=self.guild_id,
             id=self.message_id
         )
 
@@ -210,17 +290,17 @@ class BulkDeletePayload:
         guild: "PartialGuild"
     ):
         self._state = state
+        self.guild: "PartialGuild" = guild
 
         self.messages: list[PartialMessage] = [
             PartialMessage(
                 state=self._state,
                 id=int(g),
+                guild_id=self.guild.id,
                 channel_id=int(data["channel_id"]),
             )
             for g in data["ids"]
         ]
-
-        self.guild: "PartialGuild" = guild
 
 
 class ThreadListSyncPayload:
@@ -236,14 +316,6 @@ class ThreadListSyncPayload:
 
         This may contains ids of channels that have no active threads.
     """
-    __slots__ = (
-        "_state",
-        "guild_id",
-        "channel_ids",
-        "_threads",
-        "_members",
-    )
-
     def __init__(
         self,
         *,
@@ -343,15 +415,6 @@ class ThreadMembersUpdatePayload:
     removed_member_ids: `list[int]`
         The IDs of the members that were removed from the thread.
     """
-    __slots__ = (
-        "_state",
-        "id",
-        "guild_id",
-        "member_count",
-        "_added_members",
-        "removed_member_ids",
-    )
-
     def __init__(
         self,
         *,

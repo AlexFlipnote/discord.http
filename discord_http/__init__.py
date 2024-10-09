@@ -3,6 +3,7 @@ __version__ = "2.0.0"
 # flake8: noqa: F401
 from .asset import *
 from .audit import *
+from .automod import *
 from .backend import *
 from .channel import *
 from .client import *

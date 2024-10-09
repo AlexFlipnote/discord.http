@@ -10,12 +10,12 @@ from typing import (
 )
 
 from . import utils
+from .automod import PartialAutoModRule, AutoModRule
 from .backend import DiscordHTTP
 from .channel import PartialChannel, BaseChannel
 from .commands import Command, Interaction, Listener, Cog, SubGroup
 from .context import Context
 from .emoji import PartialEmoji, Emoji
-from .voice import PartialVoiceState, VoiceState
 from .entitlements import PartialSKU, SKU, PartialEntitlements, Entitlements
 from .enums import ApplicationCommandType
 from .file import File
@@ -25,6 +25,7 @@ from .http import DiscordAPI
 from .invite import PartialInvite, Invite
 from .member import PartialMember, Member
 from .mentions import AllowedMentions
+from .voice import PartialVoiceState, VoiceState
 from .message import PartialMessage, Message
 from .object import Snowflake
 from .role import PartialRole
@@ -57,6 +58,8 @@ class Client:
         loop: Optional[asyncio.AbstractEventLoop] = None,
         allowed_mentions: AllowedMentions = AllowedMentions.all(),
         enable_gateway: bool = False,
+        chunk_guilds: bool = False,
+        guild_ready_timeout: float = 2.0,
         gateway_cache: Optional["GatewayCacheFlags"] = None,
         intents: Optional["Intents"] = None,
         logging_level: int = logging.INFO,
@@ -86,6 +89,11 @@ class Client:
             Allowed mentions to use, if not provided, it will use `AllowedMentions.all()`
         enable_gateway: `bool`
             Whether to enable the gateway or not, which runs in the background
+        chunk_guilds: `bool`
+            Whether to chunk guilds or not, which will reduce the amount of requests
+        guild_ready_timeout: `float`
+            **Gateway**: How long to wait for last GUILD_CREATE to be recieved
+            before triggering shard ready
         gateway_cache: `Optional[GatewayCacheFlags]`
             How the gateway should cache, only used if `enable_gateway` is `True`.
             Leave empty to use no cache.
@@ -109,6 +117,8 @@ class Client:
         self.logging_level: int = logging_level
         self.debug_events: bool = debug_events
         self.enable_gateway: bool = enable_gateway
+        self.guild_ready_timeout: float = guild_ready_timeout
+        self.chunk_guilds: bool = chunk_guilds
         self.intents: Optional["Intents"] = intents
 
         self.gateway: Optional["GatewayClient"] = None
@@ -845,6 +855,59 @@ class Client:
         """
         c = self.get_partial_channel(channel_id, guild_id=guild_id)
         return await c.fetch()
+
+    def get_partial_automod_rule(
+        self,
+        rule_id: int,
+        guild_id: int
+    ) -> PartialAutoModRule:
+        """
+        Creates a partial automod object
+
+        Parameters
+        ----------
+        rule_id: `int`
+            The ID of the automod rule
+        guild_id: `int`
+            The Guild ID where it comes from
+
+        Returns
+        -------
+        `PartialAutoModRule`
+            The partial automod object
+        """
+        return PartialAutoModRule(
+            state=self.state,
+            id=rule_id,
+            guild_id=guild_id
+        )
+
+    async def fetch_automod_rule(
+        self,
+        rule_id: int,
+        guild_id: int
+    ) -> AutoModRule:
+        """
+        Fetches a automod object
+
+        Parameters
+        ----------
+        rule_id: `int`
+            The ID of the automod rule
+        guild_id: `int`
+            The Guild ID where it comes from
+
+        Returns
+        -------
+        `AutoModRule`
+            The automod object
+        """
+        automod = self.get_partial_automod_rule(
+            rule_id=rule_id,
+            guild_id=guild_id
+        )
+
+        return await automod.fetch()
 
     def get_partial_invite(
         self,

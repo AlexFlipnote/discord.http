@@ -124,6 +124,7 @@ class JumpURL:
         return PartialMessage(
             state=self._state,
             channel_id=self.channel_id,
+            guild_id=self.guild_id,
             id=self.message_id
         )
 
@@ -319,9 +320,10 @@ class Poll:
         if data.get("expiry", None):
             poll.expiry = utils.parse_time(data["expiry"])
 
-        poll.is_finalized = data["results"].get("is_finalized", False)
+        _results = data.get("results", {})
+        poll.is_finalized = _results.get("is_finalized", False)
 
-        for g in data["results"]["answer_counts"]:
+        for g in _results.get("answer_counts", []):
             find_answer = next(
                 (a for a in poll.answers if a.id == g["id"]),
                 None
@@ -385,6 +387,7 @@ class MessageReference:
         return PartialMessage(
             state=self._state,
             channel_id=self.channel_id,
+            guild_id=self.guild_id,
             id=self.message_id
         )
 

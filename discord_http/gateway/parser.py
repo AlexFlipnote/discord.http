@@ -1,18 +1,21 @@
 from datetime import datetime
 from typing import TYPE_CHECKING, overload
 
+from .enums import PollVoteActionType
 from .object import (
     ChannelPinsUpdate, TypingStartEvent,
     Reaction, BulkDeletePayload, ThreadListSyncPayload,
-    ThreadMembersUpdatePayload, Presence
+    ThreadMembersUpdatePayload, Presence, AutomodExecution,
+    PollVoteEvent
 )
 
 from .. import utils
 from ..audit import AuditLogEntry
+from ..automod import AutoModRule
 from ..channel import BaseChannel, PartialChannel, StageInstance
 from ..emoji import Emoji
 from ..enums import ChannelType
-from ..guild import Guild, PartialGuild
+from ..guild import Guild, PartialGuild, ScheduledEvent, PartialScheduledEvent
 from ..invite import Invite, PartialInvite
 from ..member import Member, PartialMember, PartialThreadMember
 from ..message import Message, PartialMessage
@@ -119,25 +122,44 @@ class Parser:
         return (guild,)
 
     def guild_delete(self, data: dict) -> tuple[PartialGuild]:
-        return (self.bot.get_partial_guild(data["id"]),)
+        _guild_id = int(data["id"])
+        self.bot.cache.remove_guild(_guild_id)
+        return (self.bot.get_partial_guild(_guild_id),)
+
+    def guild_available(self, data: dict) -> tuple[Guild | PartialGuild]:
+        _guild = self._guild(data)
+
+        cached_guild = self.bot.cache.get_guild(_guild.id)
+        return_guild = cached_guild or _guild
+
+        return (return_guild,)
+
+    def guild_unavailable(self, data: dict) -> tuple[Guild | PartialGuild]:
+        _guild = self._guild(data)
+
+        cached_guild = self.bot.cache.get_guild(_guild.id)
+        return_guild = cached_guild or _guild
+
+        return (return_guild,)
 
     def guild_member_add(self, data: dict) -> tuple[PartialGuild, Member]:
-        _guild = self.bot.get_partial_guild(int(data["guild_id"]))
+        _guild = self._get_guild_or_partial(int(data["guild_id"]))
         return (
             _guild,
             Member(state=self.bot.state, guild=_guild, data=data)
         )
 
     def guild_member_update(self, data: dict) -> tuple[PartialGuild, Member]:
-        _guild = self.bot.get_partial_guild(int(data["guild_id"]))
+        _guild = self._get_guild_or_partial(int(data["guild_id"]))
         return (
             _guild,
             Member(state=self.bot.state, guild=_guild, data=data)
         )
 
     def guild_member_remove(self, data: dict) -> tuple[PartialGuild, User]:
+        _guild = self._get_guild_or_partial(int(data["guild_id"]))
         return (
-            self.bot.get_partial_guild(int(data["guild_id"])),
+            _guild,
             User(
                 state=self.bot.state,
                 data=data["user"]
@@ -145,8 +167,10 @@ class Parser:
         )
 
     def guild_ban_add(self, data: dict) -> tuple[PartialGuild, User]:
+        _guild = self._get_guild_or_partial(int(data["guild_id"]))
+
         return (
-            self.bot.get_partial_guild(int(data["guild_id"])),
+            _guild,
             User(
                 state=self.bot.state,
                 data=data["user"]
@@ -154,8 +178,10 @@ class Parser:
         )
 
     def guild_ban_remove(self, data: dict) -> tuple[PartialGuild, User]:
+        _guild = self._get_guild_or_partial(int(data["guild_id"]))
+
         return (
-            self.bot.get_partial_guild(int(data["guild_id"])),
+            _guild,
             User(
                 state=self.bot.state,
                 data=data["user"]
@@ -163,7 +189,8 @@ class Parser:
         )
 
     def guild_emojis_update(self, data: dict) -> tuple[PartialGuild, list[Emoji]]:
-        _guild = self.bot.get_partial_guild(int(data["guild_id"]))
+        _guild = self._get_guild_or_partial(int(data["guild_id"]))
+
         return (
             _guild,
             [
@@ -177,7 +204,8 @@ class Parser:
         )
 
     def guild_stickers_update(self, data: dict) -> tuple[PartialGuild, list[Sticker]]:
-        _guild = self.bot.get_partial_guild(int(data["guild_id"]))
+        _guild = self._get_guild_or_partial(int(data["guild_id"]))
+
         return (
             _guild,
             [
@@ -191,7 +219,8 @@ class Parser:
         )
 
     def guild_soundboard_sound_create(self, data: dict) -> tuple[SoundboardSound]:
-        _guild = self.bot.get_partial_guild(int(data["guild_id"]))
+        _guild = self._get_guild_or_partial(int(data["guild_id"]))
+
         return (
             SoundboardSound(
                 state=self.bot.state,
@@ -201,7 +230,8 @@ class Parser:
         )
 
     def guild_soundboard_sound_update(self, data: dict) -> tuple[SoundboardSound]:
-        _guild = self.bot.get_partial_guild(int(data["guild_id"]))
+        _guild = self._get_guild_or_partial(int(data["guild_id"]))
+
         return (
             SoundboardSound(
                 state=self.bot.state,
@@ -220,7 +250,8 @@ class Parser:
         )
 
     def guild_soundboard_sounds_update(self, data: list[dict]) -> tuple[PartialGuild, list[SoundboardSound]]:
-        _guild = self.bot.get_partial_guild(int(data[0]["guild_id"]))
+        _guild = self._get_guild_or_partial(int(data[0]["guild_id"]))
+
         return (
             _guild,
             [
@@ -234,7 +265,8 @@ class Parser:
         )
 
     def guild_audit_log_entry_create(self, data: dict) -> tuple[AuditLogEntry]:
-        _guild = self.bot.get_partial_guild(int(data["guild_id"]))
+        _guild = self._get_guild_or_partial(int(data["guild_id"]))
+
         return (
             AuditLogEntry(
                 state=self.bot.state,
@@ -284,6 +316,7 @@ class Parser:
             utils.parse_time(_last_pin_timestamp)
             if (_last_pin_timestamp := data.get("last_pin_timestamp", None)) else None
         )
+
         return (
             ChannelPinsUpdate(
                 channel=self._get_channel_or_partial(channel_id, guild_id),
@@ -329,7 +362,7 @@ class Parser:
             state=self.bot.state,
             data=data,
             guild=(
-                self.bot.get_partial_guild(guild_id)
+                self._get_guild_or_partial(guild_id)
                 if guild_id else None
             )
         )
@@ -345,6 +378,7 @@ class Parser:
             self.bot.get_partial_message(
                 message_id=int(data["id"]),
                 channel_id=int(data["channel_id"]),
+                guild_id=utils.get_int(data, "guild_id"),
             ),
         )
 
@@ -402,7 +436,8 @@ class Parser:
         )
 
     def guild_role_create(self, data: dict) -> tuple[Role]:
-        _guild = self.bot.get_partial_guild(int(data["guild_id"]))
+        _guild = self._get_guild_or_partial(int(data["guild_id"]))
+
         _role = Role(
             state=self.bot.state,
             guild=_guild,
@@ -413,9 +448,11 @@ class Parser:
         return (_role,)
 
     def guild_role_update(self, data: dict) -> tuple[Role]:
+        _guild = self._get_guild_or_partial(int(data["guild_id"]))
+
         _role = Role(
             state=self.bot.state,
-            guild=self.bot.get_partial_guild(int(data["guild_id"])),
+            guild=_guild,
             data=data["role"]
         )
 
@@ -445,6 +482,17 @@ class Parser:
                 )
             ),
         )
+
+    """
+    This is just a placeholder for now.
+    I am unsure if I ever will handle voice communication with discord.http/gateway
+    Let this be a reminder for myself in later time
+
+    - AlexFlipnote, 9. October 2024
+
+    def voice_channel_effect_send(self, data: dict) -> tuple[None]:
+        return (None,)
+    """
 
     def voice_state_update(self, data: dict) -> tuple[VoiceState]:
         vs = VoiceState(state=self.bot.state, data=data)
@@ -567,5 +615,163 @@ class Parser:
             # guild_id is always provided
             self._get_guild_or_partial(
                 int(data["guild_id"])
+            ),
+        )
+
+    def guild_scheduled_event_create(self, data: dict) -> tuple[ScheduledEvent]:
+        return (
+            ScheduledEvent(
+                state=self.bot.state,
+                data=data
+            ),
+        )
+
+    def guild_scheduled_event_update(self, data: dict) -> tuple[ScheduledEvent]:
+        return (
+            ScheduledEvent(
+                state=self.bot.state,
+                data=data
+            ),
+        )
+
+    def guild_scheduled_event_delete(self, data: dict) -> tuple[ScheduledEvent]:
+        return (
+            ScheduledEvent(
+                state=self.bot.state,
+                data=data
+            ),
+        )
+
+    def guild_scheduled_event_user_add(self, data: dict) -> tuple[
+        PartialScheduledEvent,
+        Member | PartialMember
+    ]:
+        _user = self._get_user_or_partial(
+            int(data["user_id"]),
+            int(data["guild_id"])
+        )
+
+        return (
+            PartialScheduledEvent(
+                state=self.bot.state,
+                id=int(data["guild_scheduled_event_id"]),
+                guild_id=int(data["guild_id"])
+            ),
+            _user
+        )
+
+    def guild_scheduled_event_user_remove(self, data: dict) -> tuple[
+        PartialScheduledEvent,
+        Member | PartialMember
+    ]:
+        _user = self._get_user_or_partial(
+            int(data["user_id"]),
+            int(data["guild_id"])
+        )
+
+        return (
+            PartialScheduledEvent(
+                state=self.bot.state,
+                id=int(data["guild_scheduled_event_id"]),
+                guild_id=int(data["guild_id"])
+            ),
+            _user
+        )
+
+    def auto_moderation_rule_create(self, data: dict) -> tuple[AutoModRule]:
+        return (
+            AutoModRule(
+                state=self.bot.state,
+                data=data
+            ),
+        )
+
+    def auto_moderation_rule_update(self, data: dict) -> tuple[AutoModRule]:
+        return (
+            AutoModRule(
+                state=self.bot.state,
+                data=data
+            ),
+        )
+
+    def auto_moderation_rule_delete(self, data: dict) -> tuple[AutoModRule]:
+        return (
+            AutoModRule(
+                state=self.bot.state,
+                data=data
+            ),
+        )
+
+    def auto_moderation_action_execution(self, data: dict) -> tuple[AutomodExecution]:
+        _channel = None
+
+        _guild = self._get_guild_or_partial(
+            int(data["guild_id"])
+        )
+
+        _user = self._get_user_or_partial(
+            int(data["user_id"]),
+            int(data["guild_id"])
+        )
+
+        if data.get("channel_id", None) is not None:
+            _channel = self._get_channel_or_partial(
+                int(data["channel_id"]),
+                int(data["guild_id"])
+            )
+        return (
+            AutomodExecution(
+                state=self.bot.state,
+                guild=_guild,
+                channel=_channel,
+                user=_user,
+                data=data
+            ),
+        )
+
+    def _message_poll_vote(self, data: dict, type: PollVoteActionType) -> PollVoteEvent:
+        _guild = None
+        _user = PartialUser(
+            state=self.bot.state,
+            id=int(data["user_id"])
+        )
+
+        if data.get("guild_id", None) is not None:
+            _guild = self._get_guild_or_partial(
+                int(data["guild_id"])
+            )
+
+            _user = self._get_user_or_partial(
+                int(data["user_id"]),
+                int(data["guild_id"])
+            )
+
+        _channel = self._get_channel_or_partial(
+            int(data["channel_id"]),
+            utils.get_int(data, "guild_id")
+        )
+
+        return PollVoteEvent(
+            state=self.bot.state,
+            user=_user,
+            channel=_channel,
+            guild=_guild,
+            type=type,
+            data=data
+        )
+
+    def message_poll_vote_add(self, data: dict) -> tuple[PollVoteEvent]:
+        return (
+            self._message_poll_vote(
+                data=data,
+                type=PollVoteActionType.add,
+            ),
+        )
+
+    def message_poll_vote_remove(self, data: dict) -> tuple[PollVoteEvent]:
+        return (
+            self._message_poll_vote(
+                data=data,
+                type=PollVoteActionType.remove,
             ),
         )

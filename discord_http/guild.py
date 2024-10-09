@@ -5,12 +5,17 @@ from typing import TYPE_CHECKING, Union, Optional, AsyncIterator, Callable
 
 from . import utils
 from .asset import Asset
+from .automod import (
+    AutoModRule, PartialAutoModRule,
+    AutoModRuleAction, AutoModRuleTriggers
+)
 from .colour import Colour, Color
 from .enums import (
     ChannelType, VerificationLevel,
     DefaultNotificationLevel, ContentFilterLevel,
     ScheduledEventEntityType, PrivacyLevelType,
-    ScheduledEventStatusType, VideoQualityType, AuditLogType
+    ScheduledEventStatusType, VideoQualityType, AuditLogType,
+    AutoModRuleEventType, AutoModRuleTriggerType, AutoModRulePresetType
 )
 from .emoji import Emoji, PartialEmoji
 from .file import File
@@ -64,9 +69,9 @@ class PartialScheduledEvent(PartialBase):
         guild_id: int
     ):
         super().__init__(id=int(id))
-        self.guild_id: int = guild_id
-
         self._state = state
+
+        self.guild_id: int = guild_id
 
     def __repr__(self) -> str:
         return f"<PartialScheduledEvent id={self.id}>"
@@ -92,12 +97,13 @@ class PartialScheduledEvent(PartialBase):
             data=r.response
         )
 
-    async def delete(self) -> None:
+    async def delete(self, *, reason: str | None = None) -> None:
         """ Delete the event (the bot must own the event) """
         await self._state.query(
             "DELETE",
             f"/guilds/{self.guild_id}/scheduled-events/{self.id}",
-            res_method="text"
+            res_method="text",
+            reason=reason
         )
 
     async def edit(
@@ -250,6 +256,9 @@ class ScheduledEvent(PartialScheduledEvent):
     def __repr__(self) -> str:
         return f"<ScheduledEvent id={self.id} name='{self.name}'>"
 
+    def __str__(self) -> str:
+        return self.name
+
     def _from_data(self, data: dict):
         if data.get("creator", None):
             from .user import User
@@ -277,6 +286,8 @@ class PartialGuild(PartialBase):
     def __init__(self, *, state: "DiscordAPI", id: int):
         super().__init__(id=int(id))
         self._state = state
+
+        self.unavailable: bool = False
 
         self._cache_members: dict[int, Union["Member", "PartialMember"]] = {}
         self._cache_channels: dict[int, Union["BaseChannel", "PartialChannel"]] = {}
@@ -492,6 +503,161 @@ class PartialGuild(PartialBase):
         )
 
         return Guild(
+            state=self._state,
+            data=r.response
+        )
+
+    def get_partial_automod_rule(self, automod_id: int) -> PartialAutoModRule:
+        """ `PartialAutoModRule`: Returns a partial automod rule object """
+        return PartialAutoModRule(
+            state=self._state,
+            id=automod_id,
+            guild_id=self.id
+        )
+
+    async def fetch_automod_rule(self, automod_id: int) -> AutoModRule:
+        """ `AutoModRule`: Fetches a automod rule from the guild """
+        automod = self.get_partial_automod_rule(automod_id)
+        return await automod.fetch()
+
+    async def fetch_automod_rules(self) -> list[AutoModRule]:
+        """ `list[AutoModRule]` Fetches all the automod rules in the guild """
+        r = await self._state.query(
+            "GET",
+            f"/guilds/{self.id}/auto-moderation/rules"
+        )
+
+        return [
+            AutoModRule(
+                state=self._state,
+                data=data
+            )
+            for data in r.response
+        ]
+
+    async def create_automod_rule(
+        self,
+        name: str,
+        *,
+        event_type: AutoModRuleEventType | int,
+        trigger_type: AutoModRuleTriggerType | int,
+        keyword_filter: list[str] | None = None,
+        regex_patterns: list[str] | None = None,
+        presets: list[AutoModRulePresetType] | None = None,
+        allow_list: list[str] | None = None,
+        mention_total_limit: int | None = None,
+        mention_raid_protection_enabled: bool = False,
+        alert_channel: Snowflake | int | None = None,
+        timeout_seconds: int | None = None,
+        message: str | None = None,
+        enabled: bool = True,
+        exempt_roles: list[Snowflake | int] | None = None,
+        exempt_channels: list[Snowflake | int] | None = None,
+        reason: str | None = None,
+    ) -> AutoModRule:
+        """
+        Create an automod rule
+
+        Parameters
+        ----------
+        name: `str`
+            Name of the automod
+        event_type: `AutoModRuleEventType | int`
+            What type of event
+        trigger_type: `AutoModRuleTriggerType | int`
+            What should make it get triggered
+        keyword_filter: `list[str] | None`
+            Keywords to filter
+        regex_patterns: `list[str] | None`
+            Keywords in regex pattern to filter
+        presets: `list[AutoModRulePresetType] | None`
+            Automod presets to include
+        allow_list: `list[str] | None`
+            List of keywords that are allowed
+        mention_total_limit: `int | None`
+            How many unique mentions allowed before trigger
+        mention_raid_protection_enabled: `bool`
+            If this should apply for raids
+        alert_channel: `Snowflake | int | None`
+            Where the action should be logged
+        timeout_seconds: `int | None`
+            How many seconds the user in question should be timed out
+        message: `str | None`
+            What message the user gets when action is taken
+        enabled: `bool`
+            If the automod should be enabled or not
+        exempt_roles: `list[Snowflake  |  int] | None`
+            Which roles are allowed to bypass
+        exempt_channels: `list[Snowflake  |  int] | None`
+            Which channels are allowed to bypass
+        reason: `str | None`
+            Reason for creating the automod
+
+        Returns
+        -------
+        `AutoModRule`
+            The automod that was just created
+        """
+        payload = {
+            "name": str(name),
+            "event_type": int(event_type),
+            "trigger_type": int(trigger_type),
+            "enabled": bool(enabled),
+            "actions": []
+        }
+
+        if alert_channel is not None:
+            payload["actions"].append(
+                AutoModRuleAction.create_alert_location(
+                    int(alert_channel)
+                ).to_dict()
+            )
+
+        if timeout_seconds is not None:
+            payload["actions"].append(
+                AutoModRuleAction.create_timeout(
+                    int(timeout_seconds)
+                ).to_dict()
+            )
+
+        if message is not None:
+            payload["actions"].append(
+                AutoModRuleAction.create_message(
+                    str(message)
+                ).to_dict()
+            )
+
+        if exempt_roles is not None:
+            payload["exempt_roles"] = [str(int(g)) for g in exempt_roles]
+
+        if exempt_channels is not None:
+            payload["exempt_channels"] = [str(int(g)) for g in exempt_channels]
+
+        if any([
+            keyword_filter,
+            regex_patterns,
+            presets,
+            allow_list,
+            mention_total_limit,
+            mention_raid_protection_enabled
+        ]):
+            payload["trigger_metadata"] = AutoModRuleTriggers(
+                keyword_filter=keyword_filter,
+                regex_patterns=regex_patterns,
+                presets=presets,
+                allow_list=allow_list,
+                mention_total_limit=mention_total_limit,
+                mention_raid_protection_enabled=mention_raid_protection_enabled
+            ).to_dict()
+
+        r = await self._state.query(
+            "POST",
+            f"/guilds/{self.id}/auto-moderation/rules",
+            json=payload,
+            reason=reason
+        )
+
+        return AutoModRule(
             state=self._state,
             data=r.response
         )
@@ -1992,7 +2158,8 @@ class PartialGuild(PartialBase):
         """ Delete the guild (the bot must own the server) """
         await self._state.query(
             "DELETE",
-            f"/guilds/{self.id}"
+            f"/guilds/{self.id}",
+            res_method="text"
         )
 
     async def edit(
@@ -2196,6 +2363,13 @@ class Guild(PartialGuild):
         self.widget_channel_id: Optional[int] = utils.get_int(data, "widget_channel_id")
         self.widget_enabled: bool = data.get("widget_enabled", False)
 
+        self.chunked: bool = False
+        self._member_count: int | None = None
+        self._large: bool | None = (
+            None if self._member_count is None
+            else self._member_count >= 250
+        )
+
         self._from_data(data)
 
     def __str__(self) -> str:
@@ -2232,6 +2406,9 @@ class Guild(PartialGuild):
             for g in data["stickers"]
         }
 
+        if data.get("member_count", None):
+            self._member_count = data["member_count"]
+
     def _update(self, data: dict) -> None:
         for g in data:
             if g in ("roles", "channels", "emojis", "stickers"):
@@ -2242,6 +2419,15 @@ class Guild(PartialGuild):
                 name = f"_{g}"
 
             setattr(self, name, data[g])
+
+    @property
+    def large(self) -> bool:
+        """ `bool`: Whether the guild is considered large """
+        if self._large is None:
+            if self._member_count is not None:
+                return self._member_count >= 250
+            return len(self.members) >= 250
+        return self.large
 
     @property
     def emojis_limit(self) -> int:

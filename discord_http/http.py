@@ -591,10 +591,19 @@ class DiscordAPI:
         -------
         `dict`
             The response from the request
+
+        Raises
+        ------
+        `HTTPException`
+            If the request returned anything other than 200.
+            Typically this means the guild is not found.
         """
         r = await self._app_command_query(
             "GET",
             guild_id=guild_id
         )
+
+        if r.status != 200:
+            raise HTTPException(r)
 
         return r.response

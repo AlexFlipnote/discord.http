@@ -5,6 +5,7 @@ __all__ = (
     "ShardCloseType",
     "StatusType",
     "ActivityType",
+    "PollVoteActionType",
 )
 
 
@@ -45,3 +46,8 @@ class ActivityType(BaseEnum):
     watching = 3
     custom = 4
     competing = 5
+
+
+class PollVoteActionType(BaseEnum):
+    add = 0
+    remove = 1

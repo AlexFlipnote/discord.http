@@ -537,14 +537,6 @@ class Member(PartialMember):
 
 
 class PartialThreadMember(PartialMember):
-    __slots__ = (
-        "_state",
-        "_user",
-        "id",
-        "guild_id",
-        "thread_id",
-    )
-
     def __init__(
         self,
         *,
@@ -568,7 +560,6 @@ class PartialThreadMember(PartialMember):
 
 
 class ThreadMember(Member, PartialThreadMember):
-    # __slots__ = PartialThreadMember.__slots__ + Member.__slots__
     def __init__(
         self,
         *,

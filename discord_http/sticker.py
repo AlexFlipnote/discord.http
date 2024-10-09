@@ -156,7 +156,10 @@ class PartialSticker(PartialBase):
         """
         guild_id = guild_id or self.guild_id
         if guild_id is None:
-            raise ValueError("guild_id is a required argument")
+            raise ValueError(
+                "guild_id is a required argument "
+                "since it was not provided by object"
+            )
 
         await self._state.query(
             "DELETE",

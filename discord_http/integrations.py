@@ -22,8 +22,6 @@ class IntegrationAccount(PartialBase):
     name: :class:`str`
         The name of the account.
     """
-    __slots__ = ("id", "name",)
-
     def __init__(
         self,
         *,
@@ -49,15 +47,6 @@ class IntegrationApplication(PartialBase):
     description: :class:`str`
         The description of the application.
     """
-    __slots__ = (
-        "_state",
-        "_bot"
-        "_icon",
-        "id",
-        "name",
-        "description",
-    )
-
     def __init__(
         self,
         *,
@@ -109,13 +98,11 @@ class PartialIntegration(PartialBase):
     ----------
     id: :class:`int`
         The ID of the integration.
-    guild: :class:`PartialGuild` | :class:`Guild`
+    guild_id: `int`
         The guild associated with this integration.
     application_id: Optional[:class:`int`]
         The ID of the application associated with this integration.
     """
-    __slots__ = ("id", "guild_id", "application_id",)
-
     def __init__(
         self,
         *,
@@ -148,7 +135,8 @@ class PartialIntegration(PartialBase):
         """
         await self._state.query(
             "DELETE",
-            f"/guilds/{self.guild.id}/integrations/{self.id}"
+            f"/guilds/{self.guild.id}/integrations/{self.id}",
+            res_method="text"
         )
 
 
@@ -202,26 +190,6 @@ class Integration(PartialIntegration):
     scopes: List[:class:`str`]
         The scopes of the application has been granted.
     """
-    __slots__ = (
-        "_state",
-        "_user",
-        "_application",
-        "_account",
-        "id",
-        "name",
-        "type",
-        "enabled",
-        "syncing",
-        "role_id",
-        "enable_emoticons",
-        "expire_behavior",
-        "expire_grace_period",
-        "synced_at",
-        "subscriber_count",
-        "revoked",
-        "scopes",
-    )
-
     def __init__(
         self,
         *,

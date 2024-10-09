@@ -3,6 +3,7 @@ from datetime import datetime
 
 from . import utils, enums, flags
 from .asset import Asset
+from .automod import AutoModRuleTriggers, AutoModRuleAction
 from .object import Snowflake
 from .guild import PartialGuild
 from .channel import PartialChannel, ForumTag
@@ -190,6 +191,31 @@ def _handle_colour(entry: "AuditLogEntry", data: int) -> Colour:
     return Colour(int(data))
 
 
+def _handle_automod_triggers(entry: "AuditLogEntry", data: dict) -> AutoModRuleTriggers:
+    return AutoModRuleTriggers.from_dict(data)
+
+
+def _handle_automod_actions(entry: "AuditLogEntry", data: list[dict]) -> list[AutoModRuleAction]:
+    return [
+        AutoModRuleAction.from_dict(g)
+        for g in data
+    ]
+
+
+def _handle_automod_roles(entry: "AuditLogEntry", data: list[int]) -> list[PartialRole]:
+    return [
+        entry._convert_target_role(g)
+        for g in data
+    ]
+
+
+def _handle_automod_channels(entry: "AuditLogEntry", data: list[int]) -> list[PartialChannel]:
+    return [
+        entry._convert_target_channel(g)
+        for g in data
+    ]
+
+
 def _handle_member(entry: "AuditLogEntry", data: int) -> Union[User, PartialUser]:
     return entry._convert_target_user(int(data))
 
@@ -263,10 +289,11 @@ class AuditChange:
         "preferred_locale": _handle_enum(enums.Locale),
         "image_hash": _handle_cover_image,
         "trigger_type": _handle_enum(enums.AutoModRuleTriggerType),
+        "trigger_metadata": _handle_automod_triggers,
         "event_type": _handle_enum(enums.AutoModRuleEventType),
-        # "actions": _handle_enum(enums.AutoModRuleActionType),
-        "exempt_channels": _handle_channel,
-        "exempt_roles": _handle_role,
+        "actions": _handle_automod_actions,
+        "exempt_channels": _handle_automod_channels,
+        "exempt_roles": _handle_automod_roles,
         "applied_tags": _handle_applied_tags,
         "available_tags": _handle_forum_tags,
         "flags": _handle_overloaded_flags,

@@ -17,6 +17,7 @@ from .enums import PayloadType, ShardCloseType
 
 if TYPE_CHECKING:
     from ..client import Client
+    from ..guild import Guild, PartialGuild
     from .flags import GatewayCacheFlags, Intents
 
 DEFAULT_GATEWAY = yarl.URL("wss://gateway.discord.gg/")
@@ -109,6 +110,10 @@ class Shard:
 
         self.parser = Parser(bot)
         self.status = Status(shard_id)
+
+        self._ready: asyncio.Event = asyncio.Event()
+        self._guild_ready_timeout: float = float(self.bot.guild_ready_timeout)
+        self._guild_create_queue: asyncio.Queue["Guild | PartialGuild"] = asyncio.Queue()
 
         self._connection = None
         self._should_kill = False
@@ -277,11 +282,7 @@ class Shard:
             case "READY":
                 self.status.update_sequence(msg["s"])
                 self.status.update_ready_data(data)  # type: ignore
-
-                if self.bot.has_any_dispatch("shard_ready"):
-                    self.bot.dispatch("shard_ready", self)
-                else:
-                    _log.info(f"Shard {self.shard_id} ready")
+                asyncio.create_task(self._delay_ready())
 
             case "RESUMED":
                 if self.bot.has_any_dispatch("shard_resumed"):
@@ -365,6 +366,36 @@ class Shard:
             self._reset_instance()
             _log.error(f"Shard {self.shard_id} crashed completly", exc_info=e)
 
+    async def _delay_ready(self) -> None:
+        """
+        Purposfully delays the ready event
+        Then make shard ready when last GUILD_CREATE is received
+        """
+        while True:
+            try:
+                await asyncio.wait_for(
+                    self._guild_create_queue.get(),
+                    timeout=self._guild_ready_timeout
+                )
+            except asyncio.TimeoutError:
+                break  # It's supposed to timeout
+            else:
+                # NOTE: Handling of chunking is not implemented yet
+                pass
+
+        self._ready.set()
+
+        if self.bot.has_any_dispatch("shard_ready"):
+            self.bot.dispatch("shard_ready", self)
+        else:
+            _log.info(f"Shard {self.shard_id} ready")
+
+    async def wait_until_ready(self) -> None:
+        """
+        Waits until the shard is ready
+        """
+        await self._ready.wait()
+
     async def on_event(self, name: str, event: Any) -> None:
         new_name = name.lower()
         data: dict = event.get("d", {})
@@ -379,13 +410,55 @@ class Shard:
         if not _parse_event:
             return None
 
+        match name:
+            case "GUILD_CREATE":
+                await self._parse_guild_create(data)
+
+            case "GUILD_DELETE":
+                self._parse_guild_delete(data)
+
+            case _:
+                self._send_dispatch(new_name, *_parse_event(data))
+
+    def _send_dispatch(self, name: str, *args: Any) -> None:
         try:
-            self.bot.dispatch(
-                new_name,
-                *_parse_event(data)
-            )
+            self.bot.dispatch(name, *args)
         except Exception as e:
             _log.error(f"Error while parsing event {name}", exc_info=e)
+
+    async def _parse_guild_create(self, data: dict) -> None:
+        unavailable = data.get("unavailable", None)
+        if unavailable is True:
+            return None
+
+        if unavailable is False:
+            (guild,) = self.parser.guild_available(data)
+            guild.unavailable = False
+            _event_name = "guild_available"
+
+        else:
+            (guild,) = self.parser.guild_create(data)
+            _event_name = "guild_create"
+
+        if not self._ready.is_set():
+            # We still want to parse GUILD_CREATE
+            # But we do not want to dispatch event just yet
+            self._guild_create_queue.put_nowait(guild)
+            return None
+
+        self._send_dispatch(_event_name, guild)
+
+    def _parse_guild_delete(self, data: dict) -> None:
+        if data.get("unavailable", False):
+            (guild,) = self.parser.guild_unavailable(data)
+            guild.unavailable = True
+            _event_name = "guild_unavailable"
+
+        else:
+            (guild,) = self.parser.guild_delete(data)
+            _event_name = "guild_delete"
+
+        self._send_dispatch(_event_name, guild)
 
     def connect(self) -> None:
         """ Connect the websocket """
