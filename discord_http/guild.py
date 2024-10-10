@@ -298,6 +298,13 @@ class PartialGuild(PartialBase):
         self._cache_stickers: dict[int, Union["Sticker", "PartialSticker"]] = {}
         self._cache_voice_states: dict[int, Union["VoiceState", "PartialVoiceState"]] = {}
 
+        self.chunked: bool = False
+        self.member_count: int | None = None
+        self._large: bool | None = (
+            None if self.member_count is None
+            else self.member_count >= 250
+        )
+
     def __repr__(self) -> str:
         return f"<PartialGuild id={self.id}>"
 
@@ -457,9 +464,9 @@ class PartialGuild(PartialBase):
         Returns a list of all the text channels in the guild if they are cached.
         """
         return [
-            channel
+            channel  # type: ignore
             for channel in self.channels
-            if isinstance(channel, (TextChannel))
+            if channel.type == ChannelType.guild_text
         ]
 
     @property
@@ -469,9 +476,9 @@ class PartialGuild(PartialBase):
         Returns a list of all the voice channels in the guild if they are cached.
         """
         return [
-            channel
+            channel  # type: ignore
             for channel in self.channels
-            if isinstance(channel, (VoiceChannel))
+            if channel.type == ChannelType.guild_voice
         ]
 
     @property
@@ -481,9 +488,9 @@ class PartialGuild(PartialBase):
         Returns a list of all the category channels in the guild if they are cached.
         """
         return [
-            channel
+            channel  # type: ignore
             for channel in self.channels
-            if isinstance(channel, (CategoryChannel))
+            if channel.type == ChannelType.guild_category
         ]
 
     @property
@@ -2363,13 +2370,6 @@ class Guild(PartialGuild):
         self.widget_channel_id: Optional[int] = utils.get_int(data, "widget_channel_id")
         self.widget_enabled: bool = data.get("widget_enabled", False)
 
-        self.chunked: bool = False
-        self._member_count: int | None = None
-        self._large: bool | None = (
-            None if self._member_count is None
-            else self._member_count >= 250
-        )
-
         self._from_data(data)
 
     def __str__(self) -> str:
@@ -2407,7 +2407,7 @@ class Guild(PartialGuild):
         }
 
         if data.get("member_count", None):
-            self._member_count = data["member_count"]
+            self.member_count = data["member_count"]
 
     def _update(self, data: dict) -> None:
         for g in data:
@@ -2424,8 +2424,8 @@ class Guild(PartialGuild):
     def large(self) -> bool:
         """ `bool`: Whether the guild is considered large """
         if self._large is None:
-            if self._member_count is not None:
-                return self._member_count >= 250
+            if self.member_count is not None:
+                return self.member_count >= 250
             return len(self.members) >= 250
         return self.large
 
@@ -2542,6 +2542,14 @@ class Guild(PartialGuild):
             if isinstance(r, Role) and
             r.name == role_name
         ), None)
+
+    @property
+    def me(self) -> "Member | PartialMember | None":
+        """
+        `Optional[Member]`: Returns the bot's member object.
+        Only useable if you are using gateway and caching
+        """
+        return self.get_member(self._state.bot.user.id)
 
     def get_member_top_role(self, member: "Member") -> Optional[Role]:
         """

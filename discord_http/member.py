@@ -6,7 +6,7 @@ from .asset import Asset
 from .embeds import Embed
 from .file import File
 from .flags import Permissions, PublicFlags, GuildMemberFlags
-from .guild import PartialGuild
+from .guild import Guild, PartialGuild
 from .mentions import AllowedMentions
 from .object import PartialBase, Snowflake
 from .response import ResponseType
@@ -56,8 +56,15 @@ class PartialMember(PartialBase):
         self.presence = obj
 
     @property
-    def guild(self) -> PartialGuild:
-        """ `PartialGuild`: The guild of the member """
+    def guild(self) -> PartialGuild | Guild:
+        """
+        `PartialGuild | Guild`: The guild of the member
+        If you are using gateway cache, it can return full object too
+        """
+        cache = self._state.cache.get_guild(self.guild_id)
+        if cache:
+            return cache
+
         return PartialGuild(state=self._state, id=self.guild_id)
 
     async def fetch(self) -> "Member":
@@ -364,7 +371,7 @@ class Member(PartialMember):
         self,
         *,
         state: "DiscordAPI",
-        guild: PartialGuild,
+        guild: Guild | PartialGuild,
         data: dict
     ):
         super().__init__(
@@ -382,6 +389,7 @@ class Member(PartialMember):
         self._raw_permissions: Optional[int] = utils.get_int(data, "permissions")
         self.nick: Optional[str] = data.get("nick", None)
         self.joined_at: datetime = utils.parse_time(data["joined_at"])
+        self.communication_disabled_until: datetime | None = None
         self.roles: list[PartialRole] = [
             PartialRole(state=state, id=int(r), guild_id=self.guild.id)
             for r in data["roles"]
@@ -405,6 +413,11 @@ class Member(PartialMember):
                 self._state, self.guild.id, self.id, has_avatar
             )
 
+        if data.get("communication_disabled_until", None):
+            self.communication_disabled_until = utils.parse_time(
+                data["communication_disabled_until"]
+            )
+
     def get_role(
         self,
         role: Union[Snowflake, int]
@@ -426,6 +439,12 @@ class Member(PartialMember):
             r for r in self.roles
             if r.id == int(role)
         ), None)
+
+    def is_timed_out(self) -> bool:
+        """ `bool`: Returns whether the member is timed out or not """
+        if self.communication_disabled_until is None:
+            return False
+        return utils.utcnow() < self.communication_disabled_until
 
     @property
     def resolved_permissions(self) -> Permissions:
@@ -534,6 +553,16 @@ class Member(PartialMember):
     def display_avatar(self) -> Optional[Asset]:
         """ `Optional[Asset]`: Returns the display avatar of the member """
         return self.avatar or self._user.avatar
+
+    @property
+    def top_role(self) -> PartialRole | Role | None:
+        """
+        `Optional[PartialRole | Role]`: Returns the top role of the member.
+        Only usable if you are using gateway and caching
+        """
+        if not isinstance(self.guild, Guild):
+            return None
+        return self.guild.get_member_top_role(self)
 
 
 class PartialThreadMember(PartialMember):

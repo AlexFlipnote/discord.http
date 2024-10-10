@@ -1,4 +1,4 @@
-from typing import TYPE_CHECKING, Self
+from typing import TYPE_CHECKING, Self, Any
 
 from . import utils
 from .channel import PartialChannel
@@ -321,24 +321,21 @@ class PartialAutoModRule(PartialBase):
         if isinstance(exempt_channels, list):
             payload["exempt_channels"] = [str(int(g)) for g in exempt_channels]
 
-        if any([
-            g is not MISSING
-            for g in [
-                keyword_filter,
-                regex_patterns,
-                presets,
-                allow_list,
-                mention_total_limit,
-                mention_raid_protection_enabled
-            ]
-        ]):
+        _trigger_payload: dict[str, Any] = {
+            k: v for k, v in {
+                "keyword_filter": keyword_filter,
+                "regex_patterns": regex_patterns,
+                "presets": presets,
+                "allow_list": allow_list,
+                "mention_total_limit": mention_total_limit,
+                "mention_raid_protection_enabled": mention_raid_protection_enabled
+            }.items()
+            if v is not MISSING
+        }
+
+        if _trigger_payload:
             payload["trigger_metadata"] = AutoModRuleTriggers(
-                keyword_filter=keyword_filter,
-                regex_patterns=regex_patterns,
-                presets=presets,
-                allow_list=allow_list,
-                mention_total_limit=mention_total_limit,
-                mention_raid_protection_enabled=mention_raid_protection_enabled
+                **_trigger_payload
             ).to_dict()
 
         r = await self._state.query(

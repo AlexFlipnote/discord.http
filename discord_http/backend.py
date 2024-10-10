@@ -2,6 +2,7 @@ import asyncio
 import copy
 import logging
 import signal
+import json
 
 from datetime import datetime
 from hypercorn.asyncio import serve
@@ -75,6 +76,10 @@ class DiscordHTTP(Quart):
         self.debug_events = self.bot.debug_events
 
         super().__init__(__name__)
+
+        # Change some of the default settings
+        self.config["JSONIFY_PRETTYPRINT_REGULAR"] = False
+        self.config["JSON_SORT_KEYS"] = False
 
         # Remove Quart's default logging handler
         _quart_log = logging.getLogger("quart.app")
@@ -399,6 +404,39 @@ class DiscordHTTP(Quart):
             }
         }
 
+    def jsonify(
+        self,
+        data: dict,
+        *,
+        status: int = 200,
+        sort_keys: bool = False,
+        indent: int | None = None,
+    ) -> QuartResponse:
+        """
+        Force Quart to respond with JSON the way you like it
+
+        Parameters
+        ----------
+        data: `dict`
+            The data to respond with
+        status: `int`
+            The status code to respond with
+        sort_keys: `bool`
+            Whether to sort the keys or not
+        indent: `int | None`
+            If the JSON should be indented on response
+
+        Returns
+        -------
+        `QuartResponse`
+            The response object
+        """
+        return self.response_class(
+            json.dumps(data, sort_keys=sort_keys, indent=indent),
+            headers={"Content-Type": "application/json"},
+            status=status
+        )
+
     def start(
         self,
         *,
@@ -419,10 +457,6 @@ class DiscordHTTP(Quart):
             self._index_interactions_endpoint,
             methods=["POST"]
         )
-
-        # Change some of the default settings
-        self.config["JSONIFY_PRETTYPRINT_REGULAR"] = True
-        self.config["JSON_SORT_KEYS"] = False
 
         try:
             _log.info(f"Serving on http://{host}:{port}")

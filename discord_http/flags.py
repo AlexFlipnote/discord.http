@@ -5,7 +5,6 @@ from typing import Union, Self, Optional
 
 from .enums import PermissionType
 from .object import Snowflake
-from .role import PartialRole
 
 __all__ = (
     "ApplicationFlags",
@@ -289,6 +288,10 @@ class Permissions(BaseFlag):
     send_polls = 1 << 49
     use_external_apps = 1 << 50
 
+    def handle_overwrite(self, allow: int, deny: int) -> "Permissions":
+        new_value: int = (self.value & ~deny) | allow
+        return Permissions(new_value)
+
 
 class PermissionOverwrite:
     def __init__(
@@ -322,7 +325,7 @@ class PermissionOverwrite:
             PermissionType.member
         )
 
-        if isinstance(self.target, PartialRole):
+        if getattr(self.target, "_target_type", None) == PermissionType.role:
             self.target_type = PermissionType.role
 
         if not isinstance(self.target_type, PermissionType):
@@ -336,6 +339,14 @@ class PermissionOverwrite:
             f"<PermissionOverwrite target={self.target} "
             f"allow={int(self.allow)} deny={int(self.deny)}>"
         )
+
+    def is_role(self) -> bool:
+        """ `bool`: Returns whether the overwrite is a role overwrite """
+        return self.target_type == PermissionType.role
+
+    def is_member(self) -> bool:
+        """ `bool`: Returns whether the overwrite is a member overwrite """
+        return self.target_type == PermissionType.member
 
     @classmethod
     def from_dict(cls, data: dict) -> Self:

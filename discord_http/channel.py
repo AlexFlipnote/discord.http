@@ -9,7 +9,7 @@ from .enums import (
     SortOrderType, ForumLayoutType, PrivacyLevelType
 )
 from .file import File
-from .flags import PermissionOverwrite, ChannelFlags
+from .flags import PermissionOverwrite, ChannelFlags, Permissions
 from .mentions import AllowedMentions
 from .multipart import MultipartData
 from .object import PartialBase, Snowflake
@@ -18,12 +18,13 @@ from .view import View
 from .webhook import Webhook
 
 if TYPE_CHECKING:
-    from .types import channels
-    from .member import ThreadMember
-    from .guild import PartialGuild, PartialScheduledEvent
+    from .guild import Guild, PartialGuild, PartialScheduledEvent
     from .http import DiscordAPI
     from .invite import Invite
+    from .member import Member
+    from .member import ThreadMember
     from .message import PartialMessage, Message, Poll
+    from .types import channels
     from .user import PartialUser, User
 
 MISSING = utils.MISSING
@@ -71,13 +72,38 @@ class PartialChannel(PartialBase):
         return f"<PartialChannel id={self.id}>"
 
     @property
-    def guild(self) -> Optional["PartialGuild"]:
-        """ `Optional[PartialGuild]`: The guild the channel belongs to (if available) """
+    def guild(self) -> "Guild | PartialGuild | None":
+        """
+        `Optional[Guild | PartialGuild]`:
+        The guild the channel belongs to (if available).
+        If you are using gateway cache, it can return full object too
+        """
         if not self.guild_id:
             return None
 
+        cache = self._state.cache.get_guild(self.guild_id)
+        if cache:
+            return cache
+
         from .guild import PartialGuild
         return PartialGuild(state=self._state, id=self.guild_id)
+
+    def permissions_for(self, member: "Member") -> Permissions:
+        """
+        Returns the permissions for a member in the channel.
+        However since this is Partial, it will always return Permissions.none()
+
+        Parameters
+        ----------
+        member: `Member`
+            The member to get the permissions for.
+
+        Returns
+        -------
+        `Permissions`
+            The permissions for the member in the channel.
+        """
+        return Permissions.none()
 
     @property
     def type(self) -> ChannelType:
@@ -351,7 +377,8 @@ class PartialChannel(PartialBase):
         self,
         data: dict,
         *,
-        state: Optional["DiscordAPI"] = None
+        state: Optional["DiscordAPI"] = None,
+        guild_id: int | None = None
     ) -> "BaseChannel":
         match data["type"]:
             case x if x in (ChannelType.guild_text, ChannelType.guild_news):
@@ -382,6 +409,9 @@ class PartialChannel(PartialBase):
                 _class = BaseChannel
 
         _class: type["BaseChannel"]
+
+        if guild_id is not None:
+            data["guild_id"] = guild_id
 
         return _class(
             state=state or self._state,
@@ -1222,11 +1252,17 @@ class PartialChannel(PartialBase):
 
 
 class BaseChannel(PartialChannel):
-    def __init__(self, *, state: "DiscordAPI", data: dict):
+    def __init__(
+        self,
+        *,
+        state: "DiscordAPI",
+        data: dict,
+        guild_id: int | None = None
+    ):
         super().__init__(
             state=state,
             id=int(data["id"]),
-            guild_id=utils.get_int(data, "guild_id")
+            guild_id=utils.get_int(data, "guild_id", default=guild_id)
         )
 
         self.id: int = int(data["id"])
@@ -1250,6 +1286,83 @@ class BaseChannel(PartialChannel):
     def __str__(self) -> str:
         return self.name or ""
 
+    def permissions_for(self, member: "Member") -> Permissions:
+        """
+        Returns the permissions for a member in the channel.
+        Note that this only works if you are using Gateway with guild, role and channel cache.
+
+        Parameters
+        ----------
+        member: `Member`
+            The member to get the permissions for.
+
+        Returns
+        -------
+        `Permissions`
+            The permissions for the member in the channel.
+        """
+        if getattr(self.guild, "owner_id", None) == member.id:
+            return Permissions.all()
+
+        base: Permissions = getattr(
+            self.guild.default_role,
+            "permissions",
+            Permissions.none()
+        )
+
+        for r in member.roles:
+            role = self.guild.get_role(r.id)
+            if role is None:
+                continue
+            base |= getattr(role, "permissions", Permissions.none())
+
+        if Permissions.administrator in base:
+            return Permissions.all()
+
+        _everyone = next((
+            g for g in self.permission_overwrites
+            if g.target.id == self.guild.default_role.id
+        ), None)
+
+        if _everyone:
+            base = base.handle_overwrite(int(_everyone.allow), int(_everyone.deny))
+            _overwrites = [
+                g for g in self.permission_overwrites
+                if g.target.id != _everyone.target.id
+            ]
+        else:
+            _overwrites = self.permission_overwrites
+
+        allows, denies = 0, 0
+
+        for ow in _overwrites:
+            if ow.is_role() and ow.target.id in member.roles:
+                allows |= int(ow.allow)
+                denies |= int(ow.deny)
+
+        base = base.handle_overwrite(allows, denies)
+
+        for ow in _overwrites:
+            if ow.is_member() and ow.target.id == member.id:
+                allows |= int(ow.allow)
+                denies |= int(ow.deny)
+                break
+
+        if member.is_timed_out():
+            _timeout_perm = (
+                Permissions.view_channel |
+                Permissions.read_message_history
+            )
+
+            if Permissions.view_channel not in base:
+                _timeout_perm &= ~Permissions.view_channel
+            if Permissions.read_message_history not in base:
+                _timeout_perm &= ~Permissions.read_message_history
+
+            base = _timeout_perm
+
+        return base
+
     @property
     def mention(self) -> str:
         """ `str`: The channel's mention """
@@ -1261,7 +1374,13 @@ class BaseChannel(PartialChannel):
         return ChannelType.guild_text
 
     @classmethod
-    def from_dict(cls, *, state: "DiscordAPI", data: dict) -> "BaseChannel":
+    def from_dict(
+        cls,
+        *,
+        state: "DiscordAPI",
+        data: dict,
+        guild_id: int | None = None
+    ) -> "BaseChannel":
         """
         Create a channel object from a dictionary
         Requires the state to be set
@@ -1281,6 +1400,7 @@ class BaseChannel(PartialChannel):
         _class = cls(state=state, data=data)._class_to_return(
             data=data,
             state=state,
+            guild_id=guild_id
         )
 
         return _class
@@ -1403,6 +1523,34 @@ class CategoryChannel(BaseChannel):
     def type(self) -> ChannelType:
         """ `ChannelType`: Returns the channel's type """
         return ChannelType.guild_category
+
+    @property
+    def channels(self) -> list["BaseChannel | PartialChannel"]:
+        """
+        `list[BaseChannel | PartialChannel]`: Returns a list of channels in this category.
+        This will only return channels that are in the same guild as the category.
+        """
+        guild = self._state.cache.get_guild(self.guild_id)
+        if not guild:
+            return []
+
+        channels: list["BaseChannel | PartialChannel"] = [
+            g for g in guild.channels
+            if g.parent_id == self.id
+        ]
+
+        _voice_types = [
+            ChannelType.guild_voice,
+            ChannelType.guild_stage_voice
+        ]
+
+        return sorted(
+            channels,
+            key=lambda x: (
+                1 if x.type in _voice_types else 0,
+                getattr(x, "position", 0)
+            )
+        )
 
     async def create_text_channel(
         self,
@@ -1704,10 +1852,13 @@ class ForumChannel(PublicThread):
 
     def _from_data(self, data: dict):
         if data.get("default_reaction_emoji", None):
-            self.default_reaction_emoji = EmojiParser(
-                data["default_reaction_emoji"]["id"] or
-                data["default_reaction_emoji"]["name"]
+            _target = (
+                data["default_reaction_emoji"].get("id", None) or
+                data["default_reaction_emoji"].get("name", None)
             )
+
+            if _target:
+                self.default_reaction_emoji = EmojiParser(_target)
 
 
 class ForumThread(PublicThread):

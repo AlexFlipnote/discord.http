@@ -327,6 +327,30 @@ class Client:
 
         return self._user_object
 
+    @property
+    def guilds(self) -> list[Guild | PartialGuild]:
+        """
+        `list[Guild]`: Returns a list of all the guilds the bot is in.
+        Only useable if you are using gateway and caching
+        """
+        return self.cache.guilds
+
+    def get_guild(self, guild_id: int) -> Guild | PartialGuild | None:
+        """
+        Get a guild object from the cache.
+
+        Parameters
+        ----------
+        guild_id: `int`
+            The ID of the guild to get.
+
+        Returns
+        -------
+        `Guild | PartialGuild | None`
+            The guild object with the specified ID, or `None` if not found.
+        """
+        return self.cache.get_guild(guild_id)
+
     def is_ready(self) -> bool:
         """ `bool`: Indicates if the client is ready. """
         return (

@@ -18,7 +18,6 @@ from .enums import PayloadType, ShardCloseType
 
 if TYPE_CHECKING:
     from ..client import Client
-    from ..guild import Guild, PartialGuild
     from .flags import GatewayCacheFlags, Intents
 
 DEFAULT_GATEWAY = yarl.URL("wss://gateway.discord.gg/")
@@ -116,7 +115,7 @@ class Shard:
 
         self._ready: asyncio.Event = asyncio.Event()
         self._guild_ready_timeout: float = float(bot.guild_ready_timeout)
-        self._guild_create_queue: asyncio.Queue["Guild | PartialGuild"] = asyncio.Queue()
+        self._guild_create_queue: asyncio.Queue[dict] = asyncio.Queue()
 
         self._connection = None
         self._should_kill = False
@@ -376,15 +375,15 @@ class Shard:
         """
         while True:
             try:
-                await asyncio.wait_for(
+                guild_data = await asyncio.wait_for(
                     self._guild_create_queue.get(),
                     timeout=self._guild_ready_timeout
                 )
             except asyncio.TimeoutError:
                 break  # It's supposed to timeout
             else:
-                # NOTE: Handling of chunking is not implemented yet
-                pass
+                # Start adding guilds to cache if it's enabled
+                self.parser.guild_create(guild_data)
 
         self._ready.set()
 
@@ -446,7 +445,7 @@ class Shard:
         if not self._ready.is_set():
             # We still want to parse GUILD_CREATE
             # But we do not want to dispatch event just yet
-            self._guild_create_queue.put_nowait(guild)
+            self._guild_create_queue.put_nowait(data)
             return None
 
         self._send_dispatch(_event_name, guild)

@@ -99,10 +99,17 @@ class JumpURL:
         return await self.guild.fetch()
 
     @property
-    def channel(self) -> Optional["PartialChannel"]:
-        """ `PartialChannel`: Returns the channel the message was sent in """
+    def channel(self) -> Optional["BaseChannel | PartialChannel"]:
+        """
+        `BaseChannel | PartialChannel`: Returns the channel the message was sent in.
+        If guild and channel cache is enabled, it can also return full channel object.
+        """
         if not self.channel_id:
             return None
+
+        cache = self._state.cache.get_channel(self.guild_id or 0, self.channel_id)
+        if cache:
+            return cache
 
         from .channel import PartialChannel
         return PartialChannel(
@@ -371,6 +378,10 @@ class MessageReference:
         if not self.channel_id:
             return None
 
+        cache = self._state.cache.get_channel(self.guild_id or 0, self.channel_id)
+        if cache:
+            return cache
+
         from .channel import PartialChannel
         return PartialChannel(
             state=self._state,
@@ -612,8 +623,16 @@ class Typing:
     @property
     def channel(self) -> "PartialChannel":
         """ `Optional[PartialChannel]`: Returns the channel the message was sent in """
+        cache = self._state.cache.get_channel(self.guild_id or 0, self.channel_id)
+        if cache:
+            return cache
+
         from .channel import PartialChannel
-        return PartialChannel(state=self._state, id=self.channel_id)
+        return PartialChannel(
+            state=self._state,
+            id=self.channel_id,
+            guild_id=self.guild_id
+        )
 
 
 class PartialMessage(PartialBase):
@@ -637,8 +656,16 @@ class PartialMessage(PartialBase):
     @property
     def channel(self) -> "PartialChannel":
         """ `PartialChannel`: Returns the channel the message was sent in """
+        cache = self._state.cache.get_channel(self.guild_id or 0, self.channel_id)
+        if cache:
+            return cache
+
         from .channel import PartialChannel
-        return PartialChannel(state=self._state, id=self.channel_id)
+        return PartialChannel(
+            state=self._state,
+            id=self.channel_id,
+            guild_id=self.guild_id
+        )
 
     @property
     def guild(self) -> "PartialGuild | None":
@@ -896,8 +923,9 @@ class PartialMessage(PartialBase):
             message_reference=MessageReference(
                 state=self._state,
                 data={
+                    "type": int(MessageReferenceType.default),
                     "channel_id": self.channel_id,
-                    "message_id": self.id
+                    "message_id": self.id,
                 }
             )
         )
@@ -1092,10 +1120,7 @@ class Message(PartialMessage):
             for s in data.get("sticker_items", [])
         ]
 
-        self.user_mentions: list[User] = [
-            User(state=self._state, data=g)
-            for g in data.get("mentions", [])
-        ]
+        self.mentions: list["Member | User"] = []
 
         self.view: View | None = None
         self.edited_timestamp: datetime | None = None
@@ -1146,6 +1171,23 @@ class Message(PartialMessage):
                 guild=self.guild,  # type: ignore
                 data=data["member"]
             )
+
+        if data.get("mentions", None):
+            from .member import Member
+
+            for m in data["mentions"]:
+                if m.get("member", None) and self.guild_id:
+                    # This is only done through the gateway
+                    _fake_member = m["member"]
+                    _fake_member["user"] = m
+                    Member(
+                        state=self._state,
+                        guild=self.guild,  # type: ignore
+                        data=_fake_member
+                    )
+
+                else:
+                    User(state=self._state, data=m)
 
     def is_system(self) -> bool:
         """ `bool`: Returns whether the message is a system message """

@@ -184,7 +184,10 @@ class Loop:
                         await self._try_sleep_until(self._next_loop)
 
                     self._loop_count += 1
-                    if self.loop_count == self.count:
+                    if (
+                        self.count and
+                        self.loop_count >= self.count
+                    ):
                         break
 
         except asyncio.CancelledError:
