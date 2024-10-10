@@ -146,6 +146,9 @@ Intents.guilds
 
   Called whenever a guild is deleted (Bot was removed)
 
+  .. note::
+    Depending on your cache rules, Guild will either return Full or Partial object.
+
   :param guild: :class:`PartialGuild` object with information about the guild.
 
 
@@ -210,17 +213,14 @@ Intents.guilds
 
   Called whenever a channel is updated
 
-  .. note::
-    Depending on your cache rules, it will either return TextChannel/VoiceChannel/etc. or Partial object.
-
-  :param channel: :class:`PartialChannel` | :class:`BaseChannel`\* object with information about the channel.
+  :param channel: :class:`BaseChannel` object with information about the channel.
 
 
 .. function:: async def on_channel_delete(channel):
 
   Called whenever a channel is deleted
 
-  :param channel: :class:`PartialChannel` object with information about the channel.
+  :param channel: :class:`BaseChannel` object with information about the channel.
 
 
 .. function:: async def on_channel_pins_update(payload):

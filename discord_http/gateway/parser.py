@@ -59,7 +59,7 @@ class Parser:
     def _get_channel_or_partial(
         self,
         channel_id: int,
-        guild_id: int | None
+        guild_id: int | None = None
     ) -> "BaseChannel | PartialChannel":
         if not guild_id:
             return PartialChannel(state=self.bot.state, id=channel_id)
@@ -121,42 +121,38 @@ class Parser:
         self.bot.cache.update_guild(guild.id, data)
         return (guild,)
 
-    def guild_delete(self, data: dict) -> tuple[PartialGuild]:
-        _guild_id = int(data["id"])
-        self.bot.cache.remove_guild(_guild_id)
-        return (self.bot.get_partial_guild(_guild_id),)
+    def guild_delete(self, data: dict) -> tuple[Guild | PartialGuild]:
+        guild = self._get_guild_or_partial(int(data["id"]))
+        self.bot.cache.remove_guild(guild.id)
+        return (guild,)
 
     def guild_available(self, data: dict) -> tuple[Guild | PartialGuild]:
-        _guild = self._guild(data)
+        _guild = self._get_guild_or_partial(int(data["id"]))
 
-        cached_guild = self.bot.cache.get_guild(_guild.id)
-        return_guild = cached_guild or _guild
-
-        return (return_guild,)
+        return (_guild,)
 
     def guild_unavailable(self, data: dict) -> tuple[Guild | PartialGuild]:
-        _guild = self._guild(data)
+        _guild = self._get_guild_or_partial(int(data["id"]))
 
-        cached_guild = self.bot.cache.get_guild(_guild.id)
-        return_guild = cached_guild or _guild
+        return (_guild,)
 
-        return (return_guild,)
+    def guild_member_add(self, data: dict) -> tuple[Guild | PartialGuild, Member]:
+        _guild = self._get_guild_or_partial(int(data["id"]))
 
-    def guild_member_add(self, data: dict) -> tuple[PartialGuild, Member]:
-        _guild = self._get_guild_or_partial(int(data["guild_id"]))
         return (
             _guild,
             Member(state=self.bot.state, guild=_guild, data=data)
         )
 
-    def guild_member_update(self, data: dict) -> tuple[PartialGuild, Member]:
-        _guild = self._get_guild_or_partial(int(data["guild_id"]))
+    def guild_member_update(self, data: dict) -> tuple[Guild | PartialGuild, Member]:
+        _guild = self._get_guild_or_partial(int(data["id"]))
+
         return (
             _guild,
             Member(state=self.bot.state, guild=_guild, data=data)
         )
 
-    def guild_member_remove(self, data: dict) -> tuple[PartialGuild, User]:
+    def guild_member_remove(self, data: dict) -> tuple[Guild | PartialGuild, User]:
         _guild = self._get_guild_or_partial(int(data["guild_id"]))
         return (
             _guild,
@@ -166,18 +162,7 @@ class Parser:
             )
         )
 
-    def guild_ban_add(self, data: dict) -> tuple[PartialGuild, User]:
-        _guild = self._get_guild_or_partial(int(data["guild_id"]))
-
-        return (
-            _guild,
-            User(
-                state=self.bot.state,
-                data=data["user"]
-            )
-        )
-
-    def guild_ban_remove(self, data: dict) -> tuple[PartialGuild, User]:
+    def guild_ban_add(self, data: dict) -> tuple[Guild | PartialGuild, User]:
         _guild = self._get_guild_or_partial(int(data["guild_id"]))
 
         return (
@@ -188,7 +173,18 @@ class Parser:
             )
         )
 
-    def guild_emojis_update(self, data: dict) -> tuple[PartialGuild, list[Emoji]]:
+    def guild_ban_remove(self, data: dict) -> tuple[Guild | PartialGuild, User]:
+        _guild = self._get_guild_or_partial(int(data["guild_id"]))
+
+        return (
+            _guild,
+            User(
+                state=self.bot.state,
+                data=data["user"]
+            )
+        )
+
+    def guild_emojis_update(self, data: dict) -> tuple[Guild | PartialGuild, list[Emoji]]:
         _guild = self._get_guild_or_partial(int(data["guild_id"]))
 
         return (
@@ -203,7 +199,7 @@ class Parser:
             ]
         )
 
-    def guild_stickers_update(self, data: dict) -> tuple[PartialGuild, list[Sticker]]:
+    def guild_stickers_update(self, data: dict) -> tuple[Guild | PartialGuild, list[Sticker]]:
         _guild = self._get_guild_or_partial(int(data["guild_id"]))
 
         return (
@@ -304,8 +300,8 @@ class Parser:
         self.bot.cache.add_channel(channel)
         return (channel,)
 
-    def channel_delete(self, data: dict) -> tuple[PartialChannel]:
-        channel = self._partial_channel(data)
+    def channel_delete(self, data: dict) -> tuple[BaseChannel]:
+        channel = self._channel(data)
         self.bot.cache.remove_channel(channel)
         return (channel,)
 
