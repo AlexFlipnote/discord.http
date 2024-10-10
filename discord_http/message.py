@@ -5,7 +5,7 @@ from typing import TYPE_CHECKING, Optional, Union, AsyncIterator, Self, Callable
 from . import utils
 from .embeds import Embed
 from .emoji import EmojiParser
-from .enums import MessageReferenceType
+from .enums import MessageReferenceType, MessageType
 from .errors import HTTPException
 from .file import File
 from .mentions import AllowedMentions
@@ -1069,6 +1069,7 @@ class Message(PartialMessage):
             guild_id=guild.id if guild else None
         )
 
+        self.type: MessageType = MessageType(data["type"])
         self.content: Optional[str] = data.get("content", None)
         self.author: Union[User, "Member"] = User(state=state, data=data["author"])
         self.pinned: bool = data.get("pinned", False)
@@ -1145,6 +1146,16 @@ class Message(PartialMessage):
                 guild=self.guild,  # type: ignore
                 data=data["member"]
             )
+
+    def is_system(self) -> bool:
+        """ `bool`: Returns whether the message is a system message """
+        return self.type not in (
+            MessageType.default,
+            MessageType.reply,
+            MessageType.chat_input_command,
+            MessageType.context_menu_command,
+            MessageType.thread_starter_message
+        )
 
     @property
     def emojis(self) -> list[EmojiParser]:
