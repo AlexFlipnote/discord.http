@@ -132,7 +132,7 @@ class DiscordHTTP(Quart):
             cmd = cmd.subcommands.get(find_next_step["name"], None)  # type: ignore
 
             if not cmd:
-                _log.warn(
+                _log.warning(
                     f"Unhandled subcommand: {find_next_step['name']} "
                     "(not found in local command list)"
                 )
@@ -169,7 +169,7 @@ class DiscordHTTP(Quart):
         cmd = self.bot.commands.get(command_name, None)
 
         if not cmd:
-            _log.warn(
+            _log.warning(
                 f"Unhandeled command: {command_name} "
                 "(not found in local command list)"
             )
@@ -272,7 +272,7 @@ class DiscordHTTP(Quart):
 
         try:
             if not cmd:
-                _log.warn(f"Unhandled autocomplete recieved (name: {command_name})")
+                _log.warning(f"Unhandled autocomplete recieved (name: {command_name})")
                 return QuartResponse(
                     "command not found",
                     status=404
@@ -286,7 +286,7 @@ class DiscordHTTP(Quart):
             ), None)
 
             if not find_focused:
-                _log.warn(
+                _log.warning(
                     "Failed to find focused option in autocomplete "
                     f"(cmd name: {command_name})"
                 )

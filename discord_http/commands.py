@@ -629,7 +629,7 @@ class Command:
 
                 opt = self._find_option(loc.key)
                 if not opt:
-                    _log.warn(
+                    _log.warning(
                         f"{self.name} -> {loc.key}: "
                         "Option not found in command, skipping..."
                     )
@@ -1240,7 +1240,7 @@ def locales(
                 continue
 
             if key not in ValidLocalesList:
-                _log.warn(f"{name}: Unsupported locale {key} skipped (might be a typo)")
+                _log.warning(f"{name}: Unsupported locale {key} skipped (might be a typo)")
                 continue
 
             if not isinstance(value, dict):
@@ -1268,7 +1268,7 @@ def locales(
                 )
 
             if not temp_value:
-                _log.warn(f"{name} -> {key}: Found an empty translation dict, skipping...")
+                _log.warning(f"{name} -> {key}: Found an empty translation dict, skipping...")
                 continue
 
             container[key] = temp_value

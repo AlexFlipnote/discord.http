@@ -161,7 +161,7 @@ class Loop:
                         self._is_explicit_time() and
                         self._next_loop <= self._last_loop
                     ):
-                        _log.warn(
+                        _log.warning(
                             f"task:{self.func.__name__} woke up a bit too early. "
                             f"Sleeping until {self._next_loop} to avoid drifting."
                         )

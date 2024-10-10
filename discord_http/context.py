@@ -483,7 +483,7 @@ class InteractionResponse:
                 )
 
             if (isinstance(k, int) or isinstance(k, float)) and k >= 2**53:
-                _log.warn(
+                _log.warning(
                     f"'{k}: {v}' (int) is too large, "
                     "Discord might ignore it and make autocomplete fail"
                 )
