@@ -261,7 +261,7 @@ class Cache:
 
         member._update_presence(presence)
 
-    def get_channel(self, guild_id: int, channel_id: int) -> Optional[Union["BaseChannel", "PartialChannel"]]:
+    def get_channel(self, guild_id: int | None, channel_id: int) -> Optional[Union["BaseChannel", "PartialChannel"]]:
         guild = self.get_guild(guild_id)
         if not guild:
             return None

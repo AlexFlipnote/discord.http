@@ -220,3 +220,8 @@ class User(PartialUser):
     def display_name(self) -> str:
         """ `str`: Returns the user's display name """
         return self.global_name or self.name
+
+    @property
+    def display_avatar(self) -> Optional[Asset]:
+        """ `Optional[Asset]`: Returns the display avatar of the member """
+        return self.avatar

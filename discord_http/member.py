@@ -56,7 +56,7 @@ class PartialMember(PartialBase):
         self.presence = obj
 
     @property
-    def guild(self) -> PartialGuild | Guild:
+    def guild(self) -> Guild | PartialGuild:
         """
         `PartialGuild | Guild`: The guild of the member
         If you are using gateway cache, it can return full object too
@@ -390,6 +390,7 @@ class Member(PartialMember):
         self.nick: Optional[str] = data.get("nick", None)
         self.joined_at: datetime = utils.parse_time(data["joined_at"])
         self.communication_disabled_until: datetime | None = None
+        self.premium_since: datetime | None = None
         self.roles: list[PartialRole] = [
             PartialRole(state=state, id=int(r), guild_id=self.guild.id)
             for r in data["roles"]
@@ -416,6 +417,11 @@ class Member(PartialMember):
         if data.get("communication_disabled_until", None):
             self.communication_disabled_until = utils.parse_time(
                 data["communication_disabled_until"]
+            )
+
+        if data.get("premium_since", None):
+            self.premium_since = utils.parse_time(
+                data["premium_since"]
             )
 
     def get_role(
@@ -445,6 +451,40 @@ class Member(PartialMember):
         if self.communication_disabled_until is None:
             return False
         return utils.utcnow() < self.communication_disabled_until
+
+    @property
+    def guild_permissions(self) -> Permissions:
+        """
+        `Permissions`: Returns the guild permissions of the member.
+        This is only available if you are using gateway with guild cache.
+        """
+        if getattr(self.guild, "owner_id", None) == self.id:
+            return Permissions.all()
+
+        base = Permissions.none()
+
+        for r in self.roles:
+            g_role = self.guild.get_role(r.id)
+            if isinstance(g_role, Role):
+                base |= g_role.permissions
+
+        if Permissions.administrator in base:
+            return Permissions.all()
+
+        if self.is_timed_out():
+            _timeout_perm = (
+                Permissions.view_channel |
+                Permissions.read_message_history
+            )
+
+            if Permissions.view_channel not in base:
+                _timeout_perm &= ~Permissions.view_channel
+            if Permissions.read_message_history not in base:
+                _timeout_perm &= ~Permissions.read_message_history
+
+            base = _timeout_perm
+
+        return base
 
     @property
     def resolved_permissions(self) -> Permissions:

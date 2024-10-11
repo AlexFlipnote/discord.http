@@ -8,6 +8,7 @@ from .object import Snowflake
 
 __all__ = (
     "ApplicationFlags",
+    "AttachmentFlags",
     "BaseFlag",
     "ChannelFlags",
     "GuildMemberFlags",
@@ -213,6 +214,12 @@ class PublicFlags(BaseFlag):
     certified_moderator = 1 << 18
     bot_http_interactions = 1 << 19
     active_developer = 1 << 22
+
+
+class AttachmentFlags(BaseFlag):
+    clip = 1 << 0
+    thumbnail = 1 << 1
+    remix = 1 << 2
 
 
 class ApplicationFlags(BaseFlag):

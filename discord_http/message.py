@@ -8,6 +8,7 @@ from .emoji import EmojiParser
 from .enums import MessageReferenceType, MessageType
 from .errors import HTTPException
 from .file import File
+from .flags import AttachmentFlags
 from .mentions import AllowedMentions
 from .object import PartialBase, Snowflake
 from .response import MessageResponse
@@ -80,10 +81,14 @@ class JumpURL:
         return self.url
 
     @property
-    def guild(self) -> Optional["PartialGuild"]:
+    def guild(self) -> Optional["Guild | PartialGuild"]:
         """ `Optional[PartialGuild]`: The guild the message was sent in """
         if not self.guild_id:
             return None
+
+        cache = self._state.cache.get_guild(self.guild_id)
+        if cache:
+            return cache
 
         from .guild import PartialGuild
         return PartialGuild(
@@ -107,7 +112,7 @@ class JumpURL:
         if not self.channel_id:
             return None
 
-        cache = self._state.cache.get_channel(self.guild_id or 0, self.channel_id)
+        cache = self._state.cache.get_channel(self.guild_id, self.channel_id)
         if cache:
             return cache
 
@@ -361,10 +366,14 @@ class MessageReference:
         )
 
     @property
-    def guild(self) -> "PartialGuild | None":
+    def guild(self) -> "Guild | PartialGuild | None":
         """ `Optional[PartialGuild]`: The guild the message was sent in """
         if not self.guild_id:
             return None
+
+        cache = self._state.cache.get_guild(self.guild_id)
+        if cache:
+            return cache
 
         from .guild import PartialGuild
         return PartialGuild(
@@ -378,7 +387,7 @@ class MessageReference:
         if not self.channel_id:
             return None
 
-        cache = self._state.cache.get_channel(self.guild_id or 0, self.channel_id)
+        cache = self._state.cache.get_channel(self.guild_id, self.channel_id)
         if cache:
             return cache
 
@@ -428,6 +437,7 @@ class Attachment:
         self.url: str = data["url"]
         self.proxy_url: str = data["proxy_url"]
         self.ephemeral: bool = data.get("ephemeral", False)
+        self.flags: AttachmentFlags = AttachmentFlags(data.get("flags", 0))
 
         self.content_type: Optional[str] = data.get("content_type", None)
         self.title: Optional[str] = data.get("title", None)
@@ -439,7 +449,6 @@ class Attachment:
 
         self.duration_secs: Optional[int] = data.get("duration_secs", None)
         self.waveform: Optional[str] = data.get("waveform", None)
-        self.flags: int = data.get("flags", 0)
 
     def __str__(self) -> str:
         return self.filename or ""
@@ -456,6 +465,10 @@ class Attachment:
     def is_spoiler(self) -> bool:
         """ `bool`: Whether the attachment is a spoiler or not """
         return self.filename.startswith("SPOILER_")
+
+    def is_voice_message(self) -> bool:
+        """:class:`bool`: Whether this attachment is a voice message."""
+        return self.duration_secs is not None and "voice-message" in self.url
 
     async def fetch(self, *, use_cached: bool = False) -> bytes:
         """
@@ -612,10 +625,14 @@ class Typing:
         )
 
     @property
-    def guild(self) -> Optional["PartialGuild"]:
+    def guild(self) -> Optional["Guild | PartialGuild"]:
         """ `Optional[PartialGuild]`: The guild the message was sent in """
         if not self.guild_id:
             return None
+
+        cache = self._state.cache.get_guild(self.guild_id)
+        if cache:
+            return cache
 
         from .guild import PartialGuild
         return PartialGuild(state=self._state, id=self.guild_id)
@@ -623,7 +640,7 @@ class Typing:
     @property
     def channel(self) -> "PartialChannel":
         """ `Optional[PartialChannel]`: Returns the channel the message was sent in """
-        cache = self._state.cache.get_channel(self.guild_id or 0, self.channel_id)
+        cache = self._state.cache.get_channel(self.guild_id, self.channel_id)
         if cache:
             return cache
 
@@ -654,9 +671,9 @@ class PartialMessage(PartialBase):
         return f"<PartialMessage id={self.id}>"
 
     @property
-    def channel(self) -> "PartialChannel":
+    def channel(self) -> "BaseChannel | PartialChannel":
         """ `PartialChannel`: Returns the channel the message was sent in """
-        cache = self._state.cache.get_channel(self.guild_id or 0, self.channel_id)
+        cache = self._state.cache.get_channel(self.guild_id, self.channel_id)
         if cache:
             return cache
 
@@ -668,10 +685,15 @@ class PartialMessage(PartialBase):
         )
 
     @property
-    def guild(self) -> "PartialGuild | None":
+    def guild(self) -> "Guild | PartialGuild | None":
         """ `PartialGuild` | `None`: Returns the guild the message was sent in """
         if not self.guild_id:
             return None
+
+        cache = self._state.cache.get_guild(self.guild_id)
+        if cache:
+            return cache
+
         from .guild import PartialGuild
         return PartialGuild(state=self._state, id=self.guild_id)
 
@@ -1082,6 +1104,38 @@ class PartialMessage(PartialBase):
         )
 
 
+class MessageSnapshot:
+    def __init__(
+        self,
+        *,
+        state: "DiscordAPI",
+        data: dict
+    ):
+        self._state = state
+
+        self.type: MessageType = MessageType(data["type"])
+        self.content: str = data["content"]
+
+        self.timestamp: datetime = utils.parse_time(data["timestamp"])
+        self.edited_timestamp: datetime | None = None
+
+        self.embeds: list[Embed] = [
+            Embed.from_dict(embed)
+            for embed in data.get("embeds", [])
+        ]
+
+        self.attachments: list[Attachment] = [
+            Attachment(state=state, data=a)
+            for a in data.get("attachments", [])
+        ]
+
+        self._from_data(data)
+
+    def _from_data(self, data: dict) -> None:
+        if data.get("edited_timestamp", None):
+            self.edited_timestamp = utils.parse_time(data["edited_timestamp"])
+
+
 class Message(PartialMessage):
     def __init__(
         self,
@@ -1098,7 +1152,7 @@ class Message(PartialMessage):
         )
 
         self.type: MessageType = MessageType(data["type"])
-        self.content: Optional[str] = data.get("content", None)
+        self.content: str = data.get("content", "")
         self.author: Union[User, "Member"] = User(state=state, data=data["author"])
         self.pinned: bool = data.get("pinned", False)
         self.mention_everyone: bool = data.get("mention_everyone", False)
@@ -1125,9 +1179,10 @@ class Message(PartialMessage):
         self.view: View | None = None
         self.edited_timestamp: datetime | None = None
 
-        self.message_reference: MessageReference | None = None
+        self.reference: MessageReference | None = None
 
-        self.referenced_message: Message | None = None
+        self.resolved_reply: Message | None = None
+        self.resolved_forward: list[MessageSnapshot] = []
 
         self._from_data(data)
 
@@ -1142,16 +1197,24 @@ class Message(PartialMessage):
             self.view = View.from_dict(data)
 
         if data.get("message_reference", None):
-            self.message_reference = MessageReference(
+            self.reference = MessageReference(
                 state=self._state,
                 data=data["message_reference"]
             )
 
         if data.get("referenced_message", None):
-            self.referenced_message = Message(
+            self.resolved_reply = Message(
                 state=self._state,
                 data=data["referenced_message"],
                 guild=self.guild
+            )
+
+        for m in data.get("message_snapshots", []):
+            self.resolved_forward.append(
+                MessageSnapshot(
+                    state=self._state,
+                    data=m
+                )
             )
 
         if data.get("poll", None):

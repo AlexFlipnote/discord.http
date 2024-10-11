@@ -163,7 +163,7 @@ async def test_followup(ctx: Context, user: Member):
     """ My name jeff """
     async def pong():
         msg = await ctx.followup.send(f"Hello there {user.mention}")
-        print(msg.user_mentions)
+        print(msg.mentions)
 
     return ctx.response.defer(thinking=True, call_after=pong)
 

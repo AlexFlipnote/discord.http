@@ -311,7 +311,8 @@ class Command:
                             CommandOptionType.string
                         )
 
-                    case x if isinstance(x, Range):
+                    # It is a range, but pyright does not understand it due to TYPE_CHECKING
+                    case x if isinstance(x, Range):  # type: ignore
                         ptype = origin.type
                         if origin.type == CommandOptionType.string:
                             option.update({
@@ -953,82 +954,87 @@ class Choice(Generic[ChoiceT]):
         self.value: Union[str, int, float] = value
 
 
-class Range:
-    """
-    Makes it possible to create a range rule for command arguments
+# Making it so pyright understands that the range type is a normal type
+if TYPE_CHECKING:
+    from typing import Annotated as Range
 
-    When used in a command, it will only return the value if it's within the range.
+else:
+    class Range:
+        """
+        Makes it possible to create a range rule for command arguments
 
-    Example usage:
+        When used in a command, it will only return the value if it's within the range.
 
-    .. code-block:: python
+        Example usage:
 
-        Range[str, 1, 10]        # (min and max length of the string)
-        Range[int, 1, 10]        # (min and max value of the integer)
-        Range[float, 1.0, 10.0]  # (min and max value of the float)
+        .. code-block:: python
 
-    Parameters
-    ----------
-    opt_type: `CommandOptionType`
-        The type of the range
-    min: `Union[int, float, str]`
-        The minimum value of the range
-    max: `Union[int, float, str]`
-        The maximum value of the range
-    """
-    def __init__(
-        self,
-        opt_type: CommandOptionType,
-        min: Optional[Union[int, float, str]],
-        max: Optional[Union[int, float, str]]
-    ):
-        self.type = opt_type
-        self.min = min
-        self.max = max
+            Range[str, 1, 10]        # (min and max length of the string)
+            Range[int, 1, 10]        # (min and max value of the integer)
+            Range[float, 1.0, 10.0]  # (min and max value of the float)
 
-    def __class_getitem__(cls, obj):
-        if not isinstance(obj, tuple):
-            raise TypeError("Range must be a tuple")
+        Parameters
+        ----------
+        opt_type: `CommandOptionType`
+            The type of the range
+        min: `Union[int, float, str]`
+            The minimum value of the range
+        max: `Union[int, float, str]`
+            The maximum value of the range
+        """
+        def __init__(
+            self,
+            opt_type: CommandOptionType,
+            min: Optional[Union[int, float, str]],
+            max: Optional[Union[int, float, str]]
+        ):
+            self.type = opt_type
+            self.min = min
+            self.max = max
 
-        if len(obj) == 2:
-            obj = (*obj, None)
-        elif len(obj) != 3:
-            raise TypeError("Range must be a tuple of length 2 or 3")
+        def __class_getitem__(cls, obj):
+            if not isinstance(obj, tuple):
+                raise TypeError("Range must be a tuple")
 
-        obj_type, min, max = obj
+            if len(obj) == 2:
+                obj = (*obj, None)
+            elif len(obj) != 3:
+                raise TypeError("Range must be a tuple of length 2 or 3")
 
-        if min is None and max is None:
-            raise TypeError("Range must have a minimum or maximum value")
+            obj_type, min, max = obj
 
-        if min is not None and max is not None:
-            if type(min) is not type(max):
-                raise TypeError("Range minimum and maximum must be the same type")
+            if min is None and max is None:
+                raise TypeError("Range must have a minimum or maximum value")
 
-        match obj_type:
-            case x if x is str:
-                opt = CommandOptionType.string
+            if min is not None and max is not None:
+                if type(min) is not type(max):
+                    raise TypeError("Range minimum and maximum must be the same type")
 
-            case x if x is int:
-                opt = CommandOptionType.integer
+            match obj_type:
+                case x if x is str:
+                    opt = CommandOptionType.string
 
-            case x if x is float:
-                opt = CommandOptionType.number
+                case x if x is int:
+                    opt = CommandOptionType.integer
 
-            case _:
-                raise TypeError(
-                    "Range type must be str, int, "
-                    f"or float, not a {obj_type}"
-                )
+                case x if x is float:
+                    opt = CommandOptionType.number
 
-        cast = float
-        if obj_type in (str, int):
-            cast = int
+                case _:
+                    raise TypeError(
+                        "Range type must be str, int, "
+                        f"or float, not a {obj_type}"
+                    )
 
-        return cls(
-            opt,
-            cast(min) if min is not None else None,
-            cast(max) if max is not None else None
-        )
+            cast = float
+            if obj_type in (str, int):
+                cast = int
+
+            return cls(
+                opt,
+                cast(min) if min is not None else None,
+                cast(max) if max is not None else None
+            )
 
 
 def command(
