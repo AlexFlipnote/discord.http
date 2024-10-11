@@ -65,7 +65,7 @@ Errors
   :param error: :class:`Exception` object with the error that occurred.
 
 
-.. function:: async def on_interaction_error(ctx, error):
+.. function:: async def on_command_error(ctx, error):
 
   Called whenever an error occurs in an interaction (command, autocomplete, button, etc.)
 

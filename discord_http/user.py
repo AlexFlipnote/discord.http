@@ -1,4 +1,4 @@
-from typing import TYPE_CHECKING, Optional, Union
+from typing import TYPE_CHECKING, Optional, Union, Any
 
 from . import utils
 from .asset import Asset
@@ -19,6 +19,7 @@ if TYPE_CHECKING:
 MISSING = utils.MISSING
 
 __all__ = (
+    "UserClient",
     "PartialUser",
     "User",
 )
@@ -225,3 +226,53 @@ class User(PartialUser):
     def display_avatar(self) -> Optional[Asset]:
         """ `Optional[Asset]`: Returns the display avatar of the member """
         return self.avatar
+
+
+class UserClient(User):
+    def __init__(
+        self,
+        *,
+        state: "DiscordAPI",
+        data: dict
+    ):
+        super().__init__(state=state, data=data)
+
+        self.verified: bool = data.get("verified", False)
+
+    def __repr__(self) -> str:
+        return f"<UserClient id={self.id} name='{self.name}'>"
+
+    async def edit(
+        self,
+        *,
+        username: str | None = MISSING,
+        avatar: bytes | None = MISSING,
+        banner: bytes | None = MISSING,
+    ) -> "UserClient":
+        payload: dict[str, Any] = {}
+
+        if username is not MISSING:
+            payload["username"] = username
+
+        if avatar is not MISSING:
+            if avatar is not None:
+                payload["avatar"] = utils.bytes_to_base64(avatar)
+            else:
+                payload["avatar"] = None
+
+        if banner is not MISSING:
+            if banner is not None:
+                payload["banner"] = utils.bytes_to_base64(banner)
+            else:
+                payload["banner"] = None
+
+        r = await self._state.query(
+            "PATCH",
+            "/users/@me",
+            json=payload
+        )
+
+        return UserClient(
+            state=self._state,
+            data=r.response
+        )

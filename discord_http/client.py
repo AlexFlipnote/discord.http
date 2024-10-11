@@ -31,7 +31,7 @@ from .object import Snowflake
 from .role import PartialRole
 from .soundboard import SoundboardSound, PartialSoundboardSound
 from .sticker import PartialSticker, Sticker
-from .user import User, PartialUser
+from .user import User, PartialUser, UserClient
 from .view import InteractionStorage
 from .webhook import PartialWebhook, Webhook
 
@@ -149,7 +149,7 @@ class Client:
         self._gateway_cache: Optional["GatewayCacheFlags"] = gateway_cache
         self._ready: Optional[asyncio.Event] = asyncio.Event()
         self._shards_ready: Optional[asyncio.Event] = asyncio.Event()
-        self._user_object: Optional[User] = None
+        self._user_object: Optional[UserClient] = None
 
         self._context: Callable = Context
 
@@ -258,7 +258,7 @@ class Client:
             wrapped, name=f"discord.quart: {event_name}"
         )
 
-    async def _prepare_me(self) -> User:
+    async def _prepare_me(self) -> UserClient:
         """ Gets the bot's user data, mostly used to validate token """
         self._user_object = await self.state.me()
         _log.debug(f"/users/@me verified: {self.user} ({self.user.id})")
@@ -312,7 +312,7 @@ class Client:
         self._update_ids(data)
 
     @property
-    def user(self) -> User:
+    def user(self) -> UserClient:
         """
         Returns
         -------

@@ -25,7 +25,7 @@ from .gateway.flags import Intents
 
 if TYPE_CHECKING:
     from .client import Client
-    from .user import User
+    from .user import UserClient
 
 MethodTypes = Literal["GET", "POST", "DELETE", "PUT", "HEAD", "PATCH", "OPTIONS"]
 ResMethodTypes = Literal["text", "read", "json"]
@@ -497,7 +497,7 @@ class DiscordAPI:
             else:
                 raise RuntimeError("Unreachable code, reached max tries (5)")
 
-    async def me(self) -> "User":
+    async def me(self) -> "UserClient":
         """
         `User`: Fetches the bot's user information
 
@@ -554,8 +554,8 @@ class DiscordAPI:
                 f"by the application. Denied intents: {repr(denied_intents)}"
             )
 
-        from .user import User
-        return User(
+        from .user import UserClient
+        return UserClient(
             state=self,
             data=r.response["bot"]
         )

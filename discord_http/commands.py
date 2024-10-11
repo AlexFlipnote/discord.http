@@ -35,7 +35,7 @@ if TYPE_CHECKING:
     from .client import Client
     from .context import Context
 
-ChoiceT = TypeVar("ChoiceT", str, int, float, Union[str, int, float])
+ChoiceT = TypeVar("ChoiceT", str, int, float)
 
 LocaleTypes = Literal[
     "id", "da", "de", "en-GB", "en-US", "es-ES", "fr",
@@ -949,9 +949,9 @@ class Choice(Generic[ChoiceT]):
     value: `Union[int, str, float]`
         The value of your choice (the one that is shown to public)
     """
-    def __init__(self, key: ChoiceT, value: Union[str, int, float]):
+    def __init__(self, key: ChoiceT, value: ChoiceT):
         self.key: ChoiceT = key
-        self.value: Union[str, int, float] = value
+        self.value: ChoiceT = value
 
 
 # Making it so pyright understands that the range type is a normal type

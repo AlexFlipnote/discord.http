@@ -7,18 +7,19 @@ if TYPE_CHECKING:
     from .http import HTTPResponse
 
 __all__ = (
+    "AutomodBlock",
     "BotMissingPermissions",
     "CheckFailed",
+    "CommandError",
+    "CommandOnCooldown",
     "DiscordException",
     "DiscordServerError",
     "Forbidden",
     "HTTPException",
     "InvalidMember",
-    "CommandOnCooldown",
     "NotFound",
     "Ratelimited",
     "UserMissingPermissions",
-    "AutomodBlock",
 )
 
 
@@ -34,6 +35,11 @@ class CheckFailed(DiscordException):
 
 class InvalidMember(CheckFailed):
     """ Raised whenever a user was found, but not a member of a guild """
+    pass
+
+
+class CommandError(Exception):
+    """ Raised whenever a command error occurs """
     pass
 
 

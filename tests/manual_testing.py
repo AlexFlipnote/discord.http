@@ -977,7 +977,7 @@ async def on_raw_interaction(data: dict):
 
 
 # @client.listener()
-async def on_interaction_error(ctx: Context, error: errors.DiscordException):
+async def on_command_error(ctx: Context, error: errors.DiscordException):
     print(utils.traceback_maker(error))
 
 
