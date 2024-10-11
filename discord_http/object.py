@@ -19,7 +19,7 @@ class Snowflake:
         if not isinstance(id, int):
             raise TypeError(f"id must be an integer, not {type(id)}")
 
-        self.id: int = id
+        self.id: int = int(id)
 
     def __repr__(self) -> str:
         return f"<Snowflake id={self.id}>"

@@ -96,8 +96,10 @@ class Parser:
         if not guild_id:
             return PartialUser(state=state, id=user_id)
 
-        guild = self._get_guild_or_partial(guild_id)
-        return guild.get_member(user_id) or PartialMember(state=state, id=user_id, guild_id=guild_id)
+        guild = self._get_guild_or_partial(int(guild_id))
+        return guild.get_member(user_id) or PartialMember(
+            state=state, id=user_id, guild_id=guild.id
+        )
 
     def _guild(self, data: dict) -> Guild:
         return Guild(
@@ -306,7 +308,7 @@ class Parser:
         return (channel,)
 
     def channel_pins_update(self, data: dict) -> tuple[ChannelPinsUpdate]:
-        guild_id: int | None = data.get("guild_id", None)
+        guild_id: int | None = utils.get_int(data, "guild_id")
         channel_id: int = int(data["channel_id"])
         last_pin_timestamp: datetime | None = (
             utils.parse_time(_last_pin_timestamp)
@@ -344,7 +346,7 @@ class Parser:
             PartialThreadMember(
                 state=self.bot.state,
                 data=data,
-                guild_id=data["guild_id"]
+                guild_id=int(data["guild_id"])
             ),
         )
 
@@ -352,7 +354,7 @@ class Parser:
         return (ThreadMembersUpdatePayload(state=self.bot.state, data=data),)
 
     def _message(self, data: dict) -> Message:
-        guild_id = data.get("guild_id", None)
+        guild_id = utils.get_int(data, "guild_id")
 
         return Message(
             state=self.bot.state,
@@ -379,7 +381,7 @@ class Parser:
         )
 
     def message_delete_bulk(self, data: dict) -> tuple[BulkDeletePayload]:
-        _guild = self._get_guild_or_partial(data.get("guild_id", None))
+        _guild = self._get_guild_or_partial(utils.get_int(data, "guild_id"))
 
         if _guild is None:
             raise ValueError("guild_id somehow was not provided by Discord")
@@ -472,10 +474,7 @@ class Parser:
             self.bot.get_partial_invite(
                 data["code"],
                 channel_id=int(data["channel_id"]),
-                guild_id=(
-                    int(data["guild_id"])
-                    if data.get("guild_id", None) else None
-                )
+                guild_id=utils.get_int(data, "guild_id")
             ),
         )
 
@@ -497,7 +496,7 @@ class Parser:
         return (vs,)
 
     def typing_start(self, data: dict) -> tuple[TypingStartEvent]:
-        guild_id: int | None = data.get("guild_id", None)
+        guild_id: int | None = utils.get_int(data, "guild_id")
         channel_id: int = int(data["channel_id"])
         user_id: int = int(data["user_id"])
         timestamp: datetime = utils.parse_time(data["timestamp"])
@@ -577,9 +576,9 @@ class Parser:
         return (
             PartialIntegration(
                 state=self.bot.state,
-                id=data["id"],
+                id=int(data["id"]),
                 guild_id=guild_id,
-                application_id=data.get("application_id")
+                application_id=utils.get_int(data, "application_id")
             ),
         )
 
