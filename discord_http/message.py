@@ -1,3 +1,5 @@
+import asyncio
+
 from datetime import timedelta, datetime, UTC
 from io import BytesIO
 from typing import TYPE_CHECKING, Optional, Union, AsyncIterator, Self, Callable
@@ -718,14 +720,42 @@ class PartialMessage(PartialBase):
             guild=self.channel.guild
         )
 
-    async def delete(self, *, reason: Optional[str] = None) -> None:
-        """ Delete the message """
-        await self._state.query(
-            "DELETE",
-            f"/channels/{self.channel.id}/messages/{self.id}",
-            reason=reason,
-            res_method="text"
-        )
+    async def delete(
+        self,
+        *,
+        delay: float | None = None,
+        reason: str | None = None
+    ) -> None:
+        """
+        Delete the message
+
+        Parameters
+        ----------
+        delay: `float` | `None`:
+            How many seconds it should wait in background to delete
+        reason: `str` | `None`:
+            Reason for deleting the message
+            (Only applies when deleting messages not made by yourself)
+        """
+        async def _delete():
+            await self._state.query(
+                "DELETE",
+                f"/channels/{self.channel.id}/messages/{self.id}",
+                reason=reason,
+                res_method="text"
+            )
+
+        async def _delete_after(d: float):
+            await asyncio.sleep(d)
+            try:
+                await _delete()
+            except HTTPException:
+                pass
+
+        if delay is not None:
+            asyncio.create_task(_delete_after(delay))
+        else:
+            await _delete()
 
     async def expire_poll(self) -> "Message":
         """
@@ -1387,7 +1417,7 @@ class WebhookMessage(Message):
     async def delete(
         self,
         *,
-        reason: Optional[str] = None
+        delay: float | None = None
     ) -> None:
         """
         Delete the webhook message
@@ -1397,10 +1427,22 @@ class WebhookMessage(Message):
         reason: `Optional[str]`
             Reason for deleting the message
         """
-        await self._state.query(
-            "DELETE",
-            f"/webhooks/{self.application_id}/{self.token}/messages/{self.id}",
-            reason=reason,
-            webhook=True,
-            res_method="text"
-        )
+        async def _delete():
+            await self._state.query(
+                "DELETE",
+                f"/webhooks/{self.application_id}/{self.token}/messages/{self.id}",
+                webhook=True,
+                res_method="text"
+            )
+
+        async def _delete_after(d: float):
+            await asyncio.sleep(d)
+            try:
+                await _delete()
+            except HTTPException:
+                pass
+
+        if delay is not None:
+            asyncio.create_task(_delete_after(delay))
+        else:
+            await _delete()
