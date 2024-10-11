@@ -196,8 +196,8 @@ class DiscordHTTP(Quart):
                 content_type=payload.content_type
             )
         except Exception as e:
-            if self.bot.has_any_dispatch("command_error"):
-                self.bot.dispatch("command_error", ctx, e)
+            if self.bot.has_any_dispatch("interaction_error"):
+                self.bot.dispatch("interaction_error", ctx, e)
             else:
                 _log.error(
                     f"Error while running command {cmd.name}",
@@ -249,8 +249,8 @@ class DiscordHTTP(Quart):
             )
 
         except Exception as e:
-            if self.bot.has_any_dispatch("command_error"):
-                self.bot.dispatch("command_error", ctx, e)
+            if self.bot.has_any_dispatch("interaction_error"):
+                self.bot.dispatch("interaction_error", ctx, e)
             else:
                 _log.error(
                     f"Error while running interaction {_custom_id}",
@@ -299,8 +299,8 @@ class DiscordHTTP(Quart):
                 ctx, find_focused["name"], find_focused["value"]
             )
         except Exception as e:
-            if self.bot.has_any_dispatch("command_error"):
-                self.bot.dispatch("command_error", ctx, e)
+            if self.bot.has_any_dispatch("interaction_error"):
+                self.bot.dispatch("interaction_error", ctx, e)
             else:
                 _log.error(
                     f"Error while running autocomplete {cmd.name}",

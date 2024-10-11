@@ -589,8 +589,8 @@ class Context:
         try:
             await call_after()
         except Exception as e:
-            if self.bot.has_any_dispatch("command_error"):
-                self.bot.dispatch("command_error", self, e)
+            if self.bot.has_any_dispatch("interaction_error"):
+                self.bot.dispatch("interaction_error", self, e)
             else:
                 _log.error(
                     f"Error while running call_after:{call_after}",
