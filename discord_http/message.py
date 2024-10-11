@@ -7,7 +7,7 @@ from typing import TYPE_CHECKING, Optional, Union, AsyncIterator, Self, Callable
 from . import utils
 from .embeds import Embed
 from .emoji import EmojiParser
-from .enums import MessageReferenceType, MessageType
+from .enums import MessageReferenceType, MessageType, InteractionType, ApplicationCommandType
 from .errors import HTTPException
 from .file import File
 from .flags import AttachmentFlags
@@ -31,11 +31,33 @@ __all__ = (
     "Attachment",
     "JumpURL",
     "Message",
+    "MessageInteraction",
     "MessageReference",
     "PartialMessage",
     "Poll",
     "WebhookMessage",
 )
+
+
+class MessageInteraction(PartialBase):
+    def __init__(
+        self,
+        *,
+        state: "DiscordAPI",
+        data: dict
+    ):
+        super().__init__(id=int(data["id"]))
+        self._state = state
+
+        self.type: InteractionType = InteractionType(data["type"])
+        self.name: str = data["name"]
+        self.command_type: ApplicationCommandType = ApplicationCommandType(
+            data["command_type"]
+        )
+        self.user: User = User(
+            state=state,
+            data=data["user"]
+        )
 
 
 class JumpURL:
@@ -1214,6 +1236,8 @@ class Message(PartialMessage):
         self.resolved_reply: Message | None = None
         self.resolved_forward: list[MessageSnapshot] = []
 
+        self.interaction: MessageInteraction | None = None
+
         self._from_data(data)
 
     def __repr__(self) -> str:
@@ -1237,6 +1261,12 @@ class Message(PartialMessage):
                 state=self._state,
                 data=data["referenced_message"],
                 guild=self.guild
+            )
+
+        if data.get("interaction_metadata", None):
+            self.interaction = MessageInteraction(
+                state=self._state,
+                data=data["interaction_metadata"]
             )
 
         for m in data.get("message_snapshots", []):
