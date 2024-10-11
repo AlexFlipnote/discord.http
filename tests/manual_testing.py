@@ -10,7 +10,6 @@ import logging
 import secrets
 
 from datetime import time, timedelta
-from typing import Union, Optional
 
 from discord_http import (
     Context, Embed, File, Member,
@@ -92,7 +91,7 @@ async def test_cooldown(ctx: Context):
 @client.command()
 async def test_multi_channel(
     ctx: Context,
-    channel: Union[TextChannel, VoiceChannel]
+    channel: TextChannel | VoiceChannel
 ):
     """ Test multiple channel types """
     return ctx.response.send_message(f"You chose {channel}")
@@ -235,7 +234,7 @@ async def test_guild(ctx: Context):
 
 
 @client.command()
-async def test_create_webhook(ctx: Context, name: str, avatar: Optional[Attachment] = None):
+async def test_create_webhook(ctx: Context, name: str, avatar: Attachment | None = None):
     """ Test creating webhook """
     webhook = await ctx.channel.create_webhook(
         name=name,
@@ -693,7 +692,7 @@ async def test_create_channel(ctx: Context, name: str):
 
 
 @client.user_command(name="Test user cmd")
-async def test_user_cmd(ctx: Context, user: Union[Member, User]):
+async def test_user_cmd(ctx: Context, user: Member | User):
     return ctx.response.send_message(
         f"You successfully targeted {user}",
         ephemeral=True
@@ -813,7 +812,7 @@ async def test_bool(ctx: Context, prompt: bool):
 
 
 @client.command()
-async def test_history(ctx: Context, limit: Optional[int] = None):
+async def test_history(ctx: Context, limit: int | None = None):
     async def followup():
         msgs = []
         async for msg in ctx.channel.fetch_history(limit=limit):

@@ -252,10 +252,10 @@ class Command:
                 option: dict[str, Any] = {}
                 _channel_options: list[ChannelType] = []
 
-                # Either there is a Union[Any, ...] or Optional[Any] type
-                if origin in [Union]:
-
-                    # Check if it's an Optional[Any] type
+                # Check if there are multiple types, looking for:
+                # - Union[Any, ...] / Optional[Any] / type | None
+                # - type | type | ...
+                if getattr(parameter.annotation, "__args__", None):
                     if (
                         len(parameter.annotation.__args__) == 2 and
                         parameter.annotation.__args__[-1] is _NoneType
