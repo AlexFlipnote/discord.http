@@ -531,7 +531,7 @@ class Shard:
                 }
 
                 if self.shard_count is not None:
-                    payload["d"]["shard"] = [self.shard_id, self.shard_count]
+                    payload["d"]["shard"] = [self.shard_id, int(self.shard_count)]
 
                 if self.playing_status is not None:
                     payload["d"]["presence"] = self.playing_status.to_dict()

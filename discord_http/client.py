@@ -60,6 +60,7 @@ class Client:
         loop: Optional[asyncio.AbstractEventLoop] = None,
         allowed_mentions: AllowedMentions = AllowedMentions.all(),
         enable_gateway: bool = False,
+        automatic_shards: bool = True,
         playing_status: "PlayingStatus | None" = None,
         chunk_guilds: bool = False,
         guild_ready_timeout: float = 2.0,
@@ -92,6 +93,8 @@ class Client:
             Allowed mentions to use, if not provided, it will use `AllowedMentions.all()`
         enable_gateway: `bool`
             Whether to enable the gateway or not, which runs in the background
+        automatic_shards: `bool`
+            Whether to automatically shard the bot or not
         playing_status: `Optional[PlayingStatus]`
             The playing status to use, if not provided, it will use `None`.
             This is only used if `enable_gateway` is `True`.
@@ -118,6 +121,7 @@ class Client:
         self.api_version: Optional[int] = api_version
         self.public_key: Optional[str] = public_key
         self.token: str = token
+        self.automatic_shards: bool = automatic_shards
         self.guild_id: Optional[int] = guild_id
         self.sync: bool = sync
         self.logging_level: int = logging_level
@@ -217,6 +221,7 @@ class Client:
             self.gateway = GatewayClient(
                 bot=self,
                 intents=self.intents,
+                automatic_shards=self.automatic_shards,
                 cache_flags=self._gateway_cache
             )
             self.gateway.start()

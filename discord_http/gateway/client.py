@@ -25,6 +25,7 @@ class GatewayClient:
         *,
         cache_flags: Optional["GatewayCacheFlags"] = None,
         intents: Optional["Intents"] = None,
+        automatic_shards: bool = True,
         shard_id: Optional[int] = None,
         shard_count: Optional[int] = None,
         shard_ids: Optional[list[int]] = None,
@@ -35,6 +36,7 @@ class GatewayClient:
         self.intents = intents
         self.cache_flags = cache_flags
 
+        self.automatic_shards = automatic_shards
         self.api_version = api_version
         self.shard_id = shard_id
         self.shard_count = shard_count
@@ -135,10 +137,18 @@ class GatewayClient:
 
     async def _launch_all_shards(self) -> None:
         """ Launches all the shards """
-        if self.shard_count is None:
+        if self.automatic_shards:
             self.shard_count, self.max_concurrency = await self._fetch_gateway()
 
-        shard_ids = self.shard_ids or range(self.shard_count)
+            if self.shard_count == 1:
+                # There is no need to shard if there is only 1 shard
+                _log.debug("Sharding disabled, no point in sharding 1 shard")
+                self.shard_count = None
+
+        _shard_count = self.shard_count or 1
+
+        shard_ids = self.shard_ids or range(_shard_count)
+        chunks = []
 
         if not self.max_concurrency:
             for shard_id in shard_ids:
@@ -165,7 +175,7 @@ class GatewayClient:
                 else:
                     _log.debug(f"Bucket {i}/{len(chunks)} shards launched, last bucket, skipping wait")
 
-        _log.debug(f"All {len(chunks)} bucket(s) have launched a total of {self.shard_count} shard(s)")
+        _log.debug(f"All {len(chunks)} bucket(s) have launched a total of {_shard_count} shard(s)")
         asyncio.create_task(self._delay_full_ready())
 
     async def _delay_full_ready(self) -> None:
