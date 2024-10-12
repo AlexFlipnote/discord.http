@@ -435,10 +435,10 @@ class DiscordHTTP(Quart):
         `QuartResponse`
             The response object
         """
-        return self.response_class(
+        return QuartResponse(
             json.dumps(data, sort_keys=sort_keys, indent=indent),
             headers={"Content-Type": "application/json"},
-            status=status
+            status=status,
         )
 
     def start(
