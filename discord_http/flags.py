@@ -5,9 +5,10 @@ from typing import Union, Self, Optional
 
 from .enums import PermissionType
 from .object import Snowflake
-from .role import PartialRole
 
 __all__ = (
+    "ApplicationFlags",
+    "AttachmentFlags",
     "BaseFlag",
     "ChannelFlags",
     "GuildMemberFlags",
@@ -215,6 +216,25 @@ class PublicFlags(BaseFlag):
     active_developer = 1 << 22
 
 
+class AttachmentFlags(BaseFlag):
+    clip = 1 << 0
+    thumbnail = 1 << 1
+    remix = 1 << 2
+
+
+class ApplicationFlags(BaseFlag):
+    application_auto_moderation_rule_create_badge = 1 << 6
+    gateway_presence = 1 << 12
+    gateway_presence_limited = 1 << 13
+    gateway_guild_members = 1 << 14
+    gateway_guild_members_limited = 1 << 15
+    verification_pending_guild_limit = 1 << 16
+    embedded = 1 << 17
+    gateway_message_content = 1 << 18
+    gateway_message_content_limited = 1 << 19
+    application_command_badge = 1 << 23
+
+
 class SystemChannelFlags(BaseFlag):
     suppress_join_notifications = 1 << 0
     suppress_premium_subscriptions = 1 << 1
@@ -275,6 +295,10 @@ class Permissions(BaseFlag):
     send_polls = 1 << 49
     use_external_apps = 1 << 50
 
+    def handle_overwrite(self, allow: int, deny: int) -> "Permissions":
+        new_value: int = (self.value & ~deny) | allow
+        return Permissions(new_value)
+
 
 class PermissionOverwrite:
     def __init__(
@@ -308,7 +332,7 @@ class PermissionOverwrite:
             PermissionType.member
         )
 
-        if isinstance(self.target, PartialRole):
+        if getattr(self.target, "_target_type", None) == PermissionType.role:
             self.target_type = PermissionType.role
 
         if not isinstance(self.target_type, PermissionType):
@@ -322,6 +346,14 @@ class PermissionOverwrite:
             f"<PermissionOverwrite target={self.target} "
             f"allow={int(self.allow)} deny={int(self.deny)}>"
         )
+
+    def is_role(self) -> bool:
+        """ `bool`: Returns whether the overwrite is a role overwrite """
+        return self.target_type == PermissionType.role
+
+    def is_member(self) -> bool:
+        """ `bool`: Returns whether the overwrite is a member overwrite """
+        return self.target_type == PermissionType.member
 
     @classmethod
     def from_dict(cls, data: dict) -> Self:

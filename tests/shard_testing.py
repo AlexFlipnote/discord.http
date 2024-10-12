@@ -1,10 +1,15 @@
 import json
 
-from discord_http.gateway import Intents, GatewayCacheFlags, Reaction, BulkDeletePayload
+from discord_http.gateway import (
+    Intents, GatewayCacheFlags, Reaction,
+    BulkDeletePayload, AutomodExecution, PollVoteEvent,
+    PlayingStatus
+)
 from discord_http import (
     Client, Message, Member, User,
     PartialGuild, Role, PartialRole, PartialMessage, VoiceState,
-    AuditLogEntry
+    AuditLogEntry, PartialChannel, ScheduledEvent, PartialScheduledEvent,
+    AutoModRule, Guild
 )
 
 
@@ -18,24 +23,25 @@ client = Client(
     debug_events=config["debug_events"],
     guild_id=config.get("guild_id", None),
     enable_gateway=True,
+    playing_status=PlayingStatus(
+        name="Testing status",
+        status="dnd"
+    ),
     gateway_cache=(
         GatewayCacheFlags.guilds |
         GatewayCacheFlags.members |
         GatewayCacheFlags.roles |
         GatewayCacheFlags.channels |
-        GatewayCacheFlags.voice_states
+        GatewayCacheFlags.voice_states |
+        GatewayCacheFlags.presences
     ),
-    intents=(
-        Intents.guilds |
-        Intents.guild_members |
-        Intents.guild_messages |
-        Intents.direct_messages |
-        Intents.message_content |
-        Intents.guild_message_reactions |
-        Intents.guild_voice_states |
-        Intents.guild_moderation
-    ),
+    intents=Intents.all(),
 )
+
+
+@client.listener()
+async def on_guild_create(guild: Guild):
+    print(f"Guild created: {guild}")
 
 
 @client.listener()
@@ -61,6 +67,66 @@ async def on_message_reaction_add(reaction: Reaction):
 @client.listener()
 async def on_message_reaction_remove(reaction: Reaction):
     print(f"Reaction: {reaction.emoji}")
+
+
+@client.listener()
+async def on_guild_scheduled_event_create(event: ScheduledEvent):
+    print(f"Event: {event}")
+
+
+@client.listener()
+async def on_guild_scheduled_event_update(event: ScheduledEvent):
+    print(f"Event: {event}")
+
+
+@client.listener()
+async def on_guild_scheduled_event_delete(event: ScheduledEvent):
+    print(f"Event: {event}")
+
+
+@client.listener()
+async def on_guild_scheduled_event_user_add(event: PartialScheduledEvent, user: Member):
+    print(f"User added to {event}: {user}")
+
+
+@client.listener()
+async def on_guild_scheduled_event_user_remove(event: PartialScheduledEvent, user: Member):
+    print(f"User removed from {event}: {user}")
+
+
+@client.listener()
+async def on_auto_moderation_rule_create(rule: AutoModRule):
+    print(f"Rule created: {rule}")
+
+
+@client.listener()
+async def on_auto_moderation_rule_update(rule: AutoModRule):
+    print(f"Rule updated: {rule}")
+
+
+@client.listener()
+async def on_auto_moderation_rule_delete(rule: AutoModRule):
+    print(f"Rule deleted: {rule}")
+
+
+@client.listener()
+async def on_auto_moderation_action_execution(execution: AutomodExecution):
+    print(f"Execution on {execution.user}: {execution}")
+
+
+@client.listener()
+async def on_message_poll_vote_add(vote: PollVoteEvent):
+    print(f"Vote added: {vote}")
+
+
+@client.listener()
+async def on_message_poll_vote_remove(vote: PollVoteEvent):
+    print(f"Vote removed: {vote}")
+
+
+@client.listener()
+async def on_webhooks_update(channel: PartialChannel):
+    print(channel)
 
 
 @client.listener()

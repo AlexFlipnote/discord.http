@@ -1,119 +1,24 @@
-This is a list of all the intents that are supported by discord.http
-More will be handled in `discord_http/gateway/parser.py`
+## Disclaimer
+Overall, discord.http/gateway is beta-ready.
+Things are still changing, so please do not use this library in production.
 
-> When everything is done, this file will be deleted
+## How to test
+If you want to beta test this without needing to clone the GitHub project,
+you can do so by running the following command:
 
-## GUILDS (1 << 0)
-  - [x] GUILD_CREATE
-  - [x] GUILD_UPDATE
-  - [x] GUILD_DELETE
-  - [x] GUILD_ROLE_CREATE
-  - [x] GUILD_ROLE_UPDATE
-  - [x] GUILD_ROLE_DELETE
-  - [x] CHANNEL_CREATE
-  - [x] CHANNEL_UPDATE
-  - [x] CHANNEL_DELETE
-  - [x] CHANNEL_PINS_UPDATE
-  - [x] THREAD_CREATE
-  - [x] THREAD_UPDATE
-  - [x] THREAD_DELETE
-  - [ ] THREAD_LIST_SYNC
-  - [ ] THREAD_MEMBER_UPDATE
-  - [ ] THREAD_MEMBERS_UPDATE *
-  - [ ] STAGE_INSTANCE_CREATE
-  - [ ] STAGE_INSTANCE_UPDATE
-  - [ ] STAGE_INSTANCE_DELETE
+Docs are not built yet, so you will have to build them yourself if you *really* want them.
+Otherwise there aren't really much more to say, it simply adds new event listeners and dispatches them.
 
-## GUILD_MEMBERS (1 << 1) **
-  - [x] GUILD_MEMBER_ADD
-  - [x] GUILD_MEMBER_UPDATE
-  - [x] GUILD_MEMBER_REMOVE
-  - [ ] THREAD_MEMBERS_UPDATE *
+```bash
+pip install git+https://github.com/AlexFlipnote/discord.http.git@feat/gateway
+```
 
-## GUILD_MODERATION (1 << 2)
-  - [x] GUILD_AUDIT_LOG_ENTRY_CREATE
-  - [x] GUILD_BAN_ADD
-  - [x] GUILD_BAN_REMOVE
+## Todo list
+- [x] Handling of all gateway intent events
+- [x] Prevent `GUILD_CREATE` from being dispatched before `SHARD_READY`
+- [x] Ability to set playing status on boot and change later
+- [x] Check if bot is allowed to use special intents
+- [ ] Properly handle all needed cache flags
+- [ ] Handling of chunking members
+- [ ] Handling of ratelimits
 
-## GUILD_EXPRESSIONS (1 << 3)
-  - [x] GUILD_EMOJIS_UPDATE
-  - [ ] GUILD_STICKERS_UPDATE
-  - [x] GUILD_SOUNDBOARD_SOUND_CREATE
-  - [x] GUILD_SOUNDBOARD_SOUND_UPDATE
-  - [x] GUILD_SOUNDBOARD_SOUND_DELETE
-  - [x] GUILD_SOUNDBOARD_SOUNDS_UPDATE
-
-## GUILD_INTEGRATIONS (1 << 4)
-  - [x] GUILD_INTEGRATIONS_UPDATE
-  - [x] INTEGRATION_CREATE
-  - [x] INTEGRATION_UPDATE
-  - [x] INTEGRATION_DELETE
-
-## GUILD_WEBHOOKS (1 << 5)
-  - [ ] WEBHOOKS_UPDATE
-
-## GUILD_INVITES (1 << 6)
-  - [x] INVITE_CREATE
-  - [x] INVITE_DELETE
-
-## GUILD_VOICE_STATES (1 << 7)
-  - [ ] VOICE_CHANNEL_EFFECT_SEND
-  - [ ] VOICE_STATE_UPDATE
-
-## GUILD_PRESENCES (1 << 8) **
-  - [ ] PRESENCE_UPDATE
-
-## GUILD_MESSAGES (1 << 9)
-  - [x] MESSAGE_CREATE
-  - [x] MESSAGE_UPDATE
-  - [x] MESSAGE_DELETE
-  - [x] MESSAGE_DELETE_BULK
-
-## GUILD_MESSAGE_REACTIONS (1 << 10)
-  - [x] MESSAGE_REACTION_ADD
-  - [x] MESSAGE_REACTION_REMOVE
-  - [x] MESSAGE_REACTION_REMOVE_ALL
-  - [x] MESSAGE_REACTION_REMOVE_EMOJI
-
-## GUILD_MESSAGE_TYPING (1 << 11)
-  - [x] TYPING_START
-
-## DIRECT_MESSAGES (1 << 12)
-  - [x] MESSAGE_CREATE
-  - [x] MESSAGE_UPDATE
-  - [x] MESSAGE_DELETE
-  - [ ] CHANNEL_PINS_UPDATE
-
-## DIRECT_MESSAGE_REACTIONS (1 << 13)
-  - [x] MESSAGE_REACTION_ADD
-  - [x] MESSAGE_REACTION_REMOVE
-  - [ ] MESSAGE_REACTION_REMOVE_ALL
-  - [ ] MESSAGE_REACTION_REMOVE_EMOJI
-
-## DIRECT_MESSAGE_TYPING (1 << 14)
-  - [x] TYPING_START
-
-## MESSAGE_CONTENT (1 << 15) ***
-
-## GUILD_SCHEDULED_EVENTS (1 << 16)
-  - [ ] GUILD_SCHEDULED_EVENT_CREATE
-  - [ ] GUILD_SCHEDULED_EVENT_UPDATE
-  - [ ] GUILD_SCHEDULED_EVENT_DELETE
-  - [ ] GUILD_SCHEDULED_EVENT_USER_ADD
-  - [ ] GUILD_SCHEDULED_EVENT_USER_REMOVE
-
-## AUTO_MODERATION_CONFIGURATION (1 << 20)
-  - [ ] AUTO_MODERATION_RULE_CREATE
-  - [ ] AUTO_MODERATION_RULE_UPDATE
-  - [ ] AUTO_MODERATION_RULE_DELETE
-
-## AUTO_MODERATION_EXECUTION (1 << 21)
-  - [ ] AUTO_MODERATION_ACTION_EXECUTION
-
-## GUILD_MESSAGE_POLLS (1 << 24)
-  - [ ] MESSAGE_POLL_VOTE_ADD
-  - [ ] MESSAGE_POLL_VOTE_REMOVE
-
-## DIRECT_MESSAGE_POLLS (1 << 25)
-  - [ ] MESSAGE_POLL_VOTE_ADD
-  - [ ] MESSAGE_POLL_VOTE_REMOVE

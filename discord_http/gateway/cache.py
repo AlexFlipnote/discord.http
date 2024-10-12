@@ -6,6 +6,7 @@ from ..voice import VoiceState, PartialVoiceState
 from .flags import GatewayCacheFlags
 
 if TYPE_CHECKING:
+    from .object import Presence
     from ..channel import PartialChannel, PublicThread, PrivateThread
     from ..client import Client
     from ..guild import PartialGuild, Guild
@@ -32,7 +33,9 @@ class Cache:
     def guilds(self) -> list[Union["PartialGuild", "Guild"]]:
         return list(self.__guilds.values())
 
-    def get_guild(self, guild_id: int) -> Optional[Union["PartialGuild", "Guild"]]:
+    def get_guild(self, guild_id: int | None) -> Optional[Union["PartialGuild", "Guild"]]:
+        if guild_id is None:
+            return None
         return self.__guilds.get(guild_id, None)
 
     def add_guild(
@@ -60,19 +63,51 @@ class Cache:
             _guild._cache_channels = {  # type: ignore
                 int(g["id"]): BaseChannel.from_dict(
                     state=self.bot.state,
-                    data=g
+                    data=g,
+                    guild_id=guild_id
                 )
                 for g in data["channels"]
             }
         elif GatewayCacheFlags.partial_channels in self.cache_flags:
             _guild._cache_channels = {
                 int(g["id"]): self.bot.get_partial_channel(
-                    g["id"], guild_id=guild_id
+                    g["id"],
+                    guild_id=guild_id
                 )
                 for g in data["channels"]
             }
         else:
             _guild._cache_channels = {}
+
+        if GatewayCacheFlags.members in self.cache_flags:
+            from ..member import Member
+            _guild._cache_members = {  # type: ignore
+                int(g["user"]["id"]): Member(
+                    state=self.bot.state,
+                    guild=_guild,
+                    data=g
+                )
+                for g in data["members"]
+            }
+        elif GatewayCacheFlags.partial_members in self.cache_flags:
+            _guild._cache_members = {
+                int(g["user"]["id"]): self.bot.get_partial_member(
+                    g["user"]["id"], guild_id=guild_id
+                )
+                for g in data["members"]
+            }
+        else:
+            # Still cache the only member which is the bot
+            from ..member import Member
+            _guild._cache_members = {  # type: ignore
+                int(g["user"]["id"]): Member(
+                    state=self.bot.state,
+                    guild=_guild,
+                    data=g
+                )
+                for g in data["members"]
+                if int(g["user"]["id"]) == self.bot.user.id
+            }
 
         if GatewayCacheFlags.roles in self.cache_flags:
             pass
@@ -186,6 +221,9 @@ class Cache:
         if not guild:
             return None
 
+        if guild.member_count is not None:
+            guild.member_count += 1
+
         if GatewayCacheFlags.members in self.cache_flags:
             guild._cache_members[member.id] = member
         elif GatewayCacheFlags.partial_members in self.cache_flags:
@@ -201,7 +239,34 @@ class Cache:
         if not guild:
             return None
 
+        if guild.member_count is not None:
+            guild.member_count -= 1
+
         guild._cache_members.pop(member.id, None)
+
+    def update_presence(self, presence: "Presence | None") -> None:
+        if self.cache_flags is None:
+            return None
+
+        if GatewayCacheFlags.presences not in self.cache_flags:
+            return None
+
+        guild = self.get_guild(presence.guild.id)
+        if not guild:
+            return None
+
+        member = guild.get_member(presence.user.id)
+        if not member:
+            return None
+
+        member._update_presence(presence)
+
+    def get_channel(self, guild_id: int | None, channel_id: int) -> Optional[Union["BaseChannel", "PartialChannel"]]:
+        guild = self.get_guild(guild_id)
+        if not guild:
+            return None
+
+        return guild.get_channel(channel_id)
 
     def add_channel(self, channel: Union["BaseChannel", "PartialChannel"]) -> None:
         if self.cache_flags is None:

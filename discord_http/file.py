@@ -10,9 +10,9 @@ __all__ = (
 class File:
     def __init__(
         self,
-        data: Union[io.BufferedIOBase, str],
-        *,
+        data: io.BufferedIOBase | str,
         filename: Optional[str] = None,
+        *,
         spoiler: bool = False,
         title: Optional[str] = None,
         description: Optional[str] = None,

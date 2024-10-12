@@ -55,6 +55,7 @@ Automatically generated documentation index for your convenience:
   pages/getting_started
   pages/api
   pages/events
+  pages/gateway
 
 .. toctree::
   :hidden:

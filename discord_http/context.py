@@ -22,7 +22,7 @@ from .enums import (
 from .file import File
 from .multipart import MultipartData
 from .flags import Permissions, MessageFlags
-from .guild import PartialGuild
+from .guild import Guild, PartialGuild
 from .member import Member
 from .mentions import AllowedMentions
 from .message import Message, Attachment, Poll
@@ -483,7 +483,7 @@ class InteractionResponse:
                 )
 
             if (isinstance(k, int) or isinstance(k, float)) and k >= 2**53:
-                _log.warn(
+                _log.warning(
                     f"'{k}: {v}' (int) is too large, "
                     "Discord might ignore it and make autocomplete fail"
                 )
@@ -547,9 +547,9 @@ class Context:
                 data=data["channel"]
             )
 
-        self.guild: Optional[PartialGuild] = None
+        self._guild: Optional[PartialGuild] = None
         if data.get("guild_id", None):
-            self.guild = PartialGuild(
+            self._guild = PartialGuild(
                 state=self.bot.state,
                 id=int(data["guild_id"])
             )
@@ -559,7 +559,7 @@ class Context:
             self.message = Message(
                 state=self.bot.state,
                 data=data["message"],
-                guild=self.guild
+                guild=self._guild
             )
         elif self._resolved.get("messages", {}):
             _first_msg = next(iter(self._resolved["messages"].values()), None)
@@ -567,7 +567,7 @@ class Context:
                 self.message = Message(
                     state=self.bot.state,
                     data=_first_msg,
-                    guild=self.guild
+                    guild=self._guild
                 )
 
         self.author: Optional[Union[Member, User]] = None
@@ -596,6 +596,18 @@ class Context:
                     f"Error while running call_after:{call_after}",
                     exc_info=e
                 )
+
+    @property
+    def guild(self) -> Guild | PartialGuild | None:
+        """
+        `Guild | PartialGuild | None`: Returns the guild the interaction was made in
+        If you are using gateway cache, it can return full object too
+        """
+        cache = self.bot.cache.get_guild(self._guild.id)
+        if cache:
+            return cache
+
+        return self._guild
 
     @property
     def created_at(self) -> datetime:

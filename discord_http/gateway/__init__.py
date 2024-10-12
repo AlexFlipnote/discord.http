@@ -1,4 +1,5 @@
 # flake8: noqa: F401
+from .activity import *
 from .cache import *
 from .client import *
 from .enums import *

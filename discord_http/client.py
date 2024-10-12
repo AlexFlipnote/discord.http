@@ -10,12 +10,12 @@ from typing import (
 )
 
 from . import utils
+from .automod import PartialAutoModRule, AutoModRule
 from .backend import DiscordHTTP
 from .channel import PartialChannel, BaseChannel
 from .commands import Command, Interaction, Listener, Cog, SubGroup
 from .context import Context
 from .emoji import PartialEmoji, Emoji
-from .voice import PartialVoiceState, VoiceState
 from .entitlements import PartialSKU, SKU, PartialEntitlements, Entitlements
 from .enums import ApplicationCommandType
 from .file import File
@@ -25,17 +25,20 @@ from .http import DiscordAPI
 from .invite import PartialInvite, Invite
 from .member import PartialMember, Member
 from .mentions import AllowedMentions
+from .voice import PartialVoiceState, VoiceState
 from .message import PartialMessage, Message
 from .object import Snowflake
 from .role import PartialRole
 from .soundboard import SoundboardSound, PartialSoundboardSound
 from .sticker import PartialSticker, Sticker
-from .user import User, PartialUser
+from .user import User, PartialUser, UserClient
 from .view import InteractionStorage
 from .webhook import PartialWebhook, Webhook
 
 if TYPE_CHECKING:
-    from .gateway import GatewayClient, GatewayCacheFlags, Intents
+    from .gateway.client import GatewayClient
+    from .gateway.flags import GatewayCacheFlags, Intents
+    from .gateway.object import PlayingStatus
 
 _log = logging.getLogger(__name__)
 
@@ -57,6 +60,10 @@ class Client:
         loop: Optional[asyncio.AbstractEventLoop] = None,
         allowed_mentions: AllowedMentions = AllowedMentions.all(),
         enable_gateway: bool = False,
+        automatic_shards: bool = True,
+        playing_status: "PlayingStatus | None" = None,
+        chunk_guilds: bool = False,
+        guild_ready_timeout: float = 2.0,
         gateway_cache: Optional["GatewayCacheFlags"] = None,
         intents: Optional["Intents"] = None,
         logging_level: int = logging.INFO,
@@ -86,6 +93,16 @@ class Client:
             Allowed mentions to use, if not provided, it will use `AllowedMentions.all()`
         enable_gateway: `bool`
             Whether to enable the gateway or not, which runs in the background
+        automatic_shards: `bool`
+            Whether to automatically shard the bot or not
+        playing_status: `Optional[PlayingStatus]`
+            The playing status to use, if not provided, it will use `None`.
+            This is only used if `enable_gateway` is `True`.
+        chunk_guilds: `bool`
+            Whether to chunk guilds or not, which will reduce the amount of requests
+        guild_ready_timeout: `float`
+            **Gateway**: How long to wait for last GUILD_CREATE to be recieved
+            before triggering shard ready
         gateway_cache: `Optional[GatewayCacheFlags]`
             How the gateway should cache, only used if `enable_gateway` is `True`.
             Leave empty to use no cache.
@@ -104,11 +121,15 @@ class Client:
         self.api_version: Optional[int] = api_version
         self.public_key: Optional[str] = public_key
         self.token: str = token
+        self.automatic_shards: bool = automatic_shards
         self.guild_id: Optional[int] = guild_id
         self.sync: bool = sync
         self.logging_level: int = logging_level
         self.debug_events: bool = debug_events
         self.enable_gateway: bool = enable_gateway
+        self.playing_status: Optional["PlayingStatus"] = playing_status
+        self.guild_ready_timeout: float = guild_ready_timeout
+        self.chunk_guilds: bool = chunk_guilds
         self.intents: Optional["Intents"] = intents
 
         self.gateway: Optional["GatewayClient"] = None
@@ -128,7 +149,7 @@ class Client:
         self._gateway_cache: Optional["GatewayCacheFlags"] = gateway_cache
         self._ready: Optional[asyncio.Event] = asyncio.Event()
         self._shards_ready: Optional[asyncio.Event] = asyncio.Event()
-        self._user_object: Optional[User] = None
+        self._user_object: Optional[UserClient] = None
 
         self._context: Callable = Context
 
@@ -176,7 +197,13 @@ class Client:
         """
         await self.state.http._create_session()
 
-        client_object = await self._prepare_me()
+        try:
+            client_object = await self._prepare_me()
+        except RuntimeError as e:
+            # Make sure the error is readable and stop HTTP server here
+            _log.error(e)
+            await self.backend.shutdown()
+            return None
 
         await self.setup_hook()
         await self._prepare_commands()
@@ -194,6 +221,7 @@ class Client:
             self.gateway = GatewayClient(
                 bot=self,
                 intents=self.intents,
+                automatic_shards=self.automatic_shards,
                 cache_flags=self._gateway_cache
             )
             self.gateway.start()
@@ -230,13 +258,9 @@ class Client:
             wrapped, name=f"discord.quart: {event_name}"
         )
 
-    async def _prepare_me(self) -> User:
+    async def _prepare_me(self) -> UserClient:
         """ Gets the bot's user data, mostly used to validate token """
-        try:
-            self._user_object = await self.state.me()
-        except KeyError:
-            raise RuntimeError("Invalid token")
-
+        self._user_object = await self.state.me()
         _log.debug(f"/users/@me verified: {self.user} ({self.user.id})")
 
         return self.user
@@ -288,7 +312,7 @@ class Client:
         self._update_ids(data)
 
     @property
-    def user(self) -> User:
+    def user(self) -> UserClient:
         """
         Returns
         -------
@@ -307,6 +331,30 @@ class Client:
             )
 
         return self._user_object
+
+    @property
+    def guilds(self) -> list[Guild | PartialGuild]:
+        """
+        `list[Guild]`: Returns a list of all the guilds the bot is in.
+        Only useable if you are using gateway and caching
+        """
+        return self.cache.guilds
+
+    def get_guild(self, guild_id: int) -> Guild | PartialGuild | None:
+        """
+        Get a guild object from the cache.
+
+        Parameters
+        ----------
+        guild_id: `int`
+            The ID of the guild to get.
+
+        Returns
+        -------
+        `Guild | PartialGuild | None`
+            The guild object with the specified ID, or `None` if not found.
+        """
+        return self.cache.get_guild(guild_id)
 
     def is_ready(self) -> bool:
         """ `bool`: Indicates if the client is ready. """
@@ -845,6 +893,59 @@ class Client:
         """
         c = self.get_partial_channel(channel_id, guild_id=guild_id)
         return await c.fetch()
+
+    def get_partial_automod_rule(
+        self,
+        rule_id: int,
+        guild_id: int
+    ) -> PartialAutoModRule:
+        """
+        Creates a partial automod object
+
+        Parameters
+        ----------
+        rule_id: `int`
+            The ID of the automod rule
+        guild_id: `int`
+            The Guild ID where it comes from
+
+        Returns
+        -------
+        `PartialAutoModRule`
+            The partial automod object
+        """
+        return PartialAutoModRule(
+            state=self.state,
+            id=rule_id,
+            guild_id=guild_id
+        )
+
+    async def fetch_automod_rule(
+        self,
+        rule_id: int,
+        guild_id: int
+    ) -> AutoModRule:
+        """
+        Fetches a automod object
+
+        Parameters
+        ----------
+        rule_id: `int`
+            The ID of the automod rule
+        guild_id: `int`
+            The Guild ID where it comes from
+
+        Returns
+        -------
+        `AutoModRule`
+            The automod object
+        """
+        automod = self.get_partial_automod_rule(
+            rule_id=rule_id,
+            guild_id=guild_id
+        )
+
+        return await automod.fetch()
 
     def get_partial_invite(
         self,

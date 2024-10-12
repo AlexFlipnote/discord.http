@@ -161,7 +161,7 @@ class Loop:
                         self._is_explicit_time() and
                         self._next_loop <= self._last_loop
                     ):
-                        _log.warn(
+                        _log.warning(
                             f"task:{self.func.__name__} woke up a bit too early. "
                             f"Sleeping until {self._next_loop} to avoid drifting."
                         )
@@ -184,7 +184,10 @@ class Loop:
                         await self._try_sleep_until(self._next_loop)
 
                     self._loop_count += 1
-                    if self.loop_count == self.count:
+                    if (
+                        self.count and
+                        self.loop_count >= self.count
+                    ):
                         break
 
         except asyncio.CancelledError:

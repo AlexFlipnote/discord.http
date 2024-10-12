@@ -6,7 +6,7 @@ from .asset import Asset
 from .embeds import Embed
 from .file import File
 from .flags import Permissions, PublicFlags, GuildMemberFlags
-from .guild import PartialGuild
+from .guild import Guild, PartialGuild
 from .mentions import AllowedMentions
 from .object import PartialBase, Snowflake
 from .response import ResponseType
@@ -14,12 +14,17 @@ from .role import PartialRole, Role
 from .user import User, PartialUser
 from .view import View
 
+
 MISSING = utils.MISSING
 
 if TYPE_CHECKING:
-    from .channel import DMChannel
+    from .gateway.object import Presence
+    from .types.guilds import (
+        ThreadMember as ThreadMemberPayload
+    )
     from .http import DiscordAPI
     from .message import Message
+    from .channel import DMChannel, PartialChannel, Thread
 
 __all__ = (
     "PartialMember",
@@ -40,14 +45,26 @@ class PartialMember(PartialBase):
         self._state = state
 
         self._user = PartialUser(state=state, id=self.id)
+
         self.guild_id: int = int(guild_id)
+        self.presence: "Presence | None" = None
 
     def __repr__(self) -> str:
         return f"<PartialMember id={self.id} guild_id={self.guild_id}>"
 
+    def _update_presence(self, obj: "Presence | None") -> None:
+        self.presence = obj
+
     @property
-    def guild(self) -> PartialGuild:
-        """ `PartialGuild`: The guild of the member """
+    def guild(self) -> Guild | PartialGuild:
+        """
+        `PartialGuild | Guild`: The guild of the member
+        If you are using gateway cache, it can return full object too
+        """
+        cache = self._state.cache.get_guild(self.guild_id)
+        if cache:
+            return cache
+
         return PartialGuild(state=self._state, id=self.guild_id)
 
     async def fetch(self) -> "Member":
@@ -354,7 +371,7 @@ class Member(PartialMember):
         self,
         *,
         state: "DiscordAPI",
-        guild: PartialGuild,
+        guild: Guild | PartialGuild,
         data: dict
     ):
         super().__init__(
@@ -372,6 +389,8 @@ class Member(PartialMember):
         self._raw_permissions: Optional[int] = utils.get_int(data, "permissions")
         self.nick: Optional[str] = data.get("nick", None)
         self.joined_at: datetime = utils.parse_time(data["joined_at"])
+        self.communication_disabled_until: datetime | None = None
+        self.premium_since: datetime | None = None
         self.roles: list[PartialRole] = [
             PartialRole(state=state, id=int(r), guild_id=self.guild.id)
             for r in data["roles"]
@@ -395,6 +414,16 @@ class Member(PartialMember):
                 self._state, self.guild.id, self.id, has_avatar
             )
 
+        if data.get("communication_disabled_until", None):
+            self.communication_disabled_until = utils.parse_time(
+                data["communication_disabled_until"]
+            )
+
+        if data.get("premium_since", None):
+            self.premium_since = utils.parse_time(
+                data["premium_since"]
+            )
+
     def get_role(
         self,
         role: Union[Snowflake, int]
@@ -416,6 +445,46 @@ class Member(PartialMember):
             r for r in self.roles
             if r.id == int(role)
         ), None)
+
+    def is_timed_out(self) -> bool:
+        """ `bool`: Returns whether the member is timed out or not """
+        if self.communication_disabled_until is None:
+            return False
+        return utils.utcnow() < self.communication_disabled_until
+
+    @property
+    def guild_permissions(self) -> Permissions:
+        """
+        `Permissions`: Returns the guild permissions of the member.
+        This is only available if you are using gateway with guild cache.
+        """
+        if getattr(self.guild, "owner_id", None) == self.id:
+            return Permissions.all()
+
+        base = Permissions.none()
+
+        for r in self.roles:
+            g_role = self.guild.get_role(r.id)
+            if isinstance(g_role, Role):
+                base |= g_role.permissions
+
+        if Permissions.administrator in base:
+            return Permissions.all()
+
+        if self.is_timed_out():
+            _timeout_perm = (
+                Permissions.view_channel |
+                Permissions.read_message_history
+            )
+
+            if Permissions.view_channel not in base:
+                _timeout_perm &= ~Permissions.view_channel
+            if Permissions.read_message_history not in base:
+                _timeout_perm &= ~Permissions.read_message_history
+
+            base = _timeout_perm
+
+        return base
 
     @property
     def resolved_permissions(self) -> Permissions:
@@ -525,14 +594,56 @@ class Member(PartialMember):
         """ `Optional[Asset]`: Returns the display avatar of the member """
         return self.avatar or self._user.avatar
 
+    @property
+    def top_role(self) -> PartialRole | Role | None:
+        """
+        `Optional[PartialRole | Role]`: Returns the top role of the member.
+        Only usable if you are using gateway and caching
+        """
+        if not isinstance(self.guild, Guild):
+            return None
+        return self.guild.get_member_top_role(self)
 
-class ThreadMember(Member):
-    def __init__(self, *, state: "DiscordAPI", guild: "PartialGuild", data: dict):
+
+class PartialThreadMember(PartialMember):
+    def __init__(
+        self,
+        *,
+        state: "DiscordAPI",
+        data: "ThreadMemberPayload",
+        guild_id: int,
+    ) -> None:
+        super().__init__(
+            state=state,
+            id=data["user_id"],
+            guild_id=guild_id,
+        )
+        self.thread_id: int = data["id"]
+        self.join_timestamp: datetime = utils.parse_time(data["join_timestamp"])
+        self.flags: int = data["flags"]
+
+    @property
+    def thread(self) -> "PartialChannel | Thread":
+        """ `PartialChannel | Thread"`: The thread the member is in """
+        return self.guild.get_channel(self.thread_id) or self.guild.get_partial_channel(self.thread_id)
+
+
+class ThreadMember(Member, PartialThreadMember):
+    def __init__(
+        self,
+        *,
+        state: "DiscordAPI",
+        guild: "PartialGuild",
+        data: dict
+    ) -> None:
         super().__init__(
             state=state,
             guild=guild,
             data=data["member"]
         )
-
-        self.flags: int = data["flags"]
-        self.join_timestamp: datetime = utils.parse_time(data["join_timestamp"])
+        PartialThreadMember.__init__(
+            self,
+            state=state,
+            data=data,  # type: ignore
+            guild_id=guild.id,
+        )

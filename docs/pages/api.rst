@@ -7,6 +7,8 @@ Here are all the things you can find on discord.http, packed in one page
   :maxdepth: 4
 
   ../api/asset
+  ../api/audit
+  ../api/automod
   ../api/backend
   ../api/channel
   ../api/client
@@ -23,6 +25,7 @@ Here are all the things you can find on discord.http, packed in one page
   ../api/flags
   ../api/guild
   ../api/http
+  ../api/integrations
   ../api/invite
   ../api/member
   ../api/mentions
@@ -31,6 +34,7 @@ Here are all the things you can find on discord.http, packed in one page
   ../api/object
   ../api/response
   ../api/role
+  ../api/soundboard
   ../api/sticker
   ../api/tasks
   ../api/user

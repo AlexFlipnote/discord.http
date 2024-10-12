@@ -2,6 +2,7 @@ import asyncio
 import copy
 import logging
 import signal
+import json
 
 from datetime import datetime
 from hypercorn.asyncio import serve
@@ -76,6 +77,10 @@ class DiscordHTTP(Quart):
 
         super().__init__(__name__)
 
+        # Change some of the default settings
+        self.config["JSONIFY_PRETTYPRINT_REGULAR"] = False
+        self.config["JSON_SORT_KEYS"] = False
+
         # Remove Quart's default logging handler
         _quart_log = logging.getLogger("quart.app")
         _quart_log.removeHandler(default_handler)
@@ -127,7 +132,7 @@ class DiscordHTTP(Quart):
             cmd = cmd.subcommands.get(find_next_step["name"], None)  # type: ignore
 
             if not cmd:
-                _log.warn(
+                _log.warning(
                     f"Unhandled subcommand: {find_next_step['name']} "
                     "(not found in local command list)"
                 )
@@ -164,7 +169,7 @@ class DiscordHTTP(Quart):
         cmd = self.bot.commands.get(command_name, None)
 
         if not cmd:
-            _log.warn(
+            _log.warning(
                 f"Unhandeled command: {command_name} "
                 "(not found in local command list)"
             )
@@ -267,7 +272,7 @@ class DiscordHTTP(Quart):
 
         try:
             if not cmd:
-                _log.warn(f"Unhandled autocomplete recieved (name: {command_name})")
+                _log.warning(f"Unhandled autocomplete recieved (name: {command_name})")
                 return QuartResponse(
                     "command not found",
                     status=404
@@ -281,7 +286,7 @@ class DiscordHTTP(Quart):
             ), None)
 
             if not find_focused:
-                _log.warn(
+                _log.warning(
                     "Failed to find focused option in autocomplete "
                     f"(cmd name: {command_name})"
                 )
@@ -399,6 +404,39 @@ class DiscordHTTP(Quart):
             }
         }
 
+    def jsonify(
+        self,
+        data: dict,
+        *,
+        status: int = 200,
+        sort_keys: bool = False,
+        indent: int | None = None,
+    ) -> QuartResponse:
+        """
+        Force Quart to respond with JSON the way you like it
+
+        Parameters
+        ----------
+        data: `dict`
+            The data to respond with
+        status: `int`
+            The status code to respond with
+        sort_keys: `bool`
+            Whether to sort the keys or not
+        indent: `int | None`
+            If the JSON should be indented on response
+
+        Returns
+        -------
+        `QuartResponse`
+            The response object
+        """
+        return self.response_class(
+            json.dumps(data, sort_keys=sort_keys, indent=indent),
+            headers={"Content-Type": "application/json"},
+            status=status
+        )
+
     def start(
         self,
         *,
@@ -419,10 +457,6 @@ class DiscordHTTP(Quart):
             self._index_interactions_endpoint,
             methods=["POST"]
         )
-
-        # Change some of the default settings
-        self.config["JSONIFY_PRETTYPRINT_REGULAR"] = True
-        self.config["JSON_SORT_KEYS"] = False
 
         try:
             _log.info(f"Serving on http://{host}:{port}")

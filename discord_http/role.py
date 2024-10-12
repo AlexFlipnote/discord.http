@@ -1,12 +1,13 @@
 from typing import TYPE_CHECKING, Union, Optional
 
 from . import utils
+from .asset import Asset
 from .colour import Colour
 from .file import File
-from .object import PartialBase
+from .flags import Permissions, PermissionType
+from .object import PartialBase, Snowflake
 
 if TYPE_CHECKING:
-    from .flags import Permissions
     from .guild import PartialGuild, Guild
     from .http import DiscordAPI
 
@@ -28,6 +29,8 @@ class PartialRole(PartialBase):
     ):
         super().__init__(id=int(id))
         self._state = state
+        self._target_type: PermissionType = PermissionType.role
+
         self.guild_id: int = guild_id
 
     def __repr__(self) -> str:
@@ -46,7 +49,7 @@ class PartialRole(PartialBase):
 
     async def add_role(
         self,
-        user_id: int,
+        user_id: Snowflake | int,
         *,
         reason: Optional[str] = None
     ) -> None:
@@ -62,14 +65,14 @@ class PartialRole(PartialBase):
         """
         await self._state.query(
             "PUT",
-            f"/guilds/{self.guild_id}/members/{user_id}/roles/{self.id}",
+            f"/guilds/{self.guild_id}/members/{int(user_id)}/roles/{self.id}",
             res_method="text",
             reason=reason
         )
 
     async def remove_role(
         self,
-        user_id: int,
+        user_id: Snowflake | int,
         *,
         reason: Optional[str] = None
     ) -> None:
@@ -85,7 +88,7 @@ class PartialRole(PartialBase):
         """
         await self._state.query(
             "DELETE",
-            f"/guilds/{self.guild_id}/members/{user_id}/roles/{self.id}",
+            f"/guilds/{self.guild_id}/members/{int(user_id)}/roles/{self.id}",
             res_method="text",
             reason=reason
         )
@@ -258,23 +261,43 @@ class Role(PartialRole):
         self.hoist: bool = data["hoist"]
         self.managed: bool = data["managed"]
         self.mentionable: bool = data["mentionable"]
-        self.permissions: int = int(data["permissions"])
+        self.permissions: Permissions = Permissions(int(data["permissions"]))
         self.position: int = int(data["position"])
         self.tags: dict = data.get("tags", {})
 
         self.bot_id: Optional[int] = utils.get_int(data, "bot_id")
         self.integration_id: Optional[int] = utils.get_int(data, "integration_id")
         self.subscription_listing_id: Optional[int] = utils.get_int(data, "subscription_listing_id")
+        self.unicode_emoji: str | None = data.get("unicode_emoji", None)
 
         self._premium_subscriber: bool = "premium_subscriber" in self.tags
         self._available_for_purchase: bool = "available_for_purchase" in self.tags
         self._guild_connections: bool = "guild_connections" in self.tags
+        self._icon: str | None = data.get("icon", None)
 
     def __str__(self) -> str:
         return self.name
 
     def __repr__(self) -> str:
         return f"<Role id={self.id} name='{self.name}'>"
+
+    @property
+    def icon(self) -> Asset | None:
+        """ `Asset | None`: Returns the icon of the role if it's custom """
+        if self._icon is None:
+            return None
+
+        return Asset._from_icon(
+            state=self._state,
+            object_id=self.id,
+            icon_hash=self._icon,
+            path="role"
+        )
+
+    @property
+    def display_icon(self) -> Asset | str | None:
+        """ `Asset | str | None`: Returns the display icon of the role """
+        return self.icon or self.unicode_emoji
 
     def is_bot_managed(self) -> bool:
         """ `bool`: Returns whether the role is bot managed """

@@ -1,3 +1,5 @@
+import asyncio
+
 from datetime import timedelta, datetime, UTC
 from io import BytesIO
 from typing import TYPE_CHECKING, Optional, Union, AsyncIterator, Self, Callable
@@ -5,9 +7,10 @@ from typing import TYPE_CHECKING, Optional, Union, AsyncIterator, Self, Callable
 from . import utils
 from .embeds import Embed
 from .emoji import EmojiParser
-from .enums import MessageReferenceType
+from .enums import MessageReferenceType, MessageType, InteractionType, ApplicationCommandType
 from .errors import HTTPException
 from .file import File
+from .flags import AttachmentFlags
 from .mentions import AllowedMentions
 from .object import PartialBase, Snowflake
 from .response import MessageResponse
@@ -28,11 +31,33 @@ __all__ = (
     "Attachment",
     "JumpURL",
     "Message",
+    "MessageInteraction",
     "MessageReference",
     "PartialMessage",
     "Poll",
     "WebhookMessage",
 )
+
+
+class MessageInteraction(PartialBase):
+    def __init__(
+        self,
+        *,
+        state: "DiscordAPI",
+        data: dict
+    ):
+        super().__init__(id=int(data["id"]))
+        self._state = state
+
+        self.type: InteractionType = InteractionType(data["type"])
+        self.name: str = data["name"]
+        self.command_type: ApplicationCommandType = ApplicationCommandType(
+            data["command_type"]
+        )
+        self.user: User = User(
+            state=state,
+            data=data["user"]
+        )
 
 
 class JumpURL:
@@ -80,10 +105,14 @@ class JumpURL:
         return self.url
 
     @property
-    def guild(self) -> Optional["PartialGuild"]:
+    def guild(self) -> Optional["Guild | PartialGuild"]:
         """ `Optional[PartialGuild]`: The guild the message was sent in """
         if not self.guild_id:
             return None
+
+        cache = self._state.cache.get_guild(self.guild_id)
+        if cache:
+            return cache
 
         from .guild import PartialGuild
         return PartialGuild(
@@ -99,10 +128,17 @@ class JumpURL:
         return await self.guild.fetch()
 
     @property
-    def channel(self) -> Optional["PartialChannel"]:
-        """ `PartialChannel`: Returns the channel the message was sent in """
+    def channel(self) -> Optional["BaseChannel | PartialChannel"]:
+        """
+        `BaseChannel | PartialChannel`: Returns the channel the message was sent in.
+        If guild and channel cache is enabled, it can also return full channel object.
+        """
         if not self.channel_id:
             return None
+
+        cache = self._state.cache.get_channel(self.guild_id, self.channel_id)
+        if cache:
+            return cache
 
         from .channel import PartialChannel
         return PartialChannel(
@@ -124,6 +160,7 @@ class JumpURL:
         return PartialMessage(
             state=self._state,
             channel_id=self.channel_id,
+            guild_id=self.guild_id,
             id=self.message_id
         )
 
@@ -319,9 +356,10 @@ class Poll:
         if data.get("expiry", None):
             poll.expiry = utils.parse_time(data["expiry"])
 
-        poll.is_finalized = data["results"].get("is_finalized", False)
+        _results = data.get("results", {})
+        poll.is_finalized = _results.get("is_finalized", False)
 
-        for g in data["results"]["answer_counts"]:
+        for g in _results.get("answer_counts", []):
             find_answer = next(
                 (a for a in poll.answers if a.id == g["id"]),
                 None
@@ -352,10 +390,14 @@ class MessageReference:
         )
 
     @property
-    def guild(self) -> "PartialGuild | None":
+    def guild(self) -> "Guild | PartialGuild | None":
         """ `Optional[PartialGuild]`: The guild the message was sent in """
         if not self.guild_id:
             return None
+
+        cache = self._state.cache.get_guild(self.guild_id)
+        if cache:
+            return cache
 
         from .guild import PartialGuild
         return PartialGuild(
@@ -368,6 +410,10 @@ class MessageReference:
         """ `Optional[PartialChannel]`: Returns the channel the message was sent in """
         if not self.channel_id:
             return None
+
+        cache = self._state.cache.get_channel(self.guild_id, self.channel_id)
+        if cache:
+            return cache
 
         from .channel import PartialChannel
         return PartialChannel(
@@ -385,6 +431,7 @@ class MessageReference:
         return PartialMessage(
             state=self._state,
             channel_id=self.channel_id,
+            guild_id=self.guild_id,
             id=self.message_id
         )
 
@@ -414,6 +461,7 @@ class Attachment:
         self.url: str = data["url"]
         self.proxy_url: str = data["proxy_url"]
         self.ephemeral: bool = data.get("ephemeral", False)
+        self.flags: AttachmentFlags = AttachmentFlags(data.get("flags", 0))
 
         self.content_type: Optional[str] = data.get("content_type", None)
         self.title: Optional[str] = data.get("title", None)
@@ -425,7 +473,6 @@ class Attachment:
 
         self.duration_secs: Optional[int] = data.get("duration_secs", None)
         self.waveform: Optional[str] = data.get("waveform", None)
-        self.flags: int = data.get("flags", 0)
 
     def __str__(self) -> str:
         return self.filename or ""
@@ -442,6 +489,10 @@ class Attachment:
     def is_spoiler(self) -> bool:
         """ `bool`: Whether the attachment is a spoiler or not """
         return self.filename.startswith("SPOILER_")
+
+    def is_voice_message(self) -> bool:
+        """:class:`bool`: Whether this attachment is a voice message."""
+        return self.duration_secs is not None and "voice-message" in self.url
 
     async def fetch(self, *, use_cached: bool = False) -> bytes:
         """
@@ -598,10 +649,14 @@ class Typing:
         )
 
     @property
-    def guild(self) -> Optional["PartialGuild"]:
+    def guild(self) -> Optional["Guild | PartialGuild"]:
         """ `Optional[PartialGuild]`: The guild the message was sent in """
         if not self.guild_id:
             return None
+
+        cache = self._state.cache.get_guild(self.guild_id)
+        if cache:
+            return cache
 
         from .guild import PartialGuild
         return PartialGuild(state=self._state, id=self.guild_id)
@@ -609,8 +664,16 @@ class Typing:
     @property
     def channel(self) -> "PartialChannel":
         """ `Optional[PartialChannel]`: Returns the channel the message was sent in """
+        cache = self._state.cache.get_channel(self.guild_id, self.channel_id)
+        if cache:
+            return cache
+
         from .channel import PartialChannel
-        return PartialChannel(state=self._state, id=self.channel_id)
+        return PartialChannel(
+            state=self._state,
+            id=self.channel_id,
+            guild_id=self.guild_id
+        )
 
 
 class PartialMessage(PartialBase):
@@ -632,16 +695,29 @@ class PartialMessage(PartialBase):
         return f"<PartialMessage id={self.id}>"
 
     @property
-    def channel(self) -> "PartialChannel":
+    def channel(self) -> "BaseChannel | PartialChannel":
         """ `PartialChannel`: Returns the channel the message was sent in """
+        cache = self._state.cache.get_channel(self.guild_id, self.channel_id)
+        if cache:
+            return cache
+
         from .channel import PartialChannel
-        return PartialChannel(state=self._state, id=self.channel_id)
+        return PartialChannel(
+            state=self._state,
+            id=self.channel_id,
+            guild_id=self.guild_id
+        )
 
     @property
-    def guild(self) -> "PartialGuild | None":
+    def guild(self) -> "Guild | PartialGuild | None":
         """ `PartialGuild` | `None`: Returns the guild the message was sent in """
         if not self.guild_id:
             return None
+
+        cache = self._state.cache.get_guild(self.guild_id)
+        if cache:
+            return cache
+
         from .guild import PartialGuild
         return PartialGuild(state=self._state, id=self.guild_id)
 
@@ -666,14 +742,42 @@ class PartialMessage(PartialBase):
             guild=self.channel.guild
         )
 
-    async def delete(self, *, reason: Optional[str] = None) -> None:
-        """ Delete the message """
-        await self._state.query(
-            "DELETE",
-            f"/channels/{self.channel.id}/messages/{self.id}",
-            reason=reason,
-            res_method="text"
-        )
+    async def delete(
+        self,
+        *,
+        delay: float | None = None,
+        reason: str | None = None
+    ) -> None:
+        """
+        Delete the message
+
+        Parameters
+        ----------
+        delay: `float` | `None`:
+            How many seconds it should wait in background to delete
+        reason: `str` | `None`:
+            Reason for deleting the message
+            (Only applies when deleting messages not made by yourself)
+        """
+        async def _delete():
+            await self._state.query(
+                "DELETE",
+                f"/channels/{self.channel.id}/messages/{self.id}",
+                reason=reason,
+                res_method="text"
+            )
+
+        async def _delete_after(d: float):
+            await asyncio.sleep(d)
+            try:
+                await _delete()
+            except HTTPException:
+                pass
+
+        if delay is not None:
+            asyncio.create_task(_delete_after(delay))
+        else:
+            await _delete()
 
     async def expire_poll(self) -> "Message":
         """
@@ -893,8 +997,9 @@ class PartialMessage(PartialBase):
             message_reference=MessageReference(
                 state=self._state,
                 data={
+                    "type": int(MessageReferenceType.default),
                     "channel_id": self.channel_id,
-                    "message_id": self.id
+                    "message_id": self.id,
                 }
             )
         )
@@ -1051,6 +1156,38 @@ class PartialMessage(PartialBase):
         )
 
 
+class MessageSnapshot:
+    def __init__(
+        self,
+        *,
+        state: "DiscordAPI",
+        data: dict
+    ):
+        self._state = state
+
+        self.type: MessageType = MessageType(data["type"])
+        self.content: str = data["content"]
+
+        self.timestamp: datetime = utils.parse_time(data["timestamp"])
+        self.edited_timestamp: datetime | None = None
+
+        self.embeds: list[Embed] = [
+            Embed.from_dict(embed)
+            for embed in data.get("embeds", [])
+        ]
+
+        self.attachments: list[Attachment] = [
+            Attachment(state=state, data=a)
+            for a in data.get("attachments", [])
+        ]
+
+        self._from_data(data)
+
+    def _from_data(self, data: dict) -> None:
+        if data.get("edited_timestamp", None):
+            self.edited_timestamp = utils.parse_time(data["edited_timestamp"])
+
+
 class Message(PartialMessage):
     def __init__(
         self,
@@ -1066,7 +1203,8 @@ class Message(PartialMessage):
             guild_id=guild.id if guild else None
         )
 
-        self.content: Optional[str] = data.get("content", None)
+        self.type: MessageType = MessageType(data["type"])
+        self.content: str = data.get("content", "")
         self.author: Union[User, "Member"] = User(state=state, data=data["author"])
         self.pinned: bool = data.get("pinned", False)
         self.mention_everyone: bool = data.get("mention_everyone", False)
@@ -1088,17 +1226,17 @@ class Message(PartialMessage):
             for s in data.get("sticker_items", [])
         ]
 
-        self.user_mentions: list[User] = [
-            User(state=self._state, data=g)
-            for g in data.get("mentions", [])
-        ]
+        self.mentions: list["Member | User"] = []
 
         self.view: View | None = None
         self.edited_timestamp: datetime | None = None
 
-        self.message_reference: MessageReference | None = None
+        self.reference: MessageReference | None = None
 
-        self.referenced_message: Message | None = None
+        self.resolved_reply: Message | None = None
+        self.resolved_forward: list[MessageSnapshot] = []
+
+        self.interaction: MessageInteraction | None = None
 
         self._from_data(data)
 
@@ -1113,16 +1251,30 @@ class Message(PartialMessage):
             self.view = View.from_dict(data)
 
         if data.get("message_reference", None):
-            self.message_reference = MessageReference(
+            self.reference = MessageReference(
                 state=self._state,
                 data=data["message_reference"]
             )
 
         if data.get("referenced_message", None):
-            self.referenced_message = Message(
+            self.resolved_reply = Message(
                 state=self._state,
                 data=data["referenced_message"],
                 guild=self.guild
+            )
+
+        if data.get("interaction_metadata", None):
+            self.interaction = MessageInteraction(
+                state=self._state,
+                data=data["interaction_metadata"]
+            )
+
+        for m in data.get("message_snapshots", []):
+            self.resolved_forward.append(
+                MessageSnapshot(
+                    state=self._state,
+                    data=m
+                )
             )
 
         if data.get("poll", None):
@@ -1142,6 +1294,33 @@ class Message(PartialMessage):
                 guild=self.guild,  # type: ignore
                 data=data["member"]
             )
+
+        if data.get("mentions", None):
+            from .member import Member
+
+            for m in data["mentions"]:
+                if m.get("member", None) and self.guild_id:
+                    # This is only done through the gateway
+                    _fake_member = m["member"]
+                    _fake_member["user"] = m
+                    Member(
+                        state=self._state,
+                        guild=self.guild,  # type: ignore
+                        data=_fake_member
+                    )
+
+                else:
+                    User(state=self._state, data=m)
+
+    def is_system(self) -> bool:
+        """ `bool`: Returns whether the message is a system message """
+        return self.type not in (
+            MessageType.default,
+            MessageType.reply,
+            MessageType.chat_input_command,
+            MessageType.context_menu_command,
+            MessageType.thread_starter_message
+        )
 
     @property
     def emojis(self) -> list[EmojiParser]:
@@ -1268,7 +1447,7 @@ class WebhookMessage(Message):
     async def delete(
         self,
         *,
-        reason: Optional[str] = None
+        delay: float | None = None
     ) -> None:
         """
         Delete the webhook message
@@ -1278,10 +1457,22 @@ class WebhookMessage(Message):
         reason: `Optional[str]`
             Reason for deleting the message
         """
-        await self._state.query(
-            "DELETE",
-            f"/webhooks/{self.application_id}/{self.token}/messages/{self.id}",
-            reason=reason,
-            webhook=True,
-            res_method="text"
-        )
+        async def _delete():
+            await self._state.query(
+                "DELETE",
+                f"/webhooks/{self.application_id}/{self.token}/messages/{self.id}",
+                webhook=True,
+                res_method="text"
+            )
+
+        async def _delete_after(d: float):
+            await asyncio.sleep(d)
+            try:
+                await _delete()
+            except HTTPException:
+                pass
+
+        if delay is not None:
+            asyncio.create_task(_delete_after(delay))
+        else:
+            await _delete()

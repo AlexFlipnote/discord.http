@@ -6,6 +6,7 @@ from datetime import datetime, UTC
 from typing import Optional, Coroutine, TYPE_CHECKING
 
 from .shard import Shard
+from .object import PlayingStatus
 
 if TYPE_CHECKING:
     from ..client import GatewayCacheFlags, Client, Intents
@@ -24,6 +25,7 @@ class GatewayClient:
         *,
         cache_flags: Optional["GatewayCacheFlags"] = None,
         intents: Optional["Intents"] = None,
+        automatic_shards: bool = True,
         shard_id: Optional[int] = None,
         shard_count: Optional[int] = None,
         shard_ids: Optional[list[int]] = None,
@@ -34,6 +36,7 @@ class GatewayClient:
         self.intents = intents
         self.cache_flags = cache_flags
 
+        self.automatic_shards = automatic_shards
         self.api_version = api_version
         self.shard_id = shard_id
         self.shard_count = shard_count
@@ -45,13 +48,37 @@ class GatewayClient:
         self.bot.backend.add_url_rule(
             "/shards",
             "shards",
-            # It does accept dict, pyright is wrong
-            self._index_websocket_status,  # type: ignore
+            self._index_websocket_status,
             methods=["GET"]
         )
 
     def get_shard(self, shard_id: int) -> Optional[Shard]:
+        """
+        Returns the shard object of the shard with the specified ID.
+
+        Parameters
+        ----------
+        shard_id: `int`
+            The ID of the shard to get.
+
+        Returns
+        -------
+        `Optional[Shard]`
+            The shard object with the specified ID, or `None` if not found.
+        """
         return self.__shards.get(shard_id, None)
+
+    async def change_presence(self, status: PlayingStatus) -> None:
+        """
+        Changes the presence of all shards to the specified status.
+
+        Parameters
+        ----------
+        status: `PlayingStatus`
+            The status to change to.
+        """
+        for shard in self.__shards.values():
+            await shard.change_presence(status)
 
     async def _index_websocket_status(self) -> dict[int, dict]:
         _now = datetime.now(UTC)
@@ -96,7 +123,9 @@ class GatewayClient:
                 api_version=self.api_version,
                 debug_events=self.bot.debug_events
             )
+
             shard.connect()
+
             while not shard.status.session_id:
                 await asyncio.sleep(0.5)
 
@@ -106,12 +135,20 @@ class GatewayClient:
 
         self.__shards[shard_id] = shard
 
-    async def launch_shards(self) -> None:
-        """ Launch all theshards """
-        if self.shard_count is None:
+    async def _launch_all_shards(self) -> None:
+        """ Launches all the shards """
+        if self.automatic_shards:
             self.shard_count, self.max_concurrency = await self._fetch_gateway()
 
-        shard_ids = self.shard_ids or range(self.shard_count)
+            if self.shard_count == 1:
+                # There is no need to shard if there is only 1 shard
+                _log.debug("Sharding disabled, no point in sharding 1 shard")
+                self.shard_count = None
+
+        _shard_count = self.shard_count or 1
+
+        shard_ids = self.shard_ids or range(_shard_count)
+        chunks = []
 
         if not self.max_concurrency:
             for shard_id in shard_ids:
@@ -138,14 +175,24 @@ class GatewayClient:
                 else:
                     _log.debug(f"Bucket {i}/{len(chunks)} shards launched, last bucket, skipping wait")
 
-        _log.debug(f"All {len(chunks)} bucket(s) have launched a total of {self.shard_count} shard(s)")
+        _log.debug(f"All {len(chunks)} bucket(s) have launched a total of {_shard_count} shard(s)")
+        asyncio.create_task(self._delay_full_ready())
+
+    async def _delay_full_ready(self) -> None:
+        _waiting: list[Coroutine] = [
+            g.wait_until_ready()
+            for g in self.__shards.values()
+        ]
+
+        # Gather all shards to now wait until they are ready
+        await asyncio.gather(*_waiting)
 
         self.bot._shards_ready.set()
         _log.info("discord.http/gateway is now ready")
 
     def start(self) -> None:
         """ Start the gateway client """
-        self.bot.loop.create_task(self.launch_shards())
+        self.bot.loop.create_task(self._launch_all_shards())
 
     async def close(self) -> None:
         """ Close the gateway client """

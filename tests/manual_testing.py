@@ -10,7 +10,6 @@ import logging
 import secrets
 
 from datetime import time, timedelta
-from typing import Union, Optional
 
 from discord_http import (
     Context, Embed, File, Member,
@@ -21,7 +20,7 @@ from discord_http import (
     utils, VoiceChannel, Select,
     TextStyles, User, UserSelect, tasks,
     TextChannel, Attachment, PermissionOverwrite,
-    Poll
+    Poll, AutoModRuleEventType, AutoModRuleTriggerType
 )
 
 with open("./config.json") as f:
@@ -92,7 +91,7 @@ async def test_cooldown(ctx: Context):
 @client.command()
 async def test_multi_channel(
     ctx: Context,
-    channel: Union[TextChannel, VoiceChannel]
+    channel: TextChannel | VoiceChannel
 ):
     """ Test multiple channel types """
     return ctx.response.send_message(f"You chose {channel}")
@@ -106,6 +105,41 @@ async def test_background_task(ctx: Context, toggle: bool):
         test_loop.cancel()
 
     return ctx.response.send_message("Check console")
+
+
+@client.command()
+async def test_automod(ctx: Context):
+    async def call_after():
+        automod = await ctx.guild.create_automod_rule(
+            name="test",
+            event_type=AutoModRuleEventType.message_send,
+            trigger_type=AutoModRuleTriggerType.keyword,
+            keyword_filter=["verynicetest"],
+            message="Nice try, but no testing, kthxbye",
+            reason="Testing automod"
+        )
+
+        await ctx.followup.send(f"Created automod {automod.name}, waiting 3 seconds to edit")
+
+        await asyncio.sleep(3)
+        automod = await automod.edit(
+            name="Test 2"
+        )
+
+        await ctx.edit_original_response(
+            content=f"Changed name to {automod.name}, waiting 10 seconds to delete"
+        )
+
+        await asyncio.sleep(10)
+
+        await automod.delete()
+        await ctx.edit_original_response(
+            content="Deleted automod, done testing"
+        )
+
+    return ctx.response.defer(
+        thinking=True, call_after=call_after
+    )
 
 
 @test_group.command(name="test1")
@@ -128,7 +162,7 @@ async def test_followup(ctx: Context, user: Member):
     """ My name jeff """
     async def pong():
         msg = await ctx.followup.send(f"Hello there {user.mention}")
-        print(msg.user_mentions)
+        print(msg.mentions)
 
     return ctx.response.defer(thinking=True, call_after=pong)
 
@@ -200,7 +234,7 @@ async def test_guild(ctx: Context):
 
 
 @client.command()
-async def test_create_webhook(ctx: Context, name: str, avatar: Optional[Attachment] = None):
+async def test_create_webhook(ctx: Context, name: str, avatar: Attachment | None = None):
     """ Test creating webhook """
     webhook = await ctx.channel.create_webhook(
         name=name,
@@ -658,7 +692,7 @@ async def test_create_channel(ctx: Context, name: str):
 
 
 @client.user_command(name="Test user cmd")
-async def test_user_cmd(ctx: Context, user: Union[Member, User]):
+async def test_user_cmd(ctx: Context, user: Member | User):
     return ctx.response.send_message(
         f"You successfully targeted {user}",
         ephemeral=True
@@ -778,7 +812,7 @@ async def test_bool(ctx: Context, prompt: bool):
 
 
 @client.command()
-async def test_history(ctx: Context, limit: Optional[int] = None):
+async def test_history(ctx: Context, limit: int | None = None):
     async def followup():
         msgs = []
         async for msg in ctx.channel.fetch_history(limit=limit):

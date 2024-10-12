@@ -1,9 +1,18 @@
-from typing import Self, TYPE_CHECKING
+import yarl
+import os
 
+from typing import Self, TYPE_CHECKING, Literal
+
+from . import utils
 from .errors import HTTPException
 
 if TYPE_CHECKING:
     from .http import DiscordAPI
+
+StaticFormatTypes = Literal["webp", "jpeg", "jpg", "png"]
+AssetFormatTypes = Literal["webp", "jpeg", "jpg", "png", "gif"]
+
+MISSING = utils.MISSING
 
 __all__ = (
     "Asset",
@@ -12,6 +21,7 @@ __all__ = (
 
 class Asset:
     BASE = "https://cdn.discordapp.com"
+    PROXY = "https://media.discordapp.net"
 
     def __init__(
         self,
@@ -69,6 +79,64 @@ class Asset:
         data = await self.fetch()
         with open(path, "wb") as f:
             return f.write(data)
+
+    def replace(
+        self,
+        *,
+        size: int = MISSING,
+        format: AssetFormatTypes = MISSING
+    ) -> Self:
+        """
+        Replace the asset with new values
+
+        Parameters
+        ----------
+        size: `int`
+            The size of the asset
+        format: `AssetFormatTypes`
+            The format of the asset
+
+        Returns
+        -------
+        `Self`
+            The new asset object
+        """
+        url = yarl.URL(self.url)
+        path, _ = os.path.splitext(url.path)
+
+        if format is not MISSING:
+            url = url.with_path(f"{path}.{format}")
+
+        if size is not MISSING:
+            url = url.with_query(size=size)
+        else:
+            url = url.with_query(url.raw_query_string)
+
+        url = str(url)
+        return self.__class__(
+            state=self._state,
+            url=url,
+            key=self._key,
+            animated=self._animated
+        )
+
+    def with_static_format(self, format: StaticFormatTypes) -> Self:
+        """
+        Replace the asset with a static format
+
+        Parameters
+        ----------
+        format: `StaticFormatTypes`
+            The static format to use
+
+        Returns
+        -------
+        `Self`
+            The new asset object, if animated, it will return no changes
+        """
+        if self._animated:
+            return self
+        return self.replace(format=format)
 
     @property
     def url(self) -> str:
@@ -216,4 +284,21 @@ class Asset:
             url=f"{cls.BASE}/banners/{user_id}/{banner}.{format}?size=1024",
             key=banner,
             animated=animated
+        )
+
+    @classmethod
+    def _from_activity_asset(
+        cls,
+        state: "DiscordAPI",
+        activity_id: int,
+        image: str
+    ) -> Self:
+        url = f"{cls.BASE}/app-assets/{activity_id}/{image}.png"
+        if image.startswith("mp:"):
+            url = f"{cls.PROXY}/{image}"
+
+        return cls(
+            state=state,
+            url=url,
+            key=image
         )

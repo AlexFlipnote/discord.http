@@ -600,7 +600,7 @@ class InteractionStorage:
             Returns the new context of the interaction, or `None` if timed out
         """
         if not inspect.iscoroutinefunction(call_after):
-            _log.warn("call_after is not a coroutine function, ignoring...")
+            _log.warning("call_after is not a coroutine function, ignoring...")
             return None
 
         if users and isinstance(users, list):
@@ -624,7 +624,7 @@ class InteractionStorage:
                 await asyncio.sleep(0.15)  # Make sure Discord has time to store the message
                 self._msg_cache = await ctx.original_response()
             except Exception as e:
-                _log.warn(f"Failed to fetch origin message: {e}")
+                _log.warning(f"Failed to fetch origin message: {e}")
                 return None
 
         ctx.bot._view_storage[self._msg_cache.id] = self

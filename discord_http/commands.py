@@ -35,7 +35,7 @@ if TYPE_CHECKING:
     from .client import Client
     from .context import Context
 
-ChoiceT = TypeVar("ChoiceT", str, int, float, Union[str, int, float])
+ChoiceT = TypeVar("ChoiceT", str, int, float)
 
 LocaleTypes = Literal[
     "id", "da", "de", "en-GB", "en-US", "es-ES", "fr",
@@ -252,10 +252,10 @@ class Command:
                 option: dict[str, Any] = {}
                 _channel_options: list[ChannelType] = []
 
-                # Either there is a Union[Any, ...] or Optional[Any] type
-                if origin in [Union]:
-
-                    # Check if it's an Optional[Any] type
+                # Check if there are multiple types, looking for:
+                # - Union[Any, ...] / Optional[Any] / type | None
+                # - type | type | ...
+                if getattr(parameter.annotation, "__args__", None):
                     if (
                         len(parameter.annotation.__args__) == 2 and
                         parameter.annotation.__args__[-1] is _NoneType
@@ -311,7 +311,8 @@ class Command:
                             CommandOptionType.string
                         )
 
-                    case x if isinstance(x, Range):
+                    # It is a range, but pyright does not understand it due to TYPE_CHECKING
+                    case x if isinstance(x, Range):  # type: ignore
                         ptype = origin.type
                         if origin.type == CommandOptionType.string:
                             option.update({
@@ -629,7 +630,7 @@ class Command:
 
                 opt = self._find_option(loc.key)
                 if not opt:
-                    _log.warn(
+                    _log.warning(
                         f"{self.name} -> {loc.key}: "
                         "Option not found in command, skipping..."
                     )
@@ -948,87 +949,92 @@ class Choice(Generic[ChoiceT]):
     value: `Union[int, str, float]`
         The value of your choice (the one that is shown to public)
     """
-    def __init__(self, key: ChoiceT, value: Union[str, int, float]):
+    def __init__(self, key: ChoiceT, value: ChoiceT):
         self.key: ChoiceT = key
-        self.value: Union[str, int, float] = value
+        self.value: ChoiceT = value
 
 
-class Range:
-    """
-    Makes it possible to create a range rule for command arguments
+# Making it so pyright understands that the range type is a normal type
+if TYPE_CHECKING:
+    from typing import Annotated as Range
 
-    When used in a command, it will only return the value if it's within the range.
+else:
+    class Range:
+        """
+        Makes it possible to create a range rule for command arguments
 
-    Example usage:
+        When used in a command, it will only return the value if it's within the range.
 
-    .. code-block:: python
+        Example usage:
 
-        Range[str, 1, 10]        # (min and max length of the string)
-        Range[int, 1, 10]        # (min and max value of the integer)
-        Range[float, 1.0, 10.0]  # (min and max value of the float)
+        .. code-block:: python
 
-    Parameters
-    ----------
-    opt_type: `CommandOptionType`
-        The type of the range
-    min: `Union[int, float, str]`
-        The minimum value of the range
-    max: `Union[int, float, str]`
-        The maximum value of the range
-    """
-    def __init__(
-        self,
-        opt_type: CommandOptionType,
-        min: Optional[Union[int, float, str]],
-        max: Optional[Union[int, float, str]]
-    ):
-        self.type = opt_type
-        self.min = min
-        self.max = max
+            Range[str, 1, 10]        # (min and max length of the string)
+            Range[int, 1, 10]        # (min and max value of the integer)
+            Range[float, 1.0, 10.0]  # (min and max value of the float)
 
-    def __class_getitem__(cls, obj):
-        if not isinstance(obj, tuple):
-            raise TypeError("Range must be a tuple")
+        Parameters
+        ----------
+        opt_type: `CommandOptionType`
+            The type of the range
+        min: `Union[int, float, str]`
+            The minimum value of the range
+        max: `Union[int, float, str]`
+            The maximum value of the range
+        """
+        def __init__(
+            self,
+            opt_type: CommandOptionType,
+            min: Optional[Union[int, float, str]],
+            max: Optional[Union[int, float, str]]
+        ):
+            self.type = opt_type
+            self.min = min
+            self.max = max
 
-        if len(obj) == 2:
-            obj = (*obj, None)
-        elif len(obj) != 3:
-            raise TypeError("Range must be a tuple of length 2 or 3")
+        def __class_getitem__(cls, obj):
+            if not isinstance(obj, tuple):
+                raise TypeError("Range must be a tuple")
 
-        obj_type, min, max = obj
+            if len(obj) == 2:
+                obj = (*obj, None)
+            elif len(obj) != 3:
+                raise TypeError("Range must be a tuple of length 2 or 3")
 
-        if min is None and max is None:
-            raise TypeError("Range must have a minimum or maximum value")
+            obj_type, min, max = obj
 
-        if min is not None and max is not None:
-            if type(min) is not type(max):
-                raise TypeError("Range minimum and maximum must be the same type")
+            if min is None and max is None:
+                raise TypeError("Range must have a minimum or maximum value")
 
-        match obj_type:
-            case x if x is str:
-                opt = CommandOptionType.string
+            if min is not None and max is not None:
+                if type(min) is not type(max):
+                    raise TypeError("Range minimum and maximum must be the same type")
 
-            case x if x is int:
-                opt = CommandOptionType.integer
+            match obj_type:
+                case x if x is str:
+                    opt = CommandOptionType.string
 
-            case x if x is float:
-                opt = CommandOptionType.number
+                case x if x is int:
+                    opt = CommandOptionType.integer
 
-            case _:
-                raise TypeError(
-                    "Range type must be str, int, "
-                    f"or float, not a {obj_type}"
-                )
+                case x if x is float:
+                    opt = CommandOptionType.number
 
-        cast = float
-        if obj_type in (str, int):
-            cast = int
+                case _:
+                    raise TypeError(
+                        "Range type must be str, int, "
+                        f"or float, not a {obj_type}"
+                    )
 
-        return cls(
-            opt,
-            cast(min) if min is not None else None,
-            cast(max) if max is not None else None
-        )
+            cast = float
+            if obj_type in (str, int):
+                cast = int
+
+            return cls(
+                opt,
+                cast(min) if min is not None else None,
+                cast(max) if max is not None else None
+            )
 
 
 def command(
@@ -1240,7 +1246,7 @@ def locales(
                 continue
 
             if key not in ValidLocalesList:
-                _log.warn(f"{name}: Unsupported locale {key} skipped (might be a typo)")
+                _log.warning(f"{name}: Unsupported locale {key} skipped (might be a typo)")
                 continue
 
             if not isinstance(value, dict):
@@ -1268,7 +1274,7 @@ def locales(
                 )
 
             if not temp_value:
-                _log.warn(f"{name} -> {key}: Found an empty translation dict, skipping...")
+                _log.warning(f"{name} -> {key}: Found an empty translation dict, skipping...")
                 continue
 
             container[key] = temp_value
