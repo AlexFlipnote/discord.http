@@ -247,8 +247,8 @@ class Parser:
             ),
         )
 
-    def guild_soundboard_sounds_update(self, data: list[dict]) -> tuple[PartialGuild, list[SoundboardSound]]:
-        _guild = self._get_guild_or_partial(int(data[0]["guild_id"]))
+    def guild_soundboard_sounds_update(self, data: dict) -> tuple[PartialGuild, list[SoundboardSound]]:
+        _guild = self._get_guild_or_partial(int(data["guild_id"]))
 
         return (
             _guild,
@@ -258,7 +258,7 @@ class Parser:
                     guild=_guild,
                     data=e
                 )
-                for e in data
+                for e in data["soundboard_sounds"]
             ]
         )
 
