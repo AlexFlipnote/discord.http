@@ -19,6 +19,7 @@ extensions = [
 
     # Third party extensions
     "myst_parser",
+    "seo_support",
 ]
 
 exclude_patterns = ["_build", "Thumbs.db", ".DS_Store"]
