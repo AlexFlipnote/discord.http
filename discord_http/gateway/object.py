@@ -52,7 +52,7 @@ class PlayingStatus:
         type: ActivityType | str | int | None = None,
         url: str | None = None,
     ):
-        self.since = 0
+        self.since: int | None = None
         self.name = name
         self.status: StatusType | str | int | None = status
         self.type: ActivityType | str | int | None = type

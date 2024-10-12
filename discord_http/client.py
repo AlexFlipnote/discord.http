@@ -6,7 +6,8 @@ import logging
 from datetime import datetime
 from typing import (
     Dict, Optional, Any, Callable,
-    Union, AsyncIterator, TYPE_CHECKING
+    Union, AsyncIterator, TYPE_CHECKING,
+    Coroutine, TypeVar
 )
 
 from . import utils
@@ -41,6 +42,9 @@ if TYPE_CHECKING:
     from .gateway.object import PlayingStatus
 
 _log = logging.getLogger(__name__)
+
+T = TypeVar("T")
+Coro = Coroutine[Any, Any, T]
 
 __all__ = (
     "Client",
@@ -176,9 +180,12 @@ class Client:
                 await listener.coro(listener.cog, *args, **kwargs)
             else:
                 await listener.coro(*args, **kwargs)
+
         except asyncio.CancelledError:
             pass
+
         except Exception as e:
+
             try:
                 if self.has_any_dispatch("event_error"):
                     self.dispatch("event_error", self, e)
@@ -837,8 +844,8 @@ class Client:
             if not inspect.iscoroutinefunction(actual):
                 raise TypeError("Listeners has to be coroutine functions")
             self.add_listener(Listener(
-                name or actual.__name__,
-                func
+                name=name or actual.__name__,
+                coro=func
             ))
 
         return decorator

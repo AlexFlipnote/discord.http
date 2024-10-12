@@ -139,7 +139,7 @@ class Parser:
         return (_guild,)
 
     def guild_member_add(self, data: dict) -> tuple[Guild | PartialGuild, Member]:
-        _guild = self._get_guild_or_partial(int(data["id"]))
+        _guild = self._get_guild_or_partial(int(data["guild_id"]))
 
         return (
             _guild,
@@ -147,7 +147,7 @@ class Parser:
         )
 
     def guild_member_update(self, data: dict) -> tuple[Guild | PartialGuild, Member]:
-        _guild = self._get_guild_or_partial(int(data["id"]))
+        _guild = self._get_guild_or_partial(int(data["guild_id"]))
 
         return (
             _guild,

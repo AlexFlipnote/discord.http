@@ -275,6 +275,8 @@ class Shard:
                     elif data is False:
                         _log.warning(f"Shard {self.shard_id} session invalidated, resetting instance")
 
+                    _log.debug(f"Shard {self.shard_id} invalidation data: {msg}")
+
                     await self.close()
 
                 case _:
@@ -341,6 +343,8 @@ class Shard:
                     if self._should_kill is True:
                         # Custom close code, only used when shutting down
                         return None
+
+                    _log.debug(f"Shard {self.shard_id} error", exc_info=e)
 
                     if self._can_handle_close():
                         self._reset_buffer()
