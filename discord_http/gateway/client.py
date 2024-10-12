@@ -144,15 +144,16 @@ class GatewayClient:
                 # There is no need to shard if there is only 1 shard
                 _log.debug("Sharding disabled, no point in sharding 1 shard")
                 self.shard_count = None
+                self.max_concurrency = None
 
         _shard_count = self.shard_count or 1
-
         shard_ids = self.shard_ids or range(_shard_count)
-        chunks = []
 
         if not self.max_concurrency:
             for shard_id in shard_ids:
                 await self._launch_shard(shard_id)
+
+            _log.debug(f"All {len(shard_ids)} shard(s) have launched")
 
         else:
             chunks = [
@@ -175,7 +176,8 @@ class GatewayClient:
                 else:
                     _log.debug(f"Bucket {i}/{len(chunks)} shards launched, last bucket, skipping wait")
 
-        _log.debug(f"All {len(chunks)} bucket(s) have launched a total of {_shard_count} shard(s)")
+            _log.debug(f"All {len(chunks)} bucket(s) have launched a total of {_shard_count} shard(s)")
+
         asyncio.create_task(self._delay_full_ready())
 
     async def _delay_full_ready(self) -> None:

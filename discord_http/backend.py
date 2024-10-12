@@ -184,6 +184,10 @@ class DiscordHTTP(Quart):
         ctx.command = cmd
 
         try:
+            # But first, check global checks
+            await self.bot._run_global_checks(ctx)
+
+            # Now run the command itself
             payload = await cmd._make_context_and_run(
                 context=ctx
             )

@@ -920,7 +920,12 @@ class Interaction:
 
 
 class Listener:
-    def __init__(self, name: str, coro: Callable):
+    def __init__(
+        self,
+        *,
+        name: str,
+        coro: Callable
+    ):
         self.name = name
         self.coro = coro
         self.cog: Optional["Cog"] = None
@@ -1604,8 +1609,8 @@ def listener(name: Optional[str] = None):
         if not inspect.iscoroutinefunction(actual):
             raise TypeError("Listeners has to be coroutine functions")
         return Listener(
-            name or actual.__name__,
-            func
+            name=name or actual.__name__,
+            coro=func
         )
 
     return decorator

@@ -6,7 +6,8 @@ import logging
 from datetime import datetime
 from typing import (
     Dict, Optional, Any, Callable,
-    Union, AsyncIterator, TYPE_CHECKING
+    Union, AsyncIterator, TYPE_CHECKING,
+    Coroutine, TypeVar
 )
 
 from . import utils
@@ -18,6 +19,7 @@ from .context import Context
 from .emoji import PartialEmoji, Emoji
 from .entitlements import PartialSKU, SKU, PartialEntitlements, Entitlements
 from .enums import ApplicationCommandType
+from .errors import CheckFailed
 from .file import File
 from .gateway.cache import Cache
 from .guild import PartialGuild, Guild, PartialScheduledEvent, ScheduledEvent
@@ -25,7 +27,6 @@ from .http import DiscordAPI
 from .invite import PartialInvite, Invite
 from .member import PartialMember, Member
 from .mentions import AllowedMentions
-from .voice import PartialVoiceState, VoiceState
 from .message import PartialMessage, Message
 from .object import Snowflake
 from .role import PartialRole
@@ -33,6 +34,7 @@ from .soundboard import SoundboardSound, PartialSoundboardSound
 from .sticker import PartialSticker, Sticker
 from .user import User, PartialUser, UserClient
 from .view import InteractionStorage
+from .voice import PartialVoiceState, VoiceState
 from .webhook import PartialWebhook, Webhook
 
 if TYPE_CHECKING:
@@ -41,6 +43,9 @@ if TYPE_CHECKING:
     from .gateway.object import PlayingStatus
 
 _log = logging.getLogger(__name__)
+
+T = TypeVar("T")
+Coro = Coroutine[Any, Any, T]
 
 __all__ = (
     "Client",
@@ -146,6 +151,8 @@ class Client:
         self.interactions: Dict[str, Interaction] = {}
         self.interactions_regex: Dict[str, Interaction] = {}
 
+        self._global_cmd_checks: list[Callable] = []
+
         self._gateway_cache: Optional["GatewayCacheFlags"] = gateway_cache
         self._ready: Optional[asyncio.Event] = asyncio.Event()
         self._shards_ready: Optional[asyncio.Event] = asyncio.Event()
@@ -164,6 +171,18 @@ class Client:
 
         utils.setup_logger(level=self.logging_level)
 
+    async def _run_global_checks(self, ctx: Context) -> bool:
+        for g in self._global_cmd_checks:
+            if inspect.iscoroutinefunction(g):
+                result = await g(ctx)
+            else:
+                result = g(ctx)
+
+            if result is not True:
+                raise CheckFailed(f"Check {g.__name__} failed.")
+
+        return True
+
     async def _run_event(
         self,
         listener: "Listener",
@@ -176,9 +195,12 @@ class Client:
                 await listener.coro(listener.cog, *args, **kwargs)
             else:
                 await listener.coro(*args, **kwargs)
+
         except asyncio.CancelledError:
             pass
+
         except Exception as e:
+
             try:
                 if self.has_any_dispatch("event_error"):
                     self.dispatch("event_error", self, e)
@@ -837,8 +859,8 @@ class Client:
             if not inspect.iscoroutinefunction(actual):
                 raise TypeError("Listeners has to be coroutine functions")
             self.add_listener(Listener(
-                name or actual.__name__,
-                func
+                name=name or actual.__name__,
+                coro=func
             ))
 
         return decorator
@@ -1869,6 +1891,22 @@ class Client:
             The command to remove from the bot.
         """
         self.commands.pop(func.name, None)
+
+    def add_global_cmd_check(
+        self,
+        func: Callable
+    ) -> Callable:
+        """
+        Add a check that will be run before every command
+
+        Parameters
+        ----------
+        func: `Callable`
+            The function to add
+        """
+        self._global_cmd_checks.append(func)
+
+        return func
 
     def add_interaction(
         self,
