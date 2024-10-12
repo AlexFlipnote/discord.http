@@ -19,6 +19,7 @@ from .context import Context
 from .emoji import PartialEmoji, Emoji
 from .entitlements import PartialSKU, SKU, PartialEntitlements, Entitlements
 from .enums import ApplicationCommandType
+from .errors import CheckFailed
 from .file import File
 from .gateway.cache import Cache
 from .guild import PartialGuild, Guild, PartialScheduledEvent, ScheduledEvent
@@ -26,7 +27,6 @@ from .http import DiscordAPI
 from .invite import PartialInvite, Invite
 from .member import PartialMember, Member
 from .mentions import AllowedMentions
-from .voice import PartialVoiceState, VoiceState
 from .message import PartialMessage, Message
 from .object import Snowflake
 from .role import PartialRole
@@ -34,6 +34,7 @@ from .soundboard import SoundboardSound, PartialSoundboardSound
 from .sticker import PartialSticker, Sticker
 from .user import User, PartialUser, UserClient
 from .view import InteractionStorage
+from .voice import PartialVoiceState, VoiceState
 from .webhook import PartialWebhook, Webhook
 
 if TYPE_CHECKING:
@@ -150,6 +151,8 @@ class Client:
         self.interactions: Dict[str, Interaction] = {}
         self.interactions_regex: Dict[str, Interaction] = {}
 
+        self._global_cmd_checks: list[Callable] = []
+
         self._gateway_cache: Optional["GatewayCacheFlags"] = gateway_cache
         self._ready: Optional[asyncio.Event] = asyncio.Event()
         self._shards_ready: Optional[asyncio.Event] = asyncio.Event()
@@ -167,6 +170,18 @@ class Client:
         self._cogs: dict[str, list[Cog]] = {}
 
         utils.setup_logger(level=self.logging_level)
+
+    async def _run_global_checks(self, ctx: Context) -> bool:
+        for g in self._global_cmd_checks:
+            if inspect.iscoroutinefunction(g):
+                result = await g(ctx)
+            else:
+                result = g(ctx)
+
+            if result is not True:
+                raise CheckFailed(f"Check {g.__name__} failed.")
+
+        return True
 
     async def _run_event(
         self,
@@ -1876,6 +1891,22 @@ class Client:
             The command to remove from the bot.
         """
         self.commands.pop(func.name, None)
+
+    def add_global_cmd_check(
+        self,
+        func: Callable
+    ) -> Callable:
+        """
+        Add a check that will be run before every command
+
+        Parameters
+        ----------
+        func: `Callable`
+            The function to add
+        """
+        self._global_cmd_checks.append(func)
+
+        return func
 
     def add_interaction(
         self,
