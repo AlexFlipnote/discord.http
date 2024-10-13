@@ -16,7 +16,6 @@ if TYPE_CHECKING:
     from . import Snowflake
     from .channel import BaseChannel
     from .context import Context
-    from .message import Message
     from .response import BaseResponse
 
 _log = logging.getLogger(__name__)
@@ -481,7 +480,7 @@ class InteractionStorage:
         self._timeout_bool = False
         self._timeout: Optional[float] = None
         self._timeout_expiry: Optional[float] = None
-        self._msg_cache: Optional[Message] = None
+        self._msg_cache: str | int | None = None
 
     def __repr__(self) -> str:
         return (
@@ -564,6 +563,7 @@ class InteractionStorage:
         call_after: Callable,
         users: Optional[list["Snowflake"]] = [],
         original_response: bool = False,
+        custom_id: str | None = None,
         timeout: float = 60,
     ) -> Optional["Context"]:
         """
@@ -591,6 +591,8 @@ class InteractionStorage:
             List of users that are allowed to interact with the view
         original_response: `bool`
             Whether to force the original response to be used as the message target
+        custom_id: `str | None`
+            Custom ID of the view, if not provided, it will use Context.id or Context.message
         timeout: `float`
             How long it should take until the code simply times out
 
@@ -613,25 +615,41 @@ class InteractionStorage:
 
         self._update_event(False)
 
-        if ctx.message is not None:
-            self._msg_cache = ctx.message
+        # If user provides a custom_id
+        if custom_id is not None:
+            self._msg_cache = custom_id
 
+        # If an interaction was made, and the initial Context.id is in message
+        if (
+            self._msg_cache is None and
+            ctx.message is not None and
+            ctx.message.interaction is not None
+        ):
+            self._msg_cache = ctx.message.interaction.id
+
+        # If we're in the command init, use the initial Context.id
+        if self._msg_cache is None:
+            self._msg_cache = ctx.id
+
+        # If for some reason msg_cache is still None
+        # Or if user has spesifically asked for original_response
         if (
             self._msg_cache is None or
             original_response is True
         ):
             try:
                 await asyncio.sleep(0.15)  # Make sure Discord has time to store the message
-                self._msg_cache = await ctx.original_response()
+                _msg = await ctx.original_response()
+                self._msg_cache = _msg.id
             except Exception as e:
                 _log.warning(f"Failed to fetch origin message: {e}")
                 return None
 
-        ctx.bot._view_storage[self._msg_cache.id] = self
+        ctx.bot._view_storage[self._msg_cache] = self
         await self._event_wait.wait()
 
         try:
-            del ctx.bot._view_storage[self._msg_cache.id]
+            del ctx.bot._view_storage[self._msg_cache]
         except KeyError:
             pass
 

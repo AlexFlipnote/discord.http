@@ -224,16 +224,35 @@ class DiscordHTTP(Quart):
         _custom_id = data["data"]["custom_id"]
 
         try:
-            if ctx.message:
+            local_view = None
+
+            if (
+                local_view is None and
+                ctx.custom_id
+            ):
+                local_view = self.bot._view_storage.get(
+                    ctx.custom_id, None
+                )
+
+            if (
+                local_view is None and
+                ctx.message
+            ):
                 local_view = self.bot._view_storage.get(
                     ctx.message.id, None
                 )
-                if local_view:
-                    payload = await local_view.callback(ctx)
-                    return QuartResponse(
-                        payload.to_multipart(),
-                        content_type=payload.content_type
+
+                if not local_view and ctx.message.interaction:
+                    local_view = self.bot._view_storage.get(
+                        ctx.message.interaction.id, None
                     )
+
+            if local_view:
+                payload = await local_view.callback(ctx)
+                return QuartResponse(
+                    payload.to_multipart(),
+                    content_type=payload.content_type
+                )
 
             intreact = self.bot.find_interaction(_custom_id)
             if not intreact:
@@ -435,10 +454,10 @@ class DiscordHTTP(Quart):
         `QuartResponse`
             The response object
         """
-        return self.response_class(
+        return QuartResponse(
             json.dumps(data, sort_keys=sort_keys, indent=indent),
             headers={"Content-Type": "application/json"},
-            status=status
+            status=status,
         )
 
     def start(

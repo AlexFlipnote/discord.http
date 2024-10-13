@@ -164,7 +164,7 @@ class Client:
         self.state: DiscordAPI = DiscordAPI(client=self)
         self.backend: DiscordHTTP = DiscordHTTP(client=self)
 
-        self._view_storage: dict[int, InteractionStorage] = {}
+        self._view_storage: dict[str | int, InteractionStorage] = {}
         self._default_allowed_mentions = allowed_mentions
 
         self._cogs: dict[str, list[Cog]] = {}

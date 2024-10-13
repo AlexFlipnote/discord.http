@@ -1,5 +1,10 @@
+import asyncio
+
 from datetime import datetime, timedelta
-from typing import Union, TYPE_CHECKING, Optional, AsyncIterator, Callable, Self
+from typing import (
+    Union, TYPE_CHECKING, Optional, AsyncIterator,
+    Callable, Self, Generator
+)
 
 from . import utils
 from .embeds import Embed
@@ -50,6 +55,44 @@ __all__ = (
     "VoiceChannel",
     "VoiceRegion",
 )
+
+
+def _typing_done_callback(f: asyncio.Future):
+    try:
+        f.exception()
+    except (asyncio.CancelledError, Exception):
+        pass
+
+
+class Typing:
+    def __init__(self, *, state: "DiscordAPI", channel: "PartialChannel"):
+        self._state = state
+
+        self.loop = state.bot.loop
+        self.channel = channel
+
+    def __await__(self) -> Generator[None, None, None]:
+        return self._send_typing().__await__()
+
+    async def __aenter__(self) -> None:
+        await self._send_typing()
+        self.task = self.loop.create_task(self.do_typing_loop())
+        self.task.add_done_callback(_typing_done_callback)
+
+    async def __aexit__(self, exc_type, exc, traceback) -> None:
+        self.task.cancel()
+
+    async def _send_typing(self) -> None:
+        await self._state.query(
+            "POST",
+            f"/channels/{self.channel.id}/typing",
+            res_method="text"
+        )
+
+    async def do_typing_loop(self) -> None:
+        while True:
+            await asyncio.sleep(5)
+            await self._send_typing()
 
 
 class PartialChannel(PartialBase):
@@ -670,16 +713,25 @@ class PartialChannel(PartialBase):
 
         return self._class_to_return(data=r.response)  # type: ignore
 
-    async def typing(self) -> None:
+    def typing(self) -> Typing:
         """
         Makes the bot trigger the typing indicator.
-        Times out after 10 seconds
+        There are two ways you can use this:
+
+        - Usual await call
+        - Using `async with` to type as long as you need
+
+        .. code-block:: python
+
+            # Method 1
+            await channel.typing()  # Stops after 10 seconds or message sent
+
+            # Method 2
+            async with channel.typing():
+                asyncio.sleep(4)
+        ```
         """
-        await self._state.query(
-            "POST",
-            f"/channels/{self.id}/typing",
-            res_method="text"
-        )
+        return Typing(state=self._state, channel=self)
 
     async def set_permission(
         self,

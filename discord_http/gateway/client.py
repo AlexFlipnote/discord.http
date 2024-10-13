@@ -48,7 +48,7 @@ class GatewayClient:
         self.bot.backend.add_url_rule(
             "/shards",
             "shards",
-            self._index_websocket_status,
+            self._index_websocket_status,  # type: ignore
             methods=["GET"]
         )
 
