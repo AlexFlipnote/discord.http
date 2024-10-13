@@ -3,7 +3,7 @@ import logging
 import asyncio
 
 from datetime import datetime, UTC
-from typing import Optional, Coroutine, TYPE_CHECKING
+from typing import Coroutine, TYPE_CHECKING
 
 from .shard import Shard
 from .object import PlayingStatus
@@ -23,14 +23,14 @@ class GatewayClient:
         self,
         bot: "Client",
         *,
-        cache_flags: Optional["GatewayCacheFlags"] = None,
-        intents: Optional["Intents"] = None,
+        cache_flags: "GatewayCacheFlags | None" = None,
+        intents: "Intents | None" = None,
         automatic_shards: bool = True,
-        shard_id: Optional[int] = None,
-        shard_count: Optional[int] = None,
-        shard_ids: Optional[list[int]] = None,
-        max_concurrency: Optional[int] = None,
-        api_version: Optional[int] = 8
+        shard_id: int | None = None,
+        shard_count: int | None = None,
+        shard_ids: list[int] | None = None,
+        max_concurrency: int | None = None,
+        api_version: int | None = 8
     ):
         self.bot = bot
         self.intents = intents
@@ -52,7 +52,7 @@ class GatewayClient:
             methods=["GET"]
         )
 
-    def get_shard(self, shard_id: int) -> Optional[Shard]:
+    def get_shard(self, shard_id: int) -> Shard | None:
         """
         Returns the shard object of the shard with the specified ID.
 

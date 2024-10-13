@@ -1,4 +1,4 @@
-from typing import Optional, Union, TYPE_CHECKING
+from typing import TYPE_CHECKING
 
 from ..channel import BaseChannel
 from ..voice import VoiceState, PartialVoiceState
@@ -27,13 +27,13 @@ class Cache:
         self.bot = client
         self.cache_flags = client._gateway_cache
 
-        self.__guilds: dict[int, Union["PartialGuild", "Guild"]] = {}
+        self.__guilds: dict[int, "PartialGuild | Guild"] = {}
 
     @property
-    def guilds(self) -> list[Union["PartialGuild", "Guild"]]:
+    def guilds(self) -> list["PartialGuild | Guild"]:
         return list(self.__guilds.values())
 
-    def get_guild(self, guild_id: int | None) -> Optional[Union["PartialGuild", "Guild"]]:
+    def get_guild(self, guild_id: int | None) -> "PartialGuild | Guild | None":
         if guild_id is None:
             return None
         return self.__guilds.get(guild_id, None)
@@ -41,7 +41,7 @@ class Cache:
     def add_guild(
         self,
         guild_id: int,
-        guild: Union["PartialGuild", "Guild"],
+        guild: "PartialGuild | Guild",
         data: dict
     ) -> None:
         if self.cache_flags is None:
@@ -189,7 +189,7 @@ class Cache:
         if not guild:
             return None
 
-        _vs_update: Optional[Union["VoiceState", "PartialVoiceState"]] = None
+        _vs_update: "VoiceState | PartialVoiceState | None" = None
         if GatewayCacheFlags.voice_states in self.cache_flags:
             _vs_update = voice_state
 
@@ -207,13 +207,13 @@ class Cache:
             else:
                 guild._cache_voice_states[voice_state.id] = _vs_update
 
-    def remove_guild(self, guild_id: int) -> Optional[Union["PartialGuild", "Guild"]]:
+    def remove_guild(self, guild_id: int) -> "PartialGuild | Guild | None":
         if self.cache_flags is None:
             return None
 
         return self.__guilds.pop(guild_id, None)
 
-    def add_member(self, member: Union["Member", "PartialMember"]) -> None:
+    def add_member(self, member: "Member | PartialMember") -> None:
         if self.cache_flags is None:
             return None
 
@@ -231,7 +231,7 @@ class Cache:
                 member.id, member.guild_id
             )
 
-    def remove_member(self, member: Union["Member", "PartialMember"]) -> None:
+    def remove_member(self, member: "Member | PartialMember") -> None:
         if self.cache_flags is None:
             return None
 
@@ -261,14 +261,18 @@ class Cache:
 
         member._update_presence(presence)
 
-    def get_channel(self, guild_id: int | None, channel_id: int) -> Optional[Union["BaseChannel", "PartialChannel"]]:
+    def get_channel(
+        self,
+        guild_id: int | None,
+        channel_id: int
+    ) -> "BaseChannel | PartialChannel | None":
         guild = self.get_guild(guild_id)
         if not guild:
             return None
 
         return guild.get_channel(channel_id)
 
-    def add_channel(self, channel: Union["BaseChannel", "PartialChannel"]) -> None:
+    def add_channel(self, channel: "BaseChannel | PartialChannel") -> None:
         if self.cache_flags is None:
             return None
         if not channel.guild_id:
@@ -285,7 +289,7 @@ class Cache:
                 channel.id, guild_id=channel.guild_id
             )
 
-    def remove_channel(self, channel: Union["BaseChannel", "PartialChannel"]) -> None:
+    def remove_channel(self, channel: "BaseChannel | PartialChannel") -> None:
         if self.cache_flags is None:
             return None
         if not channel.guild_id:
@@ -314,7 +318,7 @@ class Cache:
                 thread.id, guild_id=thread.guild_id
             )
 
-    def remove_thread(self, thread: Union["PublicThread", "PrivateThread"]) -> None:
+    def remove_thread(self, thread: "PublicThread | PrivateThread") -> None:
         if self.cache_flags is None:
             return None
         if not thread.guild_id:
@@ -326,7 +330,7 @@ class Cache:
 
         guild._cache_threads.pop(thread.id, None)
 
-    def add_role(self, role: Union["Role", "PartialRole"]) -> None:
+    def add_role(self, role: "Role | PartialRole") -> None:
         if self.cache_flags is None:
             return None
 
@@ -341,7 +345,7 @@ class Cache:
                 role.id, role.guild_id
             )
 
-    def remove_role(self, role: Union["Role", "PartialRole"]) -> None:
+    def remove_role(self, role: "Role | PartialRole") -> None:
         if self.cache_flags is None:
             return None
 
