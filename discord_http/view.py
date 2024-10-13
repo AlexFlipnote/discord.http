@@ -615,9 +615,11 @@ class InteractionStorage:
 
         self._update_event(False)
 
+        # If user provides a custom_id
         if custom_id is not None:
             self._msg_cache = custom_id
 
+        # If an interaction was made, and the initial Context.id is in message
         if (
             self._msg_cache is None and
             ctx.message is not None and
@@ -625,6 +627,12 @@ class InteractionStorage:
         ):
             self._msg_cache = ctx.message.interaction.id
 
+        # If we're in the command init, use the initial Context.id
+        if self._msg_cache is None:
+            self._msg_cache = ctx.id
+
+        # If for some reason msg_cache is still None
+        # Or if user has spesifically asked for original_response
         if (
             self._msg_cache is None or
             original_response is True
