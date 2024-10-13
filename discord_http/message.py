@@ -1,6 +1,6 @@
 import asyncio
 
-from datetime import timedelta, datetime, UTC
+from datetime import timedelta, datetime
 from io import BytesIO
 from typing import TYPE_CHECKING, Optional, Union, AsyncIterator, Self, Callable
 
@@ -16,7 +16,7 @@ from .object import PartialBase, Snowflake
 from .response import MessageResponse
 from .role import PartialRole
 from .sticker import PartialSticker
-from .user import User, PartialUser
+from .user import User
 from .view import View
 
 if TYPE_CHECKING:
@@ -611,69 +611,6 @@ class Attachment:
             data["waveform"] = self.waveform
 
         return data
-
-
-class Typing:
-    def __init__(self, *, state: "DiscordAPI", data: dict):
-        self._state = state
-        self.user_id: int = int(data["user_id"])
-        self.channel_id: int = int(data["channel_id"])
-        self.guild_id: Optional[int] = utils.get_int(data, "guild_id")
-        self.timestamp: datetime = datetime.fromtimestamp(
-            int(data["timestamp"]), tz=UTC
-        )
-
-        self.member: Optional["Member"] = None
-        self._from_data(data)
-
-    def __repr__(self) -> str:
-        return (
-            f"<Typing user_id={self.user_id} timestamp={self.timestamp}>"
-        )
-
-    def _from_data(self, data: dict) -> None:
-        if data.get("member", None):
-            from .member import Member
-            self.member = Member(
-                state=self._state,
-                guild=self.guild,  # type: ignore
-                data=data["member"]
-            )
-
-    @property
-    def user(self) -> PartialUser:
-        """ `User`: Returns the user object of the bot """
-        return PartialUser(
-            state=self._state,
-            id=self.user_id
-        )
-
-    @property
-    def guild(self) -> Optional["Guild | PartialGuild"]:
-        """ `Optional[PartialGuild]`: The guild the message was sent in """
-        if not self.guild_id:
-            return None
-
-        cache = self._state.cache.get_guild(self.guild_id)
-        if cache:
-            return cache
-
-        from .guild import PartialGuild
-        return PartialGuild(state=self._state, id=self.guild_id)
-
-    @property
-    def channel(self) -> "PartialChannel":
-        """ `Optional[PartialChannel]`: Returns the channel the message was sent in """
-        cache = self._state.cache.get_channel(self.guild_id, self.channel_id)
-        if cache:
-            return cache
-
-        from .channel import PartialChannel
-        return PartialChannel(
-            state=self._state,
-            id=self.channel_id,
-            guild_id=self.guild_id
-        )
 
 
 class PartialMessage(PartialBase):
