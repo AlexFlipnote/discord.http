@@ -1,5 +1,6 @@
 from typing import Any, Literal, NotRequired, TypedDict
 
+from .automoderation import AutoModerationRule
 from .commands import ApplicationCommand
 
 # fmt: off
@@ -150,32 +151,41 @@ class AuditLogChange(TypedDict):
     old_value: NotRequired[Any]
     key: str
 
+class AuditLogEntry(TypedDict):
+    target_id: int
+    changes: list[AuditLogChange]
+    user_id: int | None
+    id: int
+    action_type: AuditLogEvent
+    options: NotRequired[dict[str, Any]]
+    reason: NotRequired[str]
 
-class ApplicationCommandPermissionsUpdateAuditLogEntry(TypedDict):
+
+class ApplicationCommandPermissionsUpdateAuditLogEntry(AuditLogEntry):
     action_type: Literal[121]
     options: OptionalApplicationCommandPermissionsUpdateAuditEntryInfo
 
-class AutoModerationBlockMessageAuditLogEntry(TypedDict):
+class AutoModerationBlockMessageAuditLogEntry(AuditLogEntry):
     action_type: Literal[143, 144, 145]
     options: OptionalAutoModerationAuditEntryInfo
 
-class WithChannelAuditLogEntry(TypedDict):
+class WithChannelAuditLogEntry(AuditLogEntry):
     action_type: Literal[26, 74, 75, 72, 83, 84, 85, 143, 144, 145]
     options: OptionalChannelAuditEntryInfo
 
-class WithCountAuditLogEntry(TypedDict):
+class WithCountAuditLogEntry(AuditLogEntry):
     action_type: Literal[72, 73, 27, 26]
     options: OptionalCountAuditEntryInfo
 
-class WithDMembersPruneAuditEntryInfo(TypedDict):
+class WithDMembersPruneAuditEntryInfo(AuditLogEntry):
     action_type: Literal[21]
     options: OptionalMembersPruneAuditEntryInfo
 
-class WithOverwriteAuditLogEntry(TypedDict):
+class WithOverwriteAuditLogEntry(AuditLogEntry):
     action_type: Literal[13, 14, 15]
     options: OptionalIDAuditEntryInfo | OptionalRoleOverwriteAuditEntryInfo | OptionalMemberAuditEntryInfo
 
-class WithMessageIDAuditLogEntry(TypedDict):
+class WithMessageIDAuditLogEntry(AuditLogEntry):
     action_type: Literal[74, 75]
     options: OptionalMessageIDAuditEntryInfo
 
@@ -187,18 +197,15 @@ OptionalAuditLogEntry = (
     | WithDMembersPruneAuditEntryInfo
     | WithOverwriteAuditLogEntry
     | WithMessageIDAuditLogEntry
+    | AuditLogEntry
 )
-
-class AuditLogEntry(TypedDict):
-    target_id: int
-    changes: list[AuditLogChange]
-    user_id: int | None
-    id: int
-    action_type: AuditLogEvent
-    options: NotRequired[OptionalAuditLogEntry]
-    reason: NotRequired[str]
 
 class AuditLog(TypedDict):
     application_commands: list[ApplicationCommand]
-    audit_log_entries: list[AuditLogEntry]
-
+    audit_log_entries: list[OptionalAuditLogEntry]
+    auto_moderation_rules: list[AutoModerationRule]
+    guild_scheduled_events: list[dict]
+    integrations: list[dict]
+    threads: list[dict]
+    users: list[dict]
+    webhooks: list[dict]

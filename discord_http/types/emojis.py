@@ -1,8 +1,8 @@
-from typing import Literal, NotRequired, TypedDict
-
+from typing import NotRequired, TypedDict
+from .snowflake import Snowflake
 
 class PartialEmoji(TypedDict):
-    id: int | None
+    id: Snowflake | None
     name: str
     animated: bool | None
 

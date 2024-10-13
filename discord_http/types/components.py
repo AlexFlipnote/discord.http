@@ -2,6 +2,7 @@ from typing import Literal, NotRequired, TypedDict
 
 from .emojis import PartialEmoji
 from .channels import Type as ChannelType
+from .snowflake import Snowflake
 
 # fmt: off
 ComponentType = Literal[
@@ -47,7 +48,7 @@ class Button(PartialButton):
 
 
 class PremiumButton(PartialButton):
-    sku_id: int
+    sku_id: Snowflake
 
 
 class URLButton(Button):

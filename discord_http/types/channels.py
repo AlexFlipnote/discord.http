@@ -1,6 +1,8 @@
 from typing import Literal, NotRequired, TypedDict
 
 from .guilds import ThreadMember, ThreadMemberWithMember
+from .snowflake import Snowflake
+
 
 __all__ = (
     "StageInstance",
@@ -34,12 +36,12 @@ Type = Literal[
 # fmt: on
 
 class StageInstance(TypedDict):
-    id: int | str
-    guild_id: int | str
-    channel_id: int | str
+    id: Snowflake
+    guild_id: Snowflake
+    channel_id: Snowflake
     topic: str
     privacy_level: PrivacyLevel
-    guild_scheduled_event_id: int | str | None
+    guild_scheduled_event_id: Snowflake | None
 
 
 class ThreadListSync(TypedDict):

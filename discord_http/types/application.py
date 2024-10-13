@@ -1,5 +1,7 @@
 from typing import Literal, NotRequired, TypedDict
 
+from .snowflake import Snowflake
+
 # fmt: off
 Oauth2Scope = Literal[
     "activities.read",
@@ -50,7 +52,7 @@ class IntegrationTypeConfig(TypedDict):
 
 
 class Application(TypedDict):
-    id: int
+    id: Snowflake
     name: str
     icon: str | None
     description: str
@@ -63,9 +65,9 @@ class Application(TypedDict):
     owner: NotRequired[dict] # partial user object
     verify_key: str
     team: dict | None # team object
-    guild_id: NotRequired[int]
+    guild_id: NotRequired[Snowflake]
     guild: NotRequired[dict] # partial guild object
-    primary_sku_id: NotRequired[int]
+    primary_sku_id: NotRequired[Snowflake]
     slug: NotRequired[str]
     cover_image: NotRequired[str]
     flags: NotRequired[int]

@@ -2,6 +2,7 @@ from typing import Literal, NotRequired, TypedDict
 
 from .application import IntegrationTypes
 from .channels import Type as ChannelType
+from .snowflake import Snowflake
 
 # fmt: off
 ApplicationCommandType = Literal[
@@ -26,6 +27,11 @@ ApplicationCommandOptionType = Literal[
 EntryPointCommandHandlerType = Literal[
     1,  # APP_HANDLER
     2,  # DISCORD_LAUNCH_ACTIVITY
+]
+ApplicationCommandPermissionsType = Literal[
+    1,  # ROLE
+    2,  # USER
+    3,  # CHANNEL
 ]
 # fmt: on
 
@@ -106,10 +112,10 @@ ChatInputApplicationCommandOption = (
 )
 
 class PartialApplicationCommand(TypedDict):
-    id: int
+    id: Snowflake
     type: NotRequired[ApplicationCommandType] # defaults 1
-    application_id: int
-    guild_id: NotRequired[int]
+    application_id: Snowflake
+    guild_id: NotRequired[Snowflake]
     name: str
     name_localizations: NotRequired[dict[str, str] | None]
     description: str
@@ -140,3 +146,21 @@ ApplicationCommand = (
     | MessageApplicationCommand
     | PrimaryEntryPointApplicationCommand
 )
+
+
+
+
+class ApplicationCommandPermissions(TypedDict):
+    # id of the role, user or channel
+    # or a constant value
+    # guild_id = all guild members
+    # guild_id - 1 # all channels in the guild
+    id: Snowflake 
+    type: ApplicationCommandPermissionsType
+    permissions: bool # true to allow, false to disallow
+
+class GuildApplicationCommandPermissions(TypedDict):
+    id: Snowflake
+    application_id: Snowflake
+    guild_id: Snowflake
+    permissions: list[ApplicationCommandPermissions]
