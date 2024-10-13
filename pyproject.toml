@@ -22,7 +22,6 @@ dependencies = [
   "PyNaCl",
   "aiohttp",
   "yarl",
-  "websockets",
 ]
 
 [project.urls]

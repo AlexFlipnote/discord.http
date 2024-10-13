@@ -1,20 +1,20 @@
+import aiohttp
 import asyncio
 import json
 import logging
 import sys
-import zlib
 import time
 import yarl
-import websockets as ws
+import zlib
 
 from datetime import datetime
-from typing import Optional, Union, Any, TYPE_CHECKING
+from typing import Any, TYPE_CHECKING
 
 from .. import utils
 
-from .parser import Parser
-from .object import PlayingStatus
 from .enums import PayloadType, ShardCloseType
+from .object import PlayingStatus
+from .parser import Parser
 
 if TYPE_CHECKING:
     from ..client import Client
@@ -32,15 +32,15 @@ class Status:
     def __init__(self, shard_id: int):
         self.shard_id = shard_id
 
-        self.sequence: Optional[int] = None
-        self.session_id: Optional[str] = None
+        self.sequence: int | None = None
+        self.session_id: str | None = None
         self.gateway = DEFAULT_GATEWAY
 
         self.latency: float = float("inf")
         self._last_ack: float = time.perf_counter()
         self._last_send: float = time.perf_counter()
         self._last_recv: float = time.perf_counter()
-        self._last_heartbeat: Optional[float] = None
+        self._last_heartbeat: float | None = None
 
     @property
     def ping(self) -> float:
@@ -76,11 +76,29 @@ class Status:
     def tick(self) -> None:
         self._last_recv = time.perf_counter()
 
-    def ack(self) -> None:
+    def ack(
+        self,
+        *,
+        ignore_warning: bool = False
+    ) -> None:
+        """
+        Acknowledges the heartbeat
+
+        Parameters
+        ----------
+        ignore_warning: `bool`
+            Whether to ignore the warning or not
+            (This is only used before the shard is ready)
+            ((If I find a way to fix it, I will remove this))
+        """
         ack_time = time.perf_counter()
         self._last_ack = ack_time
         self.latency = ack_time - self._last_send
-        if self.latency > 10:
+
+        if (
+            self.latency > 10 and
+            not ignore_warning
+        ):
             _log.warning(f"Shard {self.shard_id} latency is {self.latency:.2f}s behind")
 
 
@@ -88,13 +106,13 @@ class Shard:
     def __init__(
         self,
         bot: "Client",
-        intents: Optional["Intents"],
+        intents: "Intents | None",
         shard_id: int,
         *,
-        cache_flags: Optional["GatewayCacheFlags"] = None,
-        shard_count: Optional[int] = None,
+        cache_flags: "GatewayCacheFlags | None" = None,
+        shard_count: int | None = None,
         debug_events: bool = False,
-        api_version: Optional[int] = 8
+        api_version: int | None = 8
     ):
         self.bot = bot
 
@@ -106,12 +124,15 @@ class Shard:
         self.shard_count = shard_count
         self.debug_events = debug_events
 
-        self.ws: Optional[ws.WebSocketClientProtocol] = None
+        self.ws: aiohttp.ClientWebSocketResponse | None = None
+
+        # Session was already made before, pyright is wrong
+        self.session: aiohttp.ClientSession = self.bot.state.http.session  # type: ignore
 
         self.parser = Parser(bot)
         self.status = Status(shard_id)
 
-        self.playing_status: Optional[PlayingStatus] = bot.playing_status
+        self.playing_status: PlayingStatus | None = bot.playing_status
 
         self._ready: asyncio.Event = asyncio.Event()
         self._guild_ready_timeout: float = float(bot.guild_ready_timeout)
@@ -124,7 +145,7 @@ class Shard:
         self._zlib: zlib._Decompress = zlib.decompressobj()
 
         self._heartbeat_interval: float = 41_250 / 1000  # 41.25 seconds
-        self._close_code: Optional[int] = None
+        self._close_code: int | None = None
         self._last_activity: datetime = utils.utcnow()
 
     @property
@@ -155,7 +176,7 @@ class Shard:
         code = self._close_code or self.ws.close_code
         return code == 1000
 
-    async def send_message(self, message: Union[dict, PayloadType]) -> None:
+    async def send_message(self, message: dict | PayloadType) -> None:
         """
         Sends a message to the websocket
 
@@ -171,14 +192,14 @@ class Shard:
             raise TypeError("message must be of type dict")
 
         _log.debug(f"Sending message: {message}")
-        await self.ws.send(json.dumps(message))
+        await self.ws.send_json(message)
 
-        self._last_activity = utils.utcnow()
         self.status.update_send()
+        self._last_activity = utils.utcnow()
 
     async def close(
         self,
-        code: Optional[int] = 1000,
+        code: int | None = 1000,
         *,
         kill: bool = False
     ) -> None:
@@ -197,7 +218,7 @@ class Shard:
         self._should_kill = kill
         await self.ws.close(code=code)
 
-    async def received_message(self, raw_msg: Union[bytes, str]) -> None:
+    async def received_message(self, raw_msg: str | bytes) -> None:
         """
         Handling the recieved data from the websocket
 
@@ -239,17 +260,16 @@ class Shard:
                 case PayloadType.reconnect:
                     _log.debug(f"Shard {self.shard_id} got requrested to reconnect")
                     await self.close(code=1013)  # 1013 = Try again later
-                    return
 
                 case PayloadType.heartbeat_ack:
-                    self.status.ack()
+                    self.status.ack(
+                        ignore_warning=not self._ready.is_set()
+                    )
                     _log.debug(f"Shard {self.shard_id} heartbeat ACK")
-                    return
 
                 case PayloadType.heartbeat:
                     _log.debug(f"Shard {self.shard_id} heartbeat from event-case")
                     await self.send_message(PayloadType.heartbeat)
-                    return
 
                 case PayloadType.hello:
                     self._heartbeat_interval = (
@@ -259,11 +279,10 @@ class Shard:
                     if self.status.can_resume():
                         _log.debug(f"Shard {self.shard_id} resuming session")
                         await self.send_message(PayloadType.resume)
+
                     else:
                         _log.debug(f"Shard {self.shard_id} identifying...")
                         await self.send_message(PayloadType.identify)
-
-                    return
 
                 case PayloadType.invalidate_session:
                     self._reset_instance()
@@ -280,12 +299,14 @@ class Shard:
                     await self.close()
 
                 case _:
-                    return
+                    pass  # Not handled, pass for now
+
+            return None  # In the end, we don't need to process anymore
 
         match event:
             case "READY":
                 self.status.update_sequence(msg["s"])
-                self.status.update_ready_data(data)  # type: ignore
+                self.status.update_ready_data(data)
                 asyncio.create_task(self._delay_ready())
 
             case "RESUMED":
@@ -308,8 +329,16 @@ class Shard:
             keep_waiting: bool = True
             self._reset_buffer()
 
-            async with ws.connect(self.url) as socket:
-                self.ws = socket
+            kwargs = {
+                "max_msg_size": 0,
+                "timeout": 30.0,
+                "headers": {"User-Agent": self.bot.state._headers},
+                "autoclose": False,
+                "compress": 0,
+            }
+
+            async with self.session.ws_connect(self.url, **kwargs) as ws:
+                self.ws = ws
 
                 try:
                     while keep_waiting:
@@ -322,7 +351,7 @@ class Shard:
 
                         try:
                             evt = await asyncio.wait_for(
-                                self.ws.recv(),
+                                self.ws.receive(),
                                 timeout=self._heartbeat_interval
                             )
 
@@ -335,7 +364,7 @@ class Shard:
                             await self.ws.ping()
 
                         else:
-                            await self.received_message(evt)
+                            await self.received_message(evt.data)
 
                 except Exception as e:
                     keep_waiting = False

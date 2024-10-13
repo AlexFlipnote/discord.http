@@ -74,21 +74,24 @@ class HTTPClient:
     Can be used to make requests outside of the usual Discord API
     """
     def __init__(self):
-        self.__session: Optional[HTTPSession] = None
+        self.session: Optional[HTTPSession] = None
 
     async def _create_session(self) -> None:
         """ Creates a new session for the library """
-        if self.__session:
-            await self.__session.close()
-        self.__session = HTTPSession(
-            timeout=aiohttp.ClientTimeout(total=60)
+        if self.session:
+            await self.session.close()
+
+        self.session = HTTPSession(
+            connector=aiohttp.TCPConnector(limit=0),
+            timeout=aiohttp.ClientTimeout(total=60),
+            cookie_jar=aiohttp.DummyCookieJar()
         )
 
     async def _close_session(self) -> None:
         """ Closes the session for the library """
-        if self.__session:
-            await self.__session.close()
-        self.__session = None
+        if self.session:
+            await self.session.close()
+        self.session = None
 
     @overload
     async def request(
@@ -161,7 +164,7 @@ class HTTPClient:
                 "must be either text, read or json"
             )
 
-        async with self.__session.request(method.upper(), str(url), **kwargs) as res:
+        async with self.session.request(method.upper(), str(url), **kwargs) as res:
             try:
                 r = await getattr(res, res_method.lower())()
             except ContentTypeError:
@@ -309,6 +312,11 @@ class DiscordAPI:
         self.http: HTTPClient = HTTPClient()
 
         self._buckets: dict[str, Ratelimit] = {}
+        self._headers: str = "discord.http/{0} Python/{1} aiohttp/{2}".format(
+            __version__,
+            ".".join(str(i) for i in sys.version_info[:3]),
+            aiohttp.__version__
+        )
 
     def _clear_old_ratelimits(self) -> None:
         if len(self._buckets) <= 256:
@@ -415,11 +423,7 @@ class DiscordAPI:
         if res_method == "json" and "Content-Type" not in kwargs["headers"]:
             kwargs["headers"]["Content-Type"] = "application/json"
 
-        kwargs["headers"]["User-Agent"] = "discord.http/{0} Python/{1} aiohttp/{2}".format(
-            __version__,
-            ".".join(str(i) for i in sys.version_info[:3]),
-            aiohttp.__version__
-        )
+        kwargs["headers"]["User-Agent"] = self._headers
 
         reason = kwargs.pop("reason", None)
         if reason:
