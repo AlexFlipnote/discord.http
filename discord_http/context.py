@@ -789,7 +789,7 @@ class Context:
         allowed_mentions: Optional[AllowedMentions] = MISSING
     ) -> Message:
         """ `Message` Edit the original response to the interaction """
-        _msg_kwargs = MessageResponse(
+        payload = MessageResponse(
             content=content,
             embeds=embeds,
             embed=embed,
@@ -802,7 +802,8 @@ class Context:
         r = await self.bot.state.query(
             "PATCH",
             f"/webhooks/{self.bot.application_id}/{self.followup_token}/messages/@original",
-            json=_msg_kwargs.to_dict()["data"]
+            headers={"Content-Type": payload.content_type},
+            data=payload.to_multipart(is_request=True),
         )
 
         msg = Message(

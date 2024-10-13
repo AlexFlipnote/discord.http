@@ -228,6 +228,12 @@ class DiscordHTTP(Quart):
                 local_view = self.bot._view_storage.get(
                     ctx.message.id, None
                 )
+
+                if not local_view and ctx.message.interaction:
+                    local_view = self.bot._view_storage.get(
+                        ctx.message.interaction.id, None
+                    )
+
                 if local_view:
                     payload = await local_view.callback(ctx)
                     return QuartResponse(

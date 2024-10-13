@@ -16,7 +16,6 @@ if TYPE_CHECKING:
     from . import Snowflake
     from .channel import BaseChannel
     from .context import Context
-    from .message import Message
     from .response import BaseResponse
 
 _log = logging.getLogger(__name__)
@@ -481,7 +480,7 @@ class InteractionStorage:
         self._timeout_bool = False
         self._timeout: Optional[float] = None
         self._timeout_expiry: Optional[float] = None
-        self._msg_cache: Optional[Message] = None
+        self._msg_cache: Optional[Snowflake] = None
 
     def __repr__(self) -> str:
         return (
@@ -613,8 +612,11 @@ class InteractionStorage:
 
         self._update_event(False)
 
-        if ctx.message is not None:
-            self._msg_cache = ctx.message
+        if (
+            ctx.message is not None and
+            ctx.message.interaction is not None
+        ):
+            self._msg_cache = ctx.message.interaction
 
         if (
             self._msg_cache is None or
