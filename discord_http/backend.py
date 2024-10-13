@@ -224,7 +224,20 @@ class DiscordHTTP(Quart):
         _custom_id = data["data"]["custom_id"]
 
         try:
-            if ctx.message:
+            local_view = None
+
+            if (
+                local_view is None and
+                ctx.custom_id
+            ):
+                local_view = self.bot._view_storage.get(
+                    ctx.custom_id, None
+                )
+
+            if (
+                local_view is None and
+                ctx.message
+            ):
                 local_view = self.bot._view_storage.get(
                     ctx.message.id, None
                 )
@@ -234,12 +247,12 @@ class DiscordHTTP(Quart):
                         ctx.message.interaction.id, None
                     )
 
-                if local_view:
-                    payload = await local_view.callback(ctx)
-                    return QuartResponse(
-                        payload.to_multipart(),
-                        content_type=payload.content_type
-                    )
+            if local_view:
+                payload = await local_view.callback(ctx)
+                return QuartResponse(
+                    payload.to_multipart(),
+                    content_type=payload.content_type
+                )
 
             intreact = self.bot.find_interaction(_custom_id)
             if not intreact:
