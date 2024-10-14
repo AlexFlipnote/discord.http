@@ -30,6 +30,9 @@ class Snowflake:
     def __int__(self) -> int:
         return self.id
 
+    def __hash__(self) -> int:
+        return self.id >> 22
+
     def __eq__(self, other) -> bool:
         match other:
             case x if isinstance(x, Snowflake):
