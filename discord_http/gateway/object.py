@@ -132,6 +132,7 @@ class GuildJoinRequest:
             self.user_id = utils.get_int(_request, "user_id")
 
             if _request.get("user", None):
+                from ..user import User
                 self.user = User(
                     state=self._state,
                     data=_request["user"]
