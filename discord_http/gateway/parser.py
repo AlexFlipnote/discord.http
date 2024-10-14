@@ -101,6 +101,27 @@ class Parser:
             state=state, id=user_id, guild_id=guild.id
         )
 
+    def _get_role_or_partial(
+        self,
+        role_id: int,
+        guild_id: int
+    ) -> "Role | PartialRole":
+        state = self.bot.state
+
+        cache = self.bot.cache.get_guild(guild_id)
+        if cache:
+            return cache.get_role(role_id) or PartialRole(
+                state=state,
+                id=role_id,
+                guild_id=guild_id
+            )
+
+        return PartialRole(
+            state=state,
+            id=role_id,
+            guild_id=guild_id
+        )
+
     def _guild(self, data: dict) -> Guild:
         return Guild(
             state=self.bot.state,
@@ -479,7 +500,7 @@ class Parser:
         return (_role,)
 
     def guild_role_delete(self, data: dict) -> tuple[PartialRole]:
-        _role = self.bot.get_partial_role(
+        _role = self._get_role_or_partial(
             role_id=int(data["role_id"]),
             guild_id=int(data["guild_id"])
         )
