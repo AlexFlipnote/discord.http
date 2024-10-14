@@ -7,7 +7,7 @@ from typing import TYPE_CHECKING, Optional, Union, AsyncIterator, Self, Callable
 from . import utils
 from .embeds import Embed
 from .emoji import EmojiParser
-from .enums import MessageReferenceType, MessageType, InteractionType, ApplicationCommandType
+from .enums import MessageReferenceType, MessageType, InteractionType
 from .errors import HTTPException
 from .file import File
 from .flags import AttachmentFlags
@@ -50,10 +50,7 @@ class MessageInteraction(PartialBase):
         self._state = state
 
         self.type: InteractionType = InteractionType(data["type"])
-        self.name: str = data["name"]
-        self.command_type: ApplicationCommandType = ApplicationCommandType(
-            data["command_type"]
-        )
+        self.name: str | None = data.get("name", None)
         self.user: User = User(
             state=state,
             data=data["user"]
