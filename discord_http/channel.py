@@ -729,7 +729,6 @@ class PartialChannel(PartialBase):
             # Method 2
             async with channel.typing():
                 asyncio.sleep(4)
-        ```
         """
         return Typing(state=self._state, channel=self)
 
