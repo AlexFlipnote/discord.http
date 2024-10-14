@@ -115,6 +115,11 @@ class PartialChannel(PartialBase):
         return f"<PartialChannel id={self.id}>"
 
     @property
+    def mention(self) -> str:
+        """ `str`: The channel's mention """
+        return f"<#{self.id}>"
+
+    @property
     def guild(self) -> "Guild | PartialGuild | None":
         """
         `Optional[Guild | PartialGuild]`:
