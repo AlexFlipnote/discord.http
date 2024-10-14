@@ -865,6 +865,33 @@ class Client:
 
         return decorator
 
+    def get_channel(
+        self,
+        channel_id: int | None
+    ) -> BaseChannel | PartialChannel | None:
+        """
+        Get a channel object from the cache.
+
+        Parameters
+        ----------
+        channel_id: `int`
+            The ID of the channel to get.
+
+        Returns
+        -------
+        `BaseChannel | PartialChannel | None`
+            The channel object with the specified ID, or `None` if not found.
+        """
+        if channel_id is None:
+            return None
+
+        for guild in self.guilds:
+            channel = guild.get_channel(channel_id)
+            if channel:
+                return channel
+
+        return None
+
     def get_partial_channel(
         self,
         channel_id: int,
