@@ -114,11 +114,11 @@ class PartialSoundboardSound(PartialBase):
     async def edit(
         self,
         *,
-        name: str | MISSING = MISSING,
-        volume: int | MISSING = MISSING,
-        emoji_name: str | MISSING = MISSING,
-        emoji_id: str | MISSING = MISSING,
-        icon: File | bytes | MISSING = MISSING,
+        name: "str | MISSING" = MISSING,
+        volume: "int | MISSING" = MISSING,
+        emoji_name: "str | MISSING" = MISSING,
+        emoji_id: "str | MISSING" = MISSING,
+        icon: "File | bytes | MISSING" = MISSING,
         reason: str | None = None,
     ) -> "SoundboardSound":
         """
