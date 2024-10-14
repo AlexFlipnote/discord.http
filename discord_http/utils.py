@@ -6,7 +6,7 @@ import unicodedata
 
 from base64 import b64encode
 from datetime import datetime, timedelta, UTC
-from typing import Optional, Any, Union, Iterator, TYPE_CHECKING
+from typing import Any, Iterator, TYPE_CHECKING
 
 from .file import File
 
@@ -52,7 +52,7 @@ def traceback_maker(
     return error if advance else f"{type(err).__name__}: {err}"
 
 
-def snowflake_time(id: Union["Snowflake", int]) -> datetime:
+def snowflake_time(id: "Snowflake | int") -> datetime:
     """
     Get the datetime from a discord snowflake
 
@@ -136,7 +136,7 @@ def parse_time(ts: str | int) -> datetime:
 
 
 def normalize_entity_id(
-    entry: Union[datetime, int, str, "Snowflake"]
+    entry: "datetime | int | str | Snowflake"
 ) -> int:
     """
     Translates a search ID or datetime to a Snowflake
@@ -144,7 +144,7 @@ def normalize_entity_id(
 
     Parameters
     ----------
-    entry: `Union[datetime, int, str, Snowflake]`
+    entry: `datetime | int | str | Snowflake`
         The entry to translate
 
     Returns
@@ -203,9 +203,9 @@ def unicode_name(text: str) -> str:
 
 
 def oauth_url(
-    client_id: Union["Snowflake", int],
+    client_id: "Snowflake | int",
     /,
-    scope: Optional[str] = None,
+    scope: str | None = None,
     user_install: bool = False,
     **kwargs: str
 ):
@@ -214,9 +214,9 @@ def oauth_url(
 
     Parameters
     ----------
-    client_id: `Union[Snowflake, int]`
+    client_id: `Snowflake | int`
         Application ID to invite to the server
-    scope: `Optional[str]`
+    scope: `str | None`
         Changing the scope of the oauth url, default: `bot+applications.commands`
     user_install: `bool`
         Whether the bot is allowed to be installed on the user's account
@@ -285,7 +285,7 @@ def utcnow() -> datetime:
 
 
 def add_to_datetime(
-    ts: Union[datetime, timedelta, int]
+    ts: datetime | timedelta | int
 ) -> datetime:
     """
     Converts different Python timestamps to a `datetime` object
@@ -410,7 +410,7 @@ def mime_type_audio(audio: bytes) -> str:
             raise ValueError("Audio bytes provided is not supported sadly")
 
 
-def bytes_to_base64(image: Union[File, bytes]) -> str:
+def bytes_to_base64(image: File | bytes) -> str:
     """
     Convert bytes to base64
 
@@ -449,8 +449,8 @@ def get_int(
     data: dict,
     key: str,
     *,
-    default: Optional[Any] = None
-) -> Optional[int]:
+    default: Any | None = None
+) -> int | None:
     """
     Get an integer from a dictionary, similar to `dict.get`
 
@@ -460,7 +460,7 @@ def get_int(
         The dictionary to get the integer from
     key: `str`
         The key to get the integer from
-    default: `Optional[Any]`
+    default: `Any | None`
         The default value to return if the key is not found
 
     Returns
@@ -473,7 +473,7 @@ def get_int(
     `ValueError`
         The key returned a non-digit value
     """
-    output: Optional[str] = data.get(key, None)
+    output: str | None = data.get(key, None)
     if output is None:
         return default
     if isinstance(output, int):
@@ -547,7 +547,7 @@ class CustomFormatter(logging.Formatter):
     light_red = "\x1b[38;5;203m"
     light_bold_red = "\x1b[38;5;197m"
 
-    def __init__(self, datefmt: Optional[str] = None):
+    def __init__(self, datefmt: str | None = None):
         super().__init__()
         self._datefmt = datefmt
 

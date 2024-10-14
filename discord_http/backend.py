@@ -13,7 +13,7 @@ from quart import Quart, request, abort
 from quart import Response as QuartResponse
 from quart.logging import default_handler
 from quart.utils import MustReloadError, restart
-from typing import Optional, Any, Union, TYPE_CHECKING
+from typing import Any, TYPE_CHECKING
 
 from . import utils
 from .commands import Command, SubGroup
@@ -112,9 +112,9 @@ class DiscordHTTP(Quart):
 
     def _dig_subcommand(
         self,
-        cmd: Union[Command, SubGroup],
+        cmd: Command | SubGroup,
         data: dict
-    ) -> tuple[Optional[Command], list[dict]]:
+    ) -> tuple[Command | None, list[dict]]:
         """
         Used to dig through subcommands to execute correct command/autocomplete
         """
@@ -161,7 +161,7 @@ class DiscordHTTP(Quart):
         self,
         ctx: "Context",
         data: dict
-    ) -> Union[QuartResponse, dict]:
+    ) -> QuartResponse | dict:
         """ Used to handle application commands """
         _log.debug("Received slash command, processing...")
 
@@ -218,7 +218,7 @@ class DiscordHTTP(Quart):
         self,
         ctx: "Context",
         data: dict
-    ) -> Union[QuartResponse, dict]:
+    ) -> QuartResponse | dict:
         """ Used to handle interactions """
         _log.debug("Received interaction, processing...")
         _custom_id = data["data"]["custom_id"]
@@ -286,7 +286,7 @@ class DiscordHTTP(Quart):
         self,
         ctx: "Context",
         data: dict
-    ) -> Union[QuartResponse, dict]:
+    ) -> QuartResponse | dict:
         """ Used to handle autocomplete interactions """
         _log.debug("Received autocomplete interaction, processing...")
 
@@ -333,7 +333,7 @@ class DiscordHTTP(Quart):
 
     async def _index_interactions_endpoint(
         self
-    ) -> Union[QuartResponse, dict]:
+    ) -> QuartResponse | dict:
         """
         The main function to handle all HTTP requests sent by Discord
         Please do not touch this function, unless you know what you're doing
@@ -380,7 +380,7 @@ class DiscordHTTP(Quart):
         self,
         ctx: "Context",
         e: Exception
-    ) -> Optional[MessageResponse]:
+    ) -> MessageResponse | None:
         """
         Used to return error messages to Discord.
         By default, it will only cover CheckFailed errors.
@@ -404,7 +404,7 @@ class DiscordHTTP(Quart):
                 ephemeral=True
             )
 
-    async def index_ping(self) -> Union[tuple[dict, int], dict]:
+    async def index_ping(self) -> tuple[dict, int] | dict:
         """
         Used to ping the interaction url, to check if it's working
         You can overwrite this function to return your own data as well.

@@ -1,6 +1,6 @@
 import random
 
-from typing import Optional, Any, Self
+from typing import Any, Self
 
 from . import utils
 
@@ -116,7 +116,7 @@ class Colour:
     def random(
         cls,
         *,
-        seed: Optional[Any] = None
+        seed: Any | None = None
     ) -> Self:
         """
         Creates a random colour

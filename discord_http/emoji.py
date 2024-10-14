@@ -1,6 +1,6 @@
 import re
 
-from typing import TYPE_CHECKING, Union, Optional, Self
+from typing import TYPE_CHECKING, Self
 
 from . import utils
 from .asset import Asset
@@ -37,11 +37,11 @@ class EmojiParser:
     def __init__(self, emoji: str):
         self._original_name: str = emoji
 
-        self.id: Optional[int] = None
+        self.id: int | None = None
         self.animated: bool = False
         self.discord_emoji: bool = False
 
-        is_custom: Optional[re.Match] = utils.re_emoji.search(emoji)
+        is_custom: re.Match | None = utils.re_emoji.search(emoji)
 
         if is_custom:
             _animated, _name, _id = is_custom.groups()
@@ -66,7 +66,7 @@ class EmojiParser:
     def __str__(self) -> str:
         return self._original_name
 
-    def __int__(self) -> Optional[int]:
+    def __int__(self) -> int | None:
         if self.discord_emoji:
             return self.id
         return None
@@ -82,7 +82,7 @@ class EmojiParser:
         )
 
     @property
-    def url(self) -> Optional[str]:
+    def url(self) -> str | None:
         """ `str`: Returns the URL of the emoji if it's a Discord emoji """
         if self.discord_emoji:
             return f"{Asset.BASE}/emojis/{self.id}.{'gif' if self.animated else 'png'}"
@@ -120,19 +120,19 @@ class PartialEmoji(PartialBase):
         *,
         state: "DiscordAPI",
         id: int,
-        guild_id: Optional[int] = None
+        guild_id: int | None = None
     ):
         super().__init__(id=int(id))
         self._state = state
 
         self.id: int = id
-        self.guild_id: Optional[int] = guild_id
+        self.guild_id: int | None = guild_id
 
     def __repr__(self) -> str:
         return f"<PartialEmoji id={self.id}>"
 
     @property
-    def guild(self) -> Optional["PartialGuild"]:
+    def guild(self) -> "PartialGuild | None":
         """ `PartialGuild`: The guild of the member. """
         if not self.guild_id:
             return None
@@ -181,7 +181,7 @@ class PartialEmoji(PartialBase):
     async def delete(
         self,
         *,
-        reason: Optional[str] = None
+        reason: str | None = None
     ) -> None:
         """
         Deletes the emoji.
@@ -190,7 +190,7 @@ class PartialEmoji(PartialBase):
 
         Parameters
         ----------
-        reason: `Optional[str]`
+        reason: `str | None`
             The reason for deleting the emoji.
         """
         if self.guild_id:
@@ -211,20 +211,20 @@ class PartialEmoji(PartialBase):
     async def edit(
         self,
         *,
-        name: Optional[str] = MISSING,
-        roles: Optional[list[Union[PartialRole, int]]] = MISSING,
-        reason: Optional[str] = None
+        name: str | None = MISSING,
+        roles: list[PartialRole | int] | None = MISSING,
+        reason: str | None = None
     ):
         """
         Edits the emoji.
 
         Parameters
         ----------
-        name: `Optional[str]`
+        name: `str | None`
             The new name of the emoji.
-        roles: `Optional[list[Union[PartialRole, int]]]`
+        roles: `list[PartialRole | int] | None`
             Roles that are allowed to use the emoji. (Only for guilds)
-        reason: `Optional[str]`
+        reason: `str | None`
             The reason for editing the emoji. (Only for guilds)
 
         Returns
@@ -281,7 +281,7 @@ class Emoji(PartialEmoji):
         *,
         state: "DiscordAPI",
         data: dict,
-        guild: Optional["PartialGuild"] = None,
+        guild: "PartialGuild | None" = None,
     ):
         super().__init__(
             state=state,
@@ -295,7 +295,7 @@ class Emoji(PartialEmoji):
         self.require_colons: bool = data.get("require_colons", True)
         self.managed: bool = data.get("managed", False)
 
-        self.user: Optional["User"] = None
+        self.user: "User | None" = None
         self.roles: list[PartialRole] = [
             PartialRole(state=state, id=r, guild_id=guild.id)
             for r in data.get("roles", [])

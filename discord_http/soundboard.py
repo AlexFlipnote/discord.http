@@ -1,4 +1,4 @@
-from typing import TYPE_CHECKING, Union, Optional
+from typing import TYPE_CHECKING
 
 from . import utils
 from .file import File
@@ -22,18 +22,18 @@ class PartialSoundboardSound(PartialBase):
         *,
         state: "DiscordAPI",
         id: int,
-        guild_id: Optional[int] = None
+        guild_id: int | None = None
     ):
         super().__init__(id=int(id))
         self._state = state
         self.sound_id: int = self.id
-        self.guild_id: Optional[int] = guild_id
+        self.guild_id: int | None = guild_id
 
     def __repr__(self) -> str:
         return f"<PartialSoundboardSound id={self.id} guild_id={self.guild_id}>"
 
     @property
-    def guild(self) -> Optional["PartialGuild"]:
+    def guild(self) -> "PartialGuild | None":
         """
         Returns the guild this soundboard sound is in
 
@@ -85,14 +85,14 @@ class PartialSoundboardSound(PartialBase):
     async def delete(
         self,
         *,
-        reason: Optional[str] = None
+        reason: str | None = None
     ) -> None:
         """
         Delete the soundboard sound
 
         Parameters
         ----------
-        reason: `Optional[str]`
+        reason: `str | None`
             The reason for deleting the soundboard sound
 
         Raises
@@ -114,12 +114,12 @@ class PartialSoundboardSound(PartialBase):
     async def edit(
         self,
         *,
-        name: Optional[str] = MISSING,
-        volume: Optional[int] = MISSING,
-        emoji_name: Optional[str] = MISSING,
-        emoji_id: Optional[str] = MISSING,
-        icon: Optional[Union[File, bytes]] = MISSING,
-        reason: Optional[str] = None,
+        name: str | MISSING = MISSING,
+        volume: int | MISSING = MISSING,
+        emoji_name: str | MISSING = MISSING,
+        emoji_id: str | MISSING = MISSING,
+        icon: File | bytes | MISSING = MISSING,
+        reason: str | None = None,
     ) -> "SoundboardSound":
         """
         Edit the soundboard sound
@@ -150,7 +150,7 @@ class PartialSoundboardSound(PartialBase):
             - Soundboard sound does not belong to a guild
         """
         payload = {}
-        _sound: Optional["SoundboardSound"] = None
+        _sound: "SoundboardSound | None" = None
 
         if self.guild is None:
             raise ValueError("Soundboard sound does not belong to a guild")
@@ -164,7 +164,7 @@ class PartialSoundboardSound(PartialBase):
         if emoji_id is not MISSING:
             payload["emoji_id"] = emoji_id
         if icon is not MISSING:
-            payload["icon"] = utils.bytes_to_base64(icon)  # type: ignore
+            payload["icon"] = utils.bytes_to_base64(icon)
 
         if (
             emoji_name is not MISSING and
@@ -201,14 +201,14 @@ class SoundboardSound(PartialSoundboardSound):
         *,
         state: "DiscordAPI",
         data: dict,
-        guild: Optional[Union["PartialGuild", "Guild"]],
+        guild: "PartialGuild | Guild | None",
     ):
         super().__init__(state=state, id=data["sound_id"], guild_id=guild.id if guild else None)
 
         self.name: str = data["name"]
         self.volume: int = data["volume"]
-        self.emoji_id: Optional[int] = utils.get_int(data, "emoji_id")
-        self.emoji_name: Optional[str] = data.get("emoji_name")
+        self.emoji_id: int | None = utils.get_int(data, "emoji_id")
+        self.emoji_name: int | None = data.get("emoji_name")
         self.available: bool = data["available"]
 
     def __str__(self) -> str:

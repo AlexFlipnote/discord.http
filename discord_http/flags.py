@@ -1,7 +1,7 @@
 import sys
 
 from enum import Flag, CONFORM
-from typing import Union, Self, Optional
+from typing import Self
 
 from .enums import PermissionType
 from .object import Snowflake
@@ -86,7 +86,7 @@ class BaseFlag(_FlagPyMeta):
 
     def add_flags(
         self,
-        *flag_name: Union[Self, str]
+        *flag_name: Self | str
     ) -> Self:
         """
         Add a flag by name
@@ -126,7 +126,7 @@ class BaseFlag(_FlagPyMeta):
 
     def remove_flags(
         self,
-        *flag_name: Union[Self, str]
+        *flag_name: Self | str
     ) -> Self:
         """
         Remove a flag by name
@@ -303,11 +303,11 @@ class Permissions(BaseFlag):
 class PermissionOverwrite:
     def __init__(
         self,
-        target: Union[Snowflake, int],
+        target: Snowflake | int,
         *,
-        allow: Optional[Permissions] = None,
-        deny: Optional[Permissions] = None,
-        target_type: Optional[PermissionType] = None
+        allow: Permissions | None = None,
+        deny: Permissions | None = None,
+        target_type: PermissionType | None = None
     ):
         self.allow = allow or Permissions.none()
         self.deny = deny or Permissions.none()

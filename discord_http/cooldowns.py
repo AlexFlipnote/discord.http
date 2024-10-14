@@ -1,6 +1,6 @@
 import time
 
-from typing import TYPE_CHECKING, Union, Optional
+from typing import TYPE_CHECKING
 
 from .enums import BaseEnum
 
@@ -22,7 +22,7 @@ class BucketType(BaseEnum):
     category = 4
     channel = 5
 
-    def get_key(self, ctx: "Context") -> Union[int, tuple[int, int]]:
+    def get_key(self, ctx: "Context") -> int | tuple[int, int]:
         match self:
             case BucketType.user:
                 return ctx.user.id
@@ -45,7 +45,7 @@ class BucketType(BaseEnum):
             case _:
                 return 0
 
-    def __call__(self, ctx: "Context") -> Union[int, tuple[int, int]]:
+    def __call__(self, ctx: "Context") -> int | tuple[int, int]:
         return self.get_key(ctx)
 
 
@@ -55,7 +55,7 @@ class CooldownCache:
         original: "Cooldown",
         type: BucketType
     ):
-        self._cache: dict[Union[int, tuple[int, int]], Cooldown] = {}
+        self._cache: dict[int | tuple[int, int], Cooldown] = {}
         self._cooldown: Cooldown = original
         self._type: BucketType = type
 
@@ -66,7 +66,7 @@ class CooldownCache:
             f"cache={len(self._cache) if self._cache else None}>"
         )
 
-    def _bucket_key(self, ctx: "Context") -> Union[int, tuple[int, int]]:
+    def _bucket_key(self, ctx: "Context") -> int | tuple[int, int]:
         """
         Creates a key for the bucket based on the type.
 
@@ -77,21 +77,21 @@ class CooldownCache:
 
         Returns
         -------
-        `Union[int, tuple[int, int]]`
+        `int | tuple[int, int]`
             Key for the bucket.
         """
         return self._type(ctx)
 
     def _cleanup_cache(
         self,
-        current: Optional[float] = None
+        current: float | None = None
     ) -> None:
         """
         Cleans up the cache by removing expired buckets.
 
         Parameters
         ----------
-        current: `Optional[float]`
+        current: `float | None`
             Current time to check the cache for.
         """
         current = current or time.time()
@@ -108,7 +108,7 @@ class CooldownCache:
     def get_bucket(
         self,
         ctx: "Context",
-        current: Optional[float] = None
+        current: float | None = None
     ) -> "Cooldown":
         """
         Gets the cooldown bucket for the given context.
@@ -117,7 +117,7 @@ class CooldownCache:
         ----------
         ctx: `Context`
             Context to get the bucket for.
-        current: `Optional[float]`
+        current: `float | None`
             Current time to check the bucket for.
 
         Returns
@@ -142,10 +142,10 @@ class CooldownCache:
     def update_rate_limit(
         self,
         ctx: "Context",
-        current: Optional[float] = None,
+        current: float | None = None,
         *,
         tokens: int = 1
-    ) -> Optional[float]:
+    ) -> float | None:
         """
         Updates the rate limit for the given context.
 
@@ -153,14 +153,14 @@ class CooldownCache:
         ----------
         ctx: `Context`
             Context to update the rate limit for.
-        current: `Optional[float]`
+        current: `float | None`
             Current time to update the rate limit for.
         tokens: `int`
             Amount of tokens to remove from the rate limit.
 
         Returns
         -------
-        `Optional[float]`
+        `float | None`
             Time left before the cooldown resets.
             Returns `None` if the rate limit was not exceeded.
         """
@@ -182,14 +182,14 @@ class Cooldown:
 
     def get_tokens(
         self,
-        current: Optional[float] = None
+        current: float | None = None
     ) -> int:
         """
         Gets the amount of tokens available for the current time.
 
         Parameters
         ----------
-        current: `Optional[float]`
+        current: `float | None`
             The current time to check the tokens for.
 
         Returns
@@ -207,14 +207,14 @@ class Cooldown:
 
     def get_retry_after(
         self,
-        current: Optional[float] = None
+        current: float | None = None
     ) -> float:
         """
         Gets the time left before the cooldown resets.
 
         Parameters
         ----------
-        current: `Optional[float]`
+        current: `float | None`
             The current time to check the retry after for.
 
         Returns
@@ -232,23 +232,23 @@ class Cooldown:
 
     def update_rate_limit(
         self,
-        current: Optional[float] = None,
+        current: float | None = None,
         *,
         tokens: int = 1
-    ) -> Optional[float]:
+    ) -> float | None:
         """
         Updates the rate limit for the current time.
 
         Parameters
         ----------
-        current: `Optional[float]`
+        current: `float | None`
             The current time to update the rate limit for.
         tokens: `int`
             Amount of tokens to remove from the rate limit.
 
         Returns
         -------
-        `Optional[float]`
+        `float | None`
             Time left before the cooldown resets.
             Returns `None` if the rate limit was not exceeded.
         """

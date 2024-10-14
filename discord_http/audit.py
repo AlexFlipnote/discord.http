@@ -1,4 +1,4 @@
-from typing import Optional, TYPE_CHECKING, Any, TypeVar, Type, Callable, Union
+from typing import TYPE_CHECKING, Any, TypeVar, Type, Callable
 from datetime import datetime
 
 from . import utils, enums, flags
@@ -25,10 +25,10 @@ def _handle_snowflake(entry: "AuditLogEntry", data: int) -> Snowflake:
     return Snowflake(id=int(data))
 
 
-def _handle_type(entry: "AuditLogEntry", data: Union[int, str]) -> Union[
-    enums.ChannelType, enums.StickerType, enums.WebhookType,
-    enums.PermissionType, str
-]:
+def _handle_type(entry: "AuditLogEntry", data: int | str) -> (
+    enums.ChannelType | enums.StickerType |
+    enums.WebhookType | enums.PermissionType | str
+):
     if entry.action_type.name.startswith("sticker_"):
         return enums.StickerType(data)
     elif entry.action_type.name.startswith("webhook_"):
@@ -42,7 +42,7 @@ def _handle_type(entry: "AuditLogEntry", data: Union[int, str]) -> Union[
         return enums.ChannelType(data)
 
 
-def _handle_overloaded_flags(entry: "AuditLogEntry", data: int) -> Union[flags.BaseFlag, int]:
+def _handle_overloaded_flags(entry: "AuditLogEntry", data: int) -> flags.BaseFlag | int:
     _valid_types = (
         enums.AuditLogType.channel_create,
         enums.AuditLogType.channel_update,
@@ -57,7 +57,7 @@ def _handle_overloaded_flags(entry: "AuditLogEntry", data: int) -> Union[flags.B
     return data
 
 
-def _handle_default_reaction(entry: "AuditLogEntry", data: Optional[dict]) -> Optional[EmojiParser]:
+def _handle_default_reaction(entry: "AuditLogEntry", data: dict | None) -> EmojiParser | None:
     if not data:
         return None
 
@@ -67,7 +67,7 @@ def _handle_default_reaction(entry: "AuditLogEntry", data: Optional[dict]) -> Op
     })
 
 
-def _handle_cover_image(entry: "AuditLogEntry", data: Optional[str]) -> Optional[Asset]:
+def _handle_cover_image(entry: "AuditLogEntry", data: str | None) -> Asset | None:
     if not data:
         return None
     if not entry.target_id:
@@ -80,8 +80,8 @@ def _handle_cover_image(entry: "AuditLogEntry", data: Optional[str]) -> Optional
     )
 
 
-def _handle_guild_hash(path: str) -> Callable[["AuditLogEntry", str], Optional[Asset]]:
-    def _handler(entry: "AuditLogEntry", data: Optional[str]) -> Optional[Asset]:
+def _handle_guild_hash(path: str) -> Callable[["AuditLogEntry", str], Asset | None]:
+    def _handler(entry: "AuditLogEntry", data: str | None) -> Asset | None:
         if not data:
             return None
 
@@ -95,14 +95,14 @@ def _handle_guild_hash(path: str) -> Callable[["AuditLogEntry", str], Optional[A
     return _handler
 
 
-def _handle_guild_id(entry: "AuditLogEntry", data: Optional[str]) -> Optional[PartialGuild]:
+def _handle_guild_id(entry: "AuditLogEntry", data: str | None) -> PartialGuild | None:
     if not data:
         return None
 
     return entry._convert_target_guild(int(data))
 
 
-def _handle_timestamp(entry: "AuditLogEntry", data: Optional[str]) -> Optional[datetime]:
+def _handle_timestamp(entry: "AuditLogEntry", data: str | None) -> datetime | None:
     if not data:
         return None
     return utils.parse_time(data)
@@ -122,7 +122,7 @@ def _handle_forum_tags(entry: "AuditLogEntry", data: list[dict]) -> list[ForumTa
     ]
 
 
-def _hanndle_icon(entry: "AuditLogEntry", data: Optional[str]) -> Optional[Asset]:
+def _hanndle_icon(entry: "AuditLogEntry", data: str | None) -> Asset | None:
     if data is None:
         return None
 
@@ -142,7 +142,7 @@ def _hanndle_icon(entry: "AuditLogEntry", data: Optional[str]) -> Optional[Asset
     )
 
 
-def _handle_avatar(entry: "AuditLogEntry", data: Optional[str]) -> Optional[Asset]:
+def _handle_avatar(entry: "AuditLogEntry", data: str | None) -> Asset | None:
     if data is None:
         return None
     if not entry.target_id:
@@ -156,7 +156,7 @@ def _handle_avatar(entry: "AuditLogEntry", data: Optional[str]) -> Optional[Asse
 
 
 def _handle_overwrites(entry: "AuditLogEntry", data: dict) -> list[tuple[
-    Union[PartialUser, PartialRole], flags.PermissionOverwrite
+    PartialUser | PartialRole, flags.PermissionOverwrite
 ]]:
     overwrites = []
     for g in data:
@@ -216,7 +216,7 @@ def _handle_automod_channels(entry: "AuditLogEntry", data: list[int]) -> list[Pa
     ]
 
 
-def _handle_member(entry: "AuditLogEntry", data: int) -> Union[User, PartialUser]:
+def _handle_member(entry: "AuditLogEntry", data: int) -> User | PartialUser:
     return entry._convert_target_user(int(data))
 
 
@@ -231,8 +231,8 @@ def _handle_role(entry: "AuditLogEntry", data: str) -> PartialRole:
 E = TypeVar("E", bound=enums.BaseEnum)
 
 
-def _handle_enum(cls: Type[E]) -> Callable[["AuditLogEntry", Union[str, int]], E]:
-    def _handler(entry: "AuditLogEntry", data: Union[str, int]) -> E:
+def _handle_enum(cls: Type[E]) -> Callable[["AuditLogEntry", str | int], E]:
+    def _handler(entry: "AuditLogEntry", data: str | int) -> E:
         return cls(int(data))
 
     return _handler
@@ -241,15 +241,15 @@ def _handle_enum(cls: Type[E]) -> Callable[["AuditLogEntry", Union[str, int]], E
 F = TypeVar("F", bound=flags.BaseFlag)
 
 
-def _handle_flags(cls: Type[F]) -> Callable[["AuditLogEntry", Union[str, int]], F]:
-    def _handler(entry: "AuditLogEntry", data: Union[str, int]) -> F:
+def _handle_flags(cls: Type[F]) -> Callable[["AuditLogEntry", str | int], F]:
+    def _handler(entry: "AuditLogEntry", data: str | int) -> F:
         return cls(int(data))
 
     return _handler
 
 
 class AuditChange:
-    _translaters: dict[str, Optional[Callable[["AuditLogEntry", Any], Any]]] = {
+    _translaters: dict[str, Callable[["AuditLogEntry", Any], Any] | None] = {
         "verification_level": _handle_enum(enums.VerificationLevel),
         "explicit_content_filter": _handle_enum(enums.ContentFilterLevel),
         "allow": _handle_flags(flags.Permissions),
@@ -310,14 +310,14 @@ class AuditChange:
 
         self.key: str = data["key"]
 
-        self.old_value: Optional[Any] = data.get("old_value", None)
-        self.new_value: Optional[Any] = data.get("new_value", None)
+        self.old_value: Any | None = data.get("old_value", None)
+        self.new_value: Any | None = data.get("new_value", None)
 
         if self.key in ("$add", "$remove"):
             self.new_value = self._handle_partial_role(data)
             return
 
-        _translator: Optional[Callable[["AuditLogEntry", Any], Any]] = self._translaters.get(self.key, None)
+        _translator: Callable[["AuditLogEntry", Any], Any] | None = self._translaters.get(self.key, None)
 
         if _translator:
             if self.new_value is not None:
@@ -343,8 +343,8 @@ class AuditLogEntry(Snowflake):
         *,
         state: "DiscordAPI",
         data: dict,
-        guild: Optional[PartialGuild] = None,
-        users: Optional[dict[int, User]] = None,
+        guild: PartialGuild | None = None,
+        users: dict[int, User] | None = None,
     ):
         super().__init__(id=int(data["id"]))
         self._state = state
@@ -355,10 +355,10 @@ class AuditLogEntry(Snowflake):
         )
 
         self.action_type: enums.AuditLogType = enums.AuditLogType(int(data["action_type"]))
-        self.reason: Optional[str] = data.get("reason", None)
+        self.reason: str | None = data.get("reason", None)
 
         self.user_id: int = int(data["user_id"])
-        self.target_id: Optional[int] = utils.get_int(data, "target_id")
+        self.target_id: int | None = utils.get_int(data, "target_id")
 
         # TODO: Add parsing methods for options
         self.options: dict = data.get("options", {})
@@ -380,14 +380,14 @@ class AuditLogEntry(Snowflake):
         ]
 
     @property
-    def user(self) -> Optional[Union[User, PartialUser]]:
+    def user(self) -> User | PartialUser | None:
         """ `User`: Returns the user object of the audit log if available """
         return self._convert_target_user(self.user_id)
 
     @property
-    def target(self) -> Optional[Snowflake]:
+    def target(self) -> Snowflake | None:
         """
-        `Optional[Snowflake]`:
+        `Snowflake | None`:
         Returns the target object of the audit log
 
         The Snowflake can be a PartialChannel, User, PartialRole, etc
@@ -415,7 +415,7 @@ class AuditLogEntry(Snowflake):
             guild_id=self.guild.id
         )
 
-    def _convert_target_user(self, user_id: int) -> Union[User, PartialUser]:
+    def _convert_target_user(self, user_id: int) -> User | PartialUser:
         return self._users.get(user_id, PartialUser(
             state=self._state,
             id=user_id
@@ -428,5 +428,5 @@ class AuditLogEntry(Snowflake):
             guild_id=self.guild.id
         )
 
-    def _convert_target_message(self, user_id: int) -> Union[User, PartialUser]:
+    def _convert_target_message(self, user_id: int) -> User | PartialUser:
         return self._convert_target_user(user_id)

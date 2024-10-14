@@ -1,5 +1,5 @@
 from datetime import datetime
-from typing import TYPE_CHECKING, Optional, Union
+from typing import TYPE_CHECKING
 
 from . import utils
 from .enums import EntitlementType, EntitlementOwnerType, SKUType
@@ -35,8 +35,8 @@ class PartialSKU(PartialBase):
     async def create_test_entitlement(
         self,
         *,
-        owner_id: Union[Snowflake, int],
-        owner_type: Union[EntitlementOwnerType, int],
+        owner_id: Snowflake | int,
+        owner_type: EntitlementOwnerType | int,
     ) -> "PartialEntitlements":
         """
         Create an entitlement for testing purposes.
@@ -149,8 +149,8 @@ class Entitlements(PartialEntitlements):
         self.deleted: bool = data["deleted"]
         self.type: EntitlementType = EntitlementType(data["type"])
 
-        self.user: Optional[PartialUser] = None
-        self.guild: Optional[PartialGuild] = None
+        self.user: PartialUser | None = None
+        self.guild: PartialGuild | None = None
         self.application: PartialUser = PartialUser(
             state=self._state,
             id=int(data["application_id"])
@@ -160,8 +160,8 @@ class Entitlements(PartialEntitlements):
             id=int(data["sku_id"])
         )
 
-        self.starts_at: Optional[datetime] = None
-        self.ends_at: Optional[datetime] = None
+        self.starts_at: datetime | None = None
+        self.ends_at: datetime | None = None
 
         self._from_data(data)
         self._data_consumed: bool = data.get("consumed", False)

@@ -9,7 +9,7 @@ from aiohttp.client_exceptions import ContentTypeError
 from multidict import CIMultiDictProxy
 from collections import deque
 from typing import (
-    Optional, Any, Union, Self, overload,
+    Any, Self, overload,
     Literal, TypeVar, Generic, TYPE_CHECKING
 )
 
@@ -51,7 +51,7 @@ class HTTPResponse(Generic[ResponseT]):
         *,
         status: int,
         response: ResponseT,
-        reason: Optional[str],
+        reason: str | None,
         res_method: ResMethodTypes,
         headers: CIMultiDictProxy[str],
     ):
@@ -74,7 +74,7 @@ class HTTPClient:
     Can be used to make requests outside of the usual Discord API
     """
     def __init__(self):
-        self.session: Optional[HTTPSession] = None
+        self.session: HTTPSession | None = None
 
     async def _create_session(self) -> None:
         """ Creates a new session for the library """
@@ -131,7 +131,7 @@ class HTTPClient:
         method: MethodTypes,
         url: str,
         *,
-        res_method: Optional[ResMethodTypes] = "text",
+        res_method: ResMethodTypes | None = "text",
         **kwargs
     ) -> HTTPResponse:
         """
@@ -198,7 +198,7 @@ class Ratelimit:
         self.outgoing: int = 0
         self.remaining = self.limit
         self.reset_after: float = 0.0
-        self.expires: Optional[float] = None
+        self.expires: float | None = None
 
         self._loop: asyncio.AbstractEventLoop = asyncio.get_running_loop()
 
@@ -301,7 +301,7 @@ class DiscordAPI:
 
         # Aliases
         self.token: str = self.bot.token
-        self.application_id: Optional[int] = self.bot.application_id
+        self.application_id: int | None = self.bot.application_id
         self.api_version: int = self.bot.api_version or 10
 
         if not isinstance(self.api_version, int):
@@ -567,7 +567,7 @@ class DiscordAPI:
     async def _app_command_query(
         self,
         method: MethodTypes,
-        guild_id: Optional[int] = None,
+        guild_id: int | None = None,
         **kwargs
     ) -> HTTPResponse:
         """
@@ -578,7 +578,7 @@ class DiscordAPI:
         ----------
         method: `MethodTypes`
             The HTTP method to use
-        guild_id: `Optional[int]`
+        guild_id: `int | None`
             The guild ID to query the commands for
 
         Returns
@@ -602,8 +602,8 @@ class DiscordAPI:
 
     async def update_commands(
         self,
-        data: Union[list[dict], dict],
-        guild_id: Optional[int] = None
+        data: list[dict] | dict,
+        guild_id: int | None = None
     ) -> dict:
         """
         Updates the commands for the bot
@@ -612,7 +612,7 @@ class DiscordAPI:
         ----------
         data: `list[dict]`
             The JSON data to send to Discord API
-        guild_id: `Optional[int]`
+        guild_id: `int | None`
             The guild ID to update the commands for (if None, commands will be global)
 
         Returns
@@ -637,14 +637,14 @@ class DiscordAPI:
 
     async def fetch_commands(
         self,
-        guild_id: Optional[int] = None
+        guild_id: int | None = None
     ) -> dict:
         """
         Fetches the commands for the bot
 
         Parameters
         ----------
-        guild_id: `Optional[int]`
+        guild_id: `int | None`
             The guild ID to fetch the commands for (if None, commands will be global)
 
         Returns
