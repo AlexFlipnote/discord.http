@@ -396,11 +396,8 @@ Intents.guild_expressions
 
   Called whenever guild emojis have been updated
 
-  .. note::
-    Depending on your cache rules, guild and emojis[].guild will either return Full or Partial object.
-
   .. warning::
-    The ``before`` will remain the same as ``after`` unless you have Guild and Emoji cache flags enabled.
+    The ``before`` will remain the same as ``after`` unless you have Guild and Emoji cache flags enabled (not partial).
 
   :param guild: :class:`Guild` | :class:`PartialGuild` object with information about the guild.
   :param before: list[:class:`Emoji`] emojis before the update.
@@ -411,11 +408,8 @@ Intents.guild_expressions
 
   Called whenever guild stickers have been updated
 
-  .. note::
-    Depending on your cache rules, guild and stickers[].guild will either return Full or Partial object.
-
   .. warning::
-    The ``before`` will remain the same as ``after`` unless you have Guild and Sticker cache flags enabled.
+    The ``before`` will remain the same as ``after`` unless you have Guild and Sticker cache flags enabled (not partial).
 
   :param guild: :class:`Guild` | :class:`PartialGuild` object with information about the guild.
   :param before: list[:class:`Sticker`] stickers before the update.
