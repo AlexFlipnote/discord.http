@@ -1,7 +1,6 @@
 import json
 
 from io import BufferedIOBase
-from typing import Union, Optional
 
 from .file import File
 
@@ -23,10 +22,10 @@ class MultipartData:
     def attach(
         self,
         name: str,
-        data: Union[File, BufferedIOBase, dict, str],
+        data: File | BufferedIOBase | dict | str,
         *,
-        filename: Optional[str] = None,
-        content_type: Optional[str] = None
+        filename: str | None = None,
+        content_type: str | None = None
     ) -> None:
         """
         Attach data to the multipart data
@@ -84,5 +83,5 @@ class MultipartData:
 
     def finish(self) -> bytes:
         """ `bytes`: Return the multipart data to be sent to Discord """
-        self.bufs.append(f"\r\n--{self.boundary}--\r\n".encode("utf8"))
+        self.bufs.append(f"\r\n--{self.boundary}--\r\n".encode())
         return b"".join(self.bufs)

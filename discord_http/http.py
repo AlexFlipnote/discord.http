@@ -8,10 +8,7 @@ import sys
 from aiohttp.client_exceptions import ContentTypeError
 from multidict import CIMultiDictProxy
 from collections import deque
-from typing import (
-    Any, Self, overload,
-    Literal, TypeVar, Generic, TYPE_CHECKING
-)
+from typing import Any, Self, overload, Literal, TypeVar, Generic, TYPE_CHECKING
 
 from . import __version__
 from .flags import ApplicationFlags

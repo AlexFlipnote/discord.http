@@ -1,4 +1,4 @@
-from typing import TYPE_CHECKING, Union, Any, Optional
+from typing import TYPE_CHECKING, Any
 
 from . import utils
 from .embeds import Embed
@@ -172,21 +172,21 @@ class EmptyResponse(BaseResponse):
 class MessageResponse(BaseResponse):
     def __init__(
         self,
-        content: Optional[str] = MISSING,
+        content: str | None = MISSING,
         *,
-        file: Optional[File] = MISSING,
-        files: Optional[list[File]] = MISSING,
-        embed: Optional[Embed] = MISSING,
-        embeds: Optional[list[Embed]] = MISSING,
-        attachment: Optional[File] = MISSING,
-        attachments: Optional[list[File]] = MISSING,
-        view: Optional[View] = MISSING,
-        tts: Optional[bool] = False,
-        allowed_mentions: Optional[AllowedMentions] = MISSING,
-        message_reference: Optional["MessageReference"] = MISSING,
-        poll: Optional["Poll"] = MISSING,
-        type: Union[ResponseType, int] = 4,
-        ephemeral: Optional[bool] = False,
+        file: File | None = MISSING,
+        files: list[File] | None = MISSING,
+        embed: Embed | None = MISSING,
+        embeds: list[Embed] | None = MISSING,
+        attachment: File | None = MISSING,
+        attachments: list[File] | None = MISSING,
+        view: View | None = MISSING,
+        tts: bool | None = False,
+        allowed_mentions: AllowedMentions | None = MISSING,
+        message_reference: "MessageReference | None" = MISSING,
+        poll: "Poll | None" = MISSING,
+        type: ResponseType | int = 4,
+        ephemeral: bool | None = False,
         flags: MessageFlags | None = MISSING,
     ):
         self.content = content

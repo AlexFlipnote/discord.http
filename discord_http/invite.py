@@ -1,5 +1,5 @@
 from datetime import datetime
-from typing import Optional, TYPE_CHECKING, Union
+from typing import TYPE_CHECKING
 
 from . import utils
 from .channel import PartialChannel
@@ -24,8 +24,8 @@ class PartialInvite:
         *,
         state: "DiscordAPI",
         code: str,
-        channel_id: Optional[int] = None,
-        guild_id: Optional[int] = None
+        channel_id: int | None = None,
+        guild_id: int | None = None
     ):
         self._state = state
         self.code = code
@@ -40,7 +40,7 @@ class PartialInvite:
         return f"<PartialInvite code='{self.code}'>"
 
     @property
-    def guild(self) -> Optional[PartialGuild]:
+    def guild(self) -> PartialGuild | None:
         """ `Optional[PartialGuild]`: The guild the invite is in """
         if not self.guild_id:
             return None
@@ -51,7 +51,7 @@ class PartialInvite:
         )
 
     @property
-    def channel(self) -> Optional["PartialChannel"]:
+    def channel(self) -> "PartialChannel | None":
         """ `Optional[PartialChannel]`: The channel the invite is in """
         if not self.channel_id:
             return None
@@ -84,7 +84,7 @@ class PartialInvite:
     async def delete(
         self,
         *,
-        reason: Optional[str] = None
+        reason: str | None = None
     ) -> "Invite":
         """
         Deletes the invite
@@ -127,10 +127,10 @@ class Invite(PartialInvite):
         self.temporary: bool = data.get("temporary", False)
         self.created_at: datetime = utils.parse_time(data["created_at"])
 
-        self.inviter: Optional["User"] = None
-        self.expires_at: Optional[datetime] = None
-        self.guild: Optional[Union[Guild, PartialGuild]] = None
-        self.channel: Optional["PartialChannel"] = None
+        self.inviter: "User | None" = None
+        self.expires_at: datetime | None = None
+        self.guild: Guild | PartialGuild | None = None
+        self.channel: "PartialChannel | None" = None
 
         self._from_data(data)
 

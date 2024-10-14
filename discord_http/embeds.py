@@ -1,5 +1,5 @@
 from datetime import datetime
-from typing import Optional, Union, Self
+from typing import Self
 
 from .asset import Asset
 from .colour import Colour
@@ -13,24 +13,24 @@ class Embed:
     def __init__(
         self,
         *,
-        title: Optional[str] = None,
-        description: Optional[str] = None,
-        colour: Optional[Union[Colour, int]] = None,
-        color: Optional[Union[Colour, int]] = None,
-        url: Optional[str] = None,
-        timestamp: Optional[datetime] = None,
+        title: str | None = None,
+        description: str | None = None,
+        colour: Colour | int | None = None,
+        color: Colour | int | None = None,
+        url: str | None = None,
+        timestamp: datetime | None = None,
     ):
-        self.colour: Optional[Colour] = None
+        self.colour: Colour | None = None
 
         if colour is not None:
             self.colour = Colour(int(colour))
         elif color is not None:
             self.colour = Colour(int(color))
 
-        self.title: Optional[str] = title
-        self.description: Optional[str] = description
-        self.timestamp: Optional[datetime] = timestamp
-        self.url: Optional[str] = url
+        self.title: str | None = title
+        self.description: str | None = description
+        self.timestamp: datetime | None = timestamp
+        self.url: str | None = url
 
         self.footer: dict = {}
         self.image: dict = {}
@@ -56,7 +56,7 @@ class Embed:
 
     def set_colour(
         self,
-        value: Optional[Union[Colour, int]]
+        value: Colour | int | None
     ) -> Self:
         """
         Set the colour of the embed
@@ -82,8 +82,8 @@ class Embed:
     def set_footer(
         self,
         *,
-        text: Optional[str] = None,
-        icon_url: Optional[Union[Asset, str]] = None
+        text: str | None = None,
+        icon_url: Asset | str | None = None
     ) -> Self:
         """
         Set the footer of the embed
@@ -126,8 +126,8 @@ class Embed:
         self,
         *,
         name: str,
-        url: Optional[str] = None,
-        icon_url: Optional[Union[Asset, str]] = None
+        url: str | None = None,
+        icon_url: Asset | str | None = None
     ) -> Self:
         """
         Set the author of the embed
@@ -170,7 +170,7 @@ class Embed:
     def set_image(
         self,
         *,
-        url: Optional[Union[Asset, str]] = None
+        url: Asset | str | None = None
     ) -> Self:
         """
         Set the image of the embed
@@ -207,7 +207,7 @@ class Embed:
     def set_thumbnail(
         self,
         *,
-        url: Optional[Union[Asset, str]] = None
+        url: Asset | str | None = None
     ) -> Self:
         """
         Set the thumbnail of the embed

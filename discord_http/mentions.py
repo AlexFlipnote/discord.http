@@ -1,4 +1,4 @@
-from typing import Union, Optional, Self
+from typing import Self
 
 from .object import Snowflake
 
@@ -12,13 +12,13 @@ class AllowedMentions:
         self,
         *,
         everyone: bool = True,
-        users: Optional[Union[bool, list[Union[Snowflake, int]]]] = True,
-        roles: Optional[Union[bool, list[Union[Snowflake, int]]]] = True,
+        users: bool | list[Snowflake | int] | None = True,
+        roles: bool | list[Snowflake | int] | None = True,
         replied_user: bool = True,
     ):
         self.everyone: bool = everyone
-        self.users: Optional[Union[bool, list[Union[Snowflake, int]]]] = users
-        self.roles: Optional[Union[bool, list[Union[Snowflake, int]]]] = roles
+        self.users: bool | list[Snowflake | int] | None = users
+        self.roles: bool | list[Snowflake | int] | None = roles
         self.reply_user: bool = replied_user
 
     @classmethod

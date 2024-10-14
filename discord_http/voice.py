@@ -1,5 +1,5 @@
 from datetime import datetime
-from typing import TYPE_CHECKING, Optional, Any
+from typing import TYPE_CHECKING, Any
 
 from . import utils
 from .object import PartialBase
@@ -25,13 +25,13 @@ class PartialVoiceState(PartialBase):
         *,
         state: "DiscordAPI",
         id: int,
-        channel_id: Optional[int] = None,
-        guild_id: Optional[int] = None,
+        channel_id: int | None = None,
+        guild_id: int | None = None,
     ):
         self._state = state
         self.id: int = int(id)
-        self.channel_id: Optional[int] = channel_id
-        self.guild_id: Optional[int] = guild_id
+        self.channel_id: int | None = channel_id
+        self.guild_id: int | None = guild_id
 
     def __repr__(self) -> str:
         return f"<PartialVoiceState id={self.id} guild_id={self.guild_id}>"
@@ -104,11 +104,11 @@ class VoiceState(PartialVoiceState):
 
         self.session_id: str = data["session_id"]
 
-        self.channel_id: Optional[int] = utils.get_int(data, "channel_id")
-        self.guild_id: Optional[int] = utils.get_int(data, "guild_id")
+        self.channel_id: int | None = utils.get_int(data, "channel_id")
+        self.guild_id: int | None = utils.get_int(data, "guild_id")
 
         self.user: PartialUser = PartialUser(state=state, id=int(data["user_id"]))
-        self.member: Optional["Member"] = None
+        self.member: "Member | None" = None
 
         self.deaf: bool = data["deaf"]
         self.mute: bool = data["mute"]
@@ -117,7 +117,7 @@ class VoiceState(PartialVoiceState):
         self.self_stream: bool = data.get("self_stream", False)
         self.self_video: bool = data["self_video"]
         self.suppress: bool = data["suppress"]
-        self.request_to_speak_timestamp: Optional[datetime] = None
+        self.request_to_speak_timestamp: datetime | None = None
 
         self._from_data(data)
 
@@ -139,7 +139,7 @@ class VoiceState(PartialVoiceState):
             )
 
     @property
-    def guild(self) -> Optional["PartialGuild"]:
+    def guild(self) -> "PartialGuild | None":
         """ `PartialGuild`: Returns the guild the member is in """
         if not self.guild_id:
             return None
@@ -151,7 +151,7 @@ class VoiceState(PartialVoiceState):
         )
 
     @property
-    def channel(self) -> Optional["PartialChannel"]:
+    def channel(self) -> "PartialChannel | None":
         """ `PartialChannel`: Returns the channel the member is in """
         if not self.channel_id:
             return None
