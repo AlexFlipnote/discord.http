@@ -6,7 +6,7 @@ from .object import (
     ChannelPinsUpdate, TypingStartEvent,
     Reaction, BulkDeletePayload, ThreadListSyncPayload,
     ThreadMembersUpdatePayload, Presence, AutomodExecution,
-    PollVoteEvent
+    PollVoteEvent, GuildJoinRequest
 )
 
 from .. import utils
@@ -272,6 +272,27 @@ class Parser:
                 guild=_guild
             ),
         )
+
+    # NOTE: These are not documented in Discord API......
+    # Need to play around and figure them out, UPDATE is what I got so far
+    def guild_join_request_create(self, data: dict) -> tuple[None]:
+        # print(("CREATE", data))
+        return (None,)
+
+    def guild_join_request_update(self, data: dict) -> tuple[GuildJoinRequest]:
+        _guild = self._get_guild_or_partial(int(data["guild_id"]))
+
+        return (
+            GuildJoinRequest(
+                state=self.bot.state,
+                data=data,
+                guild=_guild
+            ),
+        )
+
+    def guild_join_request_delete(self, data: dict) -> tuple[None]:
+        # print(("DELETE", data))
+        return (None,)
 
     def _channel(self, data: dict) -> BaseChannel:
         return BaseChannel.from_dict(

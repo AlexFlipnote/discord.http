@@ -33,6 +33,7 @@ __all__ = (
     "AutomodExecution",
     "BulkDeletePayload",
     "ChannelPinsUpdate",
+    "GuildJoinRequest",
     "PlayingStatus",
     "PollVoteEvent",
     "Presence",
@@ -102,6 +103,40 @@ class PlayingStatus:
                 payload["activities"][0]["type"] = int(ActivityType.playing)
 
         return payload
+
+
+class GuildJoinRequest:
+    def __init__(
+        self,
+        *,
+        state: "DiscordAPI",
+        guild: "Guild | PartialGuild",
+        data: dict
+    ):
+        self._state = state
+
+        self.status: str = data["status"]
+        self.rejection_reason: str | None = None
+
+        self.user: User | None = None
+        self.user_id: int = int(data["user_id"])
+
+        self.guild: "Guild | PartialGuild" = guild
+        self.last_seen: datetime | None = None
+
+        self._from_data(data)
+
+    def _from_data(self, data: dict) -> None:
+        _request = data.get("request", {})
+        if _request:
+
+            if _request.get("user", None):
+                self.user = User(
+                    state=self._state,
+                    data=_request["user"]
+                )
+
+            self.rejection_reason = _request.get("rejection_reason", None)
 
 
 class ChannelPinsUpdate:
