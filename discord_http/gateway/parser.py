@@ -2,6 +2,7 @@ from datetime import datetime
 from typing import TYPE_CHECKING, overload
 
 from .enums import PollVoteActionType
+from .flags import GatewayCacheFlags
 from .object import (
     ChannelPinsUpdate, TypingStartEvent,
     Reaction, BulkDeletePayload, ThreadListSyncPayload,
@@ -207,34 +208,68 @@ class Parser:
             )
         )
 
-    def guild_emojis_update(self, data: dict) -> tuple[Guild | PartialGuild, list[Emoji]]:
+    def guild_emojis_update(self, data: dict) -> tuple[Guild | PartialGuild, list[Emoji], list[Emoji]]:
         _guild = self._get_guild_or_partial(int(data["guild_id"]))
+
+        _emojis_after = [
+            Emoji(
+                state=self.bot.state,
+                guild=_guild,
+                data=e
+            )
+            for e in data["emojis"]
+        ]
+
+        _emojis_before = _emojis_after
+
+        if (
+            self.bot.cache.cache_flags and
+            (
+                GatewayCacheFlags.guilds in self.bot.cache.cache_flags or
+                GatewayCacheFlags.partial_guilds in self.bot.cache.cache_flags
+            ) and
+            GatewayCacheFlags.emojis in self.bot.cache.cache_flags
+        ):
+            _emojis_before = self.bot.cache.get_guild(_guild.id).emojis
+
+        self.bot.cache.update_emojis(guild_id=_guild.id, emojis=_emojis_after)
 
         return (
             _guild,
-            [
-                Emoji(
-                    state=self.bot.state,
-                    guild=_guild,
-                    data=e
-                )
-                for e in data["emojis"]
-            ]
+            _emojis_before,  # type: ignore
+            _emojis_after
         )
 
-    def guild_stickers_update(self, data: dict) -> tuple[Guild | PartialGuild, list[Sticker]]:
+    def guild_stickers_update(self, data: dict) -> tuple[Guild | PartialGuild, list[Sticker], list[Sticker]]:
         _guild = self._get_guild_or_partial(int(data["guild_id"]))
+
+        _stickers_after = [
+            Sticker(
+                state=self.bot.state,
+                guild=_guild,
+                data=e
+            )
+            for e in data["stickers"]
+        ]
+
+        _stickers_before = _stickers_after
+
+        if (
+            self.bot.cache.cache_flags and
+            (
+                GatewayCacheFlags.guilds in self.bot.cache.cache_flags or
+                GatewayCacheFlags.partial_guilds in self.bot.cache.cache_flags
+            ) and
+            GatewayCacheFlags.stickers in self.bot.cache.cache_flags
+        ):
+            _stickers_before = self.bot.cache.get_guild(_guild.id).stickers
+
+        self.bot.cache.update_stickers(guild_id=_guild.id, stickers=_stickers_after)
 
         return (
             _guild,
-            [
-                Sticker(
-                    state=self.bot.state,
-                    guild=_guild,
-                    data=e
-                )
-                for e in data["stickers"]
-            ]
+            _stickers_before,  # type: ignore
+            _stickers_after
         )
 
     def guild_soundboard_sound_create(self, data: dict) -> tuple[SoundboardSound]:

@@ -392,26 +392,34 @@ Intents.guild_moderation
 Intents.guild_expressions
 ~~~~~~~~~~~~~~~~~~~~~~~~~
 
-.. function:: async def on_guild_emojis_update(guild, emojis):
+.. function:: async def on_guild_emojis_update(guild, before, after):
 
   Called whenever guild emojis have been updated
 
   .. note::
     Depending on your cache rules, guild and emojis[].guild will either return Full or Partial object.
 
+  .. warning::
+    The ``before`` will remain the same as ``after`` unless you have Guild and Emoji cache flags enabled.
+
   :param guild: :class:`Guild` | :class:`PartialGuild` object with information about the guild.
-  :param emojis: list[:class:`Emoji`] object with information about the emojis.
+  :param before: list[:class:`Emoji`] emojis before the update.
+  :param after: list[:class:`Emoji`] emojis after the update.
 
 
-.. function:: async def on_guild_stickers_update(guild, stickers):
+.. function:: async def on_guild_stickers_update(guild, before, after):
 
   Called whenever guild stickers have been updated
 
   .. note::
     Depending on your cache rules, guild and stickers[].guild will either return Full or Partial object.
 
+  .. warning::
+    The ``before`` will remain the same as ``after`` unless you have Guild and Sticker cache flags enabled.
+
   :param guild: :class:`Guild` | :class:`PartialGuild` object with information about the guild.
-  :param stickers: list[:class:`Sticker`] object with information about the stickers.
+  :param before: list[:class:`Sticker`] stickers before the update.
+  :param after: list[:class:`Sticker`] stickers after the update.
 
 
 .. function:: async def on_guild_soundboard_sound_create(sound):

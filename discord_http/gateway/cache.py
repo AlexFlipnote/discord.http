@@ -10,6 +10,8 @@ if TYPE_CHECKING:
     from ..channel import PartialChannel, PublicThread, PrivateThread
     from ..client import Client
     from ..guild import PartialGuild, Guild
+    from ..emoji import Emoji
+    from ..sticker import Sticker
     from ..member import PartialMember, Member
     from ..role import PartialRole, Role
 
@@ -354,3 +356,45 @@ class Cache:
             return None
 
         guild._cache_roles.pop(role.id, None)
+
+    def update_emojis(self, guild_id: int, emojis: list["Emoji"]):
+        if self.cache_flags is None:
+            return None
+
+        guild = self.get_guild(guild_id)
+        if not guild:
+            return None
+
+        if GatewayCacheFlags.emojis in self.cache_flags:
+            guild._cache_emojis = {  # type: ignore
+                int(g.id): g
+                for g in emojis
+            }
+        elif GatewayCacheFlags.partial_emojis in self.cache_flags:
+            guild._cache_emojis = {
+                int(g.id): self.bot.get_partial_emoji(
+                    g.id, guild_id=guild_id
+                )
+                for g in emojis
+            }
+
+    def update_stickers(self, guild_id: int, stickers: list["Sticker"]):
+        if self.cache_flags is None:
+            return None
+
+        guild = self.get_guild(guild_id)
+        if not guild:
+            return None
+
+        if GatewayCacheFlags.stickers in self.cache_flags:
+            guild._cache_stickers = {  # type: ignore
+                int(g.id): g
+                for g in stickers
+            }
+        elif GatewayCacheFlags.partial_stickers in self.cache_flags:
+            guild._cache_stickers = {
+                int(g.id): self.bot.get_partial_sticker(
+                    g.id, guild_id=guild_id
+                )
+                for g in stickers
+            }
