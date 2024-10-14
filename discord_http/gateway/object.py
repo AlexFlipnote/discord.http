@@ -119,7 +119,7 @@ class GuildJoinRequest:
         self.rejection_reason: str | None = None
 
         self.user: User | None = None
-        self.user_id: int = int(data["user_id"])
+        self.user_id: int | None = None
 
         self.guild: "Guild | PartialGuild" = guild
         self.last_seen: datetime | None = None
@@ -129,6 +129,7 @@ class GuildJoinRequest:
     def _from_data(self, data: dict) -> None:
         _request = data.get("request", {})
         if _request:
+            self.user_id = utils.get_int(_request, "user_id")
 
             if _request.get("user", None):
                 self.user = User(
