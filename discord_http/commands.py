@@ -204,6 +204,7 @@ class Command:
         guild_install: bool = True,
         user_install: bool = False,
         type: ApplicationCommandType = ApplicationCommandType.chat_input,
+        parent: Optional["SubGroup"] = None
     ):
         self.id: Optional[int] = None
         self.command = command
@@ -212,6 +213,7 @@ class Command:
         self.name = name
         self.description = description
         self.options = []
+        self.parent = parent
 
         self.guild_install = guild_install
         self.user_install = user_install
@@ -442,10 +444,7 @@ class Command:
         if _resolved_perms is None:
             return Permissions(0)
 
-        if (
-            isinstance(ctx.user, Member) and
-            Permissions.administrator in _resolved_perms
-        ):
+        if Permissions.administrator in _resolved_perms:
             return Permissions(0)
 
         missing = Permissions(sum([
@@ -719,7 +718,8 @@ class SubCommand(Command):
         description: Optional[str] = None,
         guild_install: bool = True,
         user_install: bool = False,
-        guild_ids: Optional[list[Union[Snowflake, int]]] = None
+        guild_ids: Optional[list[Union[Snowflake, int]]] = None,
+        parent: Optional["SubGroup"] = None
     ):
         super().__init__(
             func,
@@ -727,7 +727,8 @@ class SubCommand(Command):
             description=description,
             guild_install=guild_install,
             user_install=user_install,
-            guild_ids=guild_ids
+            guild_ids=guild_ids,
+            parent=parent
         )
 
     def __repr__(self) -> str:
@@ -742,7 +743,8 @@ class SubGroup(Command):
         description: Optional[str] = None,
         guild_ids: Optional[list[Union[Snowflake, int]]] = None,
         guild_install: bool = True,
-        user_install: bool = False
+        user_install: bool = False,
+        parent: Optional["SubGroup"] = None
     ):
         self.name = name
         self.description = description or "..."  # Only used to make Discord happy
@@ -752,6 +754,7 @@ class SubGroup(Command):
         self.subcommands: Dict[str, Union[SubCommand, SubGroup]] = {}
         self.guild_install = guild_install
         self.user_install = user_install
+        self.parent: Optional["SubGroup"] = parent
 
     def __repr__(self) -> str:
         _subs = [g for g in self.subcommands.values()]
@@ -790,6 +793,7 @@ class SubGroup(Command):
                 guild_ids=guild_ids,
                 guild_install=guild_install,
                 user_install=user_install,
+                parent=self
             )
             self.subcommands[subcommand.name] = subcommand
             return subcommand
@@ -813,7 +817,8 @@ class SubGroup(Command):
         def decorator(func):
             subgroup = SubGroup(
                 name=name or func.__name__,
-                description=description
+                description=description,
+                parent=self
             )
             self.subcommands[subgroup.name] = subgroup
             return subgroup
@@ -841,15 +846,21 @@ class SubGroup(Command):
     @property
     def options(self) -> list[dict]:
         """ `list[dict]`: Returns the options of the subcommand group """
-        options = []
-        for cmd in self.subcommands.values():
-            data = cmd.to_dict()
-            if isinstance(cmd, SubGroup):
-                data["type"] = int(CommandOptionType.sub_command_group)
-            else:
-                data["type"] = int(CommandOptionType.sub_command)
-            options.append(data)
-        return options
+        def build_options(subcommands: dict) -> list[dict]:
+            options = []
+            for cmd in subcommands.values():
+                data = cmd.to_dict()
+                if isinstance(cmd, SubGroup):
+                    data["type"] = int(CommandOptionType.sub_command_group)
+                    # Recursively build options for nested subcommand groups
+                    data["options"] = build_options(cmd.subcommands)
+                else:
+                    data["type"] = int(CommandOptionType.sub_command)
+
+                options.append(data)
+            return options
+
+        return build_options(self.subcommands)
 
 
 class Interaction:

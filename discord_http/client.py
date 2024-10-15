@@ -307,7 +307,8 @@ class Client:
             data=[
                 v.to_dict()
                 for v in self.commands.values()
-                if not v.guild_ids
+                if not v.guild_ids and
+                v.parent is None
             ],
             guild_id=self.guild_id
         )
@@ -326,7 +327,8 @@ class Client:
                 data=[
                     v.to_dict()
                     for v in self.commands.values()
-                    if g in v.guild_ids
+                    if g in v.guild_ids and
+                    v.parent is None
                 ],
                 guild_id=g
             )
