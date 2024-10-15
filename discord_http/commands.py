@@ -435,15 +435,22 @@ class Command:
         if _perms is None:
             return Permissions(0)
 
+        _resolved_perms: Permissions | None = getattr(
+            ctx.user, "resolved_permissions", None
+        )
+
+        if _resolved_perms is None:
+            return Permissions(0)
+
         if (
             isinstance(ctx.user, Member) and
-            Permissions.administrator in ctx.user.resolved_permissions
+            Permissions.administrator in _resolved_perms
         ):
             return Permissions(0)
 
         missing = Permissions(sum([
             flag.value for flag in _perms
-            if flag not in ctx.app_permissions
+            if flag not in _resolved_perms
         ]))
 
         return missing
