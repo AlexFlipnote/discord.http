@@ -1,14 +1,16 @@
 import asyncio
+import time
 
 from datetime import datetime, timedelta
 from typing import (
     Union, TYPE_CHECKING, Optional, AsyncIterator,
-    Callable, Self, Generator
+    Callable, Self, Generator, overload
 )
 
 from . import utils
 from .embeds import Embed
 from .emoji import EmojiParser
+from .errors import NotFound
 from .enums import (
     ChannelType, ResponseType, VideoQualityType,
     SortOrderType, ForumLayoutType, PrivacyLevelType
@@ -807,44 +809,6 @@ class PartialChannel(PartialBase):
             res_method="text"
         )
 
-    async def delete_messages(
-        self,
-        message_ids: list[int],
-        *,
-        reason: Optional[str] = None
-    ) -> None:
-        """
-        _summary_
-
-        Parameters
-        ----------
-        message_ids: `list[int]`
-            List of message IDs to delete
-        reason: `Optional[str]`
-            The reason of why you are deleting them (appears in audit log)
-
-        Raises
-        ------
-        `ValueError`
-            If you provide >100 IDs to delete
-        """
-        if len(message_ids) <= 0:
-            return None
-
-        if len(message_ids) == 1:
-            msg = self.get_partial_message(message_ids[0])
-            return await msg.delete(reason=reason)
-        if len(message_ids) > 100:
-            raise ValueError("message_ids must be less than or equal to 100")
-
-        await self._state.query(
-            "POST",
-            f"/channels/{self.id}/messages/bulk-delete",
-            json={"messages": message_ids},
-            reason=reason,
-            res_method="text"
-        )
-
     async def create_webhook(
         self,
         name: str,
@@ -1192,6 +1156,131 @@ class PartialChannel(PartialBase):
 
             if i < 100:
                 break
+
+    @overload
+    async def bulk_delete_messages(
+        self,
+        *,
+        check: Callable[["Message"], bool] | None = None,
+        before: "datetime | Message | Snowflake | int | None" = None,
+        after: "datetime | Message | Snowflake | int | None" = None,
+        around: "datetime | Message | Snowflake | int | None" = None,
+        message_ids: list["Message | Snowflake | int"],
+        limit: int | None = 100,
+        reason: str | None = None
+    ) -> None:
+        ...
+
+    @overload
+    async def bulk_delete_messages(
+        self,
+        *,
+        check: Callable[["Message"], bool] | None = None,
+        before: "datetime | Message | Snowflake | int | None" = None,
+        after: "datetime | Message | Snowflake | int | None" = None,
+        around: "datetime | Message | Snowflake | int | None" = None,
+        message_ids: None = None,
+        limit: int | None = 100,
+        reason: str | None = None
+    ) -> list["Message"]:
+        ...
+
+    async def bulk_delete_messages(
+        self,
+        *,
+        check: Callable[["Message"], bool] | None = None,
+        before: "datetime | Message | Snowflake | int | None" = None,
+        after: "datetime | Message | Snowflake | int | None" = None,
+        around: "datetime | Message | Snowflake | int | None" = None,
+        message_ids: list["Message | Snowflake | int"] | None = None,
+        limit: int | None = 100,
+        reason: str | None = None
+    ) -> list["Message"] | None:
+        """
+        Deletes messages in bulk
+
+        Parameters
+        ----------
+        check: `Callable[[Message], bool] | None`
+            A function to check if the message should be deleted
+        before: `datetime | Message | Snowflake | int | None`
+            The message before which to delete
+        after: `datetime | Message | Snowflake | int | None`
+            The message after which to delete
+        around: `datetime | Message | Snowflake | int | None`
+            The message around which to delete
+        message_ids: `list[Message | Snowflake | int] | None`
+            The message IDs to delete
+        limit: `int | None`
+            The maximum amount of messages to delete
+        reason: `str | None`
+            The reason for deleting the messages
+
+        Returns
+        -------
+        `list[Message] | None`
+            Returns a list of messages deleted
+            If you provide message_ids upfront, it will skip history search and delete
+        """
+        _msg_collector: list["Message"] = []
+
+        async def _bulk_delete(messages: list["Message"]):
+            await self._state.query(
+                "POST",
+                f"/channels/{self.id}/messages/bulk-delete",
+                res_method="text",
+                json={"messages": [str(int(g)) for g in messages]},
+                reason=reason
+            )
+
+        async def _single_delete(messages: list["Message"]):
+            for g in messages:
+                try:
+                    await g.delete()
+                except NotFound as e:
+                    if e.code == 10008:
+                        pass
+                    raise e
+
+        if message_ids is not None:
+            await _bulk_delete(message_ids)  # type: ignore
+            return None
+
+        count = 0
+        minimum_time = int((time.time() - 14 * 24 * 60 * 60) * 1000 - 1420070400000) << 22
+        strategy = _bulk_delete
+
+        async for message in self.fetch_history(
+            before=before,
+            after=after,
+            around=around,
+            limit=limit
+        ):
+            if count == 100:
+                to_delete = _msg_collector[-100:]
+                await strategy(to_delete)
+                count = 0
+                await asyncio.sleep(0.5)
+
+            if check is not None and not check(message):
+                continue
+
+            if message.id < minimum_time:
+                if count == 1:
+                    await _msg_collector[-1].delete()
+                elif count >= 2:
+                    await strategy(_msg_collector[-count:])
+
+                count = 0
+                strategy = _single_delete
+
+            count += 1
+            _msg_collector.append(message)
+
+        if count != 0:
+            await strategy(_msg_collector[-count:])
+
+        return _msg_collector
 
     async def join_thread(self) -> None:
         """ Make the bot join a thread """

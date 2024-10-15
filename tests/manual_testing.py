@@ -228,6 +228,23 @@ async def test_publish(ctx: Context):
 
 
 @client.command()
+async def test_bulk_delete(ctx: Context):
+    async def call_after():
+        msgs = await ctx.channel.bulk_delete_messages(
+            limit=10,
+            check=lambda m: m.content.startswith("test")
+        )
+        print(msgs)
+        await ctx.edit_original_response(content="Deleted messages")
+
+    return ctx.response.send_message(
+        "Working on it...",
+        ephemeral=True,
+        call_after=call_after
+    )
+
+
+@client.command()
 async def test_guild(ctx: Context):
     guild = await ctx.guild.fetch()
     return ctx.response.send_message(guild.name)
