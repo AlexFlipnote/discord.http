@@ -29,6 +29,7 @@ __all__ = (
     "MFALevel",
     "MessageReferenceType",
     "MessageType",
+    "PermissionType",
     "PrivacyLevelType",
     "ReactionType",
     "ResponseType",
