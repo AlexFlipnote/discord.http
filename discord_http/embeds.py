@@ -1,5 +1,5 @@
 from datetime import datetime
-from typing import Self
+from typing import Self, Literal
 
 from .asset import Asset
 from .colour import Colour
@@ -7,6 +7,8 @@ from .colour import Colour
 __all__ = (
     "Embed",
 )
+
+EmbedTypes = Literal["rich", "image", "video", "gifv", "article", "link", "poll_result"]
 
 
 class Embed:
@@ -20,7 +22,7 @@ class Embed:
         url: str | None = None,
         timestamp: datetime | None = None,
     ):
-        self.colour: Colour | None = None
+        self.colour: Colour | int | None = None
 
         if colour is not None:
             self.colour = Colour(int(colour))
@@ -31,6 +33,7 @@ class Embed:
         self.description: str | None = description
         self.timestamp: datetime | None = timestamp
         self.url: str | None = url
+        self.type: EmbedTypes = "rich"
 
         self.footer: dict = {}
         self.image: dict = {}
@@ -319,6 +322,7 @@ class Embed:
         self.description = data.get("description", None)
         self.timestamp = data.get("timestamp", None)
         self.url = data.get("url", None)
+        self.type = data.get("type", "rich")
 
         self.footer = data.get("footer", {})
         self.image = data.get("image", {})

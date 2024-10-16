@@ -5,6 +5,7 @@ from io import BytesIO
 from typing import TYPE_CHECKING, Optional, Union, AsyncIterator, Self, Callable
 
 from . import utils
+from .colour import Colour
 from .embeds import Embed
 from .emoji import EmojiParser
 from .enums import MessageReferenceType, MessageType, InteractionType
@@ -54,6 +55,59 @@ class MessageInteraction(PartialBase):
         self.user: User = User(
             state=state,
             data=data["user"]
+        )
+
+
+class MessageReaction:
+    def __init__(self, *, state: "DiscordAPI", message: "Message", data: dict):
+        self._state = state
+        self._message = message
+
+        self.count: int = int(data["count"])
+        self.burst_count: int = int(data["burst_count"])
+
+        self.me: bool = data.get("me", False)
+        self.emoji: EmojiParser = EmojiParser.from_dict(data["emoji"])
+
+        self.me_burst: bool = data.get("me_burst", False)
+        self.burst_me: bool = data.get("burst_me", False)
+        self.burst_count: int = data.get("burst_count", 0)
+        self.burst_colors: list[Colour] = [
+            Colour.from_hex(g)
+            for g in data.get("burst_colors", [])
+        ]
+
+    async def add(self) -> None:
+        """
+        Make the bot react with this emoji
+        """
+        _parsed = self.emoji.to_reaction()
+        await self._state.query(
+            "PUT",
+            f"/channels/{self._message.channel.id}/messages/{self._message.id}/reactions/{_parsed}/@me",
+            res_method="text"
+        )
+
+    async def remove(self, *, user_id: int | None = None) -> None:
+        """
+        Remove the reaction from the message
+
+        Parameters
+        ----------
+        user_id: `int | None`
+            User ID to remove the reaction from
+            If none provided, it will remove the reaction from the bot
+        """
+        _parsed = self.emoji.to_reaction()
+        _url = (
+            f"/channels/{self._message.channel.id}/messages/{self._message.id}/reactions/{_parsed}"
+            f"/{user_id}" if user_id is not None else "/@me"
+        )
+
+        await self._state.query(
+            "DELETE",
+            _url,
+            res_method="text"
         )
 
 
@@ -384,6 +438,14 @@ class MessageReference:
         return (
             f"<MessageReference guild_id={self.guild_id} channel_id={self.channel_id} "
             f"message_id={self.message_id}>"
+        )
+
+    @property
+    def jump_url(self) -> JumpURL:
+        """ `JumpURL`: The jump URL of the message """
+        return JumpURL(
+            state=self._state,
+            url=f"https://discord.com/channels/{self.guild_id or '@me'}/{self.channel_id}/{self.message_id}"
         )
 
     @property
@@ -1026,6 +1088,14 @@ class PartialMessage(PartialBase):
             res_method="text"
         )
 
+    async def remove_all_reactions(self) -> None:
+        """ Remove all reactions from the message """
+        await self._state.query(
+            "DELETE",
+            f"/channels/{self.channel.id}/messages/{self.id}/reactions",
+            res_method="text"
+        )
+
     async def create_public_thread(
         self,
         name: str,
@@ -1158,6 +1228,11 @@ class Message(PartialMessage):
         self.stickers: list[PartialSticker] = [
             PartialSticker(state=state, id=int(s["id"]), name=s["name"])
             for s in data.get("sticker_items", [])
+        ]
+
+        self.reactions: list[MessageReaction] = [
+            MessageReaction(state=state, message=self, data=g)
+            for g in data.get("reactions", [])
         ]
 
         self.mentions: list["Member | User"] = []

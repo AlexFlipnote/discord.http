@@ -184,7 +184,7 @@ class Sticker(PartialSticker):
     ):
         super().__init__(
             state=state,
-            id=data["id"],
+            id=int(data["id"]),
             name=data["name"],
             guild_id=guild.id if guild else None
         )

@@ -1417,6 +1417,7 @@ class BaseChannel(PartialChannel):
         self.position: Optional[int] = utils.get_int(data, "position")
         self.last_message_id: Optional[int] = utils.get_int(data, "last_message_id")
         self.parent_id: Optional[int] = utils.get_int(data, "parent_id")
+        self.rate_limit_per_user: int = data.get("rate_limit_per_user", 0)
 
         self._raw_type: ChannelType = ChannelType(data["type"])
 

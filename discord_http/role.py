@@ -253,7 +253,7 @@ class Role(PartialRole):
         guild: Union["PartialGuild", "Guild"],
         data: dict
     ):
-        super().__init__(state=state, id=data["id"], guild_id=guild.id)
+        super().__init__(state=state, id=int(data["id"]), guild_id=guild.id)
 
         self.name: str = data["name"]
         self.hoist: bool = data["hoist"]

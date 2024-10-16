@@ -459,6 +459,7 @@ class Parser:
 
     def message_delete_bulk(self, data: dict) -> tuple[BulkDeletePayload]:
         _guild = self._get_guild_or_partial(utils.get_int(data, "guild_id"))
+        _channel = self._get_channel_or_partial(int(data["channel_id"]))
 
         if _guild is None:
             raise ValueError("guild_id somehow was not provided by Discord")
@@ -467,7 +468,8 @@ class Parser:
             BulkDeletePayload(
                 state=self.bot.state,
                 data=data,
-                guild=_guild
+                guild=_guild,
+                channel=_channel
             ),
         )
 

@@ -73,7 +73,7 @@ class Cache:
         elif GatewayCacheFlags.partial_channels in self.cache_flags:
             _guild._cache_channels = {
                 int(g["id"]): self.bot.get_partial_channel(
-                    g["id"],
+                    int(g["id"]),
                     guild_id=guild_id
                 )
                 for g in data["channels"]

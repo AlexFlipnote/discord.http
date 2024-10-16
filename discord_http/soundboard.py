@@ -203,7 +203,11 @@ class SoundboardSound(PartialSoundboardSound):
         data: dict,
         guild: "PartialGuild | Guild | None",
     ):
-        super().__init__(state=state, id=data["sound_id"], guild_id=guild.id if guild else None)
+        super().__init__(
+            state=state,
+            id=int(data["sound_id"]),
+            guild_id=guild.id if guild else None
+        )
 
         self.name: str = data["name"]
         self.volume: int = data["volume"]

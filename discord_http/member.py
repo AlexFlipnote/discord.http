@@ -381,7 +381,7 @@ class Member(PartialMember):
     ):
         super().__init__(
             state=state,
-            id=data["user"]["id"],
+            id=int(data["user"]["id"]),
             guild_id=guild.id,
         )
 
@@ -637,10 +637,10 @@ class PartialThreadMember(PartialMember):
     ) -> None:
         super().__init__(
             state=state,
-            id=data["user_id"],
+            id=int(data["user_id"]),
             guild_id=guild_id,
         )
-        self.thread_id: int = data["id"]
+        self.thread_id: int = int(data["id"])
         self.join_timestamp: datetime = utils.parse_time(data["join_timestamp"])
         self.flags: int = data["flags"]
 

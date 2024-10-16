@@ -388,17 +388,19 @@ class BulkDeletePayload:
         *,
         state: "DiscordAPI",
         data: dict,
-        guild: "PartialGuild"
+        guild: "PartialGuild",
+        channel: "BaseChannel | PartialChannel"
     ):
         self._state = state
-        self.guild: "PartialGuild" = guild
+        self.guild: "Guild | PartialGuild" = guild
+        self.channel: "BaseChannel | PartialChannel" = channel
 
         self.messages: list[PartialMessage] = [
             PartialMessage(
                 state=self._state,
                 id=int(g),
-                guild_id=self.guild.id,
-                channel_id=int(data["channel_id"]),
+                guild_id=guild.id,
+                channel_id=channel.id,
             )
             for g in data["ids"]
         ]

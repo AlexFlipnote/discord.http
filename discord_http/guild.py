@@ -2050,37 +2050,24 @@ class PartialGuild(PartialBase):
         """
         Fetches the audit logs for the guild
 
+        Parameters
+        ----------
+        before: `Optional[Union[datetime, AuditLogEntry, Snowflake, int]]`
+            Consider only entries before given entry
+        after: `Optional[Union[datetime, AuditLogEntry, Snowflake, int]]`
+            Consider only entries after given entry
+        user: `Optional[Union[Snowflake, int]]`
+            Consider only entries made by given user
+        action: `Optional[AuditLogType]`
+            Consider only entries with given action
+        limit: `Optional[int]`
+            The maximum amount of messages to fetch.
+
         Returns
         -------
         `list[AuditLogEntry]`
             The audit logs for the guild
         """
-
-        """r = await self._state.query(
-            "GET",
-            f"/guilds/{self.id}/audit-logs"
-        )
-
-        from .user import User
-        _users = {
-            int(g["id"]): User(
-                state=self._state,
-                data=g
-            )
-            for g in r.response.get("users", [])
-        }
-
-        from .audit import AuditLogEntry
-        return [
-            AuditLogEntry(
-                state=self._state,
-                data=data,
-                users=_users,
-                guild=self
-            )
-            for data in r.response["audit_log_entries"]
-        ]"""
-
         async def _get_history(limit: int, **kwargs):
             params = {"limit": limit}
             for key, value in kwargs.items():

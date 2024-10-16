@@ -26,7 +26,7 @@ class IntegrationAccount(PartialBase):
         self,
         *,
         state: "DiscordAPI",
-        id: str,
+        id: int,
         name: str
     ) -> None:
         super().__init__(id=int(id))
@@ -53,7 +53,7 @@ class IntegrationApplication(PartialBase):
         state: "DiscordAPI",
         data: dict,
     ) -> None:
-        super().__init__(id=data["id"])
+        super().__init__(id=int(data["id"]))
 
         self._state: "DiscordAPI" = state
 
@@ -250,7 +250,7 @@ class Integration(PartialIntegration):
 
         return IntegrationAccount(
             state=self._state,
-            id=self._account["id"],
+            id=int(self._account["id"]),
             name=self._account["name"]
         )
 
