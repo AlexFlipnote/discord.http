@@ -199,7 +199,29 @@ class LocaleContainer:
 
 @runtime_checkable
 class Converter(Protocol[ConverterT]):
+    """
+    This is the base class of converting strings to whatever you desire.
+
+    Instead of needing to implement checks inside the command, you can
+    use this to convert the value on runtime, both in sync and async mode.
+    """
     async def convert(self, ctx: "Context", value: str) -> ConverterT:
+        """
+        The function where you implement the logic of converting
+        the value into whatever you need to be outputted in command.
+
+        Parameters
+        ----------
+        ctx: `Context`
+            Context of the bot
+        value: `str`
+            The value returned by the argument in command
+
+        Returns
+        -------
+        `ConverterT`
+            Your converted value
+        """
         raise NotImplementedError("convert not implemented")
 
 
