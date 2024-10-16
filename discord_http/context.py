@@ -115,7 +115,7 @@ class _ResolveParser:
                     to_append.append(User(state=ctx.bot.state, data=_data))
 
                 case "channels":
-                    to_append.append(channel_types[g["type"]](state=ctx.bot.state, data=_data))
+                    to_append.append(channel_types[_data["type"]](state=ctx.bot.state, data=_data))
 
                 case "roles":
                     if not ctx.guild:
