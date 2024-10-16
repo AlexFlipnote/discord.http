@@ -164,6 +164,10 @@ class BaseFlag(_FlagPyMeta):
 
         return self
 
+    def copy(self) -> Self:
+        """ `BaseFlag`: Returns a copy of the flag """
+        return self.__class__(self.value)
+
 
 class MessageFlags(BaseFlag):
     crossposted = 1 << 0
@@ -371,3 +375,12 @@ class PermissionOverwrite:
             "deny": int(self.deny),
             "type": int(self.target_type)
         }
+
+    def copy(self) -> Self:
+        """ `BaseFlag`: Returns a copy of the flag """
+        return self.__class__(
+            target=self.target,
+            allow=self.allow,
+            deny=self.deny,
+            target_type=self.target_type
+        )
