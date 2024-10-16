@@ -1,7 +1,10 @@
 from base64 import b64encode
 from dataclasses import dataclass
 from datetime import datetime, timedelta
-from typing import TYPE_CHECKING, Union, Optional, AsyncIterator, Callable
+from typing import (
+    TYPE_CHECKING, Union, Optional, AsyncIterator, Callable,
+    NamedTuple
+)
 
 from . import utils
 from .asset import Asset
@@ -48,6 +51,7 @@ __all__ = (
     "PartialGuild",
     "PartialScheduledEvent",
     "ScheduledEvent",
+    "BanEntry",
 )
 
 
@@ -58,6 +62,11 @@ class _GuildLimits:
     filesize: int
     soundboards: int
     stickers: int
+
+
+class BanEntry(NamedTuple):
+    user: "User"
+    reason: str | None
 
 
 class PartialScheduledEvent(PartialBase):
@@ -748,48 +757,123 @@ class PartialGuild(PartialBase):
             for data in r.response
         ]
 
-    async def create_guild(
-        self,
-        name: str,
-        *,
-        icon: Optional[Union[File, bytes]] = None,
-        reason: Optional[str] = None
-    ) -> "Guild":
+    async def fetch_ban(self, user: Snowflake | int) -> BanEntry:
         """
-        Create a guild
-
-        Note that the bot must be in less than 10 guilds to use this endpoint
+        Fetches a user's ban of the guild
 
         Parameters
         ----------
-        name: `str`
-            The name of the guild
-        icon: `Optional[File]`
-            The icon of the guild
-        reason: `Optional[str]`
-            The reason for creating the guild
+        user: Snowflake | int
+            The user to fetch the ban of
 
         Returns
         -------
-        `Guild`
-            The created guild
+        `BanEntry`
+            Ban entry that was found
         """
-        payload = {"name": name}
-
-        if icon is not None:
-            payload["icon"] = utils.bytes_to_base64(icon)
-
         r = await self._state.query(
-            "POST",
-            "/guilds",
-            json=payload,
-            reason=reason
+            "GET",
+            f"/guilds/{self.id}/bans/{int(user)}"
         )
 
-        return Guild(
-            state=self._state,
-            data=r.response
+        from .user import User
+        return BanEntry(
+            user=User(state=self._state, data=r.response["user"]),
+            reason=r.response["reason"]
         )
+
+    async def fetch_bans(
+        self,
+        *,
+        before: Optional[Union[Snowflake, int]] = None,
+        after: Optional[Union[Snowflake, int]] = None,
+        limit: Optional[int] = 1000,
+    ) -> AsyncIterator["BanEntry"]:
+        """
+        Fetch the bans of the guild
+
+        Parameters
+        ----------
+        before: `Optional[Union[Snowflake, int]]`
+            Consider only users before given user id
+        after: `Optional[Union[Snowflake, int]]`
+            Consider only users after given user id
+        limit: `Optional[int]`
+            The maximum amount of messages to fetch.
+            `None` will fetch all users.
+
+        Yields
+        ------
+        `Message`
+            The message object
+        """
+        async def _get_history(limit: int, **kwargs):
+            params = {"limit": limit}
+            for key, value in kwargs.items():
+                if value is None:
+                    continue
+                params[key] = utils.normalize_entity_id(value)
+
+            return await self._state.query(
+                "GET",
+                f"/guilds/{self.id}/bans",
+                params=params
+            )
+
+        async def _after_http(
+            http_limit: int,
+            after_id: Optional[int],
+            limit: Optional[int]
+        ):
+            r = await _get_history(limit=http_limit, after=after_id)
+
+            if r.response:
+                if limit is not None:
+                    limit -= len(r.response)
+                after_id = int(r.response[0]["user"]["id"])
+
+            return r.response, after_id, limit
+
+        async def _before_http(
+            http_limit: int,
+            before_id: Optional[int],
+            limit: Optional[int]
+        ):
+            r = await _get_history(limit=http_limit, before=before_id)
+
+            if r.response:
+                if limit is not None:
+                    limit -= len(r.response)
+                before_id = int(r.response[-1]["user"]["id"])
+
+            return r.response, before_id, limit
+
+        if after:
+            strategy, state = _after_http, utils.normalize_entity_id(after)
+        elif before:
+            strategy, state = _before_http, utils.normalize_entity_id(before)
+        else:
+            strategy, state = _before_http, None
+
+        from .user import User
+
+        while True:
+            http_limit: int = 1000 if limit is None else min(limit, 1000)
+            if http_limit <= 0:
+                break
+
+            strategy: Callable
+            bans, state, limit = await strategy(http_limit, state, limit)
+
+            i = 0
+            for i, b in enumerate(bans, start=1):
+                yield BanEntry(
+                    user=User(state=self._state, data=b["user"]),
+                    reason=b["reason"]
+                )
+
+            if i < 1000:
+                break
 
     async def create_role(
         self,
