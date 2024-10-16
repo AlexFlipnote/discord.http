@@ -1808,6 +1808,49 @@ class Client:
         guild = self.get_partial_guild(guild_id)
         return await guild.fetch()
 
+    async def create_guild(
+        self,
+        name: str,
+        *,
+        icon: Optional[Union[File, bytes]] = None,
+        reason: Optional[str] = None
+    ) -> "Guild":
+        """
+        Create a guild
+
+        Note that the bot must be in less than 10 guilds to use this endpoint
+
+        Parameters
+        ----------
+        name: `str`
+            The name of the guild
+        icon: `Optional[File]`
+            The icon of the guild
+        reason: `Optional[str]`
+            The reason for creating the guild
+
+        Returns
+        -------
+        `Guild`
+            The created guild
+        """
+        payload = {"name": name}
+
+        if icon is not None:
+            payload["icon"] = utils.bytes_to_base64(icon)
+
+        r = await self.state.query(
+            "POST",
+            "/guilds",
+            json=payload,
+            reason=reason
+        )
+
+        return Guild(
+            state=self.state,
+            data=r.response
+        )
+
     def get_partial_role(
         self,
         role_id: int,
