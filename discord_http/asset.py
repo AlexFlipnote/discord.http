@@ -190,6 +190,18 @@ class Asset:
         )
 
     @classmethod
+    def _from_default_avatar(
+        cls,
+        state: "DiscordAPI",
+        num: int
+    ) -> Self:
+        return cls(
+            state=state,
+            url=f"{cls.BASE}/embed/avatars/{num}.png",
+            key=str(num)
+        )
+
+    @classmethod
     def _from_guild_avatar(
         cls,
         state: "DiscordAPI",

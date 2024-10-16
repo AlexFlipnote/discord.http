@@ -67,6 +67,11 @@ class PartialMember(PartialBase):
 
         return PartialGuild(state=self._state, id=self.guild_id)
 
+    @property
+    def default_avatar(self) -> Asset:
+        """ `Asset`: Alias for `User.default_avatar` """
+        return self._user.default_avatar
+
     async def fetch(self) -> "Member":
         """ `Fetch`: Fetches the member from the API """
         r = await self._state.query(
@@ -592,7 +597,11 @@ class Member(PartialMember):
     @property
     def display_avatar(self) -> Optional[Asset]:
         """ `Optional[Asset]`: Returns the display avatar of the member """
-        return self.avatar or self._user.avatar
+        return (
+            self.avatar or
+            self.global_avatar or
+            self.default_avatar
+        )
 
     @property
     def top_role(self) -> PartialRole | Role | None:

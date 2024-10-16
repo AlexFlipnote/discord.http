@@ -4,6 +4,7 @@ from . import utils
 from .asset import Asset
 from .colour import Colour
 from .embeds import Embed
+from .enums import DefaultAvatarType
 from .file import File
 from .flags import PublicFlags
 from .mentions import AllowedMentions
@@ -143,6 +144,14 @@ class PartialUser(PartialBase):
             data=r.response
         )
 
+    @property
+    def default_avatar(self) -> Asset:
+        """ `Asset`: Returns the default avatar of the user """
+        return Asset._from_default_avatar(
+            self._state,
+            (self.id >> 22) % len(DefaultAvatarType)
+        )
+
 
 class User(PartialUser):
     def __init__(
@@ -225,7 +234,7 @@ class User(PartialUser):
     @property
     def display_avatar(self) -> Optional[Asset]:
         """ `Optional[Asset]`: Returns the display avatar of the member """
-        return self.avatar
+        return self.avatar or self.default_avatar
 
 
 class UserClient(User):

@@ -17,6 +17,7 @@ __all__ = (
     "CommandOptionType",
     "ComponentType",
     "ContentFilterLevel",
+    "DefaultAvatarType",
     "DefaultNotificationLevel",
     "EntitlementOwnerType",
     "EntitlementType",
@@ -136,6 +137,16 @@ class BaseEnum(_Enum):
 class IntegrationType(BaseEnum):
     guild = 0
     user = 1
+
+
+class DefaultAvatarType(BaseEnum):
+    blurple = 0
+    grey = 1
+    gray = 1
+    green = 2
+    orange = 3
+    red = 4
+    pink = 5
 
 
 class InviteType(BaseEnum):
