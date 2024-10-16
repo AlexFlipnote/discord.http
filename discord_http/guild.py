@@ -2366,7 +2366,7 @@ class Guild(PartialGuild):
         self.system_channel_flags: int = data.get("system_channel_flags", 0)
         self.system_channel_id: Optional[int] = utils.get_int(data, "system_channel_id")
         self.vanity_url_code: Optional[str] = data.get("vanity_url_code", None)
-        self.verification_level: int = data.get("verification_level", 0)
+        self.verification_level: VerificationLevel = VerificationLevel(data.get("verification_level", 0))
         self.widget_channel_id: Optional[int] = utils.get_int(data, "widget_channel_id")
         self.widget_enabled: bool = data.get("widget_enabled", False)
 

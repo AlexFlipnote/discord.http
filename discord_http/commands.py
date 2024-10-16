@@ -5,8 +5,9 @@ import re
 
 from typing import get_args as get_type_args
 from typing import (
-    Callable, Dict, TYPE_CHECKING, Union, Type,
-    Generic, TypeVar, Optional, Coroutine, Literal, Any
+    Callable, TYPE_CHECKING, Union, Type, Protocol,
+    Generic, TypeVar, Optional, Coroutine, Literal, Any,
+    runtime_checkable
 )
 
 from . import utils
@@ -36,6 +37,7 @@ if TYPE_CHECKING:
     from .context import Context
 
 ChoiceT = TypeVar("ChoiceT", str, int, float)
+ConverterT = TypeVar("ConverterT", covariant=True)
 
 LocaleTypes = Literal[
     "id", "da", "de", "en-GB", "en-US", "es-ES", "fr",
@@ -77,6 +79,7 @@ __all__ = (
     "Choice",
     "Cog",
     "Command",
+    "Converter",
     "Interaction",
     "Listener",
     "PartialCommand",
@@ -194,6 +197,12 @@ class LocaleContainer:
         self.description = description or "..."
 
 
+@runtime_checkable
+class Converter(Protocol[ConverterT]):
+    async def convert(self, ctx: "Context", value: str) -> ConverterT:
+        raise NotImplementedError("convert not implemented")
+
+
 class Command:
     def __init__(
         self,
@@ -218,8 +227,10 @@ class Command:
         self.guild_install = guild_install
         self.user_install = user_install
 
-        self.list_autocompletes: Dict[str, Callable] = {}
+        self.list_autocompletes: dict[str, Callable] = {}
         self.guild_ids: list[Union[Snowflake, int]] = guild_ids or []
+
+        self._converters: dict[str, Type[Converter]] = {}
 
         self.__list_choices: list[str] = []
         self.__user_objects: dict[str, Type[Union[Member, User]]] = {}
@@ -259,9 +270,11 @@ class Command:
                 # - type | type | ...
                 if getattr(parameter.annotation, "__args__", None):
                     if (
-                        len(parameter.annotation.__args__) == 2 and
+                        len(parameter.annotation.__args__) >= 2 and
                         parameter.annotation.__args__[-1] is _NoneType
                     ):
+                        # First one is the type we're looking for
+                        # Others except last usually is for typing purposes
                         origin = parameter.annotation.__args__[0]
 
                         # Recreate GenericAlias if it's something like Choice[str]
@@ -339,6 +352,10 @@ class Command:
                     case x if x == str:
                         ptype = CommandOptionType.string
 
+                    case x if isinstance(x, Converter):
+                        self._converters[parameter.name] = x  # type: ignore
+                        ptype = CommandOptionType.string
+
                     case _:
                         ptype = CommandOptionType.string
 
@@ -391,7 +408,7 @@ class Command:
         self,
         context: "Context"
     ) -> BaseResponse:
-        args, kwargs = context._create_args()
+        args, kwargs = await context._create_args()
 
         for name, values in getattr(self.command, "__choices_params__", {}).items():
             if name not in kwargs:
@@ -751,7 +768,7 @@ class SubGroup(Command):
         self.guild_ids: list[Union[Snowflake, int]] = guild_ids or []
         self.type = int(ApplicationCommandType.chat_input)
         self.cog: Optional["Cog"] = None
-        self.subcommands: Dict[str, Union[SubCommand, SubGroup]] = {}
+        self.subcommands: dict[str, Union[SubCommand, SubGroup]] = {}
         self.guild_install = guild_install
         self.user_install = user_install
         self.parent: Optional["SubGroup"] = parent
@@ -1224,9 +1241,9 @@ def message_command(
 
 
 def locales(
-    translations: Dict[
+    translations: dict[
         LocaleTypes,
-        Dict[
+        dict[
             str,
             Union[list[str], tuple[str], tuple[str, str]]
         ]

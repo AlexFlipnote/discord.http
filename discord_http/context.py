@@ -66,7 +66,7 @@ __all__ = (
 )
 
 
-class SelectValues:
+class _ResolveParser:
     def __init__(self, ctx: "Context", data: dict):
         self._parsed_data = {
             "members": [], "users": [],
@@ -89,31 +89,6 @@ class SelectValues:
     def none(cls, ctx: "Context") -> Self:
         """ `SelectValues`: with no values """
         return cls(ctx, {})
-
-    @property
-    def members(self) -> list[Member]:
-        """ `List[Member]`: of members selected """
-        return self._parsed_data["members"]
-
-    @property
-    def users(self) -> list[User]:
-        """ `List[User]`: of users selected """
-        return self._parsed_data["users"]
-
-    @property
-    def channels(self) -> list[BaseChannel]:
-        """ `List[BaseChannel]`: of channels selected """
-        return self._parsed_data["channels"]
-
-    @property
-    def roles(self) -> list[Role]:
-        """ `List[Role]`: of roles selected """
-        return self._parsed_data["roles"]
-
-    @property
-    def strings(self) -> list[str]:
-        """ `List[str]`: of strings selected """
-        return self._parsed_data["strings"]
 
     def is_empty(self) -> bool:
         """ `bool`: Whether no values were selected """
@@ -149,6 +124,41 @@ class SelectValues:
 
                 case _:
                     pass
+
+
+class ResolvedValues(_ResolveParser):
+    def __init__(self, ctx: "Context", data: dict):
+        super().__init__(ctx, data)
+
+    @property
+    def members(self) -> list[Member]:
+        """ `List[Member]`: of members resolved """
+        return self._parsed_data["members"]
+
+    @property
+    def users(self) -> list[User]:
+        """ `List[User]`: of users resolved """
+        return self._parsed_data["users"]
+
+    @property
+    def channels(self) -> list[BaseChannel]:
+        """ `List[BaseChannel]`: of channels resolved """
+        return self._parsed_data["channels"]
+
+    @property
+    def roles(self) -> list[Role]:
+        """ `List[Role]`: of roles resolved """
+        return self._parsed_data["roles"]
+
+
+class SelectValues(ResolvedValues):
+    def __init__(self, ctx: "Context", data: dict):
+        super().__init__(ctx, data)
+
+    @property
+    def strings(self) -> list[str]:
+        """ `List[str]`: of strings selected """
+        return self._parsed_data["strings"]
 
 
 class InteractionResponse:
@@ -516,6 +526,8 @@ class Context:
 
         self.app_permissions: Permissions = Permissions(int(data.get("app_permissions", 0)))
         self.custom_id: Optional[str] = data.get("data", {}).get("custom_id", None)
+
+        self.resolved: ResolvedValues = ResolvedValues.none(self)
         self.select_values: SelectValues = SelectValues.none(self)
         self.modal_values: dict[str, str] = {}
 
@@ -523,7 +535,7 @@ class Context:
         self.followup_token: str = data.get("token", None)
 
         self._original_response: Optional[Message] = None
-        self._resolved: dict = data.get("data", {}).get("resolved", {})
+        self._raw_resolved: dict = data.get("data", {}).get("resolved", {})
 
         self.entitlements: list[Entitlements] = [
             Entitlements(state=self.bot.state, data=g)
@@ -561,14 +573,17 @@ class Context:
                 data=data["message"],
                 guild=self._guild
             )
-        elif self._resolved.get("messages", {}):
-            _first_msg = next(iter(self._resolved["messages"].values()), None)
+        elif self._raw_resolved.get("messages", {}):
+            _first_msg = next(iter(self._raw_resolved["messages"].values()), None)
             if _first_msg:
                 self.message = Message(
                     state=self.bot.state,
                     data=_first_msg,
                     guild=self._guild
                 )
+
+        if self._raw_resolved:
+            self.resolved = ResolvedValues(self, data)
 
         self.author: Optional[Union[Member, User]] = None
         if self.message is not None:
@@ -822,15 +837,15 @@ class Context:
             f"/webhooks/{self.bot.application_id}/{self.followup_token}/messages/@original"
         )
 
-    def _create_args(self) -> tuple[list[Union[Member, User, Message, None]], dict]:
+    async def _create_args(self) -> tuple[list[Union[Member, User, Message, None]], dict]:
         match self.command_type:
             case ApplicationCommandType.chat_input:
-                return [], self._create_args_chat_input()
+                return [], await self._create_args_chat_input()
 
             case ApplicationCommandType.user:
-                if self._resolved.get("members", {}):
+                if self.resolved.members:
                     _first: Optional[dict] = next(
-                        iter(self._resolved["members"].values()),
+                        iter(self._raw_resolved["members"].values()),
                         None
                     )
 
@@ -840,7 +855,7 @@ class Context:
                         raise ValueError("While parsing members, guild was not available")
 
                     _first["user"] = next(
-                        iter(self._resolved["users"].values()),
+                        iter(self._raw_resolved["users"].values()),
                         None
                     )
 
@@ -850,9 +865,9 @@ class Context:
                         data=_first
                     )
 
-                elif self._resolved.get("users", {}):
+                elif self._raw_resolved.get("users", {}):
                     _first: Optional[dict] = next(
-                        iter(self._resolved["users"].values()),
+                        iter(self._raw_resolved["users"].values()),
                         None
                     )
 
@@ -872,12 +887,12 @@ class Context:
             case _:
                 raise ValueError("Unknown command type")
 
-    def _create_args_chat_input(self) -> dict:
-        def _create_args_recursive(data, resolved) -> dict:
+    async def _create_args_chat_input(self) -> dict:
+        async def _create_args_recursive(data, resolved) -> dict:
             if not data.get("options"):
                 return {}
 
-            kwargs = {}
+            kwargs: dict[str, Any] = {}
 
             for option in data["options"]:
                 match option["type"]:
@@ -885,7 +900,7 @@ class Context:
                         CommandOptionType.sub_command,
                         CommandOptionType.sub_command_group
                     ):
-                        sub_kwargs = _create_args_recursive(option, resolved)
+                        sub_kwargs = await _create_args_recursive(option, resolved)
                         kwargs.update(sub_kwargs)
 
                     case CommandOptionType.user:
@@ -933,6 +948,20 @@ class Context:
                     case CommandOptionType.string:
                         kwargs[option["name"]] = option["value"]
 
+                        _has_converter = self.command._converters.get(option["name"], None)
+                        if _has_converter:
+                            _conv_class = _has_converter()
+                            if inspect.iscoroutinefunction(_conv_class.convert):
+                                kwargs[option["name"]] = await _conv_class.convert(
+                                    self,
+                                    option["value"]
+                                )
+                            else:
+                                kwargs[option["name"]] = _conv_class.convert(
+                                    self,
+                                    option["value"]
+                                )
+
                     case CommandOptionType.integer:
                         kwargs[option["name"]] = int(option["value"])
 
@@ -947,9 +976,9 @@ class Context:
 
             return kwargs
 
-        return _create_args_recursive(
+        return await _create_args_recursive(
             {"options": self.options},
-            self._resolved
+            self._raw_resolved
         )
 
     def _parse_user(self, data: dict) -> Union[Member, User]:

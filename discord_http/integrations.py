@@ -201,7 +201,7 @@ class Integration(PartialIntegration):
             state=state,
             id=int(data["id"]),
             guild_id=guild.id,
-            application_id=data.get("application", {}.get("id"))
+            application_id=utils.get_int(data.get("application", {}), "id")
         )
 
         self._application: dict | None = data.get("application")

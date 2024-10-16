@@ -255,13 +255,12 @@ class Role(PartialRole):
     ):
         super().__init__(state=state, id=data["id"], guild_id=guild.id)
 
-        self.color: int = int(data["color"])
-        self.colour: int = int(data["color"])
         self.name: str = data["name"]
         self.hoist: bool = data["hoist"]
-        self.managed: bool = data["managed"]
-        self.mentionable: bool = data["mentionable"]
+        self.managed: bool = data.get("managed", False)
+        self.mentionable: bool = data.get("mentionable", False)
         self.permissions: Permissions = Permissions(int(data["permissions"]))
+        self.colour: Colour = Colour(int(data["color"]))
         self.position: int = int(data["position"])
         self.tags: dict = data.get("tags", {})
 

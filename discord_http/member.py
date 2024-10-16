@@ -396,7 +396,7 @@ class Member(PartialMember):
         self.joined_at: datetime = utils.parse_time(data["joined_at"])
         self.communication_disabled_until: datetime | None = None
         self.premium_since: datetime | None = None
-        self.roles: list[PartialRole] = [
+        self._roles: list[PartialRole] = [
             PartialRole(state=state, id=int(r), guild_id=self.guild.id)
             for r in data["roles"]
         ]
@@ -428,6 +428,19 @@ class Member(PartialMember):
             self.premium_since = utils.parse_time(
                 data["premium_since"]
             )
+
+    @property
+    def roles(self) -> list[Role | PartialRole]:
+        """ `list[Role | PartialRole]`: Returns the roles of the member """
+        if self.guild.roles:
+            # If there is a guild cache, we could potentially return full Role object
+            g_roles = [r.id for r in self._roles]
+            return [
+                g for g in self.guild.roles
+                if g.id in g_roles
+            ]
+
+        return self._roles
 
     def get_role(
         self,
