@@ -15,7 +15,7 @@ from .flags import AttachmentFlags
 from .mentions import AllowedMentions
 from .object import PartialBase, Snowflake
 from .response import MessageResponse
-from .role import PartialRole
+from .role import Role, PartialRole
 from .sticker import PartialSticker
 from .user import User
 from .view import View
@@ -1348,12 +1348,16 @@ class Message(PartialMessage):
         )
 
     @property
-    def role_mentions(self) -> list[PartialRole]:
-        """ `list[PartialRole]`: Returns the role mentions in the message """
+    def role_mentions(self) -> list[Role | PartialRole]:
+        """
+        `list[PartialRole]`: Returns the role mentions in the message.
+        Can return full role object if guild and role cache is enabled
+        """
         if not self.guild_id:
             return []
 
         return [
+            self.guild.get_role(int(role_id)) or
             PartialRole(
                 state=self._state,
                 id=int(role_id),
@@ -1363,11 +1367,15 @@ class Message(PartialMessage):
         ]
 
     @property
-    def channel_mentions(self) -> list["PartialChannel"]:
-        """ `list[PartialChannel]`: Returns the channel mentions in the message """
+    def channel_mentions(self) -> list["BaseChannel | PartialChannel"]:
+        """
+        `list[PartialChannel]`: Returns the channel mentions in the message
+        Can return full role object if guild and channel cache is enabled
+        """
         from .channel import PartialChannel
 
         return [
+            self.guild.get_channel(int(channel_id)) or
             PartialChannel(state=self._state, id=int(channel_id))
             for channel_id in utils.re_channel.findall(self.content)
         ]

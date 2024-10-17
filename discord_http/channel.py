@@ -741,9 +741,8 @@ class PartialChannel(PartialBase):
 
     async def set_permission(
         self,
-        id: Union[Snowflake, int],
-        *,
         overwrite: PermissionOverwrite,
+        *,
         reason: Optional[str] = None
     ) -> None:
         """
@@ -751,16 +750,14 @@ class PartialChannel(PartialBase):
 
         Parameters
         ----------
-        id: `Union[Snowflake, int]`
-            The ID of the overwrite
         overwrite: `PermissionOverwrite`
-            The new overwrite permissions
+            The new overwrite permissions for the spesific role/user
         reason: `Optional[str]`
             The reason for editing the overwrite
         """
         await self._state.query(
             "PUT",
-            f"/channels/{self.id}/permissions/{int(id)}",
+            f"/channels/{self.id}/permissions/{int(overwrite.target.id)}",
             json=overwrite.to_dict(),
             res_method="text",
             reason=reason
