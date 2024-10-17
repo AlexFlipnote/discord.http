@@ -9,7 +9,7 @@ MISSING = utils.MISSING
 
 if TYPE_CHECKING:
     from .member import Member
-    from .channel import PartialChannel
+    from .channel import BaseChannel, PartialChannel
     from .guild import PartialGuild
     from .http import DiscordAPI
 
@@ -59,9 +59,16 @@ class PartialVoiceState(PartialBase):
             f"/guilds/{self.guild_id}/voice-states/{self.id}"
         )
 
+        _guild = self._state.cache.get_guild(self.guild_id)
+        _channel = None
+        if self.channel_id is not None:
+            _channel = self._state.cache.get_channel(self.guild_id, self.channel_id)
+
         return VoiceState(
             state=self._state,
-            data=r.response
+            data=r.response,
+            guild=_guild,
+            channel=_channel
         )
 
     async def edit(
@@ -94,7 +101,14 @@ class PartialVoiceState(PartialBase):
 
 
 class VoiceState(PartialVoiceState):
-    def __init__(self, *, state: "DiscordAPI", data: dict):
+    def __init__(
+        self,
+        *,
+        state: "DiscordAPI",
+        data: dict,
+        guild: "PartialGuild | None",
+        channel: "BaseChannel | PartialChannel | None"
+    ):
         super().__init__(
             state=state,
             id=int(data["user_id"]),
@@ -104,11 +118,11 @@ class VoiceState(PartialVoiceState):
 
         self.session_id: str = data["session_id"]
 
-        self.channel_id: int | None = utils.get_int(data, "channel_id")
-        self.guild_id: int | None = utils.get_int(data, "guild_id")
-
         self.user: PartialUser = PartialUser(state=state, id=int(data["user_id"]))
         self.member: "Member | None" = None
+
+        self.channel: "BaseChannel | PartialChannel | None" = channel
+        self.guild: "PartialGuild | None" = guild
 
         self.deaf: bool = data["deaf"]
         self.mute: bool = data["mute"]
@@ -137,27 +151,3 @@ class VoiceState(PartialVoiceState):
             self.request_to_speak_timestamp = utils.parse_time(
                 data["request_to_speak_timestamp"]
             )
-
-    @property
-    def guild(self) -> "PartialGuild | None":
-        """ `PartialGuild`: Returns the guild the member is in """
-        if not self.guild_id:
-            return None
-
-        from .guild import PartialGuild
-        return PartialGuild(
-            state=self._state,
-            id=self.guild_id
-        )
-
-    @property
-    def channel(self) -> "PartialChannel | None":
-        """ `PartialChannel`: Returns the channel the member is in """
-        if not self.channel_id:
-            return None
-
-        from .channel import PartialChannel
-        return PartialChannel(
-            state=self._state,
-            id=self.channel_id
-        )

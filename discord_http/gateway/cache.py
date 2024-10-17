@@ -147,11 +147,20 @@ class Cache:
         else:
             _guild._cache_stickers = {}
 
+        # Do voice states in the end
         if GatewayCacheFlags.voice_states in self.cache_flags:
             _guild._cache_voice_states = {  # type: ignore
                 int(g["user_id"]): VoiceState(
                     state=self.bot.state,
-                    data=g
+                    data=g,
+                    guild=_guild,
+                    channel=(
+                        _guild.get_channel(int(g["channel_id"])) or
+                        self.bot.get_partial_channel(
+                            int(g["channel_id"]),
+                            guild_id=guild_id
+                        )
+                    )
                 )
                 for g in data["voice_states"]
             }
@@ -160,7 +169,7 @@ class Cache:
                 int(g["user_id"]): self.bot.get_partial_voice_state(
                     int(g["user_id"]),
                     guild_id=guild_id,
-                    channel_id=g["channel_id"]
+                    channel_id=int(g["channel_id"])
                 )
                 for g in data["voice_states"]
             }

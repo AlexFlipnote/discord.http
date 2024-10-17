@@ -461,7 +461,7 @@ class PartialChannel(PartialBase):
         _class: type["BaseChannel"]
 
         if guild_id is not None:
-            data["guild_id"] = guild_id
+            data["guild_id"] = int(guild_id)
 
         return _class(
             state=state or self._state,

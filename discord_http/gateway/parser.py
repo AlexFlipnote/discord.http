@@ -133,11 +133,6 @@ class Parser:
         guild = self._guild(data)
         self.bot.cache.add_guild(guild.id, guild, data)
 
-        for channel in guild.channels:
-            self.bot.cache.add_channel(channel)
-        for role in guild.roles:
-            self.bot.cache.add_role(role)
-
         return (guild,)
 
     def guild_update(self, data: dict) -> tuple[Guild]:
@@ -459,7 +454,10 @@ class Parser:
 
     def message_delete_bulk(self, data: dict) -> tuple[BulkDeletePayload]:
         _guild = self._get_guild_or_partial(utils.get_int(data, "guild_id"))
-        _channel = self._get_channel_or_partial(int(data["channel_id"]))
+        _channel = self._get_channel_or_partial(
+            int(data["channel_id"]),
+            guild_id=_guild.id
+        )
 
         if _guild is None:
             raise ValueError("guild_id somehow was not provided by Discord")
@@ -569,7 +567,24 @@ class Parser:
     """
 
     def voice_state_update(self, data: dict) -> tuple[VoiceState]:
-        vs = VoiceState(state=self.bot.state, data=data)
+        _channel = None
+        _guild = None
+
+        if data.get("channel_id", None) is not None:
+            _channel = self._get_channel_or_partial(
+                int(data["channel_id"]),
+                guild_id=utils.get_int(data, "guild_id")
+            )
+
+        if data.get("guild_id", None) is not None:
+            _guild = self._get_guild_or_partial(int(data["guild_id"]))
+
+        vs = VoiceState(
+            state=self.bot.state,
+            data=data,
+            guild=_guild,
+            channel=_channel
+        )
 
         self.bot.cache.update_voice_state(vs)
         return (vs,)
