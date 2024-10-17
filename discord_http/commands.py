@@ -1438,8 +1438,8 @@ def allow_contexts(
 
 def choices(
     **kwargs: dict[
-        Union[str, int, float],
-        Union[str, int, float]
+        str | int | float,
+        str | int | float
     ]
 ):
     """

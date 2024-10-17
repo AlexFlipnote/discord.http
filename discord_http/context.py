@@ -1,5 +1,6 @@
 import inspect
 import logging
+import asyncio
 
 from typing import TYPE_CHECKING, Callable, Union, Optional, Any, Self
 from datetime import datetime, timedelta
@@ -602,6 +603,10 @@ class Context:
 
     async def _background_task_manager(self, call_after: Callable) -> None:
         try:
+            if isinstance(self.bot.call_after_delay, float):
+                await asyncio.sleep(self.bot.call_after_delay)
+                # Somehow, Discord thinks @original messages is HTTP 404
+                # Give them a smaaaall chance to fix it
             await call_after()
         except Exception as e:
             if self.bot.has_any_dispatch("interaction_error"):
@@ -618,6 +623,9 @@ class Context:
         `Guild | PartialGuild | None`: Returns the guild the interaction was made in
         If you are using gateway cache, it can return full object too
         """
+        if not self._guild:
+            return None
+
         cache = self.bot.cache.get_guild(self._guild.id)
         if cache:
             return cache

@@ -107,7 +107,7 @@ class PartialChannel(PartialBase):
     ):
         super().__init__(id=int(id))
         self._state = state
-        self.guild_id: Optional[int] = guild_id
+        self.guild_id: Optional[int] = int(guild_id) if guild_id else None
 
         self.parent_id: Optional[int] = None
 

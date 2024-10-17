@@ -24,9 +24,6 @@ class Snowflake:
     def __repr__(self) -> str:
         return f"<Snowflake id={self.id}>"
 
-    def __str__(self) -> str:
-        return str(self.id)
-
     def __int__(self) -> int:
         return self.id
 

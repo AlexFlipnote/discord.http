@@ -123,7 +123,7 @@ class JumpURL:
     ):
         self._state = state
 
-        self.guild_id: Optional[int] = guild_id or None
+        self.guild_id: Optional[int] = int(guild_id) if guild_id else None
         self.channel_id: Optional[int] = channel_id or None
         self.message_id: Optional[int] = message_id or None
 
@@ -685,7 +685,7 @@ class PartialMessage(PartialBase):
         self._state = state
 
         self.channel_id: int = int(channel_id)
-        self.guild_id: int | None = guild_id
+        self.guild_id: int | None = int(guild_id) if guild_id else None
 
     def __repr__(self) -> str:
         return f"<PartialMessage id={self.id}>"

@@ -614,8 +614,7 @@ async def test_create_category(ctx: Context, name: str):
     await category.create_voice_channel(name="test")
 
     await test1.set_permission(
-        ctx.user,
-        overwrite=PermissionOverwrite(
+        PermissionOverwrite(
             ctx.user,
             allow=Permissions.from_names("send_messages", "embed_links")
         )
