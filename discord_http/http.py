@@ -345,6 +345,7 @@ class DiscordAPI:
         path: str,
         *,
         res_method: Literal["json"] = "json",
+        retry_codes: list[int] | None = None,
         **kwargs
     ) -> HTTPResponse[dict[Any, Any]]:
         ...
@@ -356,6 +357,7 @@ class DiscordAPI:
         path: str,
         *,
         res_method: Literal["read"] = "read",
+        retry_codes: list[int] | None = None,
         **kwargs
     ) -> HTTPResponse[bytes]:
         ...
@@ -367,6 +369,7 @@ class DiscordAPI:
         path: str,
         *,
         res_method: Literal["text"] = "text",
+        retry_codes: list[int] | None = None,
         **kwargs
     ) -> HTTPResponse[str]:
         ...
@@ -377,6 +380,7 @@ class DiscordAPI:
         path: str,
         *,
         res_method: ResMethodTypes = "json",
+        retry_codes: list[int] | None = None,
         **kwargs
     ) -> HTTPResponse:
         """
@@ -390,6 +394,8 @@ class DiscordAPI:
             The path to make the request to
         res_method: `str`
             The method to use to get the response
+        retry_codes: `list[int]`
+            The HTTP codes to retry regardless of the response
 
         Returns
         -------
@@ -430,6 +436,8 @@ class DiscordAPI:
         if kwargs.pop("webhook", False):
             _api_url = self.base_url
 
+        retry_codes = retry_codes or []
+
         ratelimit = self.get_ratelimit(f"{method} {path}")
 
         _http_400_error_table: dict[int, type[HTTPException]] = {
@@ -456,6 +464,16 @@ class DiscordAPI:
                         case x if x >= 200 and x <= 299:
                             ratelimit.update(r)
                             return r
+
+                        case x if x in retry_codes:
+                            # Custom retry code
+
+                            if tries > 4:  # Give up after 5 tries
+                                raise DiscordServerError(r)
+
+                            # Try again, maybe it will work next time, surely...
+                            await _sleep(tries)
+                            continue
 
                         case 429:
                             if not isinstance(r.response, dict):

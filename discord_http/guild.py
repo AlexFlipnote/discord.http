@@ -511,6 +511,14 @@ class PartialGuild(PartialBase):
             guild_id=self.id
         )
 
+    async def leave(self) -> None:
+        """ Leave the guild """
+        await self._state.query(
+            "DELETE",
+            f"/users/@me/guilds/{self.id}",
+            res_method="text"
+        )
+
     async def fetch(self) -> "Guild":
         """ `Guild`: Fetches more information about the guild """
         r = await self._state.query(

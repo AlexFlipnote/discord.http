@@ -35,6 +35,7 @@ class PartialWebhook(PartialBase):
     ):
         super().__init__(id=int(id))
         self._state = state
+        self._retry_codes = []
         self.token: Optional[str] = token
 
     def __repr__(self) -> str:
@@ -205,7 +206,8 @@ class PartialWebhook(PartialBase):
             webhook=True,
             params=params,
             data=multidata.finish(),
-            headers={"Content-Type": multidata.content_type}
+            headers={"Content-Type": multidata.content_type},
+            retry_codes=self._retry_codes
         )
 
         if wait is True:
@@ -355,7 +357,9 @@ class Webhook(PartialWebhook):
         `Webhook`
             The webhook that was created
         """
-        return cls(state=state, data=data)
+        _cls = cls(state=state, data=data)
+        _cls._retry_codes = [404]
+        return _cls
 
     @property
     def guild(self) -> Optional["PartialGuild"]:
