@@ -357,7 +357,7 @@ class AuditLogEntry(Snowflake):
         self.action_type: enums.AuditLogType = enums.AuditLogType(int(data["action_type"]))
         self.reason: str | None = data.get("reason", None)
 
-        self.user_id: int = int(data["user_id"])
+        self.user_id: int | None = utils.get_int(data, "user_id")
         self.target_id: int | None = utils.get_int(data, "target_id")
 
         # TODO: Add parsing methods for options
@@ -382,6 +382,8 @@ class AuditLogEntry(Snowflake):
     @property
     def user(self) -> User | PartialUser | None:
         """ `User`: Returns the user object of the audit log if available """
+        if not self.user_id:
+            return None
         return self._convert_target_user(self.user_id)
 
     @property
