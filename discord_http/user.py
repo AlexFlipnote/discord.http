@@ -57,6 +57,7 @@ class PartialUser(PartialBase):
         tts: Optional[bool] = False,
         type: Union[ResponseType, int] = 4,
         allowed_mentions: Optional[AllowedMentions] = MISSING,
+        delete_after: Optional[float] = None
     ) -> "Message":
         """
         Send a message to the user
@@ -83,6 +84,8 @@ class PartialUser(PartialBase):
             Which type of response should be sent
         allowed_mentions: `Optional[AllowedMentions]`
             Allowed mentions of the message
+        delete_after: `Optional[float]`
+            How long to wait before deleting the message
 
         Returns
         -------
@@ -113,10 +116,14 @@ class PartialUser(PartialBase):
         )
 
         from .message import Message
-        return Message(
+        _msg = Message(
             state=self._state,
             data=r.response
         )
+
+        if delete_after is not None:
+            await _msg.delete(delay=float(delete_after))
+        return _msg
 
     async def create_dm(self) -> "DMChannel":
         """ `DMChannel`: Creates a DM channel with the user """

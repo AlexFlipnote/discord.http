@@ -691,7 +691,8 @@ class Context:
         type: Union[ResponseType, int] = 4,
         allowed_mentions: Optional[AllowedMentions] = MISSING,
         poll: Optional[Poll] = MISSING,
-        flags: Optional[MessageFlags] = MISSING
+        flags: Optional[MessageFlags] = MISSING,
+        delete_after: Optional[float] = None
     ) -> Message:
         """
         Send a message after responding with an empty response in the initial interaction
@@ -722,6 +723,8 @@ class Context:
             Thread ID to send the message to
         poll: `Optional[Poll]`
             Poll to send with the message
+        delete_after: `Optional[float]`
+            How long to wait before deleting the message
 
         Returns
         -------
@@ -775,11 +778,15 @@ class Context:
             headers={"Content-Type": multidata.content_type}
         )
 
-        return Message(
+        _msg = Message(
             state=self.bot.state,
             data=r.response["resource"]["message"],
             guild=self.guild
         )
+
+        if delete_after is not None:
+            await _msg.delete(delay=float(delete_after))
+        return _msg
 
     async def original_response(self) -> Message:
         """ `Message` Returns the original response to the interaction """

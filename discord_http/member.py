@@ -98,6 +98,7 @@ class PartialMember(PartialBase):
         tts: Optional[bool] = False,
         type: Union[ResponseType, int] = 4,
         allowed_mentions: Optional[AllowedMentions] = MISSING,
+        delete_after: Optional[float] = None
     ) -> "Message":
         """
         Send a message to the user
@@ -124,6 +125,8 @@ class PartialMember(PartialBase):
             Type of the message
         allowed_mentions: `Optional[AllowedMentions]`
             Allowed mentions of the message
+        delete_after: `Optional[float]`
+            How long to wait before deleting the message
 
         Returns
         -------
@@ -140,7 +143,8 @@ class PartialMember(PartialBase):
             view=view,
             tts=tts,
             type=type,
-            allowed_mentions=allowed_mentions
+            allowed_mentions=allowed_mentions,
+            delete_after=delete_after
         )
 
     async def create_dm(self) -> "DMChannel":

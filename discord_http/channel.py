@@ -365,6 +365,7 @@ class PartialChannel(PartialBase):
         type: Union[ResponseType, int] = 4,
         poll: Optional["Poll"] = MISSING,
         allowed_mentions: Optional[AllowedMentions] = MISSING,
+        delete_after: Optional[float] = None
     ) -> "Message":
         """
         Send a message to the channel
@@ -391,6 +392,8 @@ class PartialChannel(PartialBase):
             The allowed mentions for the message
         poll: `Optional[Poll]`
             The poll to be sent
+        delete_after: `Optional[float]`
+            How long to wait before deleting the message
 
         Returns
         -------
@@ -418,10 +421,14 @@ class PartialChannel(PartialBase):
         )
 
         from .message import Message
-        return Message(
+        _msg = Message(
             state=self._state,
             data=r.response
         )
+
+        if delete_after is not None:
+            await _msg.delete(delay=float(delete_after))
+        return _msg
 
     def _class_to_return(
         self,
@@ -1240,6 +1247,8 @@ class PartialChannel(PartialBase):
                     raise e
 
         if message_ids is not None:
+            # Remove duplicates just in case
+            message_ids = list(set(message_ids))
             await _bulk_delete(message_ids)  # type: ignore
             return None
 

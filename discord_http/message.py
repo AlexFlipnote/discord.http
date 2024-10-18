@@ -1170,7 +1170,7 @@ class MessageSnapshot:
         self._state = state
 
         self.type: MessageType = MessageType(data.get("type", 0))
-        self.content: str = data["content"]
+        self.content: str = data.get("content", "")
 
         self.timestamp: datetime = utils.parse_time(data["timestamp"])
         self.edited_timestamp: datetime | None = None
