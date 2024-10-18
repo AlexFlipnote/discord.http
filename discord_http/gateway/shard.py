@@ -453,7 +453,10 @@ class Shard:
                 self._parse_guild_delete(data)
 
             case _:
-                self._send_dispatch(new_name, *_parse_event(data))
+                try:
+                    self._send_dispatch(new_name, *_parse_event(data))
+                except Exception as e:
+                    _log.error(f"Error while parsing event {new_name}", exc_info=e)
 
     def _send_dispatch(self, name: str, *args: Any) -> None:
         try:
