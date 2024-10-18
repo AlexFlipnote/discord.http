@@ -228,7 +228,8 @@ class Link(Button):
         url: str,
         label: str | None = None,
         row: int | None = None,
-        emoji: str | None = None
+        emoji: str | None = None,
+        disabled: bool = False
     ):
         """
         Button alias for the link style
@@ -249,7 +250,8 @@ class Link(Button):
             label=label,
             emoji=emoji,
             style=ButtonStyles.link,
-            row=row
+            row=row,
+            disabled=disabled
         )
 
         # Link buttons use url instead of custom_id
