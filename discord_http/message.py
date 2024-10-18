@@ -1172,7 +1172,7 @@ class MessageSnapshot:
         self.type: MessageType = MessageType(data.get("type", 0))
         self.content: str = data.get("content", "")
 
-        self.timestamp: datetime = utils.parse_time(data["timestamp"])
+        self.timestamp: datetime | None = None
         self.edited_timestamp: datetime | None = None
 
         self.embeds: list[Embed] = [
@@ -1190,6 +1190,8 @@ class MessageSnapshot:
     def _from_data(self, data: dict) -> None:
         if data.get("edited_timestamp", None):
             self.edited_timestamp = utils.parse_time(data["edited_timestamp"])
+        if data.get("timestamp", None):
+            self.timestamp = utils.parse_time(data["timestamp"])
 
 
 class Message(PartialMessage):
