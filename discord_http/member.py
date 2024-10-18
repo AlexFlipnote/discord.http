@@ -284,10 +284,7 @@ class PartialMember(PartialBase):
         if nick is not MISSING:
             payload["nick"] = nick
         if isinstance(roles, list) and roles is not MISSING:
-            payload["roles"] = [
-                role.id if isinstance(role, (PartialRole, Role)) else role
-                for role in roles
-            ]
+            payload["roles"] = [str(int(role)) for role in roles]
         if mute is not MISSING:
             payload["mute"] = mute
         if deaf is not MISSING:
