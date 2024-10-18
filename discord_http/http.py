@@ -448,6 +448,15 @@ class DiscordAPI:
         async def _sleep(tries: int) -> None:
             await asyncio.sleep(1 + (tries * 2) + self.create_jitter())
 
+        def _try_json(data: str) -> dict | str:
+            _response = data
+            if isinstance(data, str):
+                try:
+                    _response = json.loads(data)
+                except json.JSONDecodeError:
+                    pass
+            return _response
+
         async with ratelimit:
             for tries in range(5):
                 try:
@@ -476,11 +485,13 @@ class DiscordAPI:
                             continue
 
                         case 429:
-                            if not isinstance(r.response, dict):
+                            _response = _try_json(r.response)
+
+                            if not isinstance(_response, dict):
                                 # For cases where you're ratelimited by CloudFlare
                                 raise Ratelimited(r)
 
-                            retry_after: float = r.response["retry_after"]
+                            retry_after: float = _response["retry_after"]
                             _log.warning(f"Ratelimit hit ({path}), waiting {retry_after}s...")
                             await asyncio.sleep(retry_after)
                             continue
@@ -494,17 +505,14 @@ class DiscordAPI:
                             continue
 
                         case 400:
-                            _response = r.response
-                            if isinstance(r.response, str):
-                                try:
-                                    _response = json.loads(r.response)
-                                except json.JSONDecodeError:
-                                    pass
-
-                            raise _http_400_error_table.get(
-                                _response.get("code", 0),
-                                HTTPException
-                            )(r)
+                            _response = _try_json(r.response)
+                            if isinstance(_response, str):
+                                raise _http_400_error_table.get(400, HTTPException)(r)
+                            else:
+                                raise _http_400_error_table.get(
+                                    _response.get("code", 0),
+                                    HTTPException
+                                )(r)
 
                         case 403:
                             raise Forbidden(r)
