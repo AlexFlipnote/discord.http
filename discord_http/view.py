@@ -565,7 +565,7 @@ class InteractionStorage:
         call_after: Callable,
         users: list["Snowflake"] | None = [],
         original_response: bool = False,
-        custom_id: str | None = None,
+        custom_id: str | int | None = None,
         timeout: float = 60,
     ) -> "Context | None":
         """
