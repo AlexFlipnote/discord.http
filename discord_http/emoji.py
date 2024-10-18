@@ -125,7 +125,6 @@ class PartialEmoji(PartialBase):
         super().__init__(id=int(id))
         self._state = state
 
-        self.id: int = id
         self.guild_id: int | None = guild_id
 
     def __repr__(self) -> str:

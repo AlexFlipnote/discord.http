@@ -199,6 +199,7 @@ class DiscordHTTP(Quart):
                 payload.to_multipart(),
                 content_type=payload.content_type
             )
+
         except Exception as e:
             if self.bot.has_any_dispatch("interaction_error"):
                 self.bot.dispatch("interaction_error", ctx, e)

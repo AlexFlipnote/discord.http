@@ -1407,7 +1407,6 @@ class BaseChannel(PartialChannel):
             guild_id=utils.get_int(data, "guild_id", default=guild_id)
         )
 
-        self.id: int = int(data["id"])
         self.name: Optional[str] = data.get("name", None)
         self.nsfw: bool = data.get("nsfw", False)
         self.topic: Optional[str] = data.get("topic", None)
