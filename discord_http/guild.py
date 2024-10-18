@@ -2489,15 +2489,35 @@ class Guild(PartialGuild):
             self.member_count = data["member_count"]
 
     def _update(self, data: dict) -> None:
-        for g in data:
-            if g in ("roles", "channels", "emojis", "stickers"):
-                continue
-
-            name = g
-            if g in ("icon", "banner"):
-                name = f"_{g}"
-
-            setattr(self, name, data[g])
+        """ Update the guild from the data """
+        self.afk_channel_id: Optional[int] = utils.get_int(data, "afk_channel_id")
+        self.afk_timeout: int = data.get("afk_timeout", 0)
+        self.default_message_notifications: int = data.get("default_message_notifications", 0)
+        self.description: Optional[str] = data.get("description", None)
+        self.explicit_content_filter: int = data.get("explicit_content_filter", 0)
+        self.features: list[str] = data.get("features", [])
+        self.latest_onboarding_question_id: Optional[int] = utils.get_int(data, "latest_onboarding_question_id")
+        self.max_members: int = data.get("max_members", 0)
+        self.max_stage_video_channel_users: int = data.get("max_stage_video_channel_users", 0)
+        self.max_video_channel_users: int = data.get("max_video_channel_users", 0)
+        self.mfa_level: Optional[int] = utils.get_int(data, "mfa_level")
+        self.name: str = data["name"]
+        self.nsfw: bool = data.get("nsfw", False)
+        self.nsfw_level: int = data.get("nsfw_level", 0)
+        self.owner_id: Optional[int] = utils.get_int(data, "owner_id")
+        self.preferred_locale: Optional[str] = data.get("preferred_locale", None)
+        self.premium_progress_bar_enabled: bool = data.get("premium_progress_bar_enabled", False)
+        self.premium_subscription_count: int = data.get("premium_subscription_count", 0)
+        self.premium_tier: int = data.get("premium_tier", 0)
+        self.public_updates_channel_id: Optional[int] = utils.get_int(data, "public_updates_channel_id")
+        self.region: Optional[str] = data.get("region", None)
+        self.safety_alerts_channel_id: Optional[int] = utils.get_int(data, "safety_alerts_channel_id")
+        self.system_channel_flags: int = data.get("system_channel_flags", 0)
+        self.system_channel_id: Optional[int] = utils.get_int(data, "system_channel_id")
+        self.vanity_url_code: Optional[str] = data.get("vanity_url_code", None)
+        self.verification_level: VerificationLevel = VerificationLevel(data.get("verification_level", 0))
+        self.widget_channel_id: Optional[int] = utils.get_int(data, "widget_channel_id")
+        self.widget_enabled: bool = data.get("widget_enabled", False)
 
     @property
     def large(self) -> bool:
