@@ -284,6 +284,7 @@ class AuditLogType(BaseEnum):
     auto_moderation_block_message = 143
     auto_moderation_flag_to_channel = 144
     auto_moderation_user_communication_disabled = 145
+    auto_moderation_quarantine_user = 146
     creator_monetization_request_created = 150
     creator_monetization_terms_accepted = 151
     onboarding_prompt_create = 163
@@ -293,9 +294,6 @@ class AuditLogType(BaseEnum):
     onboarding_update = 167
     home_settings_create = 190
     home_settings_update = 191
-
-    # These are not documented, but are returned by Discord
-    # I could be wrong, but they seem to be correct
     voice_channel_status_create = 192
     voice_channel_status_delete = 193
 
