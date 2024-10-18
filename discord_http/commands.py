@@ -290,7 +290,12 @@ class Command:
                 # Check if there are multiple types, looking for:
                 # - Union[Any, ...] / Optional[Any] / type | None
                 # - type | type | ...
-                if getattr(parameter.annotation, "__args__", None):
+
+                if (
+                    getattr(parameter.annotation, "__args__", None) or
+                    origin in [Union]
+                ):
+
                     if (
                         len(parameter.annotation.__args__) >= 2 and
                         parameter.annotation.__args__[-1] is _NoneType
@@ -341,12 +346,10 @@ class Command:
                     case x if x in [Role]:
                         ptype = CommandOptionType.role
 
-                    case x if x in [Choice]:
+                    # case x if x in [Choice]:
+                    case x if isinstance(x, Choice):
                         self.__list_choices.append(parameter.name)
-                        ptype = _type_table.get(
-                            parameter.annotation.__args__[0],
-                            CommandOptionType.string
-                        )
+                        ptype = origin.type
 
                     # It is a range, but pyright does not understand it due to TYPE_CHECKING
                     case x if isinstance(x, Range):  # type: ignore
@@ -1014,6 +1017,31 @@ class Choice(Generic[ChoiceT]):
     def __init__(self, key: ChoiceT, value: ChoiceT):
         self.key: ChoiceT = key
         self.value: ChoiceT = value
+        self.type: CommandOptionType = CommandOptionType.string
+
+    def __class_getitem__(cls, obj):
+        if isinstance(obj, tuple):
+            raise TypeError("Choice can only take one type")
+
+        match obj:
+            case x if x is str:
+                opt = CommandOptionType.string
+
+            case x if x is int:
+                opt = CommandOptionType.integer
+
+            case x if x is float:
+                opt = CommandOptionType.number
+
+            case _:
+                raise TypeError(
+                    "Range type must be str, int, "
+                    f"or float, not a {obj}"
+                )
+
+        output = cls(obj, obj)
+        output.type = opt
+        return output
 
 
 # Making it so pyright understands that the range type is a normal type
