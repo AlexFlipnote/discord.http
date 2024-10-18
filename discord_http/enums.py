@@ -412,6 +412,7 @@ class ChannelType(BaseEnum):
     guild_stage_voice = 13
     guild_directory = 14
     guild_forum = 15
+    guild_media = 16
 
 
 class CommandOptionType(BaseEnum):

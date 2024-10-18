@@ -494,8 +494,15 @@ class DiscordAPI:
                             continue
 
                         case 400:
+                            _response = r.response
+                            if isinstance(r.response, str):
+                                try:
+                                    _response = json.loads(r.response)
+                                except json.JSONDecodeError:
+                                    pass
+
                             raise _http_400_error_table.get(
-                                r.response.get("code", 0),
+                                _response.get("code", 0),
                                 HTTPException
                             )(r)
 
