@@ -342,7 +342,7 @@ class PartialMember(PartialBase):
 
             await self._state.query(
                 "PUT",
-                f"/guilds/{self.guild_id}/members/{self.id}/roles/{role}",
+                f"/guilds/{self.guild_id}/members/{self.id}/roles/{int(role)}",
                 reason=reason
             )
 
@@ -365,7 +365,7 @@ class PartialMember(PartialBase):
 
             await self._state.query(
                 "DELETE",
-                f"/guilds/{self.guild_id}/members/{self.id}/roles/{role}",
+                f"/guilds/{self.guild_id}/members/{self.id}/roles/{int(role)}",
                 reason=reason
             )
 
