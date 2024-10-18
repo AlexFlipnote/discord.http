@@ -14,12 +14,14 @@ class Snowflake:
     """
     def __init__(
         self,
-        id: int
+        id: int | str
     ):
-        if not isinstance(id, int):
-            raise TypeError(f"id must be an integer, not {type(id)}")
+        try:
+            id = int(id)
+        except ValueError:
+            raise TypeError(f"id must be an integer or convertible to integer, not {type(id)}")
 
-        self.id: int = int(id)
+        self.id: int = id
 
     def __repr__(self) -> str:
         return f"<Snowflake id={self.id}>"

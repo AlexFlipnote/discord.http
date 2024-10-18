@@ -53,8 +53,8 @@ class Parser:
             return None
 
         return (
-            self.bot.cache.get_guild(guild_id) or
-            PartialGuild(state=self.bot.state, id=guild_id)
+            self.bot.cache.get_guild(int(guild_id)) or
+            PartialGuild(state=self.bot.state, id=int(guild_id))
         )
 
     def _get_channel_or_partial(
@@ -168,7 +168,11 @@ class Parser:
 
         return (
             _guild,
-            Member(state=self.bot.state, guild=_guild, data=data)
+            Member(
+                state=self.bot.state,
+                guild=_guild,
+                data=data
+            )
         )
 
     def guild_member_remove(self, data: dict) -> tuple[Guild | PartialGuild, User]:
