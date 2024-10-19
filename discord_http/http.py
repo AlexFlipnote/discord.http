@@ -492,7 +492,7 @@ class DiscordAPI:
                                 raise Ratelimited(r)
 
                             retry_after: float = _response["retry_after"]
-                            _log.warning(f"Ratelimit hit ({path}), waiting {retry_after}s...")
+                            _log.warning(f"Ratelimit hit ({method.upper()} {path}), waiting {retry_after}s...")
                             await asyncio.sleep(retry_after)
                             continue
 
