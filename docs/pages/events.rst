@@ -621,7 +621,7 @@ Intents.guild_message_reactions
   Called whenever a message reaction is removed by an emoji
 
   :param reaction: :class:`PartialMessage` object with information about the message.
-  :param emoji: :class:`Emoji` object with information about the emoji.
+  :param emoji: :class:`EmojiParser` object with information about the emoji.
 
 
 Intents.direct_message_reactions

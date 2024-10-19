@@ -14,7 +14,7 @@ from .. import utils
 from ..audit import AuditLogEntry
 from ..automod import AutoModRule
 from ..channel import BaseChannel, PartialChannel, StageInstance
-from ..emoji import Emoji
+from ..emoji import Emoji, EmojiParser
 from ..enums import ChannelType
 from ..guild import Guild, PartialGuild, ScheduledEvent, PartialScheduledEvent
 from ..invite import Invite, PartialInvite
@@ -501,7 +501,7 @@ class Parser:
             ),
         )
 
-    def message_reaction_remove_emoji(self, data: dict) -> tuple[PartialMessage, Emoji]:
+    def message_reaction_remove_emoji(self, data: dict) -> tuple[PartialMessage, EmojiParser]:
         _message = PartialMessage(
             state=self.bot.state,
             id=int(data["message_id"]),
@@ -511,7 +511,7 @@ class Parser:
 
         return (
             _message,
-            Emoji(state=self.bot.state, data=data["emoji"],)
+            EmojiParser.from_dict(data["emoji"])
         )
 
     def guild_role_create(self, data: dict) -> tuple[Role]:
