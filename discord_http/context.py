@@ -11,7 +11,7 @@ from .channel import (
     GroupDMChannel, CategoryChannel, NewsThread,
     PublicThread, PrivateThread, StageChannel,
     DirectoryChannel, ForumChannel, StoreChannel,
-    NewsChannel, BaseChannel
+    NewsChannel, BaseChannel, PartialChannel
 )
 from .cooldowns import Cooldown
 from .embeds import Embed
@@ -553,9 +553,9 @@ class Context:
         if data.get("channel_id", None):
             self.channel_id = int(data["channel_id"])
 
-        self.channel: Optional[BaseChannel] = None
+        self._channel: Optional[BaseChannel] = None
         if data.get("channel", None):
-            self.channel = channel_types[data["channel"]["type"]](
+            self._channel = channel_types[data["channel"]["type"]](
                 state=self.bot.state,
                 data=data["channel"]
             )
@@ -631,6 +631,21 @@ class Context:
             return cache
 
         return self._guild
+
+    @property
+    def channel(self) -> "BaseChannel | PartialChannel | None":
+        """ `BaseChannel | PartialChannel`: Returns the channel the interaction was made in """
+        if not self.channel_id:
+            return None
+
+        cache = self.bot.cache.get_channel(
+            guild_id=self._guild.id if self._guild else None,
+            channel_id=self.channel_id
+        )
+        if cache:
+            return cache
+
+        return self._channel
 
     @property
     def created_at(self) -> datetime:
