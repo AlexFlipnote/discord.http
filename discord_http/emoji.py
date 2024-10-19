@@ -8,7 +8,7 @@ from .object import PartialBase, Snowflake
 from .role import PartialRole
 
 if TYPE_CHECKING:
-    from .guild import PartialGuild
+    from .guild import Guild, PartialGuild
     from .http import DiscordAPI
     from .user import User
 
@@ -131,10 +131,14 @@ class PartialEmoji(PartialBase):
         return f"<PartialEmoji id={self.id}>"
 
     @property
-    def guild(self) -> "PartialGuild | None":
+    def guild(self) -> "Guild | PartialGuild | None":
         """ `PartialGuild`: The guild of the member. """
         if not self.guild_id:
             return None
+
+        cache = self._state.cache.get_guild(self.guild_id)
+        if cache:
+            return cache
 
         from .guild import PartialGuild
         return PartialGuild(state=self._state, id=self.guild_id)

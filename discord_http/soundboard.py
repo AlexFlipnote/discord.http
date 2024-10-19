@@ -33,7 +33,7 @@ class PartialSoundboardSound(PartialBase):
         return f"<PartialSoundboardSound id={self.id} guild_id={self.guild_id}>"
 
     @property
-    def guild(self) -> "PartialGuild | None":
+    def guild(self) -> "Guild | PartialGuild | None":
         """
         Returns the guild this soundboard sound is in
 
@@ -49,6 +49,10 @@ class PartialSoundboardSound(PartialBase):
         """
         if not self.guild_id:
             return None
+
+        cache = self._state.cache.get_guild(self.guild_id)
+        if cache:
+            return cache
 
         from .guild import PartialGuild
         return PartialGuild(state=self._state, id=self.guild_id)

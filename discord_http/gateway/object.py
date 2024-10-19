@@ -351,10 +351,14 @@ class Reaction:
             )
 
     @property
-    def guild(self) -> "PartialGuild | None":
+    def guild(self) -> "Guild | PartialGuild | None":
         """ `PartialGuild` | `None`: The guild the message was sent in """
         if not self.guild_id:
             return None
+
+        cache = self._state.cache.get_guild(self.guild_id)
+        if cache:
+            return cache
 
         from ..guild import PartialGuild
         return PartialGuild(state=self._state, id=self.guild_id)

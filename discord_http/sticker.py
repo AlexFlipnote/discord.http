@@ -5,7 +5,7 @@ from .enums import StickerType, StickerFormatType
 from .object import PartialBase
 
 if TYPE_CHECKING:
-    from .guild import PartialGuild
+    from .guild import Guild, PartialGuild
     from .http import DiscordAPI
 
 MISSING = utils.MISSING
@@ -50,7 +50,7 @@ class PartialSticker(PartialBase):
         )
 
     @property
-    def guild(self) -> "PartialGuild | None":
+    def guild(self) -> "Guild | PartialGuild | None":
         """
         Returns the guild this sticker is in
 
@@ -66,6 +66,10 @@ class PartialSticker(PartialBase):
         """
         if not self.guild_id:
             return None
+
+        cache = self._state.cache.get_guild(self.guild_id)
+        if cache:
+            return cache
 
         from .guild import PartialGuild
         return PartialGuild(state=self._state, id=self.guild_id)

@@ -1148,7 +1148,7 @@ class PartialMessage(PartialBase):
 
         r = await self._state.query(
             "POST",
-            f"/channels/{self.channel.id}/threads/messages/{self.id}/threads",
+            f"/channels/{self.channel.id}/messages/{self.id}/threads",
             json=payload,
             reason=reason
         )

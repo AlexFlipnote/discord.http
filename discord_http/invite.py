@@ -40,15 +40,16 @@ class PartialInvite:
         return f"<PartialInvite code='{self.code}'>"
 
     @property
-    def guild(self) -> PartialGuild | None:
+    def guild(self) -> Guild | PartialGuild | None:
         """ `Optional[PartialGuild]`: The guild the invite is in """
         if not self.guild_id:
             return None
 
-        return PartialGuild(
-            state=self._state,
-            id=self.guild_id
-        )
+        cache = self._state.cache.get_guild(self.guild_id)
+        if cache:
+            return cache
+
+        return PartialGuild(state=self._state, id=self.guild_id)
 
     @property
     def channel(self) -> "PartialChannel | None":

@@ -86,8 +86,13 @@ class PartialScheduledEvent(PartialBase):
         return f"<PartialScheduledEvent id={self.id}>"
 
     @property
-    def guild(self) -> "PartialGuild":
+    def guild(self) -> "Guild | PartialGuild":
         """ `PartialGuild`: The guild object this event is in """
+        cache = self._state.cache.get_guild(self.guild_id)
+        if cache:
+            return cache
+
+        from .guild import PartialGuild
         return PartialGuild(state=self._state, id=self.guild_id)
 
     @property

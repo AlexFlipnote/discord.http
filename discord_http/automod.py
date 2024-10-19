@@ -11,7 +11,7 @@ from .role import PartialRole
 from .user import PartialUser
 
 if TYPE_CHECKING:
-    from .guild import PartialGuild
+    from .guild import PartialGuild, Guild
     from .http import DiscordAPI
 
 MISSING = utils.MISSING
@@ -185,8 +185,15 @@ class PartialAutoModRule(PartialBase):
         return f"<PartialAutoModRule id={self.id}>"
 
     @property
-    def guild(self) -> "PartialGuild":
+    def guild(self) -> "Guild | PartialGuild | None":
         """ `PartialGuild`: The guild object this event is in """
+        if not self.guild_id:
+            return None
+
+        cache = self._state.cache.get_guild(self.guild_id)
+        if cache:
+            return cache
+
         from .guild import PartialGuild
         return PartialGuild(state=self._state, id=self.guild_id)
 

@@ -1866,10 +1866,14 @@ class PublicThread(BaseChannel):
         return PartialChannel(state=self._state, id=self.channel_id)
 
     @property
-    def guild(self) -> Optional["PartialGuild"]:
+    def guild(self) -> "Guild | PartialGuild | None":
         """ `PartialGuild`: Returns a partial guild object """
         if not self.guild_id:
             return None
+
+        cache = self._state.cache.get_guild(self.guild_id)
+        if cache:
+            return cache
 
         from .guild import PartialGuild
         return PartialGuild(state=self._state, id=self.guild_id)
@@ -2135,9 +2139,13 @@ class StageInstance(PartialBase):
         self.guild_scheduled_event_id: Optional[int] = utils.get_int(data, "guild_scheduled_event_id")  # type: ignore # todo types
 
     @property
-    def guild(self) -> "PartialGuild":
-        if self._guild:
-            return self._guild
+    def guild(self) -> "Guild | PartialGuild | None":
+        if not self.guild_id:
+            return None
+
+        cache = self._state.cache.get_guild(self.guild_id)
+        if cache:
+            return cache
 
         from .guild import PartialGuild
         return PartialGuild(state=self._state, id=self.guild_id)

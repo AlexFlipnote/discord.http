@@ -37,8 +37,12 @@ class PartialRole(PartialBase):
         return f"<PartialRole id={self.id} guild_id={self.guild_id}>"
 
     @property
-    def guild(self) -> "PartialGuild":
+    def guild(self) -> "Guild | PartialGuild":
         """ `PartialGuild`: Returns the guild this role is in """
+        cache = self._state.cache.get_guild(self.guild_id)
+        if cache:
+            return cache
+
         from .guild import PartialGuild
         return PartialGuild(state=self._state, id=self.guild_id)
 
