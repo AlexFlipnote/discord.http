@@ -467,7 +467,7 @@ class PartialGuild(PartialBase):
         `list[Union[BaseChannel, PartialChannel]]`:
         Returns a list of all the threads in the guild if they are cached.
         """
-        return list(self._cache_channels.values())
+        return list(self._cache_threads.values())
 
     @property
     def roles(self) -> list[Union["Role", "PartialRole"]]:
