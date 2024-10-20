@@ -638,14 +638,20 @@ class Context:
         if not self.channel_id:
             return None
 
-        cache = self.bot.cache.get_channel(
-            guild_id=self._guild.id if self._guild else None,
-            channel_id=self.channel_id
-        )
-        if cache:
-            return cache
+        if self.guild:
+            cache = self.bot.cache.get_channel_thread(
+                guild_id=self.guild.id,
+                channel_id=self.channel_id
+            )
 
-        return self._channel
+            if cache:
+                return cache
+
+        return PartialChannel(
+            state=self.bot.state,
+            id=self.channel_id,
+            guild_id=self.guild.id if self.guild else None
+        )
 
     @property
     def created_at(self) -> datetime:

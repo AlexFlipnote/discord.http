@@ -361,6 +361,22 @@ class PartialGuild(PartialBase):
         """
         return self._cache_channels.get(channel_id, None)
 
+    def get_thread(self, thread_id: int) -> "BaseChannel | PartialChannel | None":
+        """
+        Returns the thread from cache if it exists.
+
+        Parameters
+        ----------
+        thread_id: `int`
+            The ID of the thread to get.
+
+        Returns
+        -------
+        `Optional[Union["PartialThread", "PartialChannel"]`
+            The thread with the given ID, if it exists.
+        """
+        return self._cache_threads.get(thread_id, None)
+
     def get_voice_states(self) -> list[Union["VoiceState", "PartialVoiceState"]]:
         """
         `Optional[Union[VoiceState, PartialVoiceState]]`:
@@ -446,6 +462,14 @@ class PartialGuild(PartialBase):
         return list(self._cache_channels.values())
 
     @property
+    def threads(self) -> list[Union["BaseChannel", "PartialChannel"]]:
+        """
+        `list[Union[BaseChannel, PartialChannel]]`:
+        Returns a list of all the threads in the guild if they are cached.
+        """
+        return list(self._cache_channels.values())
+
+    @property
     def roles(self) -> list[Union["Role", "PartialRole"]]:
         """
         `list[Union[Role, PartialRole]]`:
@@ -487,7 +511,8 @@ class PartialGuild(PartialBase):
         return [
             channel  # type: ignore
             for channel in self.channels
-            if channel.type == ChannelType.guild_text
+            if channel.type == ChannelType.guild_text or
+            channel.type == ChannelType.guild_news
         ]
 
     @property

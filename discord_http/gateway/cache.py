@@ -7,7 +7,7 @@ from .flags import GatewayCacheFlags
 
 if TYPE_CHECKING:
     from .object import Presence
-    from ..channel import PartialChannel, PublicThread, PrivateThread
+    from ..channel import PartialChannel, PartialThread
     from ..client import Client
     from ..guild import PartialGuild, Guild
     from ..emoji import Emoji
@@ -146,6 +146,26 @@ class Cache:
             }
         else:
             _guild._cache_stickers = {}
+
+        if GatewayCacheFlags.threads in self.cache_flags:
+            _guild._cache_threads = {  # type: ignore
+                int(g["id"]): BaseChannel.from_dict(
+                    state=self.bot.state,
+                    data=g,
+                    guild_id=guild_id
+                )
+                for g in data["threads"]
+            }
+        elif GatewayCacheFlags.partial_threads in self.cache_flags:
+            _guild._cache_threads = {
+                int(g["id"]): self.bot.get_partial_channel(
+                    int(g["id"]),
+                    guild_id=guild_id
+                )
+                for g in data["threads"]
+            }
+        else:
+            _guild._cache_threads = {}
 
         # Do voice states in the end
         if GatewayCacheFlags.voice_states in self.cache_flags:
@@ -291,6 +311,20 @@ class Cache:
 
         return guild.get_channel(channel_id)
 
+    def get_channel_thread(
+        self,
+        guild_id: int,
+        channel_id: int
+    ) -> "BaseChannel | PartialChannel | None":
+        guild = self.get_guild(guild_id)
+        if not guild:
+            return None
+
+        find1 = guild.get_channel(channel_id)
+        find2 = guild.get_thread(channel_id)
+
+        return find2 or find1 or None
+
     def add_channel(self, channel: "BaseChannel | PartialChannel") -> None:
         if self.cache_flags is None:
             return None
@@ -320,7 +354,7 @@ class Cache:
 
         guild._cache_channels.pop(channel.id, None)
 
-    def add_thread(self, thread: "PublicThread | PrivateThread") -> None:
+    def add_thread(self, thread: "BaseChannel") -> None:
         if self.cache_flags is None:
             return None
         if not thread.guild_id:
@@ -337,7 +371,7 @@ class Cache:
                 thread.id, guild_id=thread.guild_id
             )
 
-    def remove_thread(self, thread: "PublicThread | PrivateThread") -> None:
+    def remove_thread(self, thread: "PartialThread") -> None:
         if self.cache_flags is None:
             return None
         if not thread.guild_id:

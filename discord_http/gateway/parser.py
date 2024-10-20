@@ -566,12 +566,12 @@ class Parser:
 
     def thread_create(self, data: dict) -> tuple[BaseChannel]:
         channel = self._channel(data)
-        self.bot.cache.add_channel(channel)
+        self.bot.cache.add_thread(channel)
         return (channel,)
 
     def thread_update(self, data: dict) -> tuple[BaseChannel]:
         channel = self._channel(data)
-        self.bot.cache.add_channel(channel)
+        self.bot.cache.add_thread(channel)
         return (channel,)
 
     def thread_delete(self, data: dict) -> tuple[PartialThread]:
@@ -583,7 +583,7 @@ class Parser:
             type=ChannelType(data["type"])
         )
 
-        self.bot.cache.remove_channel(thread)
+        self.bot.cache.remove_thread(thread)
         return (thread,)
 
     def thread_list_sync(self, data: "channels.ThreadListSync") -> tuple[ThreadListSyncPayload]:

@@ -108,8 +108,8 @@ class PartialChannel(PartialBase):
     ):
         super().__init__(id=int(id))
         self._state = state
-        self.guild_id: Optional[int] = int(guild_id) if guild_id else None
 
+        self.guild_id: Optional[int] = int(guild_id) if guild_id else None
         self.parent_id: Optional[int] = None
 
         self._raw_type: ChannelType = ChannelType.unknown
@@ -140,6 +140,28 @@ class PartialChannel(PartialBase):
         return PartialGuild(state=self._state, id=self.guild_id)
 
     @property
+    def channel(self) -> "BaseChannel | CategoryChannel | PartialChannel | None":
+        """
+        `BaseChannel | CategoryChannel | PartialChannel | None`:
+        Returns the channel the thread is in.
+        Only returns a full object if cache is enabled for guild and channel.
+        """
+        if self.guild_id:
+            cache = self._state.cache.get_channel_thread(
+                guild_id=self.guild_id,
+                channel_id=self.id
+            )
+
+            if cache:
+                return cache
+
+        return PartialChannel(
+            state=self._state,
+            id=self.id,
+            guild_id=self.guild_id
+        )
+
+    @property
     def parent(self) -> "BaseChannel | CategoryChannel | PartialChannel | None":
         """
         `BaseChannel | CategoryChannel | PartialChannel | None`:
@@ -150,7 +172,7 @@ class PartialChannel(PartialBase):
             return None
 
         if self.guild_id:
-            cache = self._state.cache.get_channel(
+            cache = self._state.cache.get_channel_thread(
                 guild_id=self.guild_id,
                 channel_id=self.parent_id
             )
@@ -1898,20 +1920,9 @@ class PublicThread(BaseChannel):
         self.guild_id: Optional[int] = utils.get_int(data, "guild_id")
         self.owner_id: Optional[int] = utils.get_int(data, "owner_id")
         self.last_message_id: Optional[int] = utils.get_int(data, "last_message_id")
-        self.parent_id: Optional[int] = utils.get_int(data, "parent_id")
 
     def __repr__(self) -> str:
         return f"<PublicThread id={self.id} name='{self.name}'>"
-
-    @property
-    def channel(self) -> "PartialChannel":
-        """ `PartialChannel`: Returns a partial channel object """
-        _channel = self.guild.get_channel(self.channel_id)
-        if _channel:
-            return _channel
-
-        from .channel import PartialChannel
-        return PartialChannel(state=self._state, id=self.channel_id)
 
     @property
     def guild(self) -> "Guild | PartialGuild | None":

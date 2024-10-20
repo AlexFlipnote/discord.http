@@ -187,9 +187,14 @@ class JumpURL:
         if not self.channel_id:
             return None
 
-        cache = self._state.cache.get_channel(self.guild_id, self.channel_id)
-        if cache:
-            return cache
+        if self.guild_id:
+            cache = self._state.cache.get_channel_thread(
+                guild_id=self.guild_id,
+                channel_id=self.channel_id
+            )
+
+            if cache:
+                return cache
 
         from .channel import PartialChannel
         return PartialChannel(
@@ -470,9 +475,14 @@ class MessageReference:
         if not self.channel_id:
             return None
 
-        cache = self._state.cache.get_channel(self.guild_id, self.channel_id)
-        if cache:
-            return cache
+        if self.guild_id:
+            cache = self._state.cache.get_channel_thread(
+                guild_id=self.guild_id,
+                channel_id=self.channel_id
+            )
+
+            if cache:
+                return cache
 
         from .channel import PartialChannel
         return PartialChannel(
@@ -693,9 +703,14 @@ class PartialMessage(PartialBase):
     @property
     def channel(self) -> "BaseChannel | PartialChannel":
         """ `PartialChannel`: Returns the channel the message was sent in """
-        cache = self._state.cache.get_channel(self.guild_id, self.channel_id)
-        if cache:
-            return cache
+        if self.guild_id:
+            cache = self._state.cache.get_channel_thread(
+                guild_id=self.guild_id,
+                channel_id=self.channel_id
+            )
+
+            if cache:
+                return cache
 
         from .channel import PartialChannel
         return PartialChannel(
