@@ -152,8 +152,8 @@ class DiscordHTTP(Quart):
 
         if self.bot.has_any_dispatch("ping"):
             self.bot.dispatch("ping", _ping)
-        else:
-            _log.info(f"Discord Interactions ACK recieved ({_ping.id})")
+
+        _log.debug(f"Discord Interactions ACK recieved ({_ping.id})")
 
         return ctx.response.pong()
 
