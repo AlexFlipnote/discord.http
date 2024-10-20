@@ -30,15 +30,13 @@ class GatewayClient:
         shard_id: int | None = None,
         shard_count: int = 1,
         shard_ids: list[int] | None = None,
-        max_concurrency: int | None = None,
-        api_version: int | None = 8
+        max_concurrency: int | None = None
     ):
         self.bot = bot
         self.intents = intents
         self.cache_flags = cache_flags
 
         self.automatic_shards = automatic_shards
-        self.api_version = api_version
         self.shard_id = shard_id
         self.shard_count = shard_count
         self.shard_ids = shard_ids
@@ -121,7 +119,7 @@ class GatewayClient:
                 cache_flags=self.cache_flags,
                 shard_id=shard_id,
                 shard_count=self.shard_count,
-                api_version=self.api_version,
+                api_version=self.bot.api_version,
                 debug_events=self.bot.debug_events
             )
 

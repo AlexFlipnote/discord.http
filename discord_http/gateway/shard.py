@@ -160,10 +160,10 @@ class Shard:
         intents: Intents | None,
         shard_id: int,
         *,
+        api_version: int,
         cache_flags: GatewayCacheFlags | None = None,
         shard_count: int | None = None,
         debug_events: bool = False,
-        api_version: int | None = 8
     ):
         self.bot = bot
 

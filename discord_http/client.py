@@ -61,7 +61,7 @@ class Client:
         public_key: Optional[str] = None,
         guild_id: Optional[int] = None,
         sync: bool = False,
-        api_version: Optional[int] = None,
+        api_version: int = 10,
         loop: Optional[asyncio.AbstractEventLoop] = None,
         allowed_mentions: AllowedMentions = AllowedMentions.all(),
         enable_gateway: bool = False,
@@ -92,7 +92,7 @@ class Client:
         sync: `bool`
             Whether to sync commands on boot or not
         api_version: `Optional[int]`
-            API version to use, if not provided, it will use the default (10)
+            API version to use for both HTTP and WS, if not provided, it will use the default (10)
         loop: `Optional[asyncio.AbstractEventLoop]`
             Event loop to use, if not provided, it will use `asyncio.get_running_loop()`
         allowed_mentions: `AllowedMentions`
@@ -126,7 +126,7 @@ class Client:
             Usually a great tool to just validate that your bot is online.
         """
         self.application_id: Optional[int] = application_id
-        self.api_version: Optional[int] = api_version
+        self.api_version: int = int(api_version)
         self.public_key: Optional[str] = public_key
         self.token: str = token
         self.automatic_shards: bool = automatic_shards
