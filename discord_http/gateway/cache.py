@@ -224,7 +224,12 @@ class Cache:
 
         return self.__guilds.pop(guild_id, None)
 
-    def add_member(self, member: "Member | PartialMember") -> None:
+    def add_member(
+        self,
+        member: "Member | PartialMember",
+        *,
+        count_member: bool = True
+    ) -> None:
         if self.cache_flags is None:
             return None
 
@@ -232,7 +237,7 @@ class Cache:
         if not guild:
             return None
 
-        if guild.member_count is not None:
+        if count_member and guild.member_count is not None:
             guild.member_count += 1
 
         if GatewayCacheFlags.members in self.cache_flags:
@@ -242,18 +247,21 @@ class Cache:
                 member.id, member.guild_id
             )
 
-    def remove_member(self, member: "Member | PartialMember") -> None:
+    def update_member(self, member: "Member | PartialMember") -> None:
+        self.add_member(member, count_member=False)
+
+    def remove_member(self, guild_id: int, member_id: int) -> "Member | PartialMember | None":
         if self.cache_flags is None:
             return None
 
-        guild = self.get_guild(member.guild_id)
+        guild = self.get_guild(guild_id)
         if not guild:
             return None
 
         if guild.member_count is not None:
             guild.member_count -= 1
 
-        guild._cache_members.pop(member.id, None)
+        return guild._cache_members.pop(member_id, None)
 
     def update_presence(self, presence: "Presence | None") -> None:
         if self.cache_flags is None:

@@ -67,7 +67,7 @@ class Client:
         enable_gateway: bool = False,
         automatic_shards: bool = True,
         playing_status: "PlayingStatus | None" = None,
-        chunk_guilds: bool = False,
+        chunk_guilds_on_startup: bool = False,
         guild_ready_timeout: float = 2.0,
         gateway_cache: Optional["GatewayCacheFlags"] = None,
         intents: Optional["Intents"] = None,
@@ -104,8 +104,8 @@ class Client:
         playing_status: `Optional[PlayingStatus]`
             The playing status to use, if not provided, it will use `None`.
             This is only used if `enable_gateway` is `True`.
-        chunk_guilds: `bool`
-            Whether to chunk guilds or not, which will reduce the amount of requests
+        chunk_guilds_on_startup: `bool`
+            Whether to chunk guilds or not when booting, which will reduce the amount of requests
         guild_ready_timeout: `float`
             **Gateway**: How long to wait for last GUILD_CREATE to be recieved
             before triggering shard ready
@@ -137,9 +137,9 @@ class Client:
         self.enable_gateway: bool = enable_gateway
         self.playing_status: Optional["PlayingStatus"] = playing_status
         self.guild_ready_timeout: float = guild_ready_timeout
-        self.chunk_guilds: bool = chunk_guilds
+        self.chunk_guilds_on_startup: bool = chunk_guilds_on_startup
         self.call_after_delay: float = call_after_delay
-        self.intents: Optional["Intents"] = intents
+        self.intents: Intents = intents or Intents.none()
 
         self.gateway: Optional["GatewayClient"] = None
         self.disable_default_get_path: bool = disable_default_get_path
@@ -301,6 +301,94 @@ class Client:
                 guild_id=self.guild_id
             )
             self._update_ids(data)
+
+    def get_shard_by_guild_id(
+        self,
+        guild_id: Snowflake | int
+    ) -> int | None:
+        """
+        Returns the shard ID of the shard that the guild is in
+
+        Parameters
+        ----------
+        guild_id: `Snowflake | int`
+            The ID of the guild to get the shard ID of
+
+        Returns
+        -------
+        `int | None`
+            The shard ID of the guild, or `None` if not found
+
+        Raises
+        ------
+        `NotImplementedError`
+            If the gateway is not available
+        """
+        if not self.gateway:
+            raise NotImplementedError("gateway is not available")
+
+        return self.gateway.shard_by_guild_id(
+            int(guild_id)
+        )
+
+    async def query_members(
+        self,
+        guild_id: Snowflake | int,
+        *,
+        query: str | None = None,
+        limit: int = 0,
+        presences: bool = False,
+        user_ids: list[Snowflake | int] | None = None,
+        shard_id: int | None = None
+    ) -> list[Member]:
+        """
+        Query members in a guild
+
+        Parameters
+        ----------
+        guild_id: `Snowflake | int`
+            The ID of the guild to query members in
+        query: `str | None`
+            The query to search for
+        limit: `int`
+            The maximum amount of members to return
+        presences: `bool`
+            Whether to include presences in the response
+        user_ids: `list[Snowflake | int] | None`
+            The user IDs to fetch members for
+        shard_id: `int | None`
+            The shard ID to query the members from
+
+        Returns
+        -------
+        `list[Member]`
+            The members that matched the query
+
+        Raises
+        ------
+        `ValueError`
+            - If `shard_id` is not provided
+            - If `shard_id` is not valid
+        """
+        if not self.gateway:
+            raise NotImplementedError("gateway is not available")
+
+        if shard_id is None:
+            shard_id = self.get_shard_by_guild_id(guild_id)
+            if shard_id is None:  # Just double check
+                raise ValueError("shard_id must be provided")
+
+        shard = self.gateway.get_shard(shard_id)
+        if not shard:
+            raise ValueError("shard_id is not valid")
+
+        return await shard.query_members(
+            guild_id=guild_id,
+            query=query,
+            limit=limit,
+            presences=presences,
+            user_ids=user_ids
+        )
 
     async def sync_commands(self) -> None:
         """

@@ -1,3 +1,6 @@
+import asyncio
+import os
+
 from datetime import datetime
 from typing import TYPE_CHECKING, overload
 
@@ -29,16 +32,116 @@ from ..integrations import Integration, PartialIntegration
 
 if TYPE_CHECKING:
     from ..types import channels
+    from ..http import DiscordAPI
     from ..client import Client
 
 __all__ = (
     "Parser",
+    "GuildMembersChunk",
 )
+
+
+class GuildMembersChunk:
+    def __init__(
+        self,
+        *,
+        state: "DiscordAPI",
+        guild_id: int,
+        cache: bool = False
+    ):
+        self._state = state
+        self.nonce: str = os.urandom(16).hex()
+
+        self.guild_id: int = guild_id
+        self.not_found: list[int] = []
+        self.members: list[Member] = []
+
+        self.cache: bool = cache
+        self._waiters: list[asyncio.Future[list[Member]]] = []
+
+    def __repr__(self) -> str:
+        return (
+            f"<GuildMembersChunk "
+            f"not_found={len(self.not_found)} "
+            f"members={len(self.members)}>"
+        )
+
+    @property
+    def guild(self) -> "Guild | PartialGuild":
+        """ `Guild | PartialGuild`: The guild the chunk belongs to """
+        return self._state.cache.get_guild(self.guild_id) or PartialGuild(
+            state=self._state,
+            id=self.guild_id
+        )
+
+    @property
+    def _cache_level(self) -> GatewayCacheFlags | None:
+        return self._state.bot._gateway_cache
+
+    def add_not_found(self, user_ids: list[int]) -> None:
+        """ For any members not found in the chunk search """
+        self.not_found.extend(user_ids)
+
+    def add_members(self, members: list[Member]) -> None:
+        """
+        Add member to the chunk.
+        However if cache is enabled, try to add them to the cache
+        """
+        self.members.extend(members)
+
+        if self.cache:
+            if not self._cache_level:
+                return None
+
+            _guild = self._state.cache.get_guild(self.guild_id)
+            if not _guild:
+                return None
+
+            if (
+                GatewayCacheFlags.members not in self._cache_level and
+                GatewayCacheFlags.partial_members not in self._cache_level
+            ):
+                return None
+
+            if GatewayCacheFlags.members in self._cache_level:
+                for m in members:
+                    _guild._cache_members[m.id] = m
+
+            elif GatewayCacheFlags.partial_members in self._cache_level:
+                for m in members:
+                    _guild._cache_members[m.id] = PartialMember(
+                        state=self._state,
+                        id=m.id,
+                        guild_id=self.guild_id
+                    )
+
+    async def wait(self) -> list["Member"]:
+        """ `list[Member]`: Waits for the chunk to be ready """
+        future = self._state.bot.loop.create_future()
+        self._waiters.append(future)
+        try:
+            return await future
+        finally:
+            self._waiters.remove(future)
+
+    def get_future(self) -> asyncio.Future[list[Member]]:
+        """ `asyncio.Future[list[Member]]`: Returns the future for the chunk """
+        future = self._state.bot.loop.create_future()
+        self._waiters.append(future)
+        return future
+
+    def done(self) -> None:
+        """ Mark the chunk as done """
+        for future in self._waiters:
+            if not future.done():
+                future.set_result(self.members)
 
 
 class Parser:
     def __init__(self, bot: "Client"):
         self.bot = bot
+
+        self._chunk_requests: dict[int | str, GuildMembersChunk] = {}
 
     @overload
     def _get_guild_or_partial(self, guild_id: None) -> None:
@@ -56,6 +159,25 @@ class Parser:
             self.bot.cache.get_guild(int(guild_id)) or
             PartialGuild(state=self.bot.state, id=int(guild_id))
         )
+
+    def _process_chunk_request(
+        self,
+        guild_id: int,
+        nonce: str | None,
+        members: list[Member],
+        completed: bool
+    ):
+        to_remove = []
+
+        for k, req in self._chunk_requests.items():
+            if req.guild_id == guild_id and req.nonce == nonce:
+                req.add_members(members)
+                if completed:
+                    req.done()
+                    to_remove.append(k)
+
+        for k in to_remove:
+            del self._chunk_requests[k]
 
     def _get_channel_or_partial(
         self,
@@ -145,6 +267,48 @@ class Parser:
         self.bot.cache.remove_guild(guild.id)
         return (guild,)
 
+    def guild_members_chunk(self, data: dict) -> tuple[GuildMembersChunk]:
+        _guild = self._get_guild_or_partial(int(data["guild_id"]))
+
+        members = [
+            Member(
+                state=self.bot.state,
+                guild=_guild,
+                data=g
+            ) for g in data.get("members", [])
+        ]
+
+        presences = data.get("presences", [])
+
+        if presences:
+            _temp_dict: dict[int, Member] = {g.id: g for g in members}
+            for g in presences:
+                _find_member = _temp_dict.get(int(g["user"]["id"]), None)
+                if not _find_member:
+                    continue
+                _find_member._update_presence(Presence(
+                    state=self.bot.state,
+                    user=_find_member,
+                    guild=_guild,
+                    data=g
+                ))
+
+        self._process_chunk_request(
+            _guild.id,
+            data.get("nonce", None),
+            members,
+            data.get("chunk_index", 0) + 1 == data.get("chunk_count", 1)
+        )
+
+        _dispatch_raw = GuildMembersChunk(
+            state=self.bot.state,
+            guild_id=_guild.id,
+        )
+
+        _dispatch_raw.add_members(members)
+
+        return (_dispatch_raw,)
+
     def guild_available(self, data: dict) -> tuple[Guild | PartialGuild]:
         _guild = self._get_guild_or_partial(int(data["id"]))
 
@@ -157,29 +321,30 @@ class Parser:
 
     def guild_member_add(self, data: dict) -> tuple[Guild | PartialGuild, Member]:
         _guild = self._get_guild_or_partial(int(data["guild_id"]))
+        _member = Member(state=self.bot.state, guild=_guild, data=data)
 
-        return (
-            _guild,
-            Member(state=self.bot.state, guild=_guild, data=data)
-        )
+        self.bot.cache.add_member(_member)
+
+        return (_guild, _member)
 
     def guild_member_update(self, data: dict) -> tuple[Guild | PartialGuild, Member]:
         _guild = self._get_guild_or_partial(int(data["guild_id"]))
+        _member = Member(state=self.bot.state, guild=_guild, data=data)
 
-        return (
-            _guild,
-            Member(
-                state=self.bot.state,
-                guild=_guild,
-                data=data
-            )
-        )
+        self.bot.cache.update_member(_member)
 
-    def guild_member_remove(self, data: dict) -> tuple[Guild | PartialGuild, User]:
+        return (_guild, _member)
+
+    def guild_member_remove(self, data: dict) -> tuple[
+        Guild | PartialGuild,
+        Member | PartialMember | User
+    ]:
         _guild = self._get_guild_or_partial(int(data["guild_id"]))
+        _member = self.bot.cache.remove_member(_guild.id, int(data["user"]["id"]))
+
         return (
             _guild,
-            User(
+            _member or User(
                 state=self.bot.state,
                 data=data["user"]
             )

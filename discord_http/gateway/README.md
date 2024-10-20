@@ -18,7 +18,8 @@ pip install git+https://github.com/AlexFlipnote/discord.http.git@feat/gateway
 - [x] Prevent `GUILD_CREATE` from being dispatched before `SHARD_READY`
 - [x] Ability to set playing status on boot and change later
 - [x] Check if bot is allowed to use special intents
-- [ ] Properly handle all needed cache flags
-- [ ] Handling of chunking members
-- [ ] Handling of ratelimits
+- [x] Properly handle all needed cache flags
+- [x] Handling of chunking members
+- [x] Handling of ratelimits
+- [ ] Make sure it's ready for v2 release
 

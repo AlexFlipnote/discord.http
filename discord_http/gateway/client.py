@@ -9,6 +9,7 @@ from .shard import Shard
 from .object import PlayingStatus
 
 if TYPE_CHECKING:
+    from ..object import Snowflake
     from ..client import GatewayCacheFlags, Client, Intents
 
 _log = logging.getLogger("discord_http")
@@ -27,7 +28,7 @@ class GatewayClient:
         intents: "Intents | None" = None,
         automatic_shards: bool = True,
         shard_id: int | None = None,
-        shard_count: int | None = None,
+        shard_count: int = 1,
         shard_ids: list[int] | None = None,
         max_concurrency: int | None = None,
         api_version: int | None = 8
@@ -135,19 +136,33 @@ class GatewayClient:
 
         self.__shards[shard_id] = shard
 
+    def shard_by_guild_id(self, guild_id: "Snowflake | int") -> int:
+        """
+        Returns the shard ID of the shard that the guild is in
+
+        Parameters
+        ----------
+        guild_id: `Snowflake | int`
+            The ID of the guild to get the shard ID of
+
+        Returns
+        -------
+        `int`
+            The shard ID of the guild
+        """
+        return (int(guild_id) >> 22) % self.shard_count
+
     async def _launch_all_shards(self) -> None:
         """ Launches all the shards """
         if self.automatic_shards:
             self.shard_count, self.max_concurrency = await self._fetch_gateway()
 
-            if self.shard_count == 1:
-                # There is no need to shard if there is only 1 shard
-                _log.debug("Sharding disabled, no point in sharding 1 shard")
-                self.shard_count = None
-                self.max_concurrency = None
+        if self.shard_count == 1:
+            # There is no need to shard if there is only 1 shard
+            _log.debug("Sharding disabled, no point in sharding 1 shard")
+            self.max_concurrency = None
 
-        _shard_count = self.shard_count or 1
-        shard_ids = self.shard_ids or range(_shard_count)
+        shard_ids = self.shard_ids or range(self.shard_count)
 
         if not self.max_concurrency:
             for shard_id in shard_ids:
@@ -176,7 +191,7 @@ class GatewayClient:
                 else:
                     _log.debug(f"Bucket {i}/{len(chunks)} shards launched, last bucket, skipping wait")
 
-            _log.debug(f"All {len(chunks)} bucket(s) have launched a total of {_shard_count} shard(s)")
+            _log.debug(f"All {len(chunks)} bucket(s) have launched a total of {self.shard_count} shard(s)")
 
         asyncio.create_task(self._delay_full_ready())
 

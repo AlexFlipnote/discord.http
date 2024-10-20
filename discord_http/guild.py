@@ -312,7 +312,6 @@ class PartialGuild(PartialBase):
         self._cache_stickers: dict[int, Union["Sticker", "PartialSticker"]] = {}
         self._cache_voice_states: dict[int, Union["VoiceState", "PartialVoiceState"]] = {}
 
-        self.chunked: bool = False
         self.member_count: int | None = None
         self._large: bool | None = (
             None if self.member_count is None
@@ -321,6 +320,14 @@ class PartialGuild(PartialBase):
 
     def __repr__(self) -> str:
         return f"<PartialGuild id={self.id}>"
+
+    @property
+    def chunked(self) -> bool:
+        """ `bool`: Whether the guild is chunked or not """
+        count = self.member_count
+        if count is None:
+            return False
+        return count == len(self._cache_members)
 
     def get_member(self, member_id: int) -> Optional[Union["Member", "PartialMember"]]:
         """

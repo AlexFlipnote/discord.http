@@ -8,17 +8,20 @@ import yarl
 import zlib
 
 from datetime import datetime
-from typing import Any, TYPE_CHECKING
+from typing import Any, TYPE_CHECKING, overload
 
 from .. import utils
+from ..object import Snowflake
 
 from .enums import PayloadType, ShardCloseType
+from .flags import GatewayCacheFlags, Intents
 from .object import PlayingStatus
-from .parser import Parser
+from .parser import Parser, GuildMembersChunk
 
 if TYPE_CHECKING:
+    from ..member import Member
     from ..client import Client
-    from .flags import GatewayCacheFlags, Intents
+    from ..guild import Guild
 
 DEFAULT_GATEWAY = yarl.URL("wss://gateway.discord.gg/")
 _log = logging.getLogger("discord_http")
@@ -26,6 +29,54 @@ _log = logging.getLogger("discord_http")
 __all__ = (
     "Shard",
 )
+
+
+class GatewayRatelimiter:
+    def __init__(
+        self,
+        shard_id: int,
+        count: int = 110,
+        per: float = 60.0
+    ) -> None:
+        self.shard_id: int = shard_id
+
+        self.max: int = count
+        self.remaining: int = count
+        self.window: float = 0.0
+        self.per: float = per
+        self.lock: asyncio.Lock = asyncio.Lock()
+
+    def is_ratelimited(self) -> bool:
+        current = time.time()
+        if current > self.window + self.per:
+            return False
+        return self.remaining == 0
+
+    def get_delay(self) -> float:
+        current = time.time()
+
+        if current > self.window + self.per:
+            self.remaining = self.max
+
+        if self.remaining == self.max:
+            self.window = current
+
+        if self.remaining == 0:
+            return self.per - (current - self.window)
+
+        self.remaining -= 1
+        return 0.0
+
+    async def block(self) -> None:
+        async with self.lock:
+            retry_after = self.get_delay()
+            if retry_after:
+                _log.warning(
+                    "WebSocket ratelimit hit on ShardID "
+                    f"{self.shard_id}, waiting {round(retry_after, 2)}s..."
+                )
+                await asyncio.sleep(retry_after)
+                _log.info(f"WebSocket ratelimit released on ShardID {self.shard_id}")
 
 
 class Status:
@@ -106,10 +157,10 @@ class Shard:
     def __init__(
         self,
         bot: "Client",
-        intents: "Intents | None",
+        intents: Intents | None,
         shard_id: int,
         *,
-        cache_flags: "GatewayCacheFlags | None" = None,
+        cache_flags: GatewayCacheFlags | None = None,
         shard_count: int | None = None,
         debug_events: bool = False,
         api_version: int | None = 8
@@ -137,6 +188,7 @@ class Shard:
         self._ready: asyncio.Event = asyncio.Event()
         self._guild_ready_timeout: float = float(bot.guild_ready_timeout)
         self._guild_create_queue: asyncio.Queue[dict] = asyncio.Queue()
+        self._ratelimiter: GatewayRatelimiter = GatewayRatelimiter(shard_id)
 
         self._connection = None
         self._should_kill = False
@@ -176,7 +228,12 @@ class Shard:
         code = self._close_code or self.ws.close_code
         return code == 1000
 
-    async def send_message(self, message: dict | PayloadType) -> None:
+    async def send_message(
+        self,
+        message: dict | PayloadType,
+        *,
+        ratelimit: bool = False
+    ) -> None:
         """
         Sends a message to the websocket
 
@@ -190,6 +247,12 @@ class Shard:
 
         if not isinstance(message, dict):
             raise TypeError("message must be of type dict")
+
+        if ratelimit:
+            await self._ratelimiter.block()
+
+        if self.debug_events:
+            self.bot.dispatch("raw_socket_sent", message)
 
         _log.debug(f"Sending message: {message}")
         await self.ws.send_json(message)
@@ -318,6 +381,112 @@ class Shard:
             case _:
                 pass
 
+    async def send_guild_members_chunk(
+        self,
+        guild_id: Snowflake | int,
+        *,
+        query: str | None = None,
+        limit: int = 0,
+        presences: bool = False,
+        user_ids: list[Snowflake | int] | None = None,
+        nonce: str | None = None
+    ) -> None:
+        payload = {
+            "guild_id": str(guild_id),
+            "limit": int(limit),
+        }
+
+        if user_ids is not None:
+            payload["user_ids"] = [str(int(g)) for g in user_ids]
+        if query is not None:
+            payload["query"] = str(query)
+        if presences is True:
+            payload["presences"] = True
+
+        if nonce is not None:
+            _nonce = str(nonce)
+            if len(_nonce) > 32:
+                _log.warning("Nonce is probably too long, it might be ignored by Discord")
+
+            payload["nonce"] = str(nonce)
+
+        await self.send_message(
+            {"op": int(PayloadType.request_guild_members), "d": payload},
+            ratelimit=True
+        )
+
+    async def query_members(
+        self,
+        guild_id: Snowflake | int,
+        *,
+        query: str | None = None,
+        limit: int = 0,
+        presences: bool = False,
+        user_ids: list[Snowflake | int] | None = None
+    ) -> list["Member"]:
+        """ test """
+        chunker = GuildMembersChunk(state=self.bot.state, guild_id=int(guild_id))
+        self.parser._chunk_requests[chunker.nonce] = chunker
+
+        await self.send_guild_members_chunk(
+            guild_id=guild_id,
+            query=query,
+            limit=limit,
+            presences=presences,
+            user_ids=user_ids,
+            nonce=chunker.nonce
+        )
+
+        try:
+            return await asyncio.wait_for(chunker.wait(), timeout=30.0)
+        except asyncio.TimeoutError:
+            _log.warning(
+                "Timed out while waiting for guild members chunk "
+                f"(guild_id={guild_id}, query={query}, limit={limit})"
+            )
+            raise
+
+    @overload
+    async def chunk_guild(
+        self,
+        guild_id: Snowflake | int,
+        *,
+        wait: bool = False
+    ) -> asyncio.Future[list["Member"]]:
+        ...
+
+    @overload
+    async def chunk_guild(
+        self,
+        guild_id: Snowflake | int,
+        *,
+        wait: bool = True
+    ) -> list["Member"]:
+        ...
+
+    async def chunk_guild(
+        self,
+        guild_id: Snowflake | int,
+        *,
+        wait: bool = True
+    ) -> list["Member"] | asyncio.Future[list["Member"]]:
+        chunker = GuildMembersChunk(
+            state=self.bot.state, guild_id=int(guild_id),
+            cache=True
+        )
+        self.parser._chunk_requests[chunker.nonce] = chunker
+
+        await self.send_guild_members_chunk(
+            guild_id=guild_id,
+            query="",
+            limit=0,
+            nonce=chunker.nonce
+        )
+
+        if wait:
+            return await chunker.wait()
+        return chunker.get_future()
+
     def _dispatch_close_reason(self, reason: str, enum: ShardCloseType) -> None:
         if self.bot.has_any_dispatch("shard_closed"):
             self.bot.dispatch("shard_closed", self.shard_id, enum)
@@ -401,24 +570,59 @@ class Shard:
             self._reset_instance()
             _log.error(f"Shard {self.shard_id} crashed completly", exc_info=e)
 
+    def _guild_needs_chunking(self, guild: "Guild") -> bool:
+        return (
+            self.bot.chunk_guilds_on_startup and
+            not guild.chunked and
+            not (
+                Intents.guild_presences in self.bot.intents and
+                not guild.large
+            )
+        )
+
+    def _chunk_timeout(self, guild: "Guild") -> float:
+        return max(5.0, (guild.member_count or 0) / 10_000)
+
     async def _delay_ready(self) -> None:
         """
         Purposfully delays the ready event
         Then make shard ready when last GUILD_CREATE is received
         """
-        while True:
-            try:
-                guild_data = await asyncio.wait_for(
-                    self._guild_create_queue.get(),
-                    timeout=self._guild_ready_timeout
-                )
-            except asyncio.TimeoutError:
-                break  # It's supposed to timeout
-            else:
-                # Start adding guilds to cache if it's enabled
-                self.parser.guild_create(guild_data)
+        try:
+            states: list[tuple[Guild, asyncio.Future[list[Member]]]] = []
+            while True:
+                try:
+                    guild_data = await asyncio.wait_for(
+                        self._guild_create_queue.get(),
+                        timeout=self._guild_ready_timeout
+                    )
+                except asyncio.TimeoutError:
+                    break  # It's supposed to timeout
+                else:
+                    # Start adding guilds to cache if it's enabled
+                    (parsed_guild,) = self.parser.guild_create(guild_data)
+
+                    if self._guild_needs_chunking(parsed_guild):
+                        future = await self.chunk_guild(parsed_guild.id, wait=False)
+                        states.append((parsed_guild, future))
+
+            for guild, future in states:
+                timeout = self._chunk_timeout(guild)
+
+                if not future.done():
+                    try:
+                        await asyncio.wait_for(future, timeout=timeout)
+                    except asyncio.TimeoutError:
+                        _log.warning(
+                            f"Timed out while waiting for guild members chunk "
+                            f"(guild_id={guild.id}, timeout={timeout})"
+                        )
+
+        except asyncio.CancelledError:
+            pass
 
         self._ready.set()
+        self.parser._chunk_requests.clear()
 
         if self.bot.has_any_dispatch("shard_ready"):
             self.bot.dispatch("shard_ready", self)
@@ -452,7 +656,7 @@ class Shard:
             case "GUILD_DELETE":
                 self._parse_guild_delete(data)
 
-            case _:
+            case _:  # Any other event that does not need special handling
                 try:
                     self._send_dispatch(new_name, *_parse_event(data))
                 except Exception as e:
