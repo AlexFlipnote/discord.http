@@ -16,7 +16,7 @@ from .object import (
 from .. import utils
 from ..audit import AuditLogEntry
 from ..automod import AutoModRule
-from ..channel import BaseChannel, PartialChannel, StageInstance
+from ..channel import BaseChannel, PartialChannel, StageInstance, PartialThread
 from ..emoji import Emoji, EmojiParser
 from ..enums import ChannelType
 from ..guild import Guild, PartialGuild, ScheduledEvent, PartialScheduledEvent
@@ -574,8 +574,15 @@ class Parser:
         self.bot.cache.add_channel(channel)
         return (channel,)
 
-    def thread_delete(self, data: dict) -> tuple[PartialChannel]:
-        thread = self._partial_channel(data)
+    def thread_delete(self, data: dict) -> tuple[PartialThread]:
+        thread = PartialThread(
+            state=self.bot.state,
+            id=int(data["id"]),
+            guild_id=int(data["guild_id"]),
+            parent_id=int(data["parent_id"]),
+            type=ChannelType(data["type"])
+        )
+
         self.bot.cache.remove_channel(thread)
         return (thread,)
 

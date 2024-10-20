@@ -48,6 +48,7 @@ __all__ = (
     "NewsChannel",
     "NewsThread",
     "PartialChannel",
+    "PartialThread",
     "PrivateThread",
     "PublicThread",
     "StageChannel",
@@ -137,6 +138,31 @@ class PartialChannel(PartialBase):
 
         from .guild import PartialGuild
         return PartialGuild(state=self._state, id=self.guild_id)
+
+    @property
+    def parent(self) -> "BaseChannel | CategoryChannel | PartialChannel | None":
+        """
+        `BaseChannel | CategoryChannel | PartialChannel | None`:
+        Returns the parent channel of the thread or the parent category of the channel.
+        Only returns a full object if cache is enabled for guild and channel.
+        """
+        if not self.parent_id:
+            return None
+
+        if self.guild_id:
+            cache = self._state.cache.get_channel(
+                guild_id=self.guild_id,
+                channel_id=self.parent_id
+            )
+
+            if cache:
+                return cache
+
+        return PartialChannel(
+            state=self._state,
+            id=self.parent_id,
+            guild_id=self.guild_id
+        )
 
     def permissions_for(self, member: "Member") -> Permissions:
         """
@@ -1832,6 +1858,24 @@ class NewsChannel(BaseChannel):
 
 
 # Thread channels
+class PartialThread(PartialChannel):
+    def __init__(
+        self,
+        *,
+        state: "DiscordAPI",
+        id: int,
+        guild_id: int,
+        parent_id: int,
+        type: ChannelType | int
+    ):
+        super().__init__(state=state, id=int(id), guild_id=int(guild_id))
+        self.parent_id: int = int(parent_id)
+        self._raw_type: ChannelType = ChannelType(int(type))
+
+    def __repr__(self) -> str:
+        return f"<PartialThread id={self.id} type={self.type}>"
+
+
 class PublicThread(BaseChannel):
     def __init__(self, *, state: "DiscordAPI", data: dict):
         super().__init__(state=state, data=data)
