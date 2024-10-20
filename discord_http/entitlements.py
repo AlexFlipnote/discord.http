@@ -4,7 +4,7 @@ from typing import TYPE_CHECKING
 from . import utils
 from .enums import EntitlementType, EntitlementOwnerType, SKUType
 from .flags import SKUFlags
-from .guild import PartialGuild
+from .guild import Guild, PartialGuild
 from .object import PartialBase, Snowflake
 from .user import PartialUser
 
@@ -150,7 +150,8 @@ class Entitlements(PartialEntitlements):
         self.type: EntitlementType = EntitlementType(data["type"])
 
         self.user: PartialUser | None = None
-        self.guild: PartialGuild | None = None
+        self.guild_id: int | None = utils.get_int(data, "guild_id")
+
         self.application: PartialUser = PartialUser(
             state=self._state,
             id=int(data["application_id"])
@@ -176,14 +177,24 @@ class Entitlements(PartialEntitlements):
         if data.get("user_id", None):
             self.user = PartialUser(state=self._state, id=int(data["user_id"]))
 
-        if data.get("guild_id", None):
-            self.guild = PartialGuild(state=self._state, id=int(data["guild_id"]))
-
         if data.get("starts_at", None):
             self.starts_at = utils.parse_time(data["starts_at"])
 
         if data.get("ends_at", None):
             self.ends_at = utils.parse_time(data["ends_at"])
+
+    @property
+    def guild(self) -> Guild | PartialGuild | None:
+        """ `PartialGuild | None`: Returns the guild the entitlement is in """
+        if not self.guild_id:
+            return None
+
+        cache = self._state.cache.get_guild(self.guild_id)
+        if cache:
+            return cache
+
+        from .guild import PartialGuild
+        return PartialGuild(state=self._state, id=self.guild_id)
 
     def is_consumed(self) -> bool:
         """ `bool`: Returns whether the entitlement is consumed or not. """

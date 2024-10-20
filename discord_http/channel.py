@@ -1862,6 +1862,10 @@ class PublicThread(BaseChannel):
     @property
     def channel(self) -> "PartialChannel":
         """ `PartialChannel`: Returns a partial channel object """
+        _channel = self.guild.get_channel(self.channel_id)
+        if _channel:
+            return _channel
+
         from .channel import PartialChannel
         return PartialChannel(state=self._state, id=self.channel_id)
 
