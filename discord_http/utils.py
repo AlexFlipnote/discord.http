@@ -126,7 +126,10 @@ def parse_time(ts: str | int) -> datetime:
         If the provided timestamp is not a string or int
     """
     if isinstance(ts, int):
-        if len(str(ts)) >= 13:
+        ts_length = len(str(ts))
+        if ts_length >= 16:  # Microseconds
+            ts = ts // 1_000_000
+        elif ts_length >= 13:  # Milliseconds
             ts = ts // 1000
         return datetime.fromtimestamp(ts, tz=UTC)
     elif isinstance(ts, str):
