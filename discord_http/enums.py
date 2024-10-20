@@ -230,6 +230,10 @@ class ContentFilterLevel(BaseEnum):
 
 
 class AuditLogType(BaseEnum):
+    # Unknown value is only here because Discord
+    # might add new audit log without documenting it
+    unknown = -1
+
     guild_update = 1
     channel_create = 10
     channel_update = 11
@@ -296,6 +300,9 @@ class AuditLogType(BaseEnum):
     home_settings_update = 191
     voice_channel_status_create = 192
     voice_channel_status_delete = 193
+    guild_scheduled_event_exception_create = 200
+    guild_scheduled_event_exception_update = 201
+    guild_scheduled_event_exception_delete = 202
 
     @property
     def target_type(self):

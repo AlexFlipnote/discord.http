@@ -1,3 +1,5 @@
+import logging
+
 from typing import TYPE_CHECKING, Any, TypeVar, Type, Callable
 from datetime import datetime
 
@@ -14,6 +16,8 @@ from .emoji import EmojiParser
 
 if TYPE_CHECKING:
     from .http import DiscordAPI
+
+_log = logging.getLogger(__name__)
 
 __all__ = (
     "AuditLogEntry",
@@ -354,7 +358,13 @@ class AuditLogEntry(Snowflake):
             id=int(data["guild_id"])
         )
 
-        self.action_type: enums.AuditLogType = enums.AuditLogType(int(data["action_type"]))
+        try:
+            self.action_type: enums.AuditLogType = enums.AuditLogType(int(data["action_type"]))
+        except ValueError:
+            # There might be a new audit log type added
+            _log.debug(f"Unknown audit log type detected from guild {self.guild.id}: {data['action_type']}")
+            self.action_type = enums.AuditLogType.unknown
+
         self.reason: str | None = data.get("reason", None)
 
         self.user_id: int | None = utils.get_int(data, "user_id")
