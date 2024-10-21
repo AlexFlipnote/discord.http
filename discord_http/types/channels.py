@@ -1,6 +1,8 @@
 from typing import Literal, NotRequired, TypedDict
 
 from .guilds import ThreadMember, ThreadMemberWithMember
+from .snowflake import Snowflake
+
 
 __all__ = (
     "StageInstance",
@@ -9,19 +11,37 @@ __all__ = (
     "ThreadMembersUpdate",
 )
 
+# fmt: off
 PrivacyLevel = Literal[
     1,  # PUBLIC
     2,  # GUILD_ONLY
 ]
+Type = Literal[
+    0,  # GUILD_TEXT
+    1,  # DM
+    2,  # GUILD_VOICE
+    3,  # GROUP_DM
+    4,  # GUILD_CATEGORY
+    5,  # GUILD_ANNOUNCEMENT
+    10, # ANNOUNCEMENT_THREAD
+    11, # PUBLIC_THREAD
+    12, # PRIVATE_THREAD
+    13, # GUILD_STAGE_VOICE
+    14, # GUILD_DIRECTORY
+    15, # GUILD_FORUM
+    16, # GUILD_MEDIA
+]
 
+
+# fmt: on
 
 class StageInstance(TypedDict):
-    id: int | str
-    guild_id: int | str
-    channel_id: int | str
+    id: Snowflake
+    guild_id: Snowflake
+    channel_id: Snowflake
     topic: str
     privacy_level: PrivacyLevel
-    guild_scheduled_event_id: int | str | None
+    guild_scheduled_event_id: Snowflake | None
 
 
 class ThreadListSync(TypedDict):
