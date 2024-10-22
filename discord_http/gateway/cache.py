@@ -45,7 +45,7 @@ class Cache:
         guild_id: int,
         guild: "PartialGuild | Guild",
         data: dict
-    ) -> None:
+    ) -> "Guild | PartialGuild | None":
         if self.cache_flags is None:
             return None
 
@@ -195,6 +195,8 @@ class Cache:
             }
         else:
             _guild._cache_voice_states = {}
+
+        return _guild
 
     def update_guild(self, guild_id: int, data: dict) -> None:
         if self.cache_flags is None:

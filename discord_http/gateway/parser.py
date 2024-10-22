@@ -251,11 +251,11 @@ class Parser:
             data=data
         )
 
-    def guild_create(self, data: dict) -> tuple[Guild]:
+    def guild_create(self, data: dict) -> tuple[Guild | PartialGuild]:
         guild = self._guild(data)
-        self.bot.cache.add_guild(guild.id, guild, data)
+        cache_guild = self.bot.cache.add_guild(guild.id, guild, data)
 
-        return (guild,)
+        return (cache_guild or guild,)
 
     def guild_update(self, data: dict) -> tuple[Guild]:
         guild = self._guild(data)
