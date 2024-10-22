@@ -1,3 +1,5 @@
+import time
+
 from typing import TYPE_CHECKING
 
 from .flags import Permissions
@@ -47,7 +49,9 @@ class CommandOnCooldown(CheckFailed):
     def __init__(self, cooldown: Cooldown, retry_after: float):
         self.cooldown: Cooldown = cooldown
         self.retry_after: float = retry_after
-        super().__init__(f"Command is on cooldown for {retry_after:.2f}s")
+        self.retry_after_ts: float = int(time.time() + retry_after)
+        self.discord_format: str = f"<t:{self.retry_after_ts}:R>"
+        super().__init__(f"Command is on cooldown, try again {self.discord_format}")
 
 
 class UserMissingPermissions(CheckFailed):
