@@ -167,7 +167,7 @@ class Shard:
     ):
         self.bot = bot
 
-        self.intents = intents
+        self.intents: Intents = intents or Intents.none()
         self.cache_flags = cache_flags
 
         self.api_version = api_version
@@ -575,7 +575,7 @@ class Shard:
             self.bot.chunk_guilds_on_startup and
             not guild.chunked and
             not (
-                Intents.guild_presences in self.bot.intents and
+                Intents.guild_presences in self.intents and
                 not guild.large
             )
         )

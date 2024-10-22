@@ -139,7 +139,7 @@ class Client:
         self.guild_ready_timeout: float = guild_ready_timeout
         self.chunk_guilds_on_startup: bool = chunk_guilds_on_startup
         self.call_after_delay: float = call_after_delay
-        self.intents: Intents = intents or Intents.none()
+        self.intents: Intents | None = intents
 
         self.gateway: Optional["GatewayClient"] = None
         self.disable_default_get_path: bool = disable_default_get_path
