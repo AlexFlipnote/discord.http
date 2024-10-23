@@ -123,15 +123,24 @@ class Invite(PartialInvite):
 
         self.type: InviteType = InviteType(int(data["type"]))
 
-        self.uses: int = int(data["uses"])
-        self.max_uses: int = int(data["max_uses"])
+        self.uses: int = data.get("uses", 0)
+        self.max_uses: int = data.get("max_uses", 0)
         self.temporary: bool = data.get("temporary", False)
-        self.created_at: datetime = utils.parse_time(data["created_at"])
+
+        self.created_at: datetime | None = None
+        self.expires_at: datetime | None = None
 
         self.inviter: "User | None" = None
-        self.expires_at: datetime | None = None
-        self.guild: Guild | PartialGuild | None = None
-        self.channel: "PartialChannel | None" = None
+
+        self.guild_id: int | None = (
+            utils.get_int(data, "guild_id") or
+            utils.get_int(data.get("guild", {}), "id")
+        )
+
+        self.channel_id: int | None = (
+            utils.get_int(data, "channel_id") or
+            utils.get_int(data.get("channel", {}), "id")
+        )
 
         self._from_data(data)
 
@@ -139,30 +148,11 @@ class Invite(PartialInvite):
         return f"<Invite code='{self.code}' uses='{self.uses}'>"
 
     def _from_data(self, data: dict) -> None:
-        if data["expires_at"]:
+        if data.get("expires_at", None):
             self.expires_at = utils.parse_time(data["expires_at"])
 
-        if data.get("guild", None):
-            self.guild = Guild(state=self._state, data=data["guild"])
-        elif data.get("guild_id", None):
-            self.guild = PartialGuild(
-                state=self._state,
-                id=int(data["guild_id"])
-            )
-
-        guild_id = data.get("guild", {}).get("id", None)
-        if data.get("channel", None):
-            self.channel = PartialChannel(
-                state=self._state,
-                id=int(data["channel"]["id"]),
-                guild_id=int(guild_id) if guild_id else None,
-            )
-        elif data.get("channel_id", None):
-            self.channel = PartialChannel(
-                state=self._state,
-                id=int(data["channel_id"]),
-                guild_id=int(guild_id) if guild_id else None,
-            )
+        if data.get("created_at", None):
+            self.created_at = utils.parse_time(data["created_at"])
 
         if data.get("inviter", None):
             self.inviter = User(state=self._state, data=data["inviter"])
