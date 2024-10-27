@@ -1505,9 +1505,19 @@ def guild_only():
     """
     Decorator to set a command as guild only.
 
-    This is a alias to `commands.allow_contexts(guild=True, bot_dm=False, private_dm=False)`
+    This is a alias to two particular functions:
+    - `commands.allow_contexts(guild=True, bot_dm=False, private_dm=False)`
+    - `commands.check(...)` (which checks for Context.guild to be available)
     """
+    def _guild_only_check(ctx: "Context") -> bool:
+        if not ctx.guild:
+            raise CheckFailed("Command can only be used in servers")
+        return True
+
     def decorator(func):
+        _check_list = getattr(func, "__checks__", [])
+        _check_list.append(_guild_only_check)
+        func.__checks__ = _check_list
         func.__integration_contexts__ = [0]
         return func
 
