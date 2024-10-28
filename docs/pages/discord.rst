@@ -1,2 +1,2 @@
 .. toctree::
-  Discord <https://discord.gg/AlexFlipnote>
+  Discord <https://discord.gg/yqb7vATbjH>
