@@ -40,7 +40,7 @@ Check out [the documentation](https://discordhttp.alexflipnote.dev/pages/getting
 - Documentations
   - [Library documentation](https://discordhttp.alexflipnote.dev)
   - [Discord API documentation](https://discord.com/developers/docs/intro)
-- [Discord server](https://discord.gg/AlexFlipnote)
+- [Discord server](https://discord.gg/yqb7vATbjH)
 - [discord.http Bot example](https://github.com/AlexFlipnote/discord_bot.http)
 
 
