@@ -268,6 +268,10 @@ class Cache:
             guild._cache_members[member.id] = self.bot.get_partial_member(
                 member.id, member.guild_id
             )
+        else:
+            # Cache bot regardless of cache flags
+            if member.id == self.bot.user.id:
+                guild._cache_members[member.id] = member
 
     def update_member(self, member: "Member | PartialMember") -> None:
         self.add_member(member, count_member=False)
