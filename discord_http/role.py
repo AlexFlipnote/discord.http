@@ -173,9 +173,9 @@ class PartialRole(PartialBase):
             payload["name"] = name
         if colour is not MISSING:
             if isinstance(colour, Colour):
-                payload["colour"] = colour.value
+                payload["color"] = colour.value
             else:
-                payload["colour"] = colour
+                payload["color"] = colour
         if permissions is not MISSING:
             payload["permissions"] = permissions.value
         if hoist is not MISSING:
