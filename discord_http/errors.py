@@ -79,7 +79,10 @@ class HTTPException(DiscordException):
 
         if isinstance(r.response, dict):
             self.code = r.response.get("code", 0)
-            self.text = r.response.get("message", "Unknown")
+            self.text = r.response.get(
+                "message",
+                str(r.response)  # Fallback to raw response
+            )
             if r.response.get("errors", None):
                 self.text += f"\n{r.response['errors']}"
         else:
