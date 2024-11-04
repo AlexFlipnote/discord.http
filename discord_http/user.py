@@ -190,6 +190,9 @@ class User(PartialUser):
 
         self.public_flags: Optional[PublicFlags] = None
 
+        # This might change a lot
+        self.clan: Optional[dict] = data.get("clan", None)
+
         self._from_data(data)
 
     def __repr__(self) -> str:
