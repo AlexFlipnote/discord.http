@@ -648,10 +648,13 @@ class PartialThreadMember(PartialMember):
     @property
     def thread(self) -> "PartialChannel | Thread":
         """ `PartialChannel | Thread"`: The thread the member is in """
-        return self.guild.get_channel(self.thread_id) or self.guild.get_partial_channel(self.thread_id)
+        return (
+            self.guild.get_channel(self.thread_id) or
+            self.guild.get_partial_channel(self.thread_id)
+        )
 
 
-class ThreadMember(Member, PartialThreadMember):
+class ThreadMember(Member):
     def __init__(
         self,
         *,
@@ -664,9 +667,15 @@ class ThreadMember(Member, PartialThreadMember):
             guild=guild,
             data=data["member"]
         )
-        PartialThreadMember.__init__(
-            self,
-            state=state,
-            data=data,  # type: ignore
-            guild_id=guild.id,
+
+        self.thread_id: int = int(data["id"])
+        self.join_timestamp: datetime = utils.parse_time(data["join_timestamp"])
+        self.flags: int = data["flags"]
+
+    @property
+    def thread(self) -> "PartialChannel | Thread":
+        """ `PartialChannel | Thread"`: The thread the member is in """
+        return (
+            self.guild.get_channel(self.thread_id) or
+            self.guild.get_partial_channel(self.thread_id)
         )

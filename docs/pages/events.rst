@@ -529,11 +529,15 @@ Intents.guild_invites
 Intents.guild_voice_states
 ~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-.. function:: async def on_voice_state_update(voice_state):
+.. function:: async def on_voice_state_update(before_voice, after_voice):
 
   Called whenever a voice state is updated
 
-  :param voice_state: :class:`VoiceState` object with information about the voice state.
+  .. note::
+    Depending on your cache rules, before_voice will either return Full, Partial object or None.
+
+  :param before_voice: :class:`VoiceState` object with information about the new voice state.
+  :param after_voice: :class:`VoiceState` object with information about the new voice state.
 
 
 Intents.guild_presences

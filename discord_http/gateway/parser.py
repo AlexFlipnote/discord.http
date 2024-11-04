@@ -27,7 +27,7 @@ from ..role import Role, PartialRole
 from ..soundboard import PartialSoundboardSound, SoundboardSound
 from ..sticker import Sticker
 from ..user import User, PartialUser
-from ..voice import VoiceState
+from ..voice import VoiceState, PartialVoiceState
 from ..integrations import Integration, PartialIntegration
 
 if TYPE_CHECKING:
@@ -742,7 +742,10 @@ class Parser:
         return (None,)
     """
 
-    def voice_state_update(self, data: dict) -> tuple[VoiceState]:
+    def voice_state_update(self, data: dict) -> tuple[
+        VoiceState | PartialVoiceState | None,
+        VoiceState
+    ]:
         _channel = None
         _guild = None
 
@@ -755,6 +758,8 @@ class Parser:
         if data.get("guild_id", None) is not None:
             _guild = self._get_guild_or_partial(int(data["guild_id"]))
 
+        before_vs = _guild.get_member_voice_state(int(data["user_id"]))
+
         vs = VoiceState(
             state=self.bot.state,
             data=data,
@@ -763,7 +768,7 @@ class Parser:
         )
 
         self.bot.cache.update_voice_state(vs)
-        return (vs,)
+        return (before_vs, vs)
 
     def typing_start(self, data: dict) -> tuple[TypingStartEvent]:
         guild_id: int | None = utils.get_int(data, "guild_id")
