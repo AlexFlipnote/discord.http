@@ -6,9 +6,10 @@ import random
 import sys
 
 from aiohttp.client_exceptions import ContentTypeError
-from multidict import CIMultiDictProxy
 from collections import deque
+from multidict import CIMultiDictProxy
 from typing import Any, Self, overload, Literal, TypeVar, Generic, TYPE_CHECKING
+from urllib.parse import quote as url_quote
 
 from . import __version__
 from .flags import ApplicationFlags
@@ -430,7 +431,7 @@ class DiscordAPI:
 
         reason = kwargs.pop("reason", None)
         if reason:
-            kwargs["headers"]["X-Audit-Log-Reason"] = reason
+            kwargs["headers"]["X-Audit-Log-Reason"] = url_quote(reason)
 
         _api_url = self.api_url
         if kwargs.pop("webhook", False):
