@@ -101,7 +101,7 @@ class Colour:
         if len(hex) == 3:
             hex = hex * 2
 
-        return cls(int(hex[1:], 16))
+        return cls(int(hex, 16))
 
     def to_hex(self) -> str:
         """ `str`: Returns the hex value of the colour """
