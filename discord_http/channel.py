@@ -1277,13 +1277,16 @@ class PartialChannel(PartialBase):
         _msg_collector: list["Message"] = []
 
         async def _bulk_delete(messages: list["Message"]):
-            await self._state.query(
-                "POST",
-                f"/channels/{self.id}/messages/bulk-delete",
-                res_method="text",
-                json={"messages": [str(int(g)) for g in messages]},
-                reason=reason
-            )
+            if len(messages) > 1:
+                await self._state.query(
+                    "POST",
+                    f"/channels/{self.id}/messages/bulk-delete",
+                    res_method="text",
+                    json={"messages": [str(int(g)) for g in messages]},
+                    reason=reason
+                )
+            else:
+                await _single_delete(messages)
 
         async def _single_delete(messages: list["Message"]):
             for g in messages:
