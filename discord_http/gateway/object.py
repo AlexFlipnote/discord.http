@@ -365,12 +365,28 @@ class Reaction:
 
     @property
     def channel(self) -> "PartialChannel | None":
-        """ `PartialChannel` | `None`: Returns the channel the message was sent in """
+        """
+        `BaseChannel | PartialChannel`: Returns the channel the message was sent in.
+        If guild and channel cache is enabled, it can also return full channel object.
+        """
         if not self.channel_id:
             return None
 
+        if self.guild_id:
+            cache = self._state.cache.get_channel_thread(
+                guild_id=self.guild_id,
+                channel_id=self.channel_id
+            )
+
+            if cache:
+                return cache
+
         from ..channel import PartialChannel
-        return PartialChannel(state=self._state, id=self.channel_id)
+        return PartialChannel(
+            state=self._state,
+            id=self.channel_id,
+            guild_id=self.guild_id
+        )
 
     @property
     def message(self) -> "PartialMessage | None":
