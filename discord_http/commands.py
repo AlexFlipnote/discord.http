@@ -255,7 +255,7 @@ class Command:
         self._converters: dict[str, Type[Converter]] = {}
 
         self.__list_choices: list[str] = []
-        self.__user_objects: dict[str, Type[Union[Member, User]]] = {}
+        self.__user_objects: dict[str, Type[Member | User]] = {}
 
         if self.type == ApplicationCommandType.chat_input:
             if self.description is None:
@@ -337,7 +337,9 @@ class Command:
                         else:
                             # Just a regular channel type
                             option.update({
-                                "channel_types": [int(i) for i in channel_types[origin]]
+                                "channel_types": [
+                                    int(i) for i in channel_types[origin]
+                                ]
                             })
 
                     case x if x in [Attachment]:

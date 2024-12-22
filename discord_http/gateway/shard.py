@@ -21,7 +21,7 @@ from .parser import Parser, GuildMembersChunk
 if TYPE_CHECKING:
     from ..member import Member
     from ..client import Client
-    from ..guild import Guild
+    from ..guild import Guild, PartialGuild
 
 DEFAULT_GATEWAY = yarl.URL("wss://gateway.discord.gg/")
 _log = logging.getLogger("discord_http")
@@ -570,7 +570,7 @@ class Shard:
             self._reset_instance()
             _log.error(f"Shard {self.shard_id} crashed completly", exc_info=e)
 
-    def _guild_needs_chunking(self, guild: "Guild") -> bool:
+    def _guild_needs_chunking(self, guild: "Guild | PartialGuild") -> bool:
         return (
             self.bot.chunk_guilds_on_startup and
             not guild.chunked and
@@ -580,7 +580,7 @@ class Shard:
             )
         )
 
-    def _chunk_timeout(self, guild: "Guild") -> float:
+    def _chunk_timeout(self, guild: "Guild | PartialGuild") -> float:
         return max(5.0, (guild.member_count or 0) / 10_000)
 
     async def _delay_ready(self) -> None:
@@ -589,7 +589,7 @@ class Shard:
         Then make shard ready when last GUILD_CREATE is received
         """
         try:
-            states: list[tuple[Guild, asyncio.Future[list[Member]]]] = []
+            states: list[tuple[Guild | PartialGuild, asyncio.Future[list[Member]]]] = []
             while True:
                 try:
                     guild_data = await asyncio.wait_for(

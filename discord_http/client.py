@@ -412,7 +412,7 @@ class Client:
                     int(gid) for gid in cmd.guild_ids
                 ])
 
-        guild_ids = list(set(guild_ids))
+        guild_ids: list[int] = list(set(guild_ids))
 
         for g in guild_ids:
             await self.state.update_commands(

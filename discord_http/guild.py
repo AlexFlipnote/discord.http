@@ -322,6 +322,15 @@ class PartialGuild(PartialBase):
         return f"<PartialGuild id={self.id}>"
 
     @property
+    def large(self) -> bool:
+        """ `bool`: Whether the guild is considered large """
+        if self._large is None:
+            if self.member_count is not None:
+                return self.member_count >= 250
+            return len(self.members) >= 250
+        return self.large
+
+    @property
     def chunked(self) -> bool:
         """ `bool`: Whether the guild is chunked or not """
         count = self.member_count
@@ -2555,15 +2564,6 @@ class Guild(PartialGuild):
         self.verification_level: VerificationLevel = VerificationLevel(data.get("verification_level", 0))
         self.widget_channel_id: Optional[int] = utils.get_int(data, "widget_channel_id")
         self.widget_enabled: bool = data.get("widget_enabled", False)
-
-    @property
-    def large(self) -> bool:
-        """ `bool`: Whether the guild is considered large """
-        if self._large is None:
-            if self.member_count is not None:
-                return self.member_count >= 250
-            return len(self.members) >= 250
-        return self.large
 
     @property
     def emojis_limit(self) -> int:
