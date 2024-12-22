@@ -1,7 +1,5 @@
 import io
 
-from typing import Union, Optional
-
 __all__ = (
     "File",
 )
@@ -10,14 +8,20 @@ __all__ = (
 class File:
     def __init__(
         self,
-        data: Union[io.BufferedIOBase, str],
+        data: io.BufferedIOBase | str,
+        filename: str | None = None,
         *,
-        filename: Optional[str] = None,
         spoiler: bool = False,
-        description: Optional[str] = None
+        title: str | None = None,
+        description: str | None = None,
+        duration_secs: int | None = None,
+        waveform: str | None = None
     ):
         self.spoiler = spoiler
+        self.title = title
         self.description = description
+        self.duration_secs = duration_secs
+        self.waveform = waveform
         self._filename = filename
 
         if isinstance(data, io.IOBase):
@@ -50,7 +54,7 @@ class File:
         """ `str`: The filename of the file """
         return f"{'SPOILER_' if self.spoiler else ''}{self._filename}"
 
-    def reset(self, *, seek: Union[int, bool] = True) -> None:
+    def reset(self, *, seek: int | bool = True) -> None:
         """ Reset the file buffer to the original position """
         if seek:
             self.data.seek(self._original_pos)
@@ -68,7 +72,13 @@ class File:
             "filename": self.filename
         }
 
+        if self.title:
+            payload["title"] = self.title
         if self.description:
             payload["description"] = self.description
+        if self.duration_secs:
+            payload["duration_secs"] = self.duration_secs
+        if self.waveform:
+            payload["waveform"] = self.waveform
 
         return payload

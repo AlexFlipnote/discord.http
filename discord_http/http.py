@@ -7,20 +7,23 @@ import sys
 
 from aiohttp.client_exceptions import ContentTypeError
 from collections import deque
-from typing import (
-    Optional, Any, Union, Self, overload,
-    Literal, TypeVar, Generic, TYPE_CHECKING
-)
+from multidict import CIMultiDictProxy
+from typing import Any, Self, overload, Literal, TypeVar, Generic, TYPE_CHECKING
+from urllib.parse import quote as url_quote
 
 from . import __version__
+from .flags import ApplicationFlags
 from .errors import (
     NotFound, DiscordServerError,
     Forbidden, HTTPException, Ratelimited,
     AutomodBlock
 )
 
+from .gateway.flags import Intents
+
 if TYPE_CHECKING:
-    from .user import User
+    from .client import Client
+    from .user import UserClient
 
 MethodTypes = Literal["GET", "POST", "DELETE", "PUT", "HEAD", "PATCH", "OPTIONS"]
 ResMethodTypes = Literal["text", "read", "json"]
@@ -46,9 +49,9 @@ class HTTPResponse(Generic[ResponseT]):
         *,
         status: int,
         response: ResponseT,
-        reason: Optional[str],
+        reason: str | None,
         res_method: ResMethodTypes,
-        headers: aiohttp.multipart.CIMultiDictProxy[str],
+        headers: CIMultiDictProxy[str],
     ):
         self.status = status
         self.response = response
@@ -69,21 +72,24 @@ class HTTPClient:
     Can be used to make requests outside of the usual Discord API
     """
     def __init__(self):
-        self.__session: Optional[HTTPSession] = None
+        self.session: HTTPSession | None = None
 
     async def _create_session(self) -> None:
         """ Creates a new session for the library """
-        if self.__session:
-            await self.__session.close()
-        self.__session = HTTPSession(
-            timeout=aiohttp.ClientTimeout(total=60)
+        if self.session:
+            await self.session.close()
+
+        self.session = HTTPSession(
+            connector=aiohttp.TCPConnector(limit=0),
+            timeout=aiohttp.ClientTimeout(total=60),
+            cookie_jar=aiohttp.DummyCookieJar()
         )
 
     async def _close_session(self) -> None:
         """ Closes the session for the library """
-        if self.__session:
-            await self.__session.close()
-        self.__session = None
+        if self.session:
+            await self.session.close()
+        self.session = None
 
     @overload
     async def request(
@@ -123,7 +129,7 @@ class HTTPClient:
         method: MethodTypes,
         url: str,
         *,
-        res_method: Optional[ResMethodTypes] = "text",
+        res_method: ResMethodTypes | None = "text",
         **kwargs
     ) -> HTTPResponse:
         """
@@ -156,7 +162,7 @@ class HTTPClient:
                 "must be either text, read or json"
             )
 
-        async with self.__session.request(method.upper(), str(url), **kwargs) as res:
+        async with self.session.request(method.upper(), str(url), **kwargs) as res:
             try:
                 r = await getattr(res, res_method.lower())()
             except ContentTypeError:
@@ -190,7 +196,7 @@ class Ratelimit:
         self.outgoing: int = 0
         self.remaining = self.limit
         self.reset_after: float = 0.0
-        self.expires: Optional[float] = None
+        self.expires: float | None = None
 
         self._loop: asyncio.AbstractEventLoop = asyncio.get_running_loop()
 
@@ -287,17 +293,15 @@ class Ratelimit:
 
 
 class DiscordAPI:
-    def __init__(
-        self,
-        *,
-        token: str,
-        application_id: Optional[int],
-        api_version: Optional[int] = None
-    ):
-        self.token: str = token
-        self.application_id: Optional[int] = application_id
+    def __init__(self, *, client: "Client"):
+        self.bot: "Client" = client
+        self.cache = self.bot.cache
 
-        self.api_version: int = api_version or 10
+        # Aliases
+        self.token: str = self.bot.token
+        self.application_id: int | None = self.bot.application_id
+        self.api_version: int = self.bot.api_version or 10
+
         if not isinstance(self.api_version, int):
             raise TypeError("api_version must be an integer")
 
@@ -306,6 +310,11 @@ class DiscordAPI:
         self.http: HTTPClient = HTTPClient()
 
         self._buckets: dict[str, Ratelimit] = {}
+        self._headers: str = "discord.http/{0} Python/{1} aiohttp/{2}".format(
+            __version__,
+            ".".join(str(i) for i in sys.version_info[:3]),
+            aiohttp.__version__
+        )
 
     def _clear_old_ratelimits(self) -> None:
         if len(self._buckets) <= 256:
@@ -337,6 +346,7 @@ class DiscordAPI:
         path: str,
         *,
         res_method: Literal["json"] = "json",
+        retry_codes: list[int] | None = None,
         **kwargs
     ) -> HTTPResponse[dict[Any, Any]]:
         ...
@@ -348,6 +358,7 @@ class DiscordAPI:
         path: str,
         *,
         res_method: Literal["read"] = "read",
+        retry_codes: list[int] | None = None,
         **kwargs
     ) -> HTTPResponse[bytes]:
         ...
@@ -359,6 +370,7 @@ class DiscordAPI:
         path: str,
         *,
         res_method: Literal["text"] = "text",
+        retry_codes: list[int] | None = None,
         **kwargs
     ) -> HTTPResponse[str]:
         ...
@@ -369,6 +381,7 @@ class DiscordAPI:
         path: str,
         *,
         res_method: ResMethodTypes = "json",
+        retry_codes: list[int] | None = None,
         **kwargs
     ) -> HTTPResponse:
         """
@@ -382,6 +395,8 @@ class DiscordAPI:
             The path to make the request to
         res_method: `str`
             The method to use to get the response
+        retry_codes: `list[int]`
+            The HTTP codes to retry regardless of the response
 
         Returns
         -------
@@ -412,19 +427,17 @@ class DiscordAPI:
         if res_method == "json" and "Content-Type" not in kwargs["headers"]:
             kwargs["headers"]["Content-Type"] = "application/json"
 
-        kwargs["headers"]["User-Agent"] = "discord.http/{0} Python/{1} aiohttp/{2}".format(
-            __version__,
-            ".".join(str(i) for i in sys.version_info[:3]),
-            aiohttp.__version__
-        )
+        kwargs["headers"]["User-Agent"] = self._headers
 
         reason = kwargs.pop("reason", None)
         if reason:
-            kwargs["headers"]["X-Audit-Log-Reason"] = reason
+            kwargs["headers"]["X-Audit-Log-Reason"] = url_quote(reason)
 
         _api_url = self.api_url
         if kwargs.pop("webhook", False):
             _api_url = self.base_url
+
+        retry_codes = retry_codes or []
 
         ratelimit = self.get_ratelimit(f"{method} {path}")
 
@@ -435,6 +448,15 @@ class DiscordAPI:
 
         async def _sleep(tries: int) -> None:
             await asyncio.sleep(1 + (tries * 2) + self.create_jitter())
+
+        def _try_json(data: str) -> dict | str:
+            _response = data
+            if isinstance(data, str):
+                try:
+                    _response = json.loads(data)
+                except json.JSONDecodeError:
+                    pass
+            return _response
 
         async with ratelimit:
             for tries in range(5):
@@ -453,13 +475,25 @@ class DiscordAPI:
                             ratelimit.update(r)
                             return r
 
+                        case x if x in retry_codes:
+                            # Custom retry code
+
+                            if tries > 4:  # Give up after 5 tries
+                                raise DiscordServerError(r)
+
+                            # Try again, maybe it will work next time, surely...
+                            await _sleep(tries)
+                            continue
+
                         case 429:
-                            if not isinstance(r.response, dict):
+                            _response = _try_json(r.response)
+
+                            if not isinstance(_response, dict):
                                 # For cases where you're ratelimited by CloudFlare
                                 raise Ratelimited(r)
 
-                            retry_after: float = r.response["retry_after"]
-                            _log.warning(f"Ratelimit hit ({path}), waiting {retry_after}s...")
+                            retry_after: float = _response["retry_after"]
+                            _log.warning(f"Ratelimit hit ({method.upper()} {path}), waiting {retry_after}s...")
                             await asyncio.sleep(retry_after)
                             continue
 
@@ -472,10 +506,14 @@ class DiscordAPI:
                             continue
 
                         case 400:
-                            raise _http_400_error_table.get(
-                                r.response.get("code", 0),
-                                HTTPException
-                            )(r)
+                            _response = _try_json(r.response)
+                            if isinstance(_response, str):
+                                raise _http_400_error_table.get(400, HTTPException)(r)
+                            else:
+                                raise _http_400_error_table.get(
+                                    _response.get("code", 0),
+                                    HTTPException
+                                )(r)
 
                         case 403:
                             raise Forbidden(r)
@@ -494,20 +532,73 @@ class DiscordAPI:
             else:
                 raise RuntimeError("Unreachable code, reached max tries (5)")
 
-    async def me(self) -> "User":
-        """ `User`: Fetches the bot's user information """
-        r = await self.query("GET", "/users/@me")
+    async def me(self) -> "UserClient":
+        """
+        `User`: Fetches the bot's user information
 
-        from .user import User
-        return User(
+        Returns
+        -------
+        `User`
+            The bot's user object
+
+        Raises
+        ------
+        `RuntimeError`
+            - If the bot token is not valid
+            - If the bot is not allowed to use the some intents
+        """
+        try:
+            r = await self.query("GET", "/applications/@me")
+        except HTTPException as e:
+            raise RuntimeError(
+                "Bot token is not valid, please check your token and try again. "
+                f"({e.text})"
+            )
+
+        flags = ApplicationFlags(r.response["flags"])
+        denied_intents: Intents = Intents(0)
+
+        if (
+            self.bot.intents and
+            self.bot.enable_gateway
+        ):
+            if Intents.guild_presences in self.bot.intents:
+                if (
+                    flags.gateway_presence not in flags and
+                    flags.gateway_presence_limited not in flags
+                ):
+                    denied_intents |= Intents.guild_presences
+
+            if Intents.message_content in self.bot.intents:
+                if (
+                    flags.gateway_message_content not in flags and
+                    flags.gateway_message_content_limited not in flags
+                ):
+                    denied_intents |= Intents.message_content
+
+            if Intents.guild_members in self.bot.intents:
+                if (
+                    flags.gateway_guild_members not in flags and
+                    flags.gateway_guild_members_limited not in flags
+                ):
+                    denied_intents |= Intents.guild_members
+
+        if denied_intents != Intents(0):
+            raise RuntimeError(
+                "You attempted to boot the bot with intents that are not allowed "
+                f"by the application. Denied intents: {repr(denied_intents)}"
+            )
+
+        from .user import UserClient
+        return UserClient(
             state=self,
-            data=r.response
+            data=r.response["bot"]
         )
 
     async def _app_command_query(
         self,
         method: MethodTypes,
-        guild_id: Optional[int] = None,
+        guild_id: int | None = None,
         **kwargs
     ) -> HTTPResponse:
         """
@@ -518,7 +609,7 @@ class DiscordAPI:
         ----------
         method: `MethodTypes`
             The HTTP method to use
-        guild_id: `Optional[int]`
+        guild_id: `int | None`
             The guild ID to query the commands for
 
         Returns
@@ -542,8 +633,8 @@ class DiscordAPI:
 
     async def update_commands(
         self,
-        data: Union[list[dict], dict],
-        guild_id: Optional[int] = None
+        data: list[dict] | dict,
+        guild_id: int | None = None
     ) -> dict:
         """
         Updates the commands for the bot
@@ -552,7 +643,7 @@ class DiscordAPI:
         ----------
         data: `list[dict]`
             The JSON data to send to Discord API
-        guild_id: `Optional[int]`
+        guild_id: `int | None`
             The guild ID to update the commands for (if None, commands will be global)
 
         Returns
@@ -571,30 +662,39 @@ class DiscordAPI:
         if r.status >= 200 and r.status <= 299:
             _log.info(f"🔁 Successfully synced commands {target}")
         else:
-            _log.warn(f"🔁 Failed to sync commands {target}: {r.response}")
+            _log.warning(f"🔁 Failed to sync commands {target}: {r.response}")
 
         return r.response
 
     async def fetch_commands(
         self,
-        guild_id: Optional[int] = None
+        guild_id: int | None = None
     ) -> dict:
         """
         Fetches the commands for the bot
 
         Parameters
         ----------
-        guild_id: `Optional[int]`
+        guild_id: `int | None`
             The guild ID to fetch the commands for (if None, commands will be global)
 
         Returns
         -------
         `dict`
             The response from the request
+
+        Raises
+        ------
+        `HTTPException`
+            If the request returned anything other than 200.
+            Typically this means the guild is not found.
         """
         r = await self._app_command_query(
             "GET",
             guild_id=guild_id
         )
+
+        if r.status != 200:
+            raise HTTPException(r)
 
         return r.response

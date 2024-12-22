@@ -4,9 +4,14 @@ import inspect
 import logging
 
 from datetime import datetime
-from typing import Dict, Optional, Any, Callable, Union, AsyncIterator
+from typing import (
+    Dict, Optional, Any, Callable,
+    Union, AsyncIterator, TYPE_CHECKING,
+    Coroutine, TypeVar
+)
 
 from . import utils
+from .automod import PartialAutoModRule, AutoModRule
 from .backend import DiscordHTTP
 from .channel import PartialChannel, BaseChannel
 from .commands import Command, Interaction, Listener, Cog, SubGroup
@@ -14,7 +19,9 @@ from .context import Context
 from .emoji import PartialEmoji, Emoji
 from .entitlements import PartialSKU, SKU, PartialEntitlements, Entitlements
 from .enums import ApplicationCommandType
+from .errors import CheckFailed
 from .file import File
+from .gateway.cache import Cache
 from .guild import PartialGuild, Guild, PartialScheduledEvent, ScheduledEvent
 from .http import DiscordAPI
 from .invite import PartialInvite, Invite
@@ -23,12 +30,22 @@ from .mentions import AllowedMentions
 from .message import PartialMessage, Message
 from .object import Snowflake
 from .role import PartialRole
+from .soundboard import SoundboardSound, PartialSoundboardSound
 from .sticker import PartialSticker, Sticker
-from .user import User, PartialUser
+from .user import User, PartialUser, UserClient
 from .view import InteractionStorage
+from .voice import PartialVoiceState, VoiceState
 from .webhook import PartialWebhook, Webhook
 
+if TYPE_CHECKING:
+    from .gateway.client import GatewayClient
+    from .gateway.flags import GatewayCacheFlags, Intents
+    from .gateway.object import PlayingStatus
+
 _log = logging.getLogger(__name__)
+
+T = TypeVar("T")
+Coro = Coroutine[Any, Any, T]
 
 __all__ = (
     "Client",
@@ -44,12 +61,19 @@ class Client:
         public_key: Optional[str] = None,
         guild_id: Optional[int] = None,
         sync: bool = False,
-        api_version: Optional[int] = None,
+        api_version: int = 10,
         loop: Optional[asyncio.AbstractEventLoop] = None,
         allowed_mentions: AllowedMentions = AllowedMentions.all(),
+        enable_gateway: bool = False,
+        automatic_shards: bool = True,
+        playing_status: "PlayingStatus | None" = None,
+        chunk_guilds_on_startup: bool = False,
+        guild_ready_timeout: float = 2.0,
+        gateway_cache: Optional["GatewayCacheFlags"] = None,
+        intents: Optional["Intents"] = None,
         logging_level: int = logging.INFO,
+        call_after_delay: float = 0.1,
         disable_default_get_path: bool = False,
-        disable_oauth_hint: bool = False,
         debug_events: bool = False
     ):
         """
@@ -68,32 +92,56 @@ class Client:
         sync: `bool`
             Whether to sync commands on boot or not
         api_version: `Optional[int]`
-            API version to use, if not provided, it will use the default (10)
+            API version to use for both HTTP and WS, if not provided, it will use the default (10)
         loop: `Optional[asyncio.AbstractEventLoop]`
             Event loop to use, if not provided, it will use `asyncio.get_running_loop()`
         allowed_mentions: `AllowedMentions`
             Allowed mentions to use, if not provided, it will use `AllowedMentions.all()`
+        enable_gateway: `bool`
+            Whether to enable the gateway or not, which runs in the background
+        automatic_shards: `bool`
+            Whether to automatically shard the bot or not
+        playing_status: `Optional[PlayingStatus]`
+            The playing status to use, if not provided, it will use `None`.
+            This is only used if `enable_gateway` is `True`.
+        chunk_guilds_on_startup: `bool`
+            Whether to chunk guilds or not when booting, which will reduce the amount of requests
+        guild_ready_timeout: `float`
+            **Gateway**: How long to wait for last GUILD_CREATE to be recieved
+            before triggering shard ready
+        gateway_cache: `Optional[GatewayCacheFlags]`
+            How the gateway should cache, only used if `enable_gateway` is `True`.
+            Leave empty to use no cache.
+        intents: `Optional[Intents]`
+            Intents to use, only used if `enable_gateway` is `True`
         logging_level: `int`
             Logging level to use, if not provided, it will use `logging.INFO`
+        call_after_delay: `float`
+            How long to wait before calling the `call_after` coroutine
         debug_events: `bool`
             Whether to log events or not, if not provided, `on_raw_*` events will not be useable
         disable_default_get_path: `bool`
             Whether to disable the default GET path or not, if not provided, it will use `False`.
             The default GET path only provides information about the bot and when it was last rebooted.
             Usually a great tool to just validate that your bot is online.
-        disable_oauth_hint: `bool`
-            Whether to disable the OAuth2 hint or not on boot.
-            If not provided, it will use `False`.
         """
         self.application_id: Optional[int] = application_id
+        self.api_version: int = int(api_version)
         self.public_key: Optional[str] = public_key
         self.token: str = token
+        self.automatic_shards: bool = automatic_shards
         self.guild_id: Optional[int] = guild_id
         self.sync: bool = sync
         self.logging_level: int = logging_level
         self.debug_events: bool = debug_events
+        self.enable_gateway: bool = enable_gateway
+        self.playing_status: Optional["PlayingStatus"] = playing_status
+        self.guild_ready_timeout: float = guild_ready_timeout
+        self.chunk_guilds_on_startup: bool = chunk_guilds_on_startup
+        self.call_after_delay: float = call_after_delay
+        self.intents: Intents | None = intents
 
-        self.disable_oauth_hint: bool = disable_oauth_hint
+        self.gateway: Optional["GatewayClient"] = None
         self.disable_default_get_path: bool = disable_default_get_path
 
         try:
@@ -102,29 +150,42 @@ class Client:
             self.loop: asyncio.AbstractEventLoop = asyncio.new_event_loop()
             asyncio.set_event_loop(self.loop)
 
-        self.state: DiscordAPI = DiscordAPI(
-            application_id=application_id,
-            token=token,
-            api_version=api_version
-        )
-
         self.commands: Dict[str, Command] = {}
         self.listeners: list[Listener] = []
         self.interactions: Dict[str, Interaction] = {}
         self.interactions_regex: Dict[str, Interaction] = {}
 
+        self._global_cmd_checks: list[Callable] = []
+
+        self._gateway_cache: Optional["GatewayCacheFlags"] = gateway_cache
         self._ready: Optional[asyncio.Event] = asyncio.Event()
-        self._user_object: Optional[User] = None
+        self._shards_ready: Optional[asyncio.Event] = asyncio.Event()
+        self._user_object: Optional[UserClient] = None
 
         self._context: Callable = Context
+
+        self.cache: Cache = Cache(client=self)
+        self.state: DiscordAPI = DiscordAPI(client=self)
         self.backend: DiscordHTTP = DiscordHTTP(client=self)
 
-        self._view_storage: dict[int, InteractionStorage] = {}
+        self._view_storage: dict[str | int, InteractionStorage] = {}
         self._default_allowed_mentions = allowed_mentions
 
         self._cogs: dict[str, list[Cog]] = {}
 
         utils.setup_logger(level=self.logging_level)
+
+    async def _run_global_checks(self, ctx: Context) -> bool:
+        for g in self._global_cmd_checks:
+            if inspect.iscoroutinefunction(g):
+                result = await g(ctx)
+            else:
+                result = g(ctx)
+
+            if result is not True:
+                raise CheckFailed(f"Check {g.__name__} failed.")
+
+        return True
 
     async def _run_event(
         self,
@@ -138,9 +199,12 @@ class Client:
                 await listener.coro(listener.cog, *args, **kwargs)
             else:
                 await listener.coro(*args, **kwargs)
+
         except asyncio.CancelledError:
             pass
+
         except Exception as e:
+
             try:
                 if self.has_any_dispatch("event_error"):
                     self.dispatch("event_error", self, e)
@@ -159,7 +223,13 @@ class Client:
         """
         await self.state.http._create_session()
 
-        client_object = await self._prepare_me()
+        try:
+            client_object = await self._prepare_me()
+        except RuntimeError as e:
+            # Make sure the error is readable and stop HTTP server here
+            _log.error(e)
+            await self.backend.shutdown()
+            return None
 
         await self.setup_hook()
         await self._prepare_commands()
@@ -167,21 +237,28 @@ class Client:
         self._ready.set()
 
         if self.has_any_dispatch("ready"):
-            return self.dispatch("ready", client_object)
+            self.dispatch("ready", client_object)
+        else:
+            _log.info("discord.http is now ready")
 
-        _log.info("✅ discord.http is now ready")
-        if (
-            not self.disable_oauth_hint and
-            self.application_id
-        ):
-            _log.info(
-                "✨ Your bot invite URL: "
-                f"{utils.oauth_url(self.application_id)}"
+        if self.enable_gateway:
+            # To avoid circular import, import here
+            from .gateway import GatewayClient
+            self.gateway = GatewayClient(
+                bot=self,
+                intents=self.intents,
+                automatic_shards=self.automatic_shards,
+                cache_flags=self._gateway_cache
             )
+            self.gateway.start()
+            _log.info("Starting discord.http/gateway client")
 
     async def __cleanup(self) -> None:
         """ Called when the bot is shutting down """
         await self.state.http._close_session()
+
+        if self.gateway:
+            await self.gateway.close()
 
     def _update_ids(self, data: dict) -> None:
         for g in data:
@@ -207,13 +284,9 @@ class Client:
             wrapped, name=f"discord.quart: {event_name}"
         )
 
-    async def _prepare_me(self) -> User:
+    async def _prepare_me(self) -> UserClient:
         """ Gets the bot's user data, mostly used to validate token """
-        try:
-            self._user_object = await self.state.me()
-        except KeyError:
-            raise RuntimeError("Invalid token")
-
+        self._user_object = await self.state.me()
         _log.debug(f"/users/@me verified: {self.user} ({self.user.id})")
 
         return self.user
@@ -229,6 +302,94 @@ class Client:
             )
             self._update_ids(data)
 
+    def get_shard_by_guild_id(
+        self,
+        guild_id: Snowflake | int
+    ) -> int | None:
+        """
+        Returns the shard ID of the shard that the guild is in
+
+        Parameters
+        ----------
+        guild_id: `Snowflake | int`
+            The ID of the guild to get the shard ID of
+
+        Returns
+        -------
+        `int | None`
+            The shard ID of the guild, or `None` if not found
+
+        Raises
+        ------
+        `NotImplementedError`
+            If the gateway is not available
+        """
+        if not self.gateway:
+            raise NotImplementedError("gateway is not available")
+
+        return self.gateway.shard_by_guild_id(
+            int(guild_id)
+        )
+
+    async def query_members(
+        self,
+        guild_id: Snowflake | int,
+        *,
+        query: str | None = None,
+        limit: int = 0,
+        presences: bool = False,
+        user_ids: list[Snowflake | int] | None = None,
+        shard_id: int | None = None
+    ) -> list[Member]:
+        """
+        Query members in a guild
+
+        Parameters
+        ----------
+        guild_id: `Snowflake | int`
+            The ID of the guild to query members in
+        query: `str | None`
+            The query to search for
+        limit: `int`
+            The maximum amount of members to return
+        presences: `bool`
+            Whether to include presences in the response
+        user_ids: `list[Snowflake | int] | None`
+            The user IDs to fetch members for
+        shard_id: `int | None`
+            The shard ID to query the members from
+
+        Returns
+        -------
+        `list[Member]`
+            The members that matched the query
+
+        Raises
+        ------
+        `ValueError`
+            - If `shard_id` is not provided
+            - If `shard_id` is not valid
+        """
+        if not self.gateway:
+            raise NotImplementedError("gateway is not available")
+
+        if shard_id is None:
+            shard_id = self.get_shard_by_guild_id(guild_id)
+            if shard_id is None:  # Just double check
+                raise ValueError("shard_id must be provided")
+
+        shard = self.gateway.get_shard(shard_id)
+        if not shard:
+            raise ValueError("shard_id is not valid")
+
+        return await shard.query_members(
+            guild_id=guild_id,
+            query=query,
+            limit=limit,
+            presences=presences,
+            user_ids=user_ids
+        )
+
     async def sync_commands(self) -> None:
         """
         Make the bot fetch all current commands,
@@ -238,7 +399,8 @@ class Client:
             data=[
                 v.to_dict()
                 for v in self.commands.values()
-                if not v.guild_ids
+                if not v.guild_ids and
+                v.parent is None
             ],
             guild_id=self.guild_id
         )
@@ -250,14 +412,15 @@ class Client:
                     int(gid) for gid in cmd.guild_ids
                 ])
 
-        guild_ids = list(set(guild_ids))
+        guild_ids: list[int] = list(set(guild_ids))
 
         for g in guild_ids:
             await self.state.update_commands(
                 data=[
                     v.to_dict()
                     for v in self.commands.values()
-                    if g in v.guild_ids
+                    if g in v.guild_ids and
+                    v.parent is None
                 ],
                 guild_id=g
             )
@@ -265,7 +428,7 @@ class Client:
         self._update_ids(data)
 
     @property
-    def user(self) -> User:
+    def user(self) -> UserClient:
         """
         Returns
         -------
@@ -285,11 +448,41 @@ class Client:
 
         return self._user_object
 
+    @property
+    def guilds(self) -> list[Guild | PartialGuild]:
+        """
+        `list[Guild]`: Returns a list of all the guilds the bot is in.
+        Only useable if you are using gateway and caching
+        """
+        return self.cache.guilds
+
+    def get_guild(self, guild_id: int) -> Guild | PartialGuild | None:
+        """
+        Get a guild object from the cache.
+
+        Parameters
+        ----------
+        guild_id: `int`
+            The ID of the guild to get.
+
+        Returns
+        -------
+        `Guild | PartialGuild | None`
+            The guild object with the specified ID, or `None` if not found.
+        """
+        return self.cache.get_guild(guild_id)
+
     def is_ready(self) -> bool:
         """ `bool`: Indicates if the client is ready. """
         return (
             self._ready is not None and
             self._ready.is_set()
+        )
+
+    def is_shards_ready(self) -> bool:
+        return (
+            self._shards_ready is not None and
+            self._shards_ready.is_set()
         )
 
     def set_context(
@@ -404,6 +597,16 @@ class Client:
             )
 
         await self._ready.wait()
+
+    async def wait_until_shards_ready(self) -> None:
+        """ Waits until the client is ready using `asyncio.Event.wait()`. """
+        if self._shards_ready is None:
+            raise RuntimeError(
+                "Client has not been initialized yet, "
+                "please use Client.start() to initialize the client."
+            )
+
+        await self._shards_ready.wait()
 
     def dispatch(
         self,
@@ -750,11 +953,38 @@ class Client:
             if not inspect.iscoroutinefunction(actual):
                 raise TypeError("Listeners has to be coroutine functions")
             self.add_listener(Listener(
-                name or actual.__name__,
-                func
+                name=name or actual.__name__,
+                coro=func
             ))
 
         return decorator
+
+    def get_channel(
+        self,
+        channel_id: int | None
+    ) -> BaseChannel | PartialChannel | None:
+        """
+        Get a channel object from the cache.
+
+        Parameters
+        ----------
+        channel_id: `int`
+            The ID of the channel to get.
+
+        Returns
+        -------
+        `BaseChannel | PartialChannel | None`
+            The channel object with the specified ID, or `None` if not found.
+        """
+        if channel_id is None:
+            return None
+
+        for guild in self.guilds:
+            channel = guild.get_channel(channel_id)
+            if channel:
+                return channel
+
+        return None
 
     def get_partial_channel(
         self,
@@ -807,9 +1037,65 @@ class Client:
         c = self.get_partial_channel(channel_id, guild_id=guild_id)
         return await c.fetch()
 
+    def get_partial_automod_rule(
+        self,
+        rule_id: int,
+        guild_id: int
+    ) -> PartialAutoModRule:
+        """
+        Creates a partial automod object
+
+        Parameters
+        ----------
+        rule_id: `int`
+            The ID of the automod rule
+        guild_id: `int`
+            The Guild ID where it comes from
+
+        Returns
+        -------
+        `PartialAutoModRule`
+            The partial automod object
+        """
+        return PartialAutoModRule(
+            state=self.state,
+            id=rule_id,
+            guild_id=guild_id
+        )
+
+    async def fetch_automod_rule(
+        self,
+        rule_id: int,
+        guild_id: int
+    ) -> AutoModRule:
+        """
+        Fetches a automod object
+
+        Parameters
+        ----------
+        rule_id: `int`
+            The ID of the automod rule
+        guild_id: `int`
+            The Guild ID where it comes from
+
+        Returns
+        -------
+        `AutoModRule`
+            The automod object
+        """
+        automod = self.get_partial_automod_rule(
+            rule_id=rule_id,
+            guild_id=guild_id
+        )
+
+        return await automod.fetch()
+
     def get_partial_invite(
         self,
-        invite_code: str
+        invite_code: str,
+        *,
+        channel_id: Optional[int] = None,
+        guild_id: Optional[int] = None
     ) -> PartialInvite:
         """
         Creates a partial invite object.
@@ -826,8 +1112,66 @@ class Client:
         """
         return PartialInvite(
             state=self.state,
-            code=invite_code
+            code=invite_code,
+            channel_id=channel_id,
+            guild_id=guild_id
         )
+
+    def get_partial_voice_state(
+        self,
+        member_id: int,
+        *,
+        guild_id: Optional[int] = None,
+        channel_id: Optional[int] = None
+    ) -> PartialVoiceState:
+        """
+        Creates a partial voice state object.
+
+        Parameters
+        ----------
+        member_id: `int`
+            The ID of the member to create the partial voice state from
+        guild_id: `Optional[int]`
+            Guild ID to create the partial voice state from
+
+        Returns
+        -------
+        `PartialVoiceState`
+            The partial voice state object.
+        """
+        return PartialVoiceState(
+            state=self.state,
+            id=member_id,
+            guild_id=guild_id,
+            channel_id=channel_id
+        )
+
+    async def fetch_voice_state(
+        self,
+        member_id: int,
+        guild_id: Optional[int] = None
+    ) -> VoiceState:
+        """
+        Fetches a voice state object.
+
+        Parameters
+        ----------
+        member_id: `int`
+            The ID of the member to fetch the voice state from
+        guild_id: `Optional[int]`
+            Guild ID to fetch the voice state from
+
+        Returns
+        -------
+        `VoiceState`
+            The voice state object.
+        """
+        vs = self.get_partial_voice_state(
+            member_id,
+            guild_id=guild_id
+        )
+
+        return await vs.fetch()
 
     def get_partial_emoji(
         self,
@@ -939,6 +1283,60 @@ class Client:
 
         return await sticker.fetch()
 
+    def get_partial_soundboard_sound(
+        self,
+        sound_id: int,
+        *,
+        guild_id: Optional[int] = None
+    ) -> PartialSoundboardSound:
+        """
+        Creates a partial sticker object.
+
+        Parameters
+        ----------
+        sticker_id: `int`
+            Sound ID to create the partial soundboard sound object with.
+        guild_id: `Optional[int]`
+            Guild ID to create the partial soundboard sound object with.
+
+        Returns
+        -------
+        `PartialSoundboardSound`
+            The partial soundboard sound object.
+        """
+        return PartialSoundboardSound(
+            state=self.state,
+            id=sound_id,
+            guild_id=guild_id
+        )
+
+    async def fetch_soundboard_sound(
+        self,
+        sound_id: int,
+        guild_id: int
+    ) -> SoundboardSound:
+        """
+        Fetches a soundboard sound object.
+
+        Parameters
+        ----------
+        sticker_id: `int`
+            Sound ID to fetch the soundboard sound object with.
+        guild_id: `int`
+            Guild ID to fetch the soundboard sound object from.
+
+        Returns
+        -------
+        `SoundboardSound`
+            The soundboard sound object.
+        """
+        sound = self.get_partial_soundboard_sound(
+            sound_id,
+            guild_id=guild_id
+        )
+
+        return await sound.fetch()
+
     async def fetch_invite(
         self,
         invite_code: str
@@ -962,7 +1360,8 @@ class Client:
     def get_partial_message(
         self,
         message_id: int,
-        channel_id: int
+        channel_id: int,
+        guild_id: int | None = None
     ) -> PartialMessage:
         """
         Creates a partial message object.
@@ -973,6 +1372,8 @@ class Client:
             Message ID to create the partial message object with.
         channel_id: `int`
             Channel ID to create the partial message object with.
+        guild_id: `Optional[int]`
+            Guild ID to create the partial message object with.
 
         Returns
         -------
@@ -983,12 +1384,14 @@ class Client:
             state=self.state,
             id=message_id,
             channel_id=channel_id,
+            guild_id=guild_id
         )
 
     async def fetch_message(
         self,
         message_id: int,
-        channel_id: int
+        channel_id: int,
+        guild_id: int | None = None
     ) -> Message:
         """
         Fetches a message object.
@@ -999,13 +1402,15 @@ class Client:
             Message ID to fetch the message object with.
         channel_id: `int`
             Channel ID to fetch the message object with.
+        guild_id: `Optional[int]`
+            Guild ID to fetch the message object from.
 
         Returns
         -------
         `Message`
             The message object
         """
-        msg = self.get_partial_message(message_id, channel_id)
+        msg = self.get_partial_message(message_id, channel_id, guild_id)
         return await msg.fetch()
 
     def get_partial_webhook(
@@ -1495,6 +1900,49 @@ class Client:
         guild = self.get_partial_guild(guild_id)
         return await guild.fetch()
 
+    async def create_guild(
+        self,
+        name: str,
+        *,
+        icon: Optional[Union[File, bytes]] = None,
+        reason: Optional[str] = None
+    ) -> "Guild":
+        """
+        Create a guild
+
+        Note that the bot must be in less than 10 guilds to use this endpoint
+
+        Parameters
+        ----------
+        name: `str`
+            The name of the guild
+        icon: `Optional[File]`
+            The icon of the guild
+        reason: `Optional[str]`
+            The reason for creating the guild
+
+        Returns
+        -------
+        `Guild`
+            The created guild
+        """
+        payload = {"name": name}
+
+        if icon is not None:
+            payload["icon"] = utils.bytes_to_base64(icon)
+
+        r = await self.state.query(
+            "POST",
+            "/guilds",
+            json=payload,
+            reason=reason
+        )
+
+        return Guild(
+            state=self.state,
+            data=r.response
+        )
+
     def get_partial_role(
         self,
         role_id: int,
@@ -1607,6 +2055,22 @@ class Client:
             The command to remove from the bot.
         """
         self.commands.pop(func.name, None)
+
+    def add_global_cmd_check(
+        self,
+        func: Callable
+    ) -> Callable:
+        """
+        Add a check that will be run before every command
+
+        Parameters
+        ----------
+        func: `Callable`
+            The function to add
+        """
+        self._global_cmd_checks.append(func)
+
+        return func
 
     def add_interaction(
         self,

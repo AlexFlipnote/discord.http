@@ -1,11 +1,12 @@
-from typing import TYPE_CHECKING, Optional, Union
+from typing import TYPE_CHECKING, Optional, Union, Any
 
 from . import utils
 from .asset import Asset
 from .colour import Colour
 from .embeds import Embed
+from .enums import DefaultAvatarType
 from .file import File
-from .flag import PublicFlags
+from .flags import PublicFlags
 from .mentions import AllowedMentions
 from .object import PartialBase
 from .response import ResponseType, MessageResponse
@@ -19,6 +20,7 @@ if TYPE_CHECKING:
 MISSING = utils.MISSING
 
 __all__ = (
+    "UserClient",
     "PartialUser",
     "User",
 )
@@ -55,6 +57,7 @@ class PartialUser(PartialBase):
         tts: Optional[bool] = False,
         type: Union[ResponseType, int] = 4,
         allowed_mentions: Optional[AllowedMentions] = MISSING,
+        delete_after: Optional[float] = None
     ) -> "Message":
         """
         Send a message to the user
@@ -81,6 +84,8 @@ class PartialUser(PartialBase):
             Which type of response should be sent
         allowed_mentions: `Optional[AllowedMentions]`
             Allowed mentions of the message
+        delete_after: `Optional[float]`
+            How long to wait before deleting the message
 
         Returns
         -------
@@ -111,10 +116,14 @@ class PartialUser(PartialBase):
         )
 
         from .message import Message
-        return Message(
+        _msg = Message(
             state=self._state,
             data=r.response
         )
+
+        if delete_after is not None:
+            await _msg.delete(delay=float(delete_after))
+        return _msg
 
     async def create_dm(self) -> "DMChannel":
         """ `DMChannel`: Creates a DM channel with the user """
@@ -140,6 +149,14 @@ class PartialUser(PartialBase):
         return User(
             state=self._state,
             data=r.response
+        )
+
+    @property
+    def default_avatar(self) -> Asset:
+        """ `Asset`: Returns the default avatar of the user """
+        return Asset._from_default_avatar(
+            self._state,
+            (self.id >> 22) % len(DefaultAvatarType)
         )
 
 
@@ -172,6 +189,9 @@ class User(PartialUser):
         self.global_name: Optional[str] = data.get("global_name", None)
 
         self.public_flags: Optional[PublicFlags] = None
+
+        # This might change a lot
+        self.clan: Optional[dict] = data.get("clan", None)
 
         self._from_data(data)
 
@@ -220,3 +240,58 @@ class User(PartialUser):
     def display_name(self) -> str:
         """ `str`: Returns the user's display name """
         return self.global_name or self.name
+
+    @property
+    def display_avatar(self) -> Optional[Asset]:
+        """ `Optional[Asset]`: Returns the display avatar of the member """
+        return self.avatar or self.default_avatar
+
+
+class UserClient(User):
+    def __init__(
+        self,
+        *,
+        state: "DiscordAPI",
+        data: dict
+    ):
+        super().__init__(state=state, data=data)
+
+        self.verified: bool = data.get("verified", False)
+
+    def __repr__(self) -> str:
+        return f"<UserClient id={self.id} name='{self.name}'>"
+
+    async def edit(
+        self,
+        *,
+        username: str | None = MISSING,
+        avatar: bytes | None = MISSING,
+        banner: bytes | None = MISSING,
+    ) -> "UserClient":
+        payload: dict[str, Any] = {}
+
+        if username is not MISSING:
+            payload["username"] = username
+
+        if avatar is not MISSING:
+            if avatar is not None:
+                payload["avatar"] = utils.bytes_to_base64(avatar)
+            else:
+                payload["avatar"] = None
+
+        if banner is not MISSING:
+            if banner is not None:
+                payload["banner"] = utils.bytes_to_base64(banner)
+            else:
+                payload["banner"] = None
+
+        r = await self._state.query(
+            "PATCH",
+            "/users/@me",
+            json=payload
+        )
+
+        return UserClient(
+            state=self._state,
+            data=r.response
+        )

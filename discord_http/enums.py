@@ -1,25 +1,40 @@
-from .utils import Enum
+import random
+import numbers
+
+from typing import Self
+from enum import Enum as _Enum
 
 __all__ = (
     "ApplicationCommandType",
     "AuditLogType",
+    "AutoModRuleActionType",
+    "AutoModRuleEventType",
+    "AutoModRulePresetType",
+    "AutoModRuleTriggerType",
+    "BaseEnum",
     "ButtonStyles",
     "ChannelType",
     "CommandOptionType",
     "ComponentType",
     "ContentFilterLevel",
+    "DefaultAvatarType",
     "DefaultNotificationLevel",
     "EntitlementOwnerType",
     "EntitlementType",
+    "ExpireBehaviour",
     "ForumLayoutType",
     "IntegrationType",
     "InteractionType",
     "InviteType",
     "MFALevel",
+    "MessageReferenceType",
+    "MessageType",
+    "PermissionType",
+    "PrivacyLevelType",
+    "ReactionType",
     "ResponseType",
     "SKUType",
     "ScheduledEventEntityType",
-    "ScheduledEventPrivacyType",
     "ScheduledEventStatusType",
     "SortOrderType",
     "StickerFormatType",
@@ -27,44 +42,198 @@ __all__ = (
     "TextStyles",
     "VerificationLevel",
     "VideoQualityType",
+    "WebhookType",
 )
 
 
-class IntegrationType(Enum):
+class BaseEnum(_Enum):
+    """ Enum, but with more comparison operators to make life easier """
+    @classmethod
+    def random(cls) -> Self:
+        """ `Enum`: Return a random enum """
+        return random.choice(list(cls))
+
+    def __str__(self) -> str:
+        """ `str` Return the name of the enum """
+        return self.name
+
+    def __int__(self) -> int:
+        """ `int` Return the value of the enum """
+        return self.value
+
+    def __gt__(self, other) -> bool:
+        """ `bool` Greater than """
+        try:
+            return self.value > other.value
+        except Exception:
+            pass
+        try:
+            if isinstance(other, numbers.Real):
+                return self.value > other
+        except Exception:
+            pass
+        return NotImplemented
+
+    def __lt__(self, other) -> bool:
+        """ `bool` Less than """
+        try:
+            return self.value < other.value
+        except Exception:
+            pass
+        try:
+            if isinstance(other, numbers.Real):
+                return self.value < other
+        except Exception:
+            pass
+        return NotImplemented
+
+    def __ge__(self, other) -> bool:
+        """ `bool` Greater than or equal to """
+        try:
+            return self.value >= other.value
+        except Exception:
+            pass
+        try:
+            if isinstance(other, numbers.Real):
+                return self.value >= other
+            if isinstance(other, str):
+                return self.name == other
+        except Exception:
+            pass
+        return NotImplemented
+
+    def __le__(self, other) -> bool:
+        """ `bool` Less than or equal to """
+        try:
+            return self.value <= other.value
+        except Exception:
+            pass
+        try:
+            if isinstance(other, numbers.Real):
+                return self.value <= other
+            if isinstance(other, str):
+                return self.name == other
+        except Exception:
+            pass
+        return NotImplemented
+
+    def __eq__(self, other) -> bool:
+        """ `bool` Equal to """
+        if self.__class__ is other.__class__:
+            return self.value == other.value
+        try:
+            return self.value == other.value
+        except Exception:
+            pass
+        try:
+            if isinstance(other, numbers.Real):
+                return self.value == other
+            if isinstance(other, str):
+                return self.name == other
+        except Exception:
+            pass
+        return NotImplemented
+
+
+class IntegrationType(BaseEnum):
     guild = 0
     user = 1
 
 
-class InviteType(Enum):
+class DefaultAvatarType(BaseEnum):
+    blurple = 0
+    grey = 1
+    gray = 1
+    green = 2
+    orange = 3
+    red = 4
+    pink = 5
+
+
+class InviteType(BaseEnum):
     guild = 0
     group = 1
     dm = 2
     unknown = 3
 
 
-class ApplicationCommandType(Enum):
+class ApplicationCommandType(BaseEnum):
     chat_input = 1
     user = 2
     message = 3
 
 
-class DefaultNotificationLevel(Enum):
+class ReactionType(BaseEnum):
+    normal = 0
+    burst = 1
+
+
+class DefaultNotificationLevel(BaseEnum):
     all_messages = 0
     only_mentions = 1
 
 
-class MFALevel(Enum):
+class MFALevel(BaseEnum):
     none = 0
     elevated = 1
 
 
-class ContentFilterLevel(Enum):
+class MessageType(BaseEnum):
+    default = 0
+    recipient_add = 1
+    recipient_remove = 2
+    call = 3
+    channel_name_change = 4
+    channel_icon_change = 5
+    channel_pinned_message = 6
+    user_join = 7
+    guild_boost = 8
+    guild_boost_tier_1 = 9
+    guild_boost_tier_2 = 10
+    guild_boost_tier_3 = 11
+    channel_follow_add = 12
+    guild_discovery_disqualified = 14
+    guild_discovery_requalified = 15
+    guild_discovery_grace_period_initial_warning = 16
+    guild_discovery_grace_period_final_warning = 17
+    thread_created = 18
+    reply = 19
+    chat_input_command = 20
+    thread_starter_message = 21
+    guild_invite_reminder = 22
+    context_menu_command = 23
+    auto_moderation_action = 24
+    role_subscription_purchase = 25
+    interaction_premium_upsell = 26
+    stage_start = 27
+    stage_end = 28
+    stage_speaker = 29
+    stage_topic = 31
+    guild_application_premium_subscription = 32
+    guild_incident_alert_mode_enabled = 36
+    guild_incident_alert_mode_disabled = 37
+    guild_incident_report_raid = 38
+    guild_incident_report_false_alarm = 39
+    purchase_notification = 44
+    poll_result = 46
+
+
+class MessageReferenceType(BaseEnum):
+    default = 0
+    forward = 1
+
+
+class ContentFilterLevel(BaseEnum):
     disabled = 0
     members_without_roles = 1
     all_members = 2
 
 
-class AuditLogType(Enum):
+class AuditLogType(BaseEnum):
+    # Unknown value is only here because Discord
+    # might add new audit log without documenting it
+    unknown = -1
+
     guild_update = 1
     channel_create = 10
     channel_update = 11
@@ -119,28 +288,108 @@ class AuditLogType(Enum):
     auto_moderation_block_message = 143
     auto_moderation_flag_to_channel = 144
     auto_moderation_user_communication_disabled = 145
+    auto_moderation_quarantine_user = 146
     creator_monetization_request_created = 150
     creator_monetization_terms_accepted = 151
+    onboarding_prompt_create = 163
+    onboarding_prompt_update = 164
+    onboarding_prompt_delete = 165
+    onboarding_create = 166
+    onboarding_update = 167
+    home_settings_create = 190
+    home_settings_update = 191
+    voice_channel_status_create = 192
+    voice_channel_status_delete = 193
+    guild_scheduled_event_exception_create = 200
+    guild_scheduled_event_exception_update = 201
+    guild_scheduled_event_exception_delete = 202
+
+    @property
+    def target_type(self):
+        category_map: dict[int, str] = {
+            -1: "all",
+            73: "channel"
+        }
+
+        range_map: list[tuple[int, int, str]] = [
+            (0, 9, "guild"),
+            (10, 19, "channel"),
+            (20, 29, "user"),
+            (30, 39, "role"),
+            (40, 49, "invite"),
+            (50, 59, "webhook"),
+            (60, 69, "emoji"),
+            (70, 79, "message"),
+            (80, 82, "integration"),
+            (83, 89, "stage_instance"),
+            (90, 92, "sticker"),
+            (93, 102, "guild_scheduled_event"),
+            (103, 112, "thread"),
+            (113, 121, "integration_or_app_command"),
+            (140, 142, "auto_moderation"),
+            (143, 145, "user"),
+            (146, 151, "creator_monetization")
+        ]
+
+        if self.value in category_map:
+            return category_map[self.value]
+
+        return next((
+            category
+            for start, end, category in range_map
+            if start <= self.value <= end
+        ), None)
 
 
-class ScheduledEventPrivacyType(Enum):
-    guild_only = 2
+class Locale(BaseEnum):
+    american_english = "en-US"
+    british_english = "en-GB"
+    bulgarian = "bg"
+    chinese = "zh-CN"
+    taiwan_chinese = "zh-TW"
+    croatian = "hr"
+    czech = "cs"
+    indonesian = "id"
+    danish = "da"
+    dutch = "nl"
+    finnish = "fi"
+    french = "fr"
+    german = "de"
+    greek = "el"
+    hindi = "hi"
+    hungarian = "hu"
+    italian = "it"
+    japanese = "ja"
+    korean = "ko"
+    latin_american_spanish = "es-419"
+    lithuanian = "lt"
+    norwegian = "no"
+    polish = "pl"
+    brazil_portuguese = "pt-BR"
+    romanian = "ro"
+    russian = "ru"
+    spain_spanish = "es-ES"
+    swedish = "sv-SE"
+    thai = "th"
+    turkish = "tr"
+    ukrainian = "uk"
+    vietnamese = "vi"
 
 
-class ScheduledEventEntityType(Enum):
+class ScheduledEventEntityType(BaseEnum):
     stage_instance = 1
     voice = 2
     external = 3
 
 
-class ScheduledEventStatusType(Enum):
+class ScheduledEventStatusType(BaseEnum):
     scheduled = 1
     active = 2
     completed = 3
     canceled = 4
 
 
-class VerificationLevel(Enum):
+class VerificationLevel(BaseEnum):
     none = 0
     low = 1
     medium = 2
@@ -148,7 +397,12 @@ class VerificationLevel(Enum):
     very_high = 4
 
 
-class ChannelType(Enum):
+class ExpireBehaviour(BaseEnum):
+    remove_role = 0
+    kick = 1
+
+
+class ChannelType(BaseEnum):
     unknown = -1
     guild_text = 0
     dm = 1
@@ -163,9 +417,10 @@ class ChannelType(Enum):
     guild_stage_voice = 13
     guild_directory = 14
     guild_forum = 15
+    guild_media = 16
 
 
-class CommandOptionType(Enum):
+class CommandOptionType(BaseEnum):
     sub_command = 1
     sub_command_group = 2
     string = 3
@@ -179,7 +434,13 @@ class CommandOptionType(Enum):
     attachment = 11
 
 
-class ResponseType(Enum):
+class WebhookType(BaseEnum):
+    incoming = 1
+    channel_follower = 2
+    application = 3
+
+
+class ResponseType(BaseEnum):
     pong = 1
     channel_message_with_source = 4
     deferred_channel_message_with_source = 5
@@ -187,25 +448,27 @@ class ResponseType(Enum):
     update_message = 7
     application_command_autocomplete_result = 8
     modal = 9
+    premium_required = 10
+    launch_activity = 12
 
 
-class VideoQualityType(Enum):
+class VideoQualityType(BaseEnum):
     auto = 1
     full = 2
 
 
-class ForumLayoutType(Enum):
+class ForumLayoutType(BaseEnum):
     not_set = 0
     list_view = 1
     gallery_view = 2
 
 
-class SortOrderType(Enum):
+class SortOrderType(BaseEnum):
     latest_activity = 0
     creation_date = 1
 
 
-class EntitlementType(Enum):
+class EntitlementType(BaseEnum):
     purchase = 1
     premium_subscription = 2
     developer_gift = 3
@@ -216,19 +479,46 @@ class EntitlementType(Enum):
     application_subscription = 8
 
 
-class EntitlementOwnerType(Enum):
+class AutoModRuleTriggerType(BaseEnum):
+    keyword = 1
+    harmful_link = 2
+    spam = 3
+    keyword_preset = 4
+    mention_spam = 5
+    member_profile = 6
+
+
+class AutoModRuleEventType(BaseEnum):
+    message_send = 1
+    member_update = 2
+
+
+class AutoModRuleActionType(BaseEnum):
+    block_message = 1
+    send_alert_message = 2
+    timeout = 3
+    block_member_interactions = 4
+
+
+class AutoModRulePresetType(BaseEnum):
+    profanity = 1
+    sexual_content = 2
+    slurs = 3
+
+
+class EntitlementOwnerType(BaseEnum):
     guild = 1
     user = 2
 
 
-class SKUType(Enum):
+class SKUType(BaseEnum):
     durable = 2
     consumable = 3
     subscription = 5
     subscription_group = 6
 
 
-class InteractionType(Enum):
+class InteractionType(BaseEnum):
     ping = 1
     application_command = 2
     message_component = 3
@@ -236,19 +526,19 @@ class InteractionType(Enum):
     modal_submit = 5
 
 
-class StickerType(Enum):
+class StickerType(BaseEnum):
     standard = 1
     guild = 2
 
 
-class StickerFormatType(Enum):
+class StickerFormatType(BaseEnum):
     png = 1
     apng = 2
     lottie = 3
     gif = 4
 
 
-class ComponentType(Enum):
+class ComponentType(BaseEnum):
     action_row = 1
     button = 2
     string_select = 3
@@ -259,7 +549,7 @@ class ComponentType(Enum):
     channel_select = 8
 
 
-class ButtonStyles(Enum):
+class ButtonStyles(BaseEnum):
     # Original names
     primary = 1
     secondary = 2
@@ -278,11 +568,16 @@ class ButtonStyles(Enum):
     url = 5
 
 
-class TextStyles(Enum):
+class TextStyles(BaseEnum):
     short = 1
     paragraph = 2
 
 
-class PermissionType(Enum):
+class PermissionType(BaseEnum):
     role = 0
     member = 1
+
+
+class PrivacyLevelType(BaseEnum):
+    public = 1
+    guild_only = 2

@@ -5,7 +5,7 @@ import logging
 
 from datetime import time as dtime
 from datetime import timedelta, datetime, timezone
-from typing import Callable, Optional, Union, Sequence
+from typing import Callable, Sequence
 
 from . import utils
 
@@ -46,21 +46,21 @@ class Loop:
         self,
         *,
         func: Callable,
-        seconds: Optional[float],
-        minutes: Optional[float],
-        hours: Optional[float],
-        time: Optional[Union[dtime, list[dtime]]] = None,
-        count: Optional[int] = None,
+        seconds: float | None,
+        minutes: float | None,
+        hours: float | None,
+        time: dtime | list[dtime] | None = None,
+        count: int | None = None,
         reconnect: bool = True
     ):
         self.func: Callable = func
         self.reconnect: bool = reconnect
 
-        self.count: Optional[int] = count
+        self.count: int | None = count
         if self.count is not None and self.count <= 0:
             raise ValueError("count must be greater than 0 or None")
 
-        self._task: Optional[asyncio.Task] = None
+        self._task: asyncio.Task | None = None
         self._injected = None
 
         self._error: Callable = self._default_error
@@ -84,8 +84,8 @@ class Loop:
         self._should_stop: bool = False
         self._has_faild: bool = False
         self._last_loop_failed: bool = False
-        self._last_loop: Optional[datetime] = None
-        self._next_loop: Optional[datetime] = None
+        self._last_loop: datetime | None = None
+        self._next_loop: datetime | None = None
         self._loop_count: int = 0
 
     async def __call__(self, *args, **kwargs) -> Callable:
@@ -161,7 +161,7 @@ class Loop:
                         self._is_explicit_time() and
                         self._next_loop <= self._last_loop
                     ):
-                        _log.warn(
+                        _log.warning(
                             f"task:{self.func.__name__} woke up a bit too early. "
                             f"Sleeping until {self._next_loop} to avoid drifting."
                         )
@@ -184,7 +184,10 @@ class Loop:
                         await self._try_sleep_until(self._next_loop)
 
                     self._loop_count += 1
-                    if self.loop_count == self.count:
+                    if (
+                        self.count and
+                        self.loop_count >= self.count
+                    ):
                         break
 
         except asyncio.CancelledError:
@@ -287,7 +290,7 @@ class Loop:
         """ Returns whether the loop is being cancelled or not """
         return self._will_cancel
 
-    def fetch_task(self) -> Optional[asyncio.Task]:
+    def fetch_task(self) -> asyncio.Task | None:
         """ Returns the task that is running the loop """
         return self._task
 
@@ -327,7 +330,7 @@ class Loop:
 
     def _sort_static_times(
         self,
-        times: Optional[Union[dtime, Sequence[dtime]]]
+        times: dtime | Sequence[dtime] | None
     ) -> list[dtime]:
         if isinstance(times, dtime):
             return [
@@ -357,10 +360,10 @@ class Loop:
     def handle_interval(
         self,
         *,
-        seconds: Optional[float] = 0,
-        minutes: Optional[float] = 0,
-        hours: Optional[float] = 0,
-        time: Optional[Union[dtime, list[dtime]]] = None
+        seconds: float | None = 0,
+        minutes: float | None = 0,
+        hours: float | None = 0,
+        time: dtime | list[dtime] | None = None
     ) -> None:
         """
         Sets the interval of the loop.
@@ -397,12 +400,12 @@ class Loop:
             self._minutes = float(minutes)
             self._hours = float(hours)
             self._sleep = sleep
-            self._time: Optional[list[dtime]] = None
+            self._time: list[dtime] | None = None
         else:
             if any((seconds, minutes, hours)):
                 raise ValueError("Cannot use both time and seconds/minutes/hours")
 
-            self._time: Optional[list[dtime]] = self._sort_static_times(time)
+            self._time: list[dtime] | None = self._sort_static_times(time)
             self._sleep = self._seconds = self._minutes = self._hours = None
 
         if self.is_running() and self._last_loop is not None:
@@ -410,7 +413,7 @@ class Loop:
             if self._handle and not self._handle.done():
                 self._handle.recalculate(self._next_loop)
 
-    def _find_time_index(self, now: datetime) -> Optional[int]:
+    def _find_time_index(self, now: datetime) -> int | None:
         """
         Finds the index of the next time in the list of times
 
@@ -434,7 +437,7 @@ class Loop:
         else:
             return None
 
-    def _next_sleep_time(self, now: Optional[datetime] = None) -> datetime:
+    def _next_sleep_time(self, now: datetime | None = None) -> datetime:
         """ Calculates the next time the loop should run """
         if self._sleep is not None:
             return self._last_loop + timedelta(seconds=self._sleep)
@@ -458,11 +461,11 @@ class Loop:
 
 def loop(
     *,
-    seconds: Optional[float] = None,
-    minutes: Optional[float] = None,
-    hours: Optional[float] = None,
-    time: Optional[Union[dtime, list[dtime]]] = None,
-    count: Optional[int] = None,
+    seconds: float | None = None,
+    minutes: float | None = None,
+    hours: float | None = None,
+    time: dtime | list[dtime] | None = None,
+    count: int | None = None,
     reconnect: bool = True
 ) -> Callable[[Callable], Loop]:
     """

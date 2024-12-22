@@ -2,6 +2,7 @@ import asyncio
 import copy
 import logging
 import signal
+import json
 
 from datetime import datetime
 from hypercorn.asyncio import serve
@@ -12,13 +13,13 @@ from quart import Quart, request, abort
 from quart import Response as QuartResponse
 from quart.logging import default_handler
 from quart.utils import MustReloadError, restart
-from typing import Optional, Any, Union, TYPE_CHECKING
+from typing import Any, TYPE_CHECKING
 
 from . import utils
 from .commands import Command, SubGroup
 from .enums import InteractionType
 from .errors import CheckFailed
-from .response import BaseResponse, Ping, MessageResponse
+from .response import BaseResponse, Ping, MessageResponse, EmptyResponse
 
 if TYPE_CHECKING:
     from .client import Client
@@ -69,10 +70,16 @@ class DiscordHTTP(Quart):
         self.uptime: datetime = utils.utcnow()
 
         self.bot: "Client" = client
+
+        # Aliases
         self.loop = self.bot.loop
         self.debug_events = self.bot.debug_events
 
         super().__init__(__name__)
+
+        # Change some of the default settings
+        self.config["JSONIFY_PRETTYPRINT_REGULAR"] = False
+        self.config["JSON_SORT_KEYS"] = False
 
         # Remove Quart's default logging handler
         _quart_log = logging.getLogger("quart.app")
@@ -105,9 +112,9 @@ class DiscordHTTP(Quart):
 
     def _dig_subcommand(
         self,
-        cmd: Union[Command, SubGroup],
+        cmd: Command | SubGroup,
         data: dict
-    ) -> tuple[Optional[Command], list[dict]]:
+    ) -> tuple[Command | None, list[dict]]:
         """
         Used to dig through subcommands to execute correct command/autocomplete
         """
@@ -125,7 +132,7 @@ class DiscordHTTP(Quart):
             cmd = cmd.subcommands.get(find_next_step["name"], None)  # type: ignore
 
             if not cmd:
-                _log.warn(
+                _log.warning(
                     f"Unhandled subcommand: {find_next_step['name']} "
                     "(not found in local command list)"
                 )
@@ -145,8 +152,8 @@ class DiscordHTTP(Quart):
 
         if self.bot.has_any_dispatch("ping"):
             self.bot.dispatch("ping", _ping)
-        else:
-            _log.info(f"Discord Interactions ACK recieved ({_ping.id})")
+
+        _log.debug(f"Discord Interactions ACK recieved ({_ping.id})")
 
         return ctx.response.pong()
 
@@ -154,7 +161,7 @@ class DiscordHTTP(Quart):
         self,
         ctx: "Context",
         data: dict
-    ) -> Union[QuartResponse, dict]:
+    ) -> QuartResponse | dict:
         """ Used to handle application commands """
         _log.debug("Received slash command, processing...")
 
@@ -162,7 +169,7 @@ class DiscordHTTP(Quart):
         cmd = self.bot.commands.get(command_name, None)
 
         if not cmd:
-            _log.warn(
+            _log.warning(
                 f"Unhandeled command: {command_name} "
                 "(not found in local command list)"
             )
@@ -177,14 +184,22 @@ class DiscordHTTP(Quart):
         ctx.command = cmd
 
         try:
+            # But first, check global checks
+            await self.bot._run_global_checks(ctx)
+
+            # Now run the command itself
             payload = await cmd._make_context_and_run(
                 context=ctx
             )
+
+            if isinstance(payload, EmptyResponse):
+                return QuartResponse("", status=202)
 
             return QuartResponse(
                 payload.to_multipart(),
                 content_type=payload.content_type
             )
+
         except Exception as e:
             if self.bot.has_any_dispatch("interaction_error"):
                 self.bot.dispatch("interaction_error", ctx, e)
@@ -204,22 +219,41 @@ class DiscordHTTP(Quart):
         self,
         ctx: "Context",
         data: dict
-    ) -> Union[QuartResponse, dict]:
+    ) -> QuartResponse | dict:
         """ Used to handle interactions """
         _log.debug("Received interaction, processing...")
         _custom_id = data["data"]["custom_id"]
 
         try:
-            if ctx.message:
+            local_view = None
+
+            if (
+                local_view is None and
+                ctx.custom_id
+            ):
+                local_view = self.bot._view_storage.get(
+                    ctx.custom_id, None
+                )
+
+            if (
+                local_view is None and
+                ctx.message
+            ):
                 local_view = self.bot._view_storage.get(
                     ctx.message.id, None
                 )
-                if local_view:
-                    payload = await local_view.callback(ctx)
-                    return QuartResponse(
-                        payload.to_multipart(),
-                        content_type=payload.content_type
+
+                if not local_view and ctx.message.interaction:
+                    local_view = self.bot._view_storage.get(
+                        ctx.message.interaction.id, None
                     )
+
+            if local_view:
+                payload = await local_view.callback(ctx)
+                return QuartResponse(
+                    payload.to_multipart(),
+                    content_type=payload.content_type
+                )
 
             intreact = self.bot.find_interaction(_custom_id)
             if not intreact:
@@ -253,7 +287,7 @@ class DiscordHTTP(Quart):
         self,
         ctx: "Context",
         data: dict
-    ) -> Union[QuartResponse, dict]:
+    ) -> QuartResponse | dict:
         """ Used to handle autocomplete interactions """
         _log.debug("Received autocomplete interaction, processing...")
 
@@ -262,7 +296,7 @@ class DiscordHTTP(Quart):
 
         try:
             if not cmd:
-                _log.warn(f"Unhandled autocomplete recieved (name: {command_name})")
+                _log.warning(f"Unhandled autocomplete recieved (name: {command_name})")
                 return QuartResponse(
                     "command not found",
                     status=404
@@ -276,7 +310,7 @@ class DiscordHTTP(Quart):
             ), None)
 
             if not find_focused:
-                _log.warn(
+                _log.warning(
                     "Failed to find focused option in autocomplete "
                     f"(cmd name: {command_name})"
                 )
@@ -300,7 +334,7 @@ class DiscordHTTP(Quart):
 
     async def _index_interactions_endpoint(
         self
-    ) -> Union[QuartResponse, dict]:
+    ) -> QuartResponse | dict:
         """
         The main function to handle all HTTP requests sent by Discord
         Please do not touch this function, unless you know what you're doing
@@ -347,7 +381,7 @@ class DiscordHTTP(Quart):
         self,
         ctx: "Context",
         e: Exception
-    ) -> Optional[MessageResponse]:
+    ) -> MessageResponse | None:
         """
         Used to return error messages to Discord.
         By default, it will only cover CheckFailed errors.
@@ -371,7 +405,7 @@ class DiscordHTTP(Quart):
                 ephemeral=True
             )
 
-    async def index_ping(self) -> Union[tuple[dict, int], dict]:
+    async def index_ping(self) -> tuple[dict, int] | dict:
         """
         Used to ping the interaction url, to check if it's working
         You can overwrite this function to return your own data as well.
@@ -394,6 +428,39 @@ class DiscordHTTP(Quart):
             }
         }
 
+    def jsonify(
+        self,
+        data: dict,
+        *,
+        status: int = 200,
+        sort_keys: bool = False,
+        indent: int | None = None,
+    ) -> QuartResponse:
+        """
+        Force Quart to respond with JSON the way you like it
+
+        Parameters
+        ----------
+        data: `dict`
+            The data to respond with
+        status: `int`
+            The status code to respond with
+        sort_keys: `bool`
+            Whether to sort the keys or not
+        indent: `int | None`
+            If the JSON should be indented on response
+
+        Returns
+        -------
+        `QuartResponse`
+            The response object
+        """
+        return QuartResponse(
+            json.dumps(data, sort_keys=sort_keys, indent=indent),
+            headers={"Content-Type": "application/json"},
+            status=status,
+        )
+
     def start(
         self,
         *,
@@ -415,12 +482,8 @@ class DiscordHTTP(Quart):
             methods=["POST"]
         )
 
-        # Change some of the default settings
-        self.config["JSONIFY_PRETTYPRINT_REGULAR"] = True
-        self.config["JSON_SORT_KEYS"] = False
-
         try:
-            _log.info(f"🌍 Serving on http://{host}:{port}")
+            _log.info(f"Serving on http://{host}:{port}")
             self.run(host=host, port=port, loop=self.loop)
         except KeyboardInterrupt:
             pass  # Just don't bother showing errors...

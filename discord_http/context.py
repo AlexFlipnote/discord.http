@@ -1,5 +1,6 @@
 import inspect
 import logging
+import asyncio
 
 from typing import TYPE_CHECKING, Callable, Union, Optional, Any, Self
 from datetime import datetime, timedelta
@@ -10,7 +11,7 @@ from .channel import (
     GroupDMChannel, CategoryChannel, NewsThread,
     PublicThread, PrivateThread, StageChannel,
     DirectoryChannel, ForumChannel, StoreChannel,
-    NewsChannel, BaseChannel
+    NewsChannel, BaseChannel, PartialChannel
 )
 from .cooldowns import Cooldown
 from .embeds import Embed
@@ -20,14 +21,16 @@ from .enums import (
     ResponseType, ChannelType, InteractionType
 )
 from .file import File
-from .flag import Permissions
-from .guild import PartialGuild
+from .multipart import MultipartData
+from .flags import Permissions, MessageFlags
+from .guild import Guild, PartialGuild
 from .member import Member
 from .mentions import AllowedMentions
 from .message import Message, Attachment, Poll
 from .response import (
     MessageResponse, DeferResponse,
-    AutocompleteResponse, ModalResponse
+    AutocompleteResponse, ModalResponse,
+    EmptyResponse
 )
 from .role import Role
 from .user import User
@@ -64,7 +67,7 @@ __all__ = (
 )
 
 
-class SelectValues:
+class _ResolveParser:
     def __init__(self, ctx: "Context", data: dict):
         self._parsed_data = {
             "members": [], "users": [],
@@ -87,31 +90,6 @@ class SelectValues:
     def none(cls, ctx: "Context") -> Self:
         """ `SelectValues`: with no values """
         return cls(ctx, {})
-
-    @property
-    def members(self) -> list[Member]:
-        """ `List[Member]`: of members selected """
-        return self._parsed_data["members"]
-
-    @property
-    def users(self) -> list[User]:
-        """ `List[User]`: of users selected """
-        return self._parsed_data["users"]
-
-    @property
-    def channels(self) -> list[BaseChannel]:
-        """ `List[BaseChannel]`: of channels selected """
-        return self._parsed_data["channels"]
-
-    @property
-    def roles(self) -> list[Role]:
-        """ `List[Role]`: of roles selected """
-        return self._parsed_data["roles"]
-
-    @property
-    def strings(self) -> list[str]:
-        """ `List[str]`: of strings selected """
-        return self._parsed_data["strings"]
 
     def is_empty(self) -> bool:
         """ `bool`: Whether no values were selected """
@@ -138,7 +116,7 @@ class SelectValues:
                     to_append.append(User(state=ctx.bot.state, data=_data))
 
                 case "channels":
-                    to_append.append(channel_types[g["type"]](state=ctx.bot.state, data=_data))
+                    to_append.append(channel_types[_data["type"]](state=ctx.bot.state, data=_data))
 
                 case "roles":
                     if not ctx.guild:
@@ -147,6 +125,41 @@ class SelectValues:
 
                 case _:
                     pass
+
+
+class ResolvedValues(_ResolveParser):
+    def __init__(self, ctx: "Context", data: dict):
+        super().__init__(ctx, data)
+
+    @property
+    def members(self) -> list[Member]:
+        """ `List[Member]`: of members resolved """
+        return self._parsed_data["members"]
+
+    @property
+    def users(self) -> list[User]:
+        """ `List[User]`: of users resolved """
+        return self._parsed_data["users"]
+
+    @property
+    def channels(self) -> list[BaseChannel]:
+        """ `List[BaseChannel]`: of channels resolved """
+        return self._parsed_data["channels"]
+
+    @property
+    def roles(self) -> list[Role]:
+        """ `List[Role]`: of roles resolved """
+        return self._parsed_data["roles"]
+
+
+class SelectValues(ResolvedValues):
+    def __init__(self, ctx: "Context", data: dict):
+        super().__init__(ctx, data)
+
+    @property
+    def strings(self) -> list[str]:
+        """ `List[str]`: of strings selected """
+        return self._parsed_data["strings"]
 
 
 class InteractionResponse:
@@ -164,7 +177,8 @@ class InteractionResponse:
         self,
         ephemeral: bool = False,
         thinking: bool = False,
-        call_after: Optional[Callable] = None
+        flags: MessageFlags | None = MISSING,
+        call_after: Callable | None = None
     ) -> DeferResponse:
         """
         Defer the response to the interaction
@@ -175,6 +189,8 @@ class InteractionResponse:
             If the response should be ephemeral (show only to the user)
         thinking: `bool`
             If the response should show the "thinking" status
+        flags: `Optional[int]`
+            The flags of the message (overrides ephemeral)
         call_after: `Optional[Callable]`
             A coroutine to run after the response is sent
 
@@ -196,7 +212,7 @@ class InteractionResponse:
                 self._parent._background_task_manager(call_after)
             )
 
-        return DeferResponse(ephemeral=ephemeral, thinking=thinking)
+        return DeferResponse(ephemeral=ephemeral, thinking=thinking, flags=flags)
 
     def send_modal(
         self,
@@ -238,6 +254,34 @@ class InteractionResponse:
 
         return ModalResponse(modal=modal)
 
+    def send_empty(
+        self,
+        *,
+        call_after: Optional[Callable] = None
+    ) -> EmptyResponse:
+        """
+        Send an empty response to the interaction
+
+        Parameters
+        ----------
+        call_after: `Optional[Callable]`
+            A coroutine to run after the response is sent
+
+        Returns
+        -------
+        `EmptyResponse`
+            The response to the interaction
+        """
+        if call_after:
+            if not inspect.iscoroutinefunction(call_after):
+                raise TypeError("call_after must be a coroutine")
+
+            self._parent.bot.loop.create_task(
+                self._parent._background_task_manager(call_after)
+            )
+
+        return EmptyResponse()
+
     def send_message(
         self,
         content: Optional[str] = MISSING,
@@ -252,6 +296,7 @@ class InteractionResponse:
         type: Union[ResponseType, int] = 4,
         allowed_mentions: Optional[AllowedMentions] = MISSING,
         poll: Optional[Poll] = MISSING,
+        flags: Optional[MessageFlags] = MISSING,
         call_after: Optional[Callable] = None
     ) -> MessageResponse:
         """
@@ -279,6 +324,8 @@ class InteractionResponse:
             The type of response to send
         allowed_mentions: `Optional[AllowedMentions]`
             Allowed mentions for the message
+        flags: `Optional[int]`
+            The flags of the message (overrides ephemeral)
         call_after: `Optional[Callable]`
             A coroutine to run after the response is sent
 
@@ -322,6 +369,7 @@ class InteractionResponse:
             attachments=files,
             type=type,
             poll=poll,
+            flags=flags,
             allowed_mentions=(
                 allowed_mentions or
                 self._parent.bot._default_allowed_mentions
@@ -338,6 +386,7 @@ class InteractionResponse:
         attachment: Optional[File] = MISSING,
         attachments: Optional[list[File]] = MISSING,
         allowed_mentions: Optional[AllowedMentions] = MISSING,
+        flags: Optional[MessageFlags] = MISSING,
         call_after: Optional[Callable] = None
     ) -> MessageResponse:
         """
@@ -359,6 +408,8 @@ class InteractionResponse:
             Multiple new files to edit the message with
         allowed_mentions: `Optional[AllowedMentions]`
             Allowed mentions for the message
+        flags: `Optional[int]`
+            The flags of the message
         call_after: `Optional[Callable]`
             A coroutine to run after the response is sent
 
@@ -399,6 +450,7 @@ class InteractionResponse:
             attachments=attachments,
             view=view,
             type=int(ResponseType.update_message),
+            flags=flags,
             allowed_mentions=(
                 allowed_mentions or
                 self._parent.bot._default_allowed_mentions
@@ -442,7 +494,7 @@ class InteractionResponse:
                 )
 
             if (isinstance(k, int) or isinstance(k, float)) and k >= 2**53:
-                _log.warn(
+                _log.warning(
                     f"'{k}: {v}' (int) is too large, "
                     "Discord might ignore it and make autocomplete fail"
                 )
@@ -475,6 +527,8 @@ class Context:
 
         self.app_permissions: Permissions = Permissions(int(data.get("app_permissions", 0)))
         self.custom_id: Optional[str] = data.get("data", {}).get("custom_id", None)
+
+        self.resolved: ResolvedValues = ResolvedValues.none(self)
         self.select_values: SelectValues = SelectValues.none(self)
         self.modal_values: dict[str, str] = {}
 
@@ -482,7 +536,7 @@ class Context:
         self.followup_token: str = data.get("token", None)
 
         self._original_response: Optional[Message] = None
-        self._resolved: dict = data.get("data", {}).get("resolved", {})
+        self._raw_resolved: dict = data.get("data", {}).get("resolved", {})
 
         self.entitlements: list[Entitlements] = [
             Entitlements(state=self.bot.state, data=g)
@@ -499,16 +553,16 @@ class Context:
         if data.get("channel_id", None):
             self.channel_id = int(data["channel_id"])
 
-        self.channel: Optional[BaseChannel] = None
+        self._channel: Optional[BaseChannel] = None
         if data.get("channel", None):
-            self.channel = channel_types[data["channel"]["type"]](
+            self._channel = channel_types[data["channel"]["type"]](
                 state=self.bot.state,
                 data=data["channel"]
             )
 
-        self.guild: Optional[PartialGuild] = None
+        self._guild: Optional[PartialGuild] = None
         if data.get("guild_id", None):
-            self.guild = PartialGuild(
+            self._guild = PartialGuild(
                 state=self.bot.state,
                 id=int(data["guild_id"])
             )
@@ -518,16 +572,19 @@ class Context:
             self.message = Message(
                 state=self.bot.state,
                 data=data["message"],
-                guild=self.guild
+                guild=self._guild
             )
-        elif self._resolved.get("messages", {}):
-            _first_msg = next(iter(self._resolved["messages"].values()), None)
+        elif self._raw_resolved.get("messages", {}):
+            _first_msg = next(iter(self._raw_resolved["messages"].values()), None)
             if _first_msg:
                 self.message = Message(
                     state=self.bot.state,
                     data=_first_msg,
-                    guild=self.guild
+                    guild=self._guild
                 )
+
+        if self._raw_resolved:
+            self.resolved = ResolvedValues(self, data)
 
         self.author: Optional[Union[Member, User]] = None
         if self.message is not None:
@@ -546,6 +603,10 @@ class Context:
 
     async def _background_task_manager(self, call_after: Callable) -> None:
         try:
+            if isinstance(self.bot.call_after_delay, float):
+                await asyncio.sleep(self.bot.call_after_delay)
+                # Somehow, Discord thinks @original messages is HTTP 404
+                # Give them a smaaaall chance to fix it
             await call_after()
         except Exception as e:
             if self.bot.has_any_dispatch("interaction_error"):
@@ -555,6 +616,42 @@ class Context:
                     f"Error while running call_after:{call_after}",
                     exc_info=e
                 )
+
+    @property
+    def guild(self) -> Guild | PartialGuild | None:
+        """
+        `Guild | PartialGuild | None`: Returns the guild the interaction was made in
+        If you are using gateway cache, it can return full object too
+        """
+        if not self._guild:
+            return None
+
+        cache = self.bot.cache.get_guild(self._guild.id)
+        if cache:
+            return cache
+
+        return self._guild
+
+    @property
+    def channel(self) -> "BaseChannel | PartialChannel | None":
+        """ `BaseChannel | PartialChannel`: Returns the channel the interaction was made in """
+        if not self.channel_id:
+            return None
+
+        if self.guild:
+            cache = self.bot.cache.get_channel_thread(
+                guild_id=self.guild.id,
+                channel_id=self.channel_id
+            )
+
+            if cache:
+                return cache
+
+        return PartialChannel(
+            state=self.bot.state,
+            id=self.channel_id,
+            guild_id=self.guild.id if self.guild else None
+        )
 
     @property
     def created_at(self) -> datetime:
@@ -601,6 +698,117 @@ class Context:
             data=payload
         )
 
+    async def send(
+        self,
+        content: Optional[str] = MISSING,
+        *,
+        embed: Optional[Embed] = MISSING,
+        embeds: Optional[list[Embed]] = MISSING,
+        file: Optional[File] = MISSING,
+        files: Optional[list[File]] = MISSING,
+        ephemeral: Optional[bool] = False,
+        view: Optional[View] = MISSING,
+        tts: Optional[bool] = False,
+        type: Union[ResponseType, int] = 4,
+        allowed_mentions: Optional[AllowedMentions] = MISSING,
+        poll: Optional[Poll] = MISSING,
+        flags: Optional[MessageFlags] = MISSING,
+        delete_after: Optional[float] = None
+    ) -> Message:
+        """
+        Send a message after responding with an empty response in the initial interaction
+
+        Parameters
+        ----------
+        content: `Optional[str]`
+            Content of the message
+        embed: `Optional[Embed]`
+            Embed of the message
+        embeds: `Optional[list[Embed]]`
+            Embeds of the message
+        file: `Optional[File]`
+            File of the message
+        files: `Optional[Union[list[File], File]]`
+            Files of the message
+        ephemeral: `bool`
+            Whether the message should be sent as ephemeral
+        view: `Optional[View]`
+            Components of the message
+        type: `Optional[ResponseType]`
+            Which type of response should be sent
+        allowed_mentions: `Optional[AllowedMentions]`
+            Allowed mentions of the message
+        wait: `bool`
+            Whether to wait for the message to be sent
+        thread_id: `Optional[int]`
+            Thread ID to send the message to
+        poll: `Optional[Poll]`
+            Poll to send with the message
+        delete_after: `Optional[float]`
+            How long to wait before deleting the message
+
+        Returns
+        -------
+        `Message`
+            Returns the message that was sent
+        """
+        if embed is not MISSING and embeds is not MISSING:
+            raise ValueError("Cannot pass both embed and embeds")
+        if file is not MISSING and files is not MISSING:
+            raise ValueError("Cannot pass both file and files")
+
+        if isinstance(embed, Embed):
+            embeds = [embed]
+        if isinstance(file, File):
+            files = [file]
+
+        payload = MessageResponse(
+            content=content,
+            embeds=embeds,
+            ephemeral=ephemeral,
+            view=view,
+            tts=tts,
+            attachments=files,
+            type=type,
+            poll=poll,
+            flags=flags,
+            allowed_mentions=(
+                allowed_mentions or
+                self.bot._default_allowed_mentions
+            )
+        )
+
+        multidata = MultipartData()
+
+        if isinstance(payload.files, list):
+            for i, file in enumerate(payload.files):
+                multidata.attach(
+                    f"file{i}",
+                    file,  # type: ignore
+                    filename=file.filename
+                )
+
+        _modified_payload = payload.to_dict()
+        multidata.attach("payload_json", _modified_payload)
+
+        r = await self.bot.state.query(
+            "POST",
+            f"/interactions/{self.id}/{self.followup_token}/callback",
+            data=multidata.finish(),
+            params={"with_response": "true"},
+            headers={"Content-Type": multidata.content_type}
+        )
+
+        _msg = Message(
+            state=self.bot.state,
+            data=r.response["resource"]["message"],
+            guild=self.guild
+        )
+
+        if delete_after is not None:
+            await _msg.delete(delay=float(delete_after))
+        return _msg
+
     async def original_response(self) -> Message:
         """ `Message` Returns the original response to the interaction """
         if self._original_response is not None:
@@ -608,7 +816,8 @@ class Context:
 
         r = await self.bot.state.query(
             "GET",
-            f"/webhooks/{self.bot.application_id}/{self.followup_token}/messages/@original"
+            f"/webhooks/{self.bot.application_id}/{self.followup_token}/messages/@original",
+            retry_codes=[404]
         )
 
         msg = Message(
@@ -632,7 +841,7 @@ class Context:
         allowed_mentions: Optional[AllowedMentions] = MISSING
     ) -> Message:
         """ `Message` Edit the original response to the interaction """
-        _msg_kwargs = MessageResponse(
+        payload = MessageResponse(
             content=content,
             embeds=embeds,
             embed=embed,
@@ -645,7 +854,9 @@ class Context:
         r = await self.bot.state.query(
             "PATCH",
             f"/webhooks/{self.bot.application_id}/{self.followup_token}/messages/@original",
-            json=_msg_kwargs.to_dict()["data"]
+            headers={"Content-Type": payload.content_type},
+            data=payload.to_multipart(is_request=True),
+            retry_codes=[404]
         )
 
         msg = Message(
@@ -661,18 +872,19 @@ class Context:
         """ Delete the original response to the interaction """
         await self.bot.state.query(
             "DELETE",
-            f"/webhooks/{self.bot.application_id}/{self.followup_token}/messages/@original"
+            f"/webhooks/{self.bot.application_id}/{self.followup_token}/messages/@original",
+            retry_codes=[404]
         )
 
-    def _create_args(self) -> tuple[list[Union[Member, User, Message, None]], dict]:
+    async def _create_args(self) -> tuple[list[Union[Member, User, Message, None]], dict]:
         match self.command_type:
             case ApplicationCommandType.chat_input:
-                return [], self._create_args_chat_input()
+                return [], await self._create_args_chat_input()
 
             case ApplicationCommandType.user:
-                if self._resolved.get("members", {}):
+                if self.resolved.members:
                     _first: Optional[dict] = next(
-                        iter(self._resolved["members"].values()),
+                        iter(self._raw_resolved["members"].values()),
                         None
                     )
 
@@ -682,7 +894,7 @@ class Context:
                         raise ValueError("While parsing members, guild was not available")
 
                     _first["user"] = next(
-                        iter(self._resolved["users"].values()),
+                        iter(self._raw_resolved["users"].values()),
                         None
                     )
 
@@ -692,9 +904,9 @@ class Context:
                         data=_first
                     )
 
-                elif self._resolved.get("users", {}):
+                elif self._raw_resolved.get("users", {}):
                     _first: Optional[dict] = next(
-                        iter(self._resolved["users"].values()),
+                        iter(self._raw_resolved["users"].values()),
                         None
                     )
 
@@ -714,12 +926,12 @@ class Context:
             case _:
                 raise ValueError("Unknown command type")
 
-    def _create_args_chat_input(self) -> dict:
-        def _create_args_recursive(data, resolved) -> dict:
+    async def _create_args_chat_input(self) -> dict:
+        async def _create_args_recursive(data, resolved) -> dict:
             if not data.get("options"):
                 return {}
 
-            kwargs = {}
+            kwargs: dict[str, Any] = {}
 
             for option in data["options"]:
                 match option["type"]:
@@ -727,7 +939,7 @@ class Context:
                         CommandOptionType.sub_command,
                         CommandOptionType.sub_command_group
                     ):
-                        sub_kwargs = _create_args_recursive(option, resolved)
+                        sub_kwargs = await _create_args_recursive(option, resolved)
                         kwargs.update(sub_kwargs)
 
                     case CommandOptionType.user:
@@ -775,6 +987,20 @@ class Context:
                     case CommandOptionType.string:
                         kwargs[option["name"]] = option["value"]
 
+                        _has_converter = self.command._converters.get(option["name"], None)
+                        if _has_converter:
+                            _conv_class = _has_converter()
+                            if inspect.iscoroutinefunction(_conv_class.convert):
+                                kwargs[option["name"]] = await _conv_class.convert(
+                                    self,
+                                    option["value"]
+                                )
+                            else:
+                                kwargs[option["name"]] = _conv_class.convert(
+                                    self,
+                                    option["value"]
+                                )
+
                     case CommandOptionType.integer:
                         kwargs[option["name"]] = int(option["value"])
 
@@ -789,9 +1015,9 @@ class Context:
 
             return kwargs
 
-        return _create_args_recursive(
+        return await _create_args_recursive(
             {"options": self.options},
-            self._resolved
+            self._raw_resolved
         )
 
     def _parse_user(self, data: dict) -> Union[Member, User]:

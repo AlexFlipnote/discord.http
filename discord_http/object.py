@@ -12,19 +12,25 @@ class Snowflake:
     """
     A class to represent a Discord Snowflake
     """
-    def __init__(self, *, id: int):
-        if not isinstance(id, int):
-            raise TypeError("id must be an integer")
+    def __init__(
+        self,
+        id: int | str
+    ):
+        try:
+            id = int(id)
+        except ValueError:
+            raise TypeError(f"id must be an integer or convertible to integer, not {type(id)}")
+
         self.id: int = id
 
     def __repr__(self) -> str:
         return f"<Snowflake id={self.id}>"
 
-    def __str__(self) -> str:
-        return str(self.id)
-
     def __int__(self) -> int:
         return self.id
+
+    def __hash__(self) -> int:
+        return self.id >> 22
 
     def __eq__(self, other) -> bool:
         match other:

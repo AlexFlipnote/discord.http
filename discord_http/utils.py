@@ -1,18 +1,17 @@
-import enum
 import logging
-import numbers
-import random
 import re
 import sys
 import traceback
 import unicodedata
 
 from base64 import b64encode
-from datetime import datetime, timezone, timedelta
-from typing import Optional, Any, Union, Iterator, Self
+from datetime import datetime, timedelta, UTC
+from typing import Any, Iterator, TYPE_CHECKING
 
 from .file import File
-from .object import Snowflake
+
+if TYPE_CHECKING:
+    from .object import Snowflake
 
 DISCORD_EPOCH = 1420070400000
 
@@ -53,7 +52,7 @@ def traceback_maker(
     return error if advance else f"{type(err).__name__}: {err}"
 
 
-def snowflake_time(id: Union[Snowflake, int]) -> datetime:
+def snowflake_time(id: "Snowflake | int") -> datetime:
     """
     Get the datetime from a discord snowflake
 
@@ -69,7 +68,7 @@ def snowflake_time(id: Union[Snowflake, int]) -> datetime:
     """
     return datetime.fromtimestamp(
         ((int(id) >> 22) + DISCORD_EPOCH) / 1000,
-        tz=timezone.utc
+        tz=UTC
     )
 
 
@@ -107,21 +106,79 @@ def time_snowflake(
     )
 
 
-def parse_time(ts: str) -> datetime:
+def parse_time(ts: str | int) -> datetime:
     """
-    Parse a timestamp from a string
+    Parse a timestamp from a string or int
 
     Parameters
     ----------
-    ts: `str`
+    ts: `str` | `int`
         The timestamp to parse
 
     Returns
     -------
     `datetime`
         The datetime of the timestamp
+
+    Raises
+    ------
+    `TypeError`
+        If the provided timestamp is not a string or int
     """
-    return datetime.fromisoformat(ts)
+    if isinstance(ts, int):
+        ts_length = len(str(ts))
+        if ts_length >= 16:  # Microseconds
+            ts = ts // 1_000_000
+        elif ts_length >= 13:  # Milliseconds
+            ts = ts // 1000
+        return datetime.fromtimestamp(ts, tz=UTC)
+    elif isinstance(ts, str):
+        return datetime.fromisoformat(ts)
+
+    raise TypeError("ts must be a str or int")
+
+
+def normalize_entity_id(
+    entry: "datetime | int | str | Snowflake"
+) -> int:
+    """
+    Translates a search ID or datetime to a Snowflake
+    Mostly used for audit-logs, messages, and similar API calls
+
+    Parameters
+    ----------
+    entry: `datetime | int | str | Snowflake`
+        The entry to translate
+
+    Returns
+    -------
+    `Snowflake`
+        The translated
+
+    Raises
+    ------
+    `TypeError`
+        If the entry is not a datetime, int, str, or Snowflake
+    """
+    match entry:
+        case x if isinstance(x, int):
+            return x
+
+        case x if getattr(x, "id", None):
+            # This is potentially a Snowflake
+            # Due to circular imports, can't 100% check it, just trust it
+            return int(x)  # type: ignore
+
+        case x if isinstance(x, str):
+            if not x.isdigit():
+                raise TypeError("Got a string that was not a Snowflake ID")
+            return int(x)
+
+        case x if isinstance(x, datetime):
+            return time_snowflake(x)
+
+        case _:
+            raise TypeError(f"Expected datetime, int, str, or Snowflake, got {type(entry)}")
 
 
 def unicode_name(text: str) -> str:
@@ -149,9 +206,9 @@ def unicode_name(text: str) -> str:
 
 
 def oauth_url(
-    client_id: Union[Snowflake, int],
+    client_id: "Snowflake | int",
     /,
-    scope: Optional[str] = None,
+    scope: str | None = None,
     user_install: bool = False,
     **kwargs: str
 ):
@@ -160,9 +217,9 @@ def oauth_url(
 
     Parameters
     ----------
-    client_id: `Union[Snowflake, int]`
+    client_id: `Snowflake | int`
         Application ID to invite to the server
-    scope: `Optional[str]`
+    scope: `str | None`
         Changing the scope of the oauth url, default: `bot+applications.commands`
     user_install: `bool`
         Whether the bot is allowed to be installed on the user's account
@@ -220,18 +277,18 @@ def divide_chunks(
 
 def utcnow() -> datetime:
     """
-    Alias for `datetime.now(timezone.utc)`
+    Alias for `datetime.now(UTC)`
 
     Returns
     -------
     `datetime`
         The current time in UTC
     """
-    return datetime.now(timezone.utc)
+    return datetime.now(UTC)
 
 
 def add_to_datetime(
-    ts: Union[datetime, timedelta, int]
+    ts: datetime | timedelta | int
 ) -> datetime:
     """
     Converts different Python timestamps to a `datetime` object
@@ -256,6 +313,8 @@ def add_to_datetime(
     `TypeError`
         Invalid type for timestamp provided
     """
+    _now = utcnow()
+
     match ts:
         case x if isinstance(x, datetime):
             if x.tzinfo is None:
@@ -263,16 +322,16 @@ def add_to_datetime(
                     "datetime object must be timezone aware"
                 )
 
-            if x.tzinfo is timezone.utc:
+            if x.tzinfo is UTC:
                 return x
 
-            return x.astimezone(timezone.utc)
+            return x.astimezone(UTC)
 
         case x if isinstance(x, timedelta):
-            return utcnow() + x
+            return _now + x
 
         case x if isinstance(x, int):
-            return utcnow() + timedelta(seconds=x)
+            return _now + timedelta(seconds=x)
 
         case _:
             raise TypeError(
@@ -320,7 +379,41 @@ def mime_type_image(image: bytes) -> str:
             raise ValueError("Image bytes provided is not supported sadly")
 
 
-def bytes_to_base64(image: Union[File, bytes]) -> str:
+def mime_type_audio(audio: bytes) -> str:
+    """
+    Get the mime type of an audio
+
+    Parameters
+    ----------
+    audio: `bytes`
+        The audio to get the mime type from
+
+    Returns
+    -------
+    `str`
+        The mime type of the audio
+
+    Raises
+    ------
+    `ValueError`
+        The audio bytes provided is not supported sadly
+    """
+    match audio:
+        case x if x.startswith(b"OggS"):
+            return "audio/ogg"
+
+        case x if (
+            x.startswith(b"ID3") or
+            x.startswith(b"\xff\xd8\xff") or
+            (x[0] == 0xff and (x[1] & 0xe0) == 0xe0)
+        ):
+            return "audio/mpeg"
+
+        case _:
+            raise ValueError("Audio bytes provided is not supported sadly")
+
+
+def bytes_to_base64(image: File | bytes) -> str:
     """
     Convert bytes to base64
 
@@ -359,8 +452,8 @@ def get_int(
     data: dict,
     key: str,
     *,
-    default: Optional[Any] = None
-) -> Optional[int]:
+    default: Any | None = None
+) -> int | None:
     """
     Get an integer from a dictionary, similar to `dict.get`
 
@@ -370,7 +463,7 @@ def get_int(
         The dictionary to get the integer from
     key: `str`
         The key to get the integer from
-    default: `Optional[Any]`
+    default: `Any | None`
         The default value to return if the key is not found
 
     Returns
@@ -383,7 +476,7 @@ def get_int(
     `ValueError`
         The key returned a non-digit value
     """
-    output: Optional[str] = data.get(key, None)
+    output: str | None = data.get(key, None)
     if output is None:
         return default
     if isinstance(output, int):
@@ -438,95 +531,6 @@ class _MissingType:
 MISSING: Any = _MissingType()
 
 
-class Enum(enum.Enum):
-    """ Enum, but with more comparison operators to make life easier """
-    @classmethod
-    def random(cls) -> Self:
-        """ `Enum`: Return a random enum """
-        return random.choice(list(cls))
-
-    def __str__(self) -> str:
-        """ `str` Return the name of the enum """
-        return self.name
-
-    def __int__(self) -> int:
-        """ `int` Return the value of the enum """
-        return self.value
-
-    def __gt__(self, other) -> bool:
-        """ `bool` Greater than """
-        try:
-            return self.value > other.value
-        except Exception:
-            pass
-        try:
-            if isinstance(other, numbers.Real):
-                return self.value > other
-        except Exception:
-            pass
-        return NotImplemented
-
-    def __lt__(self, other) -> bool:
-        """ `bool` Less than """
-        try:
-            return self.value < other.value
-        except Exception:
-            pass
-        try:
-            if isinstance(other, numbers.Real):
-                return self.value < other
-        except Exception:
-            pass
-        return NotImplemented
-
-    def __ge__(self, other) -> bool:
-        """ `bool` Greater than or equal to """
-        try:
-            return self.value >= other.value
-        except Exception:
-            pass
-        try:
-            if isinstance(other, numbers.Real):
-                return self.value >= other
-            if isinstance(other, str):
-                return self.name == other
-        except Exception:
-            pass
-        return NotImplemented
-
-    def __le__(self, other) -> bool:
-        """ `bool` Less than or equal to """
-        try:
-            return self.value <= other.value
-        except Exception:
-            pass
-        try:
-            if isinstance(other, numbers.Real):
-                return self.value <= other
-            if isinstance(other, str):
-                return self.name == other
-        except Exception:
-            pass
-        return NotImplemented
-
-    def __eq__(self, other) -> bool:
-        """ `bool` Equal to """
-        if self.__class__ is other.__class__:
-            return self.value == other.value
-        try:
-            return self.value == other.value
-        except Exception:
-            pass
-        try:
-            if isinstance(other, numbers.Real):
-                return self.value == other
-            if isinstance(other, str):
-                return self.name == other
-        except Exception:
-            pass
-        return NotImplemented
-
-
 class CustomFormatter(logging.Formatter):
     reset = "\x1b[0m"
 
@@ -546,7 +550,7 @@ class CustomFormatter(logging.Formatter):
     light_red = "\x1b[38;5;203m"
     light_bold_red = "\x1b[38;5;197m"
 
-    def __init__(self, datefmt: Optional[str] = None):
+    def __init__(self, datefmt: str | None = None):
         super().__init__()
         self._datefmt = datefmt
 

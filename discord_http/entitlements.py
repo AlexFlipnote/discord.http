@@ -1,10 +1,10 @@
 from datetime import datetime
-from typing import TYPE_CHECKING, Optional, Union
+from typing import TYPE_CHECKING
 
 from . import utils
 from .enums import EntitlementType, EntitlementOwnerType, SKUType
-from .flag import SKUFlags
-from .guild import PartialGuild
+from .flags import SKUFlags
+from .guild import Guild, PartialGuild
 from .object import PartialBase, Snowflake
 from .user import PartialUser
 
@@ -35,8 +35,8 @@ class PartialSKU(PartialBase):
     async def create_test_entitlement(
         self,
         *,
-        owner_id: Union[Snowflake, int],
-        owner_type: Union[EntitlementOwnerType, int],
+        owner_id: Snowflake | int,
+        owner_type: EntitlementOwnerType | int,
     ) -> "PartialEntitlements":
         """
         Create an entitlement for testing purposes.
@@ -149,8 +149,9 @@ class Entitlements(PartialEntitlements):
         self.deleted: bool = data["deleted"]
         self.type: EntitlementType = EntitlementType(data["type"])
 
-        self.user: Optional[PartialUser] = None
-        self.guild: Optional[PartialGuild] = None
+        self.user: PartialUser | None = None
+        self.guild_id: int | None = utils.get_int(data, "guild_id")
+
         self.application: PartialUser = PartialUser(
             state=self._state,
             id=int(data["application_id"])
@@ -160,8 +161,8 @@ class Entitlements(PartialEntitlements):
             id=int(data["sku_id"])
         )
 
-        self.starts_at: Optional[datetime] = None
-        self.ends_at: Optional[datetime] = None
+        self.starts_at: datetime | None = None
+        self.ends_at: datetime | None = None
 
         self._from_data(data)
         self._data_consumed: bool = data.get("consumed", False)
@@ -176,14 +177,24 @@ class Entitlements(PartialEntitlements):
         if data.get("user_id", None):
             self.user = PartialUser(state=self._state, id=int(data["user_id"]))
 
-        if data.get("guild_id", None):
-            self.guild = PartialGuild(state=self._state, id=int(data["guild_id"]))
-
         if data.get("starts_at", None):
             self.starts_at = utils.parse_time(data["starts_at"])
 
         if data.get("ends_at", None):
             self.ends_at = utils.parse_time(data["ends_at"])
+
+    @property
+    def guild(self) -> Guild | PartialGuild | None:
+        """ `PartialGuild | None`: Returns the guild the entitlement is in """
+        if not self.guild_id:
+            return None
+
+        cache = self._state.cache.get_guild(self.guild_id)
+        if cache:
+            return cache
+
+        from .guild import PartialGuild
+        return PartialGuild(state=self._state, id=self.guild_id)
 
     def is_consumed(self) -> bool:
         """ `bool`: Returns whether the entitlement is consumed or not. """

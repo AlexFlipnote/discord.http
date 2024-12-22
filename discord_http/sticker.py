@@ -1,11 +1,11 @@
-from typing import TYPE_CHECKING, Optional
+from typing import TYPE_CHECKING
 
 from . import utils
 from .enums import StickerType, StickerFormatType
 from .object import PartialBase
 
 if TYPE_CHECKING:
-    from .guild import PartialGuild
+    from .guild import Guild, PartialGuild
     from .http import DiscordAPI
 
 MISSING = utils.MISSING
@@ -22,14 +22,14 @@ class PartialSticker(PartialBase):
         *,
         state: "DiscordAPI",
         id: int,
-        name: Optional[str] = None,
-        guild_id: Optional[int] = None
+        name: str | None = None,
+        guild_id: int | None = None
     ):
         super().__init__(id=int(id))
         self._state = state
 
-        self.name: Optional[str] = name
-        self.guild_id: Optional[int] = guild_id
+        self.name: str | None = name
+        self.guild_id: int | None = guild_id
 
     def __repr__(self) -> str:
         return f"<PartialSticker id={self.id}>"
@@ -50,7 +50,7 @@ class PartialSticker(PartialBase):
         )
 
     @property
-    def guild(self) -> Optional["PartialGuild"]:
+    def guild(self) -> "Guild | PartialGuild | None":
         """
         Returns the guild this sticker is in
 
@@ -67,17 +67,21 @@ class PartialSticker(PartialBase):
         if not self.guild_id:
             return None
 
+        cache = self._state.cache.get_guild(self.guild_id)
+        if cache:
+            return cache
+
         from .guild import PartialGuild
         return PartialGuild(state=self._state, id=self.guild_id)
 
     async def edit(
         self,
         *,
-        name: Optional[str] = MISSING,
-        description: Optional[str] = MISSING,
-        tags: Optional[str] = MISSING,
-        guild_id: Optional[int] = None,
-        reason: Optional[str] = None
+        name: str | None = MISSING,
+        description: str | None = MISSING,
+        tags: str | None = MISSING,
+        guild_id: int | None = None,
+        reason: str | None = None
     ) -> "Sticker":
         """
         Edits the sticker
@@ -136,8 +140,8 @@ class PartialSticker(PartialBase):
     async def delete(
         self,
         *,
-        guild_id: Optional[int] = None,
-        reason: Optional[str] = None
+        guild_id: int | None = None,
+        reason: str | None = None
     ) -> None:
         """
         Deletes the sticker
@@ -156,7 +160,10 @@ class PartialSticker(PartialBase):
         """
         guild_id = guild_id or self.guild_id
         if guild_id is None:
-            raise ValueError("guild_id is a required argument")
+            raise ValueError(
+                "guild_id is a required argument "
+                "since it was not provided by object"
+            )
 
         await self._state.query(
             "DELETE",
@@ -177,11 +184,11 @@ class Sticker(PartialSticker):
         *,
         state: "DiscordAPI",
         data: dict,
-        guild: Optional["PartialGuild"],
+        guild: "PartialGuild | None",
     ):
         super().__init__(
             state=state,
-            id=data["id"],
+            id=int(data["id"]),
             name=data["name"],
             guild_id=guild.id if guild else None
         )
@@ -190,8 +197,8 @@ class Sticker(PartialSticker):
         self.available: bool = data["available"]
         self.description: str = data["description"]
         self.format_type: StickerFormatType = StickerFormatType(data["format_type"])
-        self.pack_id: Optional[int] = utils.get_int(data, "pack_id")
-        self.sort_value: Optional[int] = utils.get_int(data, "sort_value")
+        self.pack_id: int | None = utils.get_int(data, "pack_id")
+        self.sort_value: int | None = utils.get_int(data, "sort_value")
         self.tags: str = data["tags"]
         self.type: StickerType = StickerType(data["type"])
 
@@ -216,10 +223,10 @@ class Sticker(PartialSticker):
     async def edit(
         self,
         *,
-        name: Optional[str] = MISSING,
-        description: Optional[str] = MISSING,
-        tags: Optional[str] = MISSING,
-        reason: Optional[str] = None
+        name: str | None = MISSING,
+        description: str | None = MISSING,
+        tags: str | None = MISSING,
+        reason: str | None = None
     ) -> "Sticker":
         """
         Edits the sticker
@@ -254,7 +261,7 @@ class Sticker(PartialSticker):
     async def delete(
         self,
         *,
-        reason: Optional[str] = None
+        reason: str | None = None
     ) -> None:
         """
         Deletes the sticker

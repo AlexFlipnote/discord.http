@@ -13,7 +13,7 @@ from .view import View
 
 if TYPE_CHECKING:
     from .channel import PartialChannel
-    from .guild import PartialGuild
+    from .guild import Guild, PartialGuild
     from .http import DiscordAPI
     from .message import WebhookMessage, Poll
 
@@ -35,6 +35,7 @@ class PartialWebhook(PartialBase):
     ):
         super().__init__(id=int(id))
         self._state = state
+        self._retry_codes = []
         self.token: Optional[str] = token
 
     def __repr__(self) -> str:
@@ -205,7 +206,8 @@ class PartialWebhook(PartialBase):
             webhook=True,
             params=params,
             data=multidata.finish(),
-            headers={"Content-Type": multidata.content_type}
+            headers={"Content-Type": multidata.content_type},
+            retry_codes=self._retry_codes
         )
 
         if wait is True:
@@ -355,19 +357,22 @@ class Webhook(PartialWebhook):
         `Webhook`
             The webhook that was created
         """
-        return cls(state=state, data=data)
+        _cls = cls(state=state, data=data)
+        _cls._retry_codes = [404]
+        return _cls
 
     @property
-    def guild(self) -> Optional["PartialGuild"]:
+    def guild(self) -> "Guild | PartialGuild | None":
         """ `Optional[PartialGuild]`: Returns the guild the webhook is in """
-        if self.guild_id:
-            from .guild import PartialGuild
-            return PartialGuild(
-                state=self._state,
-                id=self.guild_id
-            )
+        if not self.guild_id:
+            return None
 
-        return None
+        cache = self._state.cache.get_guild(self.guild_id)
+        if cache:
+            return cache
+
+        from .guild import PartialGuild
+        return PartialGuild(state=self._state, id=self.guild_id)
 
     @property
     def channel(self) -> Optional["PartialChannel"]:

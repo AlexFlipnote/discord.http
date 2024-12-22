@@ -4,7 +4,7 @@ import logging
 import secrets
 import time
 
-from typing import Union, Optional, TYPE_CHECKING, Callable
+from typing import TYPE_CHECKING, Callable
 
 from .emoji import EmojiParser
 from .enums import (
@@ -16,7 +16,6 @@ if TYPE_CHECKING:
     from . import Snowflake
     from .channel import BaseChannel
     from .context import Context
-    from .message import Message
     from .response import BaseResponse
 
 _log = logging.getLogger(__name__)
@@ -43,8 +42,8 @@ def _garbage_id() -> str:
 
 
 class Item:
-    def __init__(self, *, type: int, row: Optional[int] = None):
-        self.row: Optional[int] = row
+    def __init__(self, *, type: int, row: int | None = None):
+        self.row: int | None = row
         self.type: int = type
 
     def __repr__(self) -> str:
@@ -60,12 +59,12 @@ class ModalItem:
         self,
         *,
         label: str,
-        custom_id: Optional[str] = None,
-        style: Optional[TextStyles] = None,
-        placeholder: Optional[str] = None,
-        min_length: Optional[int] = None,
-        max_length: Optional[int] = None,
-        default: Optional[str] = None,
+        custom_id: str | None = None,
+        style: TextStyles | None = None,
+        placeholder: str | None = None,
+        min_length: int | None = None,
+        max_length: int | None = None,
+        default: str | None = None,
         required: bool = True,
     ):
         self.label: str = label
@@ -75,10 +74,10 @@ class ModalItem:
         )
         self.style: int = int(style or TextStyles.short)
 
-        self.placeholder: Optional[str] = placeholder
-        self.min_length: Optional[int] = min_length
-        self.max_length: Optional[int] = max_length
-        self.default: Optional[str] = default
+        self.placeholder: str | None = placeholder
+        self.min_length: int | None = min_length
+        self.max_length: int | None = max_length
+        self.default: str | None = default
         self.required: bool = required
 
         if (
@@ -119,23 +118,23 @@ class Button(Item):
     def __init__(
         self,
         *,
-        label: Optional[str] = None,
-        style: Union[ButtonStyles, str, int] = ButtonStyles.primary,
+        label: str | None = None,
+        style: ButtonStyles | str | int = ButtonStyles.primary,
         disabled: bool = False,
-        row: Optional[int] = None,
-        custom_id: Optional[str] = None,
-        sku_id: Optional[Union["Snowflake", int]] = None,
-        emoji: Optional[Union[str, dict]] = None,
-        url: Optional[str] = None
+        row: int | None = None,
+        custom_id: str | None = None,
+        sku_id: "Snowflake | int | None" = None,
+        emoji: str | dict | None = None,
+        url: str | None = None
     ):
         super().__init__(type=int(ComponentType.button), row=row)
 
-        self.label: Optional[str] = label
+        self.label: str | None = label
         self.disabled: bool = disabled
-        self.url: Optional[str] = url
-        self.emoji: Optional[Union[str, dict]] = emoji
-        self.sku_id: Optional[Union["Snowflake", int]] = sku_id
-        self.style: Union[ButtonStyles, str, int] = style
+        self.url: str | None = url
+        self.emoji: str | dict | None = emoji
+        self.sku_id: "Snowflake | int | None" = sku_id
+        self.style: ButtonStyles | str | int = style
         self.custom_id: str = (
             str(custom_id)
             if custom_id else _garbage_id()
@@ -199,8 +198,8 @@ class Premium(Button):
     def __init__(
         self,
         *,
-        sku_id: Union["Snowflake", int],
-        row: Optional[int] = None,
+        sku_id: "Snowflake | int",
+        row: int | None = None,
     ):
         """
         Button alias for the premium SKU style
@@ -227,9 +226,10 @@ class Link(Button):
         self,
         *,
         url: str,
-        label: Optional[str] = None,
-        row: Optional[int] = None,
-        emoji: Optional[str] = None
+        label: str | None = None,
+        row: int | None = None,
+        emoji: str | None = None,
+        disabled: bool = False
     ):
         """
         Button alias for the link style
@@ -250,11 +250,12 @@ class Link(Button):
             label=label,
             emoji=emoji,
             style=ButtonStyles.link,
-            row=row
+            row=row,
+            disabled=disabled
         )
 
         # Link buttons use url instead of custom_id
-        self.custom_id: Optional[str] = None
+        self.custom_id: str | None = None
 
     def __repr__(self) -> str:
         return f"<Link url='{self.url}'>"
@@ -264,23 +265,23 @@ class Select(Item):
     def __init__(
         self,
         *,
-        placeholder: Optional[str] = None,
-        custom_id: Optional[str] = None,
-        min_values: Optional[int] = 1,
-        max_values: Optional[int] = 1,
-        row: Optional[int] = None,
+        placeholder: str | None = None,
+        custom_id: str | None = None,
+        min_values: int | None = 1,
+        max_values: int | None = 1,
+        row: int | None = None,
         disabled: bool = False,
-        options: Optional[list[dict]] = None,
-        _type: Optional[int] = None
+        options: list[dict] | None = None,
+        _type: int | None = None
     ):
         super().__init__(
             row=row,
             type=_type or int(ComponentType.string_select)
         )
 
-        self.placeholder: Optional[str] = placeholder
-        self.min_values: Optional[int] = min_values
-        self.max_values: Optional[int] = max_values
+        self.placeholder: str | None = placeholder
+        self.min_values: int | None = min_values
+        self.max_values: int | None = max_values
         self.disabled: bool = disabled
         self.custom_id: str = (
             str(custom_id)
@@ -297,8 +298,8 @@ class Select(Item):
         *,
         label: str,
         value: str,
-        description: Optional[str] = None,
-        emoji: Optional[str] = None,
+        description: str | None = None,
+        emoji: str | None = None,
         default: bool = False
     ) -> None:
         """
@@ -360,11 +361,11 @@ class UserSelect(Select):
     def __init__(
         self,
         *,
-        placeholder: Optional[str] = None,
-        custom_id: Optional[str] = None,
-        min_values: Optional[int] = 1,
-        max_values: Optional[int] = 1,
-        row: Optional[int] = None,
+        placeholder: str | None = None,
+        custom_id: str | None = None,
+        min_values: int | None = 1,
+        max_values: int | None = 1,
+        row: int | None = None,
         disabled: bool = False
     ):
         super().__init__(
@@ -385,11 +386,11 @@ class RoleSelect(Select):
     def __init__(
         self,
         *,
-        placeholder: Optional[str] = None,
-        custom_id: Optional[str] = None,
-        min_values: Optional[int] = 1,
-        max_values: Optional[int] = 1,
-        row: Optional[int] = None,
+        placeholder: str | None = None,
+        custom_id: str | None = None,
+        min_values: int | None = 1,
+        max_values: int | None = 1,
+        row: int | None = None,
         disabled: bool = False
     ):
         super().__init__(
@@ -410,11 +411,11 @@ class MentionableSelect(Select):
     def __init__(
         self,
         *,
-        placeholder: Optional[str] = None,
-        custom_id: Optional[str] = None,
-        min_values: Optional[int] = 1,
-        max_values: Optional[int] = 1,
-        row: Optional[int] = None,
+        placeholder: str | None = None,
+        custom_id: str | None = None,
+        min_values: int | None = 1,
+        max_values: int | None = 1,
+        row: int | None = None,
         disabled: bool = False
     ):
         super().__init__(
@@ -434,12 +435,12 @@ class MentionableSelect(Select):
 class ChannelSelect(Select):
     def __init__(
         self,
-        *channels: Union[ChannelType, "BaseChannel"],
-        placeholder: Optional[str] = None,
-        custom_id: Optional[str] = None,
-        min_values: Optional[int] = 1,
-        max_values: Optional[int] = 1,
-        row: Optional[int] = None,
+        *channels: "ChannelType | BaseChannel",
+        placeholder: str | None = None,
+        custom_id: str | None = None,
+        min_values: int | None = 1,
+        max_values: int | None = 1,
+        row: int | None = None,
         disabled: bool = False
     ):
         super().__init__(
@@ -473,15 +474,15 @@ class ChannelSelect(Select):
 class InteractionStorage:
     def __init__(self):
         self._event_wait = asyncio.Event()
-        self._store_interaction: Optional["Context"] = None
+        self._store_interaction: "Context | None" = None
 
         self.loop = asyncio.get_running_loop()
-        self._call_after: Optional[Callable] = None
+        self._call_after: Callable | None = None
         self._users: list["Snowflake"] = []
         self._timeout_bool = False
-        self._timeout: Optional[float] = None
-        self._timeout_expiry: Optional[float] = None
-        self._msg_cache: Optional[Message] = None
+        self._timeout: float | None = None
+        self._timeout_expiry: float | None = None
+        self._msg_cache: str | int | None = None
 
     def __repr__(self) -> str:
         return (
@@ -539,7 +540,7 @@ class InteractionStorage:
     async def callback(
         self,
         ctx: "Context"
-    ) -> Optional["BaseResponse"]:
+    ) -> "BaseResponse | None":
         """ Called when the view is interacted with """
         if not self._call_after:
             return None
@@ -562,10 +563,11 @@ class InteractionStorage:
         ctx: "Context",
         *,
         call_after: Callable,
-        users: Optional[list["Snowflake"]] = [],
+        users: list["Snowflake"] | None = [],
         original_response: bool = False,
+        custom_id: str | int | None = None,
         timeout: float = 60,
-    ) -> Optional["Context"]:
+    ) -> "Context | None":
         """
         Tell the command to wait for an interaction response
         It will continue your code either if it was interacted with or timed out
@@ -591,6 +593,8 @@ class InteractionStorage:
             List of users that are allowed to interact with the view
         original_response: `bool`
             Whether to force the original response to be used as the message target
+        custom_id: `str | None`
+            Custom ID of the view, if not provided, it will use Context.id or Context.message
         timeout: `float`
             How long it should take until the code simply times out
 
@@ -600,7 +604,7 @@ class InteractionStorage:
             Returns the new context of the interaction, or `None` if timed out
         """
         if not inspect.iscoroutinefunction(call_after):
-            _log.warn("call_after is not a coroutine function, ignoring...")
+            _log.warning("call_after is not a coroutine function, ignoring...")
             return None
 
         if users and isinstance(users, list):
@@ -613,25 +617,41 @@ class InteractionStorage:
 
         self._update_event(False)
 
-        if ctx.message is not None:
-            self._msg_cache = ctx.message
+        # If user provides a custom_id
+        if custom_id is not None:
+            self._msg_cache = custom_id
 
+        # If an interaction was made, and the initial Context.id is in message
+        if (
+            self._msg_cache is None and
+            ctx.message is not None and
+            ctx.message.interaction is not None
+        ):
+            self._msg_cache = ctx.message.interaction.id
+
+        # If we're in the command init, use the initial Context.id
+        if self._msg_cache is None:
+            self._msg_cache = ctx.id
+
+        # If for some reason msg_cache is still None
+        # Or if user has spesifically asked for original_response
         if (
             self._msg_cache is None or
             original_response is True
         ):
             try:
                 await asyncio.sleep(0.15)  # Make sure Discord has time to store the message
-                self._msg_cache = await ctx.original_response()
+                _msg = await ctx.original_response()
+                self._msg_cache = _msg.id
             except Exception as e:
-                _log.warn(f"Failed to fetch origin message: {e}")
+                _log.warning(f"Failed to fetch origin message: {e}")
                 return None
 
-        ctx.bot._view_storage[self._msg_cache.id] = self
+        ctx.bot._view_storage[self._msg_cache] = self
         await self._event_wait.wait()
 
         try:
-            del ctx.bot._view_storage[self._msg_cache.id]
+            del ctx.bot._view_storage[self._msg_cache]
         except KeyError:
             pass
 
@@ -641,7 +661,7 @@ class InteractionStorage:
 
 
 class View(InteractionStorage):
-    def __init__(self, *items: Union[Button, Select, Link]):
+    def __init__(self, *items: Button | Select | Link):
         super().__init__()
 
         self.items = items
@@ -660,9 +680,9 @@ class View(InteractionStorage):
     def get_item(
         self,
         *,
-        label: Optional[str] = None,
-        custom_id: Optional[str] = None
-    ) -> Optional[Union[Button, Select, Link]]:
+        label: str | None = None,
+        custom_id: str | None = None
+    ) -> Button | Select | Link | None:
         """
         Get an item from the view that matches the parameters
 
@@ -695,8 +715,8 @@ class View(InteractionStorage):
 
     def add_item(
         self,
-        item: Union[Button, Select, Link]
-    ) -> Union[Button, Select, Link]:
+        item: Button | Select | Link
+    ) -> Button | Select | Link:
         """
         Add an item to the view
 
@@ -716,8 +736,8 @@ class View(InteractionStorage):
     def remove_items(
         self,
         *,
-        label: Optional[str] = None,
-        custom_id: Optional[str] = None
+        label: str | None = None,
+        custom_id: str | None = None
     ) -> int:
         """
         Remove items from the view that match the parameters
@@ -842,7 +862,7 @@ class Modal(InteractionStorage):
         self,
         *,
         title: str,
-        custom_id: Optional[str] = None
+        custom_id: str | None = None
     ):
         super().__init__()
 
@@ -858,12 +878,12 @@ class Modal(InteractionStorage):
         self,
         *,
         label: str,
-        custom_id: Optional[str] = None,
-        style: Optional[TextStyles] = None,
-        placeholder: Optional[str] = None,
-        min_length: Optional[int] = None,
-        max_length: Optional[int] = None,
-        default: Optional[str] = None,
+        custom_id: str | None = None,
+        style: TextStyles | None = None,
+        placeholder: str | None = None,
+        min_length: int | None = None,
+        max_length: int | None = None,
+        default: str | None = None,
         required: bool = True,
     ) -> ModalItem:
         """

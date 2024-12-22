@@ -127,6 +127,54 @@ This what the ``[ INFO ]`` messages mean:
 3. Showing that the bot is now ready to receive interactions from Discord API.
 4. Confirming that the URL you provided in the bot's application page is correct, working and Discord API can reach it.
 
+discord.http/gateway
+--------------------
+
+If you want to use the gateway, you can do so by using the ``enable_gateway`` parameter in the Client
+
+.. code-block:: python
+
+  client = Client(
+      ...
+      enable_gateway=True
+  )
+
+.. note::
+  Sharding is done automatically by the library, so you do not have to worry about that.
+  It also uses ``max_concurrency`` automatically to determine how many shards to launch at once to speed up the boot process.
+
+
+
+Intents
+~~~~~~~
+By default, there are 0 intents enabled, which means you would have a gateway, but it would essentially do nothing.
+You can use the :class:`Intents` flag to enable certain events that you desire to listen to.
+
+.. code-block:: python
+
+  from discord_http.gateway import Intents
+
+  client = Client(
+      ...
+      intents=Intents()
+  )
+
+Cache
+~~~~~
+By default, cache is completly disabled, this is an opt-in feature.
+You can use the :class:`GatewayCacheFlags` flag to enable certain cache flags as you desire.
+Mostly this is useful if you wish to reduce the amount of data needing to be requested from Discord API.
+
+.. code-block:: python
+
+  from discord_http.gateway import GatewayCacheFlags
+
+  client = Client(
+      ...
+      cache_flags=GatewayCacheFlags()
+  )
+
+
 3rd-party tools
 ----------------
 

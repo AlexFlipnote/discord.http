@@ -1,35 +1,48 @@
+from base64 import b64encode
 from dataclasses import dataclass
 from datetime import datetime, timedelta
-from typing import TYPE_CHECKING, Union, Optional, AsyncIterator
+from typing import (
+    TYPE_CHECKING, Union, Optional, AsyncIterator, Callable,
+    NamedTuple
+)
 
 from . import utils
 from .asset import Asset
+from .automod import (
+    AutoModRule, PartialAutoModRule,
+    AutoModRuleAction, AutoModRuleTriggers
+)
 from .colour import Colour, Color
 from .enums import (
     ChannelType, VerificationLevel,
     DefaultNotificationLevel, ContentFilterLevel,
-    ScheduledEventEntityType, ScheduledEventPrivacyType,
-    ScheduledEventStatusType, VideoQualityType
+    ScheduledEventEntityType, PrivacyLevelType,
+    ScheduledEventStatusType, VideoQualityType, AuditLogType,
+    AutoModRuleEventType, AutoModRuleTriggerType, AutoModRulePresetType
 )
 from .emoji import Emoji, PartialEmoji
 from .file import File
-from .flag import Permissions, SystemChannelFlags, PermissionOverwrite
+from .flags import Permissions, SystemChannelFlags, PermissionOverwrite
 from .multipart import MultipartData
 from .object import PartialBase, Snowflake
 from .role import Role, PartialRole
+from .soundboard import SoundboardSound, PartialSoundboardSound
 from .sticker import Sticker, PartialSticker
+from .voice import VoiceState, PartialVoiceState
 
 if TYPE_CHECKING:
     from .channel import (
         TextChannel, VoiceChannel,
         PartialChannel, BaseChannel,
         CategoryChannel, PublicThread,
-        VoiceRegion, StageChannel
+        VoiceRegion, StageChannel, PrivateThread
     )
+    from .audit import AuditLogEntry
     from .http import DiscordAPI
     from .invite import Invite
-    from .member import PartialMember, Member, VoiceState
+    from .member import PartialMember, Member
     from .user import User
+    from .integrations import Integration
 
 MISSING = utils.MISSING
 
@@ -38,6 +51,7 @@ __all__ = (
     "PartialGuild",
     "PartialScheduledEvent",
     "ScheduledEvent",
+    "BanEntry",
 )
 
 
@@ -50,6 +64,11 @@ class _GuildLimits:
     stickers: int
 
 
+class BanEntry(NamedTuple):
+    user: "User"
+    reason: str | None
+
+
 class PartialScheduledEvent(PartialBase):
     def __init__(
         self,
@@ -59,16 +78,21 @@ class PartialScheduledEvent(PartialBase):
         guild_id: int
     ):
         super().__init__(id=int(id))
-        self.guild_id: int = guild_id
-
         self._state = state
+
+        self.guild_id: int = guild_id
 
     def __repr__(self) -> str:
         return f"<PartialScheduledEvent id={self.id}>"
 
     @property
-    def guild(self) -> "PartialGuild":
+    def guild(self) -> "Guild | PartialGuild":
         """ `PartialGuild`: The guild object this event is in """
+        cache = self._state.cache.get_guild(self.guild_id)
+        if cache:
+            return cache
+
+        from .guild import PartialGuild
         return PartialGuild(state=self._state, id=self.guild_id)
 
     @property
@@ -87,12 +111,13 @@ class PartialScheduledEvent(PartialBase):
             data=r.response
         )
 
-    async def delete(self) -> None:
+    async def delete(self, *, reason: str | None = None) -> None:
         """ Delete the event (the bot must own the event) """
         await self._state.query(
             "DELETE",
             f"/guilds/{self.guild_id}/scheduled-events/{self.id}",
-            res_method="text"
+            res_method="text",
+            reason=reason
         )
 
     async def edit(
@@ -102,7 +127,7 @@ class PartialScheduledEvent(PartialBase):
         description: Optional[str] = MISSING,
         channel: Optional[Union["PartialChannel", int]] = MISSING,
         external_location: Optional[str] = MISSING,
-        privacy_level: Optional[ScheduledEventPrivacyType] = MISSING,
+        privacy_level: Optional[PrivacyLevelType] = MISSING,
         entity_type: Optional[ScheduledEventEntityType] = MISSING,
         status: Optional[ScheduledEventStatusType] = MISSING,
         start_time: Optional[Union[datetime, timedelta, int]] = MISSING,
@@ -121,7 +146,7 @@ class PartialScheduledEvent(PartialBase):
             New description of the event
         channel: `Optional[Union[&quot;PartialChannel&quot;, int]]`
             New channel of the event
-        privacy_level: `Optional[ScheduledEventPrivacyType]`
+        privacy_level: `Optional[PrivacyLevelType]`
             New privacy level of the event
         entity_type: `Optional[ScheduledEventEntityType]`
             New entity type of the event
@@ -168,7 +193,7 @@ class PartialScheduledEvent(PartialBase):
         if privacy_level is not MISSING:
             payload["privacy_level"] = int(
                 privacy_level or
-                ScheduledEventPrivacyType.guild_only
+                PrivacyLevelType.guild_only
             )
 
         if entity_type is not MISSING:
@@ -230,7 +255,7 @@ class ScheduledEvent(PartialScheduledEvent):
         self.description: Optional[str] = data.get("description", None)
         self.user_count: Optional[int] = utils.get_int(data, "user_count")
 
-        self.privacy_level: ScheduledEventPrivacyType = ScheduledEventPrivacyType(data["privacy_level"])
+        self.privacy_level: PrivacyLevelType = PrivacyLevelType(data["privacy_level"])
         self.status: ScheduledEventStatusType = ScheduledEventStatusType(data["status"])
         self.entity_type: ScheduledEventEntityType = ScheduledEventEntityType(data["entity_type"])
 
@@ -244,6 +269,9 @@ class ScheduledEvent(PartialScheduledEvent):
 
     def __repr__(self) -> str:
         return f"<ScheduledEvent id={self.id} name='{self.name}'>"
+
+    def __str__(self) -> str:
+        return self.name
 
     def _from_data(self, data: dict):
         if data.get("creator", None):
@@ -273,8 +301,252 @@ class PartialGuild(PartialBase):
         super().__init__(id=int(id))
         self._state = state
 
+        self.unavailable: bool = False
+
+        self._cache_members: dict[int, Union["Member", "PartialMember"]] = {}
+        self._cache_channels: dict[int, Union["BaseChannel", "PartialChannel"]] = {}
+        self._cache_threads: dict[int, Union["PublicThread", "PrivateThread", "PartialChannel"]] = {}
+        self._cache_roles: dict[int, Union["Role", "PartialRole"]] = {}
+        self._cache_emojis: dict[int, Union["Emoji", "PartialEmoji"]] = {}
+        self._cache_soundboard_sounds: dict[int, Union["SoundboardSound", "PartialSoundboardSound"]] = {}
+        self._cache_stickers: dict[int, Union["Sticker", "PartialSticker"]] = {}
+        self._cache_voice_states: dict[int, Union["VoiceState", "PartialVoiceState"]] = {}
+
+        self.member_count: int | None = None
+        self._large: bool | None = (
+            None if self.member_count is None
+            else self.member_count >= 250
+        )
+
     def __repr__(self) -> str:
         return f"<PartialGuild id={self.id}>"
+
+    @property
+    def large(self) -> bool:
+        """ `bool`: Whether the guild is considered large """
+        if self._large is None:
+            if self.member_count is not None:
+                return self.member_count >= 250
+            return len(self.members) >= 250
+        return self.large
+
+    @property
+    def chunked(self) -> bool:
+        """ `bool`: Whether the guild is chunked or not """
+        count = self.member_count
+        if count is None:
+            return False
+        return count == len(self._cache_members)
+
+    def get_member(self, member_id: int) -> Optional[Union["Member", "PartialMember"]]:
+        """
+        Returns the member from cache if it exists.
+
+        Parameters
+        ----------
+        member_id: `int`
+            The ID of the member to get.
+
+        Returns
+        -------
+        `Optional[Union["Member", "PartialMember"]`
+            The member with the given ID, if it exists.
+        """
+        return self._cache_members.get(member_id, None)
+
+    def get_channel(self, channel_id: int) -> Optional[Union["BaseChannel", "PartialChannel"]]:
+        """
+        Returns the channel from cache if it exists.
+
+        Parameters
+        ----------
+        channel_id: `int`
+            The ID of the channel to get.
+
+        Returns
+        -------
+        `Optional[Union["BaseChannel", "PartialChannel"]`
+            The channel with the given ID, if it exists.
+        """
+        return self._cache_channels.get(channel_id, None)
+
+    def get_thread(self, thread_id: int) -> "BaseChannel | PartialChannel | None":
+        """
+        Returns the thread from cache if it exists.
+
+        Parameters
+        ----------
+        thread_id: `int`
+            The ID of the thread to get.
+
+        Returns
+        -------
+        `Optional[Union["PartialThread", "PartialChannel"]`
+            The thread with the given ID, if it exists.
+        """
+        return self._cache_threads.get(thread_id, None)
+
+    def get_voice_states(self) -> list[Union["VoiceState", "PartialVoiceState"]]:
+        """
+        `Optional[Union[VoiceState, PartialVoiceState]]`:
+        Returns the voice state of the guild
+        """
+        return list(self._cache_voice_states.values())
+
+    def get_channel_voice_states(
+        self,
+        channel_id: int
+    ) -> list[Union["VoiceState", "PartialVoiceState"]]:
+        return [
+            state
+            for state in self._cache_voice_states.values()
+            if state.channel_id == channel_id
+        ]
+
+    def get_member_voice_state(
+        self,
+        member_id: int
+    ) -> Optional[Union["VoiceState", "PartialVoiceState"]]:
+        """
+        Returns the voice state of a member from cache if it exists.
+
+        Parameters
+        ----------
+        member_id: `int`
+            The ID of the member to get the voice state of.
+
+        Returns
+        -------
+        `Optional[Union["VoiceState", "PartialVoiceState"]`
+            The voice state of the member, if it exists.
+        """
+        return self._cache_voice_states.get(member_id, None)
+
+    def get_role(self, role_id: int) -> Optional[Union["Role", "PartialRole"]]:
+        """
+        Returns the role from cache if it exists.
+
+        Parameters
+        ----------
+        role_id: `int`
+            The ID of the role to get.
+
+        Returns
+        -------
+        `Optional[Union["Role", "PartialRole"]`
+            The role with the given ID, if it exists.
+        """
+        return self._cache_roles.get(role_id, None)
+
+    def get_soundboard_sound(self, sound_id: int) -> Optional[Union["SoundboardSound", "PartialSoundboardSound"]]:
+        """
+        Returns the soundboard sound from cache if it exists.
+
+        Parameters
+        ----------
+        sound_id: `int`
+            The ID of the soundboard sound to get.
+
+        Returns
+        -------
+        `Optional[Union["SoundboardSound", "PartialSoundboardSound"]`
+            The soundboard sound with the given ID, if it exists.
+        """
+        return self._cache_soundboard_sounds.get(sound_id, None)
+
+    @property
+    def members(self) -> list[Union["Member", "PartialMember"]]:
+        """
+        `list[Union[Member, PartialMember]]`:
+        Returns a list of all the members in the guild if they are cached.
+        """
+        return list(self._cache_members.values())
+
+    @property
+    def channels(self) -> list[Union["BaseChannel", "PartialChannel"]]:
+        """
+        `list[Union[BaseChannel, PartialChannel]]`:
+        Returns a list of all the channels in the guild if they are cached.
+        """
+        return list(self._cache_channels.values())
+
+    @property
+    def threads(self) -> list[Union["BaseChannel", "PartialChannel"]]:
+        """
+        `list[Union[BaseChannel, PartialChannel]]`:
+        Returns a list of all the threads in the guild if they are cached.
+        """
+        return list(self._cache_threads.values())
+
+    @property
+    def roles(self) -> list[Union["Role", "PartialRole"]]:
+        """
+        `list[Union[Role, PartialRole]]`:
+        Returns a list of all the roles in the guild if they are cached or
+        if the guild was fetched
+        """
+        return list(self._cache_roles.values())
+
+    @property
+    def emojis(self) -> list[Union["Emoji", "PartialEmoji"]]:
+        """
+        `list[Union[Emoji, PartialEmoji]]`:
+        Returns a list of all the emojis in the guild if they are cached.
+        """
+        return list(self._cache_emojis.values())
+
+    @property
+    def soundboard_sounds(self) -> list[Union["SoundboardSound", "PartialSoundboardSound"]]:
+        """
+        `list[Union[SoundboardSound, PartialSoundboardSound]]`:
+        Returns a list of all the soundboard sounds in the guild if they are cached.
+        """
+        return list(self._cache_soundboard_sounds.values())
+
+    @property
+    def stickers(self) -> list[Union["Sticker", "PartialSticker"]]:
+        """
+        `list[Union[Sticker, PartialSticker]]`:
+        Returns a list of all the stickers in the guild if they are cached.
+        """
+        return list(self._cache_stickers.values())
+
+    @property
+    def text_channels(self) -> list["TextChannel"]:
+        """
+        `list[TextChannel]`:
+        Returns a list of all the text channels in the guild if they are cached.
+        """
+        return [
+            channel  # type: ignore
+            for channel in self.channels
+            if channel.type == ChannelType.guild_text or
+            channel.type == ChannelType.guild_news
+        ]
+
+    @property
+    def voice_channels(self) -> list["VoiceChannel"]:
+        """
+        `list[VoiceChannel]`:
+        Returns a list of all the voice channels in the guild if they are cached.
+        """
+        return [
+            channel  # type: ignore
+            for channel in self.channels
+            if channel.type == ChannelType.guild_voice
+        ]
+
+    @property
+    def categories(self) -> list["CategoryChannel"]:
+        """
+        `list[CategoryChannel]`:
+        Returns a list of all the category channels in the guild if they are cached.
+        """
+        return [
+            channel  # type: ignore
+            for channel in self.channels
+            if channel.type == ChannelType.guild_category
+        ]
 
     @property
     def default_role(self) -> PartialRole:
@@ -285,6 +557,14 @@ class PartialGuild(PartialBase):
             guild_id=self.id
         )
 
+    async def leave(self) -> None:
+        """ Leave the guild """
+        await self._state.query(
+            "DELETE",
+            f"/users/@me/guilds/{self.id}",
+            res_method="text"
+        )
+
     async def fetch(self) -> "Guild":
         """ `Guild`: Fetches more information about the guild """
         r = await self._state.query(
@@ -293,6 +573,161 @@ class PartialGuild(PartialBase):
         )
 
         return Guild(
+            state=self._state,
+            data=r.response
+        )
+
+    def get_partial_automod_rule(self, automod_id: int) -> PartialAutoModRule:
+        """ `PartialAutoModRule`: Returns a partial automod rule object """
+        return PartialAutoModRule(
+            state=self._state,
+            id=automod_id,
+            guild_id=self.id
+        )
+
+    async def fetch_automod_rule(self, automod_id: int) -> AutoModRule:
+        """ `AutoModRule`: Fetches a automod rule from the guild """
+        automod = self.get_partial_automod_rule(automod_id)
+        return await automod.fetch()
+
+    async def fetch_automod_rules(self) -> list[AutoModRule]:
+        """ `list[AutoModRule]` Fetches all the automod rules in the guild """
+        r = await self._state.query(
+            "GET",
+            f"/guilds/{self.id}/auto-moderation/rules"
+        )
+
+        return [
+            AutoModRule(
+                state=self._state,
+                data=data
+            )
+            for data in r.response
+        ]
+
+    async def create_automod_rule(
+        self,
+        name: str,
+        *,
+        event_type: AutoModRuleEventType | int,
+        trigger_type: AutoModRuleTriggerType | int,
+        keyword_filter: list[str] | None = None,
+        regex_patterns: list[str] | None = None,
+        presets: list[AutoModRulePresetType] | None = None,
+        allow_list: list[str] | None = None,
+        mention_total_limit: int | None = None,
+        mention_raid_protection_enabled: bool = False,
+        alert_channel: Snowflake | int | None = None,
+        timeout_seconds: int | None = None,
+        message: str | None = None,
+        enabled: bool = True,
+        exempt_roles: list[Snowflake | int] | None = None,
+        exempt_channels: list[Snowflake | int] | None = None,
+        reason: str | None = None,
+    ) -> AutoModRule:
+        """
+        Create an automod rule
+
+        Parameters
+        ----------
+        name: `str`
+            Name of the automod
+        event_type: `AutoModRuleEventType | int`
+            What type of event
+        trigger_type: `AutoModRuleTriggerType | int`
+            What should make it get triggered
+        keyword_filter: `list[str] | None`
+            Keywords to filter
+        regex_patterns: `list[str] | None`
+            Keywords in regex pattern to filter
+        presets: `list[AutoModRulePresetType] | None`
+            Automod presets to include
+        allow_list: `list[str] | None`
+            List of keywords that are allowed
+        mention_total_limit: `int | None`
+            How many unique mentions allowed before trigger
+        mention_raid_protection_enabled: `bool`
+            If this should apply for raids
+        alert_channel: `Snowflake | int | None`
+            Where the action should be logged
+        timeout_seconds: `int | None`
+            How many seconds the user in question should be timed out
+        message: `str | None`
+            What message the user gets when action is taken
+        enabled: `bool`
+            If the automod should be enabled or not
+        exempt_roles: `list[Snowflake  |  int] | None`
+            Which roles are allowed to bypass
+        exempt_channels: `list[Snowflake  |  int] | None`
+            Which channels are allowed to bypass
+        reason: `str | None`
+            Reason for creating the automod
+
+        Returns
+        -------
+        `AutoModRule`
+            The automod that was just created
+        """
+        payload = {
+            "name": str(name),
+            "event_type": int(event_type),
+            "trigger_type": int(trigger_type),
+            "enabled": bool(enabled),
+            "actions": []
+        }
+
+        if alert_channel is not None:
+            payload["actions"].append(
+                AutoModRuleAction.create_alert_location(
+                    int(alert_channel)
+                ).to_dict()
+            )
+
+        if timeout_seconds is not None:
+            payload["actions"].append(
+                AutoModRuleAction.create_timeout(
+                    int(timeout_seconds)
+                ).to_dict()
+            )
+
+        if message is not None:
+            payload["actions"].append(
+                AutoModRuleAction.create_message(
+                    str(message)
+                ).to_dict()
+            )
+
+        if exempt_roles is not None:
+            payload["exempt_roles"] = [str(int(g)) for g in exempt_roles]
+
+        if exempt_channels is not None:
+            payload["exempt_channels"] = [str(int(g)) for g in exempt_channels]
+
+        if any([
+            keyword_filter,
+            regex_patterns,
+            presets,
+            allow_list,
+            mention_total_limit,
+            mention_raid_protection_enabled
+        ]):
+            payload["trigger_metadata"] = AutoModRuleTriggers(
+                keyword_filter=keyword_filter,
+                regex_patterns=regex_patterns,
+                presets=presets,
+                allow_list=allow_list,
+                mention_total_limit=mention_total_limit,
+                mention_raid_protection_enabled=mention_raid_protection_enabled
+            ).to_dict()
+
+        r = await self._state.query(
+            "POST",
+            f"/guilds/{self.id}/auto-moderation/rules",
+            json=payload,
+            reason=reason
+        )
+
+        return AutoModRule(
             state=self._state,
             data=r.response
         )
@@ -360,48 +795,139 @@ class PartialGuild(PartialBase):
             for data in r.response
         ]
 
-    async def create_guild(
-        self,
-        name: str,
-        *,
-        icon: Optional[Union[File, bytes]] = None,
-        reason: Optional[str] = None
-    ) -> "Guild":
-        """
-        Create a guild
+    async def fetch_soundboard_sounds(self) -> list[SoundboardSound]:
+        """ `list[SoundboardSound]`: Fetches all the soundboard sounds in the guild """
+        r = await self._state.query(
+            "GET",
+            f"/guilds/{self.id}/soundboard-sounds"
+        )
 
-        Note that the bot must be in less than 10 guilds to use this endpoint
+        return [
+            SoundboardSound(
+                state=self._state,
+                guild=self,
+                data=data
+            )
+            for data in r.response
+        ]
+
+    async def fetch_ban(self, user: Snowflake | int) -> BanEntry:
+        """
+        Fetches a user's ban of the guild
 
         Parameters
         ----------
-        name: `str`
-            The name of the guild
-        icon: `Optional[File]`
-            The icon of the guild
-        reason: `Optional[str]`
-            The reason for creating the guild
+        user: Snowflake | int
+            The user to fetch the ban of
 
         Returns
         -------
-        `Guild`
-            The created guild
+        `BanEntry`
+            Ban entry that was found
         """
-        payload = {"name": name}
-
-        if icon is not None:
-            payload["icon"] = utils.bytes_to_base64(icon)
-
         r = await self._state.query(
-            "POST",
-            "/guilds",
-            json=payload,
-            reason=reason
+            "GET",
+            f"/guilds/{self.id}/bans/{int(user)}"
         )
 
-        return Guild(
-            state=self._state,
-            data=r.response
+        from .user import User
+        return BanEntry(
+            user=User(state=self._state, data=r.response["user"]),
+            reason=r.response["reason"]
         )
+
+    async def fetch_bans(
+        self,
+        *,
+        before: Optional[Union[Snowflake, int]] = None,
+        after: Optional[Union[Snowflake, int]] = None,
+        limit: Optional[int] = 1000,
+    ) -> AsyncIterator["BanEntry"]:
+        """
+        Fetch the bans of the guild
+
+        Parameters
+        ----------
+        before: `Optional[Union[Snowflake, int]]`
+            Consider only users before given user id
+        after: `Optional[Union[Snowflake, int]]`
+            Consider only users after given user id
+        limit: `Optional[int]`
+            The maximum amount of messages to fetch.
+            `None` will fetch all users.
+
+        Yields
+        ------
+        `Message`
+            The message object
+        """
+        async def _get_history(limit: int, **kwargs):
+            params = {"limit": limit}
+            for key, value in kwargs.items():
+                if value is None:
+                    continue
+                params[key] = utils.normalize_entity_id(value)
+
+            return await self._state.query(
+                "GET",
+                f"/guilds/{self.id}/bans",
+                params=params
+            )
+
+        async def _after_http(
+            http_limit: int,
+            after_id: Optional[int],
+            limit: Optional[int]
+        ):
+            r = await _get_history(limit=http_limit, after=after_id)
+
+            if r.response:
+                if limit is not None:
+                    limit -= len(r.response)
+                after_id = int(r.response[0]["user"]["id"])
+
+            return r.response, after_id, limit
+
+        async def _before_http(
+            http_limit: int,
+            before_id: Optional[int],
+            limit: Optional[int]
+        ):
+            r = await _get_history(limit=http_limit, before=before_id)
+
+            if r.response:
+                if limit is not None:
+                    limit -= len(r.response)
+                before_id = int(r.response[-1]["user"]["id"])
+
+            return r.response, before_id, limit
+
+        if after:
+            strategy, state = _after_http, utils.normalize_entity_id(after)
+        elif before:
+            strategy, state = _before_http, utils.normalize_entity_id(before)
+        else:
+            strategy, state = _before_http, None
+
+        from .user import User
+
+        while True:
+            http_limit: int = 1000 if limit is None else min(limit, 1000)
+            if http_limit <= 0:
+                break
+
+            strategy: Callable
+            bans, state, limit = await strategy(http_limit, state, limit)
+
+            i = 0
+            for i, b in enumerate(bans, start=1):
+                yield BanEntry(
+                    user=User(state=self._state, data=b["user"]),
+                    reason=b["reason"]
+                )
+
+            if i < 1000:
+                break
 
     async def create_role(
         self,
@@ -488,7 +1014,7 @@ class PartialGuild(PartialBase):
         end_time: Optional[Union[datetime, timedelta, int]] = None,
         channel: Optional[Union["PartialChannel", int]] = None,
         description: Optional[str] = None,
-        privacy_level: Optional[ScheduledEventPrivacyType] = None,
+        privacy_level: Optional[PrivacyLevelType] = None,
         entity_type: Optional[ScheduledEventEntityType] = None,
         external_location: Optional[str] = None,
         image: Optional[Union[File, bytes]] = None,
@@ -509,7 +1035,7 @@ class PartialGuild(PartialBase):
             The channel of the event
         description: `Optional[str]`
             The description of the event
-        privacy_level: `Optional[ScheduledEventPrivacyType]`
+        privacy_level: `Optional[PrivacyLevelType]`
             The privacy level of the event (default is guild_only)
         entity_type: `Optional[ScheduledEventEntityType]`
             The entity type of the event (default is voice)
@@ -537,7 +1063,7 @@ class PartialGuild(PartialBase):
             "name": name,
             "privacy_level": int(
                 privacy_level or
-                ScheduledEventPrivacyType.guild_only
+                PrivacyLevelType.guild_only
             ),
             "scheduled_start_time": utils.add_to_datetime(start_time).isoformat(),
             "channel_id": str(int(channel)) if channel else None,
@@ -898,6 +1424,83 @@ class PartialGuild(PartialBase):
             data=r.response
         )
 
+    async def create_soundboard_sound(
+        self,
+        name: str,
+        *,
+        sound: Union[File, bytes],
+        volume: Optional[int] = None,
+        emoji_id: Optional[str] = None,
+        emoji_name: Optional[str] = None,
+        reason: Optional[str] = None
+    ) -> SoundboardSound:
+        """
+        Create a soundboard sound
+
+        Parameters
+        ----------
+        name: `str`
+            Name of the soundboard sound
+        sound: `File`
+            File object to create a soundboard sound from
+        volume: `Optional[int]`
+            The volume of the soundboard sound
+        emoji_name: `Optional[str]`
+            The unicode emoji of the soundboard sound
+        emoji_id: `Optional[str]`
+            The ID of the custom emoji of the soundboard sound
+        reason: `Optional[str]`
+            The reason for creating the soundboard sound
+
+        Returns
+        -------
+        `SoundboardSound`
+            The created soundboard sound
+
+        Raises
+        ------
+        `ValueError`
+            If both `emoji_name` and `emoji_id` are set
+        """
+        mime_type = None
+        if isinstance(sound, File):
+            mime_type = "audio/mpeg" if sound.filename.endswith(".mp3") else None
+            sound = sound.data.read()
+
+        if not mime_type:
+            mime_type = utils.mime_type_audio(sound)
+
+        payload: dict[str, Union[str, int]] = {
+            "name": name,
+            "sound": f"data:{mime_type};base64,{b64encode(sound).decode('ascii')}"
+        }
+
+        if volume is not None:
+            payload["volume"] = volume
+        if emoji_name is not None:
+            payload["emoji_name"] = emoji_name
+        if emoji_id is not None:
+            payload["emoji_id"] = emoji_id
+
+        if (
+            emoji_name is not MISSING and
+            emoji_id is not MISSING
+        ):
+            raise ValueError("Cannot set both emoji_name and emoji_id")
+
+        r = await self._state.query(
+            "POST",
+            f"/guilds/{self.id}/soundboard-sounds",
+            reason=reason,
+            json=payload
+        )
+
+        return SoundboardSound(
+            state=self._state,
+            guild=self,
+            data=r.response
+        )
+
     async def create_sticker(
         self,
         name: str,
@@ -1177,6 +1780,31 @@ class PartialGuild(PartialBase):
             id=emoji_id,
             guild_id=self.id
         )
+
+    def get_partial_soundboard_sound(self, sound_id: int) -> PartialSoundboardSound:
+        """
+        Get a partial soundboard sound object
+
+        Parameters
+        ----------
+        sound_id: `int`
+            The ID of the sound
+
+        Returns
+        -------
+        `PartialEmoji`
+            The partial soundboard sound object
+        """
+        return PartialSoundboardSound(
+            state=self._state,
+            id=sound_id,
+            guild_id=self.id
+        )
+
+    async def fetch_soundboard_sound(self, sound_id: int) -> SoundboardSound:
+        """ `SoundboardSound`: Fetches a soundboard sound from the guild """
+        sound = self.get_partial_soundboard_sound(sound_id)
+        return await sound.fetch()
 
     async def fetch_emoji(self, emoji_id: int) -> Emoji:
         """ `Emoji`: Fetches an emoji from the guild """
@@ -1464,33 +2092,126 @@ class PartialGuild(PartialBase):
             for data in r.response
         ]
 
-    async def fetch_voice_state(self, member: Snowflake) -> "VoiceState":
+    async def fetch_audit_logs(
+        self,
+        *,
+        before: Optional[Union[datetime, "AuditLogEntry", Snowflake, int]] = None,
+        after: Optional[Union[datetime, "AuditLogEntry", Snowflake, int]] = None,
+        user: Optional[Union[Snowflake, int]] = None,
+        action: Optional[AuditLogType] = None,
+        limit: Optional[int] = 100,
+    ) -> AsyncIterator["AuditLogEntry"]:
         """
-        Fetches the voice state of the member
+        Fetches the audit logs for the guild
 
         Parameters
         ----------
-        member: `Snowflake`
-            The member to fetch the voice state from
+        before: `Optional[Union[datetime, AuditLogEntry, Snowflake, int]]`
+            Consider only entries before given entry
+        after: `Optional[Union[datetime, AuditLogEntry, Snowflake, int]]`
+            Consider only entries after given entry
+        user: `Optional[Union[Snowflake, int]]`
+            Consider only entries made by given user
+        action: `Optional[AuditLogType]`
+            Consider only entries with given action
+        limit: `Optional[int]`
+            The maximum amount of messages to fetch.
 
         Returns
         -------
-        `VoiceState`
-            The voice state of the member
-
-        Raises
-        ------
-        `NotFound`
-            - If the member is not in the guild
-            - If the member is not in a voice channel
+        `list[AuditLogEntry]`
+            The audit logs for the guild
         """
-        r = await self._state.query(
-            "GET",
-            f"/guilds/{self.id}/voice-states/{int(member)}"
-        )
+        async def _get_history(limit: int, **kwargs):
+            params = {"limit": limit}
+            for key, value in kwargs.items():
+                if value is None:
+                    continue
+                params[key] = utils.normalize_entity_id(value)
 
-        from .member import VoiceState
-        return VoiceState(state=self._state, data=r.response)
+            return await self._state.query(
+                "GET",
+                f"/guilds/{self.id}/audit-logs",
+                params=params
+            )
+
+        async def _after_http(
+            http_limit: int,
+            after_id: Optional[int],
+            limit: Optional[int],
+            **kwargs
+        ):
+            r = await _get_history(limit=http_limit, after=after_id, **kwargs)
+            _data = r.response.get("audit_log_entries", [])
+
+            if _data:
+                if limit is not None:
+                    limit -= len(_data)
+                after_id = int(_data[0]["id"])
+
+            return r.response, after_id, limit
+
+        async def _before_http(
+            http_limit: int,
+            before_id: Optional[int],
+            limit: Optional[int],
+            **kwargs
+        ):
+            r = await _get_history(limit=http_limit, before=before_id, **kwargs)
+            _data = r.response.get("audit_log_entries", [])
+
+            if _data:
+                if limit is not None:
+                    limit -= len(_data)
+                before_id = int(_data[-1]["id"])
+
+            return r.response, before_id, limit
+
+        if after:
+            strategy, state = _after_http, utils.normalize_entity_id(after)
+        elif before:
+            strategy, state = _before_http, utils.normalize_entity_id(before)
+        else:
+            strategy, state = _before_http, None
+
+        # Avoid circular import, fun times...
+        from .audit import AuditLogEntry
+        from .user import User
+
+        search_kwargs = {}
+
+        if user is not None:
+            search_kwargs["user_id"] = utils.normalize_entity_id(user)
+        if action is not None:
+            search_kwargs["action_type"] = int(action)
+
+        while True:
+            http_limit: int = 100 if limit is None else min(limit, 100)
+            if http_limit <= 0:
+                break
+
+            strategy: Callable
+            data, state, limit = await strategy(http_limit, state, limit, **search_kwargs)
+
+            _users = {
+                int(g["id"]): User(
+                    state=self._state,
+                    data=g
+                )
+                for g in data.get("users", [])
+            }
+
+            i = 0
+            for i, entry in enumerate(data["audit_log_entries"], start=1):
+                yield AuditLogEntry(
+                    state=self._state,
+                    data=entry,
+                    guild=self,
+                    users=_users
+                )
+
+            if i < 100:
+                break
 
     async def search_members(
         self,
@@ -1540,11 +2261,37 @@ class PartialGuild(PartialBase):
             for m in r.response
         ]
 
+    async def fetch_integrations(self) -> list["Integration"]:
+        """Fetches the integrations for the guild.
+
+        This requires the `MANAGE_GUILD` permission.
+
+        Returns
+        -------
+        `list[Integration]`
+            The integrations in the guild.
+        """
+        r = await self._state.query(
+            "GET",
+            f"/guilds/{self.id}/integrations"
+        )
+
+        from .integrations import Integration
+        return [
+            Integration(
+                state=self._state,
+                data=data,
+                guild=self
+            )
+            for data in r.response
+        ]
+
     async def delete(self) -> None:
         """ Delete the guild (the bot must own the server) """
         await self._state.query(
             "DELETE",
-            f"/guilds/{self.id}"
+            f"/guilds/{self.id}",
+            res_method="text"
         )
 
     async def edit(
@@ -1719,14 +2466,6 @@ class Guild(PartialGuild):
         self.afk_timeout: int = data.get("afk_timeout", 0)
         self.default_message_notifications: int = data.get("default_message_notifications", 0)
         self.description: Optional[str] = data.get("description", None)
-        self.emojis: list[Emoji] = [
-            Emoji(state=self._state, guild=self, data=e)
-            for e in data.get("emojis", [])
-        ]
-        self.stickers: list[Sticker] = [
-            Sticker(state=self._state, guild=self, data=s)
-            for s in data.get("stickers", [])
-        ]
 
         self._icon = data.get("icon", None)
         self._banner = data.get("banner", None)
@@ -1748,23 +2487,83 @@ class Guild(PartialGuild):
         self.premium_tier: int = data.get("premium_tier", 0)
         self.public_updates_channel_id: Optional[int] = utils.get_int(data, "public_updates_channel_id")
         self.region: Optional[str] = data.get("region", None)
-        self.roles: list[Role] = [
-            Role(state=self._state, guild=self, data=r)
-            for r in data.get("roles", [])
-        ]
         self.safety_alerts_channel_id: Optional[int] = utils.get_int(data, "safety_alerts_channel_id")
         self.system_channel_flags: int = data.get("system_channel_flags", 0)
         self.system_channel_id: Optional[int] = utils.get_int(data, "system_channel_id")
         self.vanity_url_code: Optional[str] = data.get("vanity_url_code", None)
-        self.verification_level: int = data.get("verification_level", 0)
+        self.verification_level: VerificationLevel = VerificationLevel(data.get("verification_level", 0))
         self.widget_channel_id: Optional[int] = utils.get_int(data, "widget_channel_id")
         self.widget_enabled: bool = data.get("widget_enabled", False)
+
+        self._from_data(data)
 
     def __str__(self) -> str:
         return self.name
 
     def __repr__(self) -> str:
         return f"<Guild id={self.id} name='{self.name}'>"
+
+    def _from_data(self, data: dict) -> None:
+        self._cache_roles = {
+            int(g["id"]): Role(
+                state=self._state,
+                guild=self,
+                data=g
+            )
+            for g in data["roles"]
+        }
+
+        self._cache_emojis = {
+            int(g["id"]): Emoji(
+                state=self._state,
+                guild=self,
+                data=g
+            )
+            for g in data["emojis"]
+        }
+
+        self._cache_stickers = {
+            int(g["id"]): Sticker(
+                state=self._state,
+                guild=self,
+                data=g
+            )
+            for g in data["stickers"]
+        }
+
+        if data.get("member_count", None):
+            self.member_count = data["member_count"]
+
+    def _update(self, data: dict) -> None:
+        """ Update the guild from the data """
+        self.afk_channel_id: Optional[int] = utils.get_int(data, "afk_channel_id")
+        self.afk_timeout: int = data.get("afk_timeout", 0)
+        self.default_message_notifications: int = data.get("default_message_notifications", 0)
+        self.description: Optional[str] = data.get("description", None)
+        self.explicit_content_filter: int = data.get("explicit_content_filter", 0)
+        self.features: list[str] = data.get("features", [])
+        self.latest_onboarding_question_id: Optional[int] = utils.get_int(data, "latest_onboarding_question_id")
+        self.max_members: int = data.get("max_members", 0)
+        self.max_stage_video_channel_users: int = data.get("max_stage_video_channel_users", 0)
+        self.max_video_channel_users: int = data.get("max_video_channel_users", 0)
+        self.mfa_level: Optional[int] = utils.get_int(data, "mfa_level")
+        self.name: str = data["name"]
+        self.nsfw: bool = data.get("nsfw", False)
+        self.nsfw_level: int = data.get("nsfw_level", 0)
+        self.owner_id: Optional[int] = utils.get_int(data, "owner_id")
+        self.preferred_locale: Optional[str] = data.get("preferred_locale", None)
+        self.premium_progress_bar_enabled: bool = data.get("premium_progress_bar_enabled", False)
+        self.premium_subscription_count: int = data.get("premium_subscription_count", 0)
+        self.premium_tier: int = data.get("premium_tier", 0)
+        self.public_updates_channel_id: Optional[int] = utils.get_int(data, "public_updates_channel_id")
+        self.region: Optional[str] = data.get("region", None)
+        self.safety_alerts_channel_id: Optional[int] = utils.get_int(data, "safety_alerts_channel_id")
+        self.system_channel_flags: int = data.get("system_channel_flags", 0)
+        self.system_channel_id: Optional[int] = utils.get_int(data, "system_channel_id")
+        self.vanity_url_code: Optional[str] = data.get("vanity_url_code", None)
+        self.verification_level: VerificationLevel = VerificationLevel(data.get("verification_level", 0))
+        self.widget_channel_id: Optional[int] = utils.get_int(data, "widget_channel_id")
+        self.widget_enabled: bool = data.get("widget_enabled", False)
 
     @property
     def emojis_limit(self) -> int:
@@ -1800,14 +2599,14 @@ class Guild(PartialGuild):
         """ `Optional[Asset]`: The guild's icon """
         if self._icon is None:
             return None
-        return Asset._from_guild_icon(self._state, self.id, self._icon)
+        return Asset._from_guild_image(self._state, self.id, self._icon, path="icons")
 
     @property
     def banner(self) -> Optional[Asset]:
         """ `Optional[Asset]`: The guild's banner """
         if self._banner is None:
             return None
-        return Asset._from_guild_banner(self._state, self.id, self._banner)
+        return Asset._from_guild_image(self._state, self.id, self._banner, path="banners")
 
     @property
     def default_role(self) -> Role:
@@ -1821,7 +2620,7 @@ class Guild(PartialGuild):
     def premium_subscriber_role(self) -> Optional[Role]:
         """ `Optional[Role]`: The guild's premium subscriber role if available """
         return next(
-            (r for r in self.roles if r.is_premium_subscriber()),
+            (r for r in self.roles if isinstance(r, Role) and r.is_premium_subscriber()),
             None
         )
 
@@ -1831,7 +2630,8 @@ class Guild(PartialGuild):
         return next(
             (
                 r for r in self.roles
-                if r.bot_id and
+                if isinstance(r, Role) and
+                r.bot_id and
                 r.bot_id == self._state.application_id
             ),
             None
@@ -1855,7 +2655,8 @@ class Guild(PartialGuild):
         """
         return next((
             r for r in self.roles
-            if r.id == role_id
+            if isinstance(r, Role) and
+            r.id == role_id
         ), None)
 
     def get_role_by_name(self, role_name: str) -> Optional[Role]:
@@ -1874,8 +2675,17 @@ class Guild(PartialGuild):
         """
         return next((
             r for r in self.roles
-            if r.name == role_name
+            if isinstance(r, Role) and
+            r.name == role_name
         ), None)
+
+    @property
+    def me(self) -> "Member | PartialMember | None":
+        """
+        `Optional[Member]`: Returns the bot's member object.
+        Only useable if you are using gateway and caching
+        """
+        return self.get_member(self._state.bot.user.id)
 
     def get_member_top_role(self, member: "Member") -> Optional[Role]:
         """
@@ -1895,7 +2705,7 @@ class Guild(PartialGuild):
             return None
 
         _roles_sorted = sorted(
-            self.roles,
+            [r for r in self.roles if isinstance(r, Role)],
             key=lambda r: r.position,
             reverse=True
         )

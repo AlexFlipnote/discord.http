@@ -5,8 +5,9 @@ import re
 
 from typing import get_args as get_type_args
 from typing import (
-    Callable, Dict, TYPE_CHECKING, Union, Type,
-    Generic, TypeVar, Optional, Coroutine, Literal, Any
+    Callable, TYPE_CHECKING, Union, Type, Protocol,
+    Generic, TypeVar, Optional, Coroutine, Literal, Any,
+    runtime_checkable
 )
 
 from . import utils
@@ -23,7 +24,7 @@ from .errors import (
     UserMissingPermissions, BotMissingPermissions, CheckFailed,
     InvalidMember, CommandOnCooldown
 )
-from .flag import Permissions
+from .flags import Permissions
 from .member import Member
 from .message import Attachment
 from .object import PartialBase, Snowflake
@@ -35,7 +36,8 @@ if TYPE_CHECKING:
     from .client import Client
     from .context import Context
 
-ChoiceT = TypeVar("ChoiceT", str, int, float, Union[str, int, float])
+ChoiceT = TypeVar("ChoiceT", str, int, float)
+ConverterT = TypeVar("ConverterT", covariant=True)
 
 LocaleTypes = Literal[
     "id", "da", "de", "en-GB", "en-US", "es-ES", "fr",
@@ -77,6 +79,7 @@ __all__ = (
     "Choice",
     "Cog",
     "Command",
+    "Converter",
     "Interaction",
     "Listener",
     "PartialCommand",
@@ -194,6 +197,34 @@ class LocaleContainer:
         self.description = description or "..."
 
 
+@runtime_checkable
+class Converter(Protocol[ConverterT]):
+    """
+    This is the base class of converting strings to whatever you desire.
+
+    Instead of needing to implement checks inside the command, you can
+    use this to convert the value on runtime, both in sync and async mode.
+    """
+    async def convert(self, ctx: "Context", value: str) -> ConverterT:
+        """
+        The function where you implement the logic of converting
+        the value into whatever you need to be outputted in command.
+
+        Parameters
+        ----------
+        ctx: `Context`
+            Context of the bot
+        value: `str`
+            The value returned by the argument in command
+
+        Returns
+        -------
+        `ConverterT`
+            Your converted value
+        """
+        raise NotImplementedError("convert not implemented")
+
+
 class Command:
     def __init__(
         self,
@@ -204,6 +235,7 @@ class Command:
         guild_install: bool = True,
         user_install: bool = False,
         type: ApplicationCommandType = ApplicationCommandType.chat_input,
+        parent: Optional["SubGroup"] = None
     ):
         self.id: Optional[int] = None
         self.command = command
@@ -212,15 +244,18 @@ class Command:
         self.name = name
         self.description = description
         self.options = []
+        self.parent = parent
 
         self.guild_install = guild_install
         self.user_install = user_install
 
-        self.list_autocompletes: Dict[str, Callable] = {}
+        self.list_autocompletes: dict[str, Callable] = {}
         self.guild_ids: list[Union[Snowflake, int]] = guild_ids or []
 
+        self._converters: dict[str, Type[Converter]] = {}
+
         self.__list_choices: list[str] = []
-        self.__user_objects: dict[str, Type[Union[Member, User]]] = {}
+        self.__user_objects: dict[str, Type[Member | User]] = {}
 
         if self.type == ApplicationCommandType.chat_input:
             if self.description is None:
@@ -252,14 +287,21 @@ class Command:
                 option: dict[str, Any] = {}
                 _channel_options: list[ChannelType] = []
 
-                # Either there is a Union[Any, ...] or Optional[Any] type
-                if origin in [Union]:
+                # Check if there are multiple types, looking for:
+                # - Union[Any, ...] / Optional[Any] / type | None
+                # - type | type | ...
 
-                    # Check if it's an Optional[Any] type
+                if (
+                    getattr(parameter.annotation, "__args__", None) or
+                    origin in [Union]
+                ):
+
                     if (
-                        len(parameter.annotation.__args__) == 2 and
+                        len(parameter.annotation.__args__) >= 2 and
                         parameter.annotation.__args__[-1] is _NoneType
                     ):
+                        # First one is the type we're looking for
+                        # Others except last usually is for typing purposes
                         origin = parameter.annotation.__args__[0]
 
                         # Recreate GenericAlias if it's something like Choice[str]
@@ -295,7 +337,9 @@ class Command:
                         else:
                             # Just a regular channel type
                             option.update({
-                                "channel_types": [int(i) for i in channel_types[origin]]
+                                "channel_types": [
+                                    int(i) for i in channel_types[origin]
+                                ]
                             })
 
                     case x if x in [Attachment]:
@@ -304,14 +348,13 @@ class Command:
                     case x if x in [Role]:
                         ptype = CommandOptionType.role
 
-                    case x if x in [Choice]:
+                    # case x if x in [Choice]:
+                    case x if isinstance(x, Choice):
                         self.__list_choices.append(parameter.name)
-                        ptype = _type_table.get(
-                            parameter.annotation.__args__[0],
-                            CommandOptionType.string
-                        )
+                        ptype = origin.type
 
-                    case x if isinstance(x, Range):
+                    # It is a range, but pyright does not understand it due to TYPE_CHECKING
+                    case x if isinstance(x, Range):  # type: ignore
                         ptype = origin.type
                         if origin.type == CommandOptionType.string:
                             option.update({
@@ -334,6 +377,10 @@ class Command:
                         ptype = CommandOptionType.number
 
                     case x if x == str:
+                        ptype = CommandOptionType.string
+
+                    case x if isinstance(x, Converter):
+                        self._converters[parameter.name] = x  # type: ignore
                         ptype = CommandOptionType.string
 
                     case _:
@@ -388,7 +435,7 @@ class Command:
         self,
         context: "Context"
     ) -> BaseResponse:
-        args, kwargs = context._create_args()
+        args, kwargs = await context._create_args()
 
         for name, values in getattr(self.command, "__choices_params__", {}).items():
             if name not in kwargs:
@@ -434,15 +481,19 @@ class Command:
         if _perms is None:
             return Permissions(0)
 
-        if (
-            isinstance(ctx.user, Member) and
-            Permissions.administrator in ctx.user.resolved_permissions
-        ):
+        _resolved_perms: Permissions | None = getattr(
+            ctx.user, "resolved_permissions", None
+        )
+
+        if _resolved_perms is None:
+            return Permissions(0)
+
+        if Permissions.administrator in _resolved_perms:
             return Permissions(0)
 
         missing = Permissions(sum([
             flag.value for flag in _perms
-            if flag not in ctx.app_permissions
+            if flag not in _resolved_perms
         ]))
 
         return missing
@@ -629,7 +680,7 @@ class Command:
 
                 opt = self._find_option(loc.key)
                 if not opt:
-                    _log.warn(
+                    _log.warning(
                         f"{self.name} -> {loc.key}: "
                         "Option not found in command, skipping..."
                     )
@@ -711,7 +762,8 @@ class SubCommand(Command):
         description: Optional[str] = None,
         guild_install: bool = True,
         user_install: bool = False,
-        guild_ids: Optional[list[Union[Snowflake, int]]] = None
+        guild_ids: Optional[list[Union[Snowflake, int]]] = None,
+        parent: Optional["SubGroup"] = None
     ):
         super().__init__(
             func,
@@ -719,7 +771,8 @@ class SubCommand(Command):
             description=description,
             guild_install=guild_install,
             user_install=user_install,
-            guild_ids=guild_ids
+            guild_ids=guild_ids,
+            parent=parent
         )
 
     def __repr__(self) -> str:
@@ -734,16 +787,18 @@ class SubGroup(Command):
         description: Optional[str] = None,
         guild_ids: Optional[list[Union[Snowflake, int]]] = None,
         guild_install: bool = True,
-        user_install: bool = False
+        user_install: bool = False,
+        parent: Optional["SubGroup"] = None
     ):
         self.name = name
         self.description = description or "..."  # Only used to make Discord happy
         self.guild_ids: list[Union[Snowflake, int]] = guild_ids or []
         self.type = int(ApplicationCommandType.chat_input)
         self.cog: Optional["Cog"] = None
-        self.subcommands: Dict[str, Union[SubCommand, SubGroup]] = {}
+        self.subcommands: dict[str, Union[SubCommand, SubGroup]] = {}
         self.guild_install = guild_install
         self.user_install = user_install
+        self.parent: Optional["SubGroup"] = parent
 
     def __repr__(self) -> str:
         _subs = [g for g in self.subcommands.values()]
@@ -782,6 +837,7 @@ class SubGroup(Command):
                 guild_ids=guild_ids,
                 guild_install=guild_install,
                 user_install=user_install,
+                parent=self
             )
             self.subcommands[subcommand.name] = subcommand
             return subcommand
@@ -805,7 +861,8 @@ class SubGroup(Command):
         def decorator(func):
             subgroup = SubGroup(
                 name=name or func.__name__,
-                description=description
+                description=description,
+                parent=self
             )
             self.subcommands[subgroup.name] = subgroup
             return subgroup
@@ -833,15 +890,21 @@ class SubGroup(Command):
     @property
     def options(self) -> list[dict]:
         """ `list[dict]`: Returns the options of the subcommand group """
-        options = []
-        for cmd in self.subcommands.values():
-            data = cmd.to_dict()
-            if isinstance(cmd, SubGroup):
-                data["type"] = int(CommandOptionType.sub_command_group)
-            else:
-                data["type"] = int(CommandOptionType.sub_command)
-            options.append(data)
-        return options
+        def build_options(subcommands: dict) -> list[dict]:
+            options = []
+            for cmd in subcommands.values():
+                data = cmd.to_dict()
+                if isinstance(cmd, SubGroup):
+                    data["type"] = int(CommandOptionType.sub_command_group)
+                    # Recursively build options for nested subcommand groups
+                    data["options"] = build_options(cmd.subcommands)
+                else:
+                    data["type"] = int(CommandOptionType.sub_command)
+
+                options.append(data)
+            return options
+
+        return build_options(self.subcommands)
 
 
 class Interaction:
@@ -919,7 +982,12 @@ class Interaction:
 
 
 class Listener:
-    def __init__(self, name: str, coro: Callable):
+    def __init__(
+        self,
+        *,
+        name: str,
+        coro: Callable
+    ):
         self.name = name
         self.coro = coro
         self.cog: Optional["Cog"] = None
@@ -948,63 +1016,16 @@ class Choice(Generic[ChoiceT]):
     value: `Union[int, str, float]`
         The value of your choice (the one that is shown to public)
     """
-    def __init__(self, key: ChoiceT, value: Union[str, int, float]):
+    def __init__(self, key: ChoiceT, value: ChoiceT):
         self.key: ChoiceT = key
-        self.value: Union[str, int, float] = value
-
-
-class Range:
-    """
-    Makes it possible to create a range rule for command arguments
-
-    When used in a command, it will only return the value if it's within the range.
-
-    Example usage:
-
-    .. code-block:: python
-
-        Range[str, 1, 10]        # (min and max length of the string)
-        Range[int, 1, 10]        # (min and max value of the integer)
-        Range[float, 1.0, 10.0]  # (min and max value of the float)
-
-    Parameters
-    ----------
-    opt_type: `CommandOptionType`
-        The type of the range
-    min: `Union[int, float, str]`
-        The minimum value of the range
-    max: `Union[int, float, str]`
-        The maximum value of the range
-    """
-    def __init__(
-        self,
-        opt_type: CommandOptionType,
-        min: Optional[Union[int, float, str]],
-        max: Optional[Union[int, float, str]]
-    ):
-        self.type = opt_type
-        self.min = min
-        self.max = max
+        self.value: ChoiceT = value
+        self.type: CommandOptionType = CommandOptionType.string
 
     def __class_getitem__(cls, obj):
-        if not isinstance(obj, tuple):
-            raise TypeError("Range must be a tuple")
+        if isinstance(obj, tuple):
+            raise TypeError("Choice can only take one type")
 
-        if len(obj) == 2:
-            obj = (*obj, None)
-        elif len(obj) != 3:
-            raise TypeError("Range must be a tuple of length 2 or 3")
-
-        obj_type, min, max = obj
-
-        if min is None and max is None:
-            raise TypeError("Range must have a minimum or maximum value")
-
-        if min is not None and max is not None:
-            if type(min) is not type(max):
-                raise TypeError("Range minimum and maximum must be the same type")
-
-        match obj_type:
+        match obj:
             case x if x is str:
                 opt = CommandOptionType.string
 
@@ -1017,18 +1038,95 @@ class Range:
             case _:
                 raise TypeError(
                     "Range type must be str, int, "
-                    f"or float, not a {obj_type}"
+                    f"or float, not a {obj}"
                 )
 
-        cast = float
-        if obj_type in (str, int):
-            cast = int
+        output = cls(obj, obj)
+        output.type = opt
+        return output
 
-        return cls(
-            opt,
-            cast(min) if min is not None else None,
-            cast(max) if max is not None else None
-        )
+
+# Making it so pyright understands that the range type is a normal type
+if TYPE_CHECKING:
+    from typing import Annotated as Range
+
+else:
+    class Range:
+        """
+        Makes it possible to create a range rule for command arguments
+
+        When used in a command, it will only return the value if it's within the range.
+
+        Example usage:
+
+        .. code-block:: python
+
+            Range[str, 1, 10]        # (min and max length of the string)
+            Range[int, 1, 10]        # (min and max value of the integer)
+            Range[float, 1.0, 10.0]  # (min and max value of the float)
+
+        Parameters
+        ----------
+        opt_type: `CommandOptionType`
+            The type of the range
+        min: `Union[int, float, str]`
+            The minimum value of the range
+        max: `Union[int, float, str]`
+            The maximum value of the range
+        """
+        def __init__(
+            self,
+            opt_type: CommandOptionType,
+            min: Optional[Union[int, float, str]],
+            max: Optional[Union[int, float, str]]
+        ):
+            self.type = opt_type
+            self.min = min
+            self.max = max
+
+        def __class_getitem__(cls, obj):
+            if not isinstance(obj, tuple):
+                raise TypeError("Range must be a tuple")
+
+            if len(obj) == 2:
+                obj = (*obj, None)
+            elif len(obj) != 3:
+                raise TypeError("Range must be a tuple of length 2 or 3")
+
+            obj_type, min, max = obj
+
+            if min is None and max is None:
+                raise TypeError("Range must have a minimum or maximum value")
+
+            if min is not None and max is not None:
+                if type(min) is not type(max):
+                    raise TypeError("Range minimum and maximum must be the same type")
+
+            match obj_type:
+                case x if x is str:
+                    opt = CommandOptionType.string
+
+                case x if x is int:
+                    opt = CommandOptionType.integer
+
+                case x if x is float:
+                    opt = CommandOptionType.number
+
+                case _:
+                    raise TypeError(
+                        "Range type must be str, int, "
+                        f"or float, not a {obj_type}"
+                    )
+
+            cast = float
+            if obj_type in (str, int):
+                cast = int
+
+            return cls(
+                opt,
+                cast(min) if min is not None else None,
+                cast(max) if max is not None else None
+            )
 
 
 def command(
@@ -1195,9 +1293,9 @@ def message_command(
 
 
 def locales(
-    translations: Dict[
+    translations: dict[
         LocaleTypes,
-        Dict[
+        dict[
             str,
             Union[list[str], tuple[str], tuple[str, str]]
         ]
@@ -1240,7 +1338,7 @@ def locales(
                 continue
 
             if key not in ValidLocalesList:
-                _log.warn(f"{name}: Unsupported locale {key} skipped (might be a typo)")
+                _log.warning(f"{name}: Unsupported locale {key} skipped (might be a typo)")
                 continue
 
             if not isinstance(value, dict):
@@ -1268,7 +1366,7 @@ def locales(
                 )
 
             if not temp_value:
-                _log.warn(f"{name} -> {key}: Found an empty translation dict, skipping...")
+                _log.warning(f"{name} -> {key}: Found an empty translation dict, skipping...")
                 continue
 
             container[key] = temp_value
@@ -1370,8 +1468,8 @@ def allow_contexts(
 
 def choices(
     **kwargs: dict[
-        Union[str, int, float],
-        Union[str, int, float]
+        str | int | float,
+        str | int | float
     ]
 ):
     """
@@ -1409,9 +1507,19 @@ def guild_only():
     """
     Decorator to set a command as guild only.
 
-    This is a alias to `commands.allow_contexts(guild=True, bot_dm=False, private_dm=False)`
+    This is a alias to two particular functions:
+    - `commands.allow_contexts(guild=True, bot_dm=False, private_dm=False)`
+    - `commands.check(...)` (which checks for Context.guild to be available)
     """
+    def _guild_only_check(ctx: "Context") -> bool:
+        if not ctx.guild:
+            raise CheckFailed("Command can only be used in servers")
+        return True
+
     def decorator(func):
+        _check_list = getattr(func, "__checks__", [])
+        _check_list.append(_guild_only_check)
+        func.__checks__ = _check_list
         func.__integration_contexts__ = [0]
         return func
 
@@ -1598,8 +1706,8 @@ def listener(name: Optional[str] = None):
         if not inspect.iscoroutinefunction(actual):
             raise TypeError("Listeners has to be coroutine functions")
         return Listener(
-            name or actual.__name__,
-            func
+            name=name or actual.__name__,
+            coro=func
         )
 
     return decorator

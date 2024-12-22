@@ -1,16 +1,21 @@
+import asyncio
+
 from datetime import timedelta, datetime
 from io import BytesIO
 from typing import TYPE_CHECKING, Optional, Union, AsyncIterator, Self, Callable
 
 from . import utils
+from .colour import Colour
 from .embeds import Embed
 from .emoji import EmojiParser
+from .enums import MessageReferenceType, MessageType, InteractionType
 from .errors import HTTPException
 from .file import File
+from .flags import AttachmentFlags
 from .mentions import AllowedMentions
 from .object import PartialBase, Snowflake
 from .response import MessageResponse
-from .role import PartialRole
+from .role import Role, PartialRole
 from .sticker import PartialSticker
 from .user import User
 from .view import View
@@ -19,6 +24,7 @@ if TYPE_CHECKING:
     from .channel import BaseChannel, PartialChannel, PublicThread
     from .guild import Guild, PartialGuild
     from .http import DiscordAPI
+    from .member import Member
 
 MISSING = utils.MISSING
 
@@ -26,11 +32,83 @@ __all__ = (
     "Attachment",
     "JumpURL",
     "Message",
+    "MessageInteraction",
     "MessageReference",
     "PartialMessage",
-    "WebhookMessage",
     "Poll",
+    "WebhookMessage",
 )
+
+
+class MessageInteraction(PartialBase):
+    def __init__(
+        self,
+        *,
+        state: "DiscordAPI",
+        data: dict
+    ):
+        super().__init__(id=int(data["id"]))
+        self._state = state
+
+        self.type: InteractionType = InteractionType(data["type"])
+        self.name: str | None = data.get("name", None)
+        self.user: User = User(
+            state=state,
+            data=data["user"]
+        )
+
+
+class MessageReaction:
+    def __init__(self, *, state: "DiscordAPI", message: "Message", data: dict):
+        self._state = state
+        self._message = message
+
+        self.count: int = int(data["count"])
+        self.burst_count: int = int(data["burst_count"])
+
+        self.me: bool = data.get("me", False)
+        self.emoji: EmojiParser = EmojiParser.from_dict(data["emoji"])
+
+        self.me_burst: bool = data.get("me_burst", False)
+        self.burst_me: bool = data.get("burst_me", False)
+        self.burst_count: int = data.get("burst_count", 0)
+        self.burst_colors: list[Colour] = [
+            Colour.from_hex(g)
+            for g in data.get("burst_colors", [])
+        ]
+
+    async def add(self) -> None:
+        """
+        Make the bot react with this emoji
+        """
+        _parsed = self.emoji.to_reaction()
+        await self._state.query(
+            "PUT",
+            f"/channels/{self._message.channel.id}/messages/{self._message.id}/reactions/{_parsed}/@me",
+            res_method="text"
+        )
+
+    async def remove(self, *, user_id: int | None = None) -> None:
+        """
+        Remove the reaction from the message
+
+        Parameters
+        ----------
+        user_id: `int | None`
+            User ID to remove the reaction from
+            If none provided, it will remove the reaction from the bot
+        """
+        _parsed = self.emoji.to_reaction()
+        _url = (
+            f"/channels/{self._message.channel.id}/messages/{self._message.id}/reactions/{_parsed}"
+            f"/{user_id}" if user_id is not None else "/@me"
+        )
+
+        await self._state.query(
+            "DELETE",
+            _url,
+            res_method="text"
+        )
 
 
 class JumpURL:
@@ -45,7 +123,7 @@ class JumpURL:
     ):
         self._state = state
 
-        self.guild_id: Optional[int] = guild_id or None
+        self.guild_id: Optional[int] = int(guild_id) if guild_id else None
         self.channel_id: Optional[int] = channel_id or None
         self.message_id: Optional[int] = message_id or None
 
@@ -78,10 +156,14 @@ class JumpURL:
         return self.url
 
     @property
-    def guild(self) -> Optional["PartialGuild"]:
+    def guild(self) -> Optional["Guild | PartialGuild"]:
         """ `Optional[PartialGuild]`: The guild the message was sent in """
         if not self.guild_id:
             return None
+
+        cache = self._state.cache.get_guild(self.guild_id)
+        if cache:
+            return cache
 
         from .guild import PartialGuild
         return PartialGuild(
@@ -97,10 +179,22 @@ class JumpURL:
         return await self.guild.fetch()
 
     @property
-    def channel(self) -> Optional["PartialChannel"]:
-        """ `PartialChannel`: Returns the channel the message was sent in """
+    def channel(self) -> Optional["BaseChannel | PartialChannel"]:
+        """
+        `BaseChannel | PartialChannel`: Returns the channel the message was sent in.
+        If guild and channel cache is enabled, it can also return full channel object.
+        """
         if not self.channel_id:
             return None
+
+        if self.guild_id:
+            cache = self._state.cache.get_channel_thread(
+                guild_id=self.guild_id,
+                channel_id=self.channel_id
+            )
+
+            if cache:
+                return cache
 
         from .channel import PartialChannel
         return PartialChannel(
@@ -122,6 +216,7 @@ class JumpURL:
         return PartialMessage(
             state=self._state,
             channel_id=self.channel_id,
+            guild_id=self.guild_id,
             id=self.message_id
         )
 
@@ -317,9 +412,10 @@ class Poll:
         if data.get("expiry", None):
             poll.expiry = utils.parse_time(data["expiry"])
 
-        poll.is_finalized = data["results"].get("is_finalized", False)
+        _results = data.get("results", {})
+        poll.is_finalized = _results.get("is_finalized", False)
 
-        for g in data["results"]["answer_counts"]:
+        for g in _results.get("answer_counts", []):
             find_answer = next(
                 (a for a in poll.answers if a.id == g["id"]),
                 None
@@ -338,9 +434,10 @@ class MessageReference:
     def __init__(self, *, state: "DiscordAPI", data: dict):
         self._state = state
 
-        self.guild_id: Optional[int] = utils.get_int(data, "guild_id")
-        self.channel_id: Optional[int] = utils.get_int(data, "channel_id")
-        self.message_id: Optional[int] = utils.get_int(data, "message_id")
+        self.type: MessageReferenceType = MessageReferenceType(data["type"])
+        self.guild_id: int | None = utils.get_int(data, "guild_id")
+        self.channel_id: int | None = utils.get_int(data, "channel_id")
+        self.message_id: int | None = utils.get_int(data, "message_id")
 
     def __repr__(self) -> str:
         return (
@@ -349,10 +446,22 @@ class MessageReference:
         )
 
     @property
-    def guild(self) -> Optional["PartialGuild"]:
+    def jump_url(self) -> JumpURL:
+        """ `JumpURL`: The jump URL of the message """
+        return JumpURL(
+            state=self._state,
+            url=f"https://discord.com/channels/{self.guild_id or '@me'}/{self.channel_id}/{self.message_id}"
+        )
+
+    @property
+    def guild(self) -> "Guild | PartialGuild | None":
         """ `Optional[PartialGuild]`: The guild the message was sent in """
         if not self.guild_id:
             return None
+
+        cache = self._state.cache.get_guild(self.guild_id)
+        if cache:
+            return cache
 
         from .guild import PartialGuild
         return PartialGuild(
@@ -361,10 +470,19 @@ class MessageReference:
         )
 
     @property
-    def channel(self) -> Optional["PartialChannel"]:
+    def channel(self) -> "PartialChannel | None":
         """ `Optional[PartialChannel]`: Returns the channel the message was sent in """
         if not self.channel_id:
             return None
+
+        if self.guild_id:
+            cache = self._state.cache.get_channel_thread(
+                guild_id=self.guild_id,
+                channel_id=self.channel_id
+            )
+
+            if cache:
+                return cache
 
         from .channel import PartialChannel
         return PartialChannel(
@@ -374,7 +492,7 @@ class MessageReference:
         )
 
     @property
-    def message(self) -> Optional["PartialMessage"]:
+    def message(self) -> "PartialMessage | None":
         """ `Optional[PartialMessage]`: Returns the message if a message_id and channel_id is available """
         if not self.channel_id or not self.message_id:
             return None
@@ -382,6 +500,7 @@ class MessageReference:
         return PartialMessage(
             state=self._state,
             channel_id=self.channel_id,
+            guild_id=self.guild_id,
             id=self.message_id
         )
 
@@ -395,6 +514,8 @@ class MessageReference:
             payload["channel_id"] = self.channel_id
         if self.message_id:
             payload["message_id"] = self.message_id
+        if self.type:
+            payload["type"] = int(self.type)
 
         return payload
 
@@ -409,13 +530,18 @@ class Attachment:
         self.url: str = data["url"]
         self.proxy_url: str = data["proxy_url"]
         self.ephemeral: bool = data.get("ephemeral", False)
+        self.flags: AttachmentFlags = AttachmentFlags(data.get("flags", 0))
 
         self.content_type: Optional[str] = data.get("content_type", None)
+        self.title: Optional[str] = data.get("title", None)
         self.description: Optional[str] = data.get("description", None)
 
         self.height: Optional[int] = data.get("height", None)
         self.width: Optional[int] = data.get("width", None)
         self.ephemeral: bool = data.get("ephemeral", False)
+
+        self.duration_secs: Optional[int] = data.get("duration_secs", None)
+        self.waveform: Optional[str] = data.get("waveform", None)
 
     def __str__(self) -> str:
         return self.filename or ""
@@ -432,6 +558,10 @@ class Attachment:
     def is_spoiler(self) -> bool:
         """ `bool`: Whether the attachment is a spoiler or not """
         return self.filename.startswith("SPOILER_")
+
+    def is_voice_message(self) -> bool:
+        """:class:`bool`: Whether this attachment is a voice message."""
+        return self.duration_secs is not None and "voice-message" in self.url
 
     async def fetch(self, *, use_cached: bool = False) -> bytes:
         """
@@ -531,8 +661,11 @@ class Attachment:
             "url": self.url,
             "proxy_url": self.proxy_url,
             "spoiler": self.is_spoiler(),
+            "flags": self.flags
         }
 
+        if self.title is not None:
+            data["title"] = self.title
         if self.description is not None:
             data["description"] = self.description
         if self.height:
@@ -541,6 +674,10 @@ class Attachment:
             data["width"] = self.width
         if self.content_type:
             data["content_type"] = self.content_type
+        if self.duration_secs:
+            data["duration_secs"] = self.duration_secs
+        if self.waveform:
+            data["waveform"] = self.waveform
 
         return data
 
@@ -552,20 +689,48 @@ class PartialMessage(PartialBase):
         state: "DiscordAPI",
         id: int,
         channel_id: int,
+        guild_id: int | None = None
     ):
         super().__init__(id=int(id))
         self._state = state
 
         self.channel_id: int = int(channel_id)
+        self.guild_id: int | None = int(guild_id) if guild_id else None
 
     def __repr__(self) -> str:
         return f"<PartialMessage id={self.id}>"
 
     @property
-    def channel(self) -> "PartialChannel":
+    def channel(self) -> "BaseChannel | PartialChannel":
         """ `PartialChannel`: Returns the channel the message was sent in """
+        if self.guild_id:
+            cache = self._state.cache.get_channel_thread(
+                guild_id=self.guild_id,
+                channel_id=self.channel_id
+            )
+
+            if cache:
+                return cache
+
         from .channel import PartialChannel
-        return PartialChannel(state=self._state, id=self.channel_id)
+        return PartialChannel(
+            state=self._state,
+            id=self.channel_id,
+            guild_id=self.guild_id
+        )
+
+    @property
+    def guild(self) -> "Guild | PartialGuild | None":
+        """ `PartialGuild` | `None`: Returns the guild the message was sent in """
+        if not self.guild_id:
+            return None
+
+        cache = self._state.cache.get_guild(self.guild_id)
+        if cache:
+            return cache
+
+        from .guild import PartialGuild
+        return PartialGuild(state=self._state, id=self.guild_id)
 
     @property
     def jump_url(self) -> JumpURL:
@@ -588,14 +753,42 @@ class PartialMessage(PartialBase):
             guild=self.channel.guild
         )
 
-    async def delete(self, *, reason: Optional[str] = None) -> None:
-        """ Delete the message """
-        await self._state.query(
-            "DELETE",
-            f"/channels/{self.channel.id}/messages/{self.id}",
-            reason=reason,
-            res_method="text"
-        )
+    async def delete(
+        self,
+        *,
+        delay: float | None = None,
+        reason: str | None = None
+    ) -> None:
+        """
+        Delete the message
+
+        Parameters
+        ----------
+        delay: `float` | `None`:
+            How many seconds it should wait in background to delete
+        reason: `str` | `None`:
+            Reason for deleting the message
+            (Only applies when deleting messages not made by yourself)
+        """
+        async def _delete():
+            await self._state.query(
+                "DELETE",
+                f"/channels/{self.channel.id}/messages/{self.id}",
+                reason=reason,
+                res_method="text"
+            )
+
+        async def _delete_after(d: float):
+            await asyncio.sleep(d)
+            try:
+                await _delete()
+            except HTTPException:
+                pass
+
+        if delay is not None:
+            asyncio.create_task(_delete_after(delay))
+        else:
+            await _delete()
 
     async def expire_poll(self) -> "Message":
         """
@@ -645,22 +838,6 @@ class PartialMessage(PartialBase):
         if isinstance(answer, PollAnswer):
             answer_id = answer.id
 
-        def _resolve_id(entry) -> int:
-            match entry:
-                case x if isinstance(x, Snowflake):
-                    return int(x)
-
-                case x if isinstance(x, int):
-                    return x
-
-                case x if isinstance(x, str):
-                    if not x.isdigit():
-                        raise TypeError("Got a string that was not a Snowflake ID for after")
-                    return int(x)
-
-                case _:
-                    raise TypeError("Got an unknown type for after")
-
         async def _get_history(limit: int, **kwargs):
             params = {"limit": min(limit, 100)}
             for key, value in kwargs.items():
@@ -684,7 +861,7 @@ class PartialMessage(PartialBase):
             return r.response, after_id, limit
 
         if after:
-            strategy, state = _after_http, _resolve_id(after)
+            strategy, state = _after_http, utils.normalize_entity_id(after)
         else:
             strategy, state = _after_http, None
 
@@ -831,8 +1008,9 @@ class PartialMessage(PartialBase):
             message_reference=MessageReference(
                 state=self._state,
                 data={
+                    "type": int(MessageReferenceType.default),
                     "channel_id": self.channel_id,
-                    "message_id": self.id
+                    "message_id": self.id,
                 }
             )
         )
@@ -925,6 +1103,14 @@ class PartialMessage(PartialBase):
             res_method="text"
         )
 
+    async def remove_all_reactions(self) -> None:
+        """ Remove all reactions from the message """
+        await self._state.query(
+            "DELETE",
+            f"/channels/{self.channel.id}/messages/{self.id}/reactions",
+            res_method="text"
+        )
+
     async def create_public_thread(
         self,
         name: str,
@@ -977,7 +1163,7 @@ class PartialMessage(PartialBase):
 
         r = await self._state.query(
             "POST",
-            f"/channels/{self.channel.id}/threads/messages/{self.id}/threads",
+            f"/channels/{self.channel.id}/messages/{self.id}/threads",
             json=payload,
             reason=reason
         )
@@ -989,25 +1175,58 @@ class PartialMessage(PartialBase):
         )
 
 
+class MessageSnapshot:
+    def __init__(
+        self,
+        *,
+        state: "DiscordAPI",
+        data: dict
+    ):
+        self._state = state
+
+        self.type: MessageType = MessageType(data.get("type", 0))
+        self.content: str = data.get("content", "")
+
+        self.timestamp: datetime | None = None
+        self.edited_timestamp: datetime | None = None
+
+        self.embeds: list[Embed] = [
+            Embed.from_dict(embed)
+            for embed in data.get("embeds", [])
+        ]
+
+        self.attachments: list[Attachment] = [
+            Attachment(state=state, data=a)
+            for a in data.get("attachments", [])
+        ]
+
+        self._from_data(data)
+
+    def _from_data(self, data: dict) -> None:
+        if data.get("edited_timestamp", None):
+            self.edited_timestamp = utils.parse_time(data["edited_timestamp"])
+        if data.get("timestamp", None):
+            self.timestamp = utils.parse_time(data["timestamp"])
+
+
 class Message(PartialMessage):
     def __init__(
         self,
         *,
         state: "DiscordAPI",
         data: dict,
-        guild: Optional["PartialGuild"] = None
+        guild: "PartialGuild | None" = None
     ):
         super().__init__(
             state=state,
+            id=int(data["id"]),
             channel_id=int(data["channel_id"]),
-            id=int(data["id"])
+            guild_id=guild.id if guild else None
         )
 
-        self.guild = guild
-        self.guild_id: Optional[int] = guild.id if guild is not None else None
-
-        self.content: Optional[str] = data.get("content", None)
-        self.author: User = User(state=state, data=data["author"])
+        self.type: MessageType = MessageType(data["type"])
+        self.content: str = data.get("content", "")
+        self.author: Union[User, "Member"] = User(state=state, data=data["author"])
         self.pinned: bool = data.get("pinned", False)
         self.mention_everyone: bool = data.get("mention_everyone", False)
         self.tts: bool = data.get("tts", False)
@@ -1028,16 +1247,22 @@ class Message(PartialMessage):
             for s in data.get("sticker_items", [])
         ]
 
-        self.user_mentions: list[User] = [
-            User(state=self._state, data=g)
-            for g in data.get("mentions", [])
+        self.reactions: list[MessageReaction] = [
+            MessageReaction(state=state, message=self, data=g)
+            for g in data.get("reactions", [])
         ]
 
-        self.view: Optional[View] = View.from_dict(data)
-        self.edited_timestamp: Optional[datetime] = None
+        self.mentions: list["Member | User"] = []
 
-        self.message_reference: Optional[MessageReference] = None
-        self.referenced_message: Optional[Message] = None
+        self.view: View | None = None
+        self.edited_timestamp: datetime | None = None
+
+        self.reference: MessageReference | None = None
+
+        self.resolved_reply: Message | None = None
+        self.resolved_forward: list[MessageSnapshot] = []
+
+        self.interaction: MessageInteraction | None = None
 
         self._from_data(data)
 
@@ -1048,17 +1273,34 @@ class Message(PartialMessage):
         return self.content or ""
 
     def _from_data(self, data: dict):
+        if data.get("components", None):
+            self.view = View.from_dict(data)
+
         if data.get("message_reference", None):
-            self.message_reference = MessageReference(
+            self.reference = MessageReference(
                 state=self._state,
                 data=data["message_reference"]
             )
 
         if data.get("referenced_message", None):
-            self.referenced_message = Message(
+            self.resolved_reply = Message(
                 state=self._state,
                 data=data["referenced_message"],
                 guild=self.guild
+            )
+
+        if data.get("interaction_metadata", None):
+            self.interaction = MessageInteraction(
+                state=self._state,
+                data=data["interaction_metadata"]
+            )
+
+        for m in data.get("message_snapshots", []):
+            self.resolved_forward.append(
+                MessageSnapshot(
+                    state=self._state,
+                    data=m
+                )
             )
 
         if data.get("poll", None):
@@ -1066,6 +1308,45 @@ class Message(PartialMessage):
 
         if data.get("edited_timestamp", None):
             self.edited_timestamp = utils.parse_time(data["edited_timestamp"])
+
+        if data.get("member", None):
+            from .member import Member
+
+            # Append author data to member data
+            data["member"]["user"] = data["author"]
+
+            self.author = Member(
+                state=self._state,
+                guild=self.guild,  # type: ignore
+                data=data["member"]
+            )
+
+        if data.get("mentions", None):
+            from .member import Member
+
+            for m in data["mentions"]:
+                if m.get("member", None) and self.guild_id:
+                    # This is only done through the gateway
+                    _fake_member = m["member"]
+                    _fake_member["user"] = m
+                    Member(
+                        state=self._state,
+                        guild=self.guild,  # type: ignore
+                        data=_fake_member
+                    )
+
+                else:
+                    User(state=self._state, data=m)
+
+    def is_system(self) -> bool:
+        """ `bool`: Returns whether the message is a system message """
+        return self.type not in (
+            MessageType.default,
+            MessageType.reply,
+            MessageType.chat_input_command,
+            MessageType.context_menu_command,
+            MessageType.thread_starter_message
+        )
 
     @property
     def emojis(self) -> list[EmojiParser]:
@@ -1084,12 +1365,16 @@ class Message(PartialMessage):
         )
 
     @property
-    def role_mentions(self) -> list[PartialRole]:
-        """ `list[PartialRole]`: Returns the role mentions in the message """
+    def role_mentions(self) -> list[Role | PartialRole]:
+        """
+        `list[PartialRole]`: Returns the role mentions in the message.
+        Can return full role object if guild and role cache is enabled
+        """
         if not self.guild_id:
             return []
 
         return [
+            self.guild.get_role(int(role_id)) or
             PartialRole(
                 state=self._state,
                 id=int(role_id),
@@ -1099,11 +1384,15 @@ class Message(PartialMessage):
         ]
 
     @property
-    def channel_mentions(self) -> list["PartialChannel"]:
-        """ `list[PartialChannel]`: Returns the channel mentions in the message """
+    def channel_mentions(self) -> list["BaseChannel | PartialChannel"]:
+        """
+        `list[PartialChannel]`: Returns the channel mentions in the message
+        Can return full role object if guild and channel cache is enabled
+        """
         from .channel import PartialChannel
 
         return [
+            self.guild.get_channel(int(channel_id)) or
             PartialChannel(state=self._state, id=int(channel_id))
             for channel_id in utils.re_channel.findall(self.content)
         ]
@@ -1192,7 +1481,7 @@ class WebhookMessage(Message):
     async def delete(
         self,
         *,
-        reason: Optional[str] = None
+        delay: float | None = None
     ) -> None:
         """
         Delete the webhook message
@@ -1202,10 +1491,22 @@ class WebhookMessage(Message):
         reason: `Optional[str]`
             Reason for deleting the message
         """
-        await self._state.query(
-            "DELETE",
-            f"/webhooks/{self.application_id}/{self.token}/messages/{self.id}",
-            reason=reason,
-            webhook=True,
-            res_method="text"
-        )
+        async def _delete():
+            await self._state.query(
+                "DELETE",
+                f"/webhooks/{self.application_id}/{self.token}/messages/{self.id}",
+                webhook=True,
+                res_method="text"
+            )
+
+        async def _delete_after(d: float):
+            await asyncio.sleep(d)
+            try:
+                await _delete()
+            except HTTPException:
+                pass
+
+        if delay is not None:
+            asyncio.create_task(_delete_after(delay))
+        else:
+            await _delete()

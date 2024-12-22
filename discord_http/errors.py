@@ -1,24 +1,27 @@
+import time
+
 from typing import TYPE_CHECKING
 
-from .flag import Permissions
+from .flags import Permissions
 from .cooldowns import Cooldown
 
 if TYPE_CHECKING:
     from .http import HTTPResponse
 
 __all__ = (
+    "AutomodBlock",
     "BotMissingPermissions",
     "CheckFailed",
+    "CommandError",
+    "CommandOnCooldown",
     "DiscordException",
     "DiscordServerError",
     "Forbidden",
     "HTTPException",
     "InvalidMember",
-    "CommandOnCooldown",
     "NotFound",
     "Ratelimited",
     "UserMissingPermissions",
-    "AutomodBlock",
 )
 
 
@@ -37,11 +40,18 @@ class InvalidMember(CheckFailed):
     pass
 
 
+class CommandError(Exception):
+    """ Raised whenever a command error occurs """
+    pass
+
+
 class CommandOnCooldown(CheckFailed):
     def __init__(self, cooldown: Cooldown, retry_after: float):
         self.cooldown: Cooldown = cooldown
         self.retry_after: float = retry_after
-        super().__init__(f"Command is on cooldown for {retry_after:.2f}s")
+        self.retry_after_ts: float = int(time.time() + retry_after)
+        self.discord_format: str = f"<t:{self.retry_after_ts}:R>"
+        super().__init__(f"Command is on cooldown, try again {self.discord_format}")
 
 
 class UserMissingPermissions(CheckFailed):
@@ -69,7 +79,10 @@ class HTTPException(DiscordException):
 
         if isinstance(r.response, dict):
             self.code = r.response.get("code", 0)
-            self.text = r.response.get("message", "Unknown")
+            self.text = r.response.get(
+                "message",
+                str(r.response)  # Fallback to raw response
+            )
             if r.response.get("errors", None):
                 self.text += f"\n{r.response['errors']}"
         else:
