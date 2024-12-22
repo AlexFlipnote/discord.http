@@ -2,9 +2,9 @@
 <html class="no-js" lang="en" data-content_root="../../">
   <head><meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width,initial-scale=1"/>
-    <meta name="color-scheme" content="light dark"><link rel="index" title="Index" href="../../genindex.html" /><link rel="search" title="Search" href="../../search.html" />
+    <meta name="color-scheme" content="light dark"><meta content="discord.http docs" property="og:title"><meta content="Python library that handles interactions from Discord POST requests." name="description"><meta content="Python library that handles interactions from Discord POST requests." property="og:description"><meta property="og:image" content="/_static/favicon.ico"><meta name="theme-color" content="#14bae4"><meta property="og:locale" content="en_GB"><meta name="keywords" content="discord, http, api, interaction, quart, webhook, slash><meta name="revisit-after" content="2 days"><link rel="index" title="Index" href="../../genindex.html" /><link rel="search" title="Search" href="../../search.html" />
 
-    <link rel="shortcut icon" href="../../_static/favicon.ico"/><!-- Generated with Sphinx 8.0.2 and Furo 2024.08.06 -->
+    <link rel="shortcut icon" href="../../_static/favicon.ico"/><!-- Generated with Sphinx 8.1.3 and Furo 2024.08.06 -->
         <title>discord_http.message - discord.http docs</title>
       <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=fa44fd50" />
     <link rel="stylesheet" type="text/css" href="../../_static/styles/furo.css?v=354aac6f" />
@@ -201,6 +201,8 @@
 <li class="toctree-l1"><a class="reference internal" href="../../pages/getting_started.html">Getting started</a></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../../pages/api.html">API components</a><input class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" role="switch" type="checkbox"/><label for="toctree-checkbox-1"><div class="visually-hidden">Toggle navigation of API components</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
 <li class="toctree-l2"><a class="reference internal" href="../../api/asset.html">Asset</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../api/audit.html">Audit</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../api/automod.html">AutoModRule</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../api/backend.html">Backend</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../api/channel.html">Channel</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../api/client.html">Client</a></li>
@@ -214,9 +216,10 @@
 <li class="toctree-l2"><a class="reference internal" href="../../api/enums.html">Enums</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../api/errors.html">Errors</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../api/file.html">File</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../api/flag.html">Flag</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../api/flags.html">Flag</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../api/guild.html">Guild</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../api/http.html">Http</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../api/integrations.html">Integrations</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../api/invite.html">Invite</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../api/member.html">Member</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../api/mentions.html">Mentions</a></li>
@@ -225,14 +228,24 @@
 <li class="toctree-l2"><a class="reference internal" href="../../api/object.html">Object</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../api/response.html">Response</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../api/role.html">Role</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../api/soundboard.html">Soundboard</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../api/sticker.html">Sticker</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../api/tasks.html">Tasks</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../api/user.html">User</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../api/view.html">View</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../api/voice.html">Vsset</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../api/webhook.html">Webhook</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../../pages/events.html">Event references</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../pages/gateway.html">Gateway references</a><input class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" role="switch" type="checkbox"/><label for="toctree-checkbox-2"><div class="visually-hidden">Toggle navigation of Gateway references</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../gateway/activity.html">Activity</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../gateway/client.html">Client</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../gateway/enums.html">Enums</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../gateway/flags.html">Flags</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../gateway/object.html">Object (Gateway events)</a></li>
+</ul>
+</li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">Advanced</span></p>
 <ul>
@@ -242,7 +255,7 @@
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../pages/contribute.html">Contributing</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../pages/license.html">License</a></li>
-<li class="toctree-l1"><a class="reference external" href="https://discord.gg/AlexFlipnote">Discord</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://discord.gg/yqb7vATbjH">Discord</a></li>
 <li class="toctree-l1"><a class="reference external" href="https://github.com/AlexFlipnote/discord.http">GitHub</a></li>
 </ul>
 
@@ -279,19 +292,24 @@
         </div>
         <article role="main" id="furo-main-content">
           <h1>Source code for discord_http.message</h1><div class="highlight"><pre>
-<span></span><span class="kn">from</span> <span class="nn">datetime</span> <span class="kn">import</span> <span class="n">timedelta</span><span class="p">,</span> <span class="n">datetime</span>
+<span></span><span class="kn">import</span> <span class="nn">asyncio</span>
+
+<span class="kn">from</span> <span class="nn">datetime</span> <span class="kn">import</span> <span class="n">timedelta</span><span class="p">,</span> <span class="n">datetime</span>
 <span class="kn">from</span> <span class="nn">io</span> <span class="kn">import</span> <span class="n">BytesIO</span>
 <span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">TYPE_CHECKING</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Union</span><span class="p">,</span> <span class="n">AsyncIterator</span><span class="p">,</span> <span class="n">Self</span><span class="p">,</span> <span class="n">Callable</span>
 
-<span class="kn">from</span> <span class="nn">.</span> <span class="kn">import</span> <span class="n">http</span><span class="p">,</span> <span class="n">utils</span>
+<span class="kn">from</span> <span class="nn">.</span> <span class="kn">import</span> <span class="n">utils</span>
+<span class="kn">from</span> <span class="nn">.colour</span> <span class="kn">import</span> <span class="n">Colour</span>
 <span class="kn">from</span> <span class="nn">.embeds</span> <span class="kn">import</span> <span class="n">Embed</span>
 <span class="kn">from</span> <span class="nn">.emoji</span> <span class="kn">import</span> <span class="n">EmojiParser</span>
+<span class="kn">from</span> <span class="nn">.enums</span> <span class="kn">import</span> <span class="n">MessageReferenceType</span><span class="p">,</span> <span class="n">MessageType</span><span class="p">,</span> <span class="n">InteractionType</span>
 <span class="kn">from</span> <span class="nn">.errors</span> <span class="kn">import</span> <span class="n">HTTPException</span>
 <span class="kn">from</span> <span class="nn">.file</span> <span class="kn">import</span> <span class="n">File</span>
+<span class="kn">from</span> <span class="nn">.flags</span> <span class="kn">import</span> <span class="n">AttachmentFlags</span>
 <span class="kn">from</span> <span class="nn">.mentions</span> <span class="kn">import</span> <span class="n">AllowedMentions</span>
 <span class="kn">from</span> <span class="nn">.object</span> <span class="kn">import</span> <span class="n">PartialBase</span><span class="p">,</span> <span class="n">Snowflake</span>
 <span class="kn">from</span> <span class="nn">.response</span> <span class="kn">import</span> <span class="n">MessageResponse</span>
-<span class="kn">from</span> <span class="nn">.role</span> <span class="kn">import</span> <span class="n">PartialRole</span>
+<span class="kn">from</span> <span class="nn">.role</span> <span class="kn">import</span> <span class="n">Role</span><span class="p">,</span> <span class="n">PartialRole</span>
 <span class="kn">from</span> <span class="nn">.sticker</span> <span class="kn">import</span> <span class="n">PartialSticker</span>
 <span class="kn">from</span> <span class="nn">.user</span> <span class="kn">import</span> <span class="n">User</span>
 <span class="kn">from</span> <span class="nn">.view</span> <span class="kn">import</span> <span class="n">View</span>
@@ -300,6 +318,7 @@
     <span class="kn">from</span> <span class="nn">.channel</span> <span class="kn">import</span> <span class="n">BaseChannel</span><span class="p">,</span> <span class="n">PartialChannel</span><span class="p">,</span> <span class="n">PublicThread</span>
     <span class="kn">from</span> <span class="nn">.guild</span> <span class="kn">import</span> <span class="n">Guild</span><span class="p">,</span> <span class="n">PartialGuild</span>
     <span class="kn">from</span> <span class="nn">.http</span> <span class="kn">import</span> <span class="n">DiscordAPI</span>
+    <span class="kn">from</span> <span class="nn">.member</span> <span class="kn">import</span> <span class="n">Member</span>
 
 <span class="n">MISSING</span> <span class="o">=</span> <span class="n">utils</span><span class="o">.</span><span class="n">MISSING</span>
 
@@ -307,11 +326,86 @@
     <span class="s2">&quot;Attachment&quot;</span><span class="p">,</span>
     <span class="s2">&quot;JumpURL&quot;</span><span class="p">,</span>
     <span class="s2">&quot;Message&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;MessageInteraction&quot;</span><span class="p">,</span>
     <span class="s2">&quot;MessageReference&quot;</span><span class="p">,</span>
     <span class="s2">&quot;PartialMessage&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;WebhookMessage&quot;</span><span class="p">,</span>
     <span class="s2">&quot;Poll&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;WebhookMessage&quot;</span><span class="p">,</span>
 <span class="p">)</span>
+
+
+<div class="viewcode-block" id="MessageInteraction">
+<a class="viewcode-back" href="../../api/message.html#discord_http.message.MessageInteraction">[docs]</a>
+<span class="k">class</span> <span class="nc">MessageInteraction</span><span class="p">(</span><span class="n">PartialBase</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="o">*</span><span class="p">,</span>
+        <span class="n">state</span><span class="p">:</span> <span class="s2">&quot;DiscordAPI&quot;</span><span class="p">,</span>
+        <span class="n">data</span><span class="p">:</span> <span class="nb">dict</span>
+    <span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="nb">id</span><span class="o">=</span><span class="nb">int</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="s2">&quot;id&quot;</span><span class="p">]))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_state</span> <span class="o">=</span> <span class="n">state</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">type</span><span class="p">:</span> <span class="n">InteractionType</span> <span class="o">=</span> <span class="n">InteractionType</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="s2">&quot;type&quot;</span><span class="p">])</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;name&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">user</span><span class="p">:</span> <span class="n">User</span> <span class="o">=</span> <span class="n">User</span><span class="p">(</span>
+            <span class="n">state</span><span class="o">=</span><span class="n">state</span><span class="p">,</span>
+            <span class="n">data</span><span class="o">=</span><span class="n">data</span><span class="p">[</span><span class="s2">&quot;user&quot;</span><span class="p">]</span>
+        <span class="p">)</span></div>
+
+
+
+<span class="k">class</span> <span class="nc">MessageReaction</span><span class="p">:</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">state</span><span class="p">:</span> <span class="s2">&quot;DiscordAPI&quot;</span><span class="p">,</span> <span class="n">message</span><span class="p">:</span> <span class="s2">&quot;Message&quot;</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="nb">dict</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_state</span> <span class="o">=</span> <span class="n">state</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_message</span> <span class="o">=</span> <span class="n">message</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">count</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="s2">&quot;count&quot;</span><span class="p">])</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">burst_count</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="s2">&quot;burst_count&quot;</span><span class="p">])</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">me</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;me&quot;</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">emoji</span><span class="p">:</span> <span class="n">EmojiParser</span> <span class="o">=</span> <span class="n">EmojiParser</span><span class="o">.</span><span class="n">from_dict</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="s2">&quot;emoji&quot;</span><span class="p">])</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">me_burst</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;me_burst&quot;</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">burst_me</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;burst_me&quot;</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">burst_count</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;burst_count&quot;</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">burst_colors</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">Colour</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="n">Colour</span><span class="o">.</span><span class="n">from_hex</span><span class="p">(</span><span class="n">g</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">g</span> <span class="ow">in</span> <span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;burst_colors&quot;</span><span class="p">,</span> <span class="p">[])</span>
+        <span class="p">]</span>
+
+    <span class="k">async</span> <span class="k">def</span> <span class="nf">add</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Make the bot react with this emoji</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">_parsed</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">emoji</span><span class="o">.</span><span class="n">to_reaction</span><span class="p">()</span>
+        <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">_state</span><span class="o">.</span><span class="n">query</span><span class="p">(</span>
+            <span class="s2">&quot;PUT&quot;</span><span class="p">,</span>
+            <span class="sa">f</span><span class="s2">&quot;/channels/</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_message</span><span class="o">.</span><span class="n">channel</span><span class="o">.</span><span class="n">id</span><span class="si">}</span><span class="s2">/messages/</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_message</span><span class="o">.</span><span class="n">id</span><span class="si">}</span><span class="s2">/reactions/</span><span class="si">{</span><span class="n">_parsed</span><span class="si">}</span><span class="s2">/@me&quot;</span><span class="p">,</span>
+            <span class="n">res_method</span><span class="o">=</span><span class="s2">&quot;text&quot;</span>
+        <span class="p">)</span>
+
+    <span class="k">async</span> <span class="k">def</span> <span class="nf">remove</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">user_id</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Remove the reaction from the message</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        user_id: `int | None`</span>
+<span class="sd">            User ID to remove the reaction from</span>
+<span class="sd">            If none provided, it will remove the reaction from the bot</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">_parsed</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">emoji</span><span class="o">.</span><span class="n">to_reaction</span><span class="p">()</span>
+        <span class="n">_url</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;/channels/</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_message</span><span class="o">.</span><span class="n">channel</span><span class="o">.</span><span class="n">id</span><span class="si">}</span><span class="s2">/messages/</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_message</span><span class="o">.</span><span class="n">id</span><span class="si">}</span><span class="s2">/reactions/</span><span class="si">{</span><span class="n">_parsed</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="sa">f</span><span class="s2">&quot;/</span><span class="si">{</span><span class="n">user_id</span><span class="si">}</span><span class="s2">&quot;</span> <span class="k">if</span> <span class="n">user_id</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="s2">&quot;/@me&quot;</span>
+        <span class="p">)</span>
+
+        <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">_state</span><span class="o">.</span><span class="n">query</span><span class="p">(</span>
+            <span class="s2">&quot;DELETE&quot;</span><span class="p">,</span>
+            <span class="n">_url</span><span class="p">,</span>
+            <span class="n">res_method</span><span class="o">=</span><span class="s2">&quot;text&quot;</span>
+        <span class="p">)</span>
 
 
 <div class="viewcode-block" id="JumpURL">
@@ -328,7 +422,7 @@
     <span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_state</span> <span class="o">=</span> <span class="n">state</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">guild_id</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="n">guild_id</span> <span class="ow">or</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">guild_id</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">guild_id</span><span class="p">)</span> <span class="k">if</span> <span class="n">guild_id</span> <span class="k">else</span> <span class="kc">None</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">channel_id</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="n">channel_id</span> <span class="ow">or</span> <span class="kc">None</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">message_id</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="n">message_id</span> <span class="ow">or</span> <span class="kc">None</span>
 
@@ -361,10 +455,14 @@
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">url</span>
 
     <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">guild</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="s2">&quot;PartialGuild&quot;</span><span class="p">]:</span>
+    <span class="k">def</span> <span class="nf">guild</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="s2">&quot;Guild | PartialGuild&quot;</span><span class="p">]:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot; `Optional[PartialGuild]`: The guild the message was sent in &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">guild_id</span><span class="p">:</span>
             <span class="k">return</span> <span class="kc">None</span>
+
+        <span class="n">cache</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_state</span><span class="o">.</span><span class="n">cache</span><span class="o">.</span><span class="n">get_guild</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">guild_id</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">cache</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">cache</span>
 
         <span class="kn">from</span> <span class="nn">.guild</span> <span class="kn">import</span> <span class="n">PartialGuild</span>
         <span class="k">return</span> <span class="n">PartialGuild</span><span class="p">(</span>
@@ -383,10 +481,22 @@
 
 
     <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">channel</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="s2">&quot;PartialChannel&quot;</span><span class="p">]:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot; `PartialChannel`: Returns the channel the message was sent in &quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="nf">channel</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="s2">&quot;BaseChannel | PartialChannel&quot;</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        `BaseChannel | PartialChannel`: Returns the channel the message was sent in.</span>
+<span class="sd">        If guild and channel cache is enabled, it can also return full channel object.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">channel_id</span><span class="p">:</span>
             <span class="k">return</span> <span class="kc">None</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">guild_id</span><span class="p">:</span>
+            <span class="n">cache</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_state</span><span class="o">.</span><span class="n">cache</span><span class="o">.</span><span class="n">get_channel_thread</span><span class="p">(</span>
+                <span class="n">guild_id</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">guild_id</span><span class="p">,</span>
+                <span class="n">channel_id</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">channel_id</span>
+            <span class="p">)</span>
+
+            <span class="k">if</span> <span class="n">cache</span><span class="p">:</span>
+                <span class="k">return</span> <span class="n">cache</span>
 
         <span class="kn">from</span> <span class="nn">.channel</span> <span class="kn">import</span> <span class="n">PartialChannel</span>
         <span class="k">return</span> <span class="n">PartialChannel</span><span class="p">(</span>
@@ -411,6 +521,7 @@
         <span class="k">return</span> <span class="n">PartialMessage</span><span class="p">(</span>
             <span class="n">state</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_state</span><span class="p">,</span>
             <span class="n">channel_id</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">channel_id</span><span class="p">,</span>
+            <span class="n">guild_id</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">guild_id</span><span class="p">,</span>
             <span class="nb">id</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">message_id</span>
         <span class="p">)</span>
 
@@ -623,9 +734,10 @@
         <span class="k">if</span> <span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;expiry&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">):</span>
             <span class="n">poll</span><span class="o">.</span><span class="n">expiry</span> <span class="o">=</span> <span class="n">utils</span><span class="o">.</span><span class="n">parse_time</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="s2">&quot;expiry&quot;</span><span class="p">])</span>
 
-        <span class="n">poll</span><span class="o">.</span><span class="n">is_finalized</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s2">&quot;results&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;is_finalized&quot;</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
+        <span class="n">_results</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;results&quot;</span><span class="p">,</span> <span class="p">{})</span>
+        <span class="n">poll</span><span class="o">.</span><span class="n">is_finalized</span> <span class="o">=</span> <span class="n">_results</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;is_finalized&quot;</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
 
-        <span class="k">for</span> <span class="n">g</span> <span class="ow">in</span> <span class="n">data</span><span class="p">[</span><span class="s2">&quot;results&quot;</span><span class="p">][</span><span class="s2">&quot;answer_counts&quot;</span><span class="p">]:</span>
+        <span class="k">for</span> <span class="n">g</span> <span class="ow">in</span> <span class="n">_results</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;answer_counts&quot;</span><span class="p">,</span> <span class="p">[]):</span>
             <span class="n">find_answer</span> <span class="o">=</span> <span class="nb">next</span><span class="p">(</span>
                 <span class="p">(</span><span class="n">a</span> <span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="n">poll</span><span class="o">.</span><span class="n">answers</span> <span class="k">if</span> <span class="n">a</span><span class="o">.</span><span class="n">id</span> <span class="o">==</span> <span class="n">g</span><span class="p">[</span><span class="s2">&quot;id&quot;</span><span class="p">]),</span>
                 <span class="kc">None</span>
@@ -648,9 +760,10 @@
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">state</span><span class="p">:</span> <span class="s2">&quot;DiscordAPI&quot;</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="nb">dict</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_state</span> <span class="o">=</span> <span class="n">state</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">guild_id</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="n">utils</span><span class="o">.</span><span class="n">get_int</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="s2">&quot;guild_id&quot;</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">channel_id</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="n">utils</span><span class="o">.</span><span class="n">get_int</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="s2">&quot;channel_id&quot;</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">message_id</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="n">utils</span><span class="o">.</span><span class="n">get_int</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="s2">&quot;message_id&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">type</span><span class="p">:</span> <span class="n">MessageReferenceType</span> <span class="o">=</span> <span class="n">MessageReferenceType</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="s2">&quot;type&quot;</span><span class="p">])</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">guild_id</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="n">utils</span><span class="o">.</span><span class="n">get_int</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="s2">&quot;guild_id&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">channel_id</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="n">utils</span><span class="o">.</span><span class="n">get_int</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="s2">&quot;channel_id&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">message_id</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="n">utils</span><span class="o">.</span><span class="n">get_int</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="s2">&quot;message_id&quot;</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
         <span class="k">return</span> <span class="p">(</span>
@@ -659,10 +772,22 @@
         <span class="p">)</span>
 
     <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">guild</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="s2">&quot;PartialGuild&quot;</span><span class="p">]:</span>
+    <span class="k">def</span> <span class="nf">jump_url</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">JumpURL</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot; `JumpURL`: The jump URL of the message &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">JumpURL</span><span class="p">(</span>
+            <span class="n">state</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_state</span><span class="p">,</span>
+            <span class="n">url</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;https://discord.com/channels/</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">guild_id</span><span class="w"> </span><span class="ow">or</span><span class="w"> </span><span class="s1">&#39;@me&#39;</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">channel_id</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">message_id</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="p">)</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">guild</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;Guild | PartialGuild | None&quot;</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot; `Optional[PartialGuild]`: The guild the message was sent in &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">guild_id</span><span class="p">:</span>
             <span class="k">return</span> <span class="kc">None</span>
+
+        <span class="n">cache</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_state</span><span class="o">.</span><span class="n">cache</span><span class="o">.</span><span class="n">get_guild</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">guild_id</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">cache</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">cache</span>
 
         <span class="kn">from</span> <span class="nn">.guild</span> <span class="kn">import</span> <span class="n">PartialGuild</span>
         <span class="k">return</span> <span class="n">PartialGuild</span><span class="p">(</span>
@@ -671,10 +796,19 @@
         <span class="p">)</span>
 
     <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">channel</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="s2">&quot;PartialChannel&quot;</span><span class="p">]:</span>
+    <span class="k">def</span> <span class="nf">channel</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;PartialChannel | None&quot;</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot; `Optional[PartialChannel]`: Returns the channel the message was sent in &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">channel_id</span><span class="p">:</span>
             <span class="k">return</span> <span class="kc">None</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">guild_id</span><span class="p">:</span>
+            <span class="n">cache</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_state</span><span class="o">.</span><span class="n">cache</span><span class="o">.</span><span class="n">get_channel_thread</span><span class="p">(</span>
+                <span class="n">guild_id</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">guild_id</span><span class="p">,</span>
+                <span class="n">channel_id</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">channel_id</span>
+            <span class="p">)</span>
+
+            <span class="k">if</span> <span class="n">cache</span><span class="p">:</span>
+                <span class="k">return</span> <span class="n">cache</span>
 
         <span class="kn">from</span> <span class="nn">.channel</span> <span class="kn">import</span> <span class="n">PartialChannel</span>
         <span class="k">return</span> <span class="n">PartialChannel</span><span class="p">(</span>
@@ -684,7 +818,7 @@
         <span class="p">)</span>
 
     <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">message</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="s2">&quot;PartialMessage&quot;</span><span class="p">]:</span>
+    <span class="k">def</span> <span class="nf">message</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;PartialMessage | None&quot;</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot; `Optional[PartialMessage]`: Returns the message if a message_id and channel_id is available &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">channel_id</span> <span class="ow">or</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">message_id</span><span class="p">:</span>
             <span class="k">return</span> <span class="kc">None</span>
@@ -692,6 +826,7 @@
         <span class="k">return</span> <span class="n">PartialMessage</span><span class="p">(</span>
             <span class="n">state</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_state</span><span class="p">,</span>
             <span class="n">channel_id</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">channel_id</span><span class="p">,</span>
+            <span class="n">guild_id</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">guild_id</span><span class="p">,</span>
             <span class="nb">id</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">message_id</span>
         <span class="p">)</span>
 
@@ -707,6 +842,8 @@
             <span class="n">payload</span><span class="p">[</span><span class="s2">&quot;channel_id&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">channel_id</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">message_id</span><span class="p">:</span>
             <span class="n">payload</span><span class="p">[</span><span class="s2">&quot;message_id&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">message_id</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">type</span><span class="p">:</span>
+            <span class="n">payload</span><span class="p">[</span><span class="s2">&quot;type&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">type</span><span class="p">)</span>
 
         <span class="k">return</span> <span class="n">payload</span></div>
 </div>
@@ -725,13 +862,18 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">url</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s2">&quot;url&quot;</span><span class="p">]</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">proxy_url</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s2">&quot;proxy_url&quot;</span><span class="p">]</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">ephemeral</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;ephemeral&quot;</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">flags</span><span class="p">:</span> <span class="n">AttachmentFlags</span> <span class="o">=</span> <span class="n">AttachmentFlags</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;flags&quot;</span><span class="p">,</span> <span class="mi">0</span><span class="p">))</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">content_type</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;content_type&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">title</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;title&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">description</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;description&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">height</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;height&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">width</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;width&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">ephemeral</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;ephemeral&quot;</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">duration_secs</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;duration_secs&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">waveform</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;waveform&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">filename</span> <span class="ow">or</span> <span class="s2">&quot;&quot;</span>
@@ -750,6 +892,13 @@
     <span class="k">def</span> <span class="nf">is_spoiler</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot; `bool`: Whether the attachment is a spoiler or not &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">filename</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;SPOILER_&quot;</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="Attachment.is_voice_message">
+<a class="viewcode-back" href="../../api/message.html#discord_http.message.Attachment.is_voice_message">[docs]</a>
+    <span class="k">def</span> <span class="nf">is_voice_message</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;:class:`bool`: Whether this attachment is a voice message.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">duration_secs</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="s2">&quot;voice-message&quot;</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">url</span></div>
 
 
 <div class="viewcode-block" id="Attachment.fetch">
@@ -773,7 +922,7 @@
 <span class="sd">        `HTTPException`</span>
 <span class="sd">            If the request returned anything other than 2XX</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">r</span> <span class="o">=</span> <span class="k">await</span> <span class="n">http</span><span class="o">.</span><span class="n">query</span><span class="p">(</span>
+        <span class="n">r</span> <span class="o">=</span> <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">_state</span><span class="o">.</span><span class="n">http</span><span class="o">.</span><span class="n">request</span><span class="p">(</span>
             <span class="s2">&quot;GET&quot;</span><span class="p">,</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">proxy_url</span> <span class="k">if</span> <span class="n">use_cached</span> <span class="k">else</span> <span class="bp">self</span><span class="o">.</span><span class="n">url</span><span class="p">,</span>
             <span class="n">res_method</span><span class="o">=</span><span class="s2">&quot;read&quot;</span>
@@ -861,8 +1010,11 @@
             <span class="s2">&quot;url&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">url</span><span class="p">,</span>
             <span class="s2">&quot;proxy_url&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">proxy_url</span><span class="p">,</span>
             <span class="s2">&quot;spoiler&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_spoiler</span><span class="p">(),</span>
+            <span class="s2">&quot;flags&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">flags</span>
         <span class="p">}</span>
 
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">title</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">data</span><span class="p">[</span><span class="s2">&quot;title&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">title</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">description</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">data</span><span class="p">[</span><span class="s2">&quot;description&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">description</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">height</span><span class="p">:</span>
@@ -871,6 +1023,10 @@
             <span class="n">data</span><span class="p">[</span><span class="s2">&quot;width&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">width</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">content_type</span><span class="p">:</span>
             <span class="n">data</span><span class="p">[</span><span class="s2">&quot;content_type&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">content_type</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">duration_secs</span><span class="p">:</span>
+            <span class="n">data</span><span class="p">[</span><span class="s2">&quot;duration_secs&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">duration_secs</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">waveform</span><span class="p">:</span>
+            <span class="n">data</span><span class="p">[</span><span class="s2">&quot;waveform&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">waveform</span>
 
         <span class="k">return</span> <span class="n">data</span></div>
 </div>
@@ -886,20 +1042,48 @@
         <span class="n">state</span><span class="p">:</span> <span class="s2">&quot;DiscordAPI&quot;</span><span class="p">,</span>
         <span class="nb">id</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
         <span class="n">channel_id</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+        <span class="n">guild_id</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
     <span class="p">):</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="nb">id</span><span class="o">=</span><span class="nb">int</span><span class="p">(</span><span class="nb">id</span><span class="p">))</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_state</span> <span class="o">=</span> <span class="n">state</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">channel_id</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">channel_id</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">guild_id</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">guild_id</span><span class="p">)</span> <span class="k">if</span> <span class="n">guild_id</span> <span class="k">else</span> <span class="kc">None</span>
 
     <span class="k">def</span> <span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
         <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;&lt;PartialMessage id=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">id</span><span class="si">}</span><span class="s2">&gt;&quot;</span>
 
     <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">channel</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;PartialChannel&quot;</span><span class="p">:</span>
+    <span class="k">def</span> <span class="nf">channel</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;BaseChannel | PartialChannel&quot;</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot; `PartialChannel`: Returns the channel the message was sent in &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">guild_id</span><span class="p">:</span>
+            <span class="n">cache</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_state</span><span class="o">.</span><span class="n">cache</span><span class="o">.</span><span class="n">get_channel_thread</span><span class="p">(</span>
+                <span class="n">guild_id</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">guild_id</span><span class="p">,</span>
+                <span class="n">channel_id</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">channel_id</span>
+            <span class="p">)</span>
+
+            <span class="k">if</span> <span class="n">cache</span><span class="p">:</span>
+                <span class="k">return</span> <span class="n">cache</span>
+
         <span class="kn">from</span> <span class="nn">.channel</span> <span class="kn">import</span> <span class="n">PartialChannel</span>
-        <span class="k">return</span> <span class="n">PartialChannel</span><span class="p">(</span><span class="n">state</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_state</span><span class="p">,</span> <span class="nb">id</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">channel_id</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">PartialChannel</span><span class="p">(</span>
+            <span class="n">state</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_state</span><span class="p">,</span>
+            <span class="nb">id</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">channel_id</span><span class="p">,</span>
+            <span class="n">guild_id</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">guild_id</span>
+        <span class="p">)</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">guild</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;Guild | PartialGuild | None&quot;</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot; `PartialGuild` | `None`: Returns the guild the message was sent in &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">guild_id</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">None</span>
+
+        <span class="n">cache</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_state</span><span class="o">.</span><span class="n">cache</span><span class="o">.</span><span class="n">get_guild</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">guild_id</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">cache</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">cache</span>
+
+        <span class="kn">from</span> <span class="nn">.guild</span> <span class="kn">import</span> <span class="n">PartialGuild</span>
+        <span class="k">return</span> <span class="n">PartialGuild</span><span class="p">(</span><span class="n">state</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_state</span><span class="p">,</span> <span class="nb">id</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">guild_id</span><span class="p">)</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">jump_url</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">JumpURL</span><span class="p">:</span>
@@ -927,14 +1111,42 @@
 
 <div class="viewcode-block" id="PartialMessage.delete">
 <a class="viewcode-back" href="../../api/message.html#discord_http.message.PartialMessage.delete">[docs]</a>
-    <span class="k">async</span> <span class="k">def</span> <span class="nf">delete</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">reason</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot; Delete the message &quot;&quot;&quot;</span>
-        <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">_state</span><span class="o">.</span><span class="n">query</span><span class="p">(</span>
-            <span class="s2">&quot;DELETE&quot;</span><span class="p">,</span>
-            <span class="sa">f</span><span class="s2">&quot;/channels/</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">channel</span><span class="o">.</span><span class="n">id</span><span class="si">}</span><span class="s2">/messages/</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">id</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
-            <span class="n">reason</span><span class="o">=</span><span class="n">reason</span><span class="p">,</span>
-            <span class="n">res_method</span><span class="o">=</span><span class="s2">&quot;text&quot;</span>
-        <span class="p">)</span></div>
+    <span class="k">async</span> <span class="k">def</span> <span class="nf">delete</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="o">*</span><span class="p">,</span>
+        <span class="n">delay</span><span class="p">:</span> <span class="nb">float</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">reason</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Delete the message</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        delay: `float` | `None`:</span>
+<span class="sd">            How many seconds it should wait in background to delete</span>
+<span class="sd">        reason: `str` | `None`:</span>
+<span class="sd">            Reason for deleting the message</span>
+<span class="sd">            (Only applies when deleting messages not made by yourself)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">async</span> <span class="k">def</span> <span class="nf">_delete</span><span class="p">():</span>
+            <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">_state</span><span class="o">.</span><span class="n">query</span><span class="p">(</span>
+                <span class="s2">&quot;DELETE&quot;</span><span class="p">,</span>
+                <span class="sa">f</span><span class="s2">&quot;/channels/</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">channel</span><span class="o">.</span><span class="n">id</span><span class="si">}</span><span class="s2">/messages/</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">id</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+                <span class="n">reason</span><span class="o">=</span><span class="n">reason</span><span class="p">,</span>
+                <span class="n">res_method</span><span class="o">=</span><span class="s2">&quot;text&quot;</span>
+            <span class="p">)</span>
+
+        <span class="k">async</span> <span class="k">def</span> <span class="nf">_delete_after</span><span class="p">(</span><span class="n">d</span><span class="p">:</span> <span class="nb">float</span><span class="p">):</span>
+            <span class="k">await</span> <span class="n">asyncio</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="n">d</span><span class="p">)</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="k">await</span> <span class="n">_delete</span><span class="p">()</span>
+            <span class="k">except</span> <span class="n">HTTPException</span><span class="p">:</span>
+                <span class="k">pass</span>
+
+        <span class="k">if</span> <span class="n">delay</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">asyncio</span><span class="o">.</span><span class="n">create_task</span><span class="p">(</span><span class="n">_delete_after</span><span class="p">(</span><span class="n">delay</span><span class="p">))</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">await</span> <span class="n">_delete</span><span class="p">()</span></div>
 
 
 <div class="viewcode-block" id="PartialMessage.expire_poll">
@@ -990,22 +1202,6 @@
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">answer</span><span class="p">,</span> <span class="n">PollAnswer</span><span class="p">):</span>
             <span class="n">answer_id</span> <span class="o">=</span> <span class="n">answer</span><span class="o">.</span><span class="n">id</span>
 
-        <span class="k">def</span> <span class="nf">_resolve_id</span><span class="p">(</span><span class="n">entry</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
-            <span class="k">match</span> <span class="n">entry</span><span class="p">:</span>
-                <span class="k">case</span> <span class="n">x</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">Snowflake</span><span class="p">):</span>
-                    <span class="k">return</span> <span class="nb">int</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
-
-                <span class="k">case</span> <span class="n">x</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="nb">int</span><span class="p">):</span>
-                    <span class="k">return</span> <span class="n">x</span>
-
-                <span class="k">case</span> <span class="n">x</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
-                    <span class="k">if</span> <span class="ow">not</span> <span class="n">x</span><span class="o">.</span><span class="n">isdigit</span><span class="p">():</span>
-                        <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;Got a string that was not a Snowflake ID for after&quot;</span><span class="p">)</span>
-                    <span class="k">return</span> <span class="nb">int</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
-
-                <span class="k">case</span><span class="w"> </span><span class="k">_</span><span class="p">:</span>
-                    <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;Got an unknown type for after&quot;</span><span class="p">)</span>
-
         <span class="k">async</span> <span class="k">def</span> <span class="nf">_get_history</span><span class="p">(</span><span class="n">limit</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
             <span class="n">params</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;limit&quot;</span><span class="p">:</span> <span class="nb">min</span><span class="p">(</span><span class="n">limit</span><span class="p">,</span> <span class="mi">100</span><span class="p">)}</span>
             <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
@@ -1029,7 +1225,7 @@
             <span class="k">return</span> <span class="n">r</span><span class="o">.</span><span class="n">response</span><span class="p">,</span> <span class="n">after_id</span><span class="p">,</span> <span class="n">limit</span>
 
         <span class="k">if</span> <span class="n">after</span><span class="p">:</span>
-            <span class="n">strategy</span><span class="p">,</span> <span class="n">state</span> <span class="o">=</span> <span class="n">_after_http</span><span class="p">,</span> <span class="n">_resolve_id</span><span class="p">(</span><span class="n">after</span><span class="p">)</span>
+            <span class="n">strategy</span><span class="p">,</span> <span class="n">state</span> <span class="o">=</span> <span class="n">_after_http</span><span class="p">,</span> <span class="n">utils</span><span class="o">.</span><span class="n">normalize_entity_id</span><span class="p">(</span><span class="n">after</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="n">strategy</span><span class="p">,</span> <span class="n">state</span> <span class="o">=</span> <span class="n">_after_http</span><span class="p">,</span> <span class="kc">None</span>
 
@@ -1185,8 +1381,9 @@
             <span class="n">message_reference</span><span class="o">=</span><span class="n">MessageReference</span><span class="p">(</span>
                 <span class="n">state</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_state</span><span class="p">,</span>
                 <span class="n">data</span><span class="o">=</span><span class="p">{</span>
+                    <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="nb">int</span><span class="p">(</span><span class="n">MessageReferenceType</span><span class="o">.</span><span class="n">default</span><span class="p">),</span>
                     <span class="s2">&quot;channel_id&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">channel_id</span><span class="p">,</span>
-                    <span class="s2">&quot;message_id&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">id</span>
+                    <span class="s2">&quot;message_id&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">id</span><span class="p">,</span>
                 <span class="p">}</span>
             <span class="p">)</span>
         <span class="p">)</span>
@@ -1292,6 +1489,17 @@
         <span class="p">)</span></div>
 
 
+<div class="viewcode-block" id="PartialMessage.remove_all_reactions">
+<a class="viewcode-back" href="../../api/message.html#discord_http.message.PartialMessage.remove_all_reactions">[docs]</a>
+    <span class="k">async</span> <span class="k">def</span> <span class="nf">remove_all_reactions</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot; Remove all reactions from the message &quot;&quot;&quot;</span>
+        <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">_state</span><span class="o">.</span><span class="n">query</span><span class="p">(</span>
+            <span class="s2">&quot;DELETE&quot;</span><span class="p">,</span>
+            <span class="sa">f</span><span class="s2">&quot;/channels/</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">channel</span><span class="o">.</span><span class="n">id</span><span class="si">}</span><span class="s2">/messages/</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">id</span><span class="si">}</span><span class="s2">/reactions&quot;</span><span class="p">,</span>
+            <span class="n">res_method</span><span class="o">=</span><span class="s2">&quot;text&quot;</span>
+        <span class="p">)</span></div>
+
+
 <div class="viewcode-block" id="PartialMessage.create_public_thread">
 <a class="viewcode-back" href="../../api/message.html#discord_http.message.PartialMessage.create_public_thread">[docs]</a>
     <span class="k">async</span> <span class="k">def</span> <span class="nf">create_public_thread</span><span class="p">(</span>
@@ -1346,7 +1554,7 @@
 
         <span class="n">r</span> <span class="o">=</span> <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">_state</span><span class="o">.</span><span class="n">query</span><span class="p">(</span>
             <span class="s2">&quot;POST&quot;</span><span class="p">,</span>
-            <span class="sa">f</span><span class="s2">&quot;/channels/</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">channel</span><span class="o">.</span><span class="n">id</span><span class="si">}</span><span class="s2">/threads/messages/</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">id</span><span class="si">}</span><span class="s2">/threads&quot;</span><span class="p">,</span>
+            <span class="sa">f</span><span class="s2">&quot;/channels/</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">channel</span><span class="o">.</span><span class="n">id</span><span class="si">}</span><span class="s2">/messages/</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">id</span><span class="si">}</span><span class="s2">/threads&quot;</span><span class="p">,</span>
             <span class="n">json</span><span class="o">=</span><span class="n">payload</span><span class="p">,</span>
             <span class="n">reason</span><span class="o">=</span><span class="n">reason</span>
         <span class="p">)</span>
@@ -1360,6 +1568,40 @@
 
 
 
+<span class="k">class</span> <span class="nc">MessageSnapshot</span><span class="p">:</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="o">*</span><span class="p">,</span>
+        <span class="n">state</span><span class="p">:</span> <span class="s2">&quot;DiscordAPI&quot;</span><span class="p">,</span>
+        <span class="n">data</span><span class="p">:</span> <span class="nb">dict</span>
+    <span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_state</span> <span class="o">=</span> <span class="n">state</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">type</span><span class="p">:</span> <span class="n">MessageType</span> <span class="o">=</span> <span class="n">MessageType</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;type&quot;</span><span class="p">,</span> <span class="mi">0</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">content</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;content&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">timestamp</span><span class="p">:</span> <span class="n">datetime</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">edited_timestamp</span><span class="p">:</span> <span class="n">datetime</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">embeds</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">Embed</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="n">Embed</span><span class="o">.</span><span class="n">from_dict</span><span class="p">(</span><span class="n">embed</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">embed</span> <span class="ow">in</span> <span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;embeds&quot;</span><span class="p">,</span> <span class="p">[])</span>
+        <span class="p">]</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">attachments</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">Attachment</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="n">Attachment</span><span class="p">(</span><span class="n">state</span><span class="o">=</span><span class="n">state</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">a</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;attachments&quot;</span><span class="p">,</span> <span class="p">[])</span>
+        <span class="p">]</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_from_data</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_from_data</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="nb">dict</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;edited_timestamp&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">edited_timestamp</span> <span class="o">=</span> <span class="n">utils</span><span class="o">.</span><span class="n">parse_time</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="s2">&quot;edited_timestamp&quot;</span><span class="p">])</span>
+        <span class="k">if</span> <span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;timestamp&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">timestamp</span> <span class="o">=</span> <span class="n">utils</span><span class="o">.</span><span class="n">parse_time</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="s2">&quot;timestamp&quot;</span><span class="p">])</span>
+
+
 <div class="viewcode-block" id="Message">
 <a class="viewcode-back" href="../../api/message.html#discord_http.message.Message">[docs]</a>
 <span class="k">class</span> <span class="nc">Message</span><span class="p">(</span><span class="n">PartialMessage</span><span class="p">):</span>
@@ -1368,19 +1610,18 @@
         <span class="o">*</span><span class="p">,</span>
         <span class="n">state</span><span class="p">:</span> <span class="s2">&quot;DiscordAPI&quot;</span><span class="p">,</span>
         <span class="n">data</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span>
-        <span class="n">guild</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="s2">&quot;PartialGuild&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="n">guild</span><span class="p">:</span> <span class="s2">&quot;PartialGuild | None&quot;</span> <span class="o">=</span> <span class="kc">None</span>
     <span class="p">):</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
             <span class="n">state</span><span class="o">=</span><span class="n">state</span><span class="p">,</span>
+            <span class="nb">id</span><span class="o">=</span><span class="nb">int</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="s2">&quot;id&quot;</span><span class="p">]),</span>
             <span class="n">channel_id</span><span class="o">=</span><span class="nb">int</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="s2">&quot;channel_id&quot;</span><span class="p">]),</span>
-            <span class="nb">id</span><span class="o">=</span><span class="nb">int</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="s2">&quot;id&quot;</span><span class="p">])</span>
+            <span class="n">guild_id</span><span class="o">=</span><span class="n">guild</span><span class="o">.</span><span class="n">id</span> <span class="k">if</span> <span class="n">guild</span> <span class="k">else</span> <span class="kc">None</span>
         <span class="p">)</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">guild</span> <span class="o">=</span> <span class="n">guild</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">guild_id</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="n">guild</span><span class="o">.</span><span class="n">id</span> <span class="k">if</span> <span class="n">guild</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="kc">None</span>
-
-        <span class="bp">self</span><span class="o">.</span><span class="n">content</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;content&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">author</span><span class="p">:</span> <span class="n">User</span> <span class="o">=</span> <span class="n">User</span><span class="p">(</span><span class="n">state</span><span class="o">=</span><span class="n">state</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">data</span><span class="p">[</span><span class="s2">&quot;author&quot;</span><span class="p">])</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">type</span><span class="p">:</span> <span class="n">MessageType</span> <span class="o">=</span> <span class="n">MessageType</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="s2">&quot;type&quot;</span><span class="p">])</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">content</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;content&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">author</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">User</span><span class="p">,</span> <span class="s2">&quot;Member&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">User</span><span class="p">(</span><span class="n">state</span><span class="o">=</span><span class="n">state</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">data</span><span class="p">[</span><span class="s2">&quot;author&quot;</span><span class="p">])</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">pinned</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;pinned&quot;</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">mention_everyone</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;mention_everyone&quot;</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">tts</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;tts&quot;</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
@@ -1401,16 +1642,22 @@
             <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;sticker_items&quot;</span><span class="p">,</span> <span class="p">[])</span>
         <span class="p">]</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">user_mentions</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">User</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span>
-            <span class="n">User</span><span class="p">(</span><span class="n">state</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_state</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">g</span><span class="p">)</span>
-            <span class="k">for</span> <span class="n">g</span> <span class="ow">in</span> <span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;mentions&quot;</span><span class="p">,</span> <span class="p">[])</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">reactions</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">MessageReaction</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="n">MessageReaction</span><span class="p">(</span><span class="n">state</span><span class="o">=</span><span class="n">state</span><span class="p">,</span> <span class="n">message</span><span class="o">=</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">g</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">g</span> <span class="ow">in</span> <span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;reactions&quot;</span><span class="p">,</span> <span class="p">[])</span>
         <span class="p">]</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">view</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">View</span><span class="p">]</span> <span class="o">=</span> <span class="n">View</span><span class="o">.</span><span class="n">from_dict</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">edited_timestamp</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">datetime</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">mentions</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="s2">&quot;Member | User&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">message_reference</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">MessageReference</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">referenced_message</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Message</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">view</span><span class="p">:</span> <span class="n">View</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">edited_timestamp</span><span class="p">:</span> <span class="n">datetime</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">reference</span><span class="p">:</span> <span class="n">MessageReference</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">resolved_reply</span><span class="p">:</span> <span class="n">Message</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">resolved_forward</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">MessageSnapshot</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">interaction</span><span class="p">:</span> <span class="n">MessageInteraction</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_from_data</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
 
@@ -1421,17 +1668,34 @@
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">content</span> <span class="ow">or</span> <span class="s2">&quot;&quot;</span>
 
     <span class="k">def</span> <span class="nf">_from_data</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="nb">dict</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;components&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">view</span> <span class="o">=</span> <span class="n">View</span><span class="o">.</span><span class="n">from_dict</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+
         <span class="k">if</span> <span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;message_reference&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">):</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">message_reference</span> <span class="o">=</span> <span class="n">MessageReference</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">reference</span> <span class="o">=</span> <span class="n">MessageReference</span><span class="p">(</span>
                 <span class="n">state</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_state</span><span class="p">,</span>
                 <span class="n">data</span><span class="o">=</span><span class="n">data</span><span class="p">[</span><span class="s2">&quot;message_reference&quot;</span><span class="p">]</span>
             <span class="p">)</span>
 
         <span class="k">if</span> <span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;referenced_message&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">):</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">referenced_message</span> <span class="o">=</span> <span class="n">Message</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">resolved_reply</span> <span class="o">=</span> <span class="n">Message</span><span class="p">(</span>
                 <span class="n">state</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_state</span><span class="p">,</span>
                 <span class="n">data</span><span class="o">=</span><span class="n">data</span><span class="p">[</span><span class="s2">&quot;referenced_message&quot;</span><span class="p">],</span>
                 <span class="n">guild</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">guild</span>
+            <span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;interaction_metadata&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">interaction</span> <span class="o">=</span> <span class="n">MessageInteraction</span><span class="p">(</span>
+                <span class="n">state</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_state</span><span class="p">,</span>
+                <span class="n">data</span><span class="o">=</span><span class="n">data</span><span class="p">[</span><span class="s2">&quot;interaction_metadata&quot;</span><span class="p">]</span>
+            <span class="p">)</span>
+
+        <span class="k">for</span> <span class="n">m</span> <span class="ow">in</span> <span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;message_snapshots&quot;</span><span class="p">,</span> <span class="p">[]):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">resolved_forward</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+                <span class="n">MessageSnapshot</span><span class="p">(</span>
+                    <span class="n">state</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_state</span><span class="p">,</span>
+                    <span class="n">data</span><span class="o">=</span><span class="n">m</span>
+                <span class="p">)</span>
             <span class="p">)</span>
 
         <span class="k">if</span> <span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;poll&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">):</span>
@@ -1439,6 +1703,48 @@
 
         <span class="k">if</span> <span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;edited_timestamp&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">):</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">edited_timestamp</span> <span class="o">=</span> <span class="n">utils</span><span class="o">.</span><span class="n">parse_time</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="s2">&quot;edited_timestamp&quot;</span><span class="p">])</span>
+
+        <span class="k">if</span> <span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;member&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">):</span>
+            <span class="kn">from</span> <span class="nn">.member</span> <span class="kn">import</span> <span class="n">Member</span>
+
+            <span class="c1"># Append author data to member data</span>
+            <span class="n">data</span><span class="p">[</span><span class="s2">&quot;member&quot;</span><span class="p">][</span><span class="s2">&quot;user&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s2">&quot;author&quot;</span><span class="p">]</span>
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">author</span> <span class="o">=</span> <span class="n">Member</span><span class="p">(</span>
+                <span class="n">state</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_state</span><span class="p">,</span>
+                <span class="n">guild</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">guild</span><span class="p">,</span>  <span class="c1"># type: ignore</span>
+                <span class="n">data</span><span class="o">=</span><span class="n">data</span><span class="p">[</span><span class="s2">&quot;member&quot;</span><span class="p">]</span>
+            <span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;mentions&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">):</span>
+            <span class="kn">from</span> <span class="nn">.member</span> <span class="kn">import</span> <span class="n">Member</span>
+
+            <span class="k">for</span> <span class="n">m</span> <span class="ow">in</span> <span class="n">data</span><span class="p">[</span><span class="s2">&quot;mentions&quot;</span><span class="p">]:</span>
+                <span class="k">if</span> <span class="n">m</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;member&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">guild_id</span><span class="p">:</span>
+                    <span class="c1"># This is only done through the gateway</span>
+                    <span class="n">_fake_member</span> <span class="o">=</span> <span class="n">m</span><span class="p">[</span><span class="s2">&quot;member&quot;</span><span class="p">]</span>
+                    <span class="n">_fake_member</span><span class="p">[</span><span class="s2">&quot;user&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">m</span>
+                    <span class="n">Member</span><span class="p">(</span>
+                        <span class="n">state</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_state</span><span class="p">,</span>
+                        <span class="n">guild</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">guild</span><span class="p">,</span>  <span class="c1"># type: ignore</span>
+                        <span class="n">data</span><span class="o">=</span><span class="n">_fake_member</span>
+                    <span class="p">)</span>
+
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">User</span><span class="p">(</span><span class="n">state</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_state</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">m</span><span class="p">)</span>
+
+<div class="viewcode-block" id="Message.is_system">
+<a class="viewcode-back" href="../../api/message.html#discord_http.message.Message.is_system">[docs]</a>
+    <span class="k">def</span> <span class="nf">is_system</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot; `bool`: Returns whether the message is a system message &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">type</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">(</span>
+            <span class="n">MessageType</span><span class="o">.</span><span class="n">default</span><span class="p">,</span>
+            <span class="n">MessageType</span><span class="o">.</span><span class="n">reply</span><span class="p">,</span>
+            <span class="n">MessageType</span><span class="o">.</span><span class="n">chat_input_command</span><span class="p">,</span>
+            <span class="n">MessageType</span><span class="o">.</span><span class="n">context_menu_command</span><span class="p">,</span>
+            <span class="n">MessageType</span><span class="o">.</span><span class="n">thread_starter_message</span>
+        <span class="p">)</span></div>
+
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">emojis</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="n">EmojiParser</span><span class="p">]:</span>
@@ -1457,12 +1763,16 @@
         <span class="p">)</span>
 
     <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">role_mentions</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="n">PartialRole</span><span class="p">]:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot; `list[PartialRole]`: Returns the role mentions in the message &quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="nf">role_mentions</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="n">Role</span> <span class="o">|</span> <span class="n">PartialRole</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        `list[PartialRole]`: Returns the role mentions in the message.</span>
+<span class="sd">        Can return full role object if guild and role cache is enabled</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">guild_id</span><span class="p">:</span>
             <span class="k">return</span> <span class="p">[]</span>
 
         <span class="k">return</span> <span class="p">[</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">guild</span><span class="o">.</span><span class="n">get_role</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">role_id</span><span class="p">))</span> <span class="ow">or</span>
             <span class="n">PartialRole</span><span class="p">(</span>
                 <span class="n">state</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_state</span><span class="p">,</span>
                 <span class="nb">id</span><span class="o">=</span><span class="nb">int</span><span class="p">(</span><span class="n">role_id</span><span class="p">),</span>
@@ -1472,11 +1782,15 @@
         <span class="p">]</span>
 
     <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">channel_mentions</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="s2">&quot;PartialChannel&quot;</span><span class="p">]:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot; `list[PartialChannel]`: Returns the channel mentions in the message &quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="nf">channel_mentions</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="s2">&quot;BaseChannel | PartialChannel&quot;</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        `list[PartialChannel]`: Returns the channel mentions in the message</span>
+<span class="sd">        Can return full role object if guild and channel cache is enabled</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="kn">from</span> <span class="nn">.channel</span> <span class="kn">import</span> <span class="n">PartialChannel</span>
 
         <span class="k">return</span> <span class="p">[</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">guild</span><span class="o">.</span><span class="n">get_channel</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">channel_id</span><span class="p">))</span> <span class="ow">or</span>
             <span class="n">PartialChannel</span><span class="p">(</span><span class="n">state</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_state</span><span class="p">,</span> <span class="nb">id</span><span class="o">=</span><span class="nb">int</span><span class="p">(</span><span class="n">channel_id</span><span class="p">))</span>
             <span class="k">for</span> <span class="n">channel_id</span> <span class="ow">in</span> <span class="n">utils</span><span class="o">.</span><span class="n">re_channel</span><span class="o">.</span><span class="n">findall</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">content</span><span class="p">)</span>
         <span class="p">]</span>
@@ -1573,7 +1887,7 @@
     <span class="k">async</span> <span class="k">def</span> <span class="nf">delete</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="o">*</span><span class="p">,</span>
-        <span class="n">reason</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="n">delay</span><span class="p">:</span> <span class="nb">float</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Delete the webhook message</span>
@@ -1583,13 +1897,25 @@
 <span class="sd">        reason: `Optional[str]`</span>
 <span class="sd">            Reason for deleting the message</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">_state</span><span class="o">.</span><span class="n">query</span><span class="p">(</span>
-            <span class="s2">&quot;DELETE&quot;</span><span class="p">,</span>
-            <span class="sa">f</span><span class="s2">&quot;/webhooks/</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">application_id</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">token</span><span class="si">}</span><span class="s2">/messages/</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">id</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
-            <span class="n">reason</span><span class="o">=</span><span class="n">reason</span><span class="p">,</span>
-            <span class="n">webhook</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-            <span class="n">res_method</span><span class="o">=</span><span class="s2">&quot;text&quot;</span>
-        <span class="p">)</span></div>
+        <span class="k">async</span> <span class="k">def</span> <span class="nf">_delete</span><span class="p">():</span>
+            <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">_state</span><span class="o">.</span><span class="n">query</span><span class="p">(</span>
+                <span class="s2">&quot;DELETE&quot;</span><span class="p">,</span>
+                <span class="sa">f</span><span class="s2">&quot;/webhooks/</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">application_id</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">token</span><span class="si">}</span><span class="s2">/messages/</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">id</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+                <span class="n">webhook</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                <span class="n">res_method</span><span class="o">=</span><span class="s2">&quot;text&quot;</span>
+            <span class="p">)</span>
+
+        <span class="k">async</span> <span class="k">def</span> <span class="nf">_delete_after</span><span class="p">(</span><span class="n">d</span><span class="p">:</span> <span class="nb">float</span><span class="p">):</span>
+            <span class="k">await</span> <span class="n">asyncio</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="n">d</span><span class="p">)</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="k">await</span> <span class="n">_delete</span><span class="p">()</span>
+            <span class="k">except</span> <span class="n">HTTPException</span><span class="p">:</span>
+                <span class="k">pass</span>
+
+        <span class="k">if</span> <span class="n">delay</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">asyncio</span><span class="o">.</span><span class="n">create_task</span><span class="p">(</span><span class="n">_delete_after</span><span class="p">(</span><span class="n">delay</span><span class="p">))</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">await</span> <span class="n">_delete</span><span class="p">()</span></div>
 </div>
 
 </pre></div>
@@ -1625,7 +1951,7 @@
     </aside>
   </div>
 </div><script src="../../_static/documentation_options.js?v=d45e8c67"></script>
-    <script src="../../_static/doctools.js?v=9a2dae69"></script>
+    <script src="../../_static/doctools.js?v=9bcbadda"></script>
     <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../_static/scripts/furo.js?v=5fa4622c"></script>
     </body>

@@ -3,9 +3,9 @@
   <head><meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width,initial-scale=1"/>
     <meta name="color-scheme" content="light dark"><meta name="viewport" content="width=device-width, initial-scale=1" />
-<link rel="index" title="Index" href="../genindex.html" /><link rel="search" title="Search" href="../search.html" /><link rel="next" title="HTTP backend" href="backend.html" /><link rel="prev" title="Webhook" href="../api/webhook.html" />
+<meta content="Event references - discord.http docs" property="og:title"><meta content="This serves as a reference for all events that can be used in the bot. The events are divided into categories, and each event has a description of what it does..." name="description"><meta content="This serves as a reference for all events that can be used in the bot. The events are divided into categories, and each event has a description of what it does..." property="og:description"><meta property="og:image" content="/_static/favicon.ico"><meta name="theme-color" content="#14bae4"><meta property="og:locale" content="en_GB"><meta name="keywords" content="discord, http, api, interaction, quart, webhook, slash><meta name="revisit-after" content="2 days"><link rel="index" title="Index" href="../genindex.html" /><link rel="search" title="Search" href="../search.html" /><link rel="next" title="Gateway references" href="gateway.html" /><link rel="prev" title="Webhook" href="../api/webhook.html" />
 
-    <link rel="shortcut icon" href="../_static/favicon.ico"/><!-- Generated with Sphinx 8.0.2 and Furo 2024.08.06 -->
+    <link rel="shortcut icon" href="../_static/favicon.ico"/><!-- Generated with Sphinx 8.1.3 and Furo 2024.08.06 -->
         <title>Event references - discord.http docs</title>
       <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=fa44fd50" />
     <link rel="stylesheet" type="text/css" href="../_static/styles/furo.css?v=354aac6f" />
@@ -202,6 +202,8 @@
 <li class="toctree-l1"><a class="reference internal" href="getting_started.html">Getting started</a></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="api.html">API components</a><input class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" role="switch" type="checkbox"/><label for="toctree-checkbox-1"><div class="visually-hidden">Toggle navigation of API components</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
 <li class="toctree-l2"><a class="reference internal" href="../api/asset.html">Asset</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../api/audit.html">Audit</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../api/automod.html">AutoModRule</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../api/backend.html">Backend</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../api/channel.html">Channel</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../api/client.html">Client</a></li>
@@ -215,9 +217,10 @@
 <li class="toctree-l2"><a class="reference internal" href="../api/enums.html">Enums</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../api/errors.html">Errors</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../api/file.html">File</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../api/flag.html">Flag</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../api/flags.html">Flag</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../api/guild.html">Guild</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../api/http.html">Http</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../api/integrations.html">Integrations</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../api/invite.html">Invite</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../api/member.html">Member</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../api/mentions.html">Mentions</a></li>
@@ -226,14 +229,24 @@
 <li class="toctree-l2"><a class="reference internal" href="../api/object.html">Object</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../api/response.html">Response</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../api/role.html">Role</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../api/soundboard.html">Soundboard</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../api/sticker.html">Sticker</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../api/tasks.html">Tasks</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../api/user.html">User</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../api/view.html">View</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../api/voice.html">Vsset</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../api/webhook.html">Webhook</a></li>
 </ul>
 </li>
 <li class="toctree-l1 current current-page"><a class="current reference internal" href="#">Event references</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="gateway.html">Gateway references</a><input class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" role="switch" type="checkbox"/><label for="toctree-checkbox-2"><div class="visually-hidden">Toggle navigation of Gateway references</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../gateway/activity.html">Activity</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../gateway/client.html">Client</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../gateway/enums.html">Enums</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../gateway/flags.html">Flags</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../gateway/object.html">Object (Gateway events)</a></li>
+</ul>
+</li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">Advanced</span></p>
 <ul>
@@ -243,7 +256,7 @@
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="contribute.html">Contributing</a></li>
 <li class="toctree-l1"><a class="reference internal" href="license.html">License</a></li>
-<li class="toctree-l1"><a class="reference external" href="https://discord.gg/AlexFlipnote">Discord</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://discord.gg/yqb7vATbjH">Discord</a></li>
 <li class="toctree-l1"><a class="reference external" href="https://github.com/AlexFlipnote/discord.http">GitHub</a></li>
 </ul>
 
@@ -354,7 +367,7 @@ In order to use this event, you must have <cite>Client.debug_events</cite> set t
 <dl class="py function">
 <dt class="sig sig-object py">
 <span class="sig-name descname"><span class="pre">async</span> <span class="pre">def</span> <span class="pre">on_event_error(client,</span> <span class="pre">error)</span></span></dt>
-<dd><p>Called whenever an error occurs in an event (aka. listener)</p>
+<dd><p>Called whenever an error occurs in an event (listener)</p>
 <p>Using this event will disable the default ERROR print given by the library, and instead let you decide what it should do.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -382,6 +395,1012 @@ In order to use this event, you must have <cite>Client.debug_events</cite> set t
 </dd></dl>
 
 </section>
+<section id="gateway-events">
+<h2>Gateway events<a class="headerlink" href="#gateway-events" title="Link to this heading">¶</a></h2>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>These events are only provided if discord.http/gateway is enabled.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">discord_http</span> <span class="kn">import</span> <span class="n">Client</span>
+<span class="kn">from</span> <span class="nn">discord_http.gateway</span> <span class="kn">import</span> <span class="n">Intents</span>
+
+<span class="n">client</span> <span class="o">=</span> <span class="n">Client</span><span class="p">(</span>
+    <span class="o">...</span><span class="p">,</span>
+    <span class="n">enable_gateway</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+    <span class="c1"># intents=Intents</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<section id="shard-events">
+<h3>Shard events<a class="headerlink" href="#shard-events" title="Link to this heading">¶</a></h3>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>These events are only provided if discord.http/gateway is enabled.
+By default if the gateway is enabled, they will do <code class="docutils literal notranslate"><span class="pre">[</span>&#160; <span class="pre">INFO</span> <span class="pre">]</span></code> logs.
+You can in theory listen to the events and simply do nothing to disable the logs.</p>
+</div>
+<dl class="py function">
+<dt class="sig sig-object py">
+<span class="sig-name descname"><span class="pre">async</span> <span class="pre">def</span> <span class="pre">on_shard_ready(shard):</span></span></dt>
+<dd><p>Called whenever a shard is now ready</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>shard</strong> – <code class="xref py py-class docutils literal notranslate"><span class="pre">Shard</span></code> object with information about the shard.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py">
+<span class="sig-name descname"><span class="pre">async</span> <span class="pre">def</span> <span class="pre">on_shard_resumed(shard):</span></span></dt>
+<dd><p>Called whenever a shard is resumed</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>shard</strong> – <code class="xref py py-class docutils literal notranslate"><span class="pre">Shard</span></code> object with information about the shard.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py">
+<span class="sig-name descname"><span class="pre">async</span> <span class="pre">def</span> <span class="pre">on_shard_closed(shard,</span> <span class="pre">close_type):</span></span></dt>
+<dd><p>Called whenever a shard is closed</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>shard</strong> – <code class="xref py py-class docutils literal notranslate"><span class="pre">Shard</span></code> object with information about the shard.</p></li>
+<li><p><strong>close_type</strong> – <code class="xref py py-class docutils literal notranslate"><span class="pre">ShardCloseType</span></code> object with information about the shard close type.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+<section id="intents-guilds">
+<h3>Intents.guilds<a class="headerlink" href="#intents-guilds" title="Link to this heading">¶</a></h3>
+<dl class="py function">
+<dt class="sig sig-object py">
+<span class="sig-name descname"><span class="pre">async</span> <span class="pre">def</span> <span class="pre">on_guild_create(guild):</span></span></dt>
+<dd><p>Called whenever a guild is created (Bot was added)</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>This event is not called unless the shard is ready, to prevent spam.</p>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>guild</strong> – <code class="xref py py-class docutils literal notranslate"><span class="pre">Guild</span></code> object with information about the guild.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py">
+<span class="sig-name descname"><span class="pre">async</span> <span class="pre">def</span> <span class="pre">on_guild_update(guild):</span></span></dt>
+<dd><p>Called whenever a guild is updated.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>guild</strong> – <code class="xref py py-class docutils literal notranslate"><span class="pre">Guild</span></code> object with information about the guild.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py">
+<span class="sig-name descname"><span class="pre">async</span> <span class="pre">def</span> <span class="pre">on_guild_delete(guild):</span></span></dt>
+<dd><p>Called whenever a guild is deleted (Bot was removed)</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Depending on your cache rules, Guild will either return Full or Partial object.</p>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>guild</strong> – <code class="xref py py-class docutils literal notranslate"><span class="pre">PartialGuild</span></code> object with information about the guild.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py">
+<span class="sig-name descname"><span class="pre">async</span> <span class="pre">def</span> <span class="pre">on_guild_available(guild):</span></span></dt>
+<dd><p>Called whenever a guild was initially created, but came back from unavailable state</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Depending on your cache rules, Guild will either return Full or Partial object.</p>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>guild</strong> – <code class="xref py py-class docutils literal notranslate"><span class="pre">Guild</span></code> object with information about that guild</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py">
+<span class="sig-name descname"><span class="pre">async</span> <span class="pre">def</span> <span class="pre">on_guild_unavailable(guild):</span></span></dt>
+<dd><p>Called whenever a guild is deleted, but came back from available state</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Depending on your cache rules, Guild will either return Full or Partial object.</p>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>guild</strong> – <code class="xref py py-class docutils literal notranslate"><span class="pre">Guild</span></code> object with information about that guild</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py">
+<span class="sig-name descname"><span class="pre">async</span> <span class="pre">def</span> <span class="pre">on_guild_role_create(role):</span></span></dt>
+<dd><p>Called whenever a role was created</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Depending on your cache rules, Role.guild will either return Full or Partial object.</p>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>role</strong> – <code class="xref py py-class docutils literal notranslate"><span class="pre">Role</span></code> object with information about the role.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py">
+<span class="sig-name descname"><span class="pre">async</span> <span class="pre">def</span> <span class="pre">on_guild_role_update(role):</span></span></dt>
+<dd><p>Called whenever a role was updated</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Depending on your cache rules, Role.guild will either return Full or Partial object.</p>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>role</strong> – <code class="xref py py-class docutils literal notranslate"><span class="pre">Role</span></code> object with information about the role.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py">
+<span class="sig-name descname"><span class="pre">async</span> <span class="pre">def</span> <span class="pre">on_guild_role_delete(role):</span></span></dt>
+<dd><p>Called whenever a role was deleted</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>role</strong> – <code class="xref py py-class docutils literal notranslate"><span class="pre">PartialRole</span></code> object with information about the role.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py">
+<span class="sig-name descname"><span class="pre">async</span> <span class="pre">def</span> <span class="pre">on_channel_create(channel):</span></span></dt>
+<dd><p>Called whenever a channel is created</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Depending on what channel was made, it will either return TextChannel, VoiceChannel, etc.</p>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>channel</strong> – <code class="xref py py-class docutils literal notranslate"><span class="pre">BaseChannel</span></code> object with information about the channel.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py">
+<span class="sig-name descname"><span class="pre">async</span> <span class="pre">def</span> <span class="pre">on_channel_update(channel):</span></span></dt>
+<dd><p>Called whenever a channel is updated</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>channel</strong> – <code class="xref py py-class docutils literal notranslate"><span class="pre">BaseChannel</span></code> object with information about the channel.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py">
+<span class="sig-name descname"><span class="pre">async</span> <span class="pre">def</span> <span class="pre">on_channel_delete(channel):</span></span></dt>
+<dd><p>Called whenever a channel is deleted</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>channel</strong> – <code class="xref py py-class docutils literal notranslate"><span class="pre">BaseChannel</span></code> object with information about the channel.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py">
+<span class="sig-name descname"><span class="pre">async</span> <span class="pre">def</span> <span class="pre">on_channel_pins_update(payload):</span></span></dt>
+<dd><p>Called whenever a channel’s pins are updated</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>payload</strong> – <code class="xref py py-class docutils literal notranslate"><span class="pre">ChannelPinsUpdate</span></code> object with information about the pins.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py">
+<span class="sig-name descname"><span class="pre">async</span> <span class="pre">def</span> <span class="pre">on_thread_create(thread):</span></span></dt>
+<dd><p>Called whenever a thread is created</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Depending on what type of thread was made, it will either return <cite>PublicThread</cite>, <cite>PrivateThread</cite>, etc.</p>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>thread</strong> – <code class="xref py py-class docutils literal notranslate"><span class="pre">BaseChannel</span></code> object with information about the thread.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py">
+<span class="sig-name descname"><span class="pre">async</span> <span class="pre">def</span> <span class="pre">on_thread_update(thread):</span></span></dt>
+<dd><p>Called whenever a thread is updated</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Depending on what type of thread was updated, it will either return <cite>PublicThread</cite>, <cite>PrivateThread</cite>, etc.</p>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>thread</strong> – <code class="xref py py-class docutils literal notranslate"><span class="pre">BaseChannel</span></code> object with information about the thread.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py">
+<span class="sig-name descname"><span class="pre">async</span> <span class="pre">def</span> <span class="pre">on_thread_delete(thread):</span></span></dt>
+<dd><p>Called whenever a thread is deleted</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>thread</strong> – <code class="xref py py-class docutils literal notranslate"><span class="pre">PartialChannel</span></code> object with information about the thread.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py">
+<span class="sig-name descname"><span class="pre">async</span> <span class="pre">def</span> <span class="pre">on_thread_list_sync(payload):</span></span></dt>
+<dd><p>Called whenever a thread list is synced</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>payload</strong> – <code class="xref py py-class docutils literal notranslate"><span class="pre">ThreadListSyncPayload</span></code> object with information about the thread list.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py">
+<span class="sig-name descname"><span class="pre">async</span> <span class="pre">def</span> <span class="pre">on_thread_member_update(payload):</span></span></dt>
+<dd><p>Called whenever a thread member is updated</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>payload</strong> – <code class="xref py py-class docutils literal notranslate"><span class="pre">ThreadMembersUpdatePayload</span></code> object with information about the thread member.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py">
+<span class="sig-name descname"><span class="pre">async</span> <span class="pre">def</span> <span class="pre">on_thread_members_update(payload):</span></span></dt>
+<dd><p>Called whenever a thread members are updated</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>payload</strong> – <code class="xref py py-class docutils literal notranslate"><span class="pre">ThreadMembersUpdatePayload</span></code> object with information about the thread members.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py">
+<span class="sig-name descname"><span class="pre">async</span> <span class="pre">def</span> <span class="pre">on_stage_instance_create(stage_instance):</span></span></dt>
+<dd><p>Called whenever a stage instance is created</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Depending on your cache rules, StageInstance.guild will either return Full or Partial object.</p>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>stage_instance</strong> – <code class="xref py py-class docutils literal notranslate"><span class="pre">StageInstance</span></code> object with information about the stage instance.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py">
+<span class="sig-name descname"><span class="pre">async</span> <span class="pre">def</span> <span class="pre">on_stage_instance_update(stage_instance):</span></span></dt>
+<dd><p>Called whenever a stage instance is updated</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Depending on your cache rules, StageInstance.guild will either return Full or Partial object.</p>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>stage_instance</strong> – <code class="xref py py-class docutils literal notranslate"><span class="pre">StageInstance</span></code> object with information about the stage instance.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py">
+<span class="sig-name descname"><span class="pre">async</span> <span class="pre">def</span> <span class="pre">on_stage_instance_delete(stage_instance):</span></span></dt>
+<dd><p>Called whenever a stage instance is deleted</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Depending on your cache rules, StageInstance.guild will either return Full or Partial object.</p>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>stage_instance</strong> – <code class="xref py py-class docutils literal notranslate"><span class="pre">PartialStageInstance</span></code> object with information about the stage instance.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+<section id="intents-guild-members">
+<h3>Intents.guild_members<a class="headerlink" href="#intents-guild-members" title="Link to this heading">¶</a></h3>
+<dl class="py function">
+<dt class="sig sig-object py">
+<span class="sig-name descname"><span class="pre">async</span> <span class="pre">def</span> <span class="pre">on_guild_member_add(guild,</span> <span class="pre">member):</span></span></dt>
+<dd><p>Called whenever a member joins a guild</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Depending on your cache rules, Member.guild and guild will either return Full or Partial object.</p>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>guild</strong> – <code class="xref py py-class docutils literal notranslate"><span class="pre">Guild</span></code> | <code class="xref py py-class docutils literal notranslate"><span class="pre">PartialGuild</span></code> object with information about the guild.</p></li>
+<li><p><strong>member</strong> – <code class="xref py py-class docutils literal notranslate"><span class="pre">Member</span></code> object with information about the member.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py">
+<span class="sig-name descname"><span class="pre">async</span> <span class="pre">def</span> <span class="pre">on_guild_member_update(guild,</span> <span class="pre">member):</span></span></dt>
+<dd><p>Called whenever a member is updated</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Depending on your cache rules, Member.guild and guild will either return Full or Partial object.</p>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>guild</strong> – <code class="xref py py-class docutils literal notranslate"><span class="pre">Guild</span></code> | <code class="xref py py-class docutils literal notranslate"><span class="pre">PartialGuild</span></code> object with information about the guild.</p></li>
+<li><p><strong>member</strong> – <code class="xref py py-class docutils literal notranslate"><span class="pre">Member</span></code> object with information about the member.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py">
+<span class="sig-name descname"><span class="pre">async</span> <span class="pre">def</span> <span class="pre">on_guild_member_remove(guild,</span> <span class="pre">member):</span></span></dt>
+<dd><p>Called whenever a member leaves a guild</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Depending on your cache rules, guild will either return Full or Partial object.</p>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>guild</strong> – <code class="xref py py-class docutils literal notranslate"><span class="pre">Guild</span></code> | <code class="xref py py-class docutils literal notranslate"><span class="pre">PartialGuild</span></code> object with information about the guild.</p></li>
+<li><p><strong>member</strong> – <code class="xref py py-class docutils literal notranslate"><span class="pre">User</span></code> object with information about the member.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py">
+<span class="sig-name descname"><span class="pre">async</span> <span class="pre">def</span> <span class="pre">on_thread_members_update(payload):</span></span></dt>
+<dd><p>Called whenever a thread members are updated</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Depending on your cache rules, ThreadMember.guild will either return Full or Partial object.</p>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>payload</strong> – <code class="xref py py-class docutils literal notranslate"><span class="pre">ThreadMembersUpdatePayload</span></code> object with information about the thread members.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+<section id="intents-guild-moderation">
+<h3>Intents.guild_moderation<a class="headerlink" href="#intents-guild-moderation" title="Link to this heading">¶</a></h3>
+<dl class="py function">
+<dt class="sig sig-object py">
+<span class="sig-name descname"><span class="pre">async</span> <span class="pre">def</span> <span class="pre">on_guild_audit_log_entry_create(entry):</span></span></dt>
+<dd><p>Called whenever an audit log entry is created</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Depending on your cache rules, AuditLogEntry.guild will either return Full or Partial object.</p>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>entry</strong> – <code class="xref py py-class docutils literal notranslate"><span class="pre">AuditLogEntry</span></code> object with information about the audit log entry.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py">
+<span class="sig-name descname"><span class="pre">async</span> <span class="pre">def</span> <span class="pre">on_guild_ban_add(guild,</span> <span class="pre">user):</span></span></dt>
+<dd><p>Called whenever a user is banned from a guild</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Depending on your cache rules, guild will either return Full or Partial object.</p>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>guild</strong> – <code class="xref py py-class docutils literal notranslate"><span class="pre">Guild</span></code> | <code class="xref py py-class docutils literal notranslate"><span class="pre">PartialGuild</span></code> object with information about the guild.</p></li>
+<li><p><strong>user</strong> – <code class="xref py py-class docutils literal notranslate"><span class="pre">User</span></code> object with information about the user.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py">
+<span class="sig-name descname"><span class="pre">async</span> <span class="pre">def</span> <span class="pre">on_guild_ban_remove(guild,</span> <span class="pre">user):</span></span></dt>
+<dd><p>Called whenever a user is unbanned from a guild</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Depending on your cache rules, guild will either return Full or Partial object.</p>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>guild</strong> – <code class="xref py py-class docutils literal notranslate"><span class="pre">Guild</span></code> | <code class="xref py py-class docutils literal notranslate"><span class="pre">PartialGuild</span></code> object with information about the guild.</p></li>
+<li><p><strong>user</strong> – <code class="xref py py-class docutils literal notranslate"><span class="pre">User</span></code> object with information about the user.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+<section id="intents-guild-expressions">
+<h3>Intents.guild_expressions<a class="headerlink" href="#intents-guild-expressions" title="Link to this heading">¶</a></h3>
+<dl class="py function">
+<dt class="sig sig-object py">
+<span class="sig-name descname"><span class="pre">async</span> <span class="pre">def</span> <span class="pre">on_guild_emojis_update(guild,</span> <span class="pre">before,</span> <span class="pre">after):</span></span></dt>
+<dd><p>Called whenever guild emojis have been updated</p>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>The <code class="docutils literal notranslate"><span class="pre">before</span></code> will remain the same as <code class="docutils literal notranslate"><span class="pre">after</span></code> unless you have Guild and Emoji cache flags enabled (not partial).</p>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>guild</strong> – <code class="xref py py-class docutils literal notranslate"><span class="pre">Guild</span></code> | <code class="xref py py-class docutils literal notranslate"><span class="pre">PartialGuild</span></code> object with information about the guild.</p></li>
+<li><p><strong>before</strong> – list[<code class="xref py py-class docutils literal notranslate"><span class="pre">Emoji</span></code>] emojis before the update.</p></li>
+<li><p><strong>after</strong> – list[<code class="xref py py-class docutils literal notranslate"><span class="pre">Emoji</span></code>] emojis after the update.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py">
+<span class="sig-name descname"><span class="pre">async</span> <span class="pre">def</span> <span class="pre">on_guild_stickers_update(guild,</span> <span class="pre">before,</span> <span class="pre">after):</span></span></dt>
+<dd><p>Called whenever guild stickers have been updated</p>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>The <code class="docutils literal notranslate"><span class="pre">before</span></code> will remain the same as <code class="docutils literal notranslate"><span class="pre">after</span></code> unless you have Guild and Sticker cache flags enabled (not partial).</p>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>guild</strong> – <code class="xref py py-class docutils literal notranslate"><span class="pre">Guild</span></code> | <code class="xref py py-class docutils literal notranslate"><span class="pre">PartialGuild</span></code> object with information about the guild.</p></li>
+<li><p><strong>before</strong> – list[<code class="xref py py-class docutils literal notranslate"><span class="pre">Sticker</span></code>] stickers before the update.</p></li>
+<li><p><strong>after</strong> – list[<code class="xref py py-class docutils literal notranslate"><span class="pre">Sticker</span></code>] stickers after the update.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py">
+<span class="sig-name descname"><span class="pre">async</span> <span class="pre">def</span> <span class="pre">on_guild_soundboard_sound_create(sound):</span></span></dt>
+<dd><p>Called whenever a soundboard sound is created</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Depending on your cache rules, SoundboardSound.guild will either return Full or Partial object.</p>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>sound</strong> – <code class="xref py py-class docutils literal notranslate"><span class="pre">SoundboardSound</span></code> object with information about the soundboard sound.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py">
+<span class="sig-name descname"><span class="pre">async</span> <span class="pre">def</span> <span class="pre">on_guild_soundboard_sound_update(sound):</span></span></dt>
+<dd><p>Called whenever a soundboard sound is updated</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Depending on your cache rules, SoundboardSound.guild will either return Full or Partial object.</p>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>sound</strong> – <code class="xref py py-class docutils literal notranslate"><span class="pre">SoundboardSound</span></code> object with information about the soundboard sound.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py">
+<span class="sig-name descname"><span class="pre">async</span> <span class="pre">def</span> <span class="pre">on_guild_soundboard_sound_delete(sound):</span></span></dt>
+<dd><p>Called whenever a soundboard sound is deleted</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Depending on your cache rules, SoundboardSound.guild will either return Full or Partial object.</p>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>sound</strong> – <code class="xref py py-class docutils literal notranslate"><span class="pre">SoundboardSound</span></code> object with information about the soundboard sound.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py">
+<span class="sig-name descname"><span class="pre">async</span> <span class="pre">def</span> <span class="pre">on_guild_soundboard_sounds_update(sounds):</span></span></dt>
+<dd><p>Called whenever a soundboard sounds are updated</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Depending on your cache rules, sounds[].guild will either return Full or Partial object.</p>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>sounds</strong> – list[<code class="xref py py-class docutils literal notranslate"><span class="pre">SoundboardSound</span></code>] object with information about the soundboard sounds.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+<section id="intents-guild-integrations">
+<h3>Intents.guild_integrations<a class="headerlink" href="#intents-guild-integrations" title="Link to this heading">¶</a></h3>
+<dl class="py function">
+<dt class="sig sig-object py">
+<span class="sig-name descname"><span class="pre">async</span> <span class="pre">def</span> <span class="pre">on_guild_integrations_update(guild):</span></span></dt>
+<dd><p>Called whenever a guild integration is updated</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Depending on your cache rules, guild will either return Full or Partial object.</p>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>guild</strong> – <code class="xref py py-class docutils literal notranslate"><span class="pre">Guild</span></code> | <code class="xref py py-class docutils literal notranslate"><span class="pre">PartialGuild</span></code> object with information about the guild.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py">
+<span class="sig-name descname"><span class="pre">async</span> <span class="pre">def</span> <span class="pre">on_integration_create(integration):</span></span></dt>
+<dd><p>Called whenever an integration is created</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Depending on your cache rules, Integration.guild will either return Full or Partial object.</p>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>integration</strong> – <code class="xref py py-class docutils literal notranslate"><span class="pre">Integration</span></code> object with information about the integration.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py">
+<span class="sig-name descname"><span class="pre">async</span> <span class="pre">def</span> <span class="pre">on_integration_update(integration):</span></span></dt>
+<dd><p>Called whenever an integration is updated</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Depending on your cache rules, Integration.guild will either return Full or Partial object.</p>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>integration</strong> – <code class="xref py py-class docutils literal notranslate"><span class="pre">Integration</span></code> object with information about the integration.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py">
+<span class="sig-name descname"><span class="pre">async</span> <span class="pre">def</span> <span class="pre">on_integration_delete(integration):</span></span></dt>
+<dd><p>Called whenever an integration is deleted</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>integration</strong> – <code class="xref py py-class docutils literal notranslate"><span class="pre">PartialIntegration</span></code> object with information about the integration.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+<section id="intents-guild-webhooks">
+<h3>Intents.guild_webhooks<a class="headerlink" href="#intents-guild-webhooks" title="Link to this heading">¶</a></h3>
+<dl class="py function">
+<dt class="sig sig-object py">
+<span class="sig-name descname"><span class="pre">async</span> <span class="pre">def</span> <span class="pre">on_webhooks_update(channel):</span></span></dt>
+<dd><p>Called whenever a webhook is updated</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Depending on your cache rules, channel will either return TextChannel/VoiceChannel/etc. or Partial object.</p>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>channel</strong> – <code class="xref py py-class docutils literal notranslate"><span class="pre">PartialChannel</span></code> | <code class="xref py py-class docutils literal notranslate"><span class="pre">BaseChannel</span></code>* object with information about the channel.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+<section id="intents-guild-invites">
+<h3>Intents.guild_invites<a class="headerlink" href="#intents-guild-invites" title="Link to this heading">¶</a></h3>
+<dl class="py function">
+<dt class="sig sig-object py">
+<span class="sig-name descname"><span class="pre">async</span> <span class="pre">def</span> <span class="pre">on_invite_create(invite):</span></span></dt>
+<dd><p>Called whenever an invite is created</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>invite</strong> – <code class="xref py py-class docutils literal notranslate"><span class="pre">Invite</span></code> object with information about the invite.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py">
+<span class="sig-name descname"><span class="pre">async</span> <span class="pre">def</span> <span class="pre">on_invite_delete(invite):</span></span></dt>
+<dd><p>Called whenever an invite is deleted</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>invite</strong> – <code class="xref py py-class docutils literal notranslate"><span class="pre">PartialInvite</span></code> object with information about the invite.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+<section id="intents-guild-voice-states">
+<h3>Intents.guild_voice_states<a class="headerlink" href="#intents-guild-voice-states" title="Link to this heading">¶</a></h3>
+<dl class="py function">
+<dt class="sig sig-object py">
+<span class="sig-name descname"><span class="pre">async</span> <span class="pre">def</span> <span class="pre">on_voice_state_update(before_voice,</span> <span class="pre">after_voice):</span></span></dt>
+<dd><p>Called whenever a voice state is updated</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Depending on your cache rules, before_voice will either return Full, Partial object or None.</p>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>before_voice</strong> – <code class="xref py py-class docutils literal notranslate"><span class="pre">VoiceState</span></code> object with information about the new voice state.</p></li>
+<li><p><strong>after_voice</strong> – <code class="xref py py-class docutils literal notranslate"><span class="pre">VoiceState</span></code> object with information about the new voice state.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+<section id="intents-guild-presences">
+<h3>Intents.guild_presences<a class="headerlink" href="#intents-guild-presences" title="Link to this heading">¶</a></h3>
+<dl class="py function">
+<dt class="sig sig-object py">
+<span class="sig-name descname"><span class="pre">async</span> <span class="pre">def</span> <span class="pre">on_presence_update(presence):</span></span></dt>
+<dd><p>Called whenever a presence is updated</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Depending on your cache rules, Presence.guild and Presence.user will either return Full or Partial object.</p>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>presence</strong> – <code class="xref py py-class docutils literal notranslate"><span class="pre">Presence</span></code> object with information about the presence.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+<section id="intents-guild-messages">
+<h3>Intents.guild_messages<a class="headerlink" href="#intents-guild-messages" title="Link to this heading">¶</a></h3>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Message.content will only return something if you have enabled <cite>Intents.message_content</cite>.</p>
+</div>
+<dl class="py function">
+<dt class="sig sig-object py">
+<span class="sig-name descname"><span class="pre">async</span> <span class="pre">def</span> <span class="pre">on_message_create(message):</span></span></dt>
+<dd><p>Called whenever a message is created</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>message</strong> – <code class="xref py py-class docutils literal notranslate"><span class="pre">Message</span></code> object with information about the message.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py">
+<span class="sig-name descname"><span class="pre">async</span> <span class="pre">def</span> <span class="pre">on_message_update(message):</span></span></dt>
+<dd><p>Called whenever a message is updated</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>message</strong> – <code class="xref py py-class docutils literal notranslate"><span class="pre">Message</span></code> object with information about the message.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py">
+<span class="sig-name descname"><span class="pre">async</span> <span class="pre">def</span> <span class="pre">on_message_delete(message):</span></span></dt>
+<dd><p>Called whenever a message is deleted</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>message</strong> – <code class="xref py py-class docutils literal notranslate"><span class="pre">PartialMessage</span></code> object with information about the message.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py">
+<span class="sig-name descname"><span class="pre">async</span> <span class="pre">def</span> <span class="pre">on_message_delete_bulk(payload):</span></span></dt>
+<dd><p>Called whenever a message is deleted in bulk</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Depending on your cache rules, payload.guild will either return Full or Partial object.</p>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>payload</strong> – <code class="xref py py-class docutils literal notranslate"><span class="pre">BulkDeletePayload</span></code> object with information about the message.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+<section id="intents-direct-messages">
+<h3>Intents.direct_messages<a class="headerlink" href="#intents-direct-messages" title="Link to this heading">¶</a></h3>
+<p>Same as <cite>Intents.guild_messages</cite></p>
+</section>
+<section id="intents-guild-message-reactions">
+<h3>Intents.guild_message_reactions<a class="headerlink" href="#intents-guild-message-reactions" title="Link to this heading">¶</a></h3>
+<dl class="py function">
+<dt class="sig sig-object py">
+<span class="sig-name descname"><span class="pre">async</span> <span class="pre">def</span> <span class="pre">on_message_reaction_add(reaction):</span></span></dt>
+<dd><p>Called whenever a message reaction is added</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>reaction</strong> – <code class="xref py py-class docutils literal notranslate"><span class="pre">Reaction</span></code> object with information about the reaction.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py">
+<span class="sig-name descname"><span class="pre">async</span> <span class="pre">def</span> <span class="pre">on_message_reaction_remove(reaction):</span></span></dt>
+<dd><p>Called whenever a message reaction is removed</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>reaction</strong> – <code class="xref py py-class docutils literal notranslate"><span class="pre">Reaction</span></code> object with information about the reaction.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py">
+<span class="sig-name descname"><span class="pre">async</span> <span class="pre">def</span> <span class="pre">on_message_reaction_remove_all(message):</span></span></dt>
+<dd><p>Called whenever all message reactions are removed</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>reaction</strong> – <code class="xref py py-class docutils literal notranslate"><span class="pre">PartialMessage</span></code> object with information about the message.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py">
+<span class="sig-name descname"><span class="pre">async</span> <span class="pre">def</span> <span class="pre">on_message_reaction_remove_emoji(message,</span> <span class="pre">emoji):</span></span></dt>
+<dd><p>Called whenever a message reaction is removed by an emoji</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>reaction</strong> – <code class="xref py py-class docutils literal notranslate"><span class="pre">PartialMessage</span></code> object with information about the message.</p></li>
+<li><p><strong>emoji</strong> – <code class="xref py py-class docutils literal notranslate"><span class="pre">EmojiParser</span></code> object with information about the emoji.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+<section id="intents-direct-message-reactions">
+<h3>Intents.direct_message_reactions<a class="headerlink" href="#intents-direct-message-reactions" title="Link to this heading">¶</a></h3>
+<p>Same as <cite>Intents.guild_message_reactions</cite></p>
+</section>
+<section id="intents-guild-message-typing">
+<h3>Intents.guild_message_typing<a class="headerlink" href="#intents-guild-message-typing" title="Link to this heading">¶</a></h3>
+<dl class="py function">
+<dt class="sig sig-object py">
+<span class="sig-name descname"><span class="pre">async</span> <span class="pre">def</span> <span class="pre">on_typing_start(typing):</span></span></dt>
+<dd><p>Called whenever a user starts typing</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Depending on your cache rules, typing.guild, typing.channel and typing.user will either return Full or Partial object.</p>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>typing</strong> – <code class="xref py py-class docutils literal notranslate"><span class="pre">TypingStartEvent</span></code> object with information about the typing.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+<section id="intents-direct-message-typing">
+<h3>Intents.direct_message_typing<a class="headerlink" href="#intents-direct-message-typing" title="Link to this heading">¶</a></h3>
+<p>Same as <cite>Intents.guild_message_typing</cite></p>
+</section>
+<section id="intents-guild-scheduled-events">
+<h3>Intents.guild_scheduled_events<a class="headerlink" href="#intents-guild-scheduled-events" title="Link to this heading">¶</a></h3>
+<dl class="py function">
+<dt class="sig sig-object py">
+<span class="sig-name descname"><span class="pre">async</span> <span class="pre">def</span> <span class="pre">on_guild_scheduled_event_create(event):</span></span></dt>
+<dd><p>Called whenever a guild scheduled event is created</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>event</strong> – <code class="xref py py-class docutils literal notranslate"><span class="pre">ScheduledEvent</span></code> object with information about the scheduled event.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py">
+<span class="sig-name descname"><span class="pre">async</span> <span class="pre">def</span> <span class="pre">on_guild_scheduled_event_update(event):</span></span></dt>
+<dd><p>Called whenever a guild scheduled event is updated</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>event</strong> – <code class="xref py py-class docutils literal notranslate"><span class="pre">ScheduledEvent</span></code> object with information about the scheduled event.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py">
+<span class="sig-name descname"><span class="pre">async</span> <span class="pre">def</span> <span class="pre">on_guild_scheduled_event_delete(event):</span></span></dt>
+<dd><p>Called whenever a guild scheduled event is deleted</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>event</strong> – <code class="xref py py-class docutils literal notranslate"><span class="pre">PartialScheduledEvent</span></code> object with information about the scheduled event.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py">
+<span class="sig-name descname"><span class="pre">async</span> <span class="pre">def</span> <span class="pre">on_guild_scheduled_event_user_add(event,</span> <span class="pre">member):</span></span></dt>
+<dd><p>Called whenever a user is added to a guild scheduled event</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Depending on your cache rules, member will either return Full or Partial object.</p>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>event</strong> – <code class="xref py py-class docutils literal notranslate"><span class="pre">ScheduledEvent</span></code> object with information about the scheduled event.</p></li>
+<li><p><strong>member</strong> – <code class="xref py py-class docutils literal notranslate"><span class="pre">PartialMember</span></code> | <code class="xref py py-class docutils literal notranslate"><span class="pre">Member</span></code> object with information about the member.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py">
+<span class="sig-name descname"><span class="pre">async</span> <span class="pre">def</span> <span class="pre">on_guild_scheduled_event_user_remove(event,</span> <span class="pre">member):</span></span></dt>
+<dd><p>Called whenever a user is removed from a guild scheduled event</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Depending on your cache rules, member will either return Full or Partial object.</p>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>event</strong> – <code class="xref py py-class docutils literal notranslate"><span class="pre">ScheduledEvent</span></code> object with information about the scheduled event.</p></li>
+<li><p><strong>member</strong> – <code class="xref py py-class docutils literal notranslate"><span class="pre">PartialMember</span></code> | <code class="xref py py-class docutils literal notranslate"><span class="pre">Member</span></code> object with information about the member.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+<section id="intents-auto-moderation-configuration">
+<h3>Intents.auto_moderation_configuration<a class="headerlink" href="#intents-auto-moderation-configuration" title="Link to this heading">¶</a></h3>
+<dl class="py function">
+<dt class="sig sig-object py">
+<span class="sig-name descname"><span class="pre">async</span> <span class="pre">def</span> <span class="pre">on_auto_moderation_rule_create(rule):</span></span></dt>
+<dd><p>Called whenever an automod rule is created</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>rule</strong> – <code class="xref py py-class docutils literal notranslate"><span class="pre">AutoModRule</span></code> object with information about the automod rule.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py">
+<span class="sig-name descname"><span class="pre">async</span> <span class="pre">def</span> <span class="pre">on_auto_moderation_rule_update(rule):</span></span></dt>
+<dd><p>Called whenever an automod rule is updated</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>rule</strong> – <code class="xref py py-class docutils literal notranslate"><span class="pre">AutoModRule</span></code> object with information about the automod rule.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py">
+<span class="sig-name descname"><span class="pre">async</span> <span class="pre">def</span> <span class="pre">on_auto_moderation_rule_delete(rule):</span></span></dt>
+<dd><p>Called whenever an automod rule is deleted</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>rule</strong> – <code class="xref py py-class docutils literal notranslate"><span class="pre">PartialAutoModRule</span></code> object with information about the automod rule.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+<section id="intents-auto-moderation-execution">
+<h3>Intents.auto_moderation_execution<a class="headerlink" href="#intents-auto-moderation-execution" title="Link to this heading">¶</a></h3>
+<dl class="py function">
+<dt class="sig sig-object py">
+<span class="sig-name descname"><span class="pre">async</span> <span class="pre">def</span> <span class="pre">on_auto_moderation_action_execution(execution):</span></span></dt>
+<dd><p>Called whenever an automod action is executed</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>execution</strong> – <code class="xref py py-class docutils literal notranslate"><span class="pre">AutomodExecution</span></code> object with information about the automod rule.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+<section id="intents-guild-message-polls">
+<h3>Intents.guild_message_polls<a class="headerlink" href="#intents-guild-message-polls" title="Link to this heading">¶</a></h3>
+<dl class="py function">
+<dt class="sig sig-object py">
+<span class="sig-name descname"><span class="pre">async</span> <span class="pre">def</span> <span class="pre">on_message_poll_vote_add(vote):</span></span></dt>
+<dd><p>Called whenever a message poll vote is added</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Depending on your cache rules, vote.guild, vote.channel and vote.user will either return Full or Partial object.</p>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>vote</strong> – <code class="xref py py-class docutils literal notranslate"><span class="pre">PollVoteEvent</span></code> object with information about the poll vote.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py">
+<span class="sig-name descname"><span class="pre">async</span> <span class="pre">def</span> <span class="pre">on_message_poll_vote_remove(vote):</span></span></dt>
+<dd><p>Called whenever a message poll vote is removed</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Depending on your cache rules, vote.guild, vote.channel and vote.user will either return Full or Partial object.</p>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>vote</strong> – <code class="xref py py-class docutils literal notranslate"><span class="pre">PollVoteEvent</span></code> object with information about the poll vote.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+<section id="intents-direct-message-polls">
+<h3>Intents.direct_message_polls<a class="headerlink" href="#intents-direct-message-polls" title="Link to this heading">¶</a></h3>
+<p>Same as <cite>Intents.guild_message_polls</cite></p>
+</section>
+</section>
 </section>
 
         </article>
@@ -389,12 +1408,12 @@ In order to use this event, you must have <cite>Client.debug_events</cite> set t
       <footer>
         
         <div class="related-pages">
-          <a class="next-page" href="backend.html">
+          <a class="next-page" href="gateway.html">
               <div class="page-info">
                 <div class="context">
                   <span>Next</span>
                 </div>
-                <div class="title">HTTP backend</div>
+                <div class="title">Gateway references</div>
               </div>
               <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
             </a>
@@ -443,6 +1462,30 @@ In order to use this event, you must have <cite>Client.debug_events</cite> set t
 <li><a class="reference internal" href="#connection">Connection</a></li>
 <li><a class="reference internal" href="#webhook">Webhook</a></li>
 <li><a class="reference internal" href="#errors">Errors</a></li>
+<li><a class="reference internal" href="#gateway-events">Gateway events</a><ul>
+<li><a class="reference internal" href="#shard-events">Shard events</a></li>
+<li><a class="reference internal" href="#intents-guilds">Intents.guilds</a></li>
+<li><a class="reference internal" href="#intents-guild-members">Intents.guild_members</a></li>
+<li><a class="reference internal" href="#intents-guild-moderation">Intents.guild_moderation</a></li>
+<li><a class="reference internal" href="#intents-guild-expressions">Intents.guild_expressions</a></li>
+<li><a class="reference internal" href="#intents-guild-integrations">Intents.guild_integrations</a></li>
+<li><a class="reference internal" href="#intents-guild-webhooks">Intents.guild_webhooks</a></li>
+<li><a class="reference internal" href="#intents-guild-invites">Intents.guild_invites</a></li>
+<li><a class="reference internal" href="#intents-guild-voice-states">Intents.guild_voice_states</a></li>
+<li><a class="reference internal" href="#intents-guild-presences">Intents.guild_presences</a></li>
+<li><a class="reference internal" href="#intents-guild-messages">Intents.guild_messages</a></li>
+<li><a class="reference internal" href="#intents-direct-messages">Intents.direct_messages</a></li>
+<li><a class="reference internal" href="#intents-guild-message-reactions">Intents.guild_message_reactions</a></li>
+<li><a class="reference internal" href="#intents-direct-message-reactions">Intents.direct_message_reactions</a></li>
+<li><a class="reference internal" href="#intents-guild-message-typing">Intents.guild_message_typing</a></li>
+<li><a class="reference internal" href="#intents-direct-message-typing">Intents.direct_message_typing</a></li>
+<li><a class="reference internal" href="#intents-guild-scheduled-events">Intents.guild_scheduled_events</a></li>
+<li><a class="reference internal" href="#intents-auto-moderation-configuration">Intents.auto_moderation_configuration</a></li>
+<li><a class="reference internal" href="#intents-auto-moderation-execution">Intents.auto_moderation_execution</a></li>
+<li><a class="reference internal" href="#intents-guild-message-polls">Intents.guild_message_polls</a></li>
+<li><a class="reference internal" href="#intents-direct-message-polls">Intents.direct_message_polls</a></li>
+</ul>
+</li>
 </ul>
 </li>
 </ul>
@@ -455,7 +1498,7 @@ In order to use this event, you must have <cite>Client.debug_events</cite> set t
     </aside>
   </div>
 </div><script src="../_static/documentation_options.js?v=d45e8c67"></script>
-    <script src="../_static/doctools.js?v=9a2dae69"></script>
+    <script src="../_static/doctools.js?v=9bcbadda"></script>
     <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../_static/scripts/furo.js?v=5fa4622c"></script>
     </body>

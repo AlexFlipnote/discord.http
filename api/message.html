@@ -3,9 +3,9 @@
   <head><meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width,initial-scale=1"/>
     <meta name="color-scheme" content="light dark"><meta name="viewport" content="width=device-width, initial-scale=1" />
-<link rel="index" title="Index" href="../genindex.html" /><link rel="search" title="Search" href="../search.html" /><link rel="next" title="Multipart" href="multipart.html" /><link rel="prev" title="Mentions" href="mentions.html" />
+<meta content="Message - discord.http docs" property="og:title"><meta content="Bases: object" name="description"><meta content="Bases: object" property="og:description"><meta property="og:image" content="/_static/favicon.ico"><meta name="theme-color" content="#14bae4"><meta property="og:locale" content="en_GB"><meta name="keywords" content="discord, http, api, interaction, quart, webhook, slash><meta name="revisit-after" content="2 days"><link rel="index" title="Index" href="../genindex.html" /><link rel="search" title="Search" href="../search.html" /><link rel="next" title="Multipart" href="multipart.html" /><link rel="prev" title="Mentions" href="mentions.html" />
 
-    <link rel="shortcut icon" href="../_static/favicon.ico"/><!-- Generated with Sphinx 8.0.2 and Furo 2024.08.06 -->
+    <link rel="shortcut icon" href="../_static/favicon.ico"/><!-- Generated with Sphinx 8.1.3 and Furo 2024.08.06 -->
         <title>Message - discord.http docs</title>
       <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=fa44fd50" />
     <link rel="stylesheet" type="text/css" href="../_static/styles/furo.css?v=354aac6f" />
@@ -202,6 +202,8 @@
 <li class="toctree-l1"><a class="reference internal" href="../pages/getting_started.html">Getting started</a></li>
 <li class="toctree-l1 current has-children"><a class="reference internal" href="../pages/api.html">API components</a><input checked="" class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" role="switch" type="checkbox"/><label for="toctree-checkbox-1"><div class="visually-hidden">Toggle navigation of API components</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul class="current">
 <li class="toctree-l2"><a class="reference internal" href="asset.html">Asset</a></li>
+<li class="toctree-l2"><a class="reference internal" href="audit.html">Audit</a></li>
+<li class="toctree-l2"><a class="reference internal" href="automod.html">AutoModRule</a></li>
 <li class="toctree-l2"><a class="reference internal" href="backend.html">Backend</a></li>
 <li class="toctree-l2"><a class="reference internal" href="channel.html">Channel</a></li>
 <li class="toctree-l2"><a class="reference internal" href="client.html">Client</a></li>
@@ -215,9 +217,10 @@
 <li class="toctree-l2"><a class="reference internal" href="enums.html">Enums</a></li>
 <li class="toctree-l2"><a class="reference internal" href="errors.html">Errors</a></li>
 <li class="toctree-l2"><a class="reference internal" href="file.html">File</a></li>
-<li class="toctree-l2"><a class="reference internal" href="flag.html">Flag</a></li>
+<li class="toctree-l2"><a class="reference internal" href="flags.html">Flag</a></li>
 <li class="toctree-l2"><a class="reference internal" href="guild.html">Guild</a></li>
 <li class="toctree-l2"><a class="reference internal" href="http.html">Http</a></li>
+<li class="toctree-l2"><a class="reference internal" href="integrations.html">Integrations</a></li>
 <li class="toctree-l2"><a class="reference internal" href="invite.html">Invite</a></li>
 <li class="toctree-l2"><a class="reference internal" href="member.html">Member</a></li>
 <li class="toctree-l2"><a class="reference internal" href="mentions.html">Mentions</a></li>
@@ -226,14 +229,24 @@
 <li class="toctree-l2"><a class="reference internal" href="object.html">Object</a></li>
 <li class="toctree-l2"><a class="reference internal" href="response.html">Response</a></li>
 <li class="toctree-l2"><a class="reference internal" href="role.html">Role</a></li>
+<li class="toctree-l2"><a class="reference internal" href="soundboard.html">Soundboard</a></li>
 <li class="toctree-l2"><a class="reference internal" href="sticker.html">Sticker</a></li>
 <li class="toctree-l2"><a class="reference internal" href="tasks.html">Tasks</a></li>
 <li class="toctree-l2"><a class="reference internal" href="user.html">User</a></li>
 <li class="toctree-l2"><a class="reference internal" href="view.html">View</a></li>
+<li class="toctree-l2"><a class="reference internal" href="voice.html">Vsset</a></li>
 <li class="toctree-l2"><a class="reference internal" href="webhook.html">Webhook</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../pages/events.html">Event references</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../pages/gateway.html">Gateway references</a><input class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" role="switch" type="checkbox"/><label for="toctree-checkbox-2"><div class="visually-hidden">Toggle navigation of Gateway references</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../gateway/activity.html">Activity</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../gateway/client.html">Client</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../gateway/enums.html">Enums</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../gateway/flags.html">Flags</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../gateway/object.html">Object (Gateway events)</a></li>
+</ul>
+</li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">Advanced</span></p>
 <ul>
@@ -243,7 +256,7 @@
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../pages/contribute.html">Contributing</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../pages/license.html">License</a></li>
-<li class="toctree-l1"><a class="reference external" href="https://discord.gg/AlexFlipnote">Discord</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://discord.gg/yqb7vATbjH">Discord</a></li>
 <li class="toctree-l1"><a class="reference external" href="https://github.com/AlexFlipnote/discord.http">GitHub</a></li>
 </ul>
 
@@ -320,6 +333,12 @@
 </dd></dl>
 
 <dl class="py method">
+<dt class="sig sig-object py" id="discord_http.message.Attachment.is_voice_message">
+<span class="sig-name descname"><span class="pre">is_voice_message</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="reference internal" href="../_modules/discord_http/message.html#Attachment.is_voice_message"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#discord_http.message.Attachment.is_voice_message" title="Link to this definition">¶</a></dt>
+<dd><p><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code>: Whether this attachment is a voice message.</p>
+</dd></dl>
+
+<dl class="py method">
 <dt class="sig sig-object py" id="discord_http.message.Attachment.save">
 <em class="property"><span class="pre">async</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">save</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">use_cached</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">int</span></span></span><a class="reference internal" href="../_modules/discord_http/message.html#Attachment.save"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#discord_http.message.Attachment.save" title="Link to this definition">¶</a></dt>
 <dd><p>Fetches the file from the attachment URL and saves it locally to the path</p>
@@ -374,11 +393,12 @@ Example: <cite>./path/to/file.png</cite></p></li>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
 <dl class="py property">
 <dt class="sig sig-object py" id="discord_http.message.JumpURL.channel">
-<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">channel</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="channel.html#discord_http.channel.PartialChannel" title="discord_http.channel.PartialChannel"><span class="pre">PartialChannel</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#discord_http.message.JumpURL.channel" title="Link to this definition">¶</a></dt>
-<dd><p>Returns the channel the message was sent in</p>
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">channel</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="channel.html#discord_http.channel.BaseChannel" title="discord_http.channel.BaseChannel"><span class="pre">BaseChannel</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="channel.html#discord_http.channel.PartialChannel" title="discord_http.channel.PartialChannel"><span class="pre">PartialChannel</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#discord_http.message.JumpURL.channel" title="Link to this definition">¶</a></dt>
+<dd><p>Returns the channel the message was sent in.
+If guild and channel cache is enabled, it can also return full channel object.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><cite>PartialChannel</cite></p>
+<dd class="field-odd"><p><cite>BaseChannel | PartialChannel</cite></p>
 </dd>
 </dl>
 </dd></dl>
@@ -403,7 +423,7 @@ Example: <cite>./path/to/file.png</cite></p></li>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="discord_http.message.JumpURL.guild">
-<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">guild</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="guild.html#discord_http.guild.PartialGuild" title="discord_http.guild.PartialGuild"><span class="pre">PartialGuild</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#discord_http.message.JumpURL.guild" title="Link to this definition">¶</a></dt>
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">guild</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="guild.html#discord_http.guild.Guild" title="discord_http.guild.Guild"><span class="pre">Guild</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="guild.html#discord_http.guild.PartialGuild" title="discord_http.guild.PartialGuild"><span class="pre">PartialGuild</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#discord_http.message.JumpURL.guild" title="Link to this definition">¶</a></dt>
 <dd><p>The guild the message was sent in</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type<span class="colon">:</span></dt>
@@ -442,8 +462,9 @@ Example: <cite>./path/to/file.png</cite></p></li>
 <dd><p>Bases: <a class="reference internal" href="#discord_http.message.PartialMessage" title="discord_http.message.PartialMessage"><code class="xref py py-class docutils literal notranslate"><span class="pre">PartialMessage</span></code></a></p>
 <dl class="py property">
 <dt class="sig sig-object py" id="discord_http.message.Message.channel_mentions">
-<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">channel_mentions</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">list</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="channel.html#discord_http.channel.PartialChannel" title="discord_http.channel.PartialChannel"><span class="pre">PartialChannel</span></a><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#discord_http.message.Message.channel_mentions" title="Link to this definition">¶</a></dt>
-<dd><p>Returns the channel mentions in the message</p>
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">channel_mentions</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">list</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="channel.html#discord_http.channel.BaseChannel" title="discord_http.channel.BaseChannel"><span class="pre">BaseChannel</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="channel.html#discord_http.channel.PartialChannel" title="discord_http.channel.PartialChannel"><span class="pre">PartialChannel</span></a><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#discord_http.message.Message.channel_mentions" title="Link to this definition">¶</a></dt>
+<dd><p>Returns the channel mentions in the message
+Can return full role object if guild and channel cache is enabled</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type<span class="colon">:</span></dt>
 <dd class="field-odd"><p><cite>list[PartialChannel]</cite></p>
@@ -460,6 +481,12 @@ Example: <cite>./path/to/file.png</cite></p></li>
 <dd class="field-odd"><p><cite>list[EmojiParser]</cite></p>
 </dd>
 </dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="discord_http.message.Message.is_system">
+<span class="sig-name descname"><span class="pre">is_system</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="reference internal" href="../_modules/discord_http/message.html#Message.is_system"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#discord_http.message.Message.is_system" title="Link to this definition">¶</a></dt>
+<dd><p><cite>bool</cite>: Returns whether the message is a system message</p>
 </dd></dl>
 
 <dl class="py property">
@@ -486,8 +513,9 @@ Example: <cite>./path/to/file.png</cite></p></li>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="discord_http.message.Message.role_mentions">
-<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">role_mentions</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">list</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="role.html#discord_http.role.PartialRole" title="discord_http.role.PartialRole"><span class="pre">PartialRole</span></a><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#discord_http.message.Message.role_mentions" title="Link to this definition">¶</a></dt>
-<dd><p>Returns the role mentions in the message</p>
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">role_mentions</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">list</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="role.html#discord_http.role.Role" title="discord_http.role.Role"><span class="pre">Role</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="role.html#discord_http.role.PartialRole" title="discord_http.role.PartialRole"><span class="pre">PartialRole</span></a><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#discord_http.message.Message.role_mentions" title="Link to this definition">¶</a></dt>
+<dd><p>Returns the role mentions in the message.
+Can return full role object if guild and role cache is enabled</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type<span class="colon">:</span></dt>
 <dd class="field-odd"><p><cite>list[PartialRole]</cite></p>
@@ -495,6 +523,12 @@ Example: <cite>./path/to/file.png</cite></p></li>
 </dl>
 </dd></dl>
 
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="discord_http.message.MessageInteraction">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">discord_http.message.</span></span><span class="sig-name descname"><span class="pre">MessageInteraction</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">state</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="http.html#discord_http.http.DiscordAPI" title="discord_http.http.DiscordAPI"><span class="pre">DiscordAPI</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">data</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/discord_http/message.html#MessageInteraction"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#discord_http.message.MessageInteraction" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="object.html#discord_http.object.PartialBase" title="discord_http.object.PartialBase"><code class="xref py py-class docutils literal notranslate"><span class="pre">PartialBase</span></code></a></p>
 </dd></dl>
 
 <dl class="py class">
@@ -514,11 +548,22 @@ Example: <cite>./path/to/file.png</cite></p></li>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="discord_http.message.MessageReference.guild">
-<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">guild</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="guild.html#discord_http.guild.PartialGuild" title="discord_http.guild.PartialGuild"><span class="pre">PartialGuild</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#discord_http.message.MessageReference.guild" title="Link to this definition">¶</a></dt>
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">guild</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="guild.html#discord_http.guild.Guild" title="discord_http.guild.Guild"><span class="pre">Guild</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="guild.html#discord_http.guild.PartialGuild" title="discord_http.guild.PartialGuild"><span class="pre">PartialGuild</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#discord_http.message.MessageReference.guild" title="Link to this definition">¶</a></dt>
 <dd><p>The guild the message was sent in</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type<span class="colon">:</span></dt>
 <dd class="field-odd"><p><cite>Optional[PartialGuild]</cite></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="discord_http.message.MessageReference.jump_url">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">jump_url</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="#discord_http.message.JumpURL" title="discord_http.message.JumpURL"><span class="pre">JumpURL</span></a></em><a class="headerlink" href="#discord_http.message.MessageReference.jump_url" title="Link to this definition">¶</a></dt>
+<dd><p>The jump URL of the message</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><cite>JumpURL</cite></p>
 </dd>
 </dl>
 </dd></dl>
@@ -544,7 +589,7 @@ Example: <cite>./path/to/file.png</cite></p></li>
 
 <dl class="py class">
 <dt class="sig sig-object py" id="discord_http.message.PartialMessage">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">discord_http.message.</span></span><span class="sig-name descname"><span class="pre">PartialMessage</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">state</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="http.html#discord_http.http.DiscordAPI" title="discord_http.http.DiscordAPI"><span class="pre">DiscordAPI</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">channel_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/discord_http/message.html#PartialMessage"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#discord_http.message.PartialMessage" title="Link to this definition">¶</a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">discord_http.message.</span></span><span class="sig-name descname"><span class="pre">PartialMessage</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">state</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="http.html#discord_http.http.DiscordAPI" title="discord_http.http.DiscordAPI"><span class="pre">DiscordAPI</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">channel_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">guild_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/discord_http/message.html#PartialMessage"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#discord_http.message.PartialMessage" title="Link to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="object.html#discord_http.object.PartialBase" title="discord_http.object.PartialBase"><code class="xref py py-class docutils literal notranslate"><span class="pre">PartialBase</span></code></a></p>
 <dl class="py method">
 <dt class="sig sig-object py" id="discord_http.message.PartialMessage.add_reaction">
@@ -559,7 +604,7 @@ Example: <cite>./path/to/file.png</cite></p></li>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="discord_http.message.PartialMessage.channel">
-<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">channel</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="channel.html#discord_http.channel.PartialChannel" title="discord_http.channel.PartialChannel"><span class="pre">PartialChannel</span></a></em><a class="headerlink" href="#discord_http.message.PartialMessage.channel" title="Link to this definition">¶</a></dt>
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">channel</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="channel.html#discord_http.channel.BaseChannel" title="discord_http.channel.BaseChannel"><span class="pre">BaseChannel</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="channel.html#discord_http.channel.PartialChannel" title="discord_http.channel.PartialChannel"><span class="pre">PartialChannel</span></a></em><a class="headerlink" href="#discord_http.message.PartialMessage.channel" title="Link to this definition">¶</a></dt>
 <dd><p>Returns the channel the message was sent in</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type<span class="colon">:</span></dt>
@@ -599,8 +644,17 @@ Example: <cite>./path/to/file.png</cite></p></li>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="discord_http.message.PartialMessage.delete">
-<em class="property"><span class="pre">async</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">delete</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">reason</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="../_modules/discord_http/message.html#PartialMessage.delete"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#discord_http.message.PartialMessage.delete" title="Link to this definition">¶</a></dt>
+<em class="property"><span class="pre">async</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">delete</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">delay</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">reason</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="../_modules/discord_http/message.html#PartialMessage.delete"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#discord_http.message.PartialMessage.delete" title="Link to this definition">¶</a></dt>
 <dd><p>Delete the message</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>delay</strong> (<cite>float</cite> | <cite>None</cite>:) – How many seconds it should wait in background to delete</p></li>
+<li><p><strong>reason</strong> (<cite>str</cite> | <cite>None</cite>:) – Reason for deleting the message
+(Only applies when deleting messages not made by yourself)</p></li>
+</ul>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py method">
@@ -669,6 +723,17 @@ This can only be done if you created it</p>
 </dd></dl>
 
 <dl class="py property">
+<dt class="sig sig-object py" id="discord_http.message.PartialMessage.guild">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">guild</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="guild.html#discord_http.guild.Guild" title="discord_http.guild.Guild"><span class="pre">Guild</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="guild.html#discord_http.guild.PartialGuild" title="discord_http.guild.PartialGuild"><span class="pre">PartialGuild</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#discord_http.message.PartialMessage.guild" title="Link to this definition">¶</a></dt>
+<dd><p>Returns the guild the message was sent in</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><cite>PartialGuild</cite> | <cite>None</cite></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
 <dt class="sig sig-object py" id="discord_http.message.PartialMessage.jump_url">
 <em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">jump_url</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="#discord_http.message.JumpURL" title="discord_http.message.JumpURL"><span class="pre">JumpURL</span></a></em><a class="headerlink" href="#discord_http.message.PartialMessage.jump_url" title="Link to this definition">¶</a></dt>
 <dd><p>Returns the jump URL of the message, GuildID will always be &#64;me</p>
@@ -694,6 +759,12 @@ This can only be done if you created it</p>
 <dt class="sig sig-object py" id="discord_http.message.PartialMessage.publish">
 <em class="property"><span class="pre">async</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">publish</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#discord_http.message.Message" title="discord_http.message.Message"><span class="pre">Message</span></a></span></span><a class="reference internal" href="../_modules/discord_http/message.html#PartialMessage.publish"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#discord_http.message.PartialMessage.publish" title="Link to this definition">¶</a></dt>
 <dd><p>Crosspost the message to another channel.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="discord_http.message.PartialMessage.remove_all_reactions">
+<em class="property"><span class="pre">async</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">remove_all_reactions</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="../_modules/discord_http/message.html#PartialMessage.remove_all_reactions"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#discord_http.message.PartialMessage.remove_all_reactions" title="Link to this definition">¶</a></dt>
+<dd><p>Remove all reactions from the message</p>
 </dd></dl>
 
 <dl class="py method">
@@ -804,7 +875,7 @@ This can only be done if you created it</p>
 <dd><p>Bases: <a class="reference internal" href="#discord_http.message.Message" title="discord_http.message.Message"><code class="xref py py-class docutils literal notranslate"><span class="pre">Message</span></code></a></p>
 <dl class="py method">
 <dt class="sig sig-object py" id="discord_http.message.WebhookMessage.delete">
-<em class="property"><span class="pre">async</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">delete</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">reason</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="../_modules/discord_http/message.html#WebhookMessage.delete"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#discord_http.message.WebhookMessage.delete" title="Link to this definition">¶</a></dt>
+<em class="property"><span class="pre">async</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">delete</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">delay</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="../_modules/discord_http/message.html#WebhookMessage.delete"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#discord_http.message.WebhookMessage.delete" title="Link to this definition">¶</a></dt>
 <dd><p>Delete the webhook message</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -903,6 +974,7 @@ This can only be done if you created it</p>
 <li><a class="reference internal" href="#discord_http.message.Attachment"><code class="docutils literal notranslate"><span class="pre">Attachment</span></code></a><ul>
 <li><a class="reference internal" href="#discord_http.message.Attachment.fetch"><code class="docutils literal notranslate"><span class="pre">Attachment.fetch()</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.message.Attachment.is_spoiler"><code class="docutils literal notranslate"><span class="pre">Attachment.is_spoiler()</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.message.Attachment.is_voice_message"><code class="docutils literal notranslate"><span class="pre">Attachment.is_voice_message()</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.message.Attachment.save"><code class="docutils literal notranslate"><span class="pre">Attachment.save()</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.message.Attachment.to_dict"><code class="docutils literal notranslate"><span class="pre">Attachment.to_dict()</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.message.Attachment.to_file"><code class="docutils literal notranslate"><span class="pre">Attachment.to_file()</span></code></a></li>
@@ -921,14 +993,17 @@ This can only be done if you created it</p>
 <li><a class="reference internal" href="#discord_http.message.Message"><code class="docutils literal notranslate"><span class="pre">Message</span></code></a><ul>
 <li><a class="reference internal" href="#discord_http.message.Message.channel_mentions"><code class="docutils literal notranslate"><span class="pre">Message.channel_mentions</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.message.Message.emojis"><code class="docutils literal notranslate"><span class="pre">Message.emojis</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.message.Message.is_system"><code class="docutils literal notranslate"><span class="pre">Message.is_system()</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.message.Message.jump_url"><code class="docutils literal notranslate"><span class="pre">Message.jump_url</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.message.Message.jump_urls"><code class="docutils literal notranslate"><span class="pre">Message.jump_urls</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.message.Message.role_mentions"><code class="docutils literal notranslate"><span class="pre">Message.role_mentions</span></code></a></li>
 </ul>
 </li>
+<li><a class="reference internal" href="#discord_http.message.MessageInteraction"><code class="docutils literal notranslate"><span class="pre">MessageInteraction</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.message.MessageReference"><code class="docutils literal notranslate"><span class="pre">MessageReference</span></code></a><ul>
 <li><a class="reference internal" href="#discord_http.message.MessageReference.channel"><code class="docutils literal notranslate"><span class="pre">MessageReference.channel</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.message.MessageReference.guild"><code class="docutils literal notranslate"><span class="pre">MessageReference.guild</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.message.MessageReference.jump_url"><code class="docutils literal notranslate"><span class="pre">MessageReference.jump_url</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.message.MessageReference.message"><code class="docutils literal notranslate"><span class="pre">MessageReference.message</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.message.MessageReference.to_dict"><code class="docutils literal notranslate"><span class="pre">MessageReference.to_dict()</span></code></a></li>
 </ul>
@@ -942,9 +1017,11 @@ This can only be done if you created it</p>
 <li><a class="reference internal" href="#discord_http.message.PartialMessage.expire_poll"><code class="docutils literal notranslate"><span class="pre">PartialMessage.expire_poll()</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.message.PartialMessage.fetch"><code class="docutils literal notranslate"><span class="pre">PartialMessage.fetch()</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.message.PartialMessage.fetch_poll_voters"><code class="docutils literal notranslate"><span class="pre">PartialMessage.fetch_poll_voters()</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.message.PartialMessage.guild"><code class="docutils literal notranslate"><span class="pre">PartialMessage.guild</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.message.PartialMessage.jump_url"><code class="docutils literal notranslate"><span class="pre">PartialMessage.jump_url</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.message.PartialMessage.pin"><code class="docutils literal notranslate"><span class="pre">PartialMessage.pin()</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.message.PartialMessage.publish"><code class="docutils literal notranslate"><span class="pre">PartialMessage.publish()</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.message.PartialMessage.remove_all_reactions"><code class="docutils literal notranslate"><span class="pre">PartialMessage.remove_all_reactions()</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.message.PartialMessage.remove_reaction"><code class="docutils literal notranslate"><span class="pre">PartialMessage.remove_reaction()</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.message.PartialMessage.reply"><code class="docutils literal notranslate"><span class="pre">PartialMessage.reply()</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.message.PartialMessage.unpin"><code class="docutils literal notranslate"><span class="pre">PartialMessage.unpin()</span></code></a></li>
@@ -976,7 +1053,7 @@ This can only be done if you created it</p>
     </aside>
   </div>
 </div><script src="../_static/documentation_options.js?v=d45e8c67"></script>
-    <script src="../_static/doctools.js?v=9a2dae69"></script>
+    <script src="../_static/doctools.js?v=9bcbadda"></script>
     <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../_static/scripts/furo.js?v=5fa4622c"></script>
     </body>

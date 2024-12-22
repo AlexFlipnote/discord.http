@@ -3,9 +3,9 @@
   <head><meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width,initial-scale=1"/>
     <meta name="color-scheme" content="light dark"><meta name="viewport" content="width=device-width, initial-scale=1" />
-<link rel="index" title="Index" href="../genindex.html" /><link rel="search" title="Search" href="../search.html" /><link rel="next" title="View" href="view.html" /><link rel="prev" title="Tasks" href="tasks.html" />
+<meta content="User - discord.http docs" property="og:title"><meta content="Bases: PartialBase" name="description"><meta content="Bases: PartialBase" property="og:description"><meta property="og:image" content="/_static/favicon.ico"><meta name="theme-color" content="#14bae4"><meta property="og:locale" content="en_GB"><meta name="keywords" content="discord, http, api, interaction, quart, webhook, slash><meta name="revisit-after" content="2 days"><link rel="index" title="Index" href="../genindex.html" /><link rel="search" title="Search" href="../search.html" /><link rel="next" title="View" href="view.html" /><link rel="prev" title="Tasks" href="tasks.html" />
 
-    <link rel="shortcut icon" href="../_static/favicon.ico"/><!-- Generated with Sphinx 8.0.2 and Furo 2024.08.06 -->
+    <link rel="shortcut icon" href="../_static/favicon.ico"/><!-- Generated with Sphinx 8.1.3 and Furo 2024.08.06 -->
         <title>User - discord.http docs</title>
       <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=fa44fd50" />
     <link rel="stylesheet" type="text/css" href="../_static/styles/furo.css?v=354aac6f" />
@@ -202,6 +202,8 @@
 <li class="toctree-l1"><a class="reference internal" href="../pages/getting_started.html">Getting started</a></li>
 <li class="toctree-l1 current has-children"><a class="reference internal" href="../pages/api.html">API components</a><input checked="" class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" role="switch" type="checkbox"/><label for="toctree-checkbox-1"><div class="visually-hidden">Toggle navigation of API components</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul class="current">
 <li class="toctree-l2"><a class="reference internal" href="asset.html">Asset</a></li>
+<li class="toctree-l2"><a class="reference internal" href="audit.html">Audit</a></li>
+<li class="toctree-l2"><a class="reference internal" href="automod.html">AutoModRule</a></li>
 <li class="toctree-l2"><a class="reference internal" href="backend.html">Backend</a></li>
 <li class="toctree-l2"><a class="reference internal" href="channel.html">Channel</a></li>
 <li class="toctree-l2"><a class="reference internal" href="client.html">Client</a></li>
@@ -215,9 +217,10 @@
 <li class="toctree-l2"><a class="reference internal" href="enums.html">Enums</a></li>
 <li class="toctree-l2"><a class="reference internal" href="errors.html">Errors</a></li>
 <li class="toctree-l2"><a class="reference internal" href="file.html">File</a></li>
-<li class="toctree-l2"><a class="reference internal" href="flag.html">Flag</a></li>
+<li class="toctree-l2"><a class="reference internal" href="flags.html">Flag</a></li>
 <li class="toctree-l2"><a class="reference internal" href="guild.html">Guild</a></li>
 <li class="toctree-l2"><a class="reference internal" href="http.html">Http</a></li>
+<li class="toctree-l2"><a class="reference internal" href="integrations.html">Integrations</a></li>
 <li class="toctree-l2"><a class="reference internal" href="invite.html">Invite</a></li>
 <li class="toctree-l2"><a class="reference internal" href="member.html">Member</a></li>
 <li class="toctree-l2"><a class="reference internal" href="mentions.html">Mentions</a></li>
@@ -226,14 +229,24 @@
 <li class="toctree-l2"><a class="reference internal" href="object.html">Object</a></li>
 <li class="toctree-l2"><a class="reference internal" href="response.html">Response</a></li>
 <li class="toctree-l2"><a class="reference internal" href="role.html">Role</a></li>
+<li class="toctree-l2"><a class="reference internal" href="soundboard.html">Soundboard</a></li>
 <li class="toctree-l2"><a class="reference internal" href="sticker.html">Sticker</a></li>
 <li class="toctree-l2"><a class="reference internal" href="tasks.html">Tasks</a></li>
 <li class="toctree-l2 current current-page"><a class="current reference internal" href="#">User</a></li>
 <li class="toctree-l2"><a class="reference internal" href="view.html">View</a></li>
+<li class="toctree-l2"><a class="reference internal" href="voice.html">Vsset</a></li>
 <li class="toctree-l2"><a class="reference internal" href="webhook.html">Webhook</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../pages/events.html">Event references</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../pages/gateway.html">Gateway references</a><input class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" role="switch" type="checkbox"/><label for="toctree-checkbox-2"><div class="visually-hidden">Toggle navigation of Gateway references</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../gateway/activity.html">Activity</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../gateway/client.html">Client</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../gateway/enums.html">Enums</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../gateway/flags.html">Flags</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../gateway/object.html">Object (Gateway events)</a></li>
+</ul>
+</li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">Advanced</span></p>
 <ul>
@@ -243,7 +256,7 @@
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../pages/contribute.html">Contributing</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../pages/license.html">License</a></li>
-<li class="toctree-l1"><a class="reference external" href="https://discord.gg/AlexFlipnote">Discord</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://discord.gg/yqb7vATbjH">Discord</a></li>
 <li class="toctree-l1"><a class="reference external" href="https://github.com/AlexFlipnote/discord.http">GitHub</a></li>
 </ul>
 
@@ -299,6 +312,17 @@
 <dd><p><cite>DMChannel</cite>: Creates a DM channel with the user</p>
 </dd></dl>
 
+<dl class="py property">
+<dt class="sig sig-object py" id="discord_http.user.PartialUser.default_avatar">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">default_avatar</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="asset.html#discord_http.asset.Asset" title="discord_http.asset.Asset"><span class="pre">Asset</span></a></em><a class="headerlink" href="#discord_http.user.PartialUser.default_avatar" title="Link to this definition">¶</a></dt>
+<dd><p>Returns the default avatar of the user</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><cite>Asset</cite></p>
+</dd>
+</dl>
+</dd></dl>
+
 <dl class="py method">
 <dt class="sig sig-object py" id="discord_http.user.PartialUser.fetch">
 <em class="property"><span class="pre">async</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">fetch</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#discord_http.user.User" title="discord_http.user.User"><span class="pre">User</span></a></span></span><a class="reference internal" href="../_modules/discord_http/user.html#PartialUser.fetch"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#discord_http.user.PartialUser.fetch" title="Link to this definition">¶</a></dt>
@@ -318,7 +342,7 @@
 
 <dl class="py method">
 <dt class="sig sig-object py" id="discord_http.user.PartialUser.send">
-<em class="property"><span class="pre">async</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">send</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">content:</span> <span class="pre">str</span> <span class="pre">|</span> <span class="pre">None</span> <span class="pre">=</span> <span class="pre">&lt;MISSING&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">channel_id:</span> <span class="pre">int</span> <span class="pre">|</span> <span class="pre">None</span> <span class="pre">=</span> <span class="pre">&lt;MISSING&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">embed:</span> <span class="pre">~discord_http.embeds.Embed</span> <span class="pre">|</span> <span class="pre">None</span> <span class="pre">=</span> <span class="pre">&lt;MISSING&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">embeds:</span> <span class="pre">list[~discord_http.embeds.Embed]</span> <span class="pre">|</span> <span class="pre">None</span> <span class="pre">=</span> <span class="pre">&lt;MISSING&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">file:</span> <span class="pre">~discord_http.file.File</span> <span class="pre">|</span> <span class="pre">None</span> <span class="pre">=</span> <span class="pre">&lt;MISSING&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">files:</span> <span class="pre">list[~discord_http.file.File]</span> <span class="pre">|</span> <span class="pre">None</span> <span class="pre">=</span> <span class="pre">&lt;MISSING&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">view:</span> <span class="pre">~discord_http.view.View</span> <span class="pre">|</span> <span class="pre">None</span> <span class="pre">=</span> <span class="pre">&lt;MISSING&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tts:</span> <span class="pre">bool</span> <span class="pre">|</span> <span class="pre">None</span> <span class="pre">=</span> <span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">type:</span> <span class="pre">~discord_http.enums.ResponseType</span> <span class="pre">|</span> <span class="pre">int</span> <span class="pre">=</span> <span class="pre">4</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">allowed_mentions:</span> <span class="pre">~discord_http.mentions.AllowedMentions</span> <span class="pre">|</span> <span class="pre">None</span> <span class="pre">=</span> <span class="pre">&lt;MISSING&gt;</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="message.html#discord_http.message.Message" title="discord_http.message.Message"><span class="pre">Message</span></a></span></span><a class="reference internal" href="../_modules/discord_http/user.html#PartialUser.send"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#discord_http.user.PartialUser.send" title="Link to this definition">¶</a></dt>
+<em class="property"><span class="pre">async</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">send</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">content:</span> <span class="pre">str</span> <span class="pre">|</span> <span class="pre">None</span> <span class="pre">=</span> <span class="pre">&lt;MISSING&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">channel_id:</span> <span class="pre">int</span> <span class="pre">|</span> <span class="pre">None</span> <span class="pre">=</span> <span class="pre">&lt;MISSING&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">embed:</span> <span class="pre">~discord_http.embeds.Embed</span> <span class="pre">|</span> <span class="pre">None</span> <span class="pre">=</span> <span class="pre">&lt;MISSING&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">embeds:</span> <span class="pre">list[~discord_http.embeds.Embed]</span> <span class="pre">|</span> <span class="pre">None</span> <span class="pre">=</span> <span class="pre">&lt;MISSING&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">file:</span> <span class="pre">~discord_http.file.File</span> <span class="pre">|</span> <span class="pre">None</span> <span class="pre">=</span> <span class="pre">&lt;MISSING&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">files:</span> <span class="pre">list[~discord_http.file.File]</span> <span class="pre">|</span> <span class="pre">None</span> <span class="pre">=</span> <span class="pre">&lt;MISSING&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">view:</span> <span class="pre">~discord_http.view.View</span> <span class="pre">|</span> <span class="pre">None</span> <span class="pre">=</span> <span class="pre">&lt;MISSING&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tts:</span> <span class="pre">bool</span> <span class="pre">|</span> <span class="pre">None</span> <span class="pre">=</span> <span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">type:</span> <span class="pre">~discord_http.enums.ResponseType</span> <span class="pre">|</span> <span class="pre">int</span> <span class="pre">=</span> <span class="pre">4</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">allowed_mentions:</span> <span class="pre">~discord_http.mentions.AllowedMentions</span> <span class="pre">|</span> <span class="pre">None</span> <span class="pre">=</span> <span class="pre">&lt;MISSING&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">delete_after:</span> <span class="pre">float</span> <span class="pre">|</span> <span class="pre">None</span> <span class="pre">=</span> <span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="message.html#discord_http.message.Message" title="discord_http.message.Message"><span class="pre">Message</span></a></span></span><a class="reference internal" href="../_modules/discord_http/user.html#PartialUser.send"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#discord_http.user.PartialUser.send" title="Link to this definition">¶</a></dt>
 <dd><p>Send a message to the user</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -333,6 +357,7 @@
 <li><p><strong>tts</strong> (<cite>bool</cite>) – Whether the message should be sent as TTS</p></li>
 <li><p><strong>type</strong> (<cite>Optional[ResponseType]</cite>) – Which type of response should be sent</p></li>
 <li><p><strong>allowed_mentions</strong> (<cite>Optional[AllowedMentions]</cite>) – Allowed mentions of the message</p></li>
+<li><p><strong>delete_after</strong> (<cite>Optional[float]</cite>) – How long to wait before deleting the message</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
@@ -350,6 +375,17 @@
 <dt class="sig sig-object py" id="discord_http.user.User">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">discord_http.user.</span></span><span class="sig-name descname"><span class="pre">User</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">state</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="http.html#discord_http.http.DiscordAPI" title="discord_http.http.DiscordAPI"><span class="pre">DiscordAPI</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">data</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/discord_http/user.html#User"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#discord_http.user.User" title="Link to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#discord_http.user.PartialUser" title="discord_http.user.PartialUser"><code class="xref py py-class docutils literal notranslate"><span class="pre">PartialUser</span></code></a></p>
+<dl class="py property">
+<dt class="sig sig-object py" id="discord_http.user.User.display_avatar">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">display_avatar</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="asset.html#discord_http.asset.Asset" title="discord_http.asset.Asset"><span class="pre">Asset</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#discord_http.user.User.display_avatar" title="Link to this definition">¶</a></dt>
+<dd><p>Returns the display avatar of the member</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><cite>Optional[Asset]</cite></p>
+</dd>
+</dl>
+</dd></dl>
+
 <dl class="py property">
 <dt class="sig sig-object py" id="discord_http.user.User.display_name">
 <em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">display_name</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><a class="headerlink" href="#discord_http.user.User.display_name" title="Link to this definition">¶</a></dt>
@@ -371,6 +407,17 @@
 </dd>
 </dl>
 </dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="discord_http.user.UserClient">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">discord_http.user.</span></span><span class="sig-name descname"><span class="pre">UserClient</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">state</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="http.html#discord_http.http.DiscordAPI" title="discord_http.http.DiscordAPI"><span class="pre">DiscordAPI</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">data</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/discord_http/user.html#UserClient"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#discord_http.user.UserClient" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#discord_http.user.User" title="discord_http.user.User"><code class="xref py py-class docutils literal notranslate"><span class="pre">User</span></code></a></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="discord_http.user.UserClient.edit">
+<em class="property"><span class="pre">async</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">edit</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">username:</span> <span class="pre">str</span> <span class="pre">|</span> <span class="pre">None</span> <span class="pre">=</span> <span class="pre">&lt;MISSING&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">avatar:</span> <span class="pre">bytes</span> <span class="pre">|</span> <span class="pre">None</span> <span class="pre">=</span> <span class="pre">&lt;MISSING&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">banner:</span> <span class="pre">bytes</span> <span class="pre">|</span> <span class="pre">None</span> <span class="pre">=</span> <span class="pre">&lt;MISSING&gt;</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#discord_http.user.UserClient" title="discord_http.user.UserClient"><span class="pre">UserClient</span></a></span></span><a class="reference internal" href="../_modules/discord_http/user.html#UserClient.edit"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#discord_http.user.UserClient.edit" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
 
 </dd></dl>
 
@@ -436,14 +483,20 @@
 <li><a class="reference internal" href="#module-discord_http.user">discord_http.user module</a><ul>
 <li><a class="reference internal" href="#discord_http.user.PartialUser"><code class="docutils literal notranslate"><span class="pre">PartialUser</span></code></a><ul>
 <li><a class="reference internal" href="#discord_http.user.PartialUser.create_dm"><code class="docutils literal notranslate"><span class="pre">PartialUser.create_dm()</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.user.PartialUser.default_avatar"><code class="docutils literal notranslate"><span class="pre">PartialUser.default_avatar</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.user.PartialUser.fetch"><code class="docutils literal notranslate"><span class="pre">PartialUser.fetch()</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.user.PartialUser.mention"><code class="docutils literal notranslate"><span class="pre">PartialUser.mention</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.user.PartialUser.send"><code class="docutils literal notranslate"><span class="pre">PartialUser.send()</span></code></a></li>
 </ul>
 </li>
 <li><a class="reference internal" href="#discord_http.user.User"><code class="docutils literal notranslate"><span class="pre">User</span></code></a><ul>
+<li><a class="reference internal" href="#discord_http.user.User.display_avatar"><code class="docutils literal notranslate"><span class="pre">User.display_avatar</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.user.User.display_name"><code class="docutils literal notranslate"><span class="pre">User.display_name</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.user.User.global_avatar"><code class="docutils literal notranslate"><span class="pre">User.global_avatar</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#discord_http.user.UserClient"><code class="docutils literal notranslate"><span class="pre">UserClient</span></code></a><ul>
+<li><a class="reference internal" href="#discord_http.user.UserClient.edit"><code class="docutils literal notranslate"><span class="pre">UserClient.edit()</span></code></a></li>
 </ul>
 </li>
 </ul>
@@ -460,7 +513,7 @@
     </aside>
   </div>
 </div><script src="../_static/documentation_options.js?v=d45e8c67"></script>
-    <script src="../_static/doctools.js?v=9a2dae69"></script>
+    <script src="../_static/doctools.js?v=9bcbadda"></script>
     <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../_static/scripts/furo.js?v=5fa4622c"></script>
     </body>

@@ -3,9 +3,9 @@
   <head><meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width,initial-scale=1"/>
     <meta name="color-scheme" content="light dark"><meta name="viewport" content="width=device-width, initial-scale=1" />
-<link rel="index" title="Index" href="../genindex.html" /><link rel="search" title="Search" href="../search.html" /><link rel="next" title="Colour" href="colour.html" /><link rel="prev" title="Channel" href="channel.html" />
+<meta content="Client - discord.http docs" property="og:title"><meta content="Bases: object" name="description"><meta content="Bases: object" property="og:description"><meta property="og:image" content="/_static/favicon.ico"><meta name="theme-color" content="#14bae4"><meta property="og:locale" content="en_GB"><meta name="keywords" content="discord, http, api, interaction, quart, webhook, slash><meta name="revisit-after" content="2 days"><link rel="index" title="Index" href="../genindex.html" /><link rel="search" title="Search" href="../search.html" /><link rel="next" title="Colour" href="colour.html" /><link rel="prev" title="Channel" href="channel.html" />
 
-    <link rel="shortcut icon" href="../_static/favicon.ico"/><!-- Generated with Sphinx 8.0.2 and Furo 2024.08.06 -->
+    <link rel="shortcut icon" href="../_static/favicon.ico"/><!-- Generated with Sphinx 8.1.3 and Furo 2024.08.06 -->
         <title>Client - discord.http docs</title>
       <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=fa44fd50" />
     <link rel="stylesheet" type="text/css" href="../_static/styles/furo.css?v=354aac6f" />
@@ -202,6 +202,8 @@
 <li class="toctree-l1"><a class="reference internal" href="../pages/getting_started.html">Getting started</a></li>
 <li class="toctree-l1 current has-children"><a class="reference internal" href="../pages/api.html">API components</a><input checked="" class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" role="switch" type="checkbox"/><label for="toctree-checkbox-1"><div class="visually-hidden">Toggle navigation of API components</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul class="current">
 <li class="toctree-l2"><a class="reference internal" href="asset.html">Asset</a></li>
+<li class="toctree-l2"><a class="reference internal" href="audit.html">Audit</a></li>
+<li class="toctree-l2"><a class="reference internal" href="automod.html">AutoModRule</a></li>
 <li class="toctree-l2"><a class="reference internal" href="backend.html">Backend</a></li>
 <li class="toctree-l2"><a class="reference internal" href="channel.html">Channel</a></li>
 <li class="toctree-l2 current current-page"><a class="current reference internal" href="#">Client</a></li>
@@ -215,9 +217,10 @@
 <li class="toctree-l2"><a class="reference internal" href="enums.html">Enums</a></li>
 <li class="toctree-l2"><a class="reference internal" href="errors.html">Errors</a></li>
 <li class="toctree-l2"><a class="reference internal" href="file.html">File</a></li>
-<li class="toctree-l2"><a class="reference internal" href="flag.html">Flag</a></li>
+<li class="toctree-l2"><a class="reference internal" href="flags.html">Flag</a></li>
 <li class="toctree-l2"><a class="reference internal" href="guild.html">Guild</a></li>
 <li class="toctree-l2"><a class="reference internal" href="http.html">Http</a></li>
+<li class="toctree-l2"><a class="reference internal" href="integrations.html">Integrations</a></li>
 <li class="toctree-l2"><a class="reference internal" href="invite.html">Invite</a></li>
 <li class="toctree-l2"><a class="reference internal" href="member.html">Member</a></li>
 <li class="toctree-l2"><a class="reference internal" href="mentions.html">Mentions</a></li>
@@ -226,14 +229,24 @@
 <li class="toctree-l2"><a class="reference internal" href="object.html">Object</a></li>
 <li class="toctree-l2"><a class="reference internal" href="response.html">Response</a></li>
 <li class="toctree-l2"><a class="reference internal" href="role.html">Role</a></li>
+<li class="toctree-l2"><a class="reference internal" href="soundboard.html">Soundboard</a></li>
 <li class="toctree-l2"><a class="reference internal" href="sticker.html">Sticker</a></li>
 <li class="toctree-l2"><a class="reference internal" href="tasks.html">Tasks</a></li>
 <li class="toctree-l2"><a class="reference internal" href="user.html">User</a></li>
 <li class="toctree-l2"><a class="reference internal" href="view.html">View</a></li>
+<li class="toctree-l2"><a class="reference internal" href="voice.html">Vsset</a></li>
 <li class="toctree-l2"><a class="reference internal" href="webhook.html">Webhook</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../pages/events.html">Event references</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../pages/gateway.html">Gateway references</a><input class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" role="switch" type="checkbox"/><label for="toctree-checkbox-2"><div class="visually-hidden">Toggle navigation of Gateway references</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../gateway/activity.html">Activity</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../gateway/client.html">Client</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../gateway/enums.html">Enums</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../gateway/flags.html">Flags</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../gateway/object.html">Object (Gateway events)</a></li>
+</ul>
+</li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">Advanced</span></p>
 <ul>
@@ -243,7 +256,7 @@
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../pages/contribute.html">Contributing</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../pages/license.html">License</a></li>
-<li class="toctree-l1"><a class="reference external" href="https://discord.gg/AlexFlipnote">Discord</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://discord.gg/yqb7vATbjH">Discord</a></li>
 <li class="toctree-l1"><a class="reference external" href="https://github.com/AlexFlipnote/discord.http">GitHub</a></li>
 </ul>
 
@@ -291,7 +304,7 @@
 <span id="discord-http-client-module"></span><h2>discord_http.client module<a class="headerlink" href="#module-discord_http.client" title="Link to this heading">¶</a></h2>
 <dl class="py class">
 <dt class="sig sig-object py" id="discord_http.client.Client">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">discord_http.client.</span></span><span class="sig-name descname"><span class="pre">Client</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">token:</span> <span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">application_id:</span> <span class="pre">int</span> <span class="pre">|</span> <span class="pre">None</span> <span class="pre">=</span> <span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">public_key:</span> <span class="pre">str</span> <span class="pre">|</span> <span class="pre">None</span> <span class="pre">=</span> <span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">guild_id:</span> <span class="pre">int</span> <span class="pre">|</span> <span class="pre">None</span> <span class="pre">=</span> <span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sync:</span> <span class="pre">bool</span> <span class="pre">=</span> <span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">api_version:</span> <span class="pre">int</span> <span class="pre">|</span> <span class="pre">None</span> <span class="pre">=</span> <span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">loop:</span> <span class="pre">~asyncio.events.AbstractEventLoop</span> <span class="pre">|</span> <span class="pre">None</span> <span class="pre">=</span> <span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">allowed_mentions:</span> <span class="pre">~discord_http.mentions.AllowedMentions</span> <span class="pre">=</span> <span class="pre">&lt;discord_http.mentions.AllowedMentions</span> <span class="pre">object&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">logging_level:</span> <span class="pre">int</span> <span class="pre">=</span> <span class="pre">20</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">disable_default_get_path:</span> <span class="pre">bool</span> <span class="pre">=</span> <span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">disable_oauth_hint:</span> <span class="pre">bool</span> <span class="pre">=</span> <span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">debug_events:</span> <span class="pre">bool</span> <span class="pre">=</span> <span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/discord_http/client.html#Client"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#discord_http.client.Client" title="Link to this definition">¶</a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">discord_http.client.</span></span><span class="sig-name descname"><span class="pre">Client</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">token:</span> <span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">application_id:</span> <span class="pre">int</span> <span class="pre">|</span> <span class="pre">None</span> <span class="pre">=</span> <span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">public_key:</span> <span class="pre">str</span> <span class="pre">|</span> <span class="pre">None</span> <span class="pre">=</span> <span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">guild_id:</span> <span class="pre">int</span> <span class="pre">|</span> <span class="pre">None</span> <span class="pre">=</span> <span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sync:</span> <span class="pre">bool</span> <span class="pre">=</span> <span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">api_version:</span> <span class="pre">int</span> <span class="pre">=</span> <span class="pre">10</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">loop:</span> <span class="pre">~asyncio.events.AbstractEventLoop</span> <span class="pre">|</span> <span class="pre">None</span> <span class="pre">=</span> <span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">allowed_mentions:</span> <span class="pre">~discord_http.mentions.AllowedMentions</span> <span class="pre">=</span> <span class="pre">&lt;discord_http.mentions.AllowedMentions</span> <span class="pre">object&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">enable_gateway:</span> <span class="pre">bool</span> <span class="pre">=</span> <span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">automatic_shards:</span> <span class="pre">bool</span> <span class="pre">=</span> <span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">playing_status:</span> <span class="pre">PlayingStatus</span> <span class="pre">|</span> <span class="pre">None</span> <span class="pre">=</span> <span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">chunk_guilds_on_startup:</span> <span class="pre">bool</span> <span class="pre">=</span> <span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">guild_ready_timeout:</span> <span class="pre">float</span> <span class="pre">=</span> <span class="pre">2.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">gateway_cache:</span> <span class="pre">GatewayCacheFlags</span> <span class="pre">|</span> <span class="pre">None</span> <span class="pre">=</span> <span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">intents:</span> <span class="pre">Intents</span> <span class="pre">|</span> <span class="pre">None</span> <span class="pre">=</span> <span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">logging_level:</span> <span class="pre">int</span> <span class="pre">=</span> <span class="pre">20</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">call_after_delay:</span> <span class="pre">float</span> <span class="pre">=</span> <span class="pre">0.1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">disable_default_get_path:</span> <span class="pre">bool</span> <span class="pre">=</span> <span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">debug_events:</span> <span class="pre">bool</span> <span class="pre">=</span> <span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/discord_http/client.html#Client"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#discord_http.client.Client" title="Link to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
 <dl class="py method">
 <dt class="sig sig-object py" id="discord_http.client.Client.add_cog">
@@ -311,6 +324,17 @@
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>command</strong> (<cite>Command</cite>) – The command to add to the bot.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="discord_http.client.Client.add_global_cmd_check">
+<span class="sig-name descname"><span class="pre">add_global_cmd_check</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">func</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Callable</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Callable</span></span></span><a class="reference internal" href="../_modules/discord_http/client.html#Client.add_global_cmd_check"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#discord_http.client.Client.add_global_cmd_check" title="Link to this definition">¶</a></dt>
+<dd><p>Add a check that will be run before every command</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>func</strong> (<cite>Callable</cite>) – The function to add</p>
 </dd>
 </dl>
 </dd></dl>
@@ -392,6 +416,28 @@
 </dd></dl>
 
 <dl class="py method">
+<dt class="sig sig-object py" id="discord_http.client.Client.create_guild">
+<em class="property"><span class="pre">async</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">create_guild</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">icon</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="file.html#discord_http.file.File" title="discord_http.file.File"><span class="pre">File</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">bytes</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">reason</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="guild.html#discord_http.guild.Guild" title="discord_http.guild.Guild"><span class="pre">Guild</span></a></span></span><a class="reference internal" href="../_modules/discord_http/client.html#Client.create_guild"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#discord_http.client.Client.create_guild" title="Link to this definition">¶</a></dt>
+<dd><p>Create a guild</p>
+<p>Note that the bot must be in less than 10 guilds to use this endpoint</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>name</strong> (<cite>str</cite>) – The name of the guild</p></li>
+<li><p><strong>icon</strong> (<cite>Optional[File]</cite>) – The icon of the guild</p></li>
+<li><p><strong>reason</strong> (<cite>Optional[str]</cite>) – The reason for creating the guild</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The created guild</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><cite>Guild</cite></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
 <dt class="sig sig-object py" id="discord_http.client.Client.dispatch">
 <span class="sig-name descname"><span class="pre">dispatch</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">event_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">/</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/discord_http/client.html#Client.dispatch"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#discord_http.client.Client.dispatch" title="Link to this definition">¶</a></dt>
 <dd><p>Dispatches an event to all listeners of that event.</p>
@@ -410,6 +456,26 @@
 <dt class="sig sig-object py" id="discord_http.client.Client.fetch_application_emojis">
 <em class="property"><span class="pre">async</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">fetch_application_emojis</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="emoji.html#discord_http.emoji.Emoji" title="discord_http.emoji.Emoji"><span class="pre">Emoji</span></a><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../_modules/discord_http/client.html#Client.fetch_application_emojis"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#discord_http.client.Client.fetch_application_emojis" title="Link to this definition">¶</a></dt>
 <dd><p><cite>list[Emoji]</cite>: Fetches all emojis available to the application.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="discord_http.client.Client.fetch_automod_rule">
+<em class="property"><span class="pre">async</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">fetch_automod_rule</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">rule_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">guild_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="automod.html#discord_http.automod.AutoModRule" title="discord_http.automod.AutoModRule"><span class="pre">AutoModRule</span></a></span></span><a class="reference internal" href="../_modules/discord_http/client.html#Client.fetch_automod_rule"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#discord_http.client.Client.fetch_automod_rule" title="Link to this definition">¶</a></dt>
+<dd><p>Fetches a automod object</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>rule_id</strong> (<cite>int</cite>) – The ID of the automod rule</p></li>
+<li><p><strong>guild_id</strong> (<cite>int</cite>) – The Guild ID where it comes from</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The automod object</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><cite>AutoModRule</cite></p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py method">
@@ -552,13 +618,14 @@ Use <cite>None</cite> to fetch all entitlements.</p></li>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="discord_http.client.Client.fetch_message">
-<em class="property"><span class="pre">async</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">fetch_message</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">message_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">channel_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="message.html#discord_http.message.Message" title="discord_http.message.Message"><span class="pre">Message</span></a></span></span><a class="reference internal" href="../_modules/discord_http/client.html#Client.fetch_message"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#discord_http.client.Client.fetch_message" title="Link to this definition">¶</a></dt>
+<em class="property"><span class="pre">async</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">fetch_message</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">message_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">channel_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">guild_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="message.html#discord_http.message.Message" title="discord_http.message.Message"><span class="pre">Message</span></a></span></span><a class="reference internal" href="../_modules/discord_http/client.html#Client.fetch_message"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#discord_http.client.Client.fetch_message" title="Link to this definition">¶</a></dt>
 <dd><p>Fetches a message object.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>message_id</strong> (<cite>int</cite>) – Message ID to fetch the message object with.</p></li>
 <li><p><strong>channel_id</strong> (<cite>int</cite>) – Channel ID to fetch the message object with.</p></li>
+<li><p><strong>guild_id</strong> (<cite>Optional[int]</cite>) – Guild ID to fetch the message object from.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
@@ -597,6 +664,26 @@ Use <cite>None</cite> to fetch all entitlements.</p></li>
 </dd></dl>
 
 <dl class="py method">
+<dt class="sig sig-object py" id="discord_http.client.Client.fetch_soundboard_sound">
+<em class="property"><span class="pre">async</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">fetch_soundboard_sound</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sound_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">guild_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="soundboard.html#discord_http.soundboard.SoundboardSound" title="discord_http.soundboard.SoundboardSound"><span class="pre">SoundboardSound</span></a></span></span><a class="reference internal" href="../_modules/discord_http/client.html#Client.fetch_soundboard_sound"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#discord_http.client.Client.fetch_soundboard_sound" title="Link to this definition">¶</a></dt>
+<dd><p>Fetches a soundboard sound object.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>sticker_id</strong> (<cite>int</cite>) – Sound ID to fetch the soundboard sound object with.</p></li>
+<li><p><strong>guild_id</strong> (<cite>int</cite>) – Guild ID to fetch the soundboard sound object from.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The soundboard sound object.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><cite>SoundboardSound</cite></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
 <dt class="sig sig-object py" id="discord_http.client.Client.fetch_sticker">
 <em class="property"><span class="pre">async</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">fetch_sticker</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sticker_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">guild_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="sticker.html#discord_http.sticker.Sticker" title="discord_http.sticker.Sticker"><span class="pre">Sticker</span></a></span></span><a class="reference internal" href="../_modules/discord_http/client.html#Client.fetch_sticker"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#discord_http.client.Client.fetch_sticker" title="Link to this definition">¶</a></dt>
 <dd><p>Fetches a sticker object.</p>
@@ -626,6 +713,26 @@ Use <cite>None</cite> to fetch all entitlements.</p></li>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p><cite>User</cite></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="discord_http.client.Client.fetch_voice_state">
+<em class="property"><span class="pre">async</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">fetch_voice_state</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">member_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">guild_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="voice.html#discord_http.voice.VoiceState" title="discord_http.voice.VoiceState"><span class="pre">VoiceState</span></a></span></span><a class="reference internal" href="../_modules/discord_http/client.html#Client.fetch_voice_state"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#discord_http.client.Client.fetch_voice_state" title="Link to this definition">¶</a></dt>
+<dd><p>Fetches a voice state object.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>member_id</strong> (<cite>int</cite>) – The ID of the member to fetch the voice state from</p></li>
+<li><p><strong>guild_id</strong> (<cite>Optional[int]</cite>) – Guild ID to fetch the voice state from</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The voice state object.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><cite>VoiceState</cite></p>
 </dd>
 </dl>
 </dd></dl>
@@ -665,6 +772,60 @@ if some interaction Custom IDs are regex.</p>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p><cite>Optional[Interaction]</cite></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="discord_http.client.Client.get_channel">
+<span class="sig-name descname"><span class="pre">get_channel</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">channel_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="channel.html#discord_http.channel.BaseChannel" title="discord_http.channel.BaseChannel"><span class="pre">BaseChannel</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="channel.html#discord_http.channel.PartialChannel" title="discord_http.channel.PartialChannel"><span class="pre">PartialChannel</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span></span><a class="reference internal" href="../_modules/discord_http/client.html#Client.get_channel"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#discord_http.client.Client.get_channel" title="Link to this definition">¶</a></dt>
+<dd><p>Get a channel object from the cache.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>channel_id</strong> (<cite>int</cite>) – The ID of the channel to get.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The channel object with the specified ID, or <cite>None</cite> if not found.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><cite>BaseChannel | PartialChannel | None</cite></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="discord_http.client.Client.get_guild">
+<span class="sig-name descname"><span class="pre">get_guild</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">guild_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="guild.html#discord_http.guild.Guild" title="discord_http.guild.Guild"><span class="pre">Guild</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="guild.html#discord_http.guild.PartialGuild" title="discord_http.guild.PartialGuild"><span class="pre">PartialGuild</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span></span><a class="reference internal" href="../_modules/discord_http/client.html#Client.get_guild"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#discord_http.client.Client.get_guild" title="Link to this definition">¶</a></dt>
+<dd><p>Get a guild object from the cache.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>guild_id</strong> (<cite>int</cite>) – The ID of the guild to get.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The guild object with the specified ID, or <cite>None</cite> if not found.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><cite>Guild | PartialGuild | None</cite></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="discord_http.client.Client.get_partial_automod_rule">
+<span class="sig-name descname"><span class="pre">get_partial_automod_rule</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">rule_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">guild_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="automod.html#discord_http.automod.PartialAutoModRule" title="discord_http.automod.PartialAutoModRule"><span class="pre">PartialAutoModRule</span></a></span></span><a class="reference internal" href="../_modules/discord_http/client.html#Client.get_partial_automod_rule"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#discord_http.client.Client.get_partial_automod_rule" title="Link to this definition">¶</a></dt>
+<dd><p>Creates a partial automod object</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>rule_id</strong> (<cite>int</cite>) – The ID of the automod rule</p></li>
+<li><p><strong>guild_id</strong> (<cite>int</cite>) – The Guild ID where it comes from</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The partial automod object</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><cite>PartialAutoModRule</cite></p>
 </dd>
 </dl>
 </dd></dl>
@@ -746,7 +907,7 @@ If None, it will get the emoji from the application.</p></li>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="discord_http.client.Client.get_partial_invite">
-<span class="sig-name descname"><span class="pre">get_partial_invite</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">invite_code</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="invite.html#discord_http.invite.PartialInvite" title="discord_http.invite.PartialInvite"><span class="pre">PartialInvite</span></a></span></span><a class="reference internal" href="../_modules/discord_http/client.html#Client.get_partial_invite"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#discord_http.client.Client.get_partial_invite" title="Link to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">get_partial_invite</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">invite_code</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">channel_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">guild_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="invite.html#discord_http.invite.PartialInvite" title="discord_http.invite.PartialInvite"><span class="pre">PartialInvite</span></a></span></span><a class="reference internal" href="../_modules/discord_http/client.html#Client.get_partial_invite"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#discord_http.client.Client.get_partial_invite" title="Link to this definition">¶</a></dt>
 <dd><p>Creates a partial invite object.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -783,13 +944,14 @@ If None, it will get the emoji from the application.</p></li>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="discord_http.client.Client.get_partial_message">
-<span class="sig-name descname"><span class="pre">get_partial_message</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">message_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">channel_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="message.html#discord_http.message.PartialMessage" title="discord_http.message.PartialMessage"><span class="pre">PartialMessage</span></a></span></span><a class="reference internal" href="../_modules/discord_http/client.html#Client.get_partial_message"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#discord_http.client.Client.get_partial_message" title="Link to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">get_partial_message</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">message_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">channel_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">guild_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="message.html#discord_http.message.PartialMessage" title="discord_http.message.PartialMessage"><span class="pre">PartialMessage</span></a></span></span><a class="reference internal" href="../_modules/discord_http/client.html#Client.get_partial_message"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#discord_http.client.Client.get_partial_message" title="Link to this definition">¶</a></dt>
 <dd><p>Creates a partial message object.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>message_id</strong> (<cite>int</cite>) – Message ID to create the partial message object with.</p></li>
 <li><p><strong>channel_id</strong> (<cite>int</cite>) – Channel ID to create the partial message object with.</p></li>
+<li><p><strong>guild_id</strong> (<cite>Optional[int]</cite>) – Guild ID to create the partial message object with.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
@@ -856,6 +1018,26 @@ If None, it will get the emoji from the application.</p></li>
 </dd></dl>
 
 <dl class="py method">
+<dt class="sig sig-object py" id="discord_http.client.Client.get_partial_soundboard_sound">
+<span class="sig-name descname"><span class="pre">get_partial_soundboard_sound</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sound_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">guild_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="soundboard.html#discord_http.soundboard.PartialSoundboardSound" title="discord_http.soundboard.PartialSoundboardSound"><span class="pre">PartialSoundboardSound</span></a></span></span><a class="reference internal" href="../_modules/discord_http/client.html#Client.get_partial_soundboard_sound"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#discord_http.client.Client.get_partial_soundboard_sound" title="Link to this definition">¶</a></dt>
+<dd><p>Creates a partial sticker object.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>sticker_id</strong> (<cite>int</cite>) – Sound ID to create the partial soundboard sound object with.</p></li>
+<li><p><strong>guild_id</strong> (<cite>Optional[int]</cite>) – Guild ID to create the partial soundboard sound object with.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The partial soundboard sound object.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><cite>PartialSoundboardSound</cite></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
 <dt class="sig sig-object py" id="discord_http.client.Client.get_partial_sticker">
 <span class="sig-name descname"><span class="pre">get_partial_sticker</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sticker_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">guild_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="sticker.html#discord_http.sticker.PartialSticker" title="discord_http.sticker.PartialSticker"><span class="pre">PartialSticker</span></a></span></span><a class="reference internal" href="../_modules/discord_http/client.html#Client.get_partial_sticker"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#discord_http.client.Client.get_partial_sticker" title="Link to this definition">¶</a></dt>
 <dd><p>Creates a partial sticker object.</p>
@@ -893,6 +1075,26 @@ If None, it will get the emoji from the application.</p></li>
 </dd></dl>
 
 <dl class="py method">
+<dt class="sig sig-object py" id="discord_http.client.Client.get_partial_voice_state">
+<span class="sig-name descname"><span class="pre">get_partial_voice_state</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">member_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">guild_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">channel_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="voice.html#discord_http.voice.PartialVoiceState" title="discord_http.voice.PartialVoiceState"><span class="pre">PartialVoiceState</span></a></span></span><a class="reference internal" href="../_modules/discord_http/client.html#Client.get_partial_voice_state"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#discord_http.client.Client.get_partial_voice_state" title="Link to this definition">¶</a></dt>
+<dd><p>Creates a partial voice state object.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>member_id</strong> (<cite>int</cite>) – The ID of the member to create the partial voice state from</p></li>
+<li><p><strong>guild_id</strong> (<cite>Optional[int]</cite>) – Guild ID to create the partial voice state from</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The partial voice state object.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><cite>PartialVoiceState</cite></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
 <dt class="sig sig-object py" id="discord_http.client.Client.get_partial_webhook">
 <span class="sig-name descname"><span class="pre">get_partial_webhook</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">webhook_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">webhook_token</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="webhook.html#discord_http.webhook.PartialWebhook" title="discord_http.webhook.PartialWebhook"><span class="pre">PartialWebhook</span></a></span></span><a class="reference internal" href="../_modules/discord_http/client.html#Client.get_partial_webhook"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#discord_http.client.Client.get_partial_webhook" title="Link to this definition">¶</a></dt>
 <dd><p>Creates a partial webhook object.</p>
@@ -913,6 +1115,26 @@ If None, it will get the emoji from the application.</p></li>
 </dd></dl>
 
 <dl class="py method">
+<dt class="sig sig-object py" id="discord_http.client.Client.get_shard_by_guild_id">
+<span class="sig-name descname"><span class="pre">get_shard_by_guild_id</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">guild_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="object.html#discord_http.object.Snowflake" title="discord_http.object.Snowflake"><span class="pre">Snowflake</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">int</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span></span><a class="reference internal" href="../_modules/discord_http/client.html#Client.get_shard_by_guild_id"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#discord_http.client.Client.get_shard_by_guild_id" title="Link to this definition">¶</a></dt>
+<dd><p>Returns the shard ID of the shard that the guild is in</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>guild_id</strong> (<cite>Snowflake | int</cite>) – The ID of the guild to get the shard ID of</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The shard ID of the guild, or <cite>None</cite> if not found</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><cite>int | None</cite></p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>NotImplementedError</strong> – If the gateway is not available</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
 <dt class="sig sig-object py" id="discord_http.client.Client.group">
 <span class="sig-name descname"><span class="pre">group</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">description</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/discord_http/client.html#Client.group"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#discord_http.client.Client.group" title="Link to this definition">¶</a></dt>
 <dd><p>Used to register a sub-command group</p>
@@ -922,6 +1144,18 @@ If None, it will get the emoji from the application.</p></li>
 <li><p><strong>name</strong> (<cite>Optional[str]</cite>) – Name of the group, if not provided, it will use the function name</p></li>
 <li><p><strong>description</strong> (<cite>Optional[str]</cite>) – Description of the group, if not provided, it will use the function docstring</p></li>
 </ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="discord_http.client.Client.guilds">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">guilds</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">list</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="guild.html#discord_http.guild.Guild" title="discord_http.guild.Guild"><span class="pre">Guild</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="guild.html#discord_http.guild.PartialGuild" title="discord_http.guild.PartialGuild"><span class="pre">PartialGuild</span></a><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#discord_http.client.Client.guilds" title="Link to this definition">¶</a></dt>
+<dd><p>Returns a list of all the guilds the bot is in.
+Only useable if you are using gateway and caching</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><cite>list[Guild]</cite></p>
 </dd>
 </dl>
 </dd></dl>
@@ -963,6 +1197,11 @@ If None, it will get the emoji from the application.</p></li>
 <span class="sig-name descname"><span class="pre">is_ready</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="reference internal" href="../_modules/discord_http/client.html#Client.is_ready"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#discord_http.client.Client.is_ready" title="Link to this definition">¶</a></dt>
 <dd><p><cite>bool</cite>: Indicates if the client is ready.</p>
 </dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="discord_http.client.Client.is_shards_ready">
+<span class="sig-name descname"><span class="pre">is_shards_ready</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="reference internal" href="../_modules/discord_http/client.html#Client.is_shards_ready"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#discord_http.client.Client.is_shards_ready" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="discord_http.client.Client.listener">
@@ -1011,6 +1250,37 @@ If None, it will get the emoji from the application.</p></li>
 <li><p><strong>user_install</strong> (<cite>bool</cite>) – Whether the command can be installed by users or not</p></li>
 <li><p><strong>guild_install</strong> (<cite>bool</cite>) – Whether the command can be installed by guilds or not</p></li>
 </ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="discord_http.client.Client.query_members">
+<em class="property"><span class="pre">async</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">query_members</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">guild_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="object.html#discord_http.object.Snowflake" title="discord_http.object.Snowflake"><span class="pre">Snowflake</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">int</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">query</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">limit</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">presences</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">user_ids</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="object.html#discord_http.object.Snowflake" title="discord_http.object.Snowflake"><span class="pre">Snowflake</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">int</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">shard_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="member.html#discord_http.member.Member" title="discord_http.member.Member"><span class="pre">Member</span></a><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../_modules/discord_http/client.html#Client.query_members"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#discord_http.client.Client.query_members" title="Link to this definition">¶</a></dt>
+<dd><p>Query members in a guild</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>guild_id</strong> (<cite>Snowflake | int</cite>) – The ID of the guild to query members in</p></li>
+<li><p><strong>query</strong> (<cite>str | None</cite>) – The query to search for</p></li>
+<li><p><strong>limit</strong> (<cite>int</cite>) – The maximum amount of members to return</p></li>
+<li><p><strong>presences</strong> (<cite>bool</cite>) – Whether to include presences in the response</p></li>
+<li><p><strong>user_ids</strong> (<cite>list[Snowflake | int] | None</cite>) – The user IDs to fetch members for</p></li>
+<li><p><strong>shard_id</strong> (<cite>int | None</cite>) – The shard ID to query the members from</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The members that matched the query</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><cite>list[Member]</cite></p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>ValueError</strong> – <ul class="simple">
+<li><p>If <cite>shard_id</cite> is not provided
+    - If <cite>shard_id</cite> is not valid</p></li>
+</ul>
+</p>
 </dd>
 </dl>
 </dd></dl>
@@ -1150,7 +1420,7 @@ to then sync them all to Discord API.</p>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="discord_http.client.Client.user">
-<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">user</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="user.html#discord_http.user.User" title="discord_http.user.User"><span class="pre">User</span></a></em><a class="headerlink" href="#discord_http.client.Client.user" title="Link to this definition">¶</a></dt>
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">user</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="user.html#discord_http.user.UserClient" title="discord_http.user.UserClient"><span class="pre">UserClient</span></a></em><a class="headerlink" href="#discord_http.client.Client.user" title="Link to this definition">¶</a></dt>
 <dd><p>returns: The bot’s user object
 :rtype: <cite>User</cite></p>
 <dl class="field-list simple">
@@ -1185,6 +1455,12 @@ to then sync them all to Discord API.</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="discord_http.client.Client.wait_until_ready">
 <em class="property"><span class="pre">async</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">wait_until_ready</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="../_modules/discord_http/client.html#Client.wait_until_ready"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#discord_http.client.Client.wait_until_ready" title="Link to this definition">¶</a></dt>
+<dd><p>Waits until the client is ready using <cite>asyncio.Event.wait()</cite>.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="discord_http.client.Client.wait_until_shards_ready">
+<em class="property"><span class="pre">async</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">wait_until_shards_ready</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="../_modules/discord_http/client.html#Client.wait_until_shards_ready"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#discord_http.client.Client.wait_until_shards_ready" title="Link to this definition">¶</a></dt>
 <dd><p>Waits until the client is ready using <cite>asyncio.Event.wait()</cite>.</p>
 </dd></dl>
 
@@ -1253,13 +1529,16 @@ to then sync them all to Discord API.</p>
 <li><a class="reference internal" href="#discord_http.client.Client"><code class="docutils literal notranslate"><span class="pre">Client</span></code></a><ul>
 <li><a class="reference internal" href="#discord_http.client.Client.add_cog"><code class="docutils literal notranslate"><span class="pre">Client.add_cog()</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.client.Client.add_command"><code class="docutils literal notranslate"><span class="pre">Client.add_command()</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.client.Client.add_global_cmd_check"><code class="docutils literal notranslate"><span class="pre">Client.add_global_cmd_check()</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.client.Client.add_group"><code class="docutils literal notranslate"><span class="pre">Client.add_group()</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.client.Client.add_interaction"><code class="docutils literal notranslate"><span class="pre">Client.add_interaction()</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.client.Client.add_listener"><code class="docutils literal notranslate"><span class="pre">Client.add_listener()</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.client.Client.command"><code class="docutils literal notranslate"><span class="pre">Client.command()</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.client.Client.create_application_emoji"><code class="docutils literal notranslate"><span class="pre">Client.create_application_emoji()</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.client.Client.create_guild"><code class="docutils literal notranslate"><span class="pre">Client.create_guild()</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.client.Client.dispatch"><code class="docutils literal notranslate"><span class="pre">Client.dispatch()</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.client.Client.fetch_application_emojis"><code class="docutils literal notranslate"><span class="pre">Client.fetch_application_emojis()</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.client.Client.fetch_automod_rule"><code class="docutils literal notranslate"><span class="pre">Client.fetch_automod_rule()</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.client.Client.fetch_channel"><code class="docutils literal notranslate"><span class="pre">Client.fetch_channel()</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.client.Client.fetch_emoji"><code class="docutils literal notranslate"><span class="pre">Client.fetch_emoji()</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.client.Client.fetch_entitlement"><code class="docutils literal notranslate"><span class="pre">Client.fetch_entitlement()</span></code></a></li>
@@ -1270,10 +1549,15 @@ to then sync them all to Discord API.</p>
 <li><a class="reference internal" href="#discord_http.client.Client.fetch_message"><code class="docutils literal notranslate"><span class="pre">Client.fetch_message()</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.client.Client.fetch_scheduled_event"><code class="docutils literal notranslate"><span class="pre">Client.fetch_scheduled_event()</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.client.Client.fetch_skus"><code class="docutils literal notranslate"><span class="pre">Client.fetch_skus()</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.client.Client.fetch_soundboard_sound"><code class="docutils literal notranslate"><span class="pre">Client.fetch_soundboard_sound()</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.client.Client.fetch_sticker"><code class="docutils literal notranslate"><span class="pre">Client.fetch_sticker()</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.client.Client.fetch_user"><code class="docutils literal notranslate"><span class="pre">Client.fetch_user()</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.client.Client.fetch_voice_state"><code class="docutils literal notranslate"><span class="pre">Client.fetch_voice_state()</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.client.Client.fetch_webhook"><code class="docutils literal notranslate"><span class="pre">Client.fetch_webhook()</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.client.Client.find_interaction"><code class="docutils literal notranslate"><span class="pre">Client.find_interaction()</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.client.Client.get_channel"><code class="docutils literal notranslate"><span class="pre">Client.get_channel()</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.client.Client.get_guild"><code class="docutils literal notranslate"><span class="pre">Client.get_guild()</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.client.Client.get_partial_automod_rule"><code class="docutils literal notranslate"><span class="pre">Client.get_partial_automod_rule()</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.client.Client.get_partial_channel"><code class="docutils literal notranslate"><span class="pre">Client.get_partial_channel()</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.client.Client.get_partial_emoji"><code class="docutils literal notranslate"><span class="pre">Client.get_partial_emoji()</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.client.Client.get_partial_entitlement"><code class="docutils literal notranslate"><span class="pre">Client.get_partial_entitlement()</span></code></a></li>
@@ -1284,16 +1568,22 @@ to then sync them all to Discord API.</p>
 <li><a class="reference internal" href="#discord_http.client.Client.get_partial_role"><code class="docutils literal notranslate"><span class="pre">Client.get_partial_role()</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.client.Client.get_partial_scheduled_event"><code class="docutils literal notranslate"><span class="pre">Client.get_partial_scheduled_event()</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.client.Client.get_partial_sku"><code class="docutils literal notranslate"><span class="pre">Client.get_partial_sku()</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.client.Client.get_partial_soundboard_sound"><code class="docutils literal notranslate"><span class="pre">Client.get_partial_soundboard_sound()</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.client.Client.get_partial_sticker"><code class="docutils literal notranslate"><span class="pre">Client.get_partial_sticker()</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.client.Client.get_partial_user"><code class="docutils literal notranslate"><span class="pre">Client.get_partial_user()</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.client.Client.get_partial_voice_state"><code class="docutils literal notranslate"><span class="pre">Client.get_partial_voice_state()</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.client.Client.get_partial_webhook"><code class="docutils literal notranslate"><span class="pre">Client.get_partial_webhook()</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.client.Client.get_shard_by_guild_id"><code class="docutils literal notranslate"><span class="pre">Client.get_shard_by_guild_id()</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.client.Client.group"><code class="docutils literal notranslate"><span class="pre">Client.group()</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.client.Client.guilds"><code class="docutils literal notranslate"><span class="pre">Client.guilds</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.client.Client.has_any_dispatch"><code class="docutils literal notranslate"><span class="pre">Client.has_any_dispatch()</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.client.Client.interaction"><code class="docutils literal notranslate"><span class="pre">Client.interaction()</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.client.Client.is_ready"><code class="docutils literal notranslate"><span class="pre">Client.is_ready()</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.client.Client.is_shards_ready"><code class="docutils literal notranslate"><span class="pre">Client.is_shards_ready()</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.client.Client.listener"><code class="docutils literal notranslate"><span class="pre">Client.listener()</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.client.Client.load_extension"><code class="docutils literal notranslate"><span class="pre">Client.load_extension()</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.client.Client.message_command"><code class="docutils literal notranslate"><span class="pre">Client.message_command()</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.client.Client.query_members"><code class="docutils literal notranslate"><span class="pre">Client.query_members()</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.client.Client.remove_cog"><code class="docutils literal notranslate"><span class="pre">Client.remove_cog()</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.client.Client.remove_command"><code class="docutils literal notranslate"><span class="pre">Client.remove_command()</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.client.Client.remove_interaction"><code class="docutils literal notranslate"><span class="pre">Client.remove_interaction()</span></code></a></li>
@@ -1307,6 +1597,7 @@ to then sync them all to Discord API.</p>
 <li><a class="reference internal" href="#discord_http.client.Client.user"><code class="docutils literal notranslate"><span class="pre">Client.user</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.client.Client.user_command"><code class="docutils literal notranslate"><span class="pre">Client.user_command()</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.client.Client.wait_until_ready"><code class="docutils literal notranslate"><span class="pre">Client.wait_until_ready()</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.client.Client.wait_until_shards_ready"><code class="docutils literal notranslate"><span class="pre">Client.wait_until_shards_ready()</span></code></a></li>
 </ul>
 </li>
 </ul>
@@ -1323,7 +1614,7 @@ to then sync them all to Discord API.</p>
     </aside>
   </div>
 </div><script src="../_static/documentation_options.js?v=d45e8c67"></script>
-    <script src="../_static/doctools.js?v=9a2dae69"></script>
+    <script src="../_static/doctools.js?v=9bcbadda"></script>
     <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../_static/scripts/furo.js?v=5fa4622c"></script>
     </body>

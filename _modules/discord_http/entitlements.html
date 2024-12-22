@@ -2,9 +2,9 @@
 <html class="no-js" lang="en" data-content_root="../../">
   <head><meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width,initial-scale=1"/>
-    <meta name="color-scheme" content="light dark"><link rel="index" title="Index" href="../../genindex.html" /><link rel="search" title="Search" href="../../search.html" />
+    <meta name="color-scheme" content="light dark"><meta content="discord.http docs" property="og:title"><meta content="Python library that handles interactions from Discord POST requests." name="description"><meta content="Python library that handles interactions from Discord POST requests." property="og:description"><meta property="og:image" content="/_static/favicon.ico"><meta name="theme-color" content="#14bae4"><meta property="og:locale" content="en_GB"><meta name="keywords" content="discord, http, api, interaction, quart, webhook, slash><meta name="revisit-after" content="2 days"><link rel="index" title="Index" href="../../genindex.html" /><link rel="search" title="Search" href="../../search.html" />
 
-    <link rel="shortcut icon" href="../../_static/favicon.ico"/><!-- Generated with Sphinx 8.0.2 and Furo 2024.08.06 -->
+    <link rel="shortcut icon" href="../../_static/favicon.ico"/><!-- Generated with Sphinx 8.1.3 and Furo 2024.08.06 -->
         <title>discord_http.entitlements - discord.http docs</title>
       <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=fa44fd50" />
     <link rel="stylesheet" type="text/css" href="../../_static/styles/furo.css?v=354aac6f" />
@@ -201,6 +201,8 @@
 <li class="toctree-l1"><a class="reference internal" href="../../pages/getting_started.html">Getting started</a></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../../pages/api.html">API components</a><input class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" role="switch" type="checkbox"/><label for="toctree-checkbox-1"><div class="visually-hidden">Toggle navigation of API components</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
 <li class="toctree-l2"><a class="reference internal" href="../../api/asset.html">Asset</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../api/audit.html">Audit</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../api/automod.html">AutoModRule</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../api/backend.html">Backend</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../api/channel.html">Channel</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../api/client.html">Client</a></li>
@@ -214,9 +216,10 @@
 <li class="toctree-l2"><a class="reference internal" href="../../api/enums.html">Enums</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../api/errors.html">Errors</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../api/file.html">File</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../api/flag.html">Flag</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../api/flags.html">Flag</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../api/guild.html">Guild</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../api/http.html">Http</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../api/integrations.html">Integrations</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../api/invite.html">Invite</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../api/member.html">Member</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../api/mentions.html">Mentions</a></li>
@@ -225,14 +228,24 @@
 <li class="toctree-l2"><a class="reference internal" href="../../api/object.html">Object</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../api/response.html">Response</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../api/role.html">Role</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../api/soundboard.html">Soundboard</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../api/sticker.html">Sticker</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../api/tasks.html">Tasks</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../api/user.html">User</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../api/view.html">View</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../api/voice.html">Vsset</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../api/webhook.html">Webhook</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../../pages/events.html">Event references</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../pages/gateway.html">Gateway references</a><input class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" role="switch" type="checkbox"/><label for="toctree-checkbox-2"><div class="visually-hidden">Toggle navigation of Gateway references</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../gateway/activity.html">Activity</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../gateway/client.html">Client</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../gateway/enums.html">Enums</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../gateway/flags.html">Flags</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../gateway/object.html">Object (Gateway events)</a></li>
+</ul>
+</li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">Advanced</span></p>
 <ul>
@@ -242,7 +255,7 @@
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../pages/contribute.html">Contributing</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../pages/license.html">License</a></li>
-<li class="toctree-l1"><a class="reference external" href="https://discord.gg/AlexFlipnote">Discord</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://discord.gg/yqb7vATbjH">Discord</a></li>
 <li class="toctree-l1"><a class="reference external" href="https://github.com/AlexFlipnote/discord.http">GitHub</a></li>
 </ul>
 
@@ -280,12 +293,12 @@
         <article role="main" id="furo-main-content">
           <h1>Source code for discord_http.entitlements</h1><div class="highlight"><pre>
 <span></span><span class="kn">from</span> <span class="nn">datetime</span> <span class="kn">import</span> <span class="n">datetime</span>
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">TYPE_CHECKING</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Union</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">TYPE_CHECKING</span>
 
 <span class="kn">from</span> <span class="nn">.</span> <span class="kn">import</span> <span class="n">utils</span>
 <span class="kn">from</span> <span class="nn">.enums</span> <span class="kn">import</span> <span class="n">EntitlementType</span><span class="p">,</span> <span class="n">EntitlementOwnerType</span><span class="p">,</span> <span class="n">SKUType</span>
-<span class="kn">from</span> <span class="nn">.flag</span> <span class="kn">import</span> <span class="n">SKUFlags</span>
-<span class="kn">from</span> <span class="nn">.guild</span> <span class="kn">import</span> <span class="n">PartialGuild</span>
+<span class="kn">from</span> <span class="nn">.flags</span> <span class="kn">import</span> <span class="n">SKUFlags</span>
+<span class="kn">from</span> <span class="nn">.guild</span> <span class="kn">import</span> <span class="n">Guild</span><span class="p">,</span> <span class="n">PartialGuild</span>
 <span class="kn">from</span> <span class="nn">.object</span> <span class="kn">import</span> <span class="n">PartialBase</span><span class="p">,</span> <span class="n">Snowflake</span>
 <span class="kn">from</span> <span class="nn">.user</span> <span class="kn">import</span> <span class="n">PartialUser</span>
 
@@ -320,8 +333,8 @@
     <span class="k">async</span> <span class="k">def</span> <span class="nf">create_test_entitlement</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="o">*</span><span class="p">,</span>
-        <span class="n">owner_id</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Snowflake</span><span class="p">,</span> <span class="nb">int</span><span class="p">],</span>
-        <span class="n">owner_type</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">EntitlementOwnerType</span><span class="p">,</span> <span class="nb">int</span><span class="p">],</span>
+        <span class="n">owner_id</span><span class="p">:</span> <span class="n">Snowflake</span> <span class="o">|</span> <span class="nb">int</span><span class="p">,</span>
+        <span class="n">owner_type</span><span class="p">:</span> <span class="n">EntitlementOwnerType</span> <span class="o">|</span> <span class="nb">int</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;PartialEntitlements&quot;</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Create an entitlement for testing purposes.</span>
@@ -453,8 +466,9 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">deleted</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s2">&quot;deleted&quot;</span><span class="p">]</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">type</span><span class="p">:</span> <span class="n">EntitlementType</span> <span class="o">=</span> <span class="n">EntitlementType</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="s2">&quot;type&quot;</span><span class="p">])</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">user</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">PartialUser</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">guild</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">PartialGuild</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">user</span><span class="p">:</span> <span class="n">PartialUser</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">guild_id</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="n">utils</span><span class="o">.</span><span class="n">get_int</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="s2">&quot;guild_id&quot;</span><span class="p">)</span>
+
         <span class="bp">self</span><span class="o">.</span><span class="n">application</span><span class="p">:</span> <span class="n">PartialUser</span> <span class="o">=</span> <span class="n">PartialUser</span><span class="p">(</span>
             <span class="n">state</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_state</span><span class="p">,</span>
             <span class="nb">id</span><span class="o">=</span><span class="nb">int</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="s2">&quot;application_id&quot;</span><span class="p">])</span>
@@ -464,8 +478,8 @@
             <span class="nb">id</span><span class="o">=</span><span class="nb">int</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="s2">&quot;sku_id&quot;</span><span class="p">])</span>
         <span class="p">)</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">starts_at</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">datetime</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">ends_at</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">datetime</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">starts_at</span><span class="p">:</span> <span class="n">datetime</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ends_at</span><span class="p">:</span> <span class="n">datetime</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_from_data</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_data_consumed</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;consumed&quot;</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
@@ -480,14 +494,24 @@
         <span class="k">if</span> <span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;user_id&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">):</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">user</span> <span class="o">=</span> <span class="n">PartialUser</span><span class="p">(</span><span class="n">state</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_state</span><span class="p">,</span> <span class="nb">id</span><span class="o">=</span><span class="nb">int</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="s2">&quot;user_id&quot;</span><span class="p">]))</span>
 
-        <span class="k">if</span> <span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;guild_id&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">):</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">guild</span> <span class="o">=</span> <span class="n">PartialGuild</span><span class="p">(</span><span class="n">state</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_state</span><span class="p">,</span> <span class="nb">id</span><span class="o">=</span><span class="nb">int</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="s2">&quot;guild_id&quot;</span><span class="p">]))</span>
-
         <span class="k">if</span> <span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;starts_at&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">):</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">starts_at</span> <span class="o">=</span> <span class="n">utils</span><span class="o">.</span><span class="n">parse_time</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="s2">&quot;starts_at&quot;</span><span class="p">])</span>
 
         <span class="k">if</span> <span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;ends_at&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">):</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">ends_at</span> <span class="o">=</span> <span class="n">utils</span><span class="o">.</span><span class="n">parse_time</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="s2">&quot;ends_at&quot;</span><span class="p">])</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">guild</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Guild</span> <span class="o">|</span> <span class="n">PartialGuild</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot; `PartialGuild | None`: Returns the guild the entitlement is in &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">guild_id</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">None</span>
+
+        <span class="n">cache</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_state</span><span class="o">.</span><span class="n">cache</span><span class="o">.</span><span class="n">get_guild</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">guild_id</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">cache</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">cache</span>
+
+        <span class="kn">from</span> <span class="nn">.guild</span> <span class="kn">import</span> <span class="n">PartialGuild</span>
+        <span class="k">return</span> <span class="n">PartialGuild</span><span class="p">(</span><span class="n">state</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_state</span><span class="p">,</span> <span class="nb">id</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">guild_id</span><span class="p">)</span>
 
 <div class="viewcode-block" id="Entitlements.is_consumed">
 <a class="viewcode-back" href="../../api/entitlements.html#discord_http.entitlements.Entitlements.is_consumed">[docs]</a>
@@ -529,7 +553,7 @@
     </aside>
   </div>
 </div><script src="../../_static/documentation_options.js?v=d45e8c67"></script>
-    <script src="../../_static/doctools.js?v=9a2dae69"></script>
+    <script src="../../_static/doctools.js?v=9bcbadda"></script>
     <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../_static/scripts/furo.js?v=5fa4622c"></script>
     </body>

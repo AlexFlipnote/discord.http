@@ -3,9 +3,9 @@
   <head><meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width,initial-scale=1"/>
     <meta name="color-scheme" content="light dark"><meta name="viewport" content="width=device-width, initial-scale=1" />
-<link rel="index" title="Index" href="../genindex.html" /><link rel="search" title="Search" href="../search.html" /><link rel="next" title="Errors" href="errors.html" /><link rel="prev" title="Entitlements" href="entitlements.html" />
+<meta content="Enums - discord.http docs" property="og:title"><meta content="Bases: BaseEnum" name="description"><meta content="Bases: BaseEnum" property="og:description"><meta property="og:image" content="/_static/favicon.ico"><meta name="theme-color" content="#14bae4"><meta property="og:locale" content="en_GB"><meta name="keywords" content="discord, http, api, interaction, quart, webhook, slash><meta name="revisit-after" content="2 days"><link rel="index" title="Index" href="../genindex.html" /><link rel="search" title="Search" href="../search.html" /><link rel="next" title="Errors" href="errors.html" /><link rel="prev" title="Entitlements" href="entitlements.html" />
 
-    <link rel="shortcut icon" href="../_static/favicon.ico"/><!-- Generated with Sphinx 8.0.2 and Furo 2024.08.06 -->
+    <link rel="shortcut icon" href="../_static/favicon.ico"/><!-- Generated with Sphinx 8.1.3 and Furo 2024.08.06 -->
         <title>Enums - discord.http docs</title>
       <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=fa44fd50" />
     <link rel="stylesheet" type="text/css" href="../_static/styles/furo.css?v=354aac6f" />
@@ -202,6 +202,8 @@
 <li class="toctree-l1"><a class="reference internal" href="../pages/getting_started.html">Getting started</a></li>
 <li class="toctree-l1 current has-children"><a class="reference internal" href="../pages/api.html">API components</a><input checked="" class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" role="switch" type="checkbox"/><label for="toctree-checkbox-1"><div class="visually-hidden">Toggle navigation of API components</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul class="current">
 <li class="toctree-l2"><a class="reference internal" href="asset.html">Asset</a></li>
+<li class="toctree-l2"><a class="reference internal" href="audit.html">Audit</a></li>
+<li class="toctree-l2"><a class="reference internal" href="automod.html">AutoModRule</a></li>
 <li class="toctree-l2"><a class="reference internal" href="backend.html">Backend</a></li>
 <li class="toctree-l2"><a class="reference internal" href="channel.html">Channel</a></li>
 <li class="toctree-l2"><a class="reference internal" href="client.html">Client</a></li>
@@ -215,9 +217,10 @@
 <li class="toctree-l2 current current-page"><a class="current reference internal" href="#">Enums</a></li>
 <li class="toctree-l2"><a class="reference internal" href="errors.html">Errors</a></li>
 <li class="toctree-l2"><a class="reference internal" href="file.html">File</a></li>
-<li class="toctree-l2"><a class="reference internal" href="flag.html">Flag</a></li>
+<li class="toctree-l2"><a class="reference internal" href="flags.html">Flag</a></li>
 <li class="toctree-l2"><a class="reference internal" href="guild.html">Guild</a></li>
 <li class="toctree-l2"><a class="reference internal" href="http.html">Http</a></li>
+<li class="toctree-l2"><a class="reference internal" href="integrations.html">Integrations</a></li>
 <li class="toctree-l2"><a class="reference internal" href="invite.html">Invite</a></li>
 <li class="toctree-l2"><a class="reference internal" href="member.html">Member</a></li>
 <li class="toctree-l2"><a class="reference internal" href="mentions.html">Mentions</a></li>
@@ -226,14 +229,24 @@
 <li class="toctree-l2"><a class="reference internal" href="object.html">Object</a></li>
 <li class="toctree-l2"><a class="reference internal" href="response.html">Response</a></li>
 <li class="toctree-l2"><a class="reference internal" href="role.html">Role</a></li>
+<li class="toctree-l2"><a class="reference internal" href="soundboard.html">Soundboard</a></li>
 <li class="toctree-l2"><a class="reference internal" href="sticker.html">Sticker</a></li>
 <li class="toctree-l2"><a class="reference internal" href="tasks.html">Tasks</a></li>
 <li class="toctree-l2"><a class="reference internal" href="user.html">User</a></li>
 <li class="toctree-l2"><a class="reference internal" href="view.html">View</a></li>
+<li class="toctree-l2"><a class="reference internal" href="voice.html">Vsset</a></li>
 <li class="toctree-l2"><a class="reference internal" href="webhook.html">Webhook</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../pages/events.html">Event references</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../pages/gateway.html">Gateway references</a><input class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" role="switch" type="checkbox"/><label for="toctree-checkbox-2"><div class="visually-hidden">Toggle navigation of Gateway references</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../gateway/activity.html">Activity</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../gateway/client.html">Client</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../gateway/enums.html">Enums</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../gateway/flags.html">Flags</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../gateway/object.html">Object (Gateway events)</a></li>
+</ul>
+</li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">Advanced</span></p>
 <ul>
@@ -243,7 +256,7 @@
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../pages/contribute.html">Contributing</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../pages/license.html">License</a></li>
-<li class="toctree-l1"><a class="reference external" href="https://discord.gg/AlexFlipnote">Discord</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://discord.gg/yqb7vATbjH">Discord</a></li>
 <li class="toctree-l1"><a class="reference external" href="https://github.com/AlexFlipnote/discord.http">GitHub</a></li>
 </ul>
 
@@ -292,7 +305,7 @@
 <dl class="py class">
 <dt class="sig sig-object py" id="discord_http.enums.ApplicationCommandType">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">discord_http.enums.</span></span><span class="sig-name descname"><span class="pre">ApplicationCommandType</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">names</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">module</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">qualname</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">type</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">start</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">boundary</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/discord_http/enums.html#ApplicationCommandType"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#discord_http.enums.ApplicationCommandType" title="Link to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Enum</span></code></p>
+<dd><p>Bases: <a class="reference internal" href="#discord_http.enums.BaseEnum" title="discord_http.enums.BaseEnum"><code class="xref py py-class docutils literal notranslate"><span class="pre">BaseEnum</span></code></a></p>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="discord_http.enums.ApplicationCommandType.chat_input">
 <span class="sig-name descname"><span class="pre">chat_input</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">1</span></em><a class="headerlink" href="#discord_http.enums.ApplicationCommandType.chat_input" title="Link to this definition">¶</a></dt>
@@ -313,7 +326,7 @@
 <dl class="py class">
 <dt class="sig sig-object py" id="discord_http.enums.AuditLogType">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">discord_http.enums.</span></span><span class="sig-name descname"><span class="pre">AuditLogType</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">names</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">module</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">qualname</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">type</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">start</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">boundary</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/discord_http/enums.html#AuditLogType"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#discord_http.enums.AuditLogType" title="Link to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Enum</span></code></p>
+<dd><p>Bases: <a class="reference internal" href="#discord_http.enums.BaseEnum" title="discord_http.enums.BaseEnum"><code class="xref py py-class docutils literal notranslate"><span class="pre">BaseEnum</span></code></a></p>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="discord_http.enums.AuditLogType.application_command_permission_update">
 <span class="sig-name descname"><span class="pre">application_command_permission_update</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">121</span></em><a class="headerlink" href="#discord_http.enums.AuditLogType.application_command_permission_update" title="Link to this definition">¶</a></dt>
@@ -327,6 +340,11 @@
 <dl class="py attribute">
 <dt class="sig sig-object py" id="discord_http.enums.AuditLogType.auto_moderation_flag_to_channel">
 <span class="sig-name descname"><span class="pre">auto_moderation_flag_to_channel</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">144</span></em><a class="headerlink" href="#discord_http.enums.AuditLogType.auto_moderation_flag_to_channel" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.enums.AuditLogType.auto_moderation_quarantine_user">
+<span class="sig-name descname"><span class="pre">auto_moderation_quarantine_user</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">146</span></em><a class="headerlink" href="#discord_http.enums.AuditLogType.auto_moderation_quarantine_user" title="Link to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py attribute">
@@ -420,6 +438,21 @@
 <dd></dd></dl>
 
 <dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.enums.AuditLogType.guild_scheduled_event_exception_create">
+<span class="sig-name descname"><span class="pre">guild_scheduled_event_exception_create</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">200</span></em><a class="headerlink" href="#discord_http.enums.AuditLogType.guild_scheduled_event_exception_create" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.enums.AuditLogType.guild_scheduled_event_exception_delete">
+<span class="sig-name descname"><span class="pre">guild_scheduled_event_exception_delete</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">202</span></em><a class="headerlink" href="#discord_http.enums.AuditLogType.guild_scheduled_event_exception_delete" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.enums.AuditLogType.guild_scheduled_event_exception_update">
+<span class="sig-name descname"><span class="pre">guild_scheduled_event_exception_update</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">201</span></em><a class="headerlink" href="#discord_http.enums.AuditLogType.guild_scheduled_event_exception_update" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
 <dt class="sig sig-object py" id="discord_http.enums.AuditLogType.guild_scheduled_event_update">
 <span class="sig-name descname"><span class="pre">guild_scheduled_event_update</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">101</span></em><a class="headerlink" href="#discord_http.enums.AuditLogType.guild_scheduled_event_update" title="Link to this definition">¶</a></dt>
 <dd></dd></dl>
@@ -427,6 +460,16 @@
 <dl class="py attribute">
 <dt class="sig sig-object py" id="discord_http.enums.AuditLogType.guild_update">
 <span class="sig-name descname"><span class="pre">guild_update</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">1</span></em><a class="headerlink" href="#discord_http.enums.AuditLogType.guild_update" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.enums.AuditLogType.home_settings_create">
+<span class="sig-name descname"><span class="pre">home_settings_create</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">190</span></em><a class="headerlink" href="#discord_http.enums.AuditLogType.home_settings_create" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.enums.AuditLogType.home_settings_update">
+<span class="sig-name descname"><span class="pre">home_settings_update</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">191</span></em><a class="headerlink" href="#discord_http.enums.AuditLogType.home_settings_update" title="Link to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py attribute">
@@ -520,6 +563,31 @@
 <dd></dd></dl>
 
 <dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.enums.AuditLogType.onboarding_create">
+<span class="sig-name descname"><span class="pre">onboarding_create</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">166</span></em><a class="headerlink" href="#discord_http.enums.AuditLogType.onboarding_create" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.enums.AuditLogType.onboarding_prompt_create">
+<span class="sig-name descname"><span class="pre">onboarding_prompt_create</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">163</span></em><a class="headerlink" href="#discord_http.enums.AuditLogType.onboarding_prompt_create" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.enums.AuditLogType.onboarding_prompt_delete">
+<span class="sig-name descname"><span class="pre">onboarding_prompt_delete</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">165</span></em><a class="headerlink" href="#discord_http.enums.AuditLogType.onboarding_prompt_delete" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.enums.AuditLogType.onboarding_prompt_update">
+<span class="sig-name descname"><span class="pre">onboarding_prompt_update</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">164</span></em><a class="headerlink" href="#discord_http.enums.AuditLogType.onboarding_prompt_update" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.enums.AuditLogType.onboarding_update">
+<span class="sig-name descname"><span class="pre">onboarding_update</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">167</span></em><a class="headerlink" href="#discord_http.enums.AuditLogType.onboarding_update" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
 <dt class="sig sig-object py" id="discord_http.enums.AuditLogType.role_create">
 <span class="sig-name descname"><span class="pre">role_create</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">30</span></em><a class="headerlink" href="#discord_http.enums.AuditLogType.role_create" title="Link to this definition">¶</a></dt>
 <dd></dd></dl>
@@ -564,6 +632,11 @@
 <span class="sig-name descname"><span class="pre">sticker_update</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">91</span></em><a class="headerlink" href="#discord_http.enums.AuditLogType.sticker_update" title="Link to this definition">¶</a></dt>
 <dd></dd></dl>
 
+<dl class="py property">
+<dt class="sig sig-object py" id="discord_http.enums.AuditLogType.target_type">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">target_type</span></span><a class="headerlink" href="#discord_http.enums.AuditLogType.target_type" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
 <dl class="py attribute">
 <dt class="sig sig-object py" id="discord_http.enums.AuditLogType.thread_create">
 <span class="sig-name descname"><span class="pre">thread_create</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">110</span></em><a class="headerlink" href="#discord_http.enums.AuditLogType.thread_create" title="Link to this definition">¶</a></dt>
@@ -577,6 +650,21 @@
 <dl class="py attribute">
 <dt class="sig sig-object py" id="discord_http.enums.AuditLogType.thread_update">
 <span class="sig-name descname"><span class="pre">thread_update</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">111</span></em><a class="headerlink" href="#discord_http.enums.AuditLogType.thread_update" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.enums.AuditLogType.unknown">
+<span class="sig-name descname"><span class="pre">unknown</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">-1</span></em><a class="headerlink" href="#discord_http.enums.AuditLogType.unknown" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.enums.AuditLogType.voice_channel_status_create">
+<span class="sig-name descname"><span class="pre">voice_channel_status_create</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">192</span></em><a class="headerlink" href="#discord_http.enums.AuditLogType.voice_channel_status_create" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.enums.AuditLogType.voice_channel_status_delete">
+<span class="sig-name descname"><span class="pre">voice_channel_status_delete</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">193</span></em><a class="headerlink" href="#discord_http.enums.AuditLogType.voice_channel_status_delete" title="Link to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py attribute">
@@ -597,9 +685,121 @@
 </dd></dl>
 
 <dl class="py class">
+<dt class="sig sig-object py" id="discord_http.enums.AutoModRuleActionType">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">discord_http.enums.</span></span><span class="sig-name descname"><span class="pre">AutoModRuleActionType</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">names</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">module</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">qualname</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">type</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">start</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">boundary</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/discord_http/enums.html#AutoModRuleActionType"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#discord_http.enums.AutoModRuleActionType" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#discord_http.enums.BaseEnum" title="discord_http.enums.BaseEnum"><code class="xref py py-class docutils literal notranslate"><span class="pre">BaseEnum</span></code></a></p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.enums.AutoModRuleActionType.block_member_interactions">
+<span class="sig-name descname"><span class="pre">block_member_interactions</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">4</span></em><a class="headerlink" href="#discord_http.enums.AutoModRuleActionType.block_member_interactions" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.enums.AutoModRuleActionType.block_message">
+<span class="sig-name descname"><span class="pre">block_message</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">1</span></em><a class="headerlink" href="#discord_http.enums.AutoModRuleActionType.block_message" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.enums.AutoModRuleActionType.send_alert_message">
+<span class="sig-name descname"><span class="pre">send_alert_message</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">2</span></em><a class="headerlink" href="#discord_http.enums.AutoModRuleActionType.send_alert_message" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.enums.AutoModRuleActionType.timeout">
+<span class="sig-name descname"><span class="pre">timeout</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">3</span></em><a class="headerlink" href="#discord_http.enums.AutoModRuleActionType.timeout" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="discord_http.enums.AutoModRuleEventType">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">discord_http.enums.</span></span><span class="sig-name descname"><span class="pre">AutoModRuleEventType</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">names</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">module</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">qualname</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">type</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">start</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">boundary</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/discord_http/enums.html#AutoModRuleEventType"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#discord_http.enums.AutoModRuleEventType" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#discord_http.enums.BaseEnum" title="discord_http.enums.BaseEnum"><code class="xref py py-class docutils literal notranslate"><span class="pre">BaseEnum</span></code></a></p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.enums.AutoModRuleEventType.member_update">
+<span class="sig-name descname"><span class="pre">member_update</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">2</span></em><a class="headerlink" href="#discord_http.enums.AutoModRuleEventType.member_update" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.enums.AutoModRuleEventType.message_send">
+<span class="sig-name descname"><span class="pre">message_send</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">1</span></em><a class="headerlink" href="#discord_http.enums.AutoModRuleEventType.message_send" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="discord_http.enums.AutoModRulePresetType">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">discord_http.enums.</span></span><span class="sig-name descname"><span class="pre">AutoModRulePresetType</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">names</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">module</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">qualname</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">type</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">start</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">boundary</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/discord_http/enums.html#AutoModRulePresetType"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#discord_http.enums.AutoModRulePresetType" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#discord_http.enums.BaseEnum" title="discord_http.enums.BaseEnum"><code class="xref py py-class docutils literal notranslate"><span class="pre">BaseEnum</span></code></a></p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.enums.AutoModRulePresetType.profanity">
+<span class="sig-name descname"><span class="pre">profanity</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">1</span></em><a class="headerlink" href="#discord_http.enums.AutoModRulePresetType.profanity" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.enums.AutoModRulePresetType.sexual_content">
+<span class="sig-name descname"><span class="pre">sexual_content</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">2</span></em><a class="headerlink" href="#discord_http.enums.AutoModRulePresetType.sexual_content" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.enums.AutoModRulePresetType.slurs">
+<span class="sig-name descname"><span class="pre">slurs</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">3</span></em><a class="headerlink" href="#discord_http.enums.AutoModRulePresetType.slurs" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="discord_http.enums.AutoModRuleTriggerType">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">discord_http.enums.</span></span><span class="sig-name descname"><span class="pre">AutoModRuleTriggerType</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">names</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">module</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">qualname</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">type</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">start</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">boundary</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/discord_http/enums.html#AutoModRuleTriggerType"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#discord_http.enums.AutoModRuleTriggerType" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#discord_http.enums.BaseEnum" title="discord_http.enums.BaseEnum"><code class="xref py py-class docutils literal notranslate"><span class="pre">BaseEnum</span></code></a></p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.enums.AutoModRuleTriggerType.harmful_link">
+<span class="sig-name descname"><span class="pre">harmful_link</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">2</span></em><a class="headerlink" href="#discord_http.enums.AutoModRuleTriggerType.harmful_link" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.enums.AutoModRuleTriggerType.keyword">
+<span class="sig-name descname"><span class="pre">keyword</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">1</span></em><a class="headerlink" href="#discord_http.enums.AutoModRuleTriggerType.keyword" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.enums.AutoModRuleTriggerType.keyword_preset">
+<span class="sig-name descname"><span class="pre">keyword_preset</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">4</span></em><a class="headerlink" href="#discord_http.enums.AutoModRuleTriggerType.keyword_preset" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.enums.AutoModRuleTriggerType.member_profile">
+<span class="sig-name descname"><span class="pre">member_profile</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">6</span></em><a class="headerlink" href="#discord_http.enums.AutoModRuleTriggerType.member_profile" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.enums.AutoModRuleTriggerType.mention_spam">
+<span class="sig-name descname"><span class="pre">mention_spam</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">5</span></em><a class="headerlink" href="#discord_http.enums.AutoModRuleTriggerType.mention_spam" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.enums.AutoModRuleTriggerType.spam">
+<span class="sig-name descname"><span class="pre">spam</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">3</span></em><a class="headerlink" href="#discord_http.enums.AutoModRuleTriggerType.spam" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="discord_http.enums.BaseEnum">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">discord_http.enums.</span></span><span class="sig-name descname"><span class="pre">BaseEnum</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">names</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">module</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">qualname</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">type</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">start</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">boundary</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/discord_http/enums.html#BaseEnum"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#discord_http.enums.BaseEnum" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Enum</span></code></p>
+<p>Enum, but with more comparison operators to make life easier</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="discord_http.enums.BaseEnum.random">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">random</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Self</span></span></span><a class="reference internal" href="../_modules/discord_http/enums.html#BaseEnum.random"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#discord_http.enums.BaseEnum.random" title="Link to this definition">¶</a></dt>
+<dd><p><cite>Enum</cite>: Return a random enum</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
 <dt class="sig sig-object py" id="discord_http.enums.ButtonStyles">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">discord_http.enums.</span></span><span class="sig-name descname"><span class="pre">ButtonStyles</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">names</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">module</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">qualname</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">type</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">start</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">boundary</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/discord_http/enums.html#ButtonStyles"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#discord_http.enums.ButtonStyles" title="Link to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Enum</span></code></p>
+<dd><p>Bases: <a class="reference internal" href="#discord_http.enums.BaseEnum" title="discord_http.enums.BaseEnum"><code class="xref py py-class docutils literal notranslate"><span class="pre">BaseEnum</span></code></a></p>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="discord_http.enums.ButtonStyles.blurple">
 <span class="sig-name descname"><span class="pre">blurple</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">1</span></em><a class="headerlink" href="#discord_http.enums.ButtonStyles.blurple" title="Link to this definition">¶</a></dt>
@@ -670,7 +870,7 @@
 <dl class="py class">
 <dt class="sig sig-object py" id="discord_http.enums.ChannelType">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">discord_http.enums.</span></span><span class="sig-name descname"><span class="pre">ChannelType</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">names</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">module</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">qualname</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">type</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">start</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">boundary</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/discord_http/enums.html#ChannelType"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#discord_http.enums.ChannelType" title="Link to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Enum</span></code></p>
+<dd><p>Bases: <a class="reference internal" href="#discord_http.enums.BaseEnum" title="discord_http.enums.BaseEnum"><code class="xref py py-class docutils literal notranslate"><span class="pre">BaseEnum</span></code></a></p>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="discord_http.enums.ChannelType.dm">
 <span class="sig-name descname"><span class="pre">dm</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">1</span></em><a class="headerlink" href="#discord_http.enums.ChannelType.dm" title="Link to this definition">¶</a></dt>
@@ -694,6 +894,11 @@
 <dl class="py attribute">
 <dt class="sig sig-object py" id="discord_http.enums.ChannelType.guild_forum">
 <span class="sig-name descname"><span class="pre">guild_forum</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">15</span></em><a class="headerlink" href="#discord_http.enums.ChannelType.guild_forum" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.enums.ChannelType.guild_media">
+<span class="sig-name descname"><span class="pre">guild_media</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">16</span></em><a class="headerlink" href="#discord_http.enums.ChannelType.guild_media" title="Link to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py attribute">
@@ -746,7 +951,7 @@
 <dl class="py class">
 <dt class="sig sig-object py" id="discord_http.enums.CommandOptionType">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">discord_http.enums.</span></span><span class="sig-name descname"><span class="pre">CommandOptionType</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">names</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">module</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">qualname</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">type</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">start</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">boundary</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/discord_http/enums.html#CommandOptionType"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#discord_http.enums.CommandOptionType" title="Link to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Enum</span></code></p>
+<dd><p>Bases: <a class="reference internal" href="#discord_http.enums.BaseEnum" title="discord_http.enums.BaseEnum"><code class="xref py py-class docutils literal notranslate"><span class="pre">BaseEnum</span></code></a></p>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="discord_http.enums.CommandOptionType.attachment">
 <span class="sig-name descname"><span class="pre">attachment</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">11</span></em><a class="headerlink" href="#discord_http.enums.CommandOptionType.attachment" title="Link to this definition">¶</a></dt>
@@ -807,7 +1012,7 @@
 <dl class="py class">
 <dt class="sig sig-object py" id="discord_http.enums.ComponentType">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">discord_http.enums.</span></span><span class="sig-name descname"><span class="pre">ComponentType</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">names</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">module</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">qualname</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">type</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">start</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">boundary</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/discord_http/enums.html#ComponentType"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#discord_http.enums.ComponentType" title="Link to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Enum</span></code></p>
+<dd><p>Bases: <a class="reference internal" href="#discord_http.enums.BaseEnum" title="discord_http.enums.BaseEnum"><code class="xref py py-class docutils literal notranslate"><span class="pre">BaseEnum</span></code></a></p>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="discord_http.enums.ComponentType.action_row">
 <span class="sig-name descname"><span class="pre">action_row</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">1</span></em><a class="headerlink" href="#discord_http.enums.ComponentType.action_row" title="Link to this definition">¶</a></dt>
@@ -853,7 +1058,7 @@
 <dl class="py class">
 <dt class="sig sig-object py" id="discord_http.enums.ContentFilterLevel">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">discord_http.enums.</span></span><span class="sig-name descname"><span class="pre">ContentFilterLevel</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">names</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">module</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">qualname</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">type</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">start</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">boundary</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/discord_http/enums.html#ContentFilterLevel"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#discord_http.enums.ContentFilterLevel" title="Link to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Enum</span></code></p>
+<dd><p>Bases: <a class="reference internal" href="#discord_http.enums.BaseEnum" title="discord_http.enums.BaseEnum"><code class="xref py py-class docutils literal notranslate"><span class="pre">BaseEnum</span></code></a></p>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="discord_http.enums.ContentFilterLevel.all_members">
 <span class="sig-name descname"><span class="pre">all_members</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">2</span></em><a class="headerlink" href="#discord_http.enums.ContentFilterLevel.all_members" title="Link to this definition">¶</a></dt>
@@ -872,9 +1077,50 @@
 </dd></dl>
 
 <dl class="py class">
+<dt class="sig sig-object py" id="discord_http.enums.DefaultAvatarType">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">discord_http.enums.</span></span><span class="sig-name descname"><span class="pre">DefaultAvatarType</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">names</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">module</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">qualname</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">type</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">start</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">boundary</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/discord_http/enums.html#DefaultAvatarType"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#discord_http.enums.DefaultAvatarType" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#discord_http.enums.BaseEnum" title="discord_http.enums.BaseEnum"><code class="xref py py-class docutils literal notranslate"><span class="pre">BaseEnum</span></code></a></p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.enums.DefaultAvatarType.blurple">
+<span class="sig-name descname"><span class="pre">blurple</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">0</span></em><a class="headerlink" href="#discord_http.enums.DefaultAvatarType.blurple" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.enums.DefaultAvatarType.gray">
+<span class="sig-name descname"><span class="pre">gray</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">1</span></em><a class="headerlink" href="#discord_http.enums.DefaultAvatarType.gray" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.enums.DefaultAvatarType.green">
+<span class="sig-name descname"><span class="pre">green</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">2</span></em><a class="headerlink" href="#discord_http.enums.DefaultAvatarType.green" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.enums.DefaultAvatarType.grey">
+<span class="sig-name descname"><span class="pre">grey</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">1</span></em><a class="headerlink" href="#discord_http.enums.DefaultAvatarType.grey" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.enums.DefaultAvatarType.orange">
+<span class="sig-name descname"><span class="pre">orange</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">3</span></em><a class="headerlink" href="#discord_http.enums.DefaultAvatarType.orange" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.enums.DefaultAvatarType.pink">
+<span class="sig-name descname"><span class="pre">pink</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">5</span></em><a class="headerlink" href="#discord_http.enums.DefaultAvatarType.pink" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.enums.DefaultAvatarType.red">
+<span class="sig-name descname"><span class="pre">red</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">4</span></em><a class="headerlink" href="#discord_http.enums.DefaultAvatarType.red" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
 <dt class="sig sig-object py" id="discord_http.enums.DefaultNotificationLevel">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">discord_http.enums.</span></span><span class="sig-name descname"><span class="pre">DefaultNotificationLevel</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">names</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">module</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">qualname</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">type</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">start</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">boundary</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/discord_http/enums.html#DefaultNotificationLevel"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#discord_http.enums.DefaultNotificationLevel" title="Link to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Enum</span></code></p>
+<dd><p>Bases: <a class="reference internal" href="#discord_http.enums.BaseEnum" title="discord_http.enums.BaseEnum"><code class="xref py py-class docutils literal notranslate"><span class="pre">BaseEnum</span></code></a></p>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="discord_http.enums.DefaultNotificationLevel.all_messages">
 <span class="sig-name descname"><span class="pre">all_messages</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">0</span></em><a class="headerlink" href="#discord_http.enums.DefaultNotificationLevel.all_messages" title="Link to this definition">¶</a></dt>
@@ -890,7 +1136,7 @@
 <dl class="py class">
 <dt class="sig sig-object py" id="discord_http.enums.EntitlementOwnerType">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">discord_http.enums.</span></span><span class="sig-name descname"><span class="pre">EntitlementOwnerType</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">names</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">module</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">qualname</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">type</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">start</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">boundary</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/discord_http/enums.html#EntitlementOwnerType"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#discord_http.enums.EntitlementOwnerType" title="Link to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Enum</span></code></p>
+<dd><p>Bases: <a class="reference internal" href="#discord_http.enums.BaseEnum" title="discord_http.enums.BaseEnum"><code class="xref py py-class docutils literal notranslate"><span class="pre">BaseEnum</span></code></a></p>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="discord_http.enums.EntitlementOwnerType.guild">
 <span class="sig-name descname"><span class="pre">guild</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">1</span></em><a class="headerlink" href="#discord_http.enums.EntitlementOwnerType.guild" title="Link to this definition">¶</a></dt>
@@ -906,7 +1152,7 @@
 <dl class="py class">
 <dt class="sig sig-object py" id="discord_http.enums.EntitlementType">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">discord_http.enums.</span></span><span class="sig-name descname"><span class="pre">EntitlementType</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">names</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">module</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">qualname</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">type</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">start</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">boundary</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/discord_http/enums.html#EntitlementType"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#discord_http.enums.EntitlementType" title="Link to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Enum</span></code></p>
+<dd><p>Bases: <a class="reference internal" href="#discord_http.enums.BaseEnum" title="discord_http.enums.BaseEnum"><code class="xref py py-class docutils literal notranslate"><span class="pre">BaseEnum</span></code></a></p>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="discord_http.enums.EntitlementType.application_subscription">
 <span class="sig-name descname"><span class="pre">application_subscription</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">8</span></em><a class="headerlink" href="#discord_http.enums.EntitlementType.application_subscription" title="Link to this definition">¶</a></dt>
@@ -950,9 +1196,25 @@
 </dd></dl>
 
 <dl class="py class">
+<dt class="sig sig-object py" id="discord_http.enums.ExpireBehaviour">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">discord_http.enums.</span></span><span class="sig-name descname"><span class="pre">ExpireBehaviour</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">names</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">module</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">qualname</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">type</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">start</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">boundary</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/discord_http/enums.html#ExpireBehaviour"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#discord_http.enums.ExpireBehaviour" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#discord_http.enums.BaseEnum" title="discord_http.enums.BaseEnum"><code class="xref py py-class docutils literal notranslate"><span class="pre">BaseEnum</span></code></a></p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.enums.ExpireBehaviour.kick">
+<span class="sig-name descname"><span class="pre">kick</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">1</span></em><a class="headerlink" href="#discord_http.enums.ExpireBehaviour.kick" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.enums.ExpireBehaviour.remove_role">
+<span class="sig-name descname"><span class="pre">remove_role</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">0</span></em><a class="headerlink" href="#discord_http.enums.ExpireBehaviour.remove_role" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
 <dt class="sig sig-object py" id="discord_http.enums.ForumLayoutType">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">discord_http.enums.</span></span><span class="sig-name descname"><span class="pre">ForumLayoutType</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">names</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">module</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">qualname</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">type</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">start</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">boundary</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/discord_http/enums.html#ForumLayoutType"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#discord_http.enums.ForumLayoutType" title="Link to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Enum</span></code></p>
+<dd><p>Bases: <a class="reference internal" href="#discord_http.enums.BaseEnum" title="discord_http.enums.BaseEnum"><code class="xref py py-class docutils literal notranslate"><span class="pre">BaseEnum</span></code></a></p>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="discord_http.enums.ForumLayoutType.gallery_view">
 <span class="sig-name descname"><span class="pre">gallery_view</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">2</span></em><a class="headerlink" href="#discord_http.enums.ForumLayoutType.gallery_view" title="Link to this definition">¶</a></dt>
@@ -973,7 +1235,7 @@
 <dl class="py class">
 <dt class="sig sig-object py" id="discord_http.enums.IntegrationType">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">discord_http.enums.</span></span><span class="sig-name descname"><span class="pre">IntegrationType</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">names</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">module</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">qualname</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">type</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">start</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">boundary</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/discord_http/enums.html#IntegrationType"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#discord_http.enums.IntegrationType" title="Link to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Enum</span></code></p>
+<dd><p>Bases: <a class="reference internal" href="#discord_http.enums.BaseEnum" title="discord_http.enums.BaseEnum"><code class="xref py py-class docutils literal notranslate"><span class="pre">BaseEnum</span></code></a></p>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="discord_http.enums.IntegrationType.guild">
 <span class="sig-name descname"><span class="pre">guild</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">0</span></em><a class="headerlink" href="#discord_http.enums.IntegrationType.guild" title="Link to this definition">¶</a></dt>
@@ -989,7 +1251,7 @@
 <dl class="py class">
 <dt class="sig sig-object py" id="discord_http.enums.InteractionType">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">discord_http.enums.</span></span><span class="sig-name descname"><span class="pre">InteractionType</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">names</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">module</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">qualname</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">type</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">start</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">boundary</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/discord_http/enums.html#InteractionType"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#discord_http.enums.InteractionType" title="Link to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Enum</span></code></p>
+<dd><p>Bases: <a class="reference internal" href="#discord_http.enums.BaseEnum" title="discord_http.enums.BaseEnum"><code class="xref py py-class docutils literal notranslate"><span class="pre">BaseEnum</span></code></a></p>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="discord_http.enums.InteractionType.application_command">
 <span class="sig-name descname"><span class="pre">application_command</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">2</span></em><a class="headerlink" href="#discord_http.enums.InteractionType.application_command" title="Link to this definition">¶</a></dt>
@@ -1020,7 +1282,7 @@
 <dl class="py class">
 <dt class="sig sig-object py" id="discord_http.enums.InviteType">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">discord_http.enums.</span></span><span class="sig-name descname"><span class="pre">InviteType</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">names</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">module</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">qualname</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">type</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">start</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">boundary</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/discord_http/enums.html#InviteType"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#discord_http.enums.InviteType" title="Link to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Enum</span></code></p>
+<dd><p>Bases: <a class="reference internal" href="#discord_http.enums.BaseEnum" title="discord_http.enums.BaseEnum"><code class="xref py py-class docutils literal notranslate"><span class="pre">BaseEnum</span></code></a></p>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="discord_http.enums.InviteType.dm">
 <span class="sig-name descname"><span class="pre">dm</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">2</span></em><a class="headerlink" href="#discord_http.enums.InviteType.dm" title="Link to this definition">¶</a></dt>
@@ -1046,7 +1308,7 @@
 <dl class="py class">
 <dt class="sig sig-object py" id="discord_http.enums.MFALevel">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">discord_http.enums.</span></span><span class="sig-name descname"><span class="pre">MFALevel</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">names</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">module</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">qualname</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">type</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">start</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">boundary</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/discord_http/enums.html#MFALevel"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#discord_http.enums.MFALevel" title="Link to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Enum</span></code></p>
+<dd><p>Bases: <a class="reference internal" href="#discord_http.enums.BaseEnum" title="discord_http.enums.BaseEnum"><code class="xref py py-class docutils literal notranslate"><span class="pre">BaseEnum</span></code></a></p>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="discord_http.enums.MFALevel.elevated">
 <span class="sig-name descname"><span class="pre">elevated</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">1</span></em><a class="headerlink" href="#discord_http.enums.MFALevel.elevated" title="Link to this definition">¶</a></dt>
@@ -1060,9 +1322,264 @@
 </dd></dl>
 
 <dl class="py class">
+<dt class="sig sig-object py" id="discord_http.enums.MessageReferenceType">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">discord_http.enums.</span></span><span class="sig-name descname"><span class="pre">MessageReferenceType</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">names</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">module</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">qualname</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">type</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">start</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">boundary</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/discord_http/enums.html#MessageReferenceType"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#discord_http.enums.MessageReferenceType" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#discord_http.enums.BaseEnum" title="discord_http.enums.BaseEnum"><code class="xref py py-class docutils literal notranslate"><span class="pre">BaseEnum</span></code></a></p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.enums.MessageReferenceType.default">
+<span class="sig-name descname"><span class="pre">default</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">0</span></em><a class="headerlink" href="#discord_http.enums.MessageReferenceType.default" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.enums.MessageReferenceType.forward">
+<span class="sig-name descname"><span class="pre">forward</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">1</span></em><a class="headerlink" href="#discord_http.enums.MessageReferenceType.forward" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="discord_http.enums.MessageType">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">discord_http.enums.</span></span><span class="sig-name descname"><span class="pre">MessageType</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">names</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">module</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">qualname</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">type</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">start</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">boundary</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/discord_http/enums.html#MessageType"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#discord_http.enums.MessageType" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#discord_http.enums.BaseEnum" title="discord_http.enums.BaseEnum"><code class="xref py py-class docutils literal notranslate"><span class="pre">BaseEnum</span></code></a></p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.enums.MessageType.auto_moderation_action">
+<span class="sig-name descname"><span class="pre">auto_moderation_action</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">24</span></em><a class="headerlink" href="#discord_http.enums.MessageType.auto_moderation_action" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.enums.MessageType.call">
+<span class="sig-name descname"><span class="pre">call</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">3</span></em><a class="headerlink" href="#discord_http.enums.MessageType.call" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.enums.MessageType.channel_follow_add">
+<span class="sig-name descname"><span class="pre">channel_follow_add</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">12</span></em><a class="headerlink" href="#discord_http.enums.MessageType.channel_follow_add" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.enums.MessageType.channel_icon_change">
+<span class="sig-name descname"><span class="pre">channel_icon_change</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">5</span></em><a class="headerlink" href="#discord_http.enums.MessageType.channel_icon_change" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.enums.MessageType.channel_name_change">
+<span class="sig-name descname"><span class="pre">channel_name_change</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">4</span></em><a class="headerlink" href="#discord_http.enums.MessageType.channel_name_change" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.enums.MessageType.channel_pinned_message">
+<span class="sig-name descname"><span class="pre">channel_pinned_message</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">6</span></em><a class="headerlink" href="#discord_http.enums.MessageType.channel_pinned_message" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.enums.MessageType.chat_input_command">
+<span class="sig-name descname"><span class="pre">chat_input_command</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">20</span></em><a class="headerlink" href="#discord_http.enums.MessageType.chat_input_command" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.enums.MessageType.context_menu_command">
+<span class="sig-name descname"><span class="pre">context_menu_command</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">23</span></em><a class="headerlink" href="#discord_http.enums.MessageType.context_menu_command" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.enums.MessageType.default">
+<span class="sig-name descname"><span class="pre">default</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">0</span></em><a class="headerlink" href="#discord_http.enums.MessageType.default" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.enums.MessageType.guild_application_premium_subscription">
+<span class="sig-name descname"><span class="pre">guild_application_premium_subscription</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">32</span></em><a class="headerlink" href="#discord_http.enums.MessageType.guild_application_premium_subscription" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.enums.MessageType.guild_boost">
+<span class="sig-name descname"><span class="pre">guild_boost</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">8</span></em><a class="headerlink" href="#discord_http.enums.MessageType.guild_boost" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.enums.MessageType.guild_boost_tier_1">
+<span class="sig-name descname"><span class="pre">guild_boost_tier_1</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">9</span></em><a class="headerlink" href="#discord_http.enums.MessageType.guild_boost_tier_1" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.enums.MessageType.guild_boost_tier_2">
+<span class="sig-name descname"><span class="pre">guild_boost_tier_2</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">10</span></em><a class="headerlink" href="#discord_http.enums.MessageType.guild_boost_tier_2" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.enums.MessageType.guild_boost_tier_3">
+<span class="sig-name descname"><span class="pre">guild_boost_tier_3</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">11</span></em><a class="headerlink" href="#discord_http.enums.MessageType.guild_boost_tier_3" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.enums.MessageType.guild_discovery_disqualified">
+<span class="sig-name descname"><span class="pre">guild_discovery_disqualified</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">14</span></em><a class="headerlink" href="#discord_http.enums.MessageType.guild_discovery_disqualified" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.enums.MessageType.guild_discovery_grace_period_final_warning">
+<span class="sig-name descname"><span class="pre">guild_discovery_grace_period_final_warning</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">17</span></em><a class="headerlink" href="#discord_http.enums.MessageType.guild_discovery_grace_period_final_warning" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.enums.MessageType.guild_discovery_grace_period_initial_warning">
+<span class="sig-name descname"><span class="pre">guild_discovery_grace_period_initial_warning</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">16</span></em><a class="headerlink" href="#discord_http.enums.MessageType.guild_discovery_grace_period_initial_warning" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.enums.MessageType.guild_discovery_requalified">
+<span class="sig-name descname"><span class="pre">guild_discovery_requalified</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">15</span></em><a class="headerlink" href="#discord_http.enums.MessageType.guild_discovery_requalified" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.enums.MessageType.guild_incident_alert_mode_disabled">
+<span class="sig-name descname"><span class="pre">guild_incident_alert_mode_disabled</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">37</span></em><a class="headerlink" href="#discord_http.enums.MessageType.guild_incident_alert_mode_disabled" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.enums.MessageType.guild_incident_alert_mode_enabled">
+<span class="sig-name descname"><span class="pre">guild_incident_alert_mode_enabled</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">36</span></em><a class="headerlink" href="#discord_http.enums.MessageType.guild_incident_alert_mode_enabled" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.enums.MessageType.guild_incident_report_false_alarm">
+<span class="sig-name descname"><span class="pre">guild_incident_report_false_alarm</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">39</span></em><a class="headerlink" href="#discord_http.enums.MessageType.guild_incident_report_false_alarm" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.enums.MessageType.guild_incident_report_raid">
+<span class="sig-name descname"><span class="pre">guild_incident_report_raid</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">38</span></em><a class="headerlink" href="#discord_http.enums.MessageType.guild_incident_report_raid" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.enums.MessageType.guild_invite_reminder">
+<span class="sig-name descname"><span class="pre">guild_invite_reminder</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">22</span></em><a class="headerlink" href="#discord_http.enums.MessageType.guild_invite_reminder" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.enums.MessageType.interaction_premium_upsell">
+<span class="sig-name descname"><span class="pre">interaction_premium_upsell</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">26</span></em><a class="headerlink" href="#discord_http.enums.MessageType.interaction_premium_upsell" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.enums.MessageType.poll_result">
+<span class="sig-name descname"><span class="pre">poll_result</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">46</span></em><a class="headerlink" href="#discord_http.enums.MessageType.poll_result" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.enums.MessageType.purchase_notification">
+<span class="sig-name descname"><span class="pre">purchase_notification</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">44</span></em><a class="headerlink" href="#discord_http.enums.MessageType.purchase_notification" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.enums.MessageType.recipient_add">
+<span class="sig-name descname"><span class="pre">recipient_add</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">1</span></em><a class="headerlink" href="#discord_http.enums.MessageType.recipient_add" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.enums.MessageType.recipient_remove">
+<span class="sig-name descname"><span class="pre">recipient_remove</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">2</span></em><a class="headerlink" href="#discord_http.enums.MessageType.recipient_remove" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.enums.MessageType.reply">
+<span class="sig-name descname"><span class="pre">reply</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">19</span></em><a class="headerlink" href="#discord_http.enums.MessageType.reply" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.enums.MessageType.role_subscription_purchase">
+<span class="sig-name descname"><span class="pre">role_subscription_purchase</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">25</span></em><a class="headerlink" href="#discord_http.enums.MessageType.role_subscription_purchase" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.enums.MessageType.stage_end">
+<span class="sig-name descname"><span class="pre">stage_end</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">28</span></em><a class="headerlink" href="#discord_http.enums.MessageType.stage_end" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.enums.MessageType.stage_speaker">
+<span class="sig-name descname"><span class="pre">stage_speaker</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">29</span></em><a class="headerlink" href="#discord_http.enums.MessageType.stage_speaker" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.enums.MessageType.stage_start">
+<span class="sig-name descname"><span class="pre">stage_start</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">27</span></em><a class="headerlink" href="#discord_http.enums.MessageType.stage_start" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.enums.MessageType.stage_topic">
+<span class="sig-name descname"><span class="pre">stage_topic</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">31</span></em><a class="headerlink" href="#discord_http.enums.MessageType.stage_topic" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.enums.MessageType.thread_created">
+<span class="sig-name descname"><span class="pre">thread_created</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">18</span></em><a class="headerlink" href="#discord_http.enums.MessageType.thread_created" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.enums.MessageType.thread_starter_message">
+<span class="sig-name descname"><span class="pre">thread_starter_message</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">21</span></em><a class="headerlink" href="#discord_http.enums.MessageType.thread_starter_message" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.enums.MessageType.user_join">
+<span class="sig-name descname"><span class="pre">user_join</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">7</span></em><a class="headerlink" href="#discord_http.enums.MessageType.user_join" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="discord_http.enums.PermissionType">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">discord_http.enums.</span></span><span class="sig-name descname"><span class="pre">PermissionType</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">names</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">module</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">qualname</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">type</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">start</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">boundary</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/discord_http/enums.html#PermissionType"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#discord_http.enums.PermissionType" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#discord_http.enums.BaseEnum" title="discord_http.enums.BaseEnum"><code class="xref py py-class docutils literal notranslate"><span class="pre">BaseEnum</span></code></a></p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.enums.PermissionType.member">
+<span class="sig-name descname"><span class="pre">member</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">1</span></em><a class="headerlink" href="#discord_http.enums.PermissionType.member" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.enums.PermissionType.role">
+<span class="sig-name descname"><span class="pre">role</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">0</span></em><a class="headerlink" href="#discord_http.enums.PermissionType.role" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="discord_http.enums.PrivacyLevelType">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">discord_http.enums.</span></span><span class="sig-name descname"><span class="pre">PrivacyLevelType</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">names</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">module</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">qualname</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">type</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">start</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">boundary</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/discord_http/enums.html#PrivacyLevelType"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#discord_http.enums.PrivacyLevelType" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#discord_http.enums.BaseEnum" title="discord_http.enums.BaseEnum"><code class="xref py py-class docutils literal notranslate"><span class="pre">BaseEnum</span></code></a></p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.enums.PrivacyLevelType.guild_only">
+<span class="sig-name descname"><span class="pre">guild_only</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">2</span></em><a class="headerlink" href="#discord_http.enums.PrivacyLevelType.guild_only" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.enums.PrivacyLevelType.public">
+<span class="sig-name descname"><span class="pre">public</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">1</span></em><a class="headerlink" href="#discord_http.enums.PrivacyLevelType.public" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="discord_http.enums.ReactionType">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">discord_http.enums.</span></span><span class="sig-name descname"><span class="pre">ReactionType</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">names</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">module</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">qualname</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">type</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">start</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">boundary</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/discord_http/enums.html#ReactionType"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#discord_http.enums.ReactionType" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#discord_http.enums.BaseEnum" title="discord_http.enums.BaseEnum"><code class="xref py py-class docutils literal notranslate"><span class="pre">BaseEnum</span></code></a></p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.enums.ReactionType.burst">
+<span class="sig-name descname"><span class="pre">burst</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">1</span></em><a class="headerlink" href="#discord_http.enums.ReactionType.burst" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.enums.ReactionType.normal">
+<span class="sig-name descname"><span class="pre">normal</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">0</span></em><a class="headerlink" href="#discord_http.enums.ReactionType.normal" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
 <dt class="sig sig-object py" id="discord_http.enums.ResponseType">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">discord_http.enums.</span></span><span class="sig-name descname"><span class="pre">ResponseType</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">names</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">module</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">qualname</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">type</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">start</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">boundary</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/discord_http/enums.html#ResponseType"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#discord_http.enums.ResponseType" title="Link to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Enum</span></code></p>
+<dd><p>Bases: <a class="reference internal" href="#discord_http.enums.BaseEnum" title="discord_http.enums.BaseEnum"><code class="xref py py-class docutils literal notranslate"><span class="pre">BaseEnum</span></code></a></p>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="discord_http.enums.ResponseType.application_command_autocomplete_result">
 <span class="sig-name descname"><span class="pre">application_command_autocomplete_result</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">8</span></em><a class="headerlink" href="#discord_http.enums.ResponseType.application_command_autocomplete_result" title="Link to this definition">¶</a></dt>
@@ -1084,6 +1601,11 @@
 <dd></dd></dl>
 
 <dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.enums.ResponseType.launch_activity">
+<span class="sig-name descname"><span class="pre">launch_activity</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">12</span></em><a class="headerlink" href="#discord_http.enums.ResponseType.launch_activity" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
 <dt class="sig sig-object py" id="discord_http.enums.ResponseType.modal">
 <span class="sig-name descname"><span class="pre">modal</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">9</span></em><a class="headerlink" href="#discord_http.enums.ResponseType.modal" title="Link to this definition">¶</a></dt>
 <dd></dd></dl>
@@ -1091,6 +1613,11 @@
 <dl class="py attribute">
 <dt class="sig sig-object py" id="discord_http.enums.ResponseType.pong">
 <span class="sig-name descname"><span class="pre">pong</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">1</span></em><a class="headerlink" href="#discord_http.enums.ResponseType.pong" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.enums.ResponseType.premium_required">
+<span class="sig-name descname"><span class="pre">premium_required</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">10</span></em><a class="headerlink" href="#discord_http.enums.ResponseType.premium_required" title="Link to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py attribute">
@@ -1103,7 +1630,7 @@
 <dl class="py class">
 <dt class="sig sig-object py" id="discord_http.enums.SKUType">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">discord_http.enums.</span></span><span class="sig-name descname"><span class="pre">SKUType</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">names</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">module</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">qualname</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">type</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">start</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">boundary</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/discord_http/enums.html#SKUType"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#discord_http.enums.SKUType" title="Link to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Enum</span></code></p>
+<dd><p>Bases: <a class="reference internal" href="#discord_http.enums.BaseEnum" title="discord_http.enums.BaseEnum"><code class="xref py py-class docutils literal notranslate"><span class="pre">BaseEnum</span></code></a></p>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="discord_http.enums.SKUType.consumable">
 <span class="sig-name descname"><span class="pre">consumable</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">3</span></em><a class="headerlink" href="#discord_http.enums.SKUType.consumable" title="Link to this definition">¶</a></dt>
@@ -1129,7 +1656,7 @@
 <dl class="py class">
 <dt class="sig sig-object py" id="discord_http.enums.ScheduledEventEntityType">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">discord_http.enums.</span></span><span class="sig-name descname"><span class="pre">ScheduledEventEntityType</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">names</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">module</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">qualname</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">type</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">start</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">boundary</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/discord_http/enums.html#ScheduledEventEntityType"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#discord_http.enums.ScheduledEventEntityType" title="Link to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Enum</span></code></p>
+<dd><p>Bases: <a class="reference internal" href="#discord_http.enums.BaseEnum" title="discord_http.enums.BaseEnum"><code class="xref py py-class docutils literal notranslate"><span class="pre">BaseEnum</span></code></a></p>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="discord_http.enums.ScheduledEventEntityType.external">
 <span class="sig-name descname"><span class="pre">external</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">3</span></em><a class="headerlink" href="#discord_http.enums.ScheduledEventEntityType.external" title="Link to this definition">¶</a></dt>
@@ -1148,20 +1675,9 @@
 </dd></dl>
 
 <dl class="py class">
-<dt class="sig sig-object py" id="discord_http.enums.ScheduledEventPrivacyType">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">discord_http.enums.</span></span><span class="sig-name descname"><span class="pre">ScheduledEventPrivacyType</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">names</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">module</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">qualname</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">type</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">start</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">boundary</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/discord_http/enums.html#ScheduledEventPrivacyType"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#discord_http.enums.ScheduledEventPrivacyType" title="Link to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Enum</span></code></p>
-<dl class="py attribute">
-<dt class="sig sig-object py" id="discord_http.enums.ScheduledEventPrivacyType.guild_only">
-<span class="sig-name descname"><span class="pre">guild_only</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">2</span></em><a class="headerlink" href="#discord_http.enums.ScheduledEventPrivacyType.guild_only" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
-
-</dd></dl>
-
-<dl class="py class">
 <dt class="sig sig-object py" id="discord_http.enums.ScheduledEventStatusType">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">discord_http.enums.</span></span><span class="sig-name descname"><span class="pre">ScheduledEventStatusType</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">names</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">module</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">qualname</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">type</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">start</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">boundary</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/discord_http/enums.html#ScheduledEventStatusType"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#discord_http.enums.ScheduledEventStatusType" title="Link to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Enum</span></code></p>
+<dd><p>Bases: <a class="reference internal" href="#discord_http.enums.BaseEnum" title="discord_http.enums.BaseEnum"><code class="xref py py-class docutils literal notranslate"><span class="pre">BaseEnum</span></code></a></p>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="discord_http.enums.ScheduledEventStatusType.active">
 <span class="sig-name descname"><span class="pre">active</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">2</span></em><a class="headerlink" href="#discord_http.enums.ScheduledEventStatusType.active" title="Link to this definition">¶</a></dt>
@@ -1187,7 +1703,7 @@
 <dl class="py class">
 <dt class="sig sig-object py" id="discord_http.enums.SortOrderType">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">discord_http.enums.</span></span><span class="sig-name descname"><span class="pre">SortOrderType</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">names</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">module</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">qualname</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">type</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">start</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">boundary</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/discord_http/enums.html#SortOrderType"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#discord_http.enums.SortOrderType" title="Link to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Enum</span></code></p>
+<dd><p>Bases: <a class="reference internal" href="#discord_http.enums.BaseEnum" title="discord_http.enums.BaseEnum"><code class="xref py py-class docutils literal notranslate"><span class="pre">BaseEnum</span></code></a></p>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="discord_http.enums.SortOrderType.creation_date">
 <span class="sig-name descname"><span class="pre">creation_date</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">1</span></em><a class="headerlink" href="#discord_http.enums.SortOrderType.creation_date" title="Link to this definition">¶</a></dt>
@@ -1203,7 +1719,7 @@
 <dl class="py class">
 <dt class="sig sig-object py" id="discord_http.enums.StickerFormatType">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">discord_http.enums.</span></span><span class="sig-name descname"><span class="pre">StickerFormatType</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">names</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">module</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">qualname</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">type</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">start</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">boundary</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/discord_http/enums.html#StickerFormatType"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#discord_http.enums.StickerFormatType" title="Link to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Enum</span></code></p>
+<dd><p>Bases: <a class="reference internal" href="#discord_http.enums.BaseEnum" title="discord_http.enums.BaseEnum"><code class="xref py py-class docutils literal notranslate"><span class="pre">BaseEnum</span></code></a></p>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="discord_http.enums.StickerFormatType.apng">
 <span class="sig-name descname"><span class="pre">apng</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">2</span></em><a class="headerlink" href="#discord_http.enums.StickerFormatType.apng" title="Link to this definition">¶</a></dt>
@@ -1229,7 +1745,7 @@
 <dl class="py class">
 <dt class="sig sig-object py" id="discord_http.enums.StickerType">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">discord_http.enums.</span></span><span class="sig-name descname"><span class="pre">StickerType</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">names</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">module</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">qualname</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">type</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">start</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">boundary</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/discord_http/enums.html#StickerType"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#discord_http.enums.StickerType" title="Link to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Enum</span></code></p>
+<dd><p>Bases: <a class="reference internal" href="#discord_http.enums.BaseEnum" title="discord_http.enums.BaseEnum"><code class="xref py py-class docutils literal notranslate"><span class="pre">BaseEnum</span></code></a></p>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="discord_http.enums.StickerType.guild">
 <span class="sig-name descname"><span class="pre">guild</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">2</span></em><a class="headerlink" href="#discord_http.enums.StickerType.guild" title="Link to this definition">¶</a></dt>
@@ -1245,7 +1761,7 @@
 <dl class="py class">
 <dt class="sig sig-object py" id="discord_http.enums.TextStyles">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">discord_http.enums.</span></span><span class="sig-name descname"><span class="pre">TextStyles</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">names</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">module</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">qualname</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">type</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">start</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">boundary</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/discord_http/enums.html#TextStyles"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#discord_http.enums.TextStyles" title="Link to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Enum</span></code></p>
+<dd><p>Bases: <a class="reference internal" href="#discord_http.enums.BaseEnum" title="discord_http.enums.BaseEnum"><code class="xref py py-class docutils literal notranslate"><span class="pre">BaseEnum</span></code></a></p>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="discord_http.enums.TextStyles.paragraph">
 <span class="sig-name descname"><span class="pre">paragraph</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">2</span></em><a class="headerlink" href="#discord_http.enums.TextStyles.paragraph" title="Link to this definition">¶</a></dt>
@@ -1261,7 +1777,7 @@
 <dl class="py class">
 <dt class="sig sig-object py" id="discord_http.enums.VerificationLevel">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">discord_http.enums.</span></span><span class="sig-name descname"><span class="pre">VerificationLevel</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">names</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">module</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">qualname</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">type</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">start</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">boundary</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/discord_http/enums.html#VerificationLevel"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#discord_http.enums.VerificationLevel" title="Link to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Enum</span></code></p>
+<dd><p>Bases: <a class="reference internal" href="#discord_http.enums.BaseEnum" title="discord_http.enums.BaseEnum"><code class="xref py py-class docutils literal notranslate"><span class="pre">BaseEnum</span></code></a></p>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="discord_http.enums.VerificationLevel.high">
 <span class="sig-name descname"><span class="pre">high</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">3</span></em><a class="headerlink" href="#discord_http.enums.VerificationLevel.high" title="Link to this definition">¶</a></dt>
@@ -1292,7 +1808,7 @@
 <dl class="py class">
 <dt class="sig sig-object py" id="discord_http.enums.VideoQualityType">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">discord_http.enums.</span></span><span class="sig-name descname"><span class="pre">VideoQualityType</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">names</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">module</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">qualname</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">type</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">start</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">boundary</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/discord_http/enums.html#VideoQualityType"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#discord_http.enums.VideoQualityType" title="Link to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Enum</span></code></p>
+<dd><p>Bases: <a class="reference internal" href="#discord_http.enums.BaseEnum" title="discord_http.enums.BaseEnum"><code class="xref py py-class docutils literal notranslate"><span class="pre">BaseEnum</span></code></a></p>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="discord_http.enums.VideoQualityType.auto">
 <span class="sig-name descname"><span class="pre">auto</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">1</span></em><a class="headerlink" href="#discord_http.enums.VideoQualityType.auto" title="Link to this definition">¶</a></dt>
@@ -1301,6 +1817,27 @@
 <dl class="py attribute">
 <dt class="sig sig-object py" id="discord_http.enums.VideoQualityType.full">
 <span class="sig-name descname"><span class="pre">full</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">2</span></em><a class="headerlink" href="#discord_http.enums.VideoQualityType.full" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="discord_http.enums.WebhookType">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">discord_http.enums.</span></span><span class="sig-name descname"><span class="pre">WebhookType</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">names</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">module</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">qualname</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">type</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">start</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">boundary</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/discord_http/enums.html#WebhookType"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#discord_http.enums.WebhookType" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#discord_http.enums.BaseEnum" title="discord_http.enums.BaseEnum"><code class="xref py py-class docutils literal notranslate"><span class="pre">BaseEnum</span></code></a></p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.enums.WebhookType.application">
+<span class="sig-name descname"><span class="pre">application</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">3</span></em><a class="headerlink" href="#discord_http.enums.WebhookType.application" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.enums.WebhookType.channel_follower">
+<span class="sig-name descname"><span class="pre">channel_follower</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">2</span></em><a class="headerlink" href="#discord_http.enums.WebhookType.channel_follower" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.enums.WebhookType.incoming">
+<span class="sig-name descname"><span class="pre">incoming</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">1</span></em><a class="headerlink" href="#discord_http.enums.WebhookType.incoming" title="Link to this definition">¶</a></dt>
 <dd></dd></dl>
 
 </dd></dl>
@@ -1375,6 +1912,7 @@
 <li><a class="reference internal" href="#discord_http.enums.AuditLogType.application_command_permission_update"><code class="docutils literal notranslate"><span class="pre">AuditLogType.application_command_permission_update</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.enums.AuditLogType.auto_moderation_block_message"><code class="docutils literal notranslate"><span class="pre">AuditLogType.auto_moderation_block_message</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.enums.AuditLogType.auto_moderation_flag_to_channel"><code class="docutils literal notranslate"><span class="pre">AuditLogType.auto_moderation_flag_to_channel</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.enums.AuditLogType.auto_moderation_quarantine_user"><code class="docutils literal notranslate"><span class="pre">AuditLogType.auto_moderation_quarantine_user</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.enums.AuditLogType.auto_moderation_rule_create"><code class="docutils literal notranslate"><span class="pre">AuditLogType.auto_moderation_rule_create</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.enums.AuditLogType.auto_moderation_rule_delete"><code class="docutils literal notranslate"><span class="pre">AuditLogType.auto_moderation_rule_delete</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.enums.AuditLogType.auto_moderation_rule_update"><code class="docutils literal notranslate"><span class="pre">AuditLogType.auto_moderation_rule_update</span></code></a></li>
@@ -1393,8 +1931,13 @@
 <li><a class="reference internal" href="#discord_http.enums.AuditLogType.emoji_update"><code class="docutils literal notranslate"><span class="pre">AuditLogType.emoji_update</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.enums.AuditLogType.guild_scheduled_event_create"><code class="docutils literal notranslate"><span class="pre">AuditLogType.guild_scheduled_event_create</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.enums.AuditLogType.guild_scheduled_event_delete"><code class="docutils literal notranslate"><span class="pre">AuditLogType.guild_scheduled_event_delete</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.enums.AuditLogType.guild_scheduled_event_exception_create"><code class="docutils literal notranslate"><span class="pre">AuditLogType.guild_scheduled_event_exception_create</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.enums.AuditLogType.guild_scheduled_event_exception_delete"><code class="docutils literal notranslate"><span class="pre">AuditLogType.guild_scheduled_event_exception_delete</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.enums.AuditLogType.guild_scheduled_event_exception_update"><code class="docutils literal notranslate"><span class="pre">AuditLogType.guild_scheduled_event_exception_update</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.enums.AuditLogType.guild_scheduled_event_update"><code class="docutils literal notranslate"><span class="pre">AuditLogType.guild_scheduled_event_update</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.enums.AuditLogType.guild_update"><code class="docutils literal notranslate"><span class="pre">AuditLogType.guild_update</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.enums.AuditLogType.home_settings_create"><code class="docutils literal notranslate"><span class="pre">AuditLogType.home_settings_create</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.enums.AuditLogType.home_settings_update"><code class="docutils literal notranslate"><span class="pre">AuditLogType.home_settings_update</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.enums.AuditLogType.integration_create"><code class="docutils literal notranslate"><span class="pre">AuditLogType.integration_create</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.enums.AuditLogType.integration_delete"><code class="docutils literal notranslate"><span class="pre">AuditLogType.integration_delete</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.enums.AuditLogType.integration_update"><code class="docutils literal notranslate"><span class="pre">AuditLogType.integration_update</span></code></a></li>
@@ -1413,6 +1956,11 @@
 <li><a class="reference internal" href="#discord_http.enums.AuditLogType.message_delete"><code class="docutils literal notranslate"><span class="pre">AuditLogType.message_delete</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.enums.AuditLogType.message_pin"><code class="docutils literal notranslate"><span class="pre">AuditLogType.message_pin</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.enums.AuditLogType.message_unpin"><code class="docutils literal notranslate"><span class="pre">AuditLogType.message_unpin</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.enums.AuditLogType.onboarding_create"><code class="docutils literal notranslate"><span class="pre">AuditLogType.onboarding_create</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.enums.AuditLogType.onboarding_prompt_create"><code class="docutils literal notranslate"><span class="pre">AuditLogType.onboarding_prompt_create</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.enums.AuditLogType.onboarding_prompt_delete"><code class="docutils literal notranslate"><span class="pre">AuditLogType.onboarding_prompt_delete</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.enums.AuditLogType.onboarding_prompt_update"><code class="docutils literal notranslate"><span class="pre">AuditLogType.onboarding_prompt_update</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.enums.AuditLogType.onboarding_update"><code class="docutils literal notranslate"><span class="pre">AuditLogType.onboarding_update</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.enums.AuditLogType.role_create"><code class="docutils literal notranslate"><span class="pre">AuditLogType.role_create</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.enums.AuditLogType.role_delete"><code class="docutils literal notranslate"><span class="pre">AuditLogType.role_delete</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.enums.AuditLogType.role_update"><code class="docutils literal notranslate"><span class="pre">AuditLogType.role_update</span></code></a></li>
@@ -1422,12 +1970,47 @@
 <li><a class="reference internal" href="#discord_http.enums.AuditLogType.sticker_create"><code class="docutils literal notranslate"><span class="pre">AuditLogType.sticker_create</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.enums.AuditLogType.sticker_delete"><code class="docutils literal notranslate"><span class="pre">AuditLogType.sticker_delete</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.enums.AuditLogType.sticker_update"><code class="docutils literal notranslate"><span class="pre">AuditLogType.sticker_update</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.enums.AuditLogType.target_type"><code class="docutils literal notranslate"><span class="pre">AuditLogType.target_type</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.enums.AuditLogType.thread_create"><code class="docutils literal notranslate"><span class="pre">AuditLogType.thread_create</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.enums.AuditLogType.thread_delete"><code class="docutils literal notranslate"><span class="pre">AuditLogType.thread_delete</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.enums.AuditLogType.thread_update"><code class="docutils literal notranslate"><span class="pre">AuditLogType.thread_update</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.enums.AuditLogType.unknown"><code class="docutils literal notranslate"><span class="pre">AuditLogType.unknown</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.enums.AuditLogType.voice_channel_status_create"><code class="docutils literal notranslate"><span class="pre">AuditLogType.voice_channel_status_create</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.enums.AuditLogType.voice_channel_status_delete"><code class="docutils literal notranslate"><span class="pre">AuditLogType.voice_channel_status_delete</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.enums.AuditLogType.webhook_create"><code class="docutils literal notranslate"><span class="pre">AuditLogType.webhook_create</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.enums.AuditLogType.webhook_delete"><code class="docutils literal notranslate"><span class="pre">AuditLogType.webhook_delete</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.enums.AuditLogType.webhook_update"><code class="docutils literal notranslate"><span class="pre">AuditLogType.webhook_update</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#discord_http.enums.AutoModRuleActionType"><code class="docutils literal notranslate"><span class="pre">AutoModRuleActionType</span></code></a><ul>
+<li><a class="reference internal" href="#discord_http.enums.AutoModRuleActionType.block_member_interactions"><code class="docutils literal notranslate"><span class="pre">AutoModRuleActionType.block_member_interactions</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.enums.AutoModRuleActionType.block_message"><code class="docutils literal notranslate"><span class="pre">AutoModRuleActionType.block_message</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.enums.AutoModRuleActionType.send_alert_message"><code class="docutils literal notranslate"><span class="pre">AutoModRuleActionType.send_alert_message</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.enums.AutoModRuleActionType.timeout"><code class="docutils literal notranslate"><span class="pre">AutoModRuleActionType.timeout</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#discord_http.enums.AutoModRuleEventType"><code class="docutils literal notranslate"><span class="pre">AutoModRuleEventType</span></code></a><ul>
+<li><a class="reference internal" href="#discord_http.enums.AutoModRuleEventType.member_update"><code class="docutils literal notranslate"><span class="pre">AutoModRuleEventType.member_update</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.enums.AutoModRuleEventType.message_send"><code class="docutils literal notranslate"><span class="pre">AutoModRuleEventType.message_send</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#discord_http.enums.AutoModRulePresetType"><code class="docutils literal notranslate"><span class="pre">AutoModRulePresetType</span></code></a><ul>
+<li><a class="reference internal" href="#discord_http.enums.AutoModRulePresetType.profanity"><code class="docutils literal notranslate"><span class="pre">AutoModRulePresetType.profanity</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.enums.AutoModRulePresetType.sexual_content"><code class="docutils literal notranslate"><span class="pre">AutoModRulePresetType.sexual_content</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.enums.AutoModRulePresetType.slurs"><code class="docutils literal notranslate"><span class="pre">AutoModRulePresetType.slurs</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#discord_http.enums.AutoModRuleTriggerType"><code class="docutils literal notranslate"><span class="pre">AutoModRuleTriggerType</span></code></a><ul>
+<li><a class="reference internal" href="#discord_http.enums.AutoModRuleTriggerType.harmful_link"><code class="docutils literal notranslate"><span class="pre">AutoModRuleTriggerType.harmful_link</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.enums.AutoModRuleTriggerType.keyword"><code class="docutils literal notranslate"><span class="pre">AutoModRuleTriggerType.keyword</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.enums.AutoModRuleTriggerType.keyword_preset"><code class="docutils literal notranslate"><span class="pre">AutoModRuleTriggerType.keyword_preset</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.enums.AutoModRuleTriggerType.member_profile"><code class="docutils literal notranslate"><span class="pre">AutoModRuleTriggerType.member_profile</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.enums.AutoModRuleTriggerType.mention_spam"><code class="docutils literal notranslate"><span class="pre">AutoModRuleTriggerType.mention_spam</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.enums.AutoModRuleTriggerType.spam"><code class="docutils literal notranslate"><span class="pre">AutoModRuleTriggerType.spam</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#discord_http.enums.BaseEnum"><code class="docutils literal notranslate"><span class="pre">BaseEnum</span></code></a><ul>
+<li><a class="reference internal" href="#discord_http.enums.BaseEnum.random"><code class="docutils literal notranslate"><span class="pre">BaseEnum.random()</span></code></a></li>
 </ul>
 </li>
 <li><a class="reference internal" href="#discord_http.enums.ButtonStyles"><code class="docutils literal notranslate"><span class="pre">ButtonStyles</span></code></a><ul>
@@ -1452,6 +2035,7 @@
 <li><a class="reference internal" href="#discord_http.enums.ChannelType.guild_category"><code class="docutils literal notranslate"><span class="pre">ChannelType.guild_category</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.enums.ChannelType.guild_directory"><code class="docutils literal notranslate"><span class="pre">ChannelType.guild_directory</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.enums.ChannelType.guild_forum"><code class="docutils literal notranslate"><span class="pre">ChannelType.guild_forum</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.enums.ChannelType.guild_media"><code class="docutils literal notranslate"><span class="pre">ChannelType.guild_media</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.enums.ChannelType.guild_news"><code class="docutils literal notranslate"><span class="pre">ChannelType.guild_news</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.enums.ChannelType.guild_news_thread"><code class="docutils literal notranslate"><span class="pre">ChannelType.guild_news_thread</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.enums.ChannelType.guild_private_thread"><code class="docutils literal notranslate"><span class="pre">ChannelType.guild_private_thread</span></code></a></li>
@@ -1494,6 +2078,16 @@
 <li><a class="reference internal" href="#discord_http.enums.ContentFilterLevel.members_without_roles"><code class="docutils literal notranslate"><span class="pre">ContentFilterLevel.members_without_roles</span></code></a></li>
 </ul>
 </li>
+<li><a class="reference internal" href="#discord_http.enums.DefaultAvatarType"><code class="docutils literal notranslate"><span class="pre">DefaultAvatarType</span></code></a><ul>
+<li><a class="reference internal" href="#discord_http.enums.DefaultAvatarType.blurple"><code class="docutils literal notranslate"><span class="pre">DefaultAvatarType.blurple</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.enums.DefaultAvatarType.gray"><code class="docutils literal notranslate"><span class="pre">DefaultAvatarType.gray</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.enums.DefaultAvatarType.green"><code class="docutils literal notranslate"><span class="pre">DefaultAvatarType.green</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.enums.DefaultAvatarType.grey"><code class="docutils literal notranslate"><span class="pre">DefaultAvatarType.grey</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.enums.DefaultAvatarType.orange"><code class="docutils literal notranslate"><span class="pre">DefaultAvatarType.orange</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.enums.DefaultAvatarType.pink"><code class="docutils literal notranslate"><span class="pre">DefaultAvatarType.pink</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.enums.DefaultAvatarType.red"><code class="docutils literal notranslate"><span class="pre">DefaultAvatarType.red</span></code></a></li>
+</ul>
+</li>
 <li><a class="reference internal" href="#discord_http.enums.DefaultNotificationLevel"><code class="docutils literal notranslate"><span class="pre">DefaultNotificationLevel</span></code></a><ul>
 <li><a class="reference internal" href="#discord_http.enums.DefaultNotificationLevel.all_messages"><code class="docutils literal notranslate"><span class="pre">DefaultNotificationLevel.all_messages</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.enums.DefaultNotificationLevel.only_mentions"><code class="docutils literal notranslate"><span class="pre">DefaultNotificationLevel.only_mentions</span></code></a></li>
@@ -1513,6 +2107,11 @@
 <li><a class="reference internal" href="#discord_http.enums.EntitlementType.purchase"><code class="docutils literal notranslate"><span class="pre">EntitlementType.purchase</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.enums.EntitlementType.test_mode_purchase"><code class="docutils literal notranslate"><span class="pre">EntitlementType.test_mode_purchase</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.enums.EntitlementType.user_gift"><code class="docutils literal notranslate"><span class="pre">EntitlementType.user_gift</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#discord_http.enums.ExpireBehaviour"><code class="docutils literal notranslate"><span class="pre">ExpireBehaviour</span></code></a><ul>
+<li><a class="reference internal" href="#discord_http.enums.ExpireBehaviour.kick"><code class="docutils literal notranslate"><span class="pre">ExpireBehaviour.kick</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.enums.ExpireBehaviour.remove_role"><code class="docutils literal notranslate"><span class="pre">ExpireBehaviour.remove_role</span></code></a></li>
 </ul>
 </li>
 <li><a class="reference internal" href="#discord_http.enums.ForumLayoutType"><code class="docutils literal notranslate"><span class="pre">ForumLayoutType</span></code></a><ul>
@@ -1546,13 +2145,75 @@
 <li><a class="reference internal" href="#discord_http.enums.MFALevel.none"><code class="docutils literal notranslate"><span class="pre">MFALevel.none</span></code></a></li>
 </ul>
 </li>
+<li><a class="reference internal" href="#discord_http.enums.MessageReferenceType"><code class="docutils literal notranslate"><span class="pre">MessageReferenceType</span></code></a><ul>
+<li><a class="reference internal" href="#discord_http.enums.MessageReferenceType.default"><code class="docutils literal notranslate"><span class="pre">MessageReferenceType.default</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.enums.MessageReferenceType.forward"><code class="docutils literal notranslate"><span class="pre">MessageReferenceType.forward</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#discord_http.enums.MessageType"><code class="docutils literal notranslate"><span class="pre">MessageType</span></code></a><ul>
+<li><a class="reference internal" href="#discord_http.enums.MessageType.auto_moderation_action"><code class="docutils literal notranslate"><span class="pre">MessageType.auto_moderation_action</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.enums.MessageType.call"><code class="docutils literal notranslate"><span class="pre">MessageType.call</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.enums.MessageType.channel_follow_add"><code class="docutils literal notranslate"><span class="pre">MessageType.channel_follow_add</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.enums.MessageType.channel_icon_change"><code class="docutils literal notranslate"><span class="pre">MessageType.channel_icon_change</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.enums.MessageType.channel_name_change"><code class="docutils literal notranslate"><span class="pre">MessageType.channel_name_change</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.enums.MessageType.channel_pinned_message"><code class="docutils literal notranslate"><span class="pre">MessageType.channel_pinned_message</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.enums.MessageType.chat_input_command"><code class="docutils literal notranslate"><span class="pre">MessageType.chat_input_command</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.enums.MessageType.context_menu_command"><code class="docutils literal notranslate"><span class="pre">MessageType.context_menu_command</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.enums.MessageType.default"><code class="docutils literal notranslate"><span class="pre">MessageType.default</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.enums.MessageType.guild_application_premium_subscription"><code class="docutils literal notranslate"><span class="pre">MessageType.guild_application_premium_subscription</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.enums.MessageType.guild_boost"><code class="docutils literal notranslate"><span class="pre">MessageType.guild_boost</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.enums.MessageType.guild_boost_tier_1"><code class="docutils literal notranslate"><span class="pre">MessageType.guild_boost_tier_1</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.enums.MessageType.guild_boost_tier_2"><code class="docutils literal notranslate"><span class="pre">MessageType.guild_boost_tier_2</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.enums.MessageType.guild_boost_tier_3"><code class="docutils literal notranslate"><span class="pre">MessageType.guild_boost_tier_3</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.enums.MessageType.guild_discovery_disqualified"><code class="docutils literal notranslate"><span class="pre">MessageType.guild_discovery_disqualified</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.enums.MessageType.guild_discovery_grace_period_final_warning"><code class="docutils literal notranslate"><span class="pre">MessageType.guild_discovery_grace_period_final_warning</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.enums.MessageType.guild_discovery_grace_period_initial_warning"><code class="docutils literal notranslate"><span class="pre">MessageType.guild_discovery_grace_period_initial_warning</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.enums.MessageType.guild_discovery_requalified"><code class="docutils literal notranslate"><span class="pre">MessageType.guild_discovery_requalified</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.enums.MessageType.guild_incident_alert_mode_disabled"><code class="docutils literal notranslate"><span class="pre">MessageType.guild_incident_alert_mode_disabled</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.enums.MessageType.guild_incident_alert_mode_enabled"><code class="docutils literal notranslate"><span class="pre">MessageType.guild_incident_alert_mode_enabled</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.enums.MessageType.guild_incident_report_false_alarm"><code class="docutils literal notranslate"><span class="pre">MessageType.guild_incident_report_false_alarm</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.enums.MessageType.guild_incident_report_raid"><code class="docutils literal notranslate"><span class="pre">MessageType.guild_incident_report_raid</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.enums.MessageType.guild_invite_reminder"><code class="docutils literal notranslate"><span class="pre">MessageType.guild_invite_reminder</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.enums.MessageType.interaction_premium_upsell"><code class="docutils literal notranslate"><span class="pre">MessageType.interaction_premium_upsell</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.enums.MessageType.poll_result"><code class="docutils literal notranslate"><span class="pre">MessageType.poll_result</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.enums.MessageType.purchase_notification"><code class="docutils literal notranslate"><span class="pre">MessageType.purchase_notification</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.enums.MessageType.recipient_add"><code class="docutils literal notranslate"><span class="pre">MessageType.recipient_add</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.enums.MessageType.recipient_remove"><code class="docutils literal notranslate"><span class="pre">MessageType.recipient_remove</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.enums.MessageType.reply"><code class="docutils literal notranslate"><span class="pre">MessageType.reply</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.enums.MessageType.role_subscription_purchase"><code class="docutils literal notranslate"><span class="pre">MessageType.role_subscription_purchase</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.enums.MessageType.stage_end"><code class="docutils literal notranslate"><span class="pre">MessageType.stage_end</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.enums.MessageType.stage_speaker"><code class="docutils literal notranslate"><span class="pre">MessageType.stage_speaker</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.enums.MessageType.stage_start"><code class="docutils literal notranslate"><span class="pre">MessageType.stage_start</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.enums.MessageType.stage_topic"><code class="docutils literal notranslate"><span class="pre">MessageType.stage_topic</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.enums.MessageType.thread_created"><code class="docutils literal notranslate"><span class="pre">MessageType.thread_created</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.enums.MessageType.thread_starter_message"><code class="docutils literal notranslate"><span class="pre">MessageType.thread_starter_message</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.enums.MessageType.user_join"><code class="docutils literal notranslate"><span class="pre">MessageType.user_join</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#discord_http.enums.PermissionType"><code class="docutils literal notranslate"><span class="pre">PermissionType</span></code></a><ul>
+<li><a class="reference internal" href="#discord_http.enums.PermissionType.member"><code class="docutils literal notranslate"><span class="pre">PermissionType.member</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.enums.PermissionType.role"><code class="docutils literal notranslate"><span class="pre">PermissionType.role</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#discord_http.enums.PrivacyLevelType"><code class="docutils literal notranslate"><span class="pre">PrivacyLevelType</span></code></a><ul>
+<li><a class="reference internal" href="#discord_http.enums.PrivacyLevelType.guild_only"><code class="docutils literal notranslate"><span class="pre">PrivacyLevelType.guild_only</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.enums.PrivacyLevelType.public"><code class="docutils literal notranslate"><span class="pre">PrivacyLevelType.public</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#discord_http.enums.ReactionType"><code class="docutils literal notranslate"><span class="pre">ReactionType</span></code></a><ul>
+<li><a class="reference internal" href="#discord_http.enums.ReactionType.burst"><code class="docutils literal notranslate"><span class="pre">ReactionType.burst</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.enums.ReactionType.normal"><code class="docutils literal notranslate"><span class="pre">ReactionType.normal</span></code></a></li>
+</ul>
+</li>
 <li><a class="reference internal" href="#discord_http.enums.ResponseType"><code class="docutils literal notranslate"><span class="pre">ResponseType</span></code></a><ul>
 <li><a class="reference internal" href="#discord_http.enums.ResponseType.application_command_autocomplete_result"><code class="docutils literal notranslate"><span class="pre">ResponseType.application_command_autocomplete_result</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.enums.ResponseType.channel_message_with_source"><code class="docutils literal notranslate"><span class="pre">ResponseType.channel_message_with_source</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.enums.ResponseType.deferred_channel_message_with_source"><code class="docutils literal notranslate"><span class="pre">ResponseType.deferred_channel_message_with_source</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.enums.ResponseType.deferred_update_message"><code class="docutils literal notranslate"><span class="pre">ResponseType.deferred_update_message</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.enums.ResponseType.launch_activity"><code class="docutils literal notranslate"><span class="pre">ResponseType.launch_activity</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.enums.ResponseType.modal"><code class="docutils literal notranslate"><span class="pre">ResponseType.modal</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.enums.ResponseType.pong"><code class="docutils literal notranslate"><span class="pre">ResponseType.pong</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.enums.ResponseType.premium_required"><code class="docutils literal notranslate"><span class="pre">ResponseType.premium_required</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.enums.ResponseType.update_message"><code class="docutils literal notranslate"><span class="pre">ResponseType.update_message</span></code></a></li>
 </ul>
 </li>
@@ -1567,10 +2228,6 @@
 <li><a class="reference internal" href="#discord_http.enums.ScheduledEventEntityType.external"><code class="docutils literal notranslate"><span class="pre">ScheduledEventEntityType.external</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.enums.ScheduledEventEntityType.stage_instance"><code class="docutils literal notranslate"><span class="pre">ScheduledEventEntityType.stage_instance</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.enums.ScheduledEventEntityType.voice"><code class="docutils literal notranslate"><span class="pre">ScheduledEventEntityType.voice</span></code></a></li>
-</ul>
-</li>
-<li><a class="reference internal" href="#discord_http.enums.ScheduledEventPrivacyType"><code class="docutils literal notranslate"><span class="pre">ScheduledEventPrivacyType</span></code></a><ul>
-<li><a class="reference internal" href="#discord_http.enums.ScheduledEventPrivacyType.guild_only"><code class="docutils literal notranslate"><span class="pre">ScheduledEventPrivacyType.guild_only</span></code></a></li>
 </ul>
 </li>
 <li><a class="reference internal" href="#discord_http.enums.ScheduledEventStatusType"><code class="docutils literal notranslate"><span class="pre">ScheduledEventStatusType</span></code></a><ul>
@@ -1615,6 +2272,12 @@
 <li><a class="reference internal" href="#discord_http.enums.VideoQualityType.full"><code class="docutils literal notranslate"><span class="pre">VideoQualityType.full</span></code></a></li>
 </ul>
 </li>
+<li><a class="reference internal" href="#discord_http.enums.WebhookType"><code class="docutils literal notranslate"><span class="pre">WebhookType</span></code></a><ul>
+<li><a class="reference internal" href="#discord_http.enums.WebhookType.application"><code class="docutils literal notranslate"><span class="pre">WebhookType.application</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.enums.WebhookType.channel_follower"><code class="docutils literal notranslate"><span class="pre">WebhookType.channel_follower</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.enums.WebhookType.incoming"><code class="docutils literal notranslate"><span class="pre">WebhookType.incoming</span></code></a></li>
+</ul>
+</li>
 </ul>
 </li>
 </ul>
@@ -1629,7 +2292,7 @@
     </aside>
   </div>
 </div><script src="../_static/documentation_options.js?v=d45e8c67"></script>
-    <script src="../_static/doctools.js?v=9a2dae69"></script>
+    <script src="../_static/doctools.js?v=9bcbadda"></script>
     <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../_static/scripts/furo.js?v=5fa4622c"></script>
     </body>

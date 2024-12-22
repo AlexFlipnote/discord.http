@@ -3,9 +3,9 @@
   <head><meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width,initial-scale=1"/>
     <meta name="color-scheme" content="light dark"><meta name="viewport" content="width=device-width, initial-scale=1" />
-<link rel="index" title="Index" href="../genindex.html" /><link rel="search" title="Search" href="../search.html" /><link rel="next" title="Embeds" href="embeds.html" /><link rel="prev" title="Context" href="context.html" />
+<meta content="Cooldowns - discord.http docs" property="og:title"><meta content="Bases: BaseEnum" name="description"><meta content="Bases: BaseEnum" property="og:description"><meta property="og:image" content="/_static/favicon.ico"><meta name="theme-color" content="#14bae4"><meta property="og:locale" content="en_GB"><meta name="keywords" content="discord, http, api, interaction, quart, webhook, slash><meta name="revisit-after" content="2 days"><link rel="index" title="Index" href="../genindex.html" /><link rel="search" title="Search" href="../search.html" /><link rel="next" title="Embeds" href="embeds.html" /><link rel="prev" title="Context" href="context.html" />
 
-    <link rel="shortcut icon" href="../_static/favicon.ico"/><!-- Generated with Sphinx 8.0.2 and Furo 2024.08.06 -->
+    <link rel="shortcut icon" href="../_static/favicon.ico"/><!-- Generated with Sphinx 8.1.3 and Furo 2024.08.06 -->
         <title>Cooldowns - discord.http docs</title>
       <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=fa44fd50" />
     <link rel="stylesheet" type="text/css" href="../_static/styles/furo.css?v=354aac6f" />
@@ -202,6 +202,8 @@
 <li class="toctree-l1"><a class="reference internal" href="../pages/getting_started.html">Getting started</a></li>
 <li class="toctree-l1 current has-children"><a class="reference internal" href="../pages/api.html">API components</a><input checked="" class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" role="switch" type="checkbox"/><label for="toctree-checkbox-1"><div class="visually-hidden">Toggle navigation of API components</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul class="current">
 <li class="toctree-l2"><a class="reference internal" href="asset.html">Asset</a></li>
+<li class="toctree-l2"><a class="reference internal" href="audit.html">Audit</a></li>
+<li class="toctree-l2"><a class="reference internal" href="automod.html">AutoModRule</a></li>
 <li class="toctree-l2"><a class="reference internal" href="backend.html">Backend</a></li>
 <li class="toctree-l2"><a class="reference internal" href="channel.html">Channel</a></li>
 <li class="toctree-l2"><a class="reference internal" href="client.html">Client</a></li>
@@ -215,9 +217,10 @@
 <li class="toctree-l2"><a class="reference internal" href="enums.html">Enums</a></li>
 <li class="toctree-l2"><a class="reference internal" href="errors.html">Errors</a></li>
 <li class="toctree-l2"><a class="reference internal" href="file.html">File</a></li>
-<li class="toctree-l2"><a class="reference internal" href="flag.html">Flag</a></li>
+<li class="toctree-l2"><a class="reference internal" href="flags.html">Flag</a></li>
 <li class="toctree-l2"><a class="reference internal" href="guild.html">Guild</a></li>
 <li class="toctree-l2"><a class="reference internal" href="http.html">Http</a></li>
+<li class="toctree-l2"><a class="reference internal" href="integrations.html">Integrations</a></li>
 <li class="toctree-l2"><a class="reference internal" href="invite.html">Invite</a></li>
 <li class="toctree-l2"><a class="reference internal" href="member.html">Member</a></li>
 <li class="toctree-l2"><a class="reference internal" href="mentions.html">Mentions</a></li>
@@ -226,14 +229,24 @@
 <li class="toctree-l2"><a class="reference internal" href="object.html">Object</a></li>
 <li class="toctree-l2"><a class="reference internal" href="response.html">Response</a></li>
 <li class="toctree-l2"><a class="reference internal" href="role.html">Role</a></li>
+<li class="toctree-l2"><a class="reference internal" href="soundboard.html">Soundboard</a></li>
 <li class="toctree-l2"><a class="reference internal" href="sticker.html">Sticker</a></li>
 <li class="toctree-l2"><a class="reference internal" href="tasks.html">Tasks</a></li>
 <li class="toctree-l2"><a class="reference internal" href="user.html">User</a></li>
 <li class="toctree-l2"><a class="reference internal" href="view.html">View</a></li>
+<li class="toctree-l2"><a class="reference internal" href="voice.html">Vsset</a></li>
 <li class="toctree-l2"><a class="reference internal" href="webhook.html">Webhook</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../pages/events.html">Event references</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../pages/gateway.html">Gateway references</a><input class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" role="switch" type="checkbox"/><label for="toctree-checkbox-2"><div class="visually-hidden">Toggle navigation of Gateway references</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../gateway/activity.html">Activity</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../gateway/client.html">Client</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../gateway/enums.html">Enums</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../gateway/flags.html">Flags</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../gateway/object.html">Object (Gateway events)</a></li>
+</ul>
+</li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">Advanced</span></p>
 <ul>
@@ -243,7 +256,7 @@
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../pages/contribute.html">Contributing</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../pages/license.html">License</a></li>
-<li class="toctree-l1"><a class="reference external" href="https://discord.gg/AlexFlipnote">Discord</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://discord.gg/yqb7vATbjH">Discord</a></li>
 <li class="toctree-l1"><a class="reference external" href="https://github.com/AlexFlipnote/discord.http">GitHub</a></li>
 </ul>
 
@@ -292,7 +305,7 @@
 <dl class="py class">
 <dt class="sig sig-object py" id="discord_http.cooldowns.BucketType">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">discord_http.cooldowns.</span></span><span class="sig-name descname"><span class="pre">BucketType</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">names</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">module</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">qualname</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">type</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">start</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">boundary</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/discord_http/cooldowns.html#BucketType"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#discord_http.cooldowns.BucketType" title="Link to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Enum</span></code></p>
+<dd><p>Bases: <a class="reference internal" href="enums.html#discord_http.enums.BaseEnum" title="discord_http.enums.BaseEnum"><code class="xref py py-class docutils literal notranslate"><span class="pre">BaseEnum</span></code></a></p>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="discord_http.cooldowns.BucketType.category">
 <span class="sig-name descname"><span class="pre">category</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">4</span></em><a class="headerlink" href="#discord_http.cooldowns.BucketType.category" title="Link to this definition">¶</a></dt>
@@ -346,7 +359,7 @@
 <dd><p>Gets the time left before the cooldown resets.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>current</strong> (<cite>Optional[float]</cite>) – The current time to check the retry after for.</p>
+<dd class="field-odd"><p><strong>current</strong> (<cite>float | None</cite>) – The current time to check the retry after for.</p>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>Time left before the cooldown resets.</p>
@@ -363,7 +376,7 @@
 <dd><p>Gets the amount of tokens available for the current time.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>current</strong> (<cite>Optional[float]</cite>) – The current time to check the tokens for.</p>
+<dd class="field-odd"><p><strong>current</strong> (<cite>float | None</cite>) – The current time to check the tokens for.</p>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>Amount of tokens available.</p>
@@ -387,7 +400,7 @@
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>current</strong> (<cite>Optional[float]</cite>) – The current time to update the rate limit for.</p></li>
+<li><p><strong>current</strong> (<cite>float | None</cite>) – The current time to update the rate limit for.</p></li>
 <li><p><strong>tokens</strong> (<cite>int</cite>) – Amount of tokens to remove from the rate limit.</p></li>
 </ul>
 </dd>
@@ -396,7 +409,7 @@
 Returns <cite>None</cite> if the rate limit was not exceeded.</p>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><cite>Optional[float]</cite></p>
+<dd class="field-odd"><p><cite>float | None</cite></p>
 </dd>
 </dl>
 </dd></dl>
@@ -421,7 +434,7 @@ Returns <cite>None</cite> if the rate limit was not exceeded.</p>
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>ctx</strong> (<cite>Context</cite>) – Context to get the bucket for.</p></li>
-<li><p><strong>current</strong> (<cite>Optional[float]</cite>) – Current time to check the bucket for.</p></li>
+<li><p><strong>current</strong> (<cite>float | None</cite>) – Current time to check the bucket for.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
@@ -441,7 +454,7 @@ Returns <cite>None</cite> if the rate limit was not exceeded.</p>
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>ctx</strong> (<cite>Context</cite>) – Context to update the rate limit for.</p></li>
-<li><p><strong>current</strong> (<cite>Optional[float]</cite>) – Current time to update the rate limit for.</p></li>
+<li><p><strong>current</strong> (<cite>float | None</cite>) – Current time to update the rate limit for.</p></li>
 <li><p><strong>tokens</strong> (<cite>int</cite>) – Amount of tokens to remove from the rate limit.</p></li>
 </ul>
 </dd>
@@ -450,7 +463,7 @@ Returns <cite>None</cite> if the rate limit was not exceeded.</p>
 Returns <cite>None</cite> if the rate limit was not exceeded.</p>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><cite>Optional[float]</cite></p>
+<dd class="field-odd"><p><cite>float | None</cite></p>
 </dd>
 </dl>
 </dd></dl>
@@ -555,7 +568,7 @@ Returns <cite>None</cite> if the rate limit was not exceeded.</p>
     </aside>
   </div>
 </div><script src="../_static/documentation_options.js?v=d45e8c67"></script>
-    <script src="../_static/doctools.js?v=9a2dae69"></script>
+    <script src="../_static/doctools.js?v=9bcbadda"></script>
     <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../_static/scripts/furo.js?v=5fa4622c"></script>
     </body>

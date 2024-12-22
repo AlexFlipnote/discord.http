@@ -3,9 +3,9 @@
   <head><meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width,initial-scale=1"/>
     <meta name="color-scheme" content="light dark"><meta name="viewport" content="width=device-width, initial-scale=1" />
-<link rel="index" title="Index" href="../genindex.html" /><link rel="search" title="Search" href="../search.html" /><link rel="next" title="Commands" href="commands.html" /><link rel="prev" title="Client" href="client.html" />
+<meta content="Colour - discord.http docs" property="og:title"><meta content="Bases: Colour" name="description"><meta content="Bases: Colour" property="og:description"><meta property="og:image" content="/_static/favicon.ico"><meta name="theme-color" content="#14bae4"><meta property="og:locale" content="en_GB"><meta name="keywords" content="discord, http, api, interaction, quart, webhook, slash><meta name="revisit-after" content="2 days"><link rel="index" title="Index" href="../genindex.html" /><link rel="search" title="Search" href="../search.html" /><link rel="next" title="Commands" href="commands.html" /><link rel="prev" title="Client" href="client.html" />
 
-    <link rel="shortcut icon" href="../_static/favicon.ico"/><!-- Generated with Sphinx 8.0.2 and Furo 2024.08.06 -->
+    <link rel="shortcut icon" href="../_static/favicon.ico"/><!-- Generated with Sphinx 8.1.3 and Furo 2024.08.06 -->
         <title>Colour - discord.http docs</title>
       <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=fa44fd50" />
     <link rel="stylesheet" type="text/css" href="../_static/styles/furo.css?v=354aac6f" />
@@ -202,6 +202,8 @@
 <li class="toctree-l1"><a class="reference internal" href="../pages/getting_started.html">Getting started</a></li>
 <li class="toctree-l1 current has-children"><a class="reference internal" href="../pages/api.html">API components</a><input checked="" class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" role="switch" type="checkbox"/><label for="toctree-checkbox-1"><div class="visually-hidden">Toggle navigation of API components</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul class="current">
 <li class="toctree-l2"><a class="reference internal" href="asset.html">Asset</a></li>
+<li class="toctree-l2"><a class="reference internal" href="audit.html">Audit</a></li>
+<li class="toctree-l2"><a class="reference internal" href="automod.html">AutoModRule</a></li>
 <li class="toctree-l2"><a class="reference internal" href="backend.html">Backend</a></li>
 <li class="toctree-l2"><a class="reference internal" href="channel.html">Channel</a></li>
 <li class="toctree-l2"><a class="reference internal" href="client.html">Client</a></li>
@@ -215,9 +217,10 @@
 <li class="toctree-l2"><a class="reference internal" href="enums.html">Enums</a></li>
 <li class="toctree-l2"><a class="reference internal" href="errors.html">Errors</a></li>
 <li class="toctree-l2"><a class="reference internal" href="file.html">File</a></li>
-<li class="toctree-l2"><a class="reference internal" href="flag.html">Flag</a></li>
+<li class="toctree-l2"><a class="reference internal" href="flags.html">Flag</a></li>
 <li class="toctree-l2"><a class="reference internal" href="guild.html">Guild</a></li>
 <li class="toctree-l2"><a class="reference internal" href="http.html">Http</a></li>
+<li class="toctree-l2"><a class="reference internal" href="integrations.html">Integrations</a></li>
 <li class="toctree-l2"><a class="reference internal" href="invite.html">Invite</a></li>
 <li class="toctree-l2"><a class="reference internal" href="member.html">Member</a></li>
 <li class="toctree-l2"><a class="reference internal" href="mentions.html">Mentions</a></li>
@@ -226,14 +229,24 @@
 <li class="toctree-l2"><a class="reference internal" href="object.html">Object</a></li>
 <li class="toctree-l2"><a class="reference internal" href="response.html">Response</a></li>
 <li class="toctree-l2"><a class="reference internal" href="role.html">Role</a></li>
+<li class="toctree-l2"><a class="reference internal" href="soundboard.html">Soundboard</a></li>
 <li class="toctree-l2"><a class="reference internal" href="sticker.html">Sticker</a></li>
 <li class="toctree-l2"><a class="reference internal" href="tasks.html">Tasks</a></li>
 <li class="toctree-l2"><a class="reference internal" href="user.html">User</a></li>
 <li class="toctree-l2"><a class="reference internal" href="view.html">View</a></li>
+<li class="toctree-l2"><a class="reference internal" href="voice.html">Vsset</a></li>
 <li class="toctree-l2"><a class="reference internal" href="webhook.html">Webhook</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../pages/events.html">Event references</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../pages/gateway.html">Gateway references</a><input class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" role="switch" type="checkbox"/><label for="toctree-checkbox-2"><div class="visually-hidden">Toggle navigation of Gateway references</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../gateway/activity.html">Activity</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../gateway/client.html">Client</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../gateway/enums.html">Enums</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../gateway/flags.html">Flags</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../gateway/object.html">Object (Gateway events)</a></li>
+</ul>
+</li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">Advanced</span></p>
 <ul>
@@ -243,7 +256,7 @@
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../pages/contribute.html">Contributing</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../pages/license.html">License</a></li>
-<li class="toctree-l1"><a class="reference external" href="https://discord.gg/AlexFlipnote">Discord</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://discord.gg/yqb7vATbjH">Discord</a></li>
 <li class="toctree-l1"><a class="reference external" href="https://github.com/AlexFlipnote/discord.http">GitHub</a></li>
 </ul>
 
@@ -300,6 +313,18 @@
 <dt class="sig sig-object py" id="discord_http.colour.Colour">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">discord_http.colour.</span></span><span class="sig-name descname"><span class="pre">Colour</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/discord_http/colour.html#Colour"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#discord_http.colour.Colour" title="Link to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="discord_http.colour.Colour.alizarin">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">alizarin</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Self</span></span></span><a class="reference internal" href="../_modules/discord_http/colour.html#Colour.alizarin"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#discord_http.colour.Colour.alizarin" title="Link to this definition">¶</a></dt>
+<dd><p><cite>Colour</cite>: Returns the alizarin colour</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="discord_http.colour.Colour.amethyst">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">amethyst</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Self</span></span></span><a class="reference internal" href="../_modules/discord_http/colour.html#Colour.amethyst"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#discord_http.colour.Colour.amethyst" title="Link to this definition">¶</a></dt>
+<dd><p><cite>Colour</cite>: Returns the amethyst colour</p>
+</dd></dl>
+
 <dl class="py property">
 <dt class="sig sig-object py" id="discord_http.colour.Colour.b">
 <em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">b</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span></em><a class="headerlink" href="#discord_http.colour.Colour.b" title="Link to this definition">¶</a></dt>
@@ -312,9 +337,39 @@
 </dd></dl>
 
 <dl class="py method">
+<dt class="sig sig-object py" id="discord_http.colour.Colour.belize_hole">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">belize_hole</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Self</span></span></span><a class="reference internal" href="../_modules/discord_http/colour.html#Colour.belize_hole"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#discord_http.colour.Colour.belize_hole" title="Link to this definition">¶</a></dt>
+<dd><p><cite>Colour</cite>: Returns the belize hole colour</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="discord_http.colour.Colour.blue_sentinel">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">blue_sentinel</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Self</span></span></span><a class="reference internal" href="../_modules/discord_http/colour.html#Colour.blue_sentinel"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#discord_http.colour.Colour.blue_sentinel" title="Link to this definition">¶</a></dt>
+<dd><p><cite>Colour</cite>: Returns the blue sentinel colour</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="discord_http.colour.Colour.carrot">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">carrot</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Self</span></span></span><a class="reference internal" href="../_modules/discord_http/colour.html#Colour.carrot"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#discord_http.colour.Colour.carrot" title="Link to this definition">¶</a></dt>
+<dd><p><cite>Colour</cite>: Returns the carrot colour</p>
+</dd></dl>
+
+<dl class="py method">
 <dt class="sig sig-object py" id="discord_http.colour.Colour.default">
 <em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">default</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Self</span></span></span><a class="reference internal" href="../_modules/discord_http/colour.html#Colour.default"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#discord_http.colour.Colour.default" title="Link to this definition">¶</a></dt>
 <dd><p><cite>Colour</cite>: Returns the default colour (#000000, Black)</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="discord_http.colour.Colour.dusty_sky">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">dusty_sky</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Self</span></span></span><a class="reference internal" href="../_modules/discord_http/colour.html#Colour.dusty_sky"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#discord_http.colour.Colour.dusty_sky" title="Link to this definition">¶</a></dt>
+<dd><p><cite>Colour</cite>: Returns the dusty sky colour</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="discord_http.colour.Colour.emerald">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">emerald</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Self</span></span></span><a class="reference internal" href="../_modules/discord_http/colour.html#Colour.emerald"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#discord_http.colour.Colour.emerald" title="Link to this definition">¶</a></dt>
+<dd><p><cite>Colour</cite>: Returns the emerald colour</p>
 </dd></dl>
 
 <dl class="py method">
@@ -369,6 +424,60 @@
 </dl>
 </dd></dl>
 
+<dl class="py method">
+<dt class="sig sig-object py" id="discord_http.colour.Colour.green_sea">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">green_sea</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Self</span></span></span><a class="reference internal" href="../_modules/discord_http/colour.html#Colour.green_sea"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#discord_http.colour.Colour.green_sea" title="Link to this definition">¶</a></dt>
+<dd><p><cite>Colour</cite>: Returns the green sea colour</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="discord_http.colour.Colour.harrison_grey">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">harrison_grey</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Self</span></span></span><a class="reference internal" href="../_modules/discord_http/colour.html#Colour.harrison_grey"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#discord_http.colour.Colour.harrison_grey" title="Link to this definition">¶</a></dt>
+<dd><p><cite>Colour</cite>: Returns the harrison grey colour</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="discord_http.colour.Colour.mellow_melon">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">mellow_melon</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Self</span></span></span><a class="reference internal" href="../_modules/discord_http/colour.html#Colour.mellow_melon"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#discord_http.colour.Colour.mellow_melon" title="Link to this definition">¶</a></dt>
+<dd><p><cite>Colour</cite>: Returns the mellow melon colour</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="discord_http.colour.Colour.nephritis">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">nephritis</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Self</span></span></span><a class="reference internal" href="../_modules/discord_http/colour.html#Colour.nephritis"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#discord_http.colour.Colour.nephritis" title="Link to this definition">¶</a></dt>
+<dd><p><cite>Colour</cite>: Returns the nephritis colour</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="discord_http.colour.Colour.orange">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">orange</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Self</span></span></span><a class="reference internal" href="../_modules/discord_http/colour.html#Colour.orange"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#discord_http.colour.Colour.orange" title="Link to this definition">¶</a></dt>
+<dd><p><cite>Colour</cite>: Returns the orange colour</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="discord_http.colour.Colour.peter_river">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">peter_river</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Self</span></span></span><a class="reference internal" href="../_modules/discord_http/colour.html#Colour.peter_river"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#discord_http.colour.Colour.peter_river" title="Link to this definition">¶</a></dt>
+<dd><p><cite>Colour</cite>: Returns the peter river colour</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="discord_http.colour.Colour.plum_perfect">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">plum_perfect</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Self</span></span></span><a class="reference internal" href="../_modules/discord_http/colour.html#Colour.plum_perfect"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#discord_http.colour.Colour.plum_perfect" title="Link to this definition">¶</a></dt>
+<dd><p><cite>Colour</cite>: Returns the plum perfect colour</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="discord_http.colour.Colour.pomegranate">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">pomegranate</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Self</span></span></span><a class="reference internal" href="../_modules/discord_http/colour.html#Colour.pomegranate"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#discord_http.colour.Colour.pomegranate" title="Link to this definition">¶</a></dt>
+<dd><p><cite>Colour</cite>: Returns the pomegranate colour</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="discord_http.colour.Colour.pumpkin">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">pumpkin</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Self</span></span></span><a class="reference internal" href="../_modules/discord_http/colour.html#Colour.pumpkin"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#discord_http.colour.Colour.pumpkin" title="Link to this definition">¶</a></dt>
+<dd><p><cite>Colour</cite>: Returns the pumpkin colour</p>
+</dd></dl>
+
 <dl class="py property">
 <dt class="sig sig-object py" id="discord_http.colour.Colour.r">
 <em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">r</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span></em><a class="headerlink" href="#discord_http.colour.Colour.r" title="Link to this definition">¶</a></dt>
@@ -398,6 +507,12 @@
 </dd></dl>
 
 <dl class="py method">
+<dt class="sig sig-object py" id="discord_http.colour.Colour.sun_flower">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">sun_flower</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Self</span></span></span><a class="reference internal" href="../_modules/discord_http/colour.html#Colour.sun_flower"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#discord_http.colour.Colour.sun_flower" title="Link to this definition">¶</a></dt>
+<dd><p><cite>Colour</cite>: Returns the sun flower colour</p>
+</dd></dl>
+
+<dl class="py method">
 <dt class="sig sig-object py" id="discord_http.colour.Colour.to_hex">
 <span class="sig-name descname"><span class="pre">to_hex</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="reference internal" href="../_modules/discord_http/colour.html#Colour.to_hex"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#discord_http.colour.Colour.to_hex" title="Link to this definition">¶</a></dt>
 <dd><p><cite>str</cite>: Returns the hex value of the colour</p>
@@ -407,6 +522,24 @@
 <dt class="sig sig-object py" id="discord_http.colour.Colour.to_rgb">
 <span class="sig-name descname"><span class="pre">to_rgb</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../_modules/discord_http/colour.html#Colour.to_rgb"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#discord_http.colour.Colour.to_rgb" title="Link to this definition">¶</a></dt>
 <dd><p><cite>tuple[int, int, int]</cite>: Returns the RGB values of the colour`</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="discord_http.colour.Colour.turquoise">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">turquoise</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Self</span></span></span><a class="reference internal" href="../_modules/discord_http/colour.html#Colour.turquoise"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#discord_http.colour.Colour.turquoise" title="Link to this definition">¶</a></dt>
+<dd><p><cite>Colour</cite>: Returns the turquoise colour</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="discord_http.colour.Colour.whale_shark">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">whale_shark</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Self</span></span></span><a class="reference internal" href="../_modules/discord_http/colour.html#Colour.whale_shark"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#discord_http.colour.Colour.whale_shark" title="Link to this definition">¶</a></dt>
+<dd><p><cite>Colour</cite>: Returns the whale shark colour</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="discord_http.colour.Colour.wisteria">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">wisteria</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Self</span></span></span><a class="reference internal" href="../_modules/discord_http/colour.html#Colour.wisteria"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#discord_http.colour.Colour.wisteria" title="Link to this definition">¶</a></dt>
+<dd><p><cite>Colour</cite>: Returns the wisteria colour</p>
 </dd></dl>
 
 </dd></dl>
@@ -473,15 +606,35 @@
 <li><a class="reference internal" href="#module-discord_http.colour">discord_http.colour module</a><ul>
 <li><a class="reference internal" href="#discord_http.colour.Color"><code class="docutils literal notranslate"><span class="pre">Color</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.colour.Colour"><code class="docutils literal notranslate"><span class="pre">Colour</span></code></a><ul>
+<li><a class="reference internal" href="#discord_http.colour.Colour.alizarin"><code class="docutils literal notranslate"><span class="pre">Colour.alizarin()</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.colour.Colour.amethyst"><code class="docutils literal notranslate"><span class="pre">Colour.amethyst()</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.colour.Colour.b"><code class="docutils literal notranslate"><span class="pre">Colour.b</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.colour.Colour.belize_hole"><code class="docutils literal notranslate"><span class="pre">Colour.belize_hole()</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.colour.Colour.blue_sentinel"><code class="docutils literal notranslate"><span class="pre">Colour.blue_sentinel()</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.colour.Colour.carrot"><code class="docutils literal notranslate"><span class="pre">Colour.carrot()</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.colour.Colour.default"><code class="docutils literal notranslate"><span class="pre">Colour.default()</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.colour.Colour.dusty_sky"><code class="docutils literal notranslate"><span class="pre">Colour.dusty_sky()</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.colour.Colour.emerald"><code class="docutils literal notranslate"><span class="pre">Colour.emerald()</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.colour.Colour.from_hex"><code class="docutils literal notranslate"><span class="pre">Colour.from_hex()</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.colour.Colour.from_rgb"><code class="docutils literal notranslate"><span class="pre">Colour.from_rgb()</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.colour.Colour.g"><code class="docutils literal notranslate"><span class="pre">Colour.g</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.colour.Colour.green_sea"><code class="docutils literal notranslate"><span class="pre">Colour.green_sea()</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.colour.Colour.harrison_grey"><code class="docutils literal notranslate"><span class="pre">Colour.harrison_grey()</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.colour.Colour.mellow_melon"><code class="docutils literal notranslate"><span class="pre">Colour.mellow_melon()</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.colour.Colour.nephritis"><code class="docutils literal notranslate"><span class="pre">Colour.nephritis()</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.colour.Colour.orange"><code class="docutils literal notranslate"><span class="pre">Colour.orange()</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.colour.Colour.peter_river"><code class="docutils literal notranslate"><span class="pre">Colour.peter_river()</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.colour.Colour.plum_perfect"><code class="docutils literal notranslate"><span class="pre">Colour.plum_perfect()</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.colour.Colour.pomegranate"><code class="docutils literal notranslate"><span class="pre">Colour.pomegranate()</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.colour.Colour.pumpkin"><code class="docutils literal notranslate"><span class="pre">Colour.pumpkin()</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.colour.Colour.r"><code class="docutils literal notranslate"><span class="pre">Colour.r</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.colour.Colour.random"><code class="docutils literal notranslate"><span class="pre">Colour.random()</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.colour.Colour.sun_flower"><code class="docutils literal notranslate"><span class="pre">Colour.sun_flower()</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.colour.Colour.to_hex"><code class="docutils literal notranslate"><span class="pre">Colour.to_hex()</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.colour.Colour.to_rgb"><code class="docutils literal notranslate"><span class="pre">Colour.to_rgb()</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.colour.Colour.turquoise"><code class="docutils literal notranslate"><span class="pre">Colour.turquoise()</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.colour.Colour.whale_shark"><code class="docutils literal notranslate"><span class="pre">Colour.whale_shark()</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.colour.Colour.wisteria"><code class="docutils literal notranslate"><span class="pre">Colour.wisteria()</span></code></a></li>
 </ul>
 </li>
 </ul>
@@ -498,7 +651,7 @@
     </aside>
   </div>
 </div><script src="../_static/documentation_options.js?v=d45e8c67"></script>
-    <script src="../_static/doctools.js?v=9a2dae69"></script>
+    <script src="../_static/doctools.js?v=9bcbadda"></script>
     <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../_static/scripts/furo.js?v=5fa4622c"></script>
     </body>

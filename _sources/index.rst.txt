@@ -19,6 +19,8 @@
     discord.http docs
   </h1>
 
+Python library that handles interactions from Discord POST requests.
+
 Getting started
 ---------------
 
@@ -55,6 +57,7 @@ Automatically generated documentation index for your convenience:
   pages/getting_started
   pages/api
   pages/events
+  pages/gateway
 
 .. toctree::
   :hidden:

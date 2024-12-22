@@ -3,9 +3,9 @@
   <head><meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width,initial-scale=1"/>
     <meta name="color-scheme" content="light dark"><meta name="viewport" content="width=device-width, initial-scale=1" />
-<link rel="index" title="Index" href="../genindex.html" /><link rel="search" title="Search" href="../search.html" /><link rel="next" title="File" href="file.html" /><link rel="prev" title="Enums" href="enums.html" />
+<meta content="Errors - discord.http docs" property="og:title"><meta content="Bases: HTTPException" name="description"><meta content="Bases: HTTPException" property="og:description"><meta property="og:image" content="/_static/favicon.ico"><meta name="theme-color" content="#14bae4"><meta property="og:locale" content="en_GB"><meta name="keywords" content="discord, http, api, interaction, quart, webhook, slash><meta name="revisit-after" content="2 days"><link rel="index" title="Index" href="../genindex.html" /><link rel="search" title="Search" href="../search.html" /><link rel="next" title="File" href="file.html" /><link rel="prev" title="Enums" href="enums.html" />
 
-    <link rel="shortcut icon" href="../_static/favicon.ico"/><!-- Generated with Sphinx 8.0.2 and Furo 2024.08.06 -->
+    <link rel="shortcut icon" href="../_static/favicon.ico"/><!-- Generated with Sphinx 8.1.3 and Furo 2024.08.06 -->
         <title>Errors - discord.http docs</title>
       <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=fa44fd50" />
     <link rel="stylesheet" type="text/css" href="../_static/styles/furo.css?v=354aac6f" />
@@ -202,6 +202,8 @@
 <li class="toctree-l1"><a class="reference internal" href="../pages/getting_started.html">Getting started</a></li>
 <li class="toctree-l1 current has-children"><a class="reference internal" href="../pages/api.html">API components</a><input checked="" class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" role="switch" type="checkbox"/><label for="toctree-checkbox-1"><div class="visually-hidden">Toggle navigation of API components</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul class="current">
 <li class="toctree-l2"><a class="reference internal" href="asset.html">Asset</a></li>
+<li class="toctree-l2"><a class="reference internal" href="audit.html">Audit</a></li>
+<li class="toctree-l2"><a class="reference internal" href="automod.html">AutoModRule</a></li>
 <li class="toctree-l2"><a class="reference internal" href="backend.html">Backend</a></li>
 <li class="toctree-l2"><a class="reference internal" href="channel.html">Channel</a></li>
 <li class="toctree-l2"><a class="reference internal" href="client.html">Client</a></li>
@@ -215,9 +217,10 @@
 <li class="toctree-l2"><a class="reference internal" href="enums.html">Enums</a></li>
 <li class="toctree-l2 current current-page"><a class="current reference internal" href="#">Errors</a></li>
 <li class="toctree-l2"><a class="reference internal" href="file.html">File</a></li>
-<li class="toctree-l2"><a class="reference internal" href="flag.html">Flag</a></li>
+<li class="toctree-l2"><a class="reference internal" href="flags.html">Flag</a></li>
 <li class="toctree-l2"><a class="reference internal" href="guild.html">Guild</a></li>
 <li class="toctree-l2"><a class="reference internal" href="http.html">Http</a></li>
+<li class="toctree-l2"><a class="reference internal" href="integrations.html">Integrations</a></li>
 <li class="toctree-l2"><a class="reference internal" href="invite.html">Invite</a></li>
 <li class="toctree-l2"><a class="reference internal" href="member.html">Member</a></li>
 <li class="toctree-l2"><a class="reference internal" href="mentions.html">Mentions</a></li>
@@ -226,14 +229,24 @@
 <li class="toctree-l2"><a class="reference internal" href="object.html">Object</a></li>
 <li class="toctree-l2"><a class="reference internal" href="response.html">Response</a></li>
 <li class="toctree-l2"><a class="reference internal" href="role.html">Role</a></li>
+<li class="toctree-l2"><a class="reference internal" href="soundboard.html">Soundboard</a></li>
 <li class="toctree-l2"><a class="reference internal" href="sticker.html">Sticker</a></li>
 <li class="toctree-l2"><a class="reference internal" href="tasks.html">Tasks</a></li>
 <li class="toctree-l2"><a class="reference internal" href="user.html">User</a></li>
 <li class="toctree-l2"><a class="reference internal" href="view.html">View</a></li>
+<li class="toctree-l2"><a class="reference internal" href="voice.html">Vsset</a></li>
 <li class="toctree-l2"><a class="reference internal" href="webhook.html">Webhook</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../pages/events.html">Event references</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../pages/gateway.html">Gateway references</a><input class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" role="switch" type="checkbox"/><label for="toctree-checkbox-2"><div class="visually-hidden">Toggle navigation of Gateway references</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../gateway/activity.html">Activity</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../gateway/client.html">Client</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../gateway/enums.html">Enums</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../gateway/flags.html">Flags</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../gateway/object.html">Object (Gateway events)</a></li>
+</ul>
+</li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">Advanced</span></p>
 <ul>
@@ -243,7 +256,7 @@
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../pages/contribute.html">Contributing</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../pages/license.html">License</a></li>
-<li class="toctree-l1"><a class="reference external" href="https://discord.gg/AlexFlipnote">Discord</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://discord.gg/yqb7vATbjH">Discord</a></li>
 <li class="toctree-l1"><a class="reference external" href="https://github.com/AlexFlipnote/discord.http">GitHub</a></li>
 </ul>
 
@@ -298,7 +311,7 @@
 
 <dl class="py exception">
 <dt class="sig sig-object py" id="discord_http.errors.BotMissingPermissions">
-<em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">discord_http.errors.</span></span><span class="sig-name descname"><span class="pre">BotMissingPermissions</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">perms</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="flag.html#discord_http.flag.Permissions" title="discord_http.flag.Permissions"><span class="pre">Permissions</span></a></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/discord_http/errors.html#BotMissingPermissions"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#discord_http.errors.BotMissingPermissions" title="Link to this definition">¶</a></dt>
+<em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">discord_http.errors.</span></span><span class="sig-name descname"><span class="pre">BotMissingPermissions</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">perms</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="flags.html#discord_http.flags.Permissions" title="discord_http.flags.Permissions"><span class="pre">Permissions</span></a></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/discord_http/errors.html#BotMissingPermissions"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#discord_http.errors.BotMissingPermissions" title="Link to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#discord_http.errors.CheckFailed" title="discord_http.errors.CheckFailed"><code class="xref py py-class docutils literal notranslate"><span class="pre">CheckFailed</span></code></a></p>
 <p>Raised whenever a bot is missing permissions</p>
 </dd></dl>
@@ -308,6 +321,13 @@
 <em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">discord_http.errors.</span></span><span class="sig-name descname"><span class="pre">CheckFailed</span></span><a class="reference internal" href="../_modules/discord_http/errors.html#CheckFailed"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#discord_http.errors.CheckFailed" title="Link to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#discord_http.errors.DiscordException" title="discord_http.errors.DiscordException"><code class="xref py py-class docutils literal notranslate"><span class="pre">DiscordException</span></code></a></p>
 <p>Raised whenever a check fails</p>
+</dd></dl>
+
+<dl class="py exception">
+<dt class="sig sig-object py" id="discord_http.errors.CommandError">
+<em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">discord_http.errors.</span></span><span class="sig-name descname"><span class="pre">CommandError</span></span><a class="reference internal" href="../_modules/discord_http/errors.html#CommandError"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#discord_http.errors.CommandError" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Exception</span></code></p>
+<p>Raised whenever a command error occurs</p>
 </dd></dl>
 
 <dl class="py exception">
@@ -367,7 +387,7 @@
 
 <dl class="py exception">
 <dt class="sig sig-object py" id="discord_http.errors.UserMissingPermissions">
-<em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">discord_http.errors.</span></span><span class="sig-name descname"><span class="pre">UserMissingPermissions</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">perms</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="flag.html#discord_http.flag.Permissions" title="discord_http.flag.Permissions"><span class="pre">Permissions</span></a></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/discord_http/errors.html#UserMissingPermissions"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#discord_http.errors.UserMissingPermissions" title="Link to this definition">¶</a></dt>
+<em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">discord_http.errors.</span></span><span class="sig-name descname"><span class="pre">UserMissingPermissions</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">perms</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="flags.html#discord_http.flags.Permissions" title="discord_http.flags.Permissions"><span class="pre">Permissions</span></a></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/discord_http/errors.html#UserMissingPermissions"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#discord_http.errors.UserMissingPermissions" title="Link to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#discord_http.errors.CheckFailed" title="discord_http.errors.CheckFailed"><code class="xref py py-class docutils literal notranslate"><span class="pre">CheckFailed</span></code></a></p>
 <p>Raised whenever a user is missing permissions</p>
 </dd></dl>
@@ -435,6 +455,7 @@
 <li><a class="reference internal" href="#discord_http.errors.AutomodBlock"><code class="docutils literal notranslate"><span class="pre">AutomodBlock</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.errors.BotMissingPermissions"><code class="docutils literal notranslate"><span class="pre">BotMissingPermissions</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.errors.CheckFailed"><code class="docutils literal notranslate"><span class="pre">CheckFailed</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.errors.CommandError"><code class="docutils literal notranslate"><span class="pre">CommandError</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.errors.CommandOnCooldown"><code class="docutils literal notranslate"><span class="pre">CommandOnCooldown</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.errors.DiscordException"><code class="docutils literal notranslate"><span class="pre">DiscordException</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.errors.DiscordServerError"><code class="docutils literal notranslate"><span class="pre">DiscordServerError</span></code></a></li>
@@ -458,7 +479,7 @@
     </aside>
   </div>
 </div><script src="../_static/documentation_options.js?v=d45e8c67"></script>
-    <script src="../_static/doctools.js?v=9a2dae69"></script>
+    <script src="../_static/doctools.js?v=9bcbadda"></script>
     <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../_static/scripts/furo.js?v=5fa4622c"></script>
     </body>

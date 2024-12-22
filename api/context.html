@@ -3,9 +3,9 @@
   <head><meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width,initial-scale=1"/>
     <meta name="color-scheme" content="light dark"><meta name="viewport" content="width=device-width, initial-scale=1" />
-<link rel="index" title="Index" href="../genindex.html" /><link rel="search" title="Search" href="../search.html" /><link rel="next" title="Cooldowns" href="cooldowns.html" /><link rel="prev" title="Commands" href="commands.html" />
+<meta content="Context - discord.http docs" property="og:title"><meta content="Bases: object" name="description"><meta content="Bases: object" property="og:description"><meta property="og:image" content="/_static/favicon.ico"><meta name="theme-color" content="#14bae4"><meta property="og:locale" content="en_GB"><meta name="keywords" content="discord, http, api, interaction, quart, webhook, slash><meta name="revisit-after" content="2 days"><link rel="index" title="Index" href="../genindex.html" /><link rel="search" title="Search" href="../search.html" /><link rel="next" title="Cooldowns" href="cooldowns.html" /><link rel="prev" title="Commands" href="commands.html" />
 
-    <link rel="shortcut icon" href="../_static/favicon.ico"/><!-- Generated with Sphinx 8.0.2 and Furo 2024.08.06 -->
+    <link rel="shortcut icon" href="../_static/favicon.ico"/><!-- Generated with Sphinx 8.1.3 and Furo 2024.08.06 -->
         <title>Context - discord.http docs</title>
       <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=fa44fd50" />
     <link rel="stylesheet" type="text/css" href="../_static/styles/furo.css?v=354aac6f" />
@@ -202,6 +202,8 @@
 <li class="toctree-l1"><a class="reference internal" href="../pages/getting_started.html">Getting started</a></li>
 <li class="toctree-l1 current has-children"><a class="reference internal" href="../pages/api.html">API components</a><input checked="" class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" role="switch" type="checkbox"/><label for="toctree-checkbox-1"><div class="visually-hidden">Toggle navigation of API components</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul class="current">
 <li class="toctree-l2"><a class="reference internal" href="asset.html">Asset</a></li>
+<li class="toctree-l2"><a class="reference internal" href="audit.html">Audit</a></li>
+<li class="toctree-l2"><a class="reference internal" href="automod.html">AutoModRule</a></li>
 <li class="toctree-l2"><a class="reference internal" href="backend.html">Backend</a></li>
 <li class="toctree-l2"><a class="reference internal" href="channel.html">Channel</a></li>
 <li class="toctree-l2"><a class="reference internal" href="client.html">Client</a></li>
@@ -215,9 +217,10 @@
 <li class="toctree-l2"><a class="reference internal" href="enums.html">Enums</a></li>
 <li class="toctree-l2"><a class="reference internal" href="errors.html">Errors</a></li>
 <li class="toctree-l2"><a class="reference internal" href="file.html">File</a></li>
-<li class="toctree-l2"><a class="reference internal" href="flag.html">Flag</a></li>
+<li class="toctree-l2"><a class="reference internal" href="flags.html">Flag</a></li>
 <li class="toctree-l2"><a class="reference internal" href="guild.html">Guild</a></li>
 <li class="toctree-l2"><a class="reference internal" href="http.html">Http</a></li>
+<li class="toctree-l2"><a class="reference internal" href="integrations.html">Integrations</a></li>
 <li class="toctree-l2"><a class="reference internal" href="invite.html">Invite</a></li>
 <li class="toctree-l2"><a class="reference internal" href="member.html">Member</a></li>
 <li class="toctree-l2"><a class="reference internal" href="mentions.html">Mentions</a></li>
@@ -226,14 +229,24 @@
 <li class="toctree-l2"><a class="reference internal" href="object.html">Object</a></li>
 <li class="toctree-l2"><a class="reference internal" href="response.html">Response</a></li>
 <li class="toctree-l2"><a class="reference internal" href="role.html">Role</a></li>
+<li class="toctree-l2"><a class="reference internal" href="soundboard.html">Soundboard</a></li>
 <li class="toctree-l2"><a class="reference internal" href="sticker.html">Sticker</a></li>
 <li class="toctree-l2"><a class="reference internal" href="tasks.html">Tasks</a></li>
 <li class="toctree-l2"><a class="reference internal" href="user.html">User</a></li>
 <li class="toctree-l2"><a class="reference internal" href="view.html">View</a></li>
+<li class="toctree-l2"><a class="reference internal" href="voice.html">Vsset</a></li>
 <li class="toctree-l2"><a class="reference internal" href="webhook.html">Webhook</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../pages/events.html">Event references</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../pages/gateway.html">Gateway references</a><input class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" role="switch" type="checkbox"/><label for="toctree-checkbox-2"><div class="visually-hidden">Toggle navigation of Gateway references</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../gateway/activity.html">Activity</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../gateway/client.html">Client</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../gateway/enums.html">Enums</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../gateway/flags.html">Flags</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../gateway/object.html">Object (Gateway events)</a></li>
+</ul>
+</li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">Advanced</span></p>
 <ul>
@@ -243,7 +256,7 @@
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../pages/contribute.html">Contributing</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../pages/license.html">License</a></li>
-<li class="toctree-l1"><a class="reference external" href="https://discord.gg/AlexFlipnote">Discord</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://discord.gg/yqb7vATbjH">Discord</a></li>
 <li class="toctree-l1"><a class="reference external" href="https://github.com/AlexFlipnote/discord.http">GitHub</a></li>
 </ul>
 
@@ -294,6 +307,17 @@
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">discord_http.context.</span></span><span class="sig-name descname"><span class="pre">Context</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">bot</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="client.html#discord_http.client.Client" title="discord_http.client.Client"><span class="pre">Client</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">data</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/discord_http/context.html#Context"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#discord_http.context.Context" title="Link to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
 <dl class="py property">
+<dt class="sig sig-object py" id="discord_http.context.Context.channel">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">channel</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="channel.html#discord_http.channel.BaseChannel" title="discord_http.channel.BaseChannel"><span class="pre">BaseChannel</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="channel.html#discord_http.channel.PartialChannel" title="discord_http.channel.PartialChannel"><span class="pre">PartialChannel</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#discord_http.context.Context.channel" title="Link to this definition">¶</a></dt>
+<dd><p>Returns the channel the interaction was made in</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><cite>BaseChannel | PartialChannel</cite></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
 <dt class="sig sig-object py" id="discord_http.context.Context.cooldown">
 <em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">cooldown</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="cooldowns.html#discord_http.cooldowns.Cooldown" title="discord_http.cooldowns.Cooldown"><span class="pre">Cooldown</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#discord_http.context.Context.cooldown" title="Link to this definition">¶</a></dt>
 <dd><p><cite>Optional[Cooldown]</cite> Returns the context cooldown</p>
@@ -329,6 +353,18 @@
 <dd><p><cite>Webhook</cite> Returns the followup webhook object</p>
 </dd></dl>
 
+<dl class="py property">
+<dt class="sig sig-object py" id="discord_http.context.Context.guild">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">guild</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="guild.html#discord_http.guild.Guild" title="discord_http.guild.Guild"><span class="pre">Guild</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="guild.html#discord_http.guild.PartialGuild" title="discord_http.guild.PartialGuild"><span class="pre">PartialGuild</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#discord_http.context.Context.guild" title="Link to this definition">¶</a></dt>
+<dd><p>Returns the guild the interaction was made in
+If you are using gateway cache, it can return full object too</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><cite>Guild | PartialGuild | None</cite></p>
+</dd>
+</dl>
+</dd></dl>
+
 <dl class="py method">
 <dt class="sig sig-object py" id="discord_http.context.Context.is_expired">
 <span class="sig-name descname"><span class="pre">is_expired</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="reference internal" href="../_modules/discord_http/context.html#Context.is_expired"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#discord_http.context.Context.is_expired" title="Link to this definition">¶</a></dt>
@@ -347,6 +383,37 @@
 <dd><p><cite>InteractionResponse</cite> Returns the response to the interaction</p>
 </dd></dl>
 
+<dl class="py method">
+<dt class="sig sig-object py" id="discord_http.context.Context.send">
+<em class="property"><span class="pre">async</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">send</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">content:</span> <span class="pre">str</span> <span class="pre">|</span> <span class="pre">None</span> <span class="pre">=</span> <span class="pre">&lt;MISSING&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">embed:</span> <span class="pre">~discord_http.embeds.Embed</span> <span class="pre">|</span> <span class="pre">None</span> <span class="pre">=</span> <span class="pre">&lt;MISSING&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">embeds:</span> <span class="pre">list[~discord_http.embeds.Embed]</span> <span class="pre">|</span> <span class="pre">None</span> <span class="pre">=</span> <span class="pre">&lt;MISSING&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">file:</span> <span class="pre">~discord_http.file.File</span> <span class="pre">|</span> <span class="pre">None</span> <span class="pre">=</span> <span class="pre">&lt;MISSING&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">files:</span> <span class="pre">list[~discord_http.file.File]</span> <span class="pre">|</span> <span class="pre">None</span> <span class="pre">=</span> <span class="pre">&lt;MISSING&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ephemeral:</span> <span class="pre">bool</span> <span class="pre">|</span> <span class="pre">None</span> <span class="pre">=</span> <span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">view:</span> <span class="pre">~discord_http.view.View</span> <span class="pre">|</span> <span class="pre">None</span> <span class="pre">=</span> <span class="pre">&lt;MISSING&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tts:</span> <span class="pre">bool</span> <span class="pre">|</span> <span class="pre">None</span> <span class="pre">=</span> <span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">type:</span> <span class="pre">~discord_http.enums.ResponseType</span> <span class="pre">|</span> <span class="pre">int</span> <span class="pre">=</span> <span class="pre">4</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">allowed_mentions:</span> <span class="pre">~discord_http.mentions.AllowedMentions</span> <span class="pre">|</span> <span class="pre">None</span> <span class="pre">=</span> <span class="pre">&lt;MISSING&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">poll:</span> <span class="pre">~discord_http.message.Poll</span> <span class="pre">|</span> <span class="pre">None</span> <span class="pre">=</span> <span class="pre">&lt;MISSING&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">flags:</span> <span class="pre">~discord_http.flags.MessageFlags</span> <span class="pre">|</span> <span class="pre">None</span> <span class="pre">=</span> <span class="pre">&lt;MISSING&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">delete_after:</span> <span class="pre">float</span> <span class="pre">|</span> <span class="pre">None</span> <span class="pre">=</span> <span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="message.html#discord_http.message.Message" title="discord_http.message.Message"><span class="pre">Message</span></a></span></span><a class="reference internal" href="../_modules/discord_http/context.html#Context.send"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#discord_http.context.Context.send" title="Link to this definition">¶</a></dt>
+<dd><p>Send a message after responding with an empty response in the initial interaction</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>content</strong> (<cite>Optional[str]</cite>) – Content of the message</p></li>
+<li><p><strong>embed</strong> (<cite>Optional[Embed]</cite>) – Embed of the message</p></li>
+<li><p><strong>embeds</strong> (<cite>Optional[list[Embed]]</cite>) – Embeds of the message</p></li>
+<li><p><strong>file</strong> (<cite>Optional[File]</cite>) – File of the message</p></li>
+<li><p><strong>files</strong> (<cite>Optional[Union[list[File], File]]</cite>) – Files of the message</p></li>
+<li><p><strong>ephemeral</strong> (<cite>bool</cite>) – Whether the message should be sent as ephemeral</p></li>
+<li><p><strong>view</strong> (<cite>Optional[View]</cite>) – Components of the message</p></li>
+<li><p><strong>type</strong> (<cite>Optional[ResponseType]</cite>) – Which type of response should be sent</p></li>
+<li><p><strong>allowed_mentions</strong> (<cite>Optional[AllowedMentions]</cite>) – Allowed mentions of the message</p></li>
+<li><p><strong>wait</strong> (<cite>bool</cite>) – Whether to wait for the message to be sent</p></li>
+<li><p><strong>thread_id</strong> (<cite>Optional[int]</cite>) – Thread ID to send the message to</p></li>
+<li><p><strong>poll</strong> (<cite>Optional[Poll]</cite>) – Poll to send with the message</p></li>
+<li><p><strong>delete_after</strong> (<cite>Optional[float]</cite>) – How long to wait before deleting the message</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Returns the message that was sent</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><cite>Message</cite></p>
+</dd>
+</dl>
+</dd></dl>
+
 </dd></dl>
 
 <dl class="py class">
@@ -355,13 +422,14 @@
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
 <dl class="py method">
 <dt class="sig sig-object py" id="discord_http.context.InteractionResponse.defer">
-<span class="sig-name descname"><span class="pre">defer</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ephemeral</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">thinking</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">call_after</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Callable</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="response.html#discord_http.response.DeferResponse" title="discord_http.response.DeferResponse"><span class="pre">DeferResponse</span></a></span></span><a class="reference internal" href="../_modules/discord_http/context.html#InteractionResponse.defer"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#discord_http.context.InteractionResponse.defer" title="Link to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">defer</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ephemeral:</span> <span class="pre">bool</span> <span class="pre">=</span> <span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">thinking:</span> <span class="pre">bool</span> <span class="pre">=</span> <span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">flags:</span> <span class="pre">~discord_http.flags.MessageFlags</span> <span class="pre">|</span> <span class="pre">None</span> <span class="pre">=</span> <span class="pre">&lt;MISSING&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">call_after:</span> <span class="pre">~typing.Callable</span> <span class="pre">|</span> <span class="pre">None</span> <span class="pre">=</span> <span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="response.html#discord_http.response.DeferResponse" title="discord_http.response.DeferResponse"><span class="pre">DeferResponse</span></a></span></span><a class="reference internal" href="../_modules/discord_http/context.html#InteractionResponse.defer"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#discord_http.context.InteractionResponse.defer" title="Link to this definition">¶</a></dt>
 <dd><p>Defer the response to the interaction</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>ephemeral</strong> (<cite>bool</cite>) – If the response should be ephemeral (show only to the user)</p></li>
 <li><p><strong>thinking</strong> (<cite>bool</cite>) – If the response should show the “thinking” status</p></li>
+<li><p><strong>flags</strong> (<cite>Optional[int]</cite>) – The flags of the message (overrides ephemeral)</p></li>
 <li><p><strong>call_after</strong> (<cite>Optional[Callable]</cite>) – A coroutine to run after the response is sent</p></li>
 </ul>
 </dd>
@@ -379,7 +447,7 @@
 
 <dl class="py method">
 <dt class="sig sig-object py" id="discord_http.context.InteractionResponse.edit_message">
-<span class="sig-name descname"><span class="pre">edit_message</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">content:</span> <span class="pre">str</span> <span class="pre">|</span> <span class="pre">None</span> <span class="pre">=</span> <span class="pre">&lt;MISSING&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">embed:</span> <span class="pre">~discord_http.embeds.Embed</span> <span class="pre">|</span> <span class="pre">None</span> <span class="pre">=</span> <span class="pre">&lt;MISSING&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">embeds:</span> <span class="pre">list[~discord_http.embeds.Embed]</span> <span class="pre">|</span> <span class="pre">None</span> <span class="pre">=</span> <span class="pre">&lt;MISSING&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">view:</span> <span class="pre">~discord_http.view.View</span> <span class="pre">|</span> <span class="pre">None</span> <span class="pre">=</span> <span class="pre">&lt;MISSING&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">attachment:</span> <span class="pre">~discord_http.file.File</span> <span class="pre">|</span> <span class="pre">None</span> <span class="pre">=</span> <span class="pre">&lt;MISSING&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">attachments:</span> <span class="pre">list[~discord_http.file.File]</span> <span class="pre">|</span> <span class="pre">None</span> <span class="pre">=</span> <span class="pre">&lt;MISSING&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">allowed_mentions:</span> <span class="pre">~discord_http.mentions.AllowedMentions</span> <span class="pre">|</span> <span class="pre">None</span> <span class="pre">=</span> <span class="pre">&lt;MISSING&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">call_after:</span> <span class="pre">~typing.Callable</span> <span class="pre">|</span> <span class="pre">None</span> <span class="pre">=</span> <span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="response.html#discord_http.response.MessageResponse" title="discord_http.response.MessageResponse"><span class="pre">MessageResponse</span></a></span></span><a class="reference internal" href="../_modules/discord_http/context.html#InteractionResponse.edit_message"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#discord_http.context.InteractionResponse.edit_message" title="Link to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">edit_message</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">content:</span> <span class="pre">str</span> <span class="pre">|</span> <span class="pre">None</span> <span class="pre">=</span> <span class="pre">&lt;MISSING&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">embed:</span> <span class="pre">~discord_http.embeds.Embed</span> <span class="pre">|</span> <span class="pre">None</span> <span class="pre">=</span> <span class="pre">&lt;MISSING&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">embeds:</span> <span class="pre">list[~discord_http.embeds.Embed]</span> <span class="pre">|</span> <span class="pre">None</span> <span class="pre">=</span> <span class="pre">&lt;MISSING&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">view:</span> <span class="pre">~discord_http.view.View</span> <span class="pre">|</span> <span class="pre">None</span> <span class="pre">=</span> <span class="pre">&lt;MISSING&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">attachment:</span> <span class="pre">~discord_http.file.File</span> <span class="pre">|</span> <span class="pre">None</span> <span class="pre">=</span> <span class="pre">&lt;MISSING&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">attachments:</span> <span class="pre">list[~discord_http.file.File]</span> <span class="pre">|</span> <span class="pre">None</span> <span class="pre">=</span> <span class="pre">&lt;MISSING&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">allowed_mentions:</span> <span class="pre">~discord_http.mentions.AllowedMentions</span> <span class="pre">|</span> <span class="pre">None</span> <span class="pre">=</span> <span class="pre">&lt;MISSING&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">flags:</span> <span class="pre">~discord_http.flags.MessageFlags</span> <span class="pre">|</span> <span class="pre">None</span> <span class="pre">=</span> <span class="pre">&lt;MISSING&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">call_after:</span> <span class="pre">~typing.Callable</span> <span class="pre">|</span> <span class="pre">None</span> <span class="pre">=</span> <span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="response.html#discord_http.response.MessageResponse" title="discord_http.response.MessageResponse"><span class="pre">MessageResponse</span></a></span></span><a class="reference internal" href="../_modules/discord_http/context.html#InteractionResponse.edit_message"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#discord_http.context.InteractionResponse.edit_message" title="Link to this definition">¶</a></dt>
 <dd><p>Edit the original message of the interaction</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -391,6 +459,7 @@
 <li><p><strong>attachment</strong> (<cite>Optional[File]</cite>) – New file to edit the message with</p></li>
 <li><p><strong>attachments</strong> (<cite>Optional[Union[list[File], File]]</cite>) – Multiple new files to edit the message with</p></li>
 <li><p><strong>allowed_mentions</strong> (<cite>Optional[AllowedMentions]</cite>) – Allowed mentions for the message</p></li>
+<li><p><strong>flags</strong> (<cite>Optional[int]</cite>) – The flags of the message</p></li>
 <li><p><strong>call_after</strong> (<cite>Optional[Callable]</cite>) – A coroutine to run after the response is sent</p></li>
 </ul>
 </dd>
@@ -445,8 +514,25 @@ Discord Developer portal Interaction URL</p>
 </dd></dl>
 
 <dl class="py method">
+<dt class="sig sig-object py" id="discord_http.context.InteractionResponse.send_empty">
+<span class="sig-name descname"><span class="pre">send_empty</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">call_after</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Callable</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">EmptyResponse</span></span></span><a class="reference internal" href="../_modules/discord_http/context.html#InteractionResponse.send_empty"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#discord_http.context.InteractionResponse.send_empty" title="Link to this definition">¶</a></dt>
+<dd><p>Send an empty response to the interaction</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>call_after</strong> (<cite>Optional[Callable]</cite>) – A coroutine to run after the response is sent</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The response to the interaction</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><cite>EmptyResponse</cite></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
 <dt class="sig sig-object py" id="discord_http.context.InteractionResponse.send_message">
-<span class="sig-name descname"><span class="pre">send_message</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">content:</span> <span class="pre">str</span> <span class="pre">|</span> <span class="pre">None</span> <span class="pre">=</span> <span class="pre">&lt;MISSING&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">embed:</span> <span class="pre">~discord_http.embeds.Embed</span> <span class="pre">|</span> <span class="pre">None</span> <span class="pre">=</span> <span class="pre">&lt;MISSING&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">embeds:</span> <span class="pre">list[~discord_http.embeds.Embed]</span> <span class="pre">|</span> <span class="pre">None</span> <span class="pre">=</span> <span class="pre">&lt;MISSING&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">file:</span> <span class="pre">~discord_http.file.File</span> <span class="pre">|</span> <span class="pre">None</span> <span class="pre">=</span> <span class="pre">&lt;MISSING&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">files:</span> <span class="pre">list[~discord_http.file.File]</span> <span class="pre">|</span> <span class="pre">None</span> <span class="pre">=</span> <span class="pre">&lt;MISSING&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ephemeral:</span> <span class="pre">bool</span> <span class="pre">|</span> <span class="pre">None</span> <span class="pre">=</span> <span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">view:</span> <span class="pre">~discord_http.view.View</span> <span class="pre">|</span> <span class="pre">None</span> <span class="pre">=</span> <span class="pre">&lt;MISSING&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tts:</span> <span class="pre">bool</span> <span class="pre">|</span> <span class="pre">None</span> <span class="pre">=</span> <span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">type:</span> <span class="pre">~discord_http.enums.ResponseType</span> <span class="pre">|</span> <span class="pre">int</span> <span class="pre">=</span> <span class="pre">4</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">allowed_mentions:</span> <span class="pre">~discord_http.mentions.AllowedMentions</span> <span class="pre">|</span> <span class="pre">None</span> <span class="pre">=</span> <span class="pre">&lt;MISSING&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">poll:</span> <span class="pre">~discord_http.message.Poll</span> <span class="pre">|</span> <span class="pre">None</span> <span class="pre">=</span> <span class="pre">&lt;MISSING&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">call_after:</span> <span class="pre">~typing.Callable</span> <span class="pre">|</span> <span class="pre">None</span> <span class="pre">=</span> <span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="response.html#discord_http.response.MessageResponse" title="discord_http.response.MessageResponse"><span class="pre">MessageResponse</span></a></span></span><a class="reference internal" href="../_modules/discord_http/context.html#InteractionResponse.send_message"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#discord_http.context.InteractionResponse.send_message" title="Link to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">send_message</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">content:</span> <span class="pre">str</span> <span class="pre">|</span> <span class="pre">None</span> <span class="pre">=</span> <span class="pre">&lt;MISSING&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">embed:</span> <span class="pre">~discord_http.embeds.Embed</span> <span class="pre">|</span> <span class="pre">None</span> <span class="pre">=</span> <span class="pre">&lt;MISSING&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">embeds:</span> <span class="pre">list[~discord_http.embeds.Embed]</span> <span class="pre">|</span> <span class="pre">None</span> <span class="pre">=</span> <span class="pre">&lt;MISSING&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">file:</span> <span class="pre">~discord_http.file.File</span> <span class="pre">|</span> <span class="pre">None</span> <span class="pre">=</span> <span class="pre">&lt;MISSING&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">files:</span> <span class="pre">list[~discord_http.file.File]</span> <span class="pre">|</span> <span class="pre">None</span> <span class="pre">=</span> <span class="pre">&lt;MISSING&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ephemeral:</span> <span class="pre">bool</span> <span class="pre">|</span> <span class="pre">None</span> <span class="pre">=</span> <span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">view:</span> <span class="pre">~discord_http.view.View</span> <span class="pre">|</span> <span class="pre">None</span> <span class="pre">=</span> <span class="pre">&lt;MISSING&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tts:</span> <span class="pre">bool</span> <span class="pre">|</span> <span class="pre">None</span> <span class="pre">=</span> <span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">type:</span> <span class="pre">~discord_http.enums.ResponseType</span> <span class="pre">|</span> <span class="pre">int</span> <span class="pre">=</span> <span class="pre">4</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">allowed_mentions:</span> <span class="pre">~discord_http.mentions.AllowedMentions</span> <span class="pre">|</span> <span class="pre">None</span> <span class="pre">=</span> <span class="pre">&lt;MISSING&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">poll:</span> <span class="pre">~discord_http.message.Poll</span> <span class="pre">|</span> <span class="pre">None</span> <span class="pre">=</span> <span class="pre">&lt;MISSING&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">flags:</span> <span class="pre">~discord_http.flags.MessageFlags</span> <span class="pre">|</span> <span class="pre">None</span> <span class="pre">=</span> <span class="pre">&lt;MISSING&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">call_after:</span> <span class="pre">~typing.Callable</span> <span class="pre">|</span> <span class="pre">None</span> <span class="pre">=</span> <span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="response.html#discord_http.response.MessageResponse" title="discord_http.response.MessageResponse"><span class="pre">MessageResponse</span></a></span></span><a class="reference internal" href="../_modules/discord_http/context.html#InteractionResponse.send_message"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#discord_http.context.InteractionResponse.send_message" title="Link to this definition">¶</a></dt>
 <dd><p>Send a message to the interaction</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -461,6 +547,7 @@ Discord Developer portal Interaction URL</p>
 <li><p><strong>tts</strong> (<cite>bool</cite>) – Whether the message should be sent using text-to-speech</p></li>
 <li><p><strong>type</strong> (<cite>Optional[ResponseType]</cite>) – The type of response to send</p></li>
 <li><p><strong>allowed_mentions</strong> (<cite>Optional[AllowedMentions]</cite>) – Allowed mentions for the message</p></li>
+<li><p><strong>flags</strong> (<cite>Optional[int]</cite>) – The flags of the message (overrides ephemeral)</p></li>
 <li><p><strong>call_after</strong> (<cite>Optional[Callable]</cite>) – A coroutine to run after the response is sent</p></li>
 </ul>
 </dd>
@@ -573,15 +660,18 @@ Discord Developer portal Interaction URL</p>
 <li><a class="reference internal" href="#">Context</a><ul>
 <li><a class="reference internal" href="#module-discord_http.context">discord_http.context module</a><ul>
 <li><a class="reference internal" href="#discord_http.context.Context"><code class="docutils literal notranslate"><span class="pre">Context</span></code></a><ul>
+<li><a class="reference internal" href="#discord_http.context.Context.channel"><code class="docutils literal notranslate"><span class="pre">Context.channel</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.context.Context.cooldown"><code class="docutils literal notranslate"><span class="pre">Context.cooldown</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.context.Context.created_at"><code class="docutils literal notranslate"><span class="pre">Context.created_at</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.context.Context.delete_original_response"><code class="docutils literal notranslate"><span class="pre">Context.delete_original_response()</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.context.Context.edit_original_response"><code class="docutils literal notranslate"><span class="pre">Context.edit_original_response()</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.context.Context.expires_at"><code class="docutils literal notranslate"><span class="pre">Context.expires_at</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.context.Context.followup"><code class="docutils literal notranslate"><span class="pre">Context.followup</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.context.Context.guild"><code class="docutils literal notranslate"><span class="pre">Context.guild</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.context.Context.is_expired"><code class="docutils literal notranslate"><span class="pre">Context.is_expired()</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.context.Context.original_response"><code class="docutils literal notranslate"><span class="pre">Context.original_response()</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.context.Context.response"><code class="docutils literal notranslate"><span class="pre">Context.response</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.context.Context.send"><code class="docutils literal notranslate"><span class="pre">Context.send()</span></code></a></li>
 </ul>
 </li>
 <li><a class="reference internal" href="#discord_http.context.InteractionResponse"><code class="docutils literal notranslate"><span class="pre">InteractionResponse</span></code></a><ul>
@@ -589,6 +679,7 @@ Discord Developer portal Interaction URL</p>
 <li><a class="reference internal" href="#discord_http.context.InteractionResponse.edit_message"><code class="docutils literal notranslate"><span class="pre">InteractionResponse.edit_message()</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.context.InteractionResponse.pong"><code class="docutils literal notranslate"><span class="pre">InteractionResponse.pong()</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.context.InteractionResponse.send_autocomplete"><code class="docutils literal notranslate"><span class="pre">InteractionResponse.send_autocomplete()</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.context.InteractionResponse.send_empty"><code class="docutils literal notranslate"><span class="pre">InteractionResponse.send_empty()</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.context.InteractionResponse.send_message"><code class="docutils literal notranslate"><span class="pre">InteractionResponse.send_message()</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.context.InteractionResponse.send_modal"><code class="docutils literal notranslate"><span class="pre">InteractionResponse.send_modal()</span></code></a></li>
 </ul>
@@ -607,7 +698,7 @@ Discord Developer portal Interaction URL</p>
     </aside>
   </div>
 </div><script src="../_static/documentation_options.js?v=d45e8c67"></script>
-    <script src="../_static/doctools.js?v=9a2dae69"></script>
+    <script src="../_static/doctools.js?v=9bcbadda"></script>
     <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../_static/scripts/furo.js?v=5fa4622c"></script>
     </body>
