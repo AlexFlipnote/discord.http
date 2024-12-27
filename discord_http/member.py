@@ -177,25 +177,11 @@ class PartialMember(PartialBase):
             - If delete_message_days is not between 0 and 7
             - If delete_message_seconds is not between 0 and 604,800
         """
-        payload = {}
-        if delete_message_days and delete_message_seconds:
-            raise ValueError("Cannot specify both delete_message_days and delete_message_seconds")
-
-        if delete_message_days:
-            if delete_message_days not in range(0, 8):
-                raise ValueError("delete_message_days must be between 0 and 7")
-            payload["delete_message_seconds"] = int(timedelta(days=delete_message_days).total_seconds())
-
-        if delete_message_seconds:
-            if delete_message_seconds not in range(0, 604801):
-                raise ValueError("delete_message_seconds must be between 0 and 604,800")
-            payload["delete_message_seconds"] = delete_message_seconds
-
-        await self._state.query(
-            "PUT",
-            f"/guilds/{self.guild_id}/bans/{self.id}",
+        await self.guild.ban(
+            self.id,
             reason=reason,
-            json=payload
+            delete_message_days=delete_message_days,
+            delete_message_seconds=delete_message_seconds
         )
 
     async def unban(
@@ -211,12 +197,7 @@ class PartialMember(PartialBase):
         reason: `Optional[str]`
             The reason for unbanning the user
         """
-        await self._state.query(
-            "DELETE",
-            f"/guilds/{self.guild_id}/bans/{self.id}",
-            reason=reason,
-            res_method="text"
-        )
+        await self.guild.unban(self.id, reason=reason)
 
     async def kick(
         self,
@@ -231,12 +212,7 @@ class PartialMember(PartialBase):
         reason: `Optional[str]`
             The reason for kicking the user
         """
-        await self._state.query(
-            "DELETE",
-            f"/guilds/{self.guild_id}/members/{self.id}",
-            reason=reason,
-            res_method="text"
-        )
+        await self.guild.kick(self.id, reason=reason)
 
     async def edit(
         self,

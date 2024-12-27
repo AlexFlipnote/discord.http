@@ -2002,11 +2002,11 @@ class PartialGuild(PartialBase):
 
     async def ban(
         self,
-        member: Union["Member", "PartialMember", int],
+        member: "Member | PartialMember | int",
         *,
-        reason: Optional[str] = None,
-        delete_message_days: Optional[int] = 0,
-        delete_message_seconds: Optional[int] = 0,
+        delete_message_days: int | None = 0,
+        delete_message_seconds: int | None = 0,
+        reason: str | None = None,
     ) -> None:
         """
         Ban a member from the server
@@ -2022,14 +2022,25 @@ class PartialGuild(PartialBase):
         delete_message_seconds: `Optional[int]`
             How many seconds of messages to delete
         """
-        if isinstance(member, int):
-            from .member import PartialMember
-            member = PartialMember(state=self._state, id=member, guild_id=self.id)
+        payload = {}
+        if delete_message_days and delete_message_seconds:
+            raise ValueError("Cannot specify both delete_message_days and delete_message_seconds")
 
-        await member.ban(
+        if delete_message_days:
+            if delete_message_days not in range(0, 8):
+                raise ValueError("delete_message_days must be between 0 and 7")
+            payload["delete_message_seconds"] = int(timedelta(days=delete_message_days).total_seconds())
+
+        if delete_message_seconds:
+            if delete_message_seconds not in range(0, 604801):
+                raise ValueError("delete_message_seconds must be between 0 and 604,800")
+            payload["delete_message_seconds"] = delete_message_seconds
+
+        await self._state.query(
+            "PUT",
+            f"/guilds/{self.id}/bans/{int(member)}",
             reason=reason,
-            delete_message_days=delete_message_days,
-            delete_message_seconds=delete_message_seconds
+            json=payload
         )
 
     async def unban(
@@ -2048,11 +2059,12 @@ class PartialGuild(PartialBase):
         reason: `Optional[str]`
             The reason for unbanning the member
         """
-        if isinstance(member, int):
-            from .member import PartialMember
-            member = PartialMember(state=self._state, id=member, guild_id=self.id)
-
-        await member.unban(reason=reason)
+        await self._state.query(
+            "DELETE",
+            f"/guilds/{self.id}/bans/{int(member)}",
+            reason=reason,
+            res_method="text"
+        )
 
     async def kick(
         self,
@@ -2070,11 +2082,12 @@ class PartialGuild(PartialBase):
         reason: `Optional[str]`
             The reason for kicking the member
         """
-        if isinstance(member, int):
-            from .member import PartialMember
-            member = PartialMember(state=self._state, id=member, guild_id=self.id)
-
-        await member.kick(reason=reason)
+        await self._state.query(
+            "DELETE",
+            f"/guilds/{self.id}/members/{int(member)}",
+            reason=reason,
+            res_method="text"
+        )
 
     async def fetch_channels(self) -> list[type["BaseChannel"]]:
         """ `list[BaseChannel]`: Fetches all the channels in the guild """
