@@ -233,7 +233,7 @@
 <li class="toctree-l2"><a class="reference internal" href="../../api/tasks.html">Tasks</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../api/user.html">User</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../api/view.html">View</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../api/voice.html">Vsset</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../api/voice.html">Voice</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../api/webhook.html">Webhook</a></li>
 </ul>
 </li>
@@ -634,71 +634,69 @@
                         <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">parameter</span><span class="o">.</span><span class="n">annotation</span><span class="o">.</span><span class="n">__args__</span><span class="p">:</span>
                             <span class="n">_channel_options</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">channel_types</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
 
-                <span class="k">match</span> <span class="n">origin</span><span class="p">:</span>
-                    <span class="k">case</span> <span class="n">x</span> <span class="k">if</span> <span class="n">x</span> <span class="ow">in</span> <span class="p">[</span><span class="n">Member</span><span class="p">,</span> <span class="n">User</span><span class="p">]:</span>
-                        <span class="n">ptype</span> <span class="o">=</span> <span class="n">CommandOptionType</span><span class="o">.</span><span class="n">user</span>
-                        <span class="bp">self</span><span class="o">.</span><span class="n">__user_objects</span><span class="p">[</span><span class="n">parameter</span><span class="o">.</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">origin</span>
+                <span class="k">if</span> <span class="n">origin</span> <span class="ow">is</span> <span class="n">User</span> <span class="ow">or</span> <span class="n">origin</span> <span class="ow">is</span> <span class="n">Member</span><span class="p">:</span>
+                    <span class="n">ptype</span> <span class="o">=</span> <span class="n">CommandOptionType</span><span class="o">.</span><span class="n">user</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">__user_objects</span><span class="p">[</span><span class="n">parameter</span><span class="o">.</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">origin</span>
 
-                    <span class="k">case</span> <span class="n">x</span> <span class="k">if</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">channel_types</span><span class="p">:</span>
-                        <span class="n">ptype</span> <span class="o">=</span> <span class="n">CommandOptionType</span><span class="o">.</span><span class="n">channel</span>
+                <span class="k">elif</span> <span class="n">origin</span> <span class="ow">in</span> <span class="n">channel_types</span><span class="p">:</span>
+                    <span class="n">ptype</span> <span class="o">=</span> <span class="n">CommandOptionType</span><span class="o">.</span><span class="n">channel</span>
 
-                        <span class="k">if</span> <span class="n">_channel_options</span><span class="p">:</span>
-                            <span class="c1"># Union[] was used for channels</span>
-                            <span class="n">option</span><span class="o">.</span><span class="n">update</span><span class="p">({</span>
-                                <span class="s2">&quot;channel_types&quot;</span><span class="p">:</span> <span class="p">[</span><span class="nb">int</span><span class="p">(</span><span class="n">i</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">_channel_options</span><span class="p">]</span>
-                            <span class="p">})</span>
+                    <span class="k">if</span> <span class="n">_channel_options</span><span class="p">:</span>
+                        <span class="c1"># Union[] was used for channels</span>
+                        <span class="n">option</span><span class="o">.</span><span class="n">update</span><span class="p">({</span>
+                            <span class="s2">&quot;channel_types&quot;</span><span class="p">:</span> <span class="p">[</span><span class="nb">int</span><span class="p">(</span><span class="n">i</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">_channel_options</span><span class="p">]</span>
+                        <span class="p">})</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="c1"># Just a regular channel type</span>
+                        <span class="n">option</span><span class="o">.</span><span class="n">update</span><span class="p">({</span>
+                            <span class="s2">&quot;channel_types&quot;</span><span class="p">:</span> <span class="p">[</span>
+                                <span class="nb">int</span><span class="p">(</span><span class="n">i</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">channel_types</span><span class="p">[</span><span class="n">origin</span><span class="p">]</span>
+                            <span class="p">]</span>
+                        <span class="p">})</span>
 
-                        <span class="k">else</span><span class="p">:</span>
-                            <span class="c1"># Just a regular channel type</span>
-                            <span class="n">option</span><span class="o">.</span><span class="n">update</span><span class="p">({</span>
-                                <span class="s2">&quot;channel_types&quot;</span><span class="p">:</span> <span class="p">[</span>
-                                    <span class="nb">int</span><span class="p">(</span><span class="n">i</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">channel_types</span><span class="p">[</span><span class="n">origin</span><span class="p">]</span>
-                                <span class="p">]</span>
-                            <span class="p">})</span>
+                <span class="k">elif</span> <span class="n">origin</span> <span class="ow">in</span> <span class="p">[</span><span class="n">Attachment</span><span class="p">]:</span>
+                    <span class="n">ptype</span> <span class="o">=</span> <span class="n">CommandOptionType</span><span class="o">.</span><span class="n">attachment</span>
 
-                    <span class="k">case</span> <span class="n">x</span> <span class="k">if</span> <span class="n">x</span> <span class="ow">in</span> <span class="p">[</span><span class="n">Attachment</span><span class="p">]:</span>
-                        <span class="n">ptype</span> <span class="o">=</span> <span class="n">CommandOptionType</span><span class="o">.</span><span class="n">attachment</span>
+                <span class="k">elif</span> <span class="n">origin</span> <span class="ow">in</span> <span class="p">[</span><span class="n">Role</span><span class="p">]:</span>
+                    <span class="n">ptype</span> <span class="o">=</span> <span class="n">CommandOptionType</span><span class="o">.</span><span class="n">role</span>
 
-                    <span class="k">case</span> <span class="n">x</span> <span class="k">if</span> <span class="n">x</span> <span class="ow">in</span> <span class="p">[</span><span class="n">Role</span><span class="p">]:</span>
-                        <span class="n">ptype</span> <span class="o">=</span> <span class="n">CommandOptionType</span><span class="o">.</span><span class="n">role</span>
+                <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">origin</span><span class="p">,</span> <span class="n">Choice</span><span class="p">):</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">__list_choices</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">parameter</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
+                    <span class="n">ptype</span> <span class="o">=</span> <span class="n">origin</span><span class="o">.</span><span class="n">type</span>
 
-                    <span class="c1"># case x if x in [Choice]:</span>
-                    <span class="k">case</span> <span class="n">x</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">Choice</span><span class="p">):</span>
-                        <span class="bp">self</span><span class="o">.</span><span class="n">__list_choices</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">parameter</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
-                        <span class="n">ptype</span> <span class="o">=</span> <span class="n">origin</span><span class="o">.</span><span class="n">type</span>
+                <span class="c1"># PyRight may not recognize &#39;Range&#39; due to dynamic typing.</span>
+                <span class="c1"># Assuming &#39;origin&#39; is a Range object.</span>
+                <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">origin</span><span class="p">,</span> <span class="n">Range</span><span class="p">):</span>  <span class="c1"># type: ignore[arg-type]</span>
+                    <span class="n">ptype</span> <span class="o">=</span> <span class="n">origin</span><span class="o">.</span><span class="n">type</span>  <span class="c1"># type: ignore[arg-type]</span>
+                    <span class="k">if</span> <span class="n">origin</span><span class="o">.</span><span class="n">type</span> <span class="o">==</span> <span class="n">CommandOptionType</span><span class="o">.</span><span class="n">string</span><span class="p">:</span>  <span class="c1"># type: ignore[arg-type]</span>
+                        <span class="n">option</span><span class="o">.</span><span class="n">update</span><span class="p">({</span>
+                            <span class="s2">&quot;min_length&quot;</span><span class="p">:</span> <span class="n">origin</span><span class="o">.</span><span class="n">min</span><span class="p">,</span>  <span class="c1"># type: ignore[arg-type]</span>
+                            <span class="s2">&quot;max_length&quot;</span><span class="p">:</span> <span class="n">origin</span><span class="o">.</span><span class="n">max</span>  <span class="c1"># type: ignore[arg-type]</span>
+                        <span class="p">})</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="n">option</span><span class="o">.</span><span class="n">update</span><span class="p">({</span>
+                            <span class="s2">&quot;min_value&quot;</span><span class="p">:</span> <span class="n">origin</span><span class="o">.</span><span class="n">min</span><span class="p">,</span>  <span class="c1"># type: ignore[arg-type]</span>
+                            <span class="s2">&quot;max_value&quot;</span><span class="p">:</span> <span class="n">origin</span><span class="o">.</span><span class="n">max</span>  <span class="c1"># type: ignore[arg-type]</span>
+                        <span class="p">})</span>
 
-                    <span class="c1"># It is a range, but pyright does not understand it due to TYPE_CHECKING</span>
-                    <span class="k">case</span> <span class="n">x</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">Range</span><span class="p">):</span>  <span class="c1"># type: ignore</span>
-                        <span class="n">ptype</span> <span class="o">=</span> <span class="n">origin</span><span class="o">.</span><span class="n">type</span>
-                        <span class="k">if</span> <span class="n">origin</span><span class="o">.</span><span class="n">type</span> <span class="o">==</span> <span class="n">CommandOptionType</span><span class="o">.</span><span class="n">string</span><span class="p">:</span>
-                            <span class="n">option</span><span class="o">.</span><span class="n">update</span><span class="p">({</span>
-                                <span class="s2">&quot;min_length&quot;</span><span class="p">:</span> <span class="n">origin</span><span class="o">.</span><span class="n">min</span><span class="p">,</span>
-                                <span class="s2">&quot;max_length&quot;</span><span class="p">:</span> <span class="n">origin</span><span class="o">.</span><span class="n">max</span>
-                            <span class="p">})</span>
-                        <span class="k">else</span><span class="p">:</span>
-                            <span class="n">option</span><span class="o">.</span><span class="n">update</span><span class="p">({</span>
-                                <span class="s2">&quot;min_value&quot;</span><span class="p">:</span> <span class="n">origin</span><span class="o">.</span><span class="n">min</span><span class="p">,</span>
-                                <span class="s2">&quot;max_value&quot;</span><span class="p">:</span> <span class="n">origin</span><span class="o">.</span><span class="n">max</span>
-                            <span class="p">})</span>
+                <span class="k">elif</span> <span class="n">origin</span> <span class="o">==</span> <span class="nb">int</span><span class="p">:</span>
+                    <span class="n">ptype</span> <span class="o">=</span> <span class="n">CommandOptionType</span><span class="o">.</span><span class="n">integer</span>
 
-                    <span class="k">case</span> <span class="n">x</span> <span class="k">if</span> <span class="n">x</span> <span class="o">==</span> <span class="nb">int</span><span class="p">:</span>
-                        <span class="n">ptype</span> <span class="o">=</span> <span class="n">CommandOptionType</span><span class="o">.</span><span class="n">integer</span>
+                <span class="k">elif</span> <span class="n">origin</span> <span class="o">==</span> <span class="nb">bool</span><span class="p">:</span>
+                    <span class="n">ptype</span> <span class="o">=</span> <span class="n">CommandOptionType</span><span class="o">.</span><span class="n">boolean</span>
 
-                    <span class="k">case</span> <span class="n">x</span> <span class="k">if</span> <span class="n">x</span> <span class="o">==</span> <span class="nb">bool</span><span class="p">:</span>
-                        <span class="n">ptype</span> <span class="o">=</span> <span class="n">CommandOptionType</span><span class="o">.</span><span class="n">boolean</span>
+                <span class="k">elif</span> <span class="n">origin</span> <span class="o">==</span> <span class="nb">float</span><span class="p">:</span>
+                    <span class="n">ptype</span> <span class="o">=</span> <span class="n">CommandOptionType</span><span class="o">.</span><span class="n">number</span>
 
-                    <span class="k">case</span> <span class="n">x</span> <span class="k">if</span> <span class="n">x</span> <span class="o">==</span> <span class="nb">float</span><span class="p">:</span>
-                        <span class="n">ptype</span> <span class="o">=</span> <span class="n">CommandOptionType</span><span class="o">.</span><span class="n">number</span>
+                <span class="k">elif</span> <span class="n">origin</span> <span class="o">==</span> <span class="nb">str</span><span class="p">:</span>
+                    <span class="n">ptype</span> <span class="o">=</span> <span class="n">CommandOptionType</span><span class="o">.</span><span class="n">string</span>
 
-                    <span class="k">case</span> <span class="n">x</span> <span class="k">if</span> <span class="n">x</span> <span class="o">==</span> <span class="nb">str</span><span class="p">:</span>
-                        <span class="n">ptype</span> <span class="o">=</span> <span class="n">CommandOptionType</span><span class="o">.</span><span class="n">string</span>
+                <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">origin</span><span class="p">,</span> <span class="n">Converter</span><span class="p">):</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">_converters</span><span class="p">[</span><span class="n">parameter</span><span class="o">.</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">origin</span>  <span class="c1"># type: ignore</span>
+                    <span class="n">ptype</span> <span class="o">=</span> <span class="n">CommandOptionType</span><span class="o">.</span><span class="n">string</span>
 
-                    <span class="k">case</span> <span class="n">x</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">Converter</span><span class="p">):</span>
-                        <span class="bp">self</span><span class="o">.</span><span class="n">_converters</span><span class="p">[</span><span class="n">parameter</span><span class="o">.</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">x</span>  <span class="c1"># type: ignore</span>
-                        <span class="n">ptype</span> <span class="o">=</span> <span class="n">CommandOptionType</span><span class="o">.</span><span class="n">string</span>
-
-                    <span class="k">case</span><span class="w"> </span><span class="k">_</span><span class="p">:</span>
-                        <span class="n">ptype</span> <span class="o">=</span> <span class="n">CommandOptionType</span><span class="o">.</span><span class="n">string</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">ptype</span> <span class="o">=</span> <span class="n">CommandOptionType</span><span class="o">.</span><span class="n">string</span>
 
                 <span class="n">option</span><span class="o">.</span><span class="n">update</span><span class="p">({</span>
                     <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="n">parameter</span><span class="o">.</span><span class="n">name</span><span class="p">,</span>

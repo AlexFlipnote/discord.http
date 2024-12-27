@@ -233,7 +233,7 @@
 <li class="toctree-l2"><a class="reference internal" href="../../api/tasks.html">Tasks</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../api/user.html">User</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../api/view.html">View</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../api/voice.html">Vsset</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../api/voice.html">Voice</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../api/webhook.html">Webhook</a></li>
 </ul>
 </li>
@@ -484,25 +484,11 @@
 <span class="sd">            - If delete_message_days is not between 0 and 7</span>
 <span class="sd">            - If delete_message_seconds is not between 0 and 604,800</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">payload</span> <span class="o">=</span> <span class="p">{}</span>
-        <span class="k">if</span> <span class="n">delete_message_days</span> <span class="ow">and</span> <span class="n">delete_message_seconds</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Cannot specify both delete_message_days and delete_message_seconds&quot;</span><span class="p">)</span>
-
-        <span class="k">if</span> <span class="n">delete_message_days</span><span class="p">:</span>
-            <span class="k">if</span> <span class="n">delete_message_days</span> <span class="ow">not</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">8</span><span class="p">):</span>
-                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;delete_message_days must be between 0 and 7&quot;</span><span class="p">)</span>
-            <span class="n">payload</span><span class="p">[</span><span class="s2">&quot;delete_message_seconds&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">timedelta</span><span class="p">(</span><span class="n">days</span><span class="o">=</span><span class="n">delete_message_days</span><span class="p">)</span><span class="o">.</span><span class="n">total_seconds</span><span class="p">())</span>
-
-        <span class="k">if</span> <span class="n">delete_message_seconds</span><span class="p">:</span>
-            <span class="k">if</span> <span class="n">delete_message_seconds</span> <span class="ow">not</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">604801</span><span class="p">):</span>
-                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;delete_message_seconds must be between 0 and 604,800&quot;</span><span class="p">)</span>
-            <span class="n">payload</span><span class="p">[</span><span class="s2">&quot;delete_message_seconds&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">delete_message_seconds</span>
-
-        <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">_state</span><span class="o">.</span><span class="n">query</span><span class="p">(</span>
-            <span class="s2">&quot;PUT&quot;</span><span class="p">,</span>
-            <span class="sa">f</span><span class="s2">&quot;/guilds/</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">guild_id</span><span class="si">}</span><span class="s2">/bans/</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">id</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+        <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">guild</span><span class="o">.</span><span class="n">ban</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">id</span><span class="p">,</span>
             <span class="n">reason</span><span class="o">=</span><span class="n">reason</span><span class="p">,</span>
-            <span class="n">json</span><span class="o">=</span><span class="n">payload</span>
+            <span class="n">delete_message_days</span><span class="o">=</span><span class="n">delete_message_days</span><span class="p">,</span>
+            <span class="n">delete_message_seconds</span><span class="o">=</span><span class="n">delete_message_seconds</span>
         <span class="p">)</span></div>
 
 
@@ -521,12 +507,7 @@
 <span class="sd">        reason: `Optional[str]`</span>
 <span class="sd">            The reason for unbanning the user</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">_state</span><span class="o">.</span><span class="n">query</span><span class="p">(</span>
-            <span class="s2">&quot;DELETE&quot;</span><span class="p">,</span>
-            <span class="sa">f</span><span class="s2">&quot;/guilds/</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">guild_id</span><span class="si">}</span><span class="s2">/bans/</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">id</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
-            <span class="n">reason</span><span class="o">=</span><span class="n">reason</span><span class="p">,</span>
-            <span class="n">res_method</span><span class="o">=</span><span class="s2">&quot;text&quot;</span>
-        <span class="p">)</span></div>
+        <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">guild</span><span class="o">.</span><span class="n">unban</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">id</span><span class="p">,</span> <span class="n">reason</span><span class="o">=</span><span class="n">reason</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="PartialMember.kick">
@@ -544,12 +525,7 @@
 <span class="sd">        reason: `Optional[str]`</span>
 <span class="sd">            The reason for kicking the user</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">_state</span><span class="o">.</span><span class="n">query</span><span class="p">(</span>
-            <span class="s2">&quot;DELETE&quot;</span><span class="p">,</span>
-            <span class="sa">f</span><span class="s2">&quot;/guilds/</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">guild_id</span><span class="si">}</span><span class="s2">/members/</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">id</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
-            <span class="n">reason</span><span class="o">=</span><span class="n">reason</span><span class="p">,</span>
-            <span class="n">res_method</span><span class="o">=</span><span class="s2">&quot;text&quot;</span>
-        <span class="p">)</span></div>
+        <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">guild</span><span class="o">.</span><span class="n">kick</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">id</span><span class="p">,</span> <span class="n">reason</span><span class="o">=</span><span class="n">reason</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="PartialMember.edit">
