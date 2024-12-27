@@ -320,71 +320,69 @@ class Command:
                         for i in parameter.annotation.__args__:
                             _channel_options.extend(channel_types[i])
 
-                match origin:
-                    case x if x in [Member, User]:
-                        ptype = CommandOptionType.user
-                        self.__user_objects[parameter.name] = origin
+                if origin is User or origin is Member:
+                    ptype = CommandOptionType.user
+                    self.__user_objects[parameter.name] = origin
 
-                    case x if x in channel_types:
-                        ptype = CommandOptionType.channel
+                elif origin in channel_types:
+                    ptype = CommandOptionType.channel
 
-                        if _channel_options:
-                            # Union[] was used for channels
-                            option.update({
-                                "channel_types": [int(i) for i in _channel_options]
-                            })
+                    if _channel_options:
+                        # Union[] was used for channels
+                        option.update({
+                            "channel_types": [int(i) for i in _channel_options]
+                        })
+                    else:
+                        # Just a regular channel type
+                        option.update({
+                            "channel_types": [
+                                int(i) for i in channel_types[origin]
+                            ]
+                        })
 
-                        else:
-                            # Just a regular channel type
-                            option.update({
-                                "channel_types": [
-                                    int(i) for i in channel_types[origin]
-                                ]
-                            })
+                elif origin in [Attachment]:
+                    ptype = CommandOptionType.attachment
 
-                    case x if x in [Attachment]:
-                        ptype = CommandOptionType.attachment
+                elif origin in [Role]:
+                    ptype = CommandOptionType.role
 
-                    case x if x in [Role]:
-                        ptype = CommandOptionType.role
+                elif isinstance(origin, Choice):
+                    self.__list_choices.append(parameter.name)
+                    ptype = origin.type
 
-                    # case x if x in [Choice]:
-                    case x if isinstance(x, Choice):
-                        self.__list_choices.append(parameter.name)
-                        ptype = origin.type
+                # PyRight may not recognize 'Range' due to dynamic typing.
+                # Assuming 'origin' is a Range object.
+                elif isinstance(origin, Range):  # type: ignore[arg-type]
+                    ptype = origin.type  # type: ignore[arg-type]
+                    if origin.type == CommandOptionType.string:  # type: ignore[arg-type]
+                        option.update({
+                            "min_length": origin.min,  # type: ignore[arg-type]
+                            "max_length": origin.max  # type: ignore[arg-type]
+                        })
+                    else:
+                        option.update({
+                            "min_value": origin.min,  # type: ignore[arg-type]
+                            "max_value": origin.max  # type: ignore[arg-type]
+                        })
 
-                    # It is a range, but pyright does not understand it due to TYPE_CHECKING
-                    case x if isinstance(x, Range):  # type: ignore
-                        ptype = origin.type
-                        if origin.type == CommandOptionType.string:
-                            option.update({
-                                "min_length": origin.min,
-                                "max_length": origin.max
-                            })
-                        else:
-                            option.update({
-                                "min_value": origin.min,
-                                "max_value": origin.max
-                            })
+                elif origin == int:
+                    ptype = CommandOptionType.integer
 
-                    case x if x == int:
-                        ptype = CommandOptionType.integer
+                elif origin == bool:
+                    ptype = CommandOptionType.boolean
 
-                    case x if x == bool:
-                        ptype = CommandOptionType.boolean
+                elif origin == float:
+                    ptype = CommandOptionType.number
 
-                    case x if x == float:
-                        ptype = CommandOptionType.number
+                elif origin == str:
+                    ptype = CommandOptionType.string
 
-                    case x if x == str:
-                        ptype = CommandOptionType.string
+                elif isinstance(origin, Converter):
+                    self._converters[parameter.name] = origin  # type: ignore
+                    ptype = CommandOptionType.string
 
-                    case x if isinstance(x, Converter):
-                        self._converters[parameter.name] = x  # type: ignore
-                        ptype = CommandOptionType.string
-
-                    case _:
-                        ptype = CommandOptionType.string
+                else:
+                    ptype = CommandOptionType.string
 
                 option.update({
                     "name": parameter.name,
