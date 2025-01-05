@@ -6,7 +6,7 @@
 
     <link rel="shortcut icon" href="../../_static/favicon.ico"/><!-- Generated with Sphinx 8.1.3 and Furo 2024.08.06 -->
         <title>discord_http.flags - discord.http docs</title>
-      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=fa44fd50" />
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=03e43079" />
     <link rel="stylesheet" type="text/css" href="../../_static/styles/furo.css?v=354aac6f" />
     <link rel="stylesheet" type="text/css" href="../../_static/styles/furo-extensions.css?v=302659d7" />
     
@@ -292,13 +292,13 @@
         </div>
         <article role="main" id="furo-main-content">
           <h1>Source code for discord_http.flags</h1><div class="highlight"><pre>
-<span></span><span class="kn">import</span> <span class="nn">sys</span>
+<span></span><span class="kn">import</span><span class="w"> </span><span class="nn">sys</span>
 
-<span class="kn">from</span> <span class="nn">enum</span> <span class="kn">import</span> <span class="n">Flag</span><span class="p">,</span> <span class="n">CONFORM</span>
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Self</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">enum</span><span class="w"> </span><span class="kn">import</span> <span class="n">Flag</span><span class="p">,</span> <span class="n">CONFORM</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Self</span>
 
-<span class="kn">from</span> <span class="nn">.enums</span> <span class="kn">import</span> <span class="n">PermissionType</span>
-<span class="kn">from</span> <span class="nn">.object</span> <span class="kn">import</span> <span class="n">Snowflake</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.enums</span><span class="w"> </span><span class="kn">import</span> <span class="n">PermissionType</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.object</span><span class="w"> </span><span class="kn">import</span> <span class="n">Snowflake</span>
 
 <span class="n">__all__</span> <span class="o">=</span> <span class="p">(</span>
     <span class="s2">&quot;ApplicationFlags&quot;</span><span class="p">,</span>
@@ -316,26 +316,26 @@
 
 
 <span class="k">if</span> <span class="n">sys</span><span class="o">.</span><span class="n">version_info</span> <span class="o">&gt;=</span> <span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">11</span><span class="p">,</span> <span class="mi">0</span><span class="p">):</span>
-    <span class="k">class</span> <span class="nc">_FlagPyMeta</span><span class="p">(</span><span class="n">Flag</span><span class="p">,</span> <span class="n">boundary</span><span class="o">=</span><span class="n">CONFORM</span><span class="p">):</span>
+    <span class="k">class</span><span class="w"> </span><span class="nc">_FlagPyMeta</span><span class="p">(</span><span class="n">Flag</span><span class="p">,</span> <span class="n">boundary</span><span class="o">=</span><span class="n">CONFORM</span><span class="p">):</span>
         <span class="k">pass</span>
 <span class="k">else</span><span class="p">:</span>
-    <span class="k">class</span> <span class="nc">_FlagPyMeta</span><span class="p">(</span><span class="n">Flag</span><span class="p">):</span>
+    <span class="k">class</span><span class="w"> </span><span class="nc">_FlagPyMeta</span><span class="p">(</span><span class="n">Flag</span><span class="p">):</span>
         <span class="k">pass</span>
 
 
 <div class="viewcode-block" id="BaseFlag">
 <a class="viewcode-back" href="../../api/flags.html#discord_http.flags.BaseFlag">[docs]</a>
-<span class="k">class</span> <span class="nc">BaseFlag</span><span class="p">(</span><span class="n">_FlagPyMeta</span><span class="p">):</span>
-    <span class="k">def</span> <span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">BaseFlag</span><span class="p">(</span><span class="n">_FlagPyMeta</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
         <span class="k">return</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">value</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="fm">__int__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__int__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">value</span>
 
 <div class="viewcode-block" id="BaseFlag.all">
 <a class="viewcode-back" href="../../api/flags.html#discord_http.flags.BaseFlag.all">[docs]</a>
     <span class="nd">@classmethod</span>
-    <span class="k">def</span> <span class="nf">all</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Self</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">all</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Self</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot; `BaseFlag`: Returns a flag with all the flags &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span><span class="nb">sum</span><span class="p">([</span><span class="nb">int</span><span class="p">(</span><span class="n">g</span><span class="p">)</span> <span class="k">for</span> <span class="n">g</span> <span class="ow">in</span> <span class="bp">cls</span><span class="o">.</span><span class="n">__members__</span><span class="o">.</span><span class="n">values</span><span class="p">()]))</span></div>
 
@@ -343,7 +343,7 @@
 <div class="viewcode-block" id="BaseFlag.none">
 <a class="viewcode-back" href="../../api/flags.html#discord_http.flags.BaseFlag.none">[docs]</a>
     <span class="nd">@classmethod</span>
-    <span class="k">def</span> <span class="nf">none</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Self</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">none</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Self</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot; `BaseFlag`: Returns a flag with no flags &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span></div>
 
@@ -351,7 +351,7 @@
 <div class="viewcode-block" id="BaseFlag.from_names">
 <a class="viewcode-back" href="../../api/flags.html#discord_http.flags.BaseFlag.from_names">[docs]</a>
     <span class="nd">@classmethod</span>
-    <span class="k">def</span> <span class="nf">from_names</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Self</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">from_names</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Self</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Create a flag from names</span>
 
@@ -375,7 +375,7 @@
 
 
     <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">list_names</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">list_names</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot; `list[str]`: Returns a list of all the names of the flag &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="p">[</span>
             <span class="n">g</span><span class="o">.</span><span class="n">name</span> <span class="ow">or</span> <span class="s2">&quot;UNKNOWN&quot;</span>
@@ -384,7 +384,7 @@
 
 <div class="viewcode-block" id="BaseFlag.to_names">
 <a class="viewcode-back" href="../../api/flags.html#discord_http.flags.BaseFlag.to_names">[docs]</a>
-    <span class="k">def</span> <span class="nf">to_names</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">to_names</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot; `list[str]`: Returns the current names of the flag &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="p">[</span>
             <span class="n">name</span> <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">member</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="n">__members__</span><span class="o">.</span><span class="n">items</span><span class="p">()</span>
@@ -394,7 +394,7 @@
 
 <div class="viewcode-block" id="BaseFlag.add_flags">
 <a class="viewcode-back" href="../../api/flags.html#discord_http.flags.BaseFlag.add_flags">[docs]</a>
-    <span class="k">def</span> <span class="nf">add_flags</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">add_flags</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="o">*</span><span class="n">flag_name</span><span class="p">:</span> <span class="n">Self</span> <span class="o">|</span> <span class="nb">str</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Self</span><span class="p">:</span>
@@ -437,7 +437,7 @@
 
 <div class="viewcode-block" id="BaseFlag.remove_flags">
 <a class="viewcode-back" href="../../api/flags.html#discord_http.flags.BaseFlag.remove_flags">[docs]</a>
-    <span class="k">def</span> <span class="nf">remove_flags</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">remove_flags</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="o">*</span><span class="n">flag_name</span><span class="p">:</span> <span class="n">Self</span> <span class="o">|</span> <span class="nb">str</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Self</span><span class="p">:</span>
@@ -480,7 +480,7 @@
 
 <div class="viewcode-block" id="BaseFlag.copy">
 <a class="viewcode-back" href="../../api/flags.html#discord_http.flags.BaseFlag.copy">[docs]</a>
-    <span class="k">def</span> <span class="nf">copy</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Self</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">copy</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Self</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot; `BaseFlag`: Returns a copy of the flag &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">value</span><span class="p">)</span></div>
 </div>
@@ -489,7 +489,7 @@
 
 <div class="viewcode-block" id="MessageFlags">
 <a class="viewcode-back" href="../../api/flags.html#discord_http.flags.MessageFlags">[docs]</a>
-<span class="k">class</span> <span class="nc">MessageFlags</span><span class="p">(</span><span class="n">BaseFlag</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">MessageFlags</span><span class="p">(</span><span class="n">BaseFlag</span><span class="p">):</span>
     <span class="n">crossposted</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">&lt;&lt;</span> <span class="mi">0</span>
     <span class="n">is_crosspost</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">&lt;&lt;</span> <span class="mi">1</span>
     <span class="n">suppress_embeds</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">&lt;&lt;</span> <span class="mi">2</span>
@@ -506,7 +506,7 @@
 
 <div class="viewcode-block" id="SKUFlags">
 <a class="viewcode-back" href="../../api/flags.html#discord_http.flags.SKUFlags">[docs]</a>
-<span class="k">class</span> <span class="nc">SKUFlags</span><span class="p">(</span><span class="n">BaseFlag</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">SKUFlags</span><span class="p">(</span><span class="n">BaseFlag</span><span class="p">):</span>
     <span class="n">available</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">&lt;&lt;</span> <span class="mi">2</span>
     <span class="n">guild_subscription</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">&lt;&lt;</span> <span class="mi">7</span>
     <span class="n">user_subscription</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">&lt;&lt;</span> <span class="mi">8</span></div>
@@ -515,7 +515,7 @@
 
 <div class="viewcode-block" id="GuildMemberFlags">
 <a class="viewcode-back" href="../../api/flags.html#discord_http.flags.GuildMemberFlags">[docs]</a>
-<span class="k">class</span> <span class="nc">GuildMemberFlags</span><span class="p">(</span><span class="n">BaseFlag</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">GuildMemberFlags</span><span class="p">(</span><span class="n">BaseFlag</span><span class="p">):</span>
     <span class="n">did_rejoin</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">&lt;&lt;</span> <span class="mi">0</span>
     <span class="n">completed_onboarding</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">&lt;&lt;</span> <span class="mi">1</span>
     <span class="n">bypasses_verification</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">&lt;&lt;</span> <span class="mi">2</span>
@@ -525,7 +525,7 @@
 
 <div class="viewcode-block" id="ChannelFlags">
 <a class="viewcode-back" href="../../api/flags.html#discord_http.flags.ChannelFlags">[docs]</a>
-<span class="k">class</span> <span class="nc">ChannelFlags</span><span class="p">(</span><span class="n">BaseFlag</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">ChannelFlags</span><span class="p">(</span><span class="n">BaseFlag</span><span class="p">):</span>
     <span class="n">pinned</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">&lt;&lt;</span> <span class="mi">1</span>
     <span class="n">require_tag</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">&lt;&lt;</span> <span class="mi">4</span>
     <span class="n">hide_media_download_options</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">&lt;&lt;</span> <span class="mi">15</span></div>
@@ -534,7 +534,7 @@
 
 <div class="viewcode-block" id="PublicFlags">
 <a class="viewcode-back" href="../../api/flags.html#discord_http.flags.PublicFlags">[docs]</a>
-<span class="k">class</span> <span class="nc">PublicFlags</span><span class="p">(</span><span class="n">BaseFlag</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">PublicFlags</span><span class="p">(</span><span class="n">BaseFlag</span><span class="p">):</span>
     <span class="n">staff</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">&lt;&lt;</span> <span class="mi">0</span>
     <span class="n">partner</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">&lt;&lt;</span> <span class="mi">1</span>
     <span class="n">hypesquad</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">&lt;&lt;</span> <span class="mi">2</span>
@@ -555,7 +555,7 @@
 
 <div class="viewcode-block" id="AttachmentFlags">
 <a class="viewcode-back" href="../../api/flags.html#discord_http.flags.AttachmentFlags">[docs]</a>
-<span class="k">class</span> <span class="nc">AttachmentFlags</span><span class="p">(</span><span class="n">BaseFlag</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">AttachmentFlags</span><span class="p">(</span><span class="n">BaseFlag</span><span class="p">):</span>
     <span class="n">clip</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">&lt;&lt;</span> <span class="mi">0</span>
     <span class="n">thumbnail</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">&lt;&lt;</span> <span class="mi">1</span>
     <span class="n">remix</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">&lt;&lt;</span> <span class="mi">2</span></div>
@@ -564,7 +564,7 @@
 
 <div class="viewcode-block" id="ApplicationFlags">
 <a class="viewcode-back" href="../../api/flags.html#discord_http.flags.ApplicationFlags">[docs]</a>
-<span class="k">class</span> <span class="nc">ApplicationFlags</span><span class="p">(</span><span class="n">BaseFlag</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">ApplicationFlags</span><span class="p">(</span><span class="n">BaseFlag</span><span class="p">):</span>
     <span class="n">application_auto_moderation_rule_create_badge</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">&lt;&lt;</span> <span class="mi">6</span>
     <span class="n">gateway_presence</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">&lt;&lt;</span> <span class="mi">12</span>
     <span class="n">gateway_presence_limited</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">&lt;&lt;</span> <span class="mi">13</span>
@@ -580,7 +580,7 @@
 
 <div class="viewcode-block" id="SystemChannelFlags">
 <a class="viewcode-back" href="../../api/flags.html#discord_http.flags.SystemChannelFlags">[docs]</a>
-<span class="k">class</span> <span class="nc">SystemChannelFlags</span><span class="p">(</span><span class="n">BaseFlag</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">SystemChannelFlags</span><span class="p">(</span><span class="n">BaseFlag</span><span class="p">):</span>
     <span class="n">suppress_join_notifications</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">&lt;&lt;</span> <span class="mi">0</span>
     <span class="n">suppress_premium_subscriptions</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">&lt;&lt;</span> <span class="mi">1</span>
     <span class="n">suppress_guild_reminder_notifications</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">&lt;&lt;</span> <span class="mi">2</span>
@@ -592,7 +592,7 @@
 
 <div class="viewcode-block" id="Permissions">
 <a class="viewcode-back" href="../../api/flags.html#discord_http.flags.Permissions">[docs]</a>
-<span class="k">class</span> <span class="nc">Permissions</span><span class="p">(</span><span class="n">BaseFlag</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">Permissions</span><span class="p">(</span><span class="n">BaseFlag</span><span class="p">):</span>
     <span class="n">create_instant_invite</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">&lt;&lt;</span> <span class="mi">0</span>
     <span class="n">kick_members</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">&lt;&lt;</span> <span class="mi">1</span>
     <span class="n">ban_members</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">&lt;&lt;</span> <span class="mi">2</span>
@@ -645,7 +645,7 @@
 
 <div class="viewcode-block" id="Permissions.handle_overwrite">
 <a class="viewcode-back" href="../../api/flags.html#discord_http.flags.Permissions.handle_overwrite">[docs]</a>
-    <span class="k">def</span> <span class="nf">handle_overwrite</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">allow</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">deny</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;Permissions&quot;</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">handle_overwrite</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">allow</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">deny</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;Permissions&quot;</span><span class="p">:</span>
         <span class="n">new_value</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">value</span> <span class="o">&amp;</span> <span class="o">~</span><span class="n">deny</span><span class="p">)</span> <span class="o">|</span> <span class="n">allow</span>
         <span class="k">return</span> <span class="n">Permissions</span><span class="p">(</span><span class="n">new_value</span><span class="p">)</span></div>
 </div>
@@ -654,8 +654,8 @@
 
 <div class="viewcode-block" id="PermissionOverwrite">
 <a class="viewcode-back" href="../../api/flags.html#discord_http.flags.PermissionOverwrite">[docs]</a>
-<span class="k">class</span> <span class="nc">PermissionOverwrite</span><span class="p">:</span>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">PermissionOverwrite</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">target</span><span class="p">:</span> <span class="n">Snowflake</span> <span class="o">|</span> <span class="nb">int</span><span class="p">,</span>
         <span class="o">*</span><span class="p">,</span>
@@ -695,7 +695,7 @@
                 <span class="sa">f</span><span class="s2">&quot;received </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">target_type</span><span class="p">)</span><span class="si">}</span><span class="s2"> instead&quot;</span>
             <span class="p">)</span>
 
-    <span class="k">def</span> <span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
         <span class="k">return</span> <span class="p">(</span>
             <span class="sa">f</span><span class="s2">&quot;&lt;PermissionOverwrite target=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">target</span><span class="si">}</span><span class="s2"> &quot;</span>
             <span class="sa">f</span><span class="s2">&quot;allow=</span><span class="si">{</span><span class="nb">int</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">allow</span><span class="p">)</span><span class="si">}</span><span class="s2"> deny=</span><span class="si">{</span><span class="nb">int</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">deny</span><span class="p">)</span><span class="si">}</span><span class="s2">&gt;&quot;</span>
@@ -703,14 +703,14 @@
 
 <div class="viewcode-block" id="PermissionOverwrite.is_role">
 <a class="viewcode-back" href="../../api/flags.html#discord_http.flags.PermissionOverwrite.is_role">[docs]</a>
-    <span class="k">def</span> <span class="nf">is_role</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">is_role</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot; `bool`: Returns whether the overwrite is a role overwrite &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">target_type</span> <span class="o">==</span> <span class="n">PermissionType</span><span class="o">.</span><span class="n">role</span></div>
 
 
 <div class="viewcode-block" id="PermissionOverwrite.is_member">
 <a class="viewcode-back" href="../../api/flags.html#discord_http.flags.PermissionOverwrite.is_member">[docs]</a>
-    <span class="k">def</span> <span class="nf">is_member</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">is_member</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot; `bool`: Returns whether the overwrite is a member overwrite &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">target_type</span> <span class="o">==</span> <span class="n">PermissionType</span><span class="o">.</span><span class="n">member</span></div>
 
@@ -718,7 +718,7 @@
 <div class="viewcode-block" id="PermissionOverwrite.from_dict">
 <a class="viewcode-back" href="../../api/flags.html#discord_http.flags.PermissionOverwrite.from_dict">[docs]</a>
     <span class="nd">@classmethod</span>
-    <span class="k">def</span> <span class="nf">from_dict</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="nb">dict</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Self</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">from_dict</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="nb">dict</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Self</span><span class="p">:</span>
         <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span>
             <span class="n">target</span><span class="o">=</span><span class="nb">int</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="s2">&quot;id&quot;</span><span class="p">]),</span>
             <span class="n">allow</span><span class="o">=</span><span class="n">Permissions</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="s2">&quot;allow&quot;</span><span class="p">])),</span>
@@ -729,7 +729,7 @@
 
 <div class="viewcode-block" id="PermissionOverwrite.to_dict">
 <a class="viewcode-back" href="../../api/flags.html#discord_http.flags.PermissionOverwrite.to_dict">[docs]</a>
-    <span class="k">def</span> <span class="nf">to_dict</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">to_dict</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
         <span class="k">return</span> <span class="p">{</span>
             <span class="s2">&quot;id&quot;</span><span class="p">:</span> <span class="nb">str</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">target</span><span class="p">)),</span>
             <span class="s2">&quot;allow&quot;</span><span class="p">:</span> <span class="nb">int</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">allow</span><span class="p">),</span>
@@ -740,7 +740,7 @@
 
 <div class="viewcode-block" id="PermissionOverwrite.copy">
 <a class="viewcode-back" href="../../api/flags.html#discord_http.flags.PermissionOverwrite.copy">[docs]</a>
-    <span class="k">def</span> <span class="nf">copy</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Self</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">copy</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Self</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot; `BaseFlag`: Returns a copy of the flag &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="p">(</span>
             <span class="n">target</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">target</span><span class="p">,</span>

@@ -7,7 +7,7 @@
 
     <link rel="shortcut icon" href="../_static/favicon.ico"/><!-- Generated with Sphinx 8.1.3 and Furo 2024.08.06 -->
         <title>HTTP backend - discord.http docs</title>
-      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=fa44fd50" />
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=03e43079" />
     <link rel="stylesheet" type="text/css" href="../_static/styles/furo.css?v=354aac6f" />
     <link rel="stylesheet" type="text/css" href="../_static/styles/furo-extensions.css?v=302659d7" />
     
@@ -304,7 +304,7 @@
 manages all the communication received by Discord HTTP POST requests.
 However since this is essentially based on Quart, you are free to intervean and
 add your own componenets to the server.</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">discord_http</span> <span class="kn">import</span> <span class="n">Context</span><span class="p">,</span> <span class="n">Client</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">discord_http</span><span class="w"> </span><span class="kn">import</span> <span class="n">Context</span><span class="p">,</span> <span class="n">Client</span>
 
 <span class="n">client</span> <span class="o">=</span> <span class="n">Client</span><span class="p">(</span>
     <span class="n">token</span><span class="o">=</span><span class="s2">&quot;Your bot token here&quot;</span><span class="p">,</span>
@@ -343,7 +343,7 @@ by having your main website ping this source and then be able to see if the bot 
 <p>A very simplified example of how you can add your own paths to the server.
 Keep in mind that there are many more methods, but this is just a simple example.
 Code example will be taking the code above as an expantion of the code.</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">async</span> <span class="k">def</span> <span class="nf">simple_test</span><span class="p">():</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">simple_test</span><span class="p">():</span>
     <span class="k">return</span> <span class="p">{</span><span class="s2">&quot;hello&quot;</span><span class="p">:</span> <span class="s2">&quot;world&quot;</span><span class="p">}</span>
 
 <span class="n">client</span><span class="o">.</span><span class="n">backend</span><span class="o">.</span><span class="n">add_url_rule</span><span class="p">(</span>

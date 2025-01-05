@@ -6,7 +6,7 @@
 
     <link rel="shortcut icon" href="../../_static/favicon.ico"/><!-- Generated with Sphinx 8.1.3 and Furo 2024.08.06 -->
         <title>discord_http.client - discord.http docs</title>
-      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=fa44fd50" />
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=03e43079" />
     <link rel="stylesheet" type="text/css" href="../../_static/styles/furo.css?v=354aac6f" />
     <link rel="stylesheet" type="text/css" href="../../_static/styles/furo-extensions.css?v=302659d7" />
     
@@ -292,49 +292,49 @@
         </div>
         <article role="main" id="furo-main-content">
           <h1>Source code for discord_http.client</h1><div class="highlight"><pre>
-<span></span><span class="kn">import</span> <span class="nn">asyncio</span>
-<span class="kn">import</span> <span class="nn">importlib</span>
-<span class="kn">import</span> <span class="nn">inspect</span>
-<span class="kn">import</span> <span class="nn">logging</span>
+<span></span><span class="kn">import</span><span class="w"> </span><span class="nn">asyncio</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">importlib</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">inspect</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">logging</span>
 
-<span class="kn">from</span> <span class="nn">datetime</span> <span class="kn">import</span> <span class="n">datetime</span>
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="p">(</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">datetime</span><span class="w"> </span><span class="kn">import</span> <span class="n">datetime</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
     <span class="n">Dict</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Callable</span><span class="p">,</span>
     <span class="n">Union</span><span class="p">,</span> <span class="n">AsyncIterator</span><span class="p">,</span> <span class="n">TYPE_CHECKING</span><span class="p">,</span>
     <span class="n">Coroutine</span><span class="p">,</span> <span class="n">TypeVar</span>
 <span class="p">)</span>
 
-<span class="kn">from</span> <span class="nn">.</span> <span class="kn">import</span> <span class="n">utils</span>
-<span class="kn">from</span> <span class="nn">.automod</span> <span class="kn">import</span> <span class="n">PartialAutoModRule</span><span class="p">,</span> <span class="n">AutoModRule</span>
-<span class="kn">from</span> <span class="nn">.backend</span> <span class="kn">import</span> <span class="n">DiscordHTTP</span>
-<span class="kn">from</span> <span class="nn">.channel</span> <span class="kn">import</span> <span class="n">PartialChannel</span><span class="p">,</span> <span class="n">BaseChannel</span>
-<span class="kn">from</span> <span class="nn">.commands</span> <span class="kn">import</span> <span class="n">Command</span><span class="p">,</span> <span class="n">Interaction</span><span class="p">,</span> <span class="n">Listener</span><span class="p">,</span> <span class="n">Cog</span><span class="p">,</span> <span class="n">SubGroup</span>
-<span class="kn">from</span> <span class="nn">.context</span> <span class="kn">import</span> <span class="n">Context</span>
-<span class="kn">from</span> <span class="nn">.emoji</span> <span class="kn">import</span> <span class="n">PartialEmoji</span><span class="p">,</span> <span class="n">Emoji</span>
-<span class="kn">from</span> <span class="nn">.entitlements</span> <span class="kn">import</span> <span class="n">PartialSKU</span><span class="p">,</span> <span class="n">SKU</span><span class="p">,</span> <span class="n">PartialEntitlements</span><span class="p">,</span> <span class="n">Entitlements</span>
-<span class="kn">from</span> <span class="nn">.enums</span> <span class="kn">import</span> <span class="n">ApplicationCommandType</span>
-<span class="kn">from</span> <span class="nn">.errors</span> <span class="kn">import</span> <span class="n">CheckFailed</span>
-<span class="kn">from</span> <span class="nn">.file</span> <span class="kn">import</span> <span class="n">File</span>
-<span class="kn">from</span> <span class="nn">.gateway.cache</span> <span class="kn">import</span> <span class="n">Cache</span>
-<span class="kn">from</span> <span class="nn">.guild</span> <span class="kn">import</span> <span class="n">PartialGuild</span><span class="p">,</span> <span class="n">Guild</span><span class="p">,</span> <span class="n">PartialScheduledEvent</span><span class="p">,</span> <span class="n">ScheduledEvent</span>
-<span class="kn">from</span> <span class="nn">.http</span> <span class="kn">import</span> <span class="n">DiscordAPI</span>
-<span class="kn">from</span> <span class="nn">.invite</span> <span class="kn">import</span> <span class="n">PartialInvite</span><span class="p">,</span> <span class="n">Invite</span>
-<span class="kn">from</span> <span class="nn">.member</span> <span class="kn">import</span> <span class="n">PartialMember</span><span class="p">,</span> <span class="n">Member</span>
-<span class="kn">from</span> <span class="nn">.mentions</span> <span class="kn">import</span> <span class="n">AllowedMentions</span>
-<span class="kn">from</span> <span class="nn">.message</span> <span class="kn">import</span> <span class="n">PartialMessage</span><span class="p">,</span> <span class="n">Message</span>
-<span class="kn">from</span> <span class="nn">.object</span> <span class="kn">import</span> <span class="n">Snowflake</span>
-<span class="kn">from</span> <span class="nn">.role</span> <span class="kn">import</span> <span class="n">PartialRole</span>
-<span class="kn">from</span> <span class="nn">.soundboard</span> <span class="kn">import</span> <span class="n">SoundboardSound</span><span class="p">,</span> <span class="n">PartialSoundboardSound</span>
-<span class="kn">from</span> <span class="nn">.sticker</span> <span class="kn">import</span> <span class="n">PartialSticker</span><span class="p">,</span> <span class="n">Sticker</span>
-<span class="kn">from</span> <span class="nn">.user</span> <span class="kn">import</span> <span class="n">User</span><span class="p">,</span> <span class="n">PartialUser</span><span class="p">,</span> <span class="n">UserClient</span>
-<span class="kn">from</span> <span class="nn">.view</span> <span class="kn">import</span> <span class="n">InteractionStorage</span>
-<span class="kn">from</span> <span class="nn">.voice</span> <span class="kn">import</span> <span class="n">PartialVoiceState</span><span class="p">,</span> <span class="n">VoiceState</span>
-<span class="kn">from</span> <span class="nn">.webhook</span> <span class="kn">import</span> <span class="n">PartialWebhook</span><span class="p">,</span> <span class="n">Webhook</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.</span><span class="w"> </span><span class="kn">import</span> <span class="n">utils</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.automod</span><span class="w"> </span><span class="kn">import</span> <span class="n">PartialAutoModRule</span><span class="p">,</span> <span class="n">AutoModRule</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.backend</span><span class="w"> </span><span class="kn">import</span> <span class="n">DiscordHTTP</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.channel</span><span class="w"> </span><span class="kn">import</span> <span class="n">PartialChannel</span><span class="p">,</span> <span class="n">BaseChannel</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.commands</span><span class="w"> </span><span class="kn">import</span> <span class="n">Command</span><span class="p">,</span> <span class="n">Interaction</span><span class="p">,</span> <span class="n">Listener</span><span class="p">,</span> <span class="n">Cog</span><span class="p">,</span> <span class="n">SubGroup</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.context</span><span class="w"> </span><span class="kn">import</span> <span class="n">Context</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.emoji</span><span class="w"> </span><span class="kn">import</span> <span class="n">PartialEmoji</span><span class="p">,</span> <span class="n">Emoji</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.entitlements</span><span class="w"> </span><span class="kn">import</span> <span class="n">PartialSKU</span><span class="p">,</span> <span class="n">SKU</span><span class="p">,</span> <span class="n">PartialEntitlements</span><span class="p">,</span> <span class="n">Entitlements</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.enums</span><span class="w"> </span><span class="kn">import</span> <span class="n">ApplicationCommandType</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.errors</span><span class="w"> </span><span class="kn">import</span> <span class="n">CheckFailed</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.file</span><span class="w"> </span><span class="kn">import</span> <span class="n">File</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.gateway.cache</span><span class="w"> </span><span class="kn">import</span> <span class="n">Cache</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.guild</span><span class="w"> </span><span class="kn">import</span> <span class="n">PartialGuild</span><span class="p">,</span> <span class="n">Guild</span><span class="p">,</span> <span class="n">PartialScheduledEvent</span><span class="p">,</span> <span class="n">ScheduledEvent</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.http</span><span class="w"> </span><span class="kn">import</span> <span class="n">DiscordAPI</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.invite</span><span class="w"> </span><span class="kn">import</span> <span class="n">PartialInvite</span><span class="p">,</span> <span class="n">Invite</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.member</span><span class="w"> </span><span class="kn">import</span> <span class="n">PartialMember</span><span class="p">,</span> <span class="n">Member</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.mentions</span><span class="w"> </span><span class="kn">import</span> <span class="n">AllowedMentions</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.message</span><span class="w"> </span><span class="kn">import</span> <span class="n">PartialMessage</span><span class="p">,</span> <span class="n">Message</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.object</span><span class="w"> </span><span class="kn">import</span> <span class="n">Snowflake</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.role</span><span class="w"> </span><span class="kn">import</span> <span class="n">PartialRole</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.soundboard</span><span class="w"> </span><span class="kn">import</span> <span class="n">SoundboardSound</span><span class="p">,</span> <span class="n">PartialSoundboardSound</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.sticker</span><span class="w"> </span><span class="kn">import</span> <span class="n">PartialSticker</span><span class="p">,</span> <span class="n">Sticker</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.user</span><span class="w"> </span><span class="kn">import</span> <span class="n">User</span><span class="p">,</span> <span class="n">PartialUser</span><span class="p">,</span> <span class="n">UserClient</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.view</span><span class="w"> </span><span class="kn">import</span> <span class="n">InteractionStorage</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.voice</span><span class="w"> </span><span class="kn">import</span> <span class="n">PartialVoiceState</span><span class="p">,</span> <span class="n">VoiceState</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.webhook</span><span class="w"> </span><span class="kn">import</span> <span class="n">PartialWebhook</span><span class="p">,</span> <span class="n">Webhook</span>
 
 <span class="k">if</span> <span class="n">TYPE_CHECKING</span><span class="p">:</span>
-    <span class="kn">from</span> <span class="nn">.gateway.client</span> <span class="kn">import</span> <span class="n">GatewayClient</span>
-    <span class="kn">from</span> <span class="nn">.gateway.flags</span> <span class="kn">import</span> <span class="n">GatewayCacheFlags</span><span class="p">,</span> <span class="n">Intents</span>
-    <span class="kn">from</span> <span class="nn">.gateway.object</span> <span class="kn">import</span> <span class="n">PlayingStatus</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">.gateway.client</span><span class="w"> </span><span class="kn">import</span> <span class="n">GatewayClient</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">.gateway.flags</span><span class="w"> </span><span class="kn">import</span> <span class="n">GatewayCacheFlags</span><span class="p">,</span> <span class="n">Intents</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">.gateway.object</span><span class="w"> </span><span class="kn">import</span> <span class="n">PlayingStatus</span>
 
 <span class="n">_log</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
 
@@ -348,8 +348,8 @@
 
 <div class="viewcode-block" id="Client">
 <a class="viewcode-back" href="../../api/client.html#discord_http.client.Client">[docs]</a>
-<span class="k">class</span> <span class="nc">Client</span><span class="p">:</span>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">Client</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="o">*</span><span class="p">,</span>
         <span class="n">token</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
@@ -471,7 +471,7 @@
 
         <span class="n">utils</span><span class="o">.</span><span class="n">setup_logger</span><span class="p">(</span><span class="n">level</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">logging_level</span><span class="p">)</span>
 
-    <span class="k">async</span> <span class="k">def</span> <span class="nf">_run_global_checks</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ctx</span><span class="p">:</span> <span class="n">Context</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+    <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">_run_global_checks</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ctx</span><span class="p">:</span> <span class="n">Context</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
         <span class="k">for</span> <span class="n">g</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_global_cmd_checks</span><span class="p">:</span>
             <span class="k">if</span> <span class="n">inspect</span><span class="o">.</span><span class="n">iscoroutinefunction</span><span class="p">(</span><span class="n">g</span><span class="p">):</span>
                 <span class="n">result</span> <span class="o">=</span> <span class="k">await</span> <span class="n">g</span><span class="p">(</span><span class="n">ctx</span><span class="p">)</span>
@@ -483,7 +483,7 @@
 
         <span class="k">return</span> <span class="kc">True</span>
 
-    <span class="k">async</span> <span class="k">def</span> <span class="nf">_run_event</span><span class="p">(</span>
+    <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">_run_event</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">listener</span><span class="p">:</span> <span class="s2">&quot;Listener&quot;</span><span class="p">,</span>
         <span class="n">event_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
@@ -512,7 +512,7 @@
             <span class="k">except</span> <span class="n">asyncio</span><span class="o">.</span><span class="n">CancelledError</span><span class="p">:</span>
                 <span class="k">pass</span>
 
-    <span class="k">async</span> <span class="k">def</span> <span class="nf">_prepare_bot</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">_prepare_bot</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        This will run prepare_setup() before boot</span>
 <span class="sd">        to make the user set up needed vars</span>
@@ -539,7 +539,7 @@
 
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">enable_gateway</span><span class="p">:</span>
             <span class="c1"># To avoid circular import, import here</span>
-            <span class="kn">from</span> <span class="nn">.gateway</span> <span class="kn">import</span> <span class="n">GatewayClient</span>
+            <span class="kn">from</span><span class="w"> </span><span class="nn">.gateway</span><span class="w"> </span><span class="kn">import</span> <span class="n">GatewayClient</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">gateway</span> <span class="o">=</span> <span class="n">GatewayClient</span><span class="p">(</span>
                 <span class="n">bot</span><span class="o">=</span><span class="bp">self</span><span class="p">,</span>
                 <span class="n">intents</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">intents</span><span class="p">,</span>
@@ -549,21 +549,21 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">gateway</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
             <span class="n">_log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Starting discord.http/gateway client&quot;</span><span class="p">)</span>
 
-    <span class="k">async</span> <span class="k">def</span> <span class="nf">__cleanup</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">__cleanup</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot; Called when the bot is shutting down &quot;&quot;&quot;</span>
         <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">state</span><span class="o">.</span><span class="n">http</span><span class="o">.</span><span class="n">_close_session</span><span class="p">()</span>
 
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">gateway</span><span class="p">:</span>
             <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">gateway</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
 
-    <span class="k">def</span> <span class="nf">_update_ids</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="nb">dict</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_update_ids</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="nb">dict</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="k">for</span> <span class="n">g</span> <span class="ow">in</span> <span class="n">data</span><span class="p">:</span>
             <span class="n">cmd</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">commands</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">g</span><span class="p">[</span><span class="s2">&quot;name&quot;</span><span class="p">],</span> <span class="kc">None</span><span class="p">)</span>
             <span class="k">if</span> <span class="ow">not</span> <span class="n">cmd</span><span class="p">:</span>
                 <span class="k">continue</span>
             <span class="n">cmd</span><span class="o">.</span><span class="n">id</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">g</span><span class="p">[</span><span class="s2">&quot;id&quot;</span><span class="p">])</span>
 
-    <span class="k">def</span> <span class="nf">_schedule_event</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_schedule_event</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">listener</span><span class="p">:</span> <span class="s2">&quot;Listener&quot;</span><span class="p">,</span>
         <span class="n">event_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
@@ -580,14 +580,14 @@
             <span class="n">wrapped</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;discord.quart: </span><span class="si">{</span><span class="n">event_name</span><span class="si">}</span><span class="s2">&quot;</span>
         <span class="p">)</span>
 
-    <span class="k">async</span> <span class="k">def</span> <span class="nf">_prepare_me</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">UserClient</span><span class="p">:</span>
+    <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">_prepare_me</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">UserClient</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot; Gets the bot&#39;s user data, mostly used to validate token &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_user_object</span> <span class="o">=</span> <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">state</span><span class="o">.</span><span class="n">me</span><span class="p">()</span>
         <span class="n">_log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;/users/@me verified: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">user</span><span class="si">}</span><span class="s2"> (</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">user</span><span class="o">.</span><span class="n">id</span><span class="si">}</span><span class="s2">)&quot;</span><span class="p">)</span>
 
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">user</span>
 
-    <span class="k">async</span> <span class="k">def</span> <span class="nf">_prepare_commands</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">_prepare_commands</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot; Only used to sync commands on boot &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">sync</span><span class="p">:</span>
             <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">sync_commands</span><span class="p">()</span>
@@ -600,7 +600,7 @@
 
 <div class="viewcode-block" id="Client.get_shard_by_guild_id">
 <a class="viewcode-back" href="../../api/client.html#discord_http.client.Client.get_shard_by_guild_id">[docs]</a>
-    <span class="k">def</span> <span class="nf">get_shard_by_guild_id</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_shard_by_guild_id</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">guild_id</span><span class="p">:</span> <span class="n">Snowflake</span> <span class="o">|</span> <span class="nb">int</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
@@ -632,7 +632,7 @@
 
 <div class="viewcode-block" id="Client.query_members">
 <a class="viewcode-back" href="../../api/client.html#discord_http.client.Client.query_members">[docs]</a>
-    <span class="k">async</span> <span class="k">def</span> <span class="nf">query_members</span><span class="p">(</span>
+    <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">query_members</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">guild_id</span><span class="p">:</span> <span class="n">Snowflake</span> <span class="o">|</span> <span class="nb">int</span><span class="p">,</span>
         <span class="o">*</span><span class="p">,</span>
@@ -694,7 +694,7 @@
 
 <div class="viewcode-block" id="Client.sync_commands">
 <a class="viewcode-back" href="../../api/client.html#discord_http.client.Client.sync_commands">[docs]</a>
-    <span class="k">async</span> <span class="k">def</span> <span class="nf">sync_commands</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">sync_commands</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Make the bot fetch all current commands,</span>
 <span class="sd">        to then sync them all to Discord API.</span>
@@ -733,7 +733,7 @@
 
 
     <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">user</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">UserClient</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">user</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">UserClient</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
@@ -754,7 +754,7 @@
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_user_object</span>
 
     <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">guilds</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="n">Guild</span> <span class="o">|</span> <span class="n">PartialGuild</span><span class="p">]:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">guilds</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="n">Guild</span> <span class="o">|</span> <span class="n">PartialGuild</span><span class="p">]:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        `list[Guild]`: Returns a list of all the guilds the bot is in.</span>
 <span class="sd">        Only useable if you are using gateway and caching</span>
@@ -763,7 +763,7 @@
 
 <div class="viewcode-block" id="Client.get_guild">
 <a class="viewcode-back" href="../../api/client.html#discord_http.client.Client.get_guild">[docs]</a>
-    <span class="k">def</span> <span class="nf">get_guild</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">guild_id</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Guild</span> <span class="o">|</span> <span class="n">PartialGuild</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_guild</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">guild_id</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Guild</span> <span class="o">|</span> <span class="n">PartialGuild</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Get a guild object from the cache.</span>
 
@@ -782,7 +782,7 @@
 
 <div class="viewcode-block" id="Client.is_ready">
 <a class="viewcode-back" href="../../api/client.html#discord_http.client.Client.is_ready">[docs]</a>
-    <span class="k">def</span> <span class="nf">is_ready</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">is_ready</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot; `bool`: Indicates if the client is ready. &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="p">(</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_ready</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span>
@@ -792,7 +792,7 @@
 
 <div class="viewcode-block" id="Client.is_shards_ready">
 <a class="viewcode-back" href="../../api/client.html#discord_http.client.Client.is_shards_ready">[docs]</a>
-    <span class="k">def</span> <span class="nf">is_shards_ready</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">is_shards_ready</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
         <span class="k">return</span> <span class="p">(</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_shards_ready</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_shards_ready</span><span class="o">.</span><span class="n">is_set</span><span class="p">()</span>
@@ -801,7 +801,7 @@
 
 <div class="viewcode-block" id="Client.set_context">
 <a class="viewcode-back" href="../../api/client.html#discord_http.client.Client.set_context">[docs]</a>
-    <span class="k">def</span> <span class="nf">set_context</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">set_context</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="o">*</span><span class="p">,</span>
         <span class="bp">cls</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Callable</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
@@ -835,7 +835,7 @@
 
 <div class="viewcode-block" id="Client.set_backend">
 <a class="viewcode-back" href="../../api/client.html#discord_http.client.Client.set_backend">[docs]</a>
-    <span class="k">def</span> <span class="nf">set_backend</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">set_backend</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="o">*</span><span class="p">,</span>
         <span class="bp">cls</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Callable</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
@@ -869,7 +869,7 @@
 
 <div class="viewcode-block" id="Client.setup_hook">
 <a class="viewcode-back" href="../../api/client.html#discord_http.client.Client.setup_hook">[docs]</a>
-    <span class="k">async</span> <span class="k">def</span> <span class="nf">setup_hook</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">setup_hook</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        This will be running after the bot is ready, to get variables set up</span>
 <span class="sd">        You can overwrite this function to do your own setup</span>
@@ -887,7 +887,7 @@
 
 <div class="viewcode-block" id="Client.start">
 <a class="viewcode-back" href="../../api/client.html#discord_http.client.Client.start">[docs]</a>
-    <span class="k">def</span> <span class="nf">start</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">start</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="o">*</span><span class="p">,</span>
         <span class="n">host</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;127.0.0.1&quot;</span><span class="p">,</span>
@@ -916,7 +916,7 @@
 
 <div class="viewcode-block" id="Client.wait_until_ready">
 <a class="viewcode-back" href="../../api/client.html#discord_http.client.Client.wait_until_ready">[docs]</a>
-    <span class="k">async</span> <span class="k">def</span> <span class="nf">wait_until_ready</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">wait_until_ready</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot; Waits until the client is ready using `asyncio.Event.wait()`. &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ready</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span>
@@ -929,7 +929,7 @@
 
 <div class="viewcode-block" id="Client.wait_until_shards_ready">
 <a class="viewcode-back" href="../../api/client.html#discord_http.client.Client.wait_until_shards_ready">[docs]</a>
-    <span class="k">async</span> <span class="k">def</span> <span class="nf">wait_until_shards_ready</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">wait_until_shards_ready</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot; Waits until the client is ready using `asyncio.Event.wait()`. &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_shards_ready</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span>
@@ -942,7 +942,7 @@
 
 <div class="viewcode-block" id="Client.dispatch">
 <a class="viewcode-back" href="../../api/client.html#discord_http.client.Client.dispatch">[docs]</a>
-    <span class="k">def</span> <span class="nf">dispatch</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">dispatch</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">event_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
         <span class="o">/</span><span class="p">,</span>
@@ -974,7 +974,7 @@
 
 <div class="viewcode-block" id="Client.has_any_dispatch">
 <a class="viewcode-back" href="../../api/client.html#discord_http.client.Client.has_any_dispatch">[docs]</a>
-    <span class="k">def</span> <span class="nf">has_any_dispatch</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">has_any_dispatch</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">event_name</span><span class="p">:</span> <span class="nb">str</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
@@ -1001,7 +1001,7 @@
 
 <div class="viewcode-block" id="Client.load_extension">
 <a class="viewcode-back" href="../../api/client.html#discord_http.client.Client.load_extension">[docs]</a>
-    <span class="k">async</span> <span class="k">def</span> <span class="nf">load_extension</span><span class="p">(</span>
+    <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">load_extension</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">package</span><span class="p">:</span> <span class="nb">str</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
@@ -1027,7 +1027,7 @@
 
 <div class="viewcode-block" id="Client.unload_extension">
 <a class="viewcode-back" href="../../api/client.html#discord_http.client.Client.unload_extension">[docs]</a>
-    <span class="k">async</span> <span class="k">def</span> <span class="nf">unload_extension</span><span class="p">(</span>
+    <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">unload_extension</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">package</span><span class="p">:</span> <span class="nb">str</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
@@ -1050,7 +1050,7 @@
 
 <div class="viewcode-block" id="Client.add_cog">
 <a class="viewcode-back" href="../../api/client.html#discord_http.client.Client.add_cog">[docs]</a>
-    <span class="k">async</span> <span class="k">def</span> <span class="nf">add_cog</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">cog</span><span class="p">:</span> <span class="s2">&quot;Cog&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">add_cog</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">cog</span><span class="p">:</span> <span class="s2">&quot;Cog&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Adds a cog to the bot.</span>
 
@@ -1064,7 +1064,7 @@
 
 <div class="viewcode-block" id="Client.remove_cog">
 <a class="viewcode-back" href="../../api/client.html#discord_http.client.Client.remove_cog">[docs]</a>
-    <span class="k">async</span> <span class="k">def</span> <span class="nf">remove_cog</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">cog</span><span class="p">:</span> <span class="s2">&quot;Cog&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">remove_cog</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">cog</span><span class="p">:</span> <span class="s2">&quot;Cog&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Removes a cog from the bot.</span>
 
@@ -1078,7 +1078,7 @@
 
 <div class="viewcode-block" id="Client.command">
 <a class="viewcode-back" href="../../api/client.html#discord_http.client.Client.command">[docs]</a>
-    <span class="k">def</span> <span class="nf">command</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">command</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">name</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="o">*</span><span class="p">,</span>
@@ -1103,7 +1103,7 @@
 <span class="sd">        guild_install: `bool`</span>
 <span class="sd">            Whether the command can be installed by guilds or not</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">def</span> <span class="nf">decorator</span><span class="p">(</span><span class="n">func</span><span class="p">):</span>
+        <span class="k">def</span><span class="w"> </span><span class="nf">decorator</span><span class="p">(</span><span class="n">func</span><span class="p">):</span>
             <span class="n">command</span> <span class="o">=</span> <span class="n">Command</span><span class="p">(</span>
                 <span class="n">func</span><span class="p">,</span>
                 <span class="n">name</span><span class="o">=</span><span class="n">name</span> <span class="ow">or</span> <span class="n">func</span><span class="o">.</span><span class="vm">__name__</span><span class="p">,</span>
@@ -1120,7 +1120,7 @@
 
 <div class="viewcode-block" id="Client.user_command">
 <a class="viewcode-back" href="../../api/client.html#discord_http.client.Client.user_command">[docs]</a>
-    <span class="k">def</span> <span class="nf">user_command</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">user_command</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">name</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="o">*</span><span class="p">,</span>
@@ -1150,7 +1150,7 @@
 <span class="sd">        guild_install: `bool`</span>
 <span class="sd">            Whether the command can be installed by guilds or not</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">def</span> <span class="nf">decorator</span><span class="p">(</span><span class="n">func</span><span class="p">):</span>
+        <span class="k">def</span><span class="w"> </span><span class="nf">decorator</span><span class="p">(</span><span class="n">func</span><span class="p">):</span>
             <span class="n">command</span> <span class="o">=</span> <span class="n">Command</span><span class="p">(</span>
                 <span class="n">func</span><span class="p">,</span>
                 <span class="n">name</span><span class="o">=</span><span class="n">name</span> <span class="ow">or</span> <span class="n">func</span><span class="o">.</span><span class="vm">__name__</span><span class="p">,</span>
@@ -1167,7 +1167,7 @@
 
 <div class="viewcode-block" id="Client.message_command">
 <a class="viewcode-back" href="../../api/client.html#discord_http.client.Client.message_command">[docs]</a>
-    <span class="k">def</span> <span class="nf">message_command</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">message_command</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">name</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="o">*</span><span class="p">,</span>
@@ -1197,7 +1197,7 @@
 <span class="sd">        guild_install: `bool`</span>
 <span class="sd">            Whether the command can be installed by guilds or not</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">def</span> <span class="nf">decorator</span><span class="p">(</span><span class="n">func</span><span class="p">):</span>
+        <span class="k">def</span><span class="w"> </span><span class="nf">decorator</span><span class="p">(</span><span class="n">func</span><span class="p">):</span>
             <span class="n">command</span> <span class="o">=</span> <span class="n">Command</span><span class="p">(</span>
                 <span class="n">func</span><span class="p">,</span>
                 <span class="n">name</span><span class="o">=</span><span class="n">name</span> <span class="ow">or</span> <span class="n">func</span><span class="o">.</span><span class="vm">__name__</span><span class="p">,</span>
@@ -1214,7 +1214,7 @@
 
 <div class="viewcode-block" id="Client.group">
 <a class="viewcode-back" href="../../api/client.html#discord_http.client.Client.group">[docs]</a>
-    <span class="k">def</span> <span class="nf">group</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">group</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">name</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="o">*</span><span class="p">,</span>
@@ -1230,7 +1230,7 @@
 <span class="sd">        description: `Optional[str]`</span>
 <span class="sd">            Description of the group, if not provided, it will use the function docstring</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">def</span> <span class="nf">decorator</span><span class="p">(</span><span class="n">func</span><span class="p">):</span>
+        <span class="k">def</span><span class="w"> </span><span class="nf">decorator</span><span class="p">(</span><span class="n">func</span><span class="p">):</span>
             <span class="n">subgroup</span> <span class="o">=</span> <span class="n">SubGroup</span><span class="p">(</span>
                 <span class="n">name</span><span class="o">=</span><span class="n">name</span> <span class="ow">or</span> <span class="n">func</span><span class="o">.</span><span class="vm">__name__</span><span class="p">,</span>
                 <span class="n">description</span><span class="o">=</span><span class="n">description</span>
@@ -1243,7 +1243,7 @@
 
 <div class="viewcode-block" id="Client.add_group">
 <a class="viewcode-back" href="../../api/client.html#discord_http.client.Client.add_group">[docs]</a>
-    <span class="k">def</span> <span class="nf">add_group</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">SubGroup</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">add_group</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">SubGroup</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Used to add a sub-command group</span>
 
@@ -1264,7 +1264,7 @@
 
 <div class="viewcode-block" id="Client.interaction">
 <a class="viewcode-back" href="../../api/client.html#discord_http.client.Client.interaction">[docs]</a>
-    <span class="k">def</span> <span class="nf">interaction</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">interaction</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">custom_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
         <span class="o">*</span><span class="p">,</span>
@@ -1282,7 +1282,7 @@
 <span class="sd">        regex: `bool`</span>
 <span class="sd">            Whether the custom_id is a regex or not</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">def</span> <span class="nf">decorator</span><span class="p">(</span><span class="n">func</span><span class="p">):</span>
+        <span class="k">def</span><span class="w"> </span><span class="nf">decorator</span><span class="p">(</span><span class="n">func</span><span class="p">):</span>
             <span class="n">command</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">add_interaction</span><span class="p">(</span><span class="n">Interaction</span><span class="p">(</span>
                 <span class="n">func</span><span class="p">,</span>
                 <span class="n">custom_id</span><span class="o">=</span><span class="n">custom_id</span><span class="p">,</span>
@@ -1295,7 +1295,7 @@
 
 <div class="viewcode-block" id="Client.listener">
 <a class="viewcode-back" href="../../api/client.html#discord_http.client.Client.listener">[docs]</a>
-    <span class="k">def</span> <span class="nf">listener</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">listener</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">name</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
     <span class="p">):</span>
@@ -1316,7 +1316,7 @@
         <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="p">(</span><span class="nb">str</span><span class="p">,</span> <span class="nb">type</span><span class="p">(</span><span class="kc">None</span><span class="p">))):</span>
             <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Listener name must be a string, not </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">name</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
 
-        <span class="k">def</span> <span class="nf">decorator</span><span class="p">(</span><span class="n">func</span><span class="p">):</span>
+        <span class="k">def</span><span class="w"> </span><span class="nf">decorator</span><span class="p">(</span><span class="n">func</span><span class="p">):</span>
             <span class="n">actual</span> <span class="o">=</span> <span class="n">func</span>
             <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">actual</span><span class="p">,</span> <span class="nb">staticmethod</span><span class="p">):</span>
                 <span class="n">actual</span> <span class="o">=</span> <span class="n">actual</span><span class="o">.</span><span class="vm">__func__</span>
@@ -1332,7 +1332,7 @@
 
 <div class="viewcode-block" id="Client.get_channel">
 <a class="viewcode-back" href="../../api/client.html#discord_http.client.Client.get_channel">[docs]</a>
-    <span class="k">def</span> <span class="nf">get_channel</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_channel</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">channel_id</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">BaseChannel</span> <span class="o">|</span> <span class="n">PartialChannel</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
@@ -1362,7 +1362,7 @@
 
 <div class="viewcode-block" id="Client.get_partial_channel">
 <a class="viewcode-back" href="../../api/client.html#discord_http.client.Client.get_partial_channel">[docs]</a>
-    <span class="k">def</span> <span class="nf">get_partial_channel</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_partial_channel</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">channel_id</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
         <span class="o">*</span><span class="p">,</span>
@@ -1392,7 +1392,7 @@
 
 <div class="viewcode-block" id="Client.fetch_channel">
 <a class="viewcode-back" href="../../api/client.html#discord_http.client.Client.fetch_channel">[docs]</a>
-    <span class="k">async</span> <span class="k">def</span> <span class="nf">fetch_channel</span><span class="p">(</span>
+    <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">fetch_channel</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">channel_id</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
         <span class="o">*</span><span class="p">,</span>
@@ -1419,7 +1419,7 @@
 
 <div class="viewcode-block" id="Client.get_partial_automod_rule">
 <a class="viewcode-back" href="../../api/client.html#discord_http.client.Client.get_partial_automod_rule">[docs]</a>
-    <span class="k">def</span> <span class="nf">get_partial_automod_rule</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_partial_automod_rule</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">rule_id</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
         <span class="n">guild_id</span><span class="p">:</span> <span class="nb">int</span>
@@ -1448,7 +1448,7 @@
 
 <div class="viewcode-block" id="Client.fetch_automod_rule">
 <a class="viewcode-back" href="../../api/client.html#discord_http.client.Client.fetch_automod_rule">[docs]</a>
-    <span class="k">async</span> <span class="k">def</span> <span class="nf">fetch_automod_rule</span><span class="p">(</span>
+    <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">fetch_automod_rule</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">rule_id</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
         <span class="n">guild_id</span><span class="p">:</span> <span class="nb">int</span>
@@ -1478,7 +1478,7 @@
 
 <div class="viewcode-block" id="Client.get_partial_invite">
 <a class="viewcode-back" href="../../api/client.html#discord_http.client.Client.get_partial_invite">[docs]</a>
-    <span class="k">def</span> <span class="nf">get_partial_invite</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_partial_invite</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">invite_code</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
         <span class="o">*</span><span class="p">,</span>
@@ -1508,7 +1508,7 @@
 
 <div class="viewcode-block" id="Client.get_partial_voice_state">
 <a class="viewcode-back" href="../../api/client.html#discord_http.client.Client.get_partial_voice_state">[docs]</a>
-    <span class="k">def</span> <span class="nf">get_partial_voice_state</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_partial_voice_state</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">member_id</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
         <span class="o">*</span><span class="p">,</span>
@@ -1540,7 +1540,7 @@
 
 <div class="viewcode-block" id="Client.fetch_voice_state">
 <a class="viewcode-back" href="../../api/client.html#discord_http.client.Client.fetch_voice_state">[docs]</a>
-    <span class="k">async</span> <span class="k">def</span> <span class="nf">fetch_voice_state</span><span class="p">(</span>
+    <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">fetch_voice_state</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">member_id</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
         <span class="n">guild_id</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
@@ -1570,7 +1570,7 @@
 
 <div class="viewcode-block" id="Client.get_partial_emoji">
 <a class="viewcode-back" href="../../api/client.html#discord_http.client.Client.get_partial_emoji">[docs]</a>
-    <span class="k">def</span> <span class="nf">get_partial_emoji</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_partial_emoji</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">emoji_id</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
         <span class="o">*</span><span class="p">,</span>
@@ -1601,7 +1601,7 @@
 
 <div class="viewcode-block" id="Client.fetch_emoji">
 <a class="viewcode-back" href="../../api/client.html#discord_http.client.Client.fetch_emoji">[docs]</a>
-    <span class="k">async</span> <span class="k">def</span> <span class="nf">fetch_emoji</span><span class="p">(</span>
+    <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">fetch_emoji</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">emoji_id</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
         <span class="o">*</span><span class="p">,</span>
@@ -1633,7 +1633,7 @@
 
 <div class="viewcode-block" id="Client.get_partial_sticker">
 <a class="viewcode-back" href="../../api/client.html#discord_http.client.Client.get_partial_sticker">[docs]</a>
-    <span class="k">def</span> <span class="nf">get_partial_sticker</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_partial_sticker</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">sticker_id</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
         <span class="o">*</span><span class="p">,</span>
@@ -1663,7 +1663,7 @@
 
 <div class="viewcode-block" id="Client.fetch_sticker">
 <a class="viewcode-back" href="../../api/client.html#discord_http.client.Client.fetch_sticker">[docs]</a>
-    <span class="k">async</span> <span class="k">def</span> <span class="nf">fetch_sticker</span><span class="p">(</span>
+    <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">fetch_sticker</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">sticker_id</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
         <span class="o">*</span><span class="p">,</span>
@@ -1692,7 +1692,7 @@
 
 <div class="viewcode-block" id="Client.get_partial_soundboard_sound">
 <a class="viewcode-back" href="../../api/client.html#discord_http.client.Client.get_partial_soundboard_sound">[docs]</a>
-    <span class="k">def</span> <span class="nf">get_partial_soundboard_sound</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_partial_soundboard_sound</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">sound_id</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
         <span class="o">*</span><span class="p">,</span>
@@ -1722,7 +1722,7 @@
 
 <div class="viewcode-block" id="Client.fetch_soundboard_sound">
 <a class="viewcode-back" href="../../api/client.html#discord_http.client.Client.fetch_soundboard_sound">[docs]</a>
-    <span class="k">async</span> <span class="k">def</span> <span class="nf">fetch_soundboard_sound</span><span class="p">(</span>
+    <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">fetch_soundboard_sound</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">sound_id</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
         <span class="n">guild_id</span><span class="p">:</span> <span class="nb">int</span>
@@ -1752,7 +1752,7 @@
 
 <div class="viewcode-block" id="Client.fetch_invite">
 <a class="viewcode-back" href="../../api/client.html#discord_http.client.Client.fetch_invite">[docs]</a>
-    <span class="k">async</span> <span class="k">def</span> <span class="nf">fetch_invite</span><span class="p">(</span>
+    <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">fetch_invite</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">invite_code</span><span class="p">:</span> <span class="nb">str</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Invite</span><span class="p">:</span>
@@ -1775,7 +1775,7 @@
 
 <div class="viewcode-block" id="Client.get_partial_message">
 <a class="viewcode-back" href="../../api/client.html#discord_http.client.Client.get_partial_message">[docs]</a>
-    <span class="k">def</span> <span class="nf">get_partial_message</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_partial_message</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">message_id</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
         <span class="n">channel_id</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
@@ -1808,7 +1808,7 @@
 
 <div class="viewcode-block" id="Client.fetch_message">
 <a class="viewcode-back" href="../../api/client.html#discord_http.client.Client.fetch_message">[docs]</a>
-    <span class="k">async</span> <span class="k">def</span> <span class="nf">fetch_message</span><span class="p">(</span>
+    <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">fetch_message</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">message_id</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
         <span class="n">channel_id</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
@@ -1837,7 +1837,7 @@
 
 <div class="viewcode-block" id="Client.get_partial_webhook">
 <a class="viewcode-back" href="../../api/client.html#discord_http.client.Client.get_partial_webhook">[docs]</a>
-    <span class="k">def</span> <span class="nf">get_partial_webhook</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_partial_webhook</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">webhook_id</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
         <span class="o">*</span><span class="p">,</span>
@@ -1867,7 +1867,7 @@
 
 <div class="viewcode-block" id="Client.fetch_webhook">
 <a class="viewcode-back" href="../../api/client.html#discord_http.client.Client.fetch_webhook">[docs]</a>
-    <span class="k">async</span> <span class="k">def</span> <span class="nf">fetch_webhook</span><span class="p">(</span>
+    <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">fetch_webhook</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">webhook_id</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
         <span class="o">*</span><span class="p">,</span>
@@ -1898,7 +1898,7 @@
 
 <div class="viewcode-block" id="Client.get_partial_user">
 <a class="viewcode-back" href="../../api/client.html#discord_http.client.Client.get_partial_user">[docs]</a>
-    <span class="k">def</span> <span class="nf">get_partial_user</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_partial_user</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">user_id</span><span class="p">:</span> <span class="nb">int</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">PartialUser</span><span class="p">:</span>
@@ -1923,7 +1923,7 @@
 
 <div class="viewcode-block" id="Client.fetch_user">
 <a class="viewcode-back" href="../../api/client.html#discord_http.client.Client.fetch_user">[docs]</a>
-    <span class="k">async</span> <span class="k">def</span> <span class="nf">fetch_user</span><span class="p">(</span>
+    <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">fetch_user</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">user_id</span><span class="p">:</span> <span class="nb">int</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">User</span><span class="p">:</span>
@@ -1946,7 +1946,7 @@
 
 <div class="viewcode-block" id="Client.get_partial_member">
 <a class="viewcode-back" href="../../api/client.html#discord_http.client.Client.get_partial_member">[docs]</a>
-    <span class="k">def</span> <span class="nf">get_partial_member</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_partial_member</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">user_id</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
         <span class="n">guild_id</span><span class="p">:</span> <span class="nb">int</span>
@@ -1975,7 +1975,7 @@
 
 <div class="viewcode-block" id="Client.fetch_member">
 <a class="viewcode-back" href="../../api/client.html#discord_http.client.Client.fetch_member">[docs]</a>
-    <span class="k">async</span> <span class="k">def</span> <span class="nf">fetch_member</span><span class="p">(</span>
+    <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">fetch_member</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">user_id</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
         <span class="n">guild_id</span><span class="p">:</span> <span class="nb">int</span>
@@ -2001,7 +2001,7 @@
 
 <div class="viewcode-block" id="Client.fetch_application_emojis">
 <a class="viewcode-back" href="../../api/client.html#discord_http.client.Client.fetch_application_emojis">[docs]</a>
-    <span class="k">async</span> <span class="k">def</span> <span class="nf">fetch_application_emojis</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="n">Emoji</span><span class="p">]:</span>
+    <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">fetch_application_emojis</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="n">Emoji</span><span class="p">]:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot; `list[Emoji]`: Fetches all emojis available to the application. &quot;&quot;&quot;</span>
         <span class="n">r</span> <span class="o">=</span> <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">state</span><span class="o">.</span><span class="n">query</span><span class="p">(</span>
             <span class="s2">&quot;GET&quot;</span><span class="p">,</span>
@@ -2016,7 +2016,7 @@
 
 <div class="viewcode-block" id="Client.create_application_emoji">
 <a class="viewcode-back" href="../../api/client.html#discord_http.client.Client.create_application_emoji">[docs]</a>
-    <span class="k">async</span> <span class="k">def</span> <span class="nf">create_application_emoji</span><span class="p">(</span>
+    <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">create_application_emoji</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
         <span class="o">*</span><span class="p">,</span>
@@ -2054,7 +2054,7 @@
 
 <div class="viewcode-block" id="Client.get_partial_sku">
 <a class="viewcode-back" href="../../api/client.html#discord_http.client.Client.get_partial_sku">[docs]</a>
-    <span class="k">def</span> <span class="nf">get_partial_sku</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_partial_sku</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">sku_id</span><span class="p">:</span> <span class="nb">int</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">PartialSKU</span><span class="p">:</span>
@@ -2074,7 +2074,7 @@
 
 <div class="viewcode-block" id="Client.fetch_skus">
 <a class="viewcode-back" href="../../api/client.html#discord_http.client.Client.fetch_skus">[docs]</a>
-    <span class="k">async</span> <span class="k">def</span> <span class="nf">fetch_skus</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="n">SKU</span><span class="p">]:</span>
+    <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">fetch_skus</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="n">SKU</span><span class="p">]:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot; `list[SKU]`: Fetches all SKUs available to the bot. &quot;&quot;&quot;</span>
         <span class="n">r</span> <span class="o">=</span> <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">state</span><span class="o">.</span><span class="n">query</span><span class="p">(</span>
             <span class="s2">&quot;GET&quot;</span><span class="p">,</span>
@@ -2089,7 +2089,7 @@
 
 <div class="viewcode-block" id="Client.get_partial_entitlement">
 <a class="viewcode-back" href="../../api/client.html#discord_http.client.Client.get_partial_entitlement">[docs]</a>
-    <span class="k">def</span> <span class="nf">get_partial_entitlement</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_partial_entitlement</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">entitlement_id</span><span class="p">:</span> <span class="nb">int</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">PartialEntitlements</span><span class="p">:</span>
@@ -2114,7 +2114,7 @@
 
 <div class="viewcode-block" id="Client.fetch_entitlement">
 <a class="viewcode-back" href="../../api/client.html#discord_http.client.Client.fetch_entitlement">[docs]</a>
-    <span class="k">async</span> <span class="k">def</span> <span class="nf">fetch_entitlement</span><span class="p">(</span>
+    <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">fetch_entitlement</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">entitlement_id</span><span class="p">:</span> <span class="nb">int</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Entitlements</span><span class="p">:</span>
@@ -2137,7 +2137,7 @@
 
 <div class="viewcode-block" id="Client.fetch_entitlement_list">
 <a class="viewcode-back" href="../../api/client.html#discord_http.client.Client.fetch_entitlement_list">[docs]</a>
-    <span class="k">async</span> <span class="k">def</span> <span class="nf">fetch_entitlement_list</span><span class="p">(</span>
+    <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">fetch_entitlement_list</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="o">*</span><span class="p">,</span>
         <span class="n">user_id</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
@@ -2185,7 +2185,7 @@
         <span class="k">if</span> <span class="n">guild_id</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">params</span><span class="p">[</span><span class="s2">&quot;guild_id&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">guild_id</span><span class="p">)</span>
 
-        <span class="k">def</span> <span class="nf">_resolve_id</span><span class="p">(</span><span class="n">entry</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+        <span class="k">def</span><span class="w"> </span><span class="nf">_resolve_id</span><span class="p">(</span><span class="n">entry</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
             <span class="k">match</span> <span class="n">entry</span><span class="p">:</span>
                 <span class="k">case</span> <span class="n">x</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">Snowflake</span><span class="p">):</span>
                     <span class="k">return</span> <span class="nb">int</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
@@ -2204,7 +2204,7 @@
                 <span class="k">case</span><span class="w"> </span><span class="k">_</span><span class="p">:</span>
                     <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;Got an unknown type for before/after&quot;</span><span class="p">)</span>
 
-        <span class="k">async</span> <span class="k">def</span> <span class="nf">_get_history</span><span class="p">(</span><span class="n">limit</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">_get_history</span><span class="p">(</span><span class="n">limit</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
             <span class="n">params</span><span class="p">[</span><span class="s2">&quot;limit&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="n">limit</span><span class="p">,</span> <span class="mi">100</span><span class="p">)</span>
             <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
                 <span class="k">if</span> <span class="n">value</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
@@ -2217,7 +2217,7 @@
                 <span class="n">params</span><span class="o">=</span><span class="n">params</span>
             <span class="p">)</span>
 
-        <span class="k">async</span> <span class="k">def</span> <span class="nf">_after_http</span><span class="p">(</span>
+        <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">_after_http</span><span class="p">(</span>
             <span class="n">http_limit</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
             <span class="n">after_id</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">],</span>
             <span class="n">limit</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span>
@@ -2231,7 +2231,7 @@
 
             <span class="k">return</span> <span class="n">r</span><span class="o">.</span><span class="n">response</span><span class="p">,</span> <span class="n">after_id</span><span class="p">,</span> <span class="n">limit</span>
 
-        <span class="k">async</span> <span class="k">def</span> <span class="nf">_before_http</span><span class="p">(</span>
+        <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">_before_http</span><span class="p">(</span>
             <span class="n">http_limit</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
             <span class="n">before_id</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">],</span>
             <span class="n">limit</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span>
@@ -2270,7 +2270,7 @@
 
 <div class="viewcode-block" id="Client.get_partial_scheduled_event">
 <a class="viewcode-back" href="../../api/client.html#discord_http.client.Client.get_partial_scheduled_event">[docs]</a>
-    <span class="k">def</span> <span class="nf">get_partial_scheduled_event</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_partial_scheduled_event</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="nb">id</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
         <span class="n">guild_id</span><span class="p">:</span> <span class="nb">int</span>
@@ -2299,7 +2299,7 @@
 
 <div class="viewcode-block" id="Client.fetch_scheduled_event">
 <a class="viewcode-back" href="../../api/client.html#discord_http.client.Client.fetch_scheduled_event">[docs]</a>
-    <span class="k">async</span> <span class="k">def</span> <span class="nf">fetch_scheduled_event</span><span class="p">(</span>
+    <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">fetch_scheduled_event</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="nb">id</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
         <span class="n">guild_id</span><span class="p">:</span> <span class="nb">int</span>
@@ -2327,7 +2327,7 @@
 
 <div class="viewcode-block" id="Client.get_partial_guild">
 <a class="viewcode-back" href="../../api/client.html#discord_http.client.Client.get_partial_guild">[docs]</a>
-    <span class="k">def</span> <span class="nf">get_partial_guild</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_partial_guild</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">guild_id</span><span class="p">:</span> <span class="nb">int</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">PartialGuild</span><span class="p">:</span>
@@ -2352,7 +2352,7 @@
 
 <div class="viewcode-block" id="Client.fetch_guild">
 <a class="viewcode-back" href="../../api/client.html#discord_http.client.Client.fetch_guild">[docs]</a>
-    <span class="k">async</span> <span class="k">def</span> <span class="nf">fetch_guild</span><span class="p">(</span>
+    <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">fetch_guild</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">guild_id</span><span class="p">:</span> <span class="nb">int</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Guild</span><span class="p">:</span>
@@ -2375,7 +2375,7 @@
 
 <div class="viewcode-block" id="Client.create_guild">
 <a class="viewcode-back" href="../../api/client.html#discord_http.client.Client.create_guild">[docs]</a>
-    <span class="k">async</span> <span class="k">def</span> <span class="nf">create_guild</span><span class="p">(</span>
+    <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">create_guild</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
         <span class="o">*</span><span class="p">,</span>
@@ -2421,7 +2421,7 @@
 
 <div class="viewcode-block" id="Client.get_partial_role">
 <a class="viewcode-back" href="../../api/client.html#discord_http.client.Client.get_partial_role">[docs]</a>
-    <span class="k">def</span> <span class="nf">get_partial_role</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_partial_role</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">role_id</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
         <span class="n">guild_id</span><span class="p">:</span> <span class="nb">int</span>
@@ -2450,7 +2450,7 @@
 
 <div class="viewcode-block" id="Client.find_interaction">
 <a class="viewcode-back" href="../../api/client.html#discord_http.client.Client.find_interaction">[docs]</a>
-    <span class="k">def</span> <span class="nf">find_interaction</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">find_interaction</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">custom_id</span><span class="p">:</span> <span class="nb">str</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="s2">&quot;Interaction&quot;</span><span class="p">]:</span>
@@ -2482,7 +2482,7 @@
 
 <div class="viewcode-block" id="Client.add_listener">
 <a class="viewcode-back" href="../../api/client.html#discord_http.client.Client.add_listener">[docs]</a>
-    <span class="k">def</span> <span class="nf">add_listener</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">add_listener</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">func</span><span class="p">:</span> <span class="s2">&quot;Listener&quot;</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;Listener&quot;</span><span class="p">:</span>
@@ -2500,7 +2500,7 @@
 
 <div class="viewcode-block" id="Client.remove_listener">
 <a class="viewcode-back" href="../../api/client.html#discord_http.client.Client.remove_listener">[docs]</a>
-    <span class="k">def</span> <span class="nf">remove_listener</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">remove_listener</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">func</span><span class="p">:</span> <span class="s2">&quot;Listener&quot;</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
@@ -2517,7 +2517,7 @@
 
 <div class="viewcode-block" id="Client.add_command">
 <a class="viewcode-back" href="../../api/client.html#discord_http.client.Client.add_command">[docs]</a>
-    <span class="k">def</span> <span class="nf">add_command</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">add_command</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">func</span><span class="p">:</span> <span class="s2">&quot;Command&quot;</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;Command&quot;</span><span class="p">:</span>
@@ -2535,7 +2535,7 @@
 
 <div class="viewcode-block" id="Client.remove_command">
 <a class="viewcode-back" href="../../api/client.html#discord_http.client.Client.remove_command">[docs]</a>
-    <span class="k">def</span> <span class="nf">remove_command</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">remove_command</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">func</span><span class="p">:</span> <span class="s2">&quot;Command&quot;</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
@@ -2552,7 +2552,7 @@
 
 <div class="viewcode-block" id="Client.add_global_cmd_check">
 <a class="viewcode-back" href="../../api/client.html#discord_http.client.Client.add_global_cmd_check">[docs]</a>
-    <span class="k">def</span> <span class="nf">add_global_cmd_check</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">add_global_cmd_check</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">func</span><span class="p">:</span> <span class="n">Callable</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Callable</span><span class="p">:</span>
@@ -2571,7 +2571,7 @@
 
 <div class="viewcode-block" id="Client.add_interaction">
 <a class="viewcode-back" href="../../api/client.html#discord_http.client.Client.add_interaction">[docs]</a>
-    <span class="k">def</span> <span class="nf">add_interaction</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">add_interaction</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">func</span><span class="p">:</span> <span class="s2">&quot;Interaction&quot;</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;Interaction&quot;</span><span class="p">:</span>
@@ -2593,7 +2593,7 @@
 
 <div class="viewcode-block" id="Client.remove_interaction">
 <a class="viewcode-back" href="../../api/client.html#discord_http.client.Client.remove_interaction">[docs]</a>
-    <span class="k">def</span> <span class="nf">remove_interaction</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">remove_interaction</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">func</span><span class="p">:</span> <span class="s2">&quot;Interaction&quot;</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>

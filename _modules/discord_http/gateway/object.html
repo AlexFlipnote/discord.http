@@ -6,7 +6,7 @@
 
     <link rel="shortcut icon" href="../../../_static/favicon.ico"/><!-- Generated with Sphinx 8.1.3 and Furo 2024.08.06 -->
         <title>discord_http.gateway.object - discord.http docs</title>
-      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=fa44fd50" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=03e43079" />
     <link rel="stylesheet" type="text/css" href="../../../_static/styles/furo.css?v=354aac6f" />
     <link rel="stylesheet" type="text/css" href="../../../_static/styles/furo-extensions.css?v=302659d7" />
     
@@ -292,36 +292,36 @@
         </div>
         <article role="main" id="furo-main-content">
           <h1>Source code for discord_http.gateway.object</h1><div class="highlight"><pre>
-<span></span><span class="kn">import</span> <span class="nn">time</span>
+<span></span><span class="kn">import</span><span class="w"> </span><span class="nn">time</span>
 
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">TYPE_CHECKING</span><span class="p">,</span> <span class="n">Iterator</span>
-<span class="kn">from</span> <span class="nn">datetime</span> <span class="kn">import</span> <span class="n">datetime</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">TYPE_CHECKING</span><span class="p">,</span> <span class="n">Iterator</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">datetime</span><span class="w"> </span><span class="kn">import</span> <span class="n">datetime</span>
 
-<span class="kn">from</span> <span class="nn">.activity</span> <span class="kn">import</span> <span class="n">Activity</span>
-<span class="kn">from</span> <span class="nn">.enums</span> <span class="kn">import</span> <span class="n">StatusType</span><span class="p">,</span> <span class="n">PollVoteActionType</span><span class="p">,</span> <span class="n">ActivityType</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.activity</span><span class="w"> </span><span class="kn">import</span> <span class="n">Activity</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.enums</span><span class="w"> </span><span class="kn">import</span> <span class="n">StatusType</span><span class="p">,</span> <span class="n">PollVoteActionType</span><span class="p">,</span> <span class="n">ActivityType</span>
 
-<span class="kn">from</span> <span class="nn">..</span> <span class="kn">import</span> <span class="n">utils</span>
-<span class="kn">from</span> <span class="nn">..automod</span> <span class="kn">import</span> <span class="n">AutoModRuleAction</span><span class="p">,</span> <span class="n">PartialAutoModRule</span>
-<span class="kn">from</span> <span class="nn">..colour</span> <span class="kn">import</span> <span class="n">Colour</span>
-<span class="kn">from</span> <span class="nn">..emoji</span> <span class="kn">import</span> <span class="n">EmojiParser</span>
-<span class="kn">from</span> <span class="nn">..enums</span> <span class="kn">import</span> <span class="n">ReactionType</span><span class="p">,</span> <span class="n">AutoModRuleTriggerType</span>
-<span class="kn">from</span> <span class="nn">..message</span> <span class="kn">import</span> <span class="n">PartialMessage</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">..</span><span class="w"> </span><span class="kn">import</span> <span class="n">utils</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">..automod</span><span class="w"> </span><span class="kn">import</span> <span class="n">AutoModRuleAction</span><span class="p">,</span> <span class="n">PartialAutoModRule</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">..colour</span><span class="w"> </span><span class="kn">import</span> <span class="n">Colour</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">..emoji</span><span class="w"> </span><span class="kn">import</span> <span class="n">EmojiParser</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">..enums</span><span class="w"> </span><span class="kn">import</span> <span class="n">ReactionType</span><span class="p">,</span> <span class="n">AutoModRuleTriggerType</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">..message</span><span class="w"> </span><span class="kn">import</span> <span class="n">PartialMessage</span>
 
 <span class="k">if</span> <span class="n">TYPE_CHECKING</span><span class="p">:</span>
-    <span class="kn">from</span> <span class="nn">..types.channels</span> <span class="kn">import</span> <span class="p">(</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">..types.channels</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
         <span class="n">ThreadListSync</span><span class="p">,</span>
         <span class="n">ThreadMembersUpdate</span>
     <span class="p">)</span>
-    <span class="kn">from</span> <span class="nn">..types.guilds</span> <span class="kn">import</span> <span class="p">(</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">..types.guilds</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
         <span class="n">ThreadMember</span> <span class="k">as</span> <span class="n">ThreadMemberPayload</span><span class="p">,</span>
         <span class="n">ThreadMemberWithMember</span> <span class="k">as</span> <span class="n">ThreadMemberWithMember</span>
     <span class="p">)</span>
 
-    <span class="kn">from</span> <span class="nn">..guild</span> <span class="kn">import</span> <span class="n">Guild</span><span class="p">,</span> <span class="n">PartialGuild</span>
-    <span class="kn">from</span> <span class="nn">..http</span> <span class="kn">import</span> <span class="n">DiscordAPI</span>
-    <span class="kn">from</span> <span class="nn">..member</span> <span class="kn">import</span> <span class="n">Member</span><span class="p">,</span> <span class="n">PartialMember</span><span class="p">,</span> <span class="n">PartialThreadMember</span><span class="p">,</span> <span class="n">ThreadMember</span>
-    <span class="kn">from</span> <span class="nn">..user</span> <span class="kn">import</span> <span class="n">User</span><span class="p">,</span> <span class="n">PartialUser</span>
-    <span class="kn">from</span> <span class="nn">..channel</span> <span class="kn">import</span> <span class="n">BaseChannel</span><span class="p">,</span> <span class="n">PartialChannel</span><span class="p">,</span> <span class="n">Thread</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">..guild</span><span class="w"> </span><span class="kn">import</span> <span class="n">Guild</span><span class="p">,</span> <span class="n">PartialGuild</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">..http</span><span class="w"> </span><span class="kn">import</span> <span class="n">DiscordAPI</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">..member</span><span class="w"> </span><span class="kn">import</span> <span class="n">Member</span><span class="p">,</span> <span class="n">PartialMember</span><span class="p">,</span> <span class="n">PartialThreadMember</span><span class="p">,</span> <span class="n">ThreadMember</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">..user</span><span class="w"> </span><span class="kn">import</span> <span class="n">User</span><span class="p">,</span> <span class="n">PartialUser</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">..channel</span><span class="w"> </span><span class="kn">import</span> <span class="n">BaseChannel</span><span class="p">,</span> <span class="n">PartialChannel</span><span class="p">,</span> <span class="n">Thread</span>
 
 <span class="n">__all__</span> <span class="o">=</span> <span class="p">(</span>
     <span class="s2">&quot;AutomodExecution&quot;</span><span class="p">,</span>
@@ -340,8 +340,8 @@
 
 <div class="viewcode-block" id="PlayingStatus">
 <a class="viewcode-back" href="../../../gateway/object.html#discord_http.gateway.object.PlayingStatus">[docs]</a>
-<span class="k">class</span> <span class="nc">PlayingStatus</span><span class="p">:</span>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">PlayingStatus</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="o">*</span><span class="p">,</span>
         <span class="n">name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
@@ -371,7 +371,7 @@
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">status</span> <span class="o">==</span> <span class="n">StatusType</span><span class="o">.</span><span class="n">idle</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">since</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span> <span class="o">*</span> <span class="mi">1_000</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
         <span class="k">return</span> <span class="p">(</span>
             <span class="sa">f</span><span class="s2">&quot;&lt;PlayingStatus name=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2"> &quot;</span>
             <span class="sa">f</span><span class="s2">&quot;status=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">status</span><span class="si">}</span><span class="s2"> type=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">type</span><span class="si">}</span><span class="s2">&gt;&quot;</span>
@@ -379,7 +379,7 @@
 
 <div class="viewcode-block" id="PlayingStatus.to_dict">
 <a class="viewcode-back" href="../../../gateway/object.html#discord_http.gateway.object.PlayingStatus.to_dict">[docs]</a>
-    <span class="k">def</span> <span class="nf">to_dict</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">to_dict</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
         <span class="n">payload</span> <span class="o">=</span> <span class="p">{</span>
             <span class="s2">&quot;afk&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
             <span class="s2">&quot;since&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">since</span><span class="p">,</span>
@@ -407,8 +407,8 @@
 
 <div class="viewcode-block" id="GuildJoinRequest">
 <a class="viewcode-back" href="../../../gateway/object.html#discord_http.gateway.object.GuildJoinRequest">[docs]</a>
-<span class="k">class</span> <span class="nc">GuildJoinRequest</span><span class="p">:</span>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">GuildJoinRequest</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="o">*</span><span class="p">,</span>
         <span class="n">state</span><span class="p">:</span> <span class="s2">&quot;DiscordAPI&quot;</span><span class="p">,</span>
@@ -428,13 +428,13 @@
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_from_data</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">_from_data</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="nb">dict</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_from_data</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="nb">dict</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="n">_request</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;request&quot;</span><span class="p">,</span> <span class="p">{})</span>
         <span class="k">if</span> <span class="n">_request</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">user_id</span> <span class="o">=</span> <span class="n">utils</span><span class="o">.</span><span class="n">get_int</span><span class="p">(</span><span class="n">_request</span><span class="p">,</span> <span class="s2">&quot;user_id&quot;</span><span class="p">)</span>
 
             <span class="k">if</span> <span class="n">_request</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;user&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">):</span>
-                <span class="kn">from</span> <span class="nn">..user</span> <span class="kn">import</span> <span class="n">User</span>
+                <span class="kn">from</span><span class="w"> </span><span class="nn">..user</span><span class="w"> </span><span class="kn">import</span> <span class="n">User</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">user</span> <span class="o">=</span> <span class="n">User</span><span class="p">(</span>
                     <span class="n">state</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_state</span><span class="p">,</span>
                     <span class="n">data</span><span class="o">=</span><span class="n">_request</span><span class="p">[</span><span class="s2">&quot;user&quot;</span><span class="p">]</span>
@@ -446,7 +446,7 @@
 
 <div class="viewcode-block" id="ChannelPinsUpdate">
 <a class="viewcode-back" href="../../../gateway/object.html#discord_http.gateway.object.ChannelPinsUpdate">[docs]</a>
-<span class="k">class</span> <span class="nc">ChannelPinsUpdate</span><span class="p">:</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">ChannelPinsUpdate</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Represents a channel pins update event.</span>
 
 <span class="sd">    Attributes</span>
@@ -458,7 +458,7 @@
 <span class="sd">    guild: `PartialGuild` | `Guild` | `None`</span>
 <span class="sd">        The guild the channel is in. If the channel is a DM channel, this will be `None`.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">channel</span><span class="p">:</span> <span class="s2">&quot;BaseChannel | PartialChannel&quot;</span><span class="p">,</span>
         <span class="n">last_pin_timestamp</span><span class="p">:</span> <span class="s2">&quot;datetime | None&quot;</span><span class="p">,</span>
@@ -472,8 +472,8 @@
 
 <div class="viewcode-block" id="Presence">
 <a class="viewcode-back" href="../../../gateway/object.html#discord_http.gateway.object.Presence">[docs]</a>
-<span class="k">class</span> <span class="nc">Presence</span><span class="p">:</span>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">Presence</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="o">*</span><span class="p">,</span>
         <span class="n">state</span><span class="p">:</span> <span class="s2">&quot;DiscordAPI&quot;</span><span class="p">,</span>
@@ -497,13 +497,13 @@
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_from_data</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
         <span class="k">return</span> <span class="p">(</span>
             <span class="sa">f</span><span class="s2">&quot;&lt;Presence user=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">user</span><span class="si">}</span><span class="s2"> &quot;</span>
             <span class="sa">f</span><span class="s2">&quot;guild=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">guild</span><span class="si">}</span><span class="s2"> activities=</span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">activities</span><span class="p">)</span><span class="si">}</span><span class="s2">&gt;&quot;</span>
         <span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">_from_data</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="nb">dict</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_from_data</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="nb">dict</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="n">_client_status</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;client_status&quot;</span><span class="p">,</span> <span class="p">{})</span>
         <span class="k">if</span> <span class="n">_client_status</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;desktop&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">):</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">desktop</span> <span class="o">=</span> <span class="n">StatusType</span><span class="p">[</span><span class="n">_client_status</span><span class="p">[</span><span class="s2">&quot;desktop&quot;</span><span class="p">]]</span>
@@ -518,7 +518,7 @@
 
 <div class="viewcode-block" id="TypingStartEvent">
 <a class="viewcode-back" href="../../../gateway/object.html#discord_http.gateway.object.TypingStartEvent">[docs]</a>
-<span class="k">class</span> <span class="nc">TypingStartEvent</span><span class="p">:</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">TypingStartEvent</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Represents a typing start event.</span>
 
 <span class="sd">    Attributes</span>
@@ -532,7 +532,7 @@
 <span class="sd">    timestamp: `datetime`</span>
 <span class="sd">        The time the user started typing.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="o">*</span><span class="p">,</span>
         <span class="n">guild</span><span class="p">:</span> <span class="s2">&quot;PartialGuild | Guild | None&quot;</span><span class="p">,</span>
@@ -549,8 +549,8 @@
 
 <div class="viewcode-block" id="AutomodExecution">
 <a class="viewcode-back" href="../../../gateway/object.html#discord_http.gateway.object.AutomodExecution">[docs]</a>
-<span class="k">class</span> <span class="nc">AutomodExecution</span><span class="p">:</span>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">AutomodExecution</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="o">*</span><span class="p">,</span>
         <span class="n">state</span><span class="p">:</span> <span class="s2">&quot;DiscordAPI&quot;</span><span class="p">,</span>
@@ -576,14 +576,14 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">matched_keyword</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;matched_keyword&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">matched_content</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;matched_content&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
         <span class="k">return</span> <span class="p">(</span>
             <span class="sa">f</span><span class="s2">&quot;&lt;AutomodExecution guild=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">guild</span><span class="si">}</span><span class="s2"> &quot;</span>
             <span class="sa">f</span><span class="s2">&quot;user=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">user</span><span class="si">}</span><span class="s2"> action=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">action</span><span class="si">}</span><span class="s2">&gt;&quot;</span>
         <span class="p">)</span>
 
     <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">rule</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">PartialAutoModRule</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">rule</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">PartialAutoModRule</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot; `PartialAutoModRule`: Returns a partial object of automod rule &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="n">PartialAutoModRule</span><span class="p">(</span>
             <span class="n">state</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_state</span><span class="p">,</span>
@@ -595,8 +595,8 @@
 
 <div class="viewcode-block" id="PollVoteEvent">
 <a class="viewcode-back" href="../../../gateway/object.html#discord_http.gateway.object.PollVoteEvent">[docs]</a>
-<span class="k">class</span> <span class="nc">PollVoteEvent</span><span class="p">:</span>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">PollVoteEvent</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="o">*</span><span class="p">,</span>
         <span class="n">state</span><span class="p">:</span> <span class="s2">&quot;DiscordAPI&quot;</span><span class="p">,</span>
@@ -621,7 +621,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">type</span><span class="p">:</span> <span class="n">PollVoteActionType</span> <span class="o">=</span> <span class="nb">type</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">answer_id</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="s2">&quot;answer_id&quot;</span><span class="p">])</span>
 
-    <span class="k">def</span> <span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
         <span class="k">return</span> <span class="p">(</span>
             <span class="sa">f</span><span class="s2">&quot;&lt;PollVoteEvent user=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">user</span><span class="si">}</span><span class="s2"> &quot;</span>
             <span class="sa">f</span><span class="s2">&quot;answer=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">answer_id</span><span class="si">}</span><span class="s2"> type=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">type</span><span class="si">}</span><span class="s2">&gt;&quot;</span>
@@ -631,8 +631,8 @@
 
 <div class="viewcode-block" id="Reaction">
 <a class="viewcode-back" href="../../../gateway/object.html#discord_http.gateway.object.Reaction">[docs]</a>
-<span class="k">class</span> <span class="nc">Reaction</span><span class="p">:</span>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">state</span><span class="p">:</span> <span class="s2">&quot;DiscordAPI&quot;</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="nb">dict</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">Reaction</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">state</span><span class="p">:</span> <span class="s2">&quot;DiscordAPI&quot;</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="nb">dict</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_state</span> <span class="o">=</span> <span class="n">state</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">user_id</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="s2">&quot;user_id&quot;</span><span class="p">])</span>
@@ -652,18 +652,18 @@
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_from_data</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
         <span class="k">return</span> <span class="p">(</span>
             <span class="sa">f</span><span class="s2">&quot;&lt;Reaction channel_id=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">channel_id</span><span class="si">}</span><span class="s2"> &quot;</span>
             <span class="sa">f</span><span class="s2">&quot;message_id=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">message_id</span><span class="si">}</span><span class="s2"> emoji=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">emoji</span><span class="si">}</span><span class="s2">&gt;&quot;</span>
         <span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">_from_data</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="nb">dict</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_from_data</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="nb">dict</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="k">if</span> <span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;burst_colour&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">):</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">burst_colour</span> <span class="o">=</span> <span class="n">Colour</span><span class="o">.</span><span class="n">from_hex</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="s2">&quot;burst_colour&quot;</span><span class="p">])</span>
 
         <span class="k">if</span> <span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;member&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">):</span>
-            <span class="kn">from</span> <span class="nn">..member</span> <span class="kn">import</span> <span class="n">Member</span>
+            <span class="kn">from</span><span class="w"> </span><span class="nn">..member</span><span class="w"> </span><span class="kn">import</span> <span class="n">Member</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">member</span> <span class="o">=</span> <span class="n">Member</span><span class="p">(</span>
                 <span class="n">state</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_state</span><span class="p">,</span>
                 <span class="n">guild</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">guild</span><span class="p">,</span>  <span class="c1"># type: ignore</span>
@@ -671,7 +671,7 @@
             <span class="p">)</span>
 
     <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">guild</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;Guild | PartialGuild | None&quot;</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">guild</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;Guild | PartialGuild | None&quot;</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot; `PartialGuild` | `None`: The guild the message was sent in &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">guild_id</span><span class="p">:</span>
             <span class="k">return</span> <span class="kc">None</span>
@@ -680,11 +680,11 @@
         <span class="k">if</span> <span class="n">cache</span><span class="p">:</span>
             <span class="k">return</span> <span class="n">cache</span>
 
-        <span class="kn">from</span> <span class="nn">..guild</span> <span class="kn">import</span> <span class="n">PartialGuild</span>
+        <span class="kn">from</span><span class="w"> </span><span class="nn">..guild</span><span class="w"> </span><span class="kn">import</span> <span class="n">PartialGuild</span>
         <span class="k">return</span> <span class="n">PartialGuild</span><span class="p">(</span><span class="n">state</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_state</span><span class="p">,</span> <span class="nb">id</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">guild_id</span><span class="p">)</span>
 
     <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">channel</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;PartialChannel | None&quot;</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">channel</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;PartialChannel | None&quot;</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        `BaseChannel | PartialChannel`: Returns the channel the message was sent in.</span>
 <span class="sd">        If guild and channel cache is enabled, it can also return full channel object.</span>
@@ -701,7 +701,7 @@
             <span class="k">if</span> <span class="n">cache</span><span class="p">:</span>
                 <span class="k">return</span> <span class="n">cache</span>
 
-        <span class="kn">from</span> <span class="nn">..channel</span> <span class="kn">import</span> <span class="n">PartialChannel</span>
+        <span class="kn">from</span><span class="w"> </span><span class="nn">..channel</span><span class="w"> </span><span class="kn">import</span> <span class="n">PartialChannel</span>
         <span class="k">return</span> <span class="n">PartialChannel</span><span class="p">(</span>
             <span class="n">state</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_state</span><span class="p">,</span>
             <span class="nb">id</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">channel_id</span><span class="p">,</span>
@@ -709,7 +709,7 @@
         <span class="p">)</span>
 
     <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">message</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;PartialMessage | None&quot;</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">message</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;PartialMessage | None&quot;</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot; `PartialMessage` | `None`: Returns the message if a message_id is available &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">channel_id</span> <span class="ow">or</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">message_id</span><span class="p">:</span>
             <span class="k">return</span> <span class="kc">None</span>
@@ -725,8 +725,8 @@
 
 <div class="viewcode-block" id="BulkDeletePayload">
 <a class="viewcode-back" href="../../../gateway/object.html#discord_http.gateway.object.BulkDeletePayload">[docs]</a>
-<span class="k">class</span> <span class="nc">BulkDeletePayload</span><span class="p">:</span>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">BulkDeletePayload</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="o">*</span><span class="p">,</span>
         <span class="n">state</span><span class="p">:</span> <span class="s2">&quot;DiscordAPI&quot;</span><span class="p">,</span>
@@ -752,7 +752,7 @@
 
 <div class="viewcode-block" id="ThreadListSyncPayload">
 <a class="viewcode-back" href="../../../gateway/object.html#discord_http.gateway.object.ThreadListSyncPayload">[docs]</a>
-<span class="k">class</span> <span class="nc">ThreadListSyncPayload</span><span class="p">:</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">ThreadListSyncPayload</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Represents a thread list sync payload.</span>
 
 <span class="sd">    Attributes</span>
@@ -765,7 +765,7 @@
 
 <span class="sd">        This may contains ids of channels that have no active threads.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="o">*</span><span class="p">,</span>
         <span class="n">state</span><span class="p">:</span> <span class="s2">&quot;DiscordAPI&quot;</span><span class="p">,</span>
@@ -779,26 +779,26 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_members</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">ThreadMemberPayload</span><span class="p">]</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s2">&quot;members&quot;</span><span class="p">]</span>
 
     <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">guild</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;PartialGuild&quot;</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">guild</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;PartialGuild&quot;</span><span class="p">:</span>
         <span class="n">bot</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_state</span><span class="o">.</span><span class="n">bot</span>
         <span class="k">return</span> <span class="n">bot</span><span class="o">.</span><span class="n">cache</span><span class="o">.</span><span class="n">get_guild</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">guild_id</span><span class="p">)</span> <span class="ow">or</span> <span class="n">bot</span><span class="o">.</span><span class="n">get_partial_guild</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">guild_id</span><span class="p">)</span>
 
     <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">threads</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="s2">&quot;Thread&quot;</span><span class="p">]:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">threads</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="s2">&quot;Thread&quot;</span><span class="p">]:</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_threads</span><span class="p">:</span>
             <span class="k">return</span> <span class="p">[]</span>
 
-        <span class="kn">from</span> <span class="nn">..channel</span> <span class="kn">import</span> <span class="n">Thread</span>
+        <span class="kn">from</span><span class="w"> </span><span class="nn">..channel</span><span class="w"> </span><span class="kn">import</span> <span class="n">Thread</span>
 
         <span class="n">state</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_state</span>
         <span class="k">return</span> <span class="p">[</span><span class="n">Thread</span><span class="p">(</span><span class="n">state</span><span class="o">=</span><span class="n">state</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">t</span><span class="p">)</span> <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_threads</span><span class="p">]</span>
 
     <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">members</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="s2">&quot;PartialThreadMember&quot;</span><span class="p">]:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">members</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="s2">&quot;PartialThreadMember&quot;</span><span class="p">]:</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_members</span><span class="p">:</span>
             <span class="k">return</span> <span class="p">[]</span>
 
-        <span class="kn">from</span> <span class="nn">..member</span> <span class="kn">import</span> <span class="n">PartialThreadMember</span>
+        <span class="kn">from</span><span class="w"> </span><span class="nn">..member</span><span class="w"> </span><span class="kn">import</span> <span class="n">PartialThreadMember</span>
 
         <span class="n">guild</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">guild</span>
         <span class="n">state</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_state</span>
@@ -812,7 +812,7 @@
         <span class="p">]</span>
 
     <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">channels</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="s2">&quot;PartialChannel&quot;</span><span class="p">]:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">channels</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="s2">&quot;PartialChannel&quot;</span><span class="p">]:</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">channel_ids</span><span class="p">:</span>
             <span class="k">return</span> <span class="p">[]</span>
 
@@ -821,12 +821,12 @@
             <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">channel_ids</span>
         <span class="p">]</span>
 
-    <span class="k">def</span> <span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
         <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;&lt;ThreadListSyncPayload guild_id=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">guild_id</span><span class="si">}</span><span class="s2">&gt;&quot;</span>
 
 <div class="viewcode-block" id="ThreadListSyncPayload.combined">
 <a class="viewcode-back" href="../../../gateway/object.html#discord_http.gateway.object.ThreadListSyncPayload.combined">[docs]</a>
-    <span class="k">def</span> <span class="nf">combined</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Iterator</span><span class="p">[</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">combined</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Iterator</span><span class="p">[</span>
         <span class="nb">tuple</span><span class="p">[</span><span class="s2">&quot;PartialChannel&quot;</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">[</span><span class="s2">&quot;Thread&quot;</span><span class="p">,</span> <span class="nb">list</span><span class="p">[</span><span class="s2">&quot;PartialThreadMember&quot;</span><span class="p">]]]</span>
     <span class="p">]:</span>
         <span class="n">channels</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">channels</span>
@@ -856,7 +856,7 @@
 
 <div class="viewcode-block" id="ThreadMembersUpdatePayload">
 <a class="viewcode-back" href="../../../gateway/object.html#discord_http.gateway.object.ThreadMembersUpdatePayload">[docs]</a>
-<span class="k">class</span> <span class="nc">ThreadMembersUpdatePayload</span><span class="p">:</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">ThreadMembersUpdatePayload</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Represents a thread members update&#39;s payload.</span>
 
 <span class="sd">    Attributes</span>
@@ -870,7 +870,7 @@
 <span class="sd">    removed_member_ids: `list[int]`</span>
 <span class="sd">        The IDs of the members that were removed from the thread.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="o">*</span><span class="p">,</span>
         <span class="n">state</span><span class="p">:</span> <span class="s2">&quot;DiscordAPI&quot;</span><span class="p">,</span>
@@ -886,18 +886,18 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_added_members</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">ThreadMemberWithMember</span><span class="p">]</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;added_members&quot;</span><span class="p">,</span> <span class="p">[])</span>
 
     <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">guild</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;PartialGuild&quot;</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">guild</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;PartialGuild&quot;</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot; `PartialGuild`: The guild the thread is in &quot;&quot;&quot;</span>
         <span class="n">bot</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_state</span><span class="o">.</span><span class="n">bot</span>
         <span class="k">return</span> <span class="n">bot</span><span class="o">.</span><span class="n">cache</span><span class="o">.</span><span class="n">get_guild</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">guild_id</span><span class="p">)</span> <span class="ow">or</span> <span class="n">bot</span><span class="o">.</span><span class="n">get_partial_guild</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">guild_id</span><span class="p">)</span>
 
     <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">thread</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;PartialChannel | Thread&quot;</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">thread</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;PartialChannel | Thread&quot;</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot; `PartialChannel` | `Thread`: The thread the members were updated in &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">guild</span><span class="o">.</span><span class="n">get_channel</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">id</span><span class="p">)</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">guild</span><span class="o">.</span><span class="n">get_partial_channel</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">id</span><span class="p">)</span>
 
     <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">added_members</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="s2">&quot;ThreadMember&quot;</span><span class="p">]:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">added_members</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="s2">&quot;ThreadMember&quot;</span><span class="p">]:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot; list[PartialThreadMember]: The members that were added to the thread &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_added_members</span><span class="p">:</span>
             <span class="k">return</span> <span class="p">[]</span>
@@ -905,7 +905,7 @@
         <span class="n">guild</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">guild</span>
         <span class="n">state</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_state</span>
 
-        <span class="kn">from</span> <span class="nn">..member</span> <span class="kn">import</span> <span class="n">ThreadMember</span>
+        <span class="kn">from</span><span class="w"> </span><span class="nn">..member</span><span class="w"> </span><span class="kn">import</span> <span class="n">ThreadMember</span>
 
         <span class="k">return</span> <span class="p">[</span>
             <span class="n">ThreadMember</span><span class="p">(</span>
@@ -917,7 +917,7 @@
         <span class="p">]</span>
 
     <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">removed_members</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="s2">&quot;PartialMember&quot;</span><span class="p">]:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">removed_members</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="s2">&quot;PartialMember&quot;</span><span class="p">]:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot; list[PartialMember]: The members that were removed from the thread &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">removed_member_ids</span><span class="p">:</span>
             <span class="k">return</span> <span class="p">[]</span>
@@ -927,7 +927,7 @@
             <span class="k">for</span> <span class="n">m</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">removed_member_ids</span>
         <span class="p">]</span>
 
-    <span class="k">def</span> <span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
         <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;&lt;ThreadMembersUpdatePayload id=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">id</span><span class="si">}</span><span class="s2"> guild_id=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">guild_id</span><span class="si">}</span><span class="s2">&gt;&quot;</span></div>
 
 </pre></div>

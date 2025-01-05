@@ -6,7 +6,7 @@
 
     <link rel="shortcut icon" href="../../_static/favicon.ico"/><!-- Generated with Sphinx 8.1.3 and Furo 2024.08.06 -->
         <title>discord_http.mentions - discord.http docs</title>
-      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=fa44fd50" />
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=03e43079" />
     <link rel="stylesheet" type="text/css" href="../../_static/styles/furo.css?v=354aac6f" />
     <link rel="stylesheet" type="text/css" href="../../_static/styles/furo-extensions.css?v=302659d7" />
     
@@ -292,9 +292,9 @@
         </div>
         <article role="main" id="furo-main-content">
           <h1>Source code for discord_http.mentions</h1><div class="highlight"><pre>
-<span></span><span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Self</span>
+<span></span><span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Self</span>
 
-<span class="kn">from</span> <span class="nn">.object</span> <span class="kn">import</span> <span class="n">Snowflake</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.object</span><span class="w"> </span><span class="kn">import</span> <span class="n">Snowflake</span>
 
 <span class="n">__all__</span> <span class="o">=</span> <span class="p">(</span>
     <span class="s2">&quot;AllowedMentions&quot;</span><span class="p">,</span>
@@ -303,8 +303,8 @@
 
 <div class="viewcode-block" id="AllowedMentions">
 <a class="viewcode-back" href="../../api/mentions.html#discord_http.mentions.AllowedMentions">[docs]</a>
-<span class="k">class</span> <span class="nc">AllowedMentions</span><span class="p">:</span>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">AllowedMentions</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="o">*</span><span class="p">,</span>
         <span class="n">everyone</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
@@ -320,7 +320,7 @@
 <div class="viewcode-block" id="AllowedMentions.all">
 <a class="viewcode-back" href="../../api/mentions.html#discord_http.mentions.AllowedMentions.all">[docs]</a>
     <span class="nd">@classmethod</span>
-    <span class="k">def</span> <span class="nf">all</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Self</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">all</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Self</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot; `AllowedMentions`: Preset to allow all mentions &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span><span class="n">everyone</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">roles</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">users</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">replied_user</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span></div>
 
@@ -328,14 +328,14 @@
 <div class="viewcode-block" id="AllowedMentions.none">
 <a class="viewcode-back" href="../../api/mentions.html#discord_http.mentions.AllowedMentions.none">[docs]</a>
     <span class="nd">@classmethod</span>
-    <span class="k">def</span> <span class="nf">none</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Self</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">none</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Self</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot; `AllowedMentions`: Preset to deny any mentions &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span><span class="n">everyone</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">roles</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">users</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">replied_user</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="AllowedMentions.to_dict">
 <a class="viewcode-back" href="../../api/mentions.html#discord_http.mentions.AllowedMentions.to_dict">[docs]</a>
-    <span class="k">def</span> <span class="nf">to_dict</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">to_dict</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        `dict`: Representation of the `AllowedMentions`</span>
 <span class="sd">        that is Discord API friendly</span>

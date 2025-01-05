@@ -6,7 +6,7 @@
 
     <link rel="shortcut icon" href="../../_static/favicon.ico"/><!-- Generated with Sphinx 8.1.3 and Furo 2024.08.06 -->
         <title>discord_http.commands - discord.http docs</title>
-      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=fa44fd50" />
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=03e43079" />
     <link rel="stylesheet" type="text/css" href="../../_static/styles/furo.css?v=354aac6f" />
     <link rel="stylesheet" type="text/css" href="../../_static/styles/furo-extensions.css?v=302659d7" />
     
@@ -292,43 +292,43 @@
         </div>
         <article role="main" id="furo-main-content">
           <h1>Source code for discord_http.commands</h1><div class="highlight"><pre>
-<span></span><span class="kn">import</span> <span class="nn">inspect</span>
-<span class="kn">import</span> <span class="nn">itertools</span>
-<span class="kn">import</span> <span class="nn">logging</span>
-<span class="kn">import</span> <span class="nn">re</span>
+<span></span><span class="kn">import</span><span class="w"> </span><span class="nn">inspect</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">itertools</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">logging</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">re</span>
 
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">get_args</span> <span class="k">as</span> <span class="n">get_type_args</span>
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="p">(</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">get_args</span> <span class="k">as</span> <span class="n">get_type_args</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
     <span class="n">Callable</span><span class="p">,</span> <span class="n">TYPE_CHECKING</span><span class="p">,</span> <span class="n">Union</span><span class="p">,</span> <span class="n">Type</span><span class="p">,</span> <span class="n">Protocol</span><span class="p">,</span>
     <span class="n">Generic</span><span class="p">,</span> <span class="n">TypeVar</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Coroutine</span><span class="p">,</span> <span class="n">Literal</span><span class="p">,</span> <span class="n">Any</span><span class="p">,</span>
     <span class="n">runtime_checkable</span>
 <span class="p">)</span>
 
-<span class="kn">from</span> <span class="nn">.</span> <span class="kn">import</span> <span class="n">utils</span>
-<span class="kn">from</span> <span class="nn">.channel</span> <span class="kn">import</span> <span class="p">(</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.</span><span class="w"> </span><span class="kn">import</span> <span class="n">utils</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.channel</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
     <span class="n">TextChannel</span><span class="p">,</span> <span class="n">VoiceChannel</span><span class="p">,</span>
     <span class="n">CategoryChannel</span><span class="p">,</span> <span class="n">NewsThread</span><span class="p">,</span>
     <span class="n">PublicThread</span><span class="p">,</span> <span class="n">PrivateThread</span><span class="p">,</span> <span class="n">StageChannel</span><span class="p">,</span>
     <span class="n">DirectoryChannel</span><span class="p">,</span> <span class="n">ForumChannel</span><span class="p">,</span> <span class="n">StoreChannel</span><span class="p">,</span>
     <span class="n">NewsChannel</span><span class="p">,</span> <span class="n">BaseChannel</span><span class="p">,</span> <span class="n">Thread</span>
 <span class="p">)</span>
-<span class="kn">from</span> <span class="nn">.cooldowns</span> <span class="kn">import</span> <span class="n">BucketType</span><span class="p">,</span> <span class="n">Cooldown</span><span class="p">,</span> <span class="n">CooldownCache</span>
-<span class="kn">from</span> <span class="nn">.enums</span> <span class="kn">import</span> <span class="n">ApplicationCommandType</span><span class="p">,</span> <span class="n">CommandOptionType</span><span class="p">,</span> <span class="n">ChannelType</span>
-<span class="kn">from</span> <span class="nn">.errors</span> <span class="kn">import</span> <span class="p">(</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.cooldowns</span><span class="w"> </span><span class="kn">import</span> <span class="n">BucketType</span><span class="p">,</span> <span class="n">Cooldown</span><span class="p">,</span> <span class="n">CooldownCache</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.enums</span><span class="w"> </span><span class="kn">import</span> <span class="n">ApplicationCommandType</span><span class="p">,</span> <span class="n">CommandOptionType</span><span class="p">,</span> <span class="n">ChannelType</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.errors</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
     <span class="n">UserMissingPermissions</span><span class="p">,</span> <span class="n">BotMissingPermissions</span><span class="p">,</span> <span class="n">CheckFailed</span><span class="p">,</span>
     <span class="n">InvalidMember</span><span class="p">,</span> <span class="n">CommandOnCooldown</span>
 <span class="p">)</span>
-<span class="kn">from</span> <span class="nn">.flags</span> <span class="kn">import</span> <span class="n">Permissions</span>
-<span class="kn">from</span> <span class="nn">.member</span> <span class="kn">import</span> <span class="n">Member</span>
-<span class="kn">from</span> <span class="nn">.message</span> <span class="kn">import</span> <span class="n">Attachment</span>
-<span class="kn">from</span> <span class="nn">.object</span> <span class="kn">import</span> <span class="n">PartialBase</span><span class="p">,</span> <span class="n">Snowflake</span>
-<span class="kn">from</span> <span class="nn">.response</span> <span class="kn">import</span> <span class="n">BaseResponse</span><span class="p">,</span> <span class="n">AutocompleteResponse</span>
-<span class="kn">from</span> <span class="nn">.role</span> <span class="kn">import</span> <span class="n">Role</span>
-<span class="kn">from</span> <span class="nn">.user</span> <span class="kn">import</span> <span class="n">User</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.flags</span><span class="w"> </span><span class="kn">import</span> <span class="n">Permissions</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.member</span><span class="w"> </span><span class="kn">import</span> <span class="n">Member</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.message</span><span class="w"> </span><span class="kn">import</span> <span class="n">Attachment</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.object</span><span class="w"> </span><span class="kn">import</span> <span class="n">PartialBase</span><span class="p">,</span> <span class="n">Snowflake</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.response</span><span class="w"> </span><span class="kn">import</span> <span class="n">BaseResponse</span><span class="p">,</span> <span class="n">AutocompleteResponse</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.role</span><span class="w"> </span><span class="kn">import</span> <span class="n">Role</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.user</span><span class="w"> </span><span class="kn">import</span> <span class="n">User</span>
 
 <span class="k">if</span> <span class="n">TYPE_CHECKING</span><span class="p">:</span>
-    <span class="kn">from</span> <span class="nn">.client</span> <span class="kn">import</span> <span class="n">Client</span>
-    <span class="kn">from</span> <span class="nn">.context</span> <span class="kn">import</span> <span class="n">Context</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">.client</span><span class="w"> </span><span class="kn">import</span> <span class="n">Client</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">.context</span><span class="w"> </span><span class="kn">import</span> <span class="n">Context</span>
 
 <span class="n">ChoiceT</span> <span class="o">=</span> <span class="n">TypeVar</span><span class="p">(</span><span class="s2">&quot;ChoiceT&quot;</span><span class="p">,</span> <span class="nb">str</span><span class="p">,</span> <span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">)</span>
 <span class="n">ConverterT</span> <span class="o">=</span> <span class="n">TypeVar</span><span class="p">(</span><span class="s2">&quot;ConverterT&quot;</span><span class="p">,</span> <span class="n">covariant</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
@@ -384,12 +384,12 @@
 
 <div class="viewcode-block" id="Cog">
 <a class="viewcode-back" href="../../api/commands.html#discord_http.commands.Cog">[docs]</a>
-<span class="k">class</span> <span class="nc">Cog</span><span class="p">:</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">Cog</span><span class="p">:</span>
     <span class="n">_cog_commands</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
     <span class="n">_cog_interactions</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
     <span class="n">_cog_listeners</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
 
-    <span class="k">def</span> <span class="fm">__new__</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__new__</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="n">commands</span> <span class="o">=</span> <span class="p">{}</span>
         <span class="n">listeners</span> <span class="o">=</span> <span class="p">{}</span>
         <span class="n">interactions</span> <span class="o">=</span> <span class="p">{}</span>
@@ -418,7 +418,7 @@
 
         <span class="k">return</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__new__</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span>
 
-    <span class="k">async</span> <span class="k">def</span> <span class="nf">_inject</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">bot</span><span class="p">:</span> <span class="s2">&quot;Client&quot;</span><span class="p">):</span>
+    <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">_inject</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">bot</span><span class="p">:</span> <span class="s2">&quot;Client&quot;</span><span class="p">):</span>
         <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">cog_load</span><span class="p">()</span>
 
         <span class="n">module_name</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__module__</span>
@@ -443,7 +443,7 @@
             <span class="n">interaction</span><span class="o">.</span><span class="n">cog</span> <span class="o">=</span> <span class="bp">self</span>
             <span class="n">bot</span><span class="o">.</span><span class="n">add_interaction</span><span class="p">(</span><span class="n">interaction</span><span class="p">)</span>
 
-    <span class="k">async</span> <span class="k">def</span> <span class="nf">_eject</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">bot</span><span class="p">:</span> <span class="s2">&quot;Client&quot;</span><span class="p">):</span>
+    <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">_eject</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">bot</span><span class="p">:</span> <span class="s2">&quot;Client&quot;</span><span class="p">):</span>
         <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">cog_unload</span><span class="p">()</span>
 
         <span class="n">module_name</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__module__</span>
@@ -461,14 +461,14 @@
 
 <div class="viewcode-block" id="Cog.cog_load">
 <a class="viewcode-back" href="../../api/commands.html#discord_http.commands.Cog.cog_load">[docs]</a>
-    <span class="k">async</span> <span class="k">def</span> <span class="nf">cog_load</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">cog_load</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot; Called before the cog is loaded &quot;&quot;&quot;</span>
         <span class="k">pass</span></div>
 
 
 <div class="viewcode-block" id="Cog.cog_unload">
 <a class="viewcode-back" href="../../api/commands.html#discord_http.commands.Cog.cog_unload">[docs]</a>
-    <span class="k">async</span> <span class="k">def</span> <span class="nf">cog_unload</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">cog_unload</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot; Called before the cog is unloaded &quot;&quot;&quot;</span>
         <span class="k">pass</span></div>
 </div>
@@ -477,22 +477,22 @@
 
 <div class="viewcode-block" id="PartialCommand">
 <a class="viewcode-back" href="../../api/commands.html#discord_http.commands.PartialCommand">[docs]</a>
-<span class="k">class</span> <span class="nc">PartialCommand</span><span class="p">(</span><span class="n">PartialBase</span><span class="p">):</span>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="nb">dict</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">PartialCommand</span><span class="p">(</span><span class="n">PartialBase</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="nb">dict</span><span class="p">):</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="nb">id</span><span class="o">=</span><span class="nb">int</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="s2">&quot;id&quot;</span><span class="p">]))</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s2">&quot;name&quot;</span><span class="p">]</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">guild_id</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="n">utils</span><span class="o">.</span><span class="n">get_int</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="s2">&quot;guild_id&quot;</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">name</span>
 
-    <span class="k">def</span> <span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;&lt;PartialCommand id=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">id</span><span class="si">}</span><span class="s2"> name=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">&gt;&quot;</span></div>
 
 
 
-<span class="k">class</span> <span class="nc">LocaleContainer</span><span class="p">:</span>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">LocaleContainer</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">key</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
         <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
@@ -506,7 +506,7 @@
 <div class="viewcode-block" id="Converter">
 <a class="viewcode-back" href="../../api/commands.html#discord_http.commands.Converter">[docs]</a>
 <span class="nd">@runtime_checkable</span>
-<span class="k">class</span> <span class="nc">Converter</span><span class="p">(</span><span class="n">Protocol</span><span class="p">[</span><span class="n">ConverterT</span><span class="p">]):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">Converter</span><span class="p">(</span><span class="n">Protocol</span><span class="p">[</span><span class="n">ConverterT</span><span class="p">]):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    This is the base class of converting strings to whatever you desire.</span>
 
@@ -515,7 +515,7 @@
 <span class="sd">    &quot;&quot;&quot;</span>
 <div class="viewcode-block" id="Converter.convert">
 <a class="viewcode-back" href="../../api/commands.html#discord_http.commands.Converter.convert">[docs]</a>
-    <span class="k">async</span> <span class="k">def</span> <span class="nf">convert</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ctx</span><span class="p">:</span> <span class="s2">&quot;Context&quot;</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ConverterT</span><span class="p">:</span>
+    <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">convert</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ctx</span><span class="p">:</span> <span class="s2">&quot;Context&quot;</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ConverterT</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        The function where you implement the logic of converting</span>
 <span class="sd">        the value into whatever you need to be outputted in command.</span>
@@ -539,8 +539,8 @@
 
 <div class="viewcode-block" id="Command">
 <a class="viewcode-back" href="../../api/commands.html#discord_http.commands.Command">[docs]</a>
-<span class="k">class</span> <span class="nc">Command</span><span class="p">:</span>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">Command</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">command</span><span class="p">:</span> <span class="n">Callable</span><span class="p">,</span>
         <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
@@ -664,6 +664,18 @@
                     <span class="bp">self</span><span class="o">.</span><span class="n">__list_choices</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">parameter</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
                     <span class="n">ptype</span> <span class="o">=</span> <span class="n">origin</span><span class="o">.</span><span class="n">type</span>
 
+                <span class="c1"># If literal, replicate Choice</span>
+                <span class="k">elif</span> <span class="n">origin</span> <span class="ow">is</span> <span class="n">Literal</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">__list_choices</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">parameter</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
+                    <span class="n">ptype</span> <span class="o">=</span> <span class="n">CommandOptionType</span><span class="o">.</span><span class="n">string</span>
+
+                    <span class="k">if</span> <span class="ow">not</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">command</span><span class="p">,</span> <span class="s2">&quot;__choices_params__&quot;</span><span class="p">,</span> <span class="p">{}):</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">command</span><span class="o">.</span><span class="n">__choices_params__</span> <span class="o">=</span> <span class="p">{}</span>
+
+                    <span class="bp">self</span><span class="o">.</span><span class="n">command</span><span class="o">.</span><span class="n">__choices_params__</span><span class="p">[</span><span class="n">parameter</span><span class="o">.</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span>
+                        <span class="nb">str</span><span class="p">(</span><span class="n">g</span><span class="p">):</span> <span class="nb">str</span><span class="p">(</span><span class="n">g</span><span class="p">)</span> <span class="k">for</span> <span class="n">g</span> <span class="ow">in</span> <span class="n">parameter</span><span class="o">.</span><span class="n">annotation</span><span class="o">.</span><span class="n">__args__</span>
+                    <span class="p">}</span>
+
                 <span class="c1"># PyRight may not recognize &#39;Range&#39; due to dynamic typing.</span>
                 <span class="c1"># Assuming &#39;origin&#39; is a Range object.</span>
                 <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">origin</span><span class="p">,</span> <span class="n">Range</span><span class="p">):</span>  <span class="c1"># type: ignore[arg-type]</span>
@@ -710,24 +722,24 @@
 
                 <span class="bp">self</span><span class="o">.</span><span class="n">options</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">option</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
         <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;&lt;Command name=&#39;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">&#39;&gt;&quot;</span>
 
     <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">mention</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">mention</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot; `str`: Returns a mentionable string for the command &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">id</span><span class="p">:</span>
             <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;&lt;/</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">:</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">id</span><span class="si">}</span><span class="s2">&gt;&quot;</span>
         <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;`/</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">`&quot;</span>
 
     <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">cooldown</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="n">CooldownCache</span><span class="p">]:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">cooldown</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="n">CooldownCache</span><span class="p">]:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot; `Optional[CooldownCache]`: Returns the cooldown rule of the command if available &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">command</span><span class="p">,</span> <span class="s2">&quot;__cooldown__&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
 
 <div class="viewcode-block" id="Command.mention_sub">
 <a class="viewcode-back" href="../../api/commands.html#discord_http.commands.Command.mention_sub">[docs]</a>
-    <span class="k">def</span> <span class="nf">mention_sub</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">suffix</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">mention_sub</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">suffix</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Returns a mentionable string for a subcommand.</span>
 
@@ -746,7 +758,7 @@
         <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;`/</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="n">suffix</span><span class="si">}</span><span class="s2">`&quot;</span></div>
 
 
-    <span class="k">async</span> <span class="k">def</span> <span class="nf">_make_context_and_run</span><span class="p">(</span>
+    <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">_make_context_and_run</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">context</span><span class="p">:</span> <span class="s2">&quot;Context&quot;</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">BaseResponse</span><span class="p">:</span>
@@ -788,7 +800,7 @@
 
         <span class="k">return</span> <span class="n">result</span>
 
-    <span class="k">def</span> <span class="nf">_has_permissions</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ctx</span><span class="p">:</span> <span class="s2">&quot;Context&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Permissions</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_has_permissions</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ctx</span><span class="p">:</span> <span class="s2">&quot;Context&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Permissions</span><span class="p">:</span>
         <span class="n">_perms</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Permissions</span><span class="p">]</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">command</span><span class="p">,</span> <span class="s2">&quot;__has_permissions__&quot;</span><span class="p">,</span> <span class="kc">None</span>
         <span class="p">)</span>
@@ -813,7 +825,7 @@
 
         <span class="k">return</span> <span class="n">missing</span>
 
-    <span class="k">def</span> <span class="nf">_bot_has_permissions</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ctx</span><span class="p">:</span> <span class="s2">&quot;Context&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Permissions</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_bot_has_permissions</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ctx</span><span class="p">:</span> <span class="s2">&quot;Context&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Permissions</span><span class="p">:</span>
         <span class="n">_perms</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Permissions</span><span class="p">]</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">command</span><span class="p">,</span> <span class="s2">&quot;__bot_has_permissions__&quot;</span><span class="p">,</span> <span class="kc">None</span>
         <span class="p">)</span>
@@ -830,7 +842,7 @@
 
         <span class="k">return</span> <span class="n">missing</span>
 
-    <span class="k">async</span> <span class="k">def</span> <span class="nf">_command_checks</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ctx</span><span class="p">:</span> <span class="s2">&quot;Context&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+    <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">_command_checks</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ctx</span><span class="p">:</span> <span class="s2">&quot;Context&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
         <span class="n">_checks</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">Callable</span><span class="p">]</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">command</span><span class="p">,</span> <span class="s2">&quot;__checks__&quot;</span><span class="p">,</span> <span class="p">[]</span>
         <span class="p">)</span>
@@ -846,7 +858,7 @@
 
         <span class="k">return</span> <span class="kc">True</span>
 
-    <span class="k">def</span> <span class="nf">_cooldown_checker</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ctx</span><span class="p">:</span> <span class="s2">&quot;Context&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_cooldown_checker</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ctx</span><span class="p">:</span> <span class="s2">&quot;Context&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">cooldown</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">return</span> <span class="kc">None</span>
 
@@ -860,7 +872,7 @@
 
 <div class="viewcode-block" id="Command.run">
 <a class="viewcode-back" href="../../api/commands.html#discord_http.commands.Command.run">[docs]</a>
-    <span class="k">async</span> <span class="k">def</span> <span class="nf">run</span><span class="p">(</span>
+    <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">run</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">context</span><span class="p">:</span> <span class="s2">&quot;Context&quot;</span><span class="p">,</span>
         <span class="o">*</span><span class="n">args</span><span class="p">,</span>
@@ -910,7 +922,7 @@
 
 <div class="viewcode-block" id="Command.run_autocomplete">
 <a class="viewcode-back" href="../../api/commands.html#discord_http.commands.Command.run_autocomplete">[docs]</a>
-    <span class="k">async</span> <span class="k">def</span> <span class="nf">run_autocomplete</span><span class="p">(</span>
+    <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">run_autocomplete</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">context</span><span class="p">:</span> <span class="s2">&quot;Context&quot;</span><span class="p">,</span>
         <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
@@ -948,12 +960,12 @@
         <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;Autocomplete must return an AutocompleteResponse object.&quot;</span><span class="p">)</span></div>
 
 
-    <span class="k">def</span> <span class="nf">_find_option</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">dict</span><span class="p">]:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_find_option</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">dict</span><span class="p">]:</span>
         <span class="k">return</span> <span class="nb">next</span><span class="p">((</span><span class="n">g</span> <span class="k">for</span> <span class="n">g</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">options</span> <span class="k">if</span> <span class="n">g</span><span class="p">[</span><span class="s2">&quot;name&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="n">name</span><span class="p">),</span> <span class="kc">None</span><span class="p">)</span>
 
 <div class="viewcode-block" id="Command.to_dict">
 <a class="viewcode-back" href="../../api/commands.html#discord_http.commands.Command.to_dict">[docs]</a>
-    <span class="k">def</span> <span class="nf">to_dict</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">to_dict</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Converts the Discord command to a dict.</span>
 
@@ -1037,7 +1049,7 @@
 
 <div class="viewcode-block" id="Command.autocomplete">
 <a class="viewcode-back" href="../../api/commands.html#discord_http.commands.Command.autocomplete">[docs]</a>
-    <span class="k">def</span> <span class="nf">autocomplete</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">autocomplete</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Decorator to set an option as an autocomplete.</span>
 
@@ -1063,7 +1075,7 @@
 <span class="sd">        name: `str`</span>
 <span class="sd">            Name of the option to set as an autocomplete.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">def</span> <span class="nf">wrapper</span><span class="p">(</span><span class="n">func</span><span class="p">):</span>
+        <span class="k">def</span><span class="w"> </span><span class="nf">wrapper</span><span class="p">(</span><span class="n">func</span><span class="p">):</span>
             <span class="n">find_option</span> <span class="o">=</span> <span class="nb">next</span><span class="p">((</span>
                 <span class="n">option</span> <span class="k">for</span> <span class="n">option</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">options</span>
                 <span class="k">if</span> <span class="n">option</span><span class="p">[</span><span class="s2">&quot;name&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="n">name</span>
@@ -1081,8 +1093,8 @@
 
 
 
-<span class="k">class</span> <span class="nc">SubCommand</span><span class="p">(</span><span class="n">Command</span><span class="p">):</span>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">SubCommand</span><span class="p">(</span><span class="n">Command</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">func</span><span class="p">:</span> <span class="n">Callable</span><span class="p">,</span>
         <span class="o">*</span><span class="p">,</span>
@@ -1103,14 +1115,14 @@
             <span class="n">parent</span><span class="o">=</span><span class="n">parent</span>
         <span class="p">)</span>
 
-    <span class="k">def</span> <span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
         <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;&lt;SubCommand name=&#39;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">&#39;&gt;&quot;</span>
 
 
 <div class="viewcode-block" id="SubGroup">
 <a class="viewcode-back" href="../../api/commands.html#discord_http.commands.SubGroup">[docs]</a>
-<span class="k">class</span> <span class="nc">SubGroup</span><span class="p">(</span><span class="n">Command</span><span class="p">):</span>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">SubGroup</span><span class="p">(</span><span class="n">Command</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="o">*</span><span class="p">,</span>
         <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
@@ -1130,13 +1142,13 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">user_install</span> <span class="o">=</span> <span class="n">user_install</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">parent</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="s2">&quot;SubGroup&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">parent</span>
 
-    <span class="k">def</span> <span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
         <span class="n">_subs</span> <span class="o">=</span> <span class="p">[</span><span class="n">g</span> <span class="k">for</span> <span class="n">g</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">subcommands</span><span class="o">.</span><span class="n">values</span><span class="p">()]</span>
         <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;&lt;SubGroup name=&#39;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">&#39;, subcommands=</span><span class="si">{</span><span class="n">_subs</span><span class="si">}</span><span class="s2">&gt;&quot;</span>
 
 <div class="viewcode-block" id="SubGroup.command">
 <a class="viewcode-back" href="../../api/commands.html#discord_http.commands.SubGroup.command">[docs]</a>
-    <span class="k">def</span> <span class="nf">command</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">command</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">name</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="o">*</span><span class="p">,</span>
@@ -1161,7 +1173,7 @@
 <span class="sd">        guild_install: `bool`</span>
 <span class="sd">            Whether the command can be installed by guilds or not</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">def</span> <span class="nf">decorator</span><span class="p">(</span><span class="n">func</span><span class="p">):</span>
+        <span class="k">def</span><span class="w"> </span><span class="nf">decorator</span><span class="p">(</span><span class="n">func</span><span class="p">):</span>
             <span class="n">subcommand</span> <span class="o">=</span> <span class="n">SubCommand</span><span class="p">(</span>
                 <span class="n">func</span><span class="p">,</span>
                 <span class="n">name</span><span class="o">=</span><span class="n">name</span> <span class="ow">or</span> <span class="n">func</span><span class="o">.</span><span class="vm">__name__</span><span class="p">,</span>
@@ -1179,7 +1191,7 @@
 
 <div class="viewcode-block" id="SubGroup.group">
 <a class="viewcode-back" href="../../api/commands.html#discord_http.commands.SubGroup.group">[docs]</a>
-    <span class="k">def</span> <span class="nf">group</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">group</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">name</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="o">*</span><span class="p">,</span>
@@ -1193,7 +1205,7 @@
 <span class="sd">        name: `Optional[str]`</span>
 <span class="sd">            Name of the subcommand group (defaults to the function name)</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">def</span> <span class="nf">decorator</span><span class="p">(</span><span class="n">func</span><span class="p">):</span>
+        <span class="k">def</span><span class="w"> </span><span class="nf">decorator</span><span class="p">(</span><span class="n">func</span><span class="p">):</span>
             <span class="n">subgroup</span> <span class="o">=</span> <span class="n">SubGroup</span><span class="p">(</span>
                 <span class="n">name</span><span class="o">=</span><span class="n">name</span> <span class="ow">or</span> <span class="n">func</span><span class="o">.</span><span class="vm">__name__</span><span class="p">,</span>
                 <span class="n">description</span><span class="o">=</span><span class="n">description</span><span class="p">,</span>
@@ -1207,7 +1219,7 @@
 
 <div class="viewcode-block" id="SubGroup.add_group">
 <a class="viewcode-back" href="../../api/commands.html#discord_http.commands.SubGroup.add_group">[docs]</a>
-    <span class="k">def</span> <span class="nf">add_group</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;SubGroup&quot;</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">add_group</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;SubGroup&quot;</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Adds a subcommand group to a subcommand group</span>
 
@@ -1227,9 +1239,9 @@
 
 
     <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">options</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">dict</span><span class="p">]:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">options</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">dict</span><span class="p">]:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot; `list[dict]`: Returns the options of the subcommand group &quot;&quot;&quot;</span>
-        <span class="k">def</span> <span class="nf">build_options</span><span class="p">(</span><span class="n">subcommands</span><span class="p">:</span> <span class="nb">dict</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">dict</span><span class="p">]:</span>
+        <span class="k">def</span><span class="w"> </span><span class="nf">build_options</span><span class="p">(</span><span class="n">subcommands</span><span class="p">:</span> <span class="nb">dict</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">dict</span><span class="p">]:</span>
             <span class="n">options</span> <span class="o">=</span> <span class="p">[]</span>
             <span class="k">for</span> <span class="n">cmd</span> <span class="ow">in</span> <span class="n">subcommands</span><span class="o">.</span><span class="n">values</span><span class="p">():</span>
                 <span class="n">data</span> <span class="o">=</span> <span class="n">cmd</span><span class="o">.</span><span class="n">to_dict</span><span class="p">()</span>
@@ -1249,8 +1261,8 @@
 
 <div class="viewcode-block" id="Interaction">
 <a class="viewcode-back" href="../../api/commands.html#discord_http.commands.Interaction">[docs]</a>
-<span class="k">class</span> <span class="nc">Interaction</span><span class="p">:</span>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">Interaction</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">func</span><span class="p">:</span> <span class="n">Callable</span><span class="p">,</span>
         <span class="n">custom_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
@@ -1268,7 +1280,7 @@
             <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">regex</span> <span class="k">else</span> <span class="kc">None</span>
         <span class="p">)</span>
 
-    <span class="k">def</span> <span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
         <span class="k">return</span> <span class="p">(</span>
             <span class="sa">f</span><span class="s2">&quot;&lt;Interaction custom_id=&#39;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">custom_id</span><span class="si">}</span><span class="s2">&#39; &quot;</span>
             <span class="sa">f</span><span class="s2">&quot;regex=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">regex</span><span class="si">}</span><span class="s2">&gt;&quot;</span>
@@ -1276,7 +1288,7 @@
 
 <div class="viewcode-block" id="Interaction.match">
 <a class="viewcode-back" href="../../api/commands.html#discord_http.commands.Interaction.match">[docs]</a>
-    <span class="k">def</span> <span class="nf">match</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">custom_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">match</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">custom_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Matches the custom ID with the interaction.</span>
 <span class="sd">        Will always return False if the interaction is not a regex.</span>
@@ -1298,7 +1310,7 @@
 
 <div class="viewcode-block" id="Interaction.run">
 <a class="viewcode-back" href="../../api/commands.html#discord_http.commands.Interaction.run">[docs]</a>
-    <span class="k">async</span> <span class="k">def</span> <span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">context</span><span class="p">:</span> <span class="s2">&quot;Context&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">BaseResponse</span><span class="p">:</span>
+    <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">context</span><span class="p">:</span> <span class="s2">&quot;Context&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">BaseResponse</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Runs the interaction.</span>
 
@@ -1332,8 +1344,8 @@
 
 <div class="viewcode-block" id="Listener">
 <a class="viewcode-back" href="../../api/commands.html#discord_http.commands.Listener">[docs]</a>
-<span class="k">class</span> <span class="nc">Listener</span><span class="p">:</span>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">Listener</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="o">*</span><span class="p">,</span>
         <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
@@ -1343,12 +1355,12 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">coro</span> <span class="o">=</span> <span class="n">coro</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">cog</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="s2">&quot;Cog&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
 
-    <span class="k">def</span> <span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
         <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;&lt;Listener name=&#39;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">&#39;&gt;&quot;</span>
 
 <div class="viewcode-block" id="Listener.run">
 <a class="viewcode-back" href="../../api/commands.html#discord_http.commands.Listener.run">[docs]</a>
-    <span class="k">async</span> <span class="k">def</span> <span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot; Runs the listener &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">cog</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">coro</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">cog</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
@@ -1360,7 +1372,7 @@
 
 <div class="viewcode-block" id="Choice">
 <a class="viewcode-back" href="../../api/commands.html#discord_http.commands.Choice">[docs]</a>
-<span class="k">class</span> <span class="nc">Choice</span><span class="p">(</span><span class="n">Generic</span><span class="p">[</span><span class="n">ChoiceT</span><span class="p">]):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">Choice</span><span class="p">(</span><span class="n">Generic</span><span class="p">[</span><span class="n">ChoiceT</span><span class="p">]):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Makes it possible to access both the name and value of a choice.</span>
 
@@ -1373,12 +1385,15 @@
 <span class="sd">    value: `Union[int, str, float]`</span>
 <span class="sd">        The value of your choice (the one that is shown to public)</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">:</span> <span class="n">ChoiceT</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="n">ChoiceT</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">:</span> <span class="n">ChoiceT</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="n">ChoiceT</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">key</span><span class="p">:</span> <span class="n">ChoiceT</span> <span class="o">=</span> <span class="n">key</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">value</span><span class="p">:</span> <span class="n">ChoiceT</span> <span class="o">=</span> <span class="n">value</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">type</span><span class="p">:</span> <span class="n">CommandOptionType</span> <span class="o">=</span> <span class="n">CommandOptionType</span><span class="o">.</span><span class="n">string</span>
 
-    <span class="k">def</span> <span class="nf">__class_getitem__</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">obj</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+        <span class="k">return</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">key</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">__class_getitem__</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">obj</span><span class="p">):</span>
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">):</span>
             <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;Choice can only take one type&quot;</span><span class="p">)</span>
 
@@ -1406,12 +1421,12 @@
 
 <span class="c1"># Making it so pyright understands that the range type is a normal type</span>
 <span class="k">if</span> <span class="n">TYPE_CHECKING</span><span class="p">:</span>
-    <span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Annotated</span> <span class="k">as</span> <span class="n">Range</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Annotated</span> <span class="k">as</span> <span class="n">Range</span>
 
 <span class="k">else</span><span class="p">:</span>
 <div class="viewcode-block" id="Range">
 <a class="viewcode-back" href="../../api/commands.html#discord_http.commands.Range">[docs]</a>
-    <span class="k">class</span> <span class="nc">Range</span><span class="p">:</span>
+    <span class="k">class</span><span class="w"> </span><span class="nc">Range</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Makes it possible to create a range rule for command arguments</span>
 
@@ -1434,7 +1449,7 @@
 <span class="sd">        max: `Union[int, float, str]`</span>
 <span class="sd">            The maximum value of the range</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+        <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
             <span class="bp">self</span><span class="p">,</span>
             <span class="n">opt_type</span><span class="p">:</span> <span class="n">CommandOptionType</span><span class="p">,</span>
             <span class="nb">min</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="nb">str</span><span class="p">]],</span>
@@ -1444,7 +1459,7 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">min</span> <span class="o">=</span> <span class="nb">min</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">max</span> <span class="o">=</span> <span class="nb">max</span>
 
-        <span class="k">def</span> <span class="nf">__class_getitem__</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">obj</span><span class="p">):</span>
+        <span class="k">def</span><span class="w"> </span><span class="nf">__class_getitem__</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">obj</span><span class="p">):</span>
             <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">):</span>
                 <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;Range must be a tuple&quot;</span><span class="p">)</span>
 
@@ -1492,7 +1507,7 @@
 
 <div class="viewcode-block" id="command">
 <a class="viewcode-back" href="../../api/commands.html#discord_http.commands.command">[docs]</a>
-<span class="k">def</span> <span class="nf">command</span><span class="p">(</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">command</span><span class="p">(</span>
     <span class="n">name</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="o">*</span><span class="p">,</span>
     <span class="n">description</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
@@ -1516,7 +1531,7 @@
 <span class="sd">    guild_install: `bool`</span>
 <span class="sd">        Whether the command can be installed by guilds or not</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">def</span> <span class="nf">decorator</span><span class="p">(</span><span class="n">func</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">decorator</span><span class="p">(</span><span class="n">func</span><span class="p">):</span>
         <span class="k">return</span> <span class="n">Command</span><span class="p">(</span>
             <span class="n">func</span><span class="p">,</span>
             <span class="n">name</span><span class="o">=</span><span class="n">name</span> <span class="ow">or</span> <span class="n">func</span><span class="o">.</span><span class="vm">__name__</span><span class="p">,</span>
@@ -1532,7 +1547,7 @@
 
 <div class="viewcode-block" id="user_command">
 <a class="viewcode-back" href="../../api/commands.html#discord_http.commands.user_command">[docs]</a>
-<span class="k">def</span> <span class="nf">user_command</span><span class="p">(</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">user_command</span><span class="p">(</span>
     <span class="n">name</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="o">*</span><span class="p">,</span>
     <span class="n">guild_ids</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="n">Snowflake</span><span class="p">,</span> <span class="nb">int</span><span class="p">]]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
@@ -1561,7 +1576,7 @@
 <span class="sd">    guild_install: `bool`</span>
 <span class="sd">        Whether the command can be installed by guilds or not</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">def</span> <span class="nf">decorator</span><span class="p">(</span><span class="n">func</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">decorator</span><span class="p">(</span><span class="n">func</span><span class="p">):</span>
         <span class="k">return</span> <span class="n">Command</span><span class="p">(</span>
             <span class="n">func</span><span class="p">,</span>
             <span class="n">name</span><span class="o">=</span><span class="n">name</span> <span class="ow">or</span> <span class="n">func</span><span class="o">.</span><span class="vm">__name__</span><span class="p">,</span>
@@ -1577,7 +1592,7 @@
 
 <div class="viewcode-block" id="cooldown">
 <a class="viewcode-back" href="../../api/commands.html#discord_http.commands.cooldown">[docs]</a>
-<span class="k">def</span> <span class="nf">cooldown</span><span class="p">(</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">cooldown</span><span class="p">(</span>
     <span class="n">rate</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
     <span class="n">per</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
     <span class="o">*</span><span class="p">,</span>
@@ -1610,7 +1625,7 @@
     <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="nb">type</span><span class="p">,</span> <span class="n">BucketType</span><span class="p">):</span>
         <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;Key must be a BucketType&quot;</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">decorator</span><span class="p">(</span><span class="n">func</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">decorator</span><span class="p">(</span><span class="n">func</span><span class="p">):</span>
         <span class="n">func</span><span class="o">.</span><span class="n">__cooldown__</span> <span class="o">=</span> <span class="n">CooldownCache</span><span class="p">(</span>
             <span class="n">Cooldown</span><span class="p">(</span><span class="n">rate</span><span class="p">,</span> <span class="n">per</span><span class="p">),</span> <span class="nb">type</span>
         <span class="p">)</span>
@@ -1622,7 +1637,7 @@
 
 <div class="viewcode-block" id="message_command">
 <a class="viewcode-back" href="../../api/commands.html#discord_http.commands.message_command">[docs]</a>
-<span class="k">def</span> <span class="nf">message_command</span><span class="p">(</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">message_command</span><span class="p">(</span>
     <span class="n">name</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="o">*</span><span class="p">,</span>
     <span class="n">guild_ids</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="n">Snowflake</span><span class="p">,</span> <span class="nb">int</span><span class="p">]]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
@@ -1651,7 +1666,7 @@
 <span class="sd">    guild_install: `bool`</span>
 <span class="sd">        Whether the command can be installed by guilds or not</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">def</span> <span class="nf">decorator</span><span class="p">(</span><span class="n">func</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">decorator</span><span class="p">(</span><span class="n">func</span><span class="p">):</span>
         <span class="k">return</span> <span class="n">Command</span><span class="p">(</span>
             <span class="n">func</span><span class="p">,</span>
             <span class="n">name</span><span class="o">=</span><span class="n">name</span> <span class="ow">or</span> <span class="n">func</span><span class="o">.</span><span class="vm">__name__</span><span class="p">,</span>
@@ -1667,7 +1682,7 @@
 
 <div class="viewcode-block" id="locales">
 <a class="viewcode-back" href="../../api/commands.html#discord_http.commands.locales">[docs]</a>
-<span class="k">def</span> <span class="nf">locales</span><span class="p">(</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">locales</span><span class="p">(</span>
     <span class="n">translations</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span>
         <span class="n">LocaleTypes</span><span class="p">,</span>
         <span class="nb">dict</span><span class="p">[</span>
@@ -1701,7 +1716,7 @@
 <span class="sd">    translations: `Dict[LocaleTypes, Dict[str, Union[tuple[str], tuple[str, str]]]]`</span>
 <span class="sd">        The translations for the command name, description, and options.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">def</span> <span class="nf">decorator</span><span class="p">(</span><span class="n">func</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">decorator</span><span class="p">(</span><span class="n">func</span><span class="p">):</span>
         <span class="n">name</span> <span class="o">=</span> <span class="n">func</span><span class="o">.</span><span class="vm">__name__</span>
         <span class="n">container</span> <span class="o">=</span> <span class="p">{}</span>
 
@@ -1755,7 +1770,7 @@
 
 <div class="viewcode-block" id="group">
 <a class="viewcode-back" href="../../api/commands.html#discord_http.commands.group">[docs]</a>
-<span class="k">def</span> <span class="nf">group</span><span class="p">(</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">group</span><span class="p">(</span>
     <span class="n">name</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="o">*</span><span class="p">,</span>
     <span class="n">description</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
@@ -1779,7 +1794,7 @@
 <span class="sd">    guild_install: `bool`</span>
 <span class="sd">        Whether the command group can be installed by guilds or not</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">def</span> <span class="nf">decorator</span><span class="p">(</span><span class="n">func</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">decorator</span><span class="p">(</span><span class="n">func</span><span class="p">):</span>
         <span class="k">return</span> <span class="n">SubGroup</span><span class="p">(</span>
             <span class="n">name</span><span class="o">=</span><span class="n">name</span> <span class="ow">or</span> <span class="n">func</span><span class="o">.</span><span class="vm">__name__</span><span class="p">,</span>
             <span class="n">description</span><span class="o">=</span><span class="n">description</span><span class="p">,</span>
@@ -1794,7 +1809,7 @@
 
 <div class="viewcode-block" id="describe">
 <a class="viewcode-back" href="../../api/commands.html#discord_http.commands.describe">[docs]</a>
-<span class="k">def</span> <span class="nf">describe</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">describe</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Decorator to set descriptions for a command.</span>
 
@@ -1807,7 +1822,7 @@
 <span class="sd">        async def ping(ctx, user: Member):</span>
 <span class="sd">            await ctx.send(f&quot;Pinged {user.mention}&quot;)</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">def</span> <span class="nf">decorator</span><span class="p">(</span><span class="n">func</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">decorator</span><span class="p">(</span><span class="n">func</span><span class="p">):</span>
         <span class="n">func</span><span class="o">.</span><span class="n">__describe_params__</span> <span class="o">=</span> <span class="n">kwargs</span>
         <span class="k">return</span> <span class="n">func</span>
 
@@ -1817,7 +1832,7 @@
 
 <div class="viewcode-block" id="allow_contexts">
 <a class="viewcode-back" href="../../api/commands.html#discord_http.commands.allow_contexts">[docs]</a>
-<span class="k">def</span> <span class="nf">allow_contexts</span><span class="p">(</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">allow_contexts</span><span class="p">(</span>
     <span class="o">*</span><span class="p">,</span>
     <span class="n">guild</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
     <span class="n">bot_dm</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
@@ -1836,7 +1851,7 @@
 <span class="sd">    private_dm: `bool`</span>
 <span class="sd">        Weather the command can be used in private DMs.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">def</span> <span class="nf">decorator</span><span class="p">(</span><span class="n">func</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">decorator</span><span class="p">(</span><span class="n">func</span><span class="p">):</span>
         <span class="n">func</span><span class="o">.</span><span class="n">__integration_contexts__</span> <span class="o">=</span> <span class="p">[]</span>
 
         <span class="k">if</span> <span class="n">guild</span><span class="p">:</span>
@@ -1853,7 +1868,7 @@
 
 <div class="viewcode-block" id="choices">
 <a class="viewcode-back" href="../../api/commands.html#discord_http.commands.choices">[docs]</a>
-<span class="k">def</span> <span class="nf">choices</span><span class="p">(</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">choices</span><span class="p">(</span>
     <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span>
         <span class="nb">str</span> <span class="o">|</span> <span class="nb">int</span> <span class="o">|</span> <span class="nb">float</span><span class="p">,</span>
         <span class="nb">str</span> <span class="o">|</span> <span class="nb">int</span> <span class="o">|</span> <span class="nb">float</span>
@@ -1877,7 +1892,7 @@
 <span class="sd">        async def ping(ctx, options: Choice[str]):</span>
 <span class="sd">            await ctx.send(f&quot;You chose {choice.value}&quot;)</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">def</span> <span class="nf">decorator</span><span class="p">(</span><span class="n">func</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">decorator</span><span class="p">(</span><span class="n">func</span><span class="p">):</span>
         <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
             <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
                 <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span>
@@ -1893,7 +1908,7 @@
 
 <div class="viewcode-block" id="guild_only">
 <a class="viewcode-back" href="../../api/commands.html#discord_http.commands.guild_only">[docs]</a>
-<span class="k">def</span> <span class="nf">guild_only</span><span class="p">():</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">guild_only</span><span class="p">():</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Decorator to set a command as guild only.</span>
 
@@ -1901,12 +1916,12 @@
 <span class="sd">    - `commands.allow_contexts(guild=True, bot_dm=False, private_dm=False)`</span>
 <span class="sd">    - `commands.check(...)` (which checks for Context.guild to be available)</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">def</span> <span class="nf">_guild_only_check</span><span class="p">(</span><span class="n">ctx</span><span class="p">:</span> <span class="s2">&quot;Context&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_guild_only_check</span><span class="p">(</span><span class="n">ctx</span><span class="p">:</span> <span class="s2">&quot;Context&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">ctx</span><span class="o">.</span><span class="n">guild</span><span class="p">:</span>
             <span class="k">raise</span> <span class="n">CheckFailed</span><span class="p">(</span><span class="s2">&quot;Command can only be used in servers&quot;</span><span class="p">)</span>
         <span class="k">return</span> <span class="kc">True</span>
 
-    <span class="k">def</span> <span class="nf">decorator</span><span class="p">(</span><span class="n">func</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">decorator</span><span class="p">(</span><span class="n">func</span><span class="p">):</span>
         <span class="n">_check_list</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">func</span><span class="p">,</span> <span class="s2">&quot;__checks__&quot;</span><span class="p">,</span> <span class="p">[])</span>
         <span class="n">_check_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">_guild_only_check</span><span class="p">)</span>
         <span class="n">func</span><span class="o">.</span><span class="n">__checks__</span> <span class="o">=</span> <span class="n">_check_list</span>
@@ -1919,9 +1934,9 @@
 
 <div class="viewcode-block" id="is_nsfw">
 <a class="viewcode-back" href="../../api/commands.html#discord_http.commands.is_nsfw">[docs]</a>
-<span class="k">def</span> <span class="nf">is_nsfw</span><span class="p">():</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">is_nsfw</span><span class="p">():</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot; Decorator to set a command as NSFW. &quot;&quot;&quot;</span>
-    <span class="k">def</span> <span class="nf">decorator</span><span class="p">(</span><span class="n">func</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">decorator</span><span class="p">(</span><span class="n">func</span><span class="p">):</span>
         <span class="n">func</span><span class="o">.</span><span class="n">__nsfw__</span> <span class="o">=</span> <span class="kc">True</span>
         <span class="k">return</span> <span class="n">func</span>
 
@@ -1931,9 +1946,9 @@
 
 <div class="viewcode-block" id="default_permissions">
 <a class="viewcode-back" href="../../api/commands.html#discord_http.commands.default_permissions">[docs]</a>
-<span class="k">def</span> <span class="nf">default_permissions</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Permissions</span><span class="p">,</span> <span class="nb">str</span><span class="p">]):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">default_permissions</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Permissions</span><span class="p">,</span> <span class="nb">str</span><span class="p">]):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot; Decorator to set default permissions for a command. &quot;&quot;&quot;</span>
-    <span class="k">def</span> <span class="nf">decorator</span><span class="p">(</span><span class="n">func</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">decorator</span><span class="p">(</span><span class="n">func</span><span class="p">):</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">args</span><span class="p">:</span>
             <span class="k">return</span> <span class="n">func</span>
 
@@ -1958,7 +1973,7 @@
 
 <div class="viewcode-block" id="has_permissions">
 <a class="viewcode-back" href="../../api/commands.html#discord_http.commands.has_permissions">[docs]</a>
-<span class="k">def</span> <span class="nf">has_permissions</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Permissions</span><span class="p">,</span> <span class="nb">str</span><span class="p">]):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">has_permissions</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Permissions</span><span class="p">,</span> <span class="nb">str</span><span class="p">]):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Decorator to set permissions for a command.</span>
 
@@ -1971,7 +1986,7 @@
 <span class="sd">        async def ban(ctx, user: Member):</span>
 <span class="sd">            ...</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">def</span> <span class="nf">decorator</span><span class="p">(</span><span class="n">func</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">decorator</span><span class="p">(</span><span class="n">func</span><span class="p">):</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">args</span><span class="p">:</span>
             <span class="k">return</span> <span class="n">func</span>
 
@@ -1996,7 +2011,7 @@
 
 <div class="viewcode-block" id="bot_has_permissions">
 <a class="viewcode-back" href="../../api/commands.html#discord_http.commands.bot_has_permissions">[docs]</a>
-<span class="k">def</span> <span class="nf">bot_has_permissions</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Permissions</span><span class="p">,</span> <span class="nb">str</span><span class="p">]):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">bot_has_permissions</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Permissions</span><span class="p">,</span> <span class="nb">str</span><span class="p">]):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Decorator to set permissions for a command.</span>
 
@@ -2009,7 +2024,7 @@
 <span class="sd">        async def cat(ctx):</span>
 <span class="sd">            ...</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">def</span> <span class="nf">decorator</span><span class="p">(</span><span class="n">func</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">decorator</span><span class="p">(</span><span class="n">func</span><span class="p">):</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">args</span><span class="p">:</span>
             <span class="k">return</span> <span class="n">func</span>
 
@@ -2034,7 +2049,7 @@
 
 <div class="viewcode-block" id="check">
 <a class="viewcode-back" href="../../api/commands.html#discord_http.commands.check">[docs]</a>
-<span class="k">def</span> <span class="nf">check</span><span class="p">(</span><span class="n">predicate</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Callable</span><span class="p">,</span> <span class="n">Coroutine</span><span class="p">]):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">check</span><span class="p">(</span><span class="n">predicate</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Callable</span><span class="p">,</span> <span class="n">Coroutine</span><span class="p">]):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Decorator to set a check for a command.</span>
 
@@ -2050,7 +2065,7 @@
 <span class="sd">        async def foo(ctx):</span>
 <span class="sd">            ...</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">def</span> <span class="nf">decorator</span><span class="p">(</span><span class="n">func</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">decorator</span><span class="p">(</span><span class="n">func</span><span class="p">):</span>
         <span class="n">_check_list</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">func</span><span class="p">,</span> <span class="s2">&quot;__checks__&quot;</span><span class="p">,</span> <span class="p">[])</span>
         <span class="n">_check_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">predicate</span><span class="p">)</span>
         <span class="n">func</span><span class="o">.</span><span class="n">__checks__</span> <span class="o">=</span> <span class="n">_check_list</span>
@@ -2062,7 +2077,7 @@
 
 <div class="viewcode-block" id="interaction">
 <a class="viewcode-back" href="../../api/commands.html#discord_http.commands.interaction">[docs]</a>
-<span class="k">def</span> <span class="nf">interaction</span><span class="p">(</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">interaction</span><span class="p">(</span>
     <span class="n">custom_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
     <span class="o">*</span><span class="p">,</span>
     <span class="n">regex</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
@@ -2079,7 +2094,7 @@
 <span class="sd">    regex: `bool`</span>
 <span class="sd">        Whether the custom_id is a regex or not</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">def</span> <span class="nf">decorator</span><span class="p">(</span><span class="n">func</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">decorator</span><span class="p">(</span><span class="n">func</span><span class="p">):</span>
         <span class="k">return</span> <span class="n">Interaction</span><span class="p">(</span>
             <span class="n">func</span><span class="p">,</span>
             <span class="n">custom_id</span><span class="o">=</span><span class="n">custom_id</span><span class="p">,</span>
@@ -2092,7 +2107,7 @@
 
 <div class="viewcode-block" id="listener">
 <a class="viewcode-back" href="../../api/commands.html#discord_http.commands.listener">[docs]</a>
-<span class="k">def</span> <span class="nf">listener</span><span class="p">(</span><span class="n">name</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">listener</span><span class="p">(</span><span class="n">name</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Decorator to register a listener.</span>
 
@@ -2110,7 +2125,7 @@
     <span class="k">if</span> <span class="n">name</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
         <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Listener name must be a string, not </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">name</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">decorator</span><span class="p">(</span><span class="n">func</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">decorator</span><span class="p">(</span><span class="n">func</span><span class="p">):</span>
         <span class="n">actual</span> <span class="o">=</span> <span class="n">func</span>
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">actual</span><span class="p">,</span> <span class="nb">staticmethod</span><span class="p">):</span>
             <span class="n">actual</span> <span class="o">=</span> <span class="n">actual</span><span class="o">.</span><span class="vm">__func__</span>

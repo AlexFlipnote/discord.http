@@ -6,7 +6,7 @@
 
     <link rel="shortcut icon" href="../../_static/favicon.ico"/><!-- Generated with Sphinx 8.1.3 and Furo 2024.08.06 -->
         <title>discord_http.backend - discord.http docs</title>
-      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=fa44fd50" />
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=03e43079" />
     <link rel="stylesheet" type="text/css" href="../../_static/styles/furo.css?v=354aac6f" />
     <link rel="stylesheet" type="text/css" href="../../_static/styles/furo-extensions.css?v=302659d7" />
     
@@ -292,32 +292,32 @@
         </div>
         <article role="main" id="furo-main-content">
           <h1>Source code for discord_http.backend</h1><div class="highlight"><pre>
-<span></span><span class="kn">import</span> <span class="nn">asyncio</span>
-<span class="kn">import</span> <span class="nn">copy</span>
-<span class="kn">import</span> <span class="nn">logging</span>
-<span class="kn">import</span> <span class="nn">signal</span>
-<span class="kn">import</span> <span class="nn">json</span>
+<span></span><span class="kn">import</span><span class="w"> </span><span class="nn">asyncio</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">copy</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">logging</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">signal</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">json</span>
 
-<span class="kn">from</span> <span class="nn">datetime</span> <span class="kn">import</span> <span class="n">datetime</span>
-<span class="kn">from</span> <span class="nn">hypercorn.asyncio</span> <span class="kn">import</span> <span class="n">serve</span>
-<span class="kn">from</span> <span class="nn">hypercorn.config</span> <span class="kn">import</span> <span class="n">Config</span> <span class="k">as</span> <span class="n">HyperConfig</span>
-<span class="kn">from</span> <span class="nn">nacl.exceptions</span> <span class="kn">import</span> <span class="n">BadSignatureError</span>
-<span class="kn">from</span> <span class="nn">nacl.signing</span> <span class="kn">import</span> <span class="n">VerifyKey</span>
-<span class="kn">from</span> <span class="nn">quart</span> <span class="kn">import</span> <span class="n">Quart</span><span class="p">,</span> <span class="n">request</span><span class="p">,</span> <span class="n">abort</span>
-<span class="kn">from</span> <span class="nn">quart</span> <span class="kn">import</span> <span class="n">Response</span> <span class="k">as</span> <span class="n">QuartResponse</span>
-<span class="kn">from</span> <span class="nn">quart.logging</span> <span class="kn">import</span> <span class="n">default_handler</span>
-<span class="kn">from</span> <span class="nn">quart.utils</span> <span class="kn">import</span> <span class="n">MustReloadError</span><span class="p">,</span> <span class="n">restart</span>
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">TYPE_CHECKING</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">datetime</span><span class="w"> </span><span class="kn">import</span> <span class="n">datetime</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">hypercorn.asyncio</span><span class="w"> </span><span class="kn">import</span> <span class="n">serve</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">hypercorn.config</span><span class="w"> </span><span class="kn">import</span> <span class="n">Config</span> <span class="k">as</span> <span class="n">HyperConfig</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">nacl.exceptions</span><span class="w"> </span><span class="kn">import</span> <span class="n">BadSignatureError</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">nacl.signing</span><span class="w"> </span><span class="kn">import</span> <span class="n">VerifyKey</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">quart</span><span class="w"> </span><span class="kn">import</span> <span class="n">Quart</span><span class="p">,</span> <span class="n">request</span><span class="p">,</span> <span class="n">abort</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">quart</span><span class="w"> </span><span class="kn">import</span> <span class="n">Response</span> <span class="k">as</span> <span class="n">QuartResponse</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">quart.logging</span><span class="w"> </span><span class="kn">import</span> <span class="n">default_handler</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">quart.utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">MustReloadError</span><span class="p">,</span> <span class="n">restart</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">TYPE_CHECKING</span>
 
-<span class="kn">from</span> <span class="nn">.</span> <span class="kn">import</span> <span class="n">utils</span>
-<span class="kn">from</span> <span class="nn">.commands</span> <span class="kn">import</span> <span class="n">Command</span><span class="p">,</span> <span class="n">SubGroup</span>
-<span class="kn">from</span> <span class="nn">.enums</span> <span class="kn">import</span> <span class="n">InteractionType</span>
-<span class="kn">from</span> <span class="nn">.errors</span> <span class="kn">import</span> <span class="n">CheckFailed</span>
-<span class="kn">from</span> <span class="nn">.response</span> <span class="kn">import</span> <span class="n">BaseResponse</span><span class="p">,</span> <span class="n">Ping</span><span class="p">,</span> <span class="n">MessageResponse</span><span class="p">,</span> <span class="n">EmptyResponse</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.</span><span class="w"> </span><span class="kn">import</span> <span class="n">utils</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.commands</span><span class="w"> </span><span class="kn">import</span> <span class="n">Command</span><span class="p">,</span> <span class="n">SubGroup</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.enums</span><span class="w"> </span><span class="kn">import</span> <span class="n">InteractionType</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.errors</span><span class="w"> </span><span class="kn">import</span> <span class="n">CheckFailed</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.response</span><span class="w"> </span><span class="kn">import</span> <span class="n">BaseResponse</span><span class="p">,</span> <span class="n">Ping</span><span class="p">,</span> <span class="n">MessageResponse</span><span class="p">,</span> <span class="n">EmptyResponse</span>
 
 <span class="k">if</span> <span class="n">TYPE_CHECKING</span><span class="p">:</span>
-    <span class="kn">from</span> <span class="nn">.client</span> <span class="kn">import</span> <span class="n">Client</span>
-    <span class="kn">from</span> <span class="nn">.context</span> <span class="kn">import</span> <span class="n">Context</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">.client</span><span class="w"> </span><span class="kn">import</span> <span class="n">Client</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">.context</span><span class="w"> </span><span class="kn">import</span> <span class="n">Context</span>
 
 <span class="n">_log</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
 
@@ -326,7 +326,7 @@
 <span class="p">)</span>
 
 
-<span class="k">def</span> <span class="nf">_cancel_all_tasks</span><span class="p">(</span><span class="n">loop</span><span class="p">:</span> <span class="n">asyncio</span><span class="o">.</span><span class="n">AbstractEventLoop</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_cancel_all_tasks</span><span class="p">(</span><span class="n">loop</span><span class="p">:</span> <span class="n">asyncio</span><span class="o">.</span><span class="n">AbstractEventLoop</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot; Used by Quart to cancel all tasks on shutdown. &quot;&quot;&quot;</span>
     <span class="n">tasks</span> <span class="o">=</span> <span class="p">[</span>
         <span class="n">task</span> <span class="k">for</span> <span class="n">task</span> <span class="ow">in</span> <span class="n">asyncio</span><span class="o">.</span><span class="n">all_tasks</span><span class="p">(</span><span class="n">loop</span><span class="p">)</span>
@@ -357,8 +357,8 @@
 
 <div class="viewcode-block" id="DiscordHTTP">
 <a class="viewcode-back" href="../../api/backend.html#discord_http.backend.DiscordHTTP">[docs]</a>
-<span class="k">class</span> <span class="nc">DiscordHTTP</span><span class="p">(</span><span class="n">Quart</span><span class="p">):</span>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">client</span><span class="p">:</span> <span class="s2">&quot;Client&quot;</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">DiscordHTTP</span><span class="p">(</span><span class="n">Quart</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">client</span><span class="p">:</span> <span class="s2">&quot;Client&quot;</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        This serves as the fundemental HTTP server for Discord Interactions</span>
 <span class="sd">        We recommend to not touch this class, unless you know what you&#39;re doing</span>
@@ -382,7 +382,7 @@
         <span class="n">_quart_log</span><span class="o">.</span><span class="n">removeHandler</span><span class="p">(</span><span class="n">default_handler</span><span class="p">)</span>
         <span class="n">_quart_log</span><span class="o">.</span><span class="n">setLevel</span><span class="p">(</span><span class="n">logging</span><span class="o">.</span><span class="n">CRITICAL</span><span class="p">)</span>
 
-    <span class="k">async</span> <span class="k">def</span> <span class="nf">_validate_request</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">_validate_request</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Used to validate requests sent by Discord Webhooks</span>
 <span class="sd">        This should NOT be modified, unless you know what you&#39;re doing</span>
@@ -406,7 +406,7 @@
         <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
             <span class="n">abort</span><span class="p">(</span><span class="mi">400</span><span class="p">,</span> <span class="s2">&quot;invalid request body&quot;</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">_dig_subcommand</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_dig_subcommand</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">cmd</span><span class="p">:</span> <span class="n">Command</span> <span class="o">|</span> <span class="n">SubGroup</span><span class="p">,</span>
         <span class="n">data</span><span class="p">:</span> <span class="nb">dict</span>
@@ -438,7 +438,7 @@
 
         <span class="k">return</span> <span class="n">cmd</span><span class="p">,</span> <span class="n">data_options</span>
 
-    <span class="k">def</span> <span class="nf">_handle_ack_ping</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_handle_ack_ping</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">ctx</span><span class="p">:</span> <span class="s2">&quot;Context&quot;</span><span class="p">,</span>
         <span class="n">data</span><span class="p">:</span> <span class="nb">dict</span>
@@ -453,7 +453,7 @@
 
         <span class="k">return</span> <span class="n">ctx</span><span class="o">.</span><span class="n">response</span><span class="o">.</span><span class="n">pong</span><span class="p">()</span>
 
-    <span class="k">async</span> <span class="k">def</span> <span class="nf">_handle_application_command</span><span class="p">(</span>
+    <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">_handle_application_command</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">ctx</span><span class="p">:</span> <span class="s2">&quot;Context&quot;</span><span class="p">,</span>
         <span class="n">data</span><span class="p">:</span> <span class="nb">dict</span>
@@ -511,7 +511,7 @@
 
             <span class="k">return</span> <span class="n">abort</span><span class="p">(</span><span class="mi">500</span><span class="p">)</span>
 
-    <span class="k">async</span> <span class="k">def</span> <span class="nf">_handle_interaction</span><span class="p">(</span>
+    <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">_handle_interaction</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">ctx</span><span class="p">:</span> <span class="s2">&quot;Context&quot;</span><span class="p">,</span>
         <span class="n">data</span><span class="p">:</span> <span class="nb">dict</span>
@@ -579,7 +579,7 @@
 
             <span class="k">return</span> <span class="n">abort</span><span class="p">(</span><span class="mi">500</span><span class="p">)</span>
 
-    <span class="k">async</span> <span class="k">def</span> <span class="nf">_handle_autocomplete</span><span class="p">(</span>
+    <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">_handle_autocomplete</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">ctx</span><span class="p">:</span> <span class="s2">&quot;Context&quot;</span><span class="p">,</span>
         <span class="n">data</span><span class="p">:</span> <span class="nb">dict</span>
@@ -628,7 +628,7 @@
                 <span class="p">)</span>
             <span class="k">return</span> <span class="n">abort</span><span class="p">(</span><span class="mi">500</span><span class="p">)</span>
 
-    <span class="k">async</span> <span class="k">def</span> <span class="nf">_index_interactions_endpoint</span><span class="p">(</span>
+    <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">_index_interactions_endpoint</span><span class="p">(</span>
         <span class="bp">self</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">QuartResponse</span> <span class="o">|</span> <span class="nb">dict</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
@@ -675,7 +675,7 @@
 
 <div class="viewcode-block" id="DiscordHTTP.error_messages">
 <a class="viewcode-back" href="../../api/backend.html#discord_http.backend.DiscordHTTP.error_messages">[docs]</a>
-    <span class="k">def</span> <span class="nf">error_messages</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">error_messages</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">ctx</span><span class="p">:</span> <span class="s2">&quot;Context&quot;</span><span class="p">,</span>
         <span class="n">e</span><span class="p">:</span> <span class="ne">Exception</span>
@@ -706,7 +706,7 @@
 
 <div class="viewcode-block" id="DiscordHTTP.index_ping">
 <a class="viewcode-back" href="../../api/backend.html#discord_http.backend.DiscordHTTP.index_ping">[docs]</a>
-    <span class="k">async</span> <span class="k">def</span> <span class="nf">index_ping</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">dict</span><span class="p">,</span> <span class="nb">int</span><span class="p">]</span> <span class="o">|</span> <span class="nb">dict</span><span class="p">:</span>
+    <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">index_ping</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">dict</span><span class="p">,</span> <span class="nb">int</span><span class="p">]</span> <span class="o">|</span> <span class="nb">dict</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Used to ping the interaction url, to check if it&#39;s working</span>
 <span class="sd">        You can overwrite this function to return your own data as well.</span>
@@ -732,7 +732,7 @@
 
 <div class="viewcode-block" id="DiscordHTTP.jsonify">
 <a class="viewcode-back" href="../../api/backend.html#discord_http.backend.DiscordHTTP.jsonify">[docs]</a>
-    <span class="k">def</span> <span class="nf">jsonify</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">jsonify</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">data</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span>
         <span class="o">*</span><span class="p">,</span>
@@ -768,7 +768,7 @@
 
 <div class="viewcode-block" id="DiscordHTTP.start">
 <a class="viewcode-back" href="../../api/backend.html#discord_http.backend.DiscordHTTP.start">[docs]</a>
-    <span class="k">def</span> <span class="nf">start</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">start</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="o">*</span><span class="p">,</span>
         <span class="n">host</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;127.0.0.1&quot;</span><span class="p">,</span>
@@ -798,7 +798,7 @@
 
 <div class="viewcode-block" id="DiscordHTTP.run">
 <a class="viewcode-back" href="../../api/backend.html#discord_http.backend.DiscordHTTP.run">[docs]</a>
-    <span class="k">def</span> <span class="nf">run</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">run</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">host</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
         <span class="n">port</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
@@ -808,7 +808,7 @@
         <span class="n">loop</span><span class="o">.</span><span class="n">set_debug</span><span class="p">(</span><span class="kc">False</span><span class="p">)</span>
         <span class="n">shutdown_event</span> <span class="o">=</span> <span class="n">asyncio</span><span class="o">.</span><span class="n">Event</span><span class="p">()</span>
 
-        <span class="k">def</span> <span class="nf">_signal_handler</span><span class="p">(</span><span class="o">*</span><span class="n">_</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">def</span><span class="w"> </span><span class="nf">_signal_handler</span><span class="p">(</span><span class="o">*</span><span class="n">_</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">shutdown_event</span><span class="o">.</span><span class="n">set</span><span class="p">()</span>
 
         <span class="k">for</span> <span class="n">signal_name</span> <span class="ow">in</span> <span class="p">{</span><span class="s2">&quot;SIGINT&quot;</span><span class="p">,</span> <span class="s2">&quot;SIGTERM&quot;</span><span class="p">,</span> <span class="s2">&quot;SIGBREAK&quot;</span><span class="p">}:</span>
@@ -866,7 +866,7 @@
 
 <div class="viewcode-block" id="DiscordHTTP.run_task">
 <a class="viewcode-back" href="../../api/backend.html#discord_http.backend.DiscordHTTP.run_task">[docs]</a>
-    <span class="k">def</span> <span class="nf">run_task</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">run_task</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">host</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;127.0.0.1&quot;</span><span class="p">,</span>
         <span class="n">port</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">8080</span><span class="p">,</span>

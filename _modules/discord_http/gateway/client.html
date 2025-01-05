@@ -6,7 +6,7 @@
 
     <link rel="shortcut icon" href="../../../_static/favicon.ico"/><!-- Generated with Sphinx 8.1.3 and Furo 2024.08.06 -->
         <title>discord_http.gateway.client - discord.http docs</title>
-      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=fa44fd50" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=03e43079" />
     <link rel="stylesheet" type="text/css" href="../../../_static/styles/furo.css?v=354aac6f" />
     <link rel="stylesheet" type="text/css" href="../../../_static/styles/furo-extensions.css?v=302659d7" />
     
@@ -293,18 +293,18 @@
         <article role="main" id="furo-main-content">
           <h1>Source code for discord_http.gateway.client</h1><div class="highlight"><pre>
 <span></span>
-<span class="kn">import</span> <span class="nn">logging</span>
-<span class="kn">import</span> <span class="nn">asyncio</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">logging</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">asyncio</span>
 
-<span class="kn">from</span> <span class="nn">datetime</span> <span class="kn">import</span> <span class="n">datetime</span><span class="p">,</span> <span class="n">UTC</span>
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Coroutine</span><span class="p">,</span> <span class="n">TYPE_CHECKING</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">datetime</span><span class="w"> </span><span class="kn">import</span> <span class="n">datetime</span><span class="p">,</span> <span class="n">UTC</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Coroutine</span><span class="p">,</span> <span class="n">TYPE_CHECKING</span>
 
-<span class="kn">from</span> <span class="nn">.shard</span> <span class="kn">import</span> <span class="n">Shard</span>
-<span class="kn">from</span> <span class="nn">.object</span> <span class="kn">import</span> <span class="n">PlayingStatus</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.shard</span><span class="w"> </span><span class="kn">import</span> <span class="n">Shard</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.object</span><span class="w"> </span><span class="kn">import</span> <span class="n">PlayingStatus</span>
 
 <span class="k">if</span> <span class="n">TYPE_CHECKING</span><span class="p">:</span>
-    <span class="kn">from</span> <span class="nn">..object</span> <span class="kn">import</span> <span class="n">Snowflake</span>
-    <span class="kn">from</span> <span class="nn">..client</span> <span class="kn">import</span> <span class="n">GatewayCacheFlags</span><span class="p">,</span> <span class="n">Client</span><span class="p">,</span> <span class="n">Intents</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">..object</span><span class="w"> </span><span class="kn">import</span> <span class="n">Snowflake</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">..client</span><span class="w"> </span><span class="kn">import</span> <span class="n">GatewayCacheFlags</span><span class="p">,</span> <span class="n">Client</span><span class="p">,</span> <span class="n">Intents</span>
 
 <span class="n">_log</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="s2">&quot;discord_http&quot;</span><span class="p">)</span>
 
@@ -315,8 +315,8 @@
 
 <div class="viewcode-block" id="GatewayClient">
 <a class="viewcode-back" href="../../../gateway/client.html#discord_http.gateway.client.GatewayClient">[docs]</a>
-<span class="k">class</span> <span class="nc">GatewayClient</span><span class="p">:</span>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">GatewayClient</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">bot</span><span class="p">:</span> <span class="s2">&quot;Client&quot;</span><span class="p">,</span>
         <span class="o">*</span><span class="p">,</span>
@@ -349,7 +349,7 @@
 
 <div class="viewcode-block" id="GatewayClient.get_shard">
 <a class="viewcode-back" href="../../../gateway/client.html#discord_http.gateway.client.GatewayClient.get_shard">[docs]</a>
-    <span class="k">def</span> <span class="nf">get_shard</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">shard_id</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Shard</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_shard</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">shard_id</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Shard</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Returns the shard object of the shard with the specified ID.</span>
 
@@ -368,7 +368,7 @@
 
 <div class="viewcode-block" id="GatewayClient.change_presence">
 <a class="viewcode-back" href="../../../gateway/client.html#discord_http.gateway.client.GatewayClient.change_presence">[docs]</a>
-    <span class="k">async</span> <span class="k">def</span> <span class="nf">change_presence</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">status</span><span class="p">:</span> <span class="n">PlayingStatus</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">change_presence</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">status</span><span class="p">:</span> <span class="n">PlayingStatus</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Changes the presence of all shards to the specified status.</span>
 
@@ -381,7 +381,7 @@
             <span class="k">await</span> <span class="n">shard</span><span class="o">.</span><span class="n">change_presence</span><span class="p">(</span><span class="n">status</span><span class="p">)</span></div>
 
 
-    <span class="k">async</span> <span class="k">def</span> <span class="nf">_index_websocket_status</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">dict</span><span class="p">]:</span>
+    <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">_index_websocket_status</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">dict</span><span class="p">]:</span>
         <span class="n">_now</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">(</span><span class="n">UTC</span><span class="p">)</span>
         <span class="k">return</span> <span class="p">{</span>
             <span class="n">shard_id</span><span class="p">:</span> <span class="p">{</span>
@@ -397,7 +397,7 @@
             <span class="p">)</span>
         <span class="p">}</span>
 
-    <span class="k">async</span> <span class="k">def</span> <span class="nf">_fetch_gateway</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">]:</span>
+    <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">_fetch_gateway</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">]:</span>
         <span class="n">r</span> <span class="o">=</span> <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">bot</span><span class="o">.</span><span class="n">state</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="s2">&quot;GET&quot;</span><span class="p">,</span> <span class="s2">&quot;/gateway/bot&quot;</span><span class="p">)</span>
 
         <span class="k">return</span> <span class="p">(</span>
@@ -405,7 +405,7 @@
             <span class="n">r</span><span class="o">.</span><span class="n">response</span><span class="p">[</span><span class="s2">&quot;session_start_limit&quot;</span><span class="p">][</span><span class="s2">&quot;max_concurrency&quot;</span><span class="p">]</span>
         <span class="p">)</span>
 
-    <span class="k">async</span> <span class="k">def</span> <span class="nf">_launch_shard</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">shard_id</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">_launch_shard</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">shard_id</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Individual shard launching</span>
 
@@ -438,7 +438,7 @@
 
 <div class="viewcode-block" id="GatewayClient.shard_by_guild_id">
 <a class="viewcode-back" href="../../../gateway/client.html#discord_http.gateway.client.GatewayClient.shard_by_guild_id">[docs]</a>
-    <span class="k">def</span> <span class="nf">shard_by_guild_id</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">guild_id</span><span class="p">:</span> <span class="s2">&quot;Snowflake | int&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">shard_by_guild_id</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">guild_id</span><span class="p">:</span> <span class="s2">&quot;Snowflake | int&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Returns the shard ID of the shard that the guild is in</span>
 
@@ -455,7 +455,7 @@
         <span class="k">return</span> <span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">guild_id</span><span class="p">)</span> <span class="o">&gt;&gt;</span> <span class="mi">22</span><span class="p">)</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">shard_count</span></div>
 
 
-    <span class="k">async</span> <span class="k">def</span> <span class="nf">_launch_all_shards</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">_launch_all_shards</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot; Launches all the shards &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">automatic_shards</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">shard_count</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">max_concurrency</span> <span class="o">=</span> <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">_fetch_gateway</span><span class="p">()</span>
@@ -498,7 +498,7 @@
 
         <span class="n">asyncio</span><span class="o">.</span><span class="n">create_task</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_delay_full_ready</span><span class="p">())</span>
 
-    <span class="k">async</span> <span class="k">def</span> <span class="nf">_delay_full_ready</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">_delay_full_ready</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="n">_waiting</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">Coroutine</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span>
             <span class="n">g</span><span class="o">.</span><span class="n">wait_until_ready</span><span class="p">()</span>
             <span class="k">for</span> <span class="n">g</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">__shards</span><span class="o">.</span><span class="n">values</span><span class="p">()</span>
@@ -512,16 +512,16 @@
 
 <div class="viewcode-block" id="GatewayClient.start">
 <a class="viewcode-back" href="../../../gateway/client.html#discord_http.gateway.client.GatewayClient.start">[docs]</a>
-    <span class="k">def</span> <span class="nf">start</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">start</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot; Start the gateway client &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">bot</span><span class="o">.</span><span class="n">loop</span><span class="o">.</span><span class="n">create_task</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_launch_all_shards</span><span class="p">())</span></div>
 
 
 <div class="viewcode-block" id="GatewayClient.close">
 <a class="viewcode-back" href="../../../gateway/client.html#discord_http.gateway.client.GatewayClient.close">[docs]</a>
-    <span class="k">async</span> <span class="k">def</span> <span class="nf">close</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">close</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot; Close the gateway client &quot;&quot;&quot;</span>
-        <span class="k">async</span> <span class="k">def</span> <span class="nf">_close</span><span class="p">():</span>
+        <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">_close</span><span class="p">():</span>
             <span class="n">to_close</span> <span class="o">=</span> <span class="p">[</span>
                 <span class="n">asyncio</span><span class="o">.</span><span class="n">ensure_future</span><span class="p">(</span><span class="n">shard</span><span class="o">.</span><span class="n">close</span><span class="p">(</span><span class="n">kill</span><span class="o">=</span><span class="kc">True</span><span class="p">))</span>
                 <span class="k">for</span> <span class="n">shard</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">__shards</span><span class="o">.</span><span class="n">values</span><span class="p">()</span>

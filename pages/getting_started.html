@@ -7,7 +7,7 @@
 
     <link rel="shortcut icon" href="../_static/favicon.ico"/><!-- Generated with Sphinx 8.1.3 and Furo 2024.08.06 -->
         <title>Getting started - discord.http docs</title>
-      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=fa44fd50" />
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=03e43079" />
     <link rel="stylesheet" type="text/css" href="../_static/styles/furo.css?v=354aac6f" />
     <link rel="stylesheet" type="text/css" href="../_static/styles/furo-extensions.css?v=302659d7" />
     
@@ -372,7 +372,7 @@ using NGINX due to its performance overall and its ability to handle more reques
 <h2>Quick example<a class="headerlink" href="#quick-example" title="Link to this heading">¶</a></h2>
 <p>After installing everything, you can make a very simple <code class="docutils literal notranslate"><span class="pre">/ping</span></code> bot with the following code:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span>
-<span class="kn">from</span> <span class="nn">discord_http</span> <span class="kn">import</span> <span class="n">Context</span><span class="p">,</span> <span class="n">Client</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">discord_http</span><span class="w"> </span><span class="kn">import</span> <span class="n">Context</span><span class="p">,</span> <span class="n">Client</span>
 
 <span class="n">client</span> <span class="o">=</span> <span class="n">Client</span><span class="p">(</span>
     <span class="n">token</span><span class="o">=</span><span class="s2">&quot;Your bot token here&quot;</span><span class="p">,</span>
@@ -382,7 +382,7 @@ using NGINX due to its performance overall and its ability to handle more reques
 <span class="p">)</span>
 
 <span class="nd">@client</span><span class="o">.</span><span class="n">command</span><span class="p">()</span>
-<span class="k">async</span> <span class="k">def</span> <span class="nf">ping</span><span class="p">(</span><span class="n">ctx</span><span class="p">:</span> <span class="n">Context</span><span class="p">):</span>
+<span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">ping</span><span class="p">(</span><span class="n">ctx</span><span class="p">:</span> <span class="n">Context</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot; A simple ping command &quot;&quot;&quot;</span>
     <span class="k">return</span> <span class="n">ctx</span><span class="o">.</span><span class="n">response</span><span class="o">.</span><span class="n">send_message</span><span class="p">(</span><span class="s2">&quot;Pong!&quot;</span><span class="p">)</span>
 
@@ -446,7 +446,7 @@ It also uses <code class="docutils literal notranslate"><span class="pre">max_co
 <h3>Intents<a class="headerlink" href="#intents" title="Link to this heading">¶</a></h3>
 <p>By default, there are 0 intents enabled, which means you would have a gateway, but it would essentially do nothing.
 You can use the <code class="xref py py-class docutils literal notranslate"><span class="pre">Intents</span></code> flag to enable certain events that you desire to listen to.</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">discord_http.gateway</span> <span class="kn">import</span> <span class="n">Intents</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">discord_http.gateway</span><span class="w"> </span><span class="kn">import</span> <span class="n">Intents</span>
 
 <span class="n">client</span> <span class="o">=</span> <span class="n">Client</span><span class="p">(</span>
     <span class="o">...</span>
@@ -460,7 +460,7 @@ You can use the <code class="xref py py-class docutils literal notranslate"><spa
 <p>By default, cache is completly disabled, this is an opt-in feature.
 You can use the <code class="xref py py-class docutils literal notranslate"><span class="pre">GatewayCacheFlags</span></code> flag to enable certain cache flags as you desire.
 Mostly this is useful if you wish to reduce the amount of data needing to be requested from Discord API.</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">discord_http.gateway</span> <span class="kn">import</span> <span class="n">GatewayCacheFlags</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">discord_http.gateway</span><span class="w"> </span><span class="kn">import</span> <span class="n">GatewayCacheFlags</span>
 
 <span class="n">client</span> <span class="o">=</span> <span class="n">Client</span><span class="p">(</span>
     <span class="o">...</span>

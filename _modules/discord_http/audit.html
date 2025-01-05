@@ -6,7 +6,7 @@
 
     <link rel="shortcut icon" href="../../_static/favicon.ico"/><!-- Generated with Sphinx 8.1.3 and Furo 2024.08.06 -->
         <title>discord_http.audit - discord.http docs</title>
-      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=fa44fd50" />
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=03e43079" />
     <link rel="stylesheet" type="text/css" href="../../_static/styles/furo.css?v=354aac6f" />
     <link rel="stylesheet" type="text/css" href="../../_static/styles/furo-extensions.css?v=302659d7" />
     
@@ -292,24 +292,24 @@
         </div>
         <article role="main" id="furo-main-content">
           <h1>Source code for discord_http.audit</h1><div class="highlight"><pre>
-<span></span><span class="kn">import</span> <span class="nn">logging</span>
+<span></span><span class="kn">import</span><span class="w"> </span><span class="nn">logging</span>
 
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">TYPE_CHECKING</span><span class="p">,</span> <span class="n">Any</span><span class="p">,</span> <span class="n">TypeVar</span><span class="p">,</span> <span class="n">Type</span><span class="p">,</span> <span class="n">Callable</span>
-<span class="kn">from</span> <span class="nn">datetime</span> <span class="kn">import</span> <span class="n">datetime</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">TYPE_CHECKING</span><span class="p">,</span> <span class="n">Any</span><span class="p">,</span> <span class="n">TypeVar</span><span class="p">,</span> <span class="n">Type</span><span class="p">,</span> <span class="n">Callable</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">datetime</span><span class="w"> </span><span class="kn">import</span> <span class="n">datetime</span>
 
-<span class="kn">from</span> <span class="nn">.</span> <span class="kn">import</span> <span class="n">utils</span><span class="p">,</span> <span class="n">enums</span><span class="p">,</span> <span class="n">flags</span>
-<span class="kn">from</span> <span class="nn">.asset</span> <span class="kn">import</span> <span class="n">Asset</span>
-<span class="kn">from</span> <span class="nn">.automod</span> <span class="kn">import</span> <span class="n">AutoModRuleTriggers</span><span class="p">,</span> <span class="n">AutoModRuleAction</span>
-<span class="kn">from</span> <span class="nn">.object</span> <span class="kn">import</span> <span class="n">Snowflake</span>
-<span class="kn">from</span> <span class="nn">.guild</span> <span class="kn">import</span> <span class="n">PartialGuild</span>
-<span class="kn">from</span> <span class="nn">.channel</span> <span class="kn">import</span> <span class="n">PartialChannel</span><span class="p">,</span> <span class="n">ForumTag</span>
-<span class="kn">from</span> <span class="nn">.colour</span> <span class="kn">import</span> <span class="n">Colour</span>
-<span class="kn">from</span> <span class="nn">.role</span> <span class="kn">import</span> <span class="n">PartialRole</span>
-<span class="kn">from</span> <span class="nn">.user</span> <span class="kn">import</span> <span class="n">User</span><span class="p">,</span> <span class="n">PartialUser</span>
-<span class="kn">from</span> <span class="nn">.emoji</span> <span class="kn">import</span> <span class="n">EmojiParser</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.</span><span class="w"> </span><span class="kn">import</span> <span class="n">utils</span><span class="p">,</span> <span class="n">enums</span><span class="p">,</span> <span class="n">flags</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.asset</span><span class="w"> </span><span class="kn">import</span> <span class="n">Asset</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.automod</span><span class="w"> </span><span class="kn">import</span> <span class="n">AutoModRuleTriggers</span><span class="p">,</span> <span class="n">AutoModRuleAction</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.object</span><span class="w"> </span><span class="kn">import</span> <span class="n">Snowflake</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.guild</span><span class="w"> </span><span class="kn">import</span> <span class="n">PartialGuild</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.channel</span><span class="w"> </span><span class="kn">import</span> <span class="n">PartialChannel</span><span class="p">,</span> <span class="n">ForumTag</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.colour</span><span class="w"> </span><span class="kn">import</span> <span class="n">Colour</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.role</span><span class="w"> </span><span class="kn">import</span> <span class="n">PartialRole</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.user</span><span class="w"> </span><span class="kn">import</span> <span class="n">User</span><span class="p">,</span> <span class="n">PartialUser</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.emoji</span><span class="w"> </span><span class="kn">import</span> <span class="n">EmojiParser</span>
 
 <span class="k">if</span> <span class="n">TYPE_CHECKING</span><span class="p">:</span>
-    <span class="kn">from</span> <span class="nn">.http</span> <span class="kn">import</span> <span class="n">DiscordAPI</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">.http</span><span class="w"> </span><span class="kn">import</span> <span class="n">DiscordAPI</span>
 
 <span class="n">_log</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
 
@@ -319,11 +319,11 @@
 <span class="p">)</span>
 
 
-<span class="k">def</span> <span class="nf">_handle_snowflake</span><span class="p">(</span><span class="n">entry</span><span class="p">:</span> <span class="s2">&quot;AuditLogEntry&quot;</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Snowflake</span><span class="p">:</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_handle_snowflake</span><span class="p">(</span><span class="n">entry</span><span class="p">:</span> <span class="s2">&quot;AuditLogEntry&quot;</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Snowflake</span><span class="p">:</span>
     <span class="k">return</span> <span class="n">Snowflake</span><span class="p">(</span><span class="nb">id</span><span class="o">=</span><span class="nb">int</span><span class="p">(</span><span class="n">data</span><span class="p">))</span>
 
 
-<span class="k">def</span> <span class="nf">_handle_type</span><span class="p">(</span><span class="n">entry</span><span class="p">:</span> <span class="s2">&quot;AuditLogEntry&quot;</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="p">(</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_handle_type</span><span class="p">(</span><span class="n">entry</span><span class="p">:</span> <span class="s2">&quot;AuditLogEntry&quot;</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="p">(</span>
     <span class="n">enums</span><span class="o">.</span><span class="n">ChannelType</span> <span class="o">|</span> <span class="n">enums</span><span class="o">.</span><span class="n">StickerType</span> <span class="o">|</span>
     <span class="n">enums</span><span class="o">.</span><span class="n">WebhookType</span> <span class="o">|</span> <span class="n">enums</span><span class="o">.</span><span class="n">PermissionType</span> <span class="o">|</span> <span class="nb">str</span>
 <span class="p">):</span>
@@ -340,7 +340,7 @@
         <span class="k">return</span> <span class="n">enums</span><span class="o">.</span><span class="n">ChannelType</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
 
 
-<span class="k">def</span> <span class="nf">_handle_overloaded_flags</span><span class="p">(</span><span class="n">entry</span><span class="p">:</span> <span class="s2">&quot;AuditLogEntry&quot;</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">flags</span><span class="o">.</span><span class="n">BaseFlag</span> <span class="o">|</span> <span class="nb">int</span><span class="p">:</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_handle_overloaded_flags</span><span class="p">(</span><span class="n">entry</span><span class="p">:</span> <span class="s2">&quot;AuditLogEntry&quot;</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">flags</span><span class="o">.</span><span class="n">BaseFlag</span> <span class="o">|</span> <span class="nb">int</span><span class="p">:</span>
     <span class="n">_valid_types</span> <span class="o">=</span> <span class="p">(</span>
         <span class="n">enums</span><span class="o">.</span><span class="n">AuditLogType</span><span class="o">.</span><span class="n">channel_create</span><span class="p">,</span>
         <span class="n">enums</span><span class="o">.</span><span class="n">AuditLogType</span><span class="o">.</span><span class="n">channel_update</span><span class="p">,</span>
@@ -355,7 +355,7 @@
     <span class="k">return</span> <span class="n">data</span>
 
 
-<span class="k">def</span> <span class="nf">_handle_default_reaction</span><span class="p">(</span><span class="n">entry</span><span class="p">:</span> <span class="s2">&quot;AuditLogEntry&quot;</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">|</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">EmojiParser</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_handle_default_reaction</span><span class="p">(</span><span class="n">entry</span><span class="p">:</span> <span class="s2">&quot;AuditLogEntry&quot;</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">|</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">EmojiParser</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
     <span class="k">if</span> <span class="ow">not</span> <span class="n">data</span><span class="p">:</span>
         <span class="k">return</span> <span class="kc">None</span>
 
@@ -365,7 +365,7 @@
     <span class="p">})</span>
 
 
-<span class="k">def</span> <span class="nf">_handle_cover_image</span><span class="p">(</span><span class="n">entry</span><span class="p">:</span> <span class="s2">&quot;AuditLogEntry&quot;</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Asset</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_handle_cover_image</span><span class="p">(</span><span class="n">entry</span><span class="p">:</span> <span class="s2">&quot;AuditLogEntry&quot;</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Asset</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
     <span class="k">if</span> <span class="ow">not</span> <span class="n">data</span><span class="p">:</span>
         <span class="k">return</span> <span class="kc">None</span>
     <span class="k">if</span> <span class="ow">not</span> <span class="n">entry</span><span class="o">.</span><span class="n">target_id</span><span class="p">:</span>
@@ -378,8 +378,8 @@
     <span class="p">)</span>
 
 
-<span class="k">def</span> <span class="nf">_handle_guild_hash</span><span class="p">(</span><span class="n">path</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Callable</span><span class="p">[[</span><span class="s2">&quot;AuditLogEntry&quot;</span><span class="p">,</span> <span class="nb">str</span><span class="p">],</span> <span class="n">Asset</span> <span class="o">|</span> <span class="kc">None</span><span class="p">]:</span>
-    <span class="k">def</span> <span class="nf">_handler</span><span class="p">(</span><span class="n">entry</span><span class="p">:</span> <span class="s2">&quot;AuditLogEntry&quot;</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Asset</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_handle_guild_hash</span><span class="p">(</span><span class="n">path</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Callable</span><span class="p">[[</span><span class="s2">&quot;AuditLogEntry&quot;</span><span class="p">,</span> <span class="nb">str</span><span class="p">],</span> <span class="n">Asset</span> <span class="o">|</span> <span class="kc">None</span><span class="p">]:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_handler</span><span class="p">(</span><span class="n">entry</span><span class="p">:</span> <span class="s2">&quot;AuditLogEntry&quot;</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Asset</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">data</span><span class="p">:</span>
             <span class="k">return</span> <span class="kc">None</span>
 
@@ -393,34 +393,34 @@
     <span class="k">return</span> <span class="n">_handler</span>
 
 
-<span class="k">def</span> <span class="nf">_handle_guild_id</span><span class="p">(</span><span class="n">entry</span><span class="p">:</span> <span class="s2">&quot;AuditLogEntry&quot;</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">PartialGuild</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_handle_guild_id</span><span class="p">(</span><span class="n">entry</span><span class="p">:</span> <span class="s2">&quot;AuditLogEntry&quot;</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">PartialGuild</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
     <span class="k">if</span> <span class="ow">not</span> <span class="n">data</span><span class="p">:</span>
         <span class="k">return</span> <span class="kc">None</span>
 
     <span class="k">return</span> <span class="n">entry</span><span class="o">.</span><span class="n">_convert_target_guild</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">data</span><span class="p">))</span>
 
 
-<span class="k">def</span> <span class="nf">_handle_timestamp</span><span class="p">(</span><span class="n">entry</span><span class="p">:</span> <span class="s2">&quot;AuditLogEntry&quot;</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">datetime</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_handle_timestamp</span><span class="p">(</span><span class="n">entry</span><span class="p">:</span> <span class="s2">&quot;AuditLogEntry&quot;</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">datetime</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
     <span class="k">if</span> <span class="ow">not</span> <span class="n">data</span><span class="p">:</span>
         <span class="k">return</span> <span class="kc">None</span>
     <span class="k">return</span> <span class="n">utils</span><span class="o">.</span><span class="n">parse_time</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
 
 
-<span class="k">def</span> <span class="nf">_handle_applied_tags</span><span class="p">(</span><span class="n">entry</span><span class="p">:</span> <span class="s2">&quot;AuditLogEntry&quot;</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="n">Snowflake</span><span class="p">]:</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_handle_applied_tags</span><span class="p">(</span><span class="n">entry</span><span class="p">:</span> <span class="s2">&quot;AuditLogEntry&quot;</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="n">Snowflake</span><span class="p">]:</span>
     <span class="k">return</span> <span class="p">[</span>
         <span class="n">Snowflake</span><span class="p">(</span><span class="nb">id</span><span class="o">=</span><span class="nb">int</span><span class="p">(</span><span class="n">g</span><span class="p">))</span>
         <span class="k">for</span> <span class="n">g</span> <span class="ow">in</span> <span class="n">data</span>
     <span class="p">]</span>
 
 
-<span class="k">def</span> <span class="nf">_handle_forum_tags</span><span class="p">(</span><span class="n">entry</span><span class="p">:</span> <span class="s2">&quot;AuditLogEntry&quot;</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">dict</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="n">ForumTag</span><span class="p">]:</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_handle_forum_tags</span><span class="p">(</span><span class="n">entry</span><span class="p">:</span> <span class="s2">&quot;AuditLogEntry&quot;</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">dict</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="n">ForumTag</span><span class="p">]:</span>
     <span class="k">return</span> <span class="p">[</span>
         <span class="n">ForumTag</span><span class="o">.</span><span class="n">from_data</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">g</span><span class="p">)</span>
         <span class="k">for</span> <span class="n">g</span> <span class="ow">in</span> <span class="n">data</span>
     <span class="p">]</span>
 
 
-<span class="k">def</span> <span class="nf">_hanndle_icon</span><span class="p">(</span><span class="n">entry</span><span class="p">:</span> <span class="s2">&quot;AuditLogEntry&quot;</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Asset</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_hanndle_icon</span><span class="p">(</span><span class="n">entry</span><span class="p">:</span> <span class="s2">&quot;AuditLogEntry&quot;</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Asset</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
     <span class="k">if</span> <span class="n">data</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
         <span class="k">return</span> <span class="kc">None</span>
 
@@ -440,7 +440,7 @@
     <span class="p">)</span>
 
 
-<span class="k">def</span> <span class="nf">_handle_avatar</span><span class="p">(</span><span class="n">entry</span><span class="p">:</span> <span class="s2">&quot;AuditLogEntry&quot;</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Asset</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_handle_avatar</span><span class="p">(</span><span class="n">entry</span><span class="p">:</span> <span class="s2">&quot;AuditLogEntry&quot;</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Asset</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
     <span class="k">if</span> <span class="n">data</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
         <span class="k">return</span> <span class="kc">None</span>
     <span class="k">if</span> <span class="ow">not</span> <span class="n">entry</span><span class="o">.</span><span class="n">target_id</span><span class="p">:</span>
@@ -453,7 +453,7 @@
     <span class="p">)</span>
 
 
-<span class="k">def</span> <span class="nf">_handle_overwrites</span><span class="p">(</span><span class="n">entry</span><span class="p">:</span> <span class="s2">&quot;AuditLogEntry&quot;</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="nb">dict</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">tuple</span><span class="p">[</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_handle_overwrites</span><span class="p">(</span><span class="n">entry</span><span class="p">:</span> <span class="s2">&quot;AuditLogEntry&quot;</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="nb">dict</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">tuple</span><span class="p">[</span>
     <span class="n">PartialUser</span> <span class="o">|</span> <span class="n">PartialRole</span><span class="p">,</span> <span class="n">flags</span><span class="o">.</span><span class="n">PermissionOverwrite</span>
 <span class="p">]]:</span>
     <span class="n">overwrites</span> <span class="o">=</span> <span class="p">[]</span>
@@ -485,52 +485,52 @@
     <span class="k">return</span> <span class="n">overwrites</span>
 
 
-<span class="k">def</span> <span class="nf">_handle_colour</span><span class="p">(</span><span class="n">entry</span><span class="p">:</span> <span class="s2">&quot;AuditLogEntry&quot;</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Colour</span><span class="p">:</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_handle_colour</span><span class="p">(</span><span class="n">entry</span><span class="p">:</span> <span class="s2">&quot;AuditLogEntry&quot;</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Colour</span><span class="p">:</span>
     <span class="k">return</span> <span class="n">Colour</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">data</span><span class="p">))</span>
 
 
-<span class="k">def</span> <span class="nf">_handle_automod_triggers</span><span class="p">(</span><span class="n">entry</span><span class="p">:</span> <span class="s2">&quot;AuditLogEntry&quot;</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="nb">dict</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">AutoModRuleTriggers</span><span class="p">:</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_handle_automod_triggers</span><span class="p">(</span><span class="n">entry</span><span class="p">:</span> <span class="s2">&quot;AuditLogEntry&quot;</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="nb">dict</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">AutoModRuleTriggers</span><span class="p">:</span>
     <span class="k">return</span> <span class="n">AutoModRuleTriggers</span><span class="o">.</span><span class="n">from_dict</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
 
 
-<span class="k">def</span> <span class="nf">_handle_automod_actions</span><span class="p">(</span><span class="n">entry</span><span class="p">:</span> <span class="s2">&quot;AuditLogEntry&quot;</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">dict</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="n">AutoModRuleAction</span><span class="p">]:</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_handle_automod_actions</span><span class="p">(</span><span class="n">entry</span><span class="p">:</span> <span class="s2">&quot;AuditLogEntry&quot;</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">dict</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="n">AutoModRuleAction</span><span class="p">]:</span>
     <span class="k">return</span> <span class="p">[</span>
         <span class="n">AutoModRuleAction</span><span class="o">.</span><span class="n">from_dict</span><span class="p">(</span><span class="n">g</span><span class="p">)</span>
         <span class="k">for</span> <span class="n">g</span> <span class="ow">in</span> <span class="n">data</span>
     <span class="p">]</span>
 
 
-<span class="k">def</span> <span class="nf">_handle_automod_roles</span><span class="p">(</span><span class="n">entry</span><span class="p">:</span> <span class="s2">&quot;AuditLogEntry&quot;</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">int</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="n">PartialRole</span><span class="p">]:</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_handle_automod_roles</span><span class="p">(</span><span class="n">entry</span><span class="p">:</span> <span class="s2">&quot;AuditLogEntry&quot;</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">int</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="n">PartialRole</span><span class="p">]:</span>
     <span class="k">return</span> <span class="p">[</span>
         <span class="n">entry</span><span class="o">.</span><span class="n">_convert_target_role</span><span class="p">(</span><span class="n">g</span><span class="p">)</span>
         <span class="k">for</span> <span class="n">g</span> <span class="ow">in</span> <span class="n">data</span>
     <span class="p">]</span>
 
 
-<span class="k">def</span> <span class="nf">_handle_automod_channels</span><span class="p">(</span><span class="n">entry</span><span class="p">:</span> <span class="s2">&quot;AuditLogEntry&quot;</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">int</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="n">PartialChannel</span><span class="p">]:</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_handle_automod_channels</span><span class="p">(</span><span class="n">entry</span><span class="p">:</span> <span class="s2">&quot;AuditLogEntry&quot;</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">int</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="n">PartialChannel</span><span class="p">]:</span>
     <span class="k">return</span> <span class="p">[</span>
         <span class="n">entry</span><span class="o">.</span><span class="n">_convert_target_channel</span><span class="p">(</span><span class="n">g</span><span class="p">)</span>
         <span class="k">for</span> <span class="n">g</span> <span class="ow">in</span> <span class="n">data</span>
     <span class="p">]</span>
 
 
-<span class="k">def</span> <span class="nf">_handle_member</span><span class="p">(</span><span class="n">entry</span><span class="p">:</span> <span class="s2">&quot;AuditLogEntry&quot;</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">User</span> <span class="o">|</span> <span class="n">PartialUser</span><span class="p">:</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_handle_member</span><span class="p">(</span><span class="n">entry</span><span class="p">:</span> <span class="s2">&quot;AuditLogEntry&quot;</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">User</span> <span class="o">|</span> <span class="n">PartialUser</span><span class="p">:</span>
     <span class="k">return</span> <span class="n">entry</span><span class="o">.</span><span class="n">_convert_target_user</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">data</span><span class="p">))</span>
 
 
-<span class="k">def</span> <span class="nf">_handle_channel</span><span class="p">(</span><span class="n">entry</span><span class="p">:</span> <span class="s2">&quot;AuditLogEntry&quot;</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">PartialChannel</span><span class="p">:</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_handle_channel</span><span class="p">(</span><span class="n">entry</span><span class="p">:</span> <span class="s2">&quot;AuditLogEntry&quot;</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">PartialChannel</span><span class="p">:</span>
     <span class="k">return</span> <span class="n">entry</span><span class="o">.</span><span class="n">_convert_target_channel</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">data</span><span class="p">))</span>
 
 
-<span class="k">def</span> <span class="nf">_handle_role</span><span class="p">(</span><span class="n">entry</span><span class="p">:</span> <span class="s2">&quot;AuditLogEntry&quot;</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">PartialRole</span><span class="p">:</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_handle_role</span><span class="p">(</span><span class="n">entry</span><span class="p">:</span> <span class="s2">&quot;AuditLogEntry&quot;</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">PartialRole</span><span class="p">:</span>
     <span class="k">return</span> <span class="n">entry</span><span class="o">.</span><span class="n">_convert_target_role</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">data</span><span class="p">))</span>
 
 
 <span class="n">E</span> <span class="o">=</span> <span class="n">TypeVar</span><span class="p">(</span><span class="s2">&quot;E&quot;</span><span class="p">,</span> <span class="n">bound</span><span class="o">=</span><span class="n">enums</span><span class="o">.</span><span class="n">BaseEnum</span><span class="p">)</span>
 
 
-<span class="k">def</span> <span class="nf">_handle_enum</span><span class="p">(</span><span class="bp">cls</span><span class="p">:</span> <span class="n">Type</span><span class="p">[</span><span class="n">E</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Callable</span><span class="p">[[</span><span class="s2">&quot;AuditLogEntry&quot;</span><span class="p">,</span> <span class="nb">str</span> <span class="o">|</span> <span class="nb">int</span><span class="p">],</span> <span class="n">E</span><span class="p">]:</span>
-    <span class="k">def</span> <span class="nf">_handler</span><span class="p">(</span><span class="n">entry</span><span class="p">:</span> <span class="s2">&quot;AuditLogEntry&quot;</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">E</span><span class="p">:</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_handle_enum</span><span class="p">(</span><span class="bp">cls</span><span class="p">:</span> <span class="n">Type</span><span class="p">[</span><span class="n">E</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Callable</span><span class="p">[[</span><span class="s2">&quot;AuditLogEntry&quot;</span><span class="p">,</span> <span class="nb">str</span> <span class="o">|</span> <span class="nb">int</span><span class="p">],</span> <span class="n">E</span><span class="p">]:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_handler</span><span class="p">(</span><span class="n">entry</span><span class="p">:</span> <span class="s2">&quot;AuditLogEntry&quot;</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">E</span><span class="p">:</span>
         <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">data</span><span class="p">))</span>
 
     <span class="k">return</span> <span class="n">_handler</span>
@@ -539,8 +539,8 @@
 <span class="n">F</span> <span class="o">=</span> <span class="n">TypeVar</span><span class="p">(</span><span class="s2">&quot;F&quot;</span><span class="p">,</span> <span class="n">bound</span><span class="o">=</span><span class="n">flags</span><span class="o">.</span><span class="n">BaseFlag</span><span class="p">)</span>
 
 
-<span class="k">def</span> <span class="nf">_handle_flags</span><span class="p">(</span><span class="bp">cls</span><span class="p">:</span> <span class="n">Type</span><span class="p">[</span><span class="n">F</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Callable</span><span class="p">[[</span><span class="s2">&quot;AuditLogEntry&quot;</span><span class="p">,</span> <span class="nb">str</span> <span class="o">|</span> <span class="nb">int</span><span class="p">],</span> <span class="n">F</span><span class="p">]:</span>
-    <span class="k">def</span> <span class="nf">_handler</span><span class="p">(</span><span class="n">entry</span><span class="p">:</span> <span class="s2">&quot;AuditLogEntry&quot;</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">F</span><span class="p">:</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_handle_flags</span><span class="p">(</span><span class="bp">cls</span><span class="p">:</span> <span class="n">Type</span><span class="p">[</span><span class="n">F</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Callable</span><span class="p">[[</span><span class="s2">&quot;AuditLogEntry&quot;</span><span class="p">,</span> <span class="nb">str</span> <span class="o">|</span> <span class="nb">int</span><span class="p">],</span> <span class="n">F</span><span class="p">]:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_handler</span><span class="p">(</span><span class="n">entry</span><span class="p">:</span> <span class="s2">&quot;AuditLogEntry&quot;</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">F</span><span class="p">:</span>
         <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">data</span><span class="p">))</span>
 
     <span class="k">return</span> <span class="n">_handler</span>
@@ -548,7 +548,7 @@
 
 <div class="viewcode-block" id="AuditChange">
 <a class="viewcode-back" href="../../api/audit.html#discord_http.audit.AuditChange">[docs]</a>
-<span class="k">class</span> <span class="nc">AuditChange</span><span class="p">:</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">AuditChange</span><span class="p">:</span>
     <span class="n">_translaters</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Callable</span><span class="p">[[</span><span class="s2">&quot;AuditLogEntry&quot;</span><span class="p">,</span> <span class="n">Any</span><span class="p">],</span> <span class="n">Any</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span>
         <span class="s2">&quot;verification_level&quot;</span><span class="p">:</span> <span class="n">_handle_enum</span><span class="p">(</span><span class="n">enums</span><span class="o">.</span><span class="n">VerificationLevel</span><span class="p">),</span>
         <span class="s2">&quot;explicit_content_filter&quot;</span><span class="p">:</span> <span class="n">_handle_enum</span><span class="p">(</span><span class="n">enums</span><span class="o">.</span><span class="n">ContentFilterLevel</span><span class="p">),</span>
@@ -600,7 +600,7 @@
         <span class="s2">&quot;default_reaction_emoji&quot;</span><span class="p">:</span> <span class="n">_handle_default_reaction</span><span class="p">,</span>
     <span class="p">}</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="o">*</span><span class="p">,</span>
         <span class="n">entry</span><span class="p">:</span> <span class="s2">&quot;AuditLogEntry&quot;</span><span class="p">,</span>
@@ -626,7 +626,7 @@
             <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">old_value</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">old_value</span> <span class="o">=</span> <span class="n">_translator</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">entry</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">old_value</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">_handle_partial_role</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="nb">dict</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="n">PartialRole</span><span class="p">]:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_handle_partial_role</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="nb">dict</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="n">PartialRole</span><span class="p">]:</span>
         <span class="k">return</span> <span class="p">[</span>
             <span class="n">PartialRole</span><span class="p">(</span>
                 <span class="n">state</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">entry</span><span class="o">.</span><span class="n">_state</span><span class="p">,</span>
@@ -640,8 +640,8 @@
 
 <div class="viewcode-block" id="AuditLogEntry">
 <a class="viewcode-back" href="../../api/audit.html#discord_http.audit.AuditLogEntry">[docs]</a>
-<span class="k">class</span> <span class="nc">AuditLogEntry</span><span class="p">(</span><span class="n">Snowflake</span><span class="p">):</span>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">AuditLogEntry</span><span class="p">(</span><span class="n">Snowflake</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="o">*</span><span class="p">,</span>
         <span class="n">state</span><span class="p">:</span> <span class="s2">&quot;DiscordAPI&quot;</span><span class="p">,</span>
@@ -677,26 +677,26 @@
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_from_data</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
         <span class="k">return</span> <span class="p">(</span>
             <span class="sa">f</span><span class="s2">&quot;&lt;AuditLogEntry action_type=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">action_type</span><span class="si">}</span><span class="s2"> user_id=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">user_id</span><span class="si">}</span><span class="s2">&gt;&quot;</span>
         <span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">_from_data</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="nb">dict</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_from_data</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="nb">dict</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">changes</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">AuditChange</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span>
             <span class="n">AuditChange</span><span class="p">(</span><span class="n">entry</span><span class="o">=</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">g</span><span class="p">)</span>
             <span class="k">for</span> <span class="n">g</span> <span class="ow">in</span> <span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;changes&quot;</span><span class="p">,</span> <span class="p">[])</span>
         <span class="p">]</span>
 
     <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">user</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">User</span> <span class="o">|</span> <span class="n">PartialUser</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">user</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">User</span> <span class="o">|</span> <span class="n">PartialUser</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot; `User`: Returns the user object of the audit log if available &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">user_id</span><span class="p">:</span>
             <span class="k">return</span> <span class="kc">None</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_convert_target_user</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">user_id</span><span class="p">)</span>
 
     <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">target</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Snowflake</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">target</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Snowflake</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        `Snowflake | None`:</span>
 <span class="sd">        Returns the target object of the audit log</span>
@@ -713,33 +713,33 @@
         <span class="k">else</span><span class="p">:</span>
             <span class="k">return</span> <span class="n">converter</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">target_id</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">_convert_target_guild</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">guild_id</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">PartialGuild</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_convert_target_guild</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">guild_id</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">PartialGuild</span><span class="p">:</span>
         <span class="k">return</span> <span class="n">PartialGuild</span><span class="p">(</span>
             <span class="n">state</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_state</span><span class="p">,</span>
             <span class="nb">id</span><span class="o">=</span><span class="n">guild_id</span>
         <span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">_convert_target_channel</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">channel_id</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">PartialChannel</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_convert_target_channel</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">channel_id</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">PartialChannel</span><span class="p">:</span>
         <span class="k">return</span> <span class="n">PartialChannel</span><span class="p">(</span>
             <span class="n">state</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_state</span><span class="p">,</span>
             <span class="nb">id</span><span class="o">=</span><span class="n">channel_id</span><span class="p">,</span>
             <span class="n">guild_id</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">guild</span><span class="o">.</span><span class="n">id</span>
         <span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">_convert_target_user</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">user_id</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">User</span> <span class="o">|</span> <span class="n">PartialUser</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_convert_target_user</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">user_id</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">User</span> <span class="o">|</span> <span class="n">PartialUser</span><span class="p">:</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_users</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">user_id</span><span class="p">,</span> <span class="n">PartialUser</span><span class="p">(</span>
             <span class="n">state</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_state</span><span class="p">,</span>
             <span class="nb">id</span><span class="o">=</span><span class="n">user_id</span>
         <span class="p">))</span>
 
-    <span class="k">def</span> <span class="nf">_convert_target_role</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">role_id</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">PartialRole</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_convert_target_role</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">role_id</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">PartialRole</span><span class="p">:</span>
         <span class="k">return</span> <span class="n">PartialRole</span><span class="p">(</span>
             <span class="n">state</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_state</span><span class="p">,</span>
             <span class="nb">id</span><span class="o">=</span><span class="n">role_id</span><span class="p">,</span>
             <span class="n">guild_id</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">guild</span><span class="o">.</span><span class="n">id</span>
         <span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">_convert_target_message</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">user_id</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">User</span> <span class="o">|</span> <span class="n">PartialUser</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_convert_target_message</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">user_id</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">User</span> <span class="o">|</span> <span class="n">PartialUser</span><span class="p">:</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_convert_target_user</span><span class="p">(</span><span class="n">user_id</span><span class="p">)</span></div>
 
 </pre></div>

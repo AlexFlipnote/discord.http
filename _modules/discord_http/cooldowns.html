@@ -6,7 +6,7 @@
 
     <link rel="shortcut icon" href="../../_static/favicon.ico"/><!-- Generated with Sphinx 8.1.3 and Furo 2024.08.06 -->
         <title>discord_http.cooldowns - discord.http docs</title>
-      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=fa44fd50" />
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=03e43079" />
     <link rel="stylesheet" type="text/css" href="../../_static/styles/furo.css?v=354aac6f" />
     <link rel="stylesheet" type="text/css" href="../../_static/styles/furo-extensions.css?v=302659d7" />
     
@@ -292,14 +292,14 @@
         </div>
         <article role="main" id="furo-main-content">
           <h1>Source code for discord_http.cooldowns</h1><div class="highlight"><pre>
-<span></span><span class="kn">import</span> <span class="nn">time</span>
+<span></span><span class="kn">import</span><span class="w"> </span><span class="nn">time</span>
 
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">TYPE_CHECKING</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">TYPE_CHECKING</span>
 
-<span class="kn">from</span> <span class="nn">.enums</span> <span class="kn">import</span> <span class="n">BaseEnum</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.enums</span><span class="w"> </span><span class="kn">import</span> <span class="n">BaseEnum</span>
 
 <span class="k">if</span> <span class="n">TYPE_CHECKING</span><span class="p">:</span>
-    <span class="kn">from</span> <span class="nn">.context</span> <span class="kn">import</span> <span class="n">Context</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">.context</span><span class="w"> </span><span class="kn">import</span> <span class="n">Context</span>
 
 <span class="n">__all__</span> <span class="o">=</span> <span class="p">(</span>
     <span class="s2">&quot;BucketType&quot;</span><span class="p">,</span>
@@ -310,7 +310,7 @@
 
 <div class="viewcode-block" id="BucketType">
 <a class="viewcode-back" href="../../api/cooldowns.html#discord_http.cooldowns.BucketType">[docs]</a>
-<span class="k">class</span> <span class="nc">BucketType</span><span class="p">(</span><span class="n">BaseEnum</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">BucketType</span><span class="p">(</span><span class="n">BaseEnum</span><span class="p">):</span>
     <span class="n">default</span> <span class="o">=</span> <span class="mi">0</span>
     <span class="n">user</span> <span class="o">=</span> <span class="mi">1</span>
     <span class="n">member</span> <span class="o">=</span> <span class="mi">2</span>
@@ -320,7 +320,7 @@
 
 <div class="viewcode-block" id="BucketType.get_key">
 <a class="viewcode-back" href="../../api/cooldowns.html#discord_http.cooldowns.BucketType.get_key">[docs]</a>
-    <span class="k">def</span> <span class="nf">get_key</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ctx</span><span class="p">:</span> <span class="s2">&quot;Context&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span> <span class="o">|</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">]:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_key</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ctx</span><span class="p">:</span> <span class="s2">&quot;Context&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span> <span class="o">|</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">]:</span>
         <span class="k">match</span> <span class="bp">self</span><span class="p">:</span>
             <span class="k">case</span> <span class="n">BucketType</span><span class="o">.</span><span class="n">user</span><span class="p">:</span>
                 <span class="k">return</span> <span class="n">ctx</span><span class="o">.</span><span class="n">user</span><span class="o">.</span><span class="n">id</span>
@@ -344,15 +344,15 @@
                 <span class="k">return</span> <span class="mi">0</span></div>
 
 
-    <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ctx</span><span class="p">:</span> <span class="s2">&quot;Context&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span> <span class="o">|</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">]:</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ctx</span><span class="p">:</span> <span class="s2">&quot;Context&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span> <span class="o">|</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">]:</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_key</span><span class="p">(</span><span class="n">ctx</span><span class="p">)</span></div>
 
 
 
 <div class="viewcode-block" id="CooldownCache">
 <a class="viewcode-back" href="../../api/cooldowns.html#discord_http.cooldowns.CooldownCache">[docs]</a>
-<span class="k">class</span> <span class="nc">CooldownCache</span><span class="p">:</span>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">CooldownCache</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">original</span><span class="p">:</span> <span class="s2">&quot;Cooldown&quot;</span><span class="p">,</span>
         <span class="nb">type</span><span class="p">:</span> <span class="n">BucketType</span>
@@ -361,14 +361,14 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_cooldown</span><span class="p">:</span> <span class="n">Cooldown</span> <span class="o">=</span> <span class="n">original</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_type</span><span class="p">:</span> <span class="n">BucketType</span> <span class="o">=</span> <span class="nb">type</span>
 
-    <span class="k">def</span> <span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
         <span class="k">return</span> <span class="p">(</span>
             <span class="sa">f</span><span class="s2">&quot;&lt;CooldownCache type=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_type</span><span class="si">!r}</span><span class="s2"> rate=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_cooldown</span><span class="o">.</span><span class="n">rate</span><span class="si">}</span><span class="s2"> &quot;</span>
             <span class="sa">f</span><span class="s2">&quot;per=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_cooldown</span><span class="o">.</span><span class="n">per</span><span class="si">}</span><span class="s2"> &quot;</span>
             <span class="sa">f</span><span class="s2">&quot;cache=</span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_cache</span><span class="p">)</span><span class="w"> </span><span class="k">if</span><span class="w"> </span><span class="bp">self</span><span class="o">.</span><span class="n">_cache</span><span class="w"> </span><span class="k">else</span><span class="w"> </span><span class="kc">None</span><span class="si">}</span><span class="s2">&gt;&quot;</span>
         <span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">_bucket_key</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ctx</span><span class="p">:</span> <span class="s2">&quot;Context&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span> <span class="o">|</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">]:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_bucket_key</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ctx</span><span class="p">:</span> <span class="s2">&quot;Context&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span> <span class="o">|</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">]:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Creates a key for the bucket based on the type.</span>
 
@@ -384,7 +384,7 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_type</span><span class="p">(</span><span class="n">ctx</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">_cleanup_cache</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_cleanup_cache</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">current</span><span class="p">:</span> <span class="nb">float</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
@@ -405,14 +405,14 @@
 
 <div class="viewcode-block" id="CooldownCache.create_bucket">
 <a class="viewcode-back" href="../../api/cooldowns.html#discord_http.cooldowns.CooldownCache.create_bucket">[docs]</a>
-    <span class="k">def</span> <span class="nf">create_bucket</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;Cooldown&quot;</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">create_bucket</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;Cooldown&quot;</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot; `Cooldown`: Creates a new cooldown bucket. &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_cooldown</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span></div>
 
 
 <div class="viewcode-block" id="CooldownCache.get_bucket">
 <a class="viewcode-back" href="../../api/cooldowns.html#discord_http.cooldowns.CooldownCache.get_bucket">[docs]</a>
-    <span class="k">def</span> <span class="nf">get_bucket</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_bucket</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">ctx</span><span class="p">:</span> <span class="s2">&quot;Context&quot;</span><span class="p">,</span>
         <span class="n">current</span><span class="p">:</span> <span class="nb">float</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
@@ -449,7 +449,7 @@
 
 <div class="viewcode-block" id="CooldownCache.update_rate_limit">
 <a class="viewcode-back" href="../../api/cooldowns.html#discord_http.cooldowns.CooldownCache.update_rate_limit">[docs]</a>
-    <span class="k">def</span> <span class="nf">update_rate_limit</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">update_rate_limit</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">ctx</span><span class="p">:</span> <span class="s2">&quot;Context&quot;</span><span class="p">,</span>
         <span class="n">current</span><span class="p">:</span> <span class="nb">float</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
@@ -482,8 +482,8 @@
 
 <div class="viewcode-block" id="Cooldown">
 <a class="viewcode-back" href="../../api/cooldowns.html#discord_http.cooldowns.Cooldown">[docs]</a>
-<span class="k">class</span> <span class="nc">Cooldown</span><span class="p">:</span>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">rate</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">per</span><span class="p">:</span> <span class="nb">float</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">Cooldown</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">rate</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">per</span><span class="p">:</span> <span class="nb">float</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">rate</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">rate</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">per</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">per</span><span class="p">)</span>
 
@@ -491,12 +491,12 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_tokens</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">rate</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_last</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.0</span>
 
-    <span class="k">def</span> <span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
         <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;&lt;Cooldown rate=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">rate</span><span class="si">}</span><span class="s2"> per=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">per</span><span class="si">}</span><span class="s2"> tokens=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_tokens</span><span class="si">}</span><span class="s2">&gt;&quot;</span>
 
 <div class="viewcode-block" id="Cooldown.get_tokens">
 <a class="viewcode-back" href="../../api/cooldowns.html#discord_http.cooldowns.Cooldown.get_tokens">[docs]</a>
-    <span class="k">def</span> <span class="nf">get_tokens</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_tokens</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">current</span><span class="p">:</span> <span class="nb">float</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
@@ -524,7 +524,7 @@
 
 <div class="viewcode-block" id="Cooldown.get_retry_after">
 <a class="viewcode-back" href="../../api/cooldowns.html#discord_http.cooldowns.Cooldown.get_retry_after">[docs]</a>
-    <span class="k">def</span> <span class="nf">get_retry_after</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_retry_after</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">current</span><span class="p">:</span> <span class="nb">float</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
@@ -552,7 +552,7 @@
 
 <div class="viewcode-block" id="Cooldown.update_rate_limit">
 <a class="viewcode-back" href="../../api/cooldowns.html#discord_http.cooldowns.Cooldown.update_rate_limit">[docs]</a>
-    <span class="k">def</span> <span class="nf">update_rate_limit</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">update_rate_limit</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">current</span><span class="p">:</span> <span class="nb">float</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="o">*</span><span class="p">,</span>
@@ -590,7 +590,7 @@
 
 <div class="viewcode-block" id="Cooldown.reset">
 <a class="viewcode-back" href="../../api/cooldowns.html#discord_http.cooldowns.Cooldown.reset">[docs]</a>
-    <span class="k">def</span> <span class="nf">reset</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">reset</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot; Resets the rate limit. &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_tokens</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">rate</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_last</span> <span class="o">=</span> <span class="mf">0.0</span></div>
@@ -598,7 +598,7 @@
 
 <div class="viewcode-block" id="Cooldown.copy">
 <a class="viewcode-back" href="../../api/cooldowns.html#discord_http.cooldowns.Cooldown.copy">[docs]</a>
-    <span class="k">def</span> <span class="nf">copy</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;Cooldown&quot;</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">copy</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;Cooldown&quot;</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot; `Cooldown`: Copies the cooldown. &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="n">Cooldown</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">rate</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">per</span><span class="p">)</span></div>
 </div>

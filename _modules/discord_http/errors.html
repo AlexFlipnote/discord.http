@@ -6,7 +6,7 @@
 
     <link rel="shortcut icon" href="../../_static/favicon.ico"/><!-- Generated with Sphinx 8.1.3 and Furo 2024.08.06 -->
         <title>discord_http.errors - discord.http docs</title>
-      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=fa44fd50" />
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=03e43079" />
     <link rel="stylesheet" type="text/css" href="../../_static/styles/furo.css?v=354aac6f" />
     <link rel="stylesheet" type="text/css" href="../../_static/styles/furo-extensions.css?v=302659d7" />
     
@@ -292,15 +292,15 @@
         </div>
         <article role="main" id="furo-main-content">
           <h1>Source code for discord_http.errors</h1><div class="highlight"><pre>
-<span></span><span class="kn">import</span> <span class="nn">time</span>
+<span></span><span class="kn">import</span><span class="w"> </span><span class="nn">time</span>
 
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">TYPE_CHECKING</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">TYPE_CHECKING</span>
 
-<span class="kn">from</span> <span class="nn">.flags</span> <span class="kn">import</span> <span class="n">Permissions</span>
-<span class="kn">from</span> <span class="nn">.cooldowns</span> <span class="kn">import</span> <span class="n">Cooldown</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.flags</span><span class="w"> </span><span class="kn">import</span> <span class="n">Permissions</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.cooldowns</span><span class="w"> </span><span class="kn">import</span> <span class="n">Cooldown</span>
 
 <span class="k">if</span> <span class="n">TYPE_CHECKING</span><span class="p">:</span>
-    <span class="kn">from</span> <span class="nn">.http</span> <span class="kn">import</span> <span class="n">HTTPResponse</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">.http</span><span class="w"> </span><span class="kn">import</span> <span class="n">HTTPResponse</span>
 
 <span class="n">__all__</span> <span class="o">=</span> <span class="p">(</span>
     <span class="s2">&quot;AutomodBlock&quot;</span><span class="p">,</span>
@@ -321,7 +321,7 @@
 
 <div class="viewcode-block" id="DiscordException">
 <a class="viewcode-back" href="../../api/errors.html#discord_http.errors.DiscordException">[docs]</a>
-<span class="k">class</span> <span class="nc">DiscordException</span><span class="p">(</span><span class="ne">Exception</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">DiscordException</span><span class="p">(</span><span class="ne">Exception</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot; Base exception for discord_http &quot;&quot;&quot;</span>
     <span class="k">pass</span></div>
 
@@ -329,7 +329,7 @@
 
 <div class="viewcode-block" id="CheckFailed">
 <a class="viewcode-back" href="../../api/errors.html#discord_http.errors.CheckFailed">[docs]</a>
-<span class="k">class</span> <span class="nc">CheckFailed</span><span class="p">(</span><span class="n">DiscordException</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">CheckFailed</span><span class="p">(</span><span class="n">DiscordException</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot; Raised whenever a check fails &quot;&quot;&quot;</span>
     <span class="k">pass</span></div>
 
@@ -337,7 +337,7 @@
 
 <div class="viewcode-block" id="InvalidMember">
 <a class="viewcode-back" href="../../api/errors.html#discord_http.errors.InvalidMember">[docs]</a>
-<span class="k">class</span> <span class="nc">InvalidMember</span><span class="p">(</span><span class="n">CheckFailed</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">InvalidMember</span><span class="p">(</span><span class="n">CheckFailed</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot; Raised whenever a user was found, but not a member of a guild &quot;&quot;&quot;</span>
     <span class="k">pass</span></div>
 
@@ -345,7 +345,7 @@
 
 <div class="viewcode-block" id="CommandError">
 <a class="viewcode-back" href="../../api/errors.html#discord_http.errors.CommandError">[docs]</a>
-<span class="k">class</span> <span class="nc">CommandError</span><span class="p">(</span><span class="ne">Exception</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">CommandError</span><span class="p">(</span><span class="ne">Exception</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot; Raised whenever a command error occurs &quot;&quot;&quot;</span>
     <span class="k">pass</span></div>
 
@@ -353,8 +353,8 @@
 
 <div class="viewcode-block" id="CommandOnCooldown">
 <a class="viewcode-back" href="../../api/errors.html#discord_http.errors.CommandOnCooldown">[docs]</a>
-<span class="k">class</span> <span class="nc">CommandOnCooldown</span><span class="p">(</span><span class="n">CheckFailed</span><span class="p">):</span>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">cooldown</span><span class="p">:</span> <span class="n">Cooldown</span><span class="p">,</span> <span class="n">retry_after</span><span class="p">:</span> <span class="nb">float</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">CommandOnCooldown</span><span class="p">(</span><span class="n">CheckFailed</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">cooldown</span><span class="p">:</span> <span class="n">Cooldown</span><span class="p">,</span> <span class="n">retry_after</span><span class="p">:</span> <span class="nb">float</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">cooldown</span><span class="p">:</span> <span class="n">Cooldown</span> <span class="o">=</span> <span class="n">cooldown</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">retry_after</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="n">retry_after</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">retry_after_ts</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span> <span class="o">+</span> <span class="n">retry_after</span><span class="p">)</span>
@@ -365,9 +365,9 @@
 
 <div class="viewcode-block" id="UserMissingPermissions">
 <a class="viewcode-back" href="../../api/errors.html#discord_http.errors.UserMissingPermissions">[docs]</a>
-<span class="k">class</span> <span class="nc">UserMissingPermissions</span><span class="p">(</span><span class="n">CheckFailed</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">UserMissingPermissions</span><span class="p">(</span><span class="n">CheckFailed</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot; Raised whenever a user is missing permissions &quot;&quot;&quot;</span>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">perms</span><span class="p">:</span> <span class="n">Permissions</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">perms</span><span class="p">:</span> <span class="n">Permissions</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">permissions</span> <span class="o">=</span> <span class="n">perms</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Missing permissions: </span><span class="si">{</span><span class="s1">&#39;, &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">perms</span><span class="o">.</span><span class="n">list_names</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span></div>
 
@@ -375,9 +375,9 @@
 
 <div class="viewcode-block" id="BotMissingPermissions">
 <a class="viewcode-back" href="../../api/errors.html#discord_http.errors.BotMissingPermissions">[docs]</a>
-<span class="k">class</span> <span class="nc">BotMissingPermissions</span><span class="p">(</span><span class="n">CheckFailed</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">BotMissingPermissions</span><span class="p">(</span><span class="n">CheckFailed</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot; Raised whenever a bot is missing permissions &quot;&quot;&quot;</span>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">perms</span><span class="p">:</span> <span class="n">Permissions</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">perms</span><span class="p">:</span> <span class="n">Permissions</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">permissions</span> <span class="o">=</span> <span class="n">perms</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Bot is missing permissions: </span><span class="si">{</span><span class="s1">&#39;, &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">perms</span><span class="o">.</span><span class="n">list_names</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span></div>
 
@@ -385,9 +385,9 @@
 
 <div class="viewcode-block" id="HTTPException">
 <a class="viewcode-back" href="../../api/errors.html#discord_http.errors.HTTPException">[docs]</a>
-<span class="k">class</span> <span class="nc">HTTPException</span><span class="p">(</span><span class="n">DiscordException</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">HTTPException</span><span class="p">(</span><span class="n">DiscordException</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot; Base exception for HTTP requests &quot;&quot;&quot;</span>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">r</span><span class="p">:</span> <span class="s2">&quot;HTTPResponse&quot;</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">r</span><span class="p">:</span> <span class="s2">&quot;HTTPResponse&quot;</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">request</span> <span class="o">=</span> <span class="n">r</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">status</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">r</span><span class="o">.</span><span class="n">status</span>
 
@@ -416,7 +416,7 @@
 
 <div class="viewcode-block" id="NotFound">
 <a class="viewcode-back" href="../../api/errors.html#discord_http.errors.NotFound">[docs]</a>
-<span class="k">class</span> <span class="nc">NotFound</span><span class="p">(</span><span class="n">HTTPException</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">NotFound</span><span class="p">(</span><span class="n">HTTPException</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot; Raised whenever a HTTP request returns 404 &quot;&quot;&quot;</span>
     <span class="k">pass</span></div>
 
@@ -424,7 +424,7 @@
 
 <div class="viewcode-block" id="Forbidden">
 <a class="viewcode-back" href="../../api/errors.html#discord_http.errors.Forbidden">[docs]</a>
-<span class="k">class</span> <span class="nc">Forbidden</span><span class="p">(</span><span class="n">HTTPException</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">Forbidden</span><span class="p">(</span><span class="n">HTTPException</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot; Raised whenever a HTTP request returns 403 &quot;&quot;&quot;</span>
     <span class="k">pass</span></div>
 
@@ -432,7 +432,7 @@
 
 <div class="viewcode-block" id="AutomodBlock">
 <a class="viewcode-back" href="../../api/errors.html#discord_http.errors.AutomodBlock">[docs]</a>
-<span class="k">class</span> <span class="nc">AutomodBlock</span><span class="p">(</span><span class="n">HTTPException</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">AutomodBlock</span><span class="p">(</span><span class="n">HTTPException</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot; Raised whenever a HTTP request was blocked by Discord &quot;&quot;&quot;</span>
     <span class="k">pass</span></div>
 
@@ -440,7 +440,7 @@
 
 <div class="viewcode-block" id="Ratelimited">
 <a class="viewcode-back" href="../../api/errors.html#discord_http.errors.Ratelimited">[docs]</a>
-<span class="k">class</span> <span class="nc">Ratelimited</span><span class="p">(</span><span class="n">HTTPException</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">Ratelimited</span><span class="p">(</span><span class="n">HTTPException</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot; Raised whenever a HTTP request returns 429, but without a Retry-After header &quot;&quot;&quot;</span>
     <span class="k">pass</span></div>
 
@@ -448,7 +448,7 @@
 
 <div class="viewcode-block" id="DiscordServerError">
 <a class="viewcode-back" href="../../api/errors.html#discord_http.errors.DiscordServerError">[docs]</a>
-<span class="k">class</span> <span class="nc">DiscordServerError</span><span class="p">(</span><span class="n">HTTPException</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">DiscordServerError</span><span class="p">(</span><span class="n">HTTPException</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot; Raised whenever an unexpected HTTP error occurs &quot;&quot;&quot;</span>
     <span class="k">pass</span></div>
 

@@ -6,7 +6,7 @@
 
     <link rel="shortcut icon" href="../../_static/favicon.ico"/><!-- Generated with Sphinx 8.1.3 and Furo 2024.08.06 -->
         <title>discord_http.enums - discord.http docs</title>
-      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=fa44fd50" />
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=03e43079" />
     <link rel="stylesheet" type="text/css" href="../../_static/styles/furo.css?v=354aac6f" />
     <link rel="stylesheet" type="text/css" href="../../_static/styles/furo-extensions.css?v=302659d7" />
     
@@ -292,11 +292,11 @@
         </div>
         <article role="main" id="furo-main-content">
           <h1>Source code for discord_http.enums</h1><div class="highlight"><pre>
-<span></span><span class="kn">import</span> <span class="nn">random</span>
-<span class="kn">import</span> <span class="nn">numbers</span>
+<span></span><span class="kn">import</span><span class="w"> </span><span class="nn">random</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numbers</span>
 
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Self</span>
-<span class="kn">from</span> <span class="nn">enum</span> <span class="kn">import</span> <span class="n">Enum</span> <span class="k">as</span> <span class="n">_Enum</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Self</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">enum</span><span class="w"> </span><span class="kn">import</span> <span class="n">Enum</span> <span class="k">as</span> <span class="n">_Enum</span>
 
 <span class="n">__all__</span> <span class="o">=</span> <span class="p">(</span>
     <span class="s2">&quot;ApplicationCommandType&quot;</span><span class="p">,</span>
@@ -342,25 +342,25 @@
 
 <div class="viewcode-block" id="BaseEnum">
 <a class="viewcode-back" href="../../api/enums.html#discord_http.enums.BaseEnum">[docs]</a>
-<span class="k">class</span> <span class="nc">BaseEnum</span><span class="p">(</span><span class="n">_Enum</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">BaseEnum</span><span class="p">(</span><span class="n">_Enum</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot; Enum, but with more comparison operators to make life easier &quot;&quot;&quot;</span>
 <div class="viewcode-block" id="BaseEnum.random">
 <a class="viewcode-back" href="../../api/enums.html#discord_http.enums.BaseEnum.random">[docs]</a>
     <span class="nd">@classmethod</span>
-    <span class="k">def</span> <span class="nf">random</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Self</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">random</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Self</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot; `Enum`: Return a random enum &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="n">random</span><span class="o">.</span><span class="n">choice</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="bp">cls</span><span class="p">))</span></div>
 
 
-    <span class="k">def</span> <span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot; `str` Return the name of the enum &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">name</span>
 
-    <span class="k">def</span> <span class="fm">__int__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__int__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot; `int` Return the value of the enum &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">value</span>
 
-    <span class="k">def</span> <span class="fm">__gt__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__gt__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot; `bool` Greater than &quot;&quot;&quot;</span>
         <span class="k">try</span><span class="p">:</span>
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">value</span> <span class="o">&gt;</span> <span class="n">other</span><span class="o">.</span><span class="n">value</span>
@@ -373,7 +373,7 @@
             <span class="k">pass</span>
         <span class="k">return</span> <span class="bp">NotImplemented</span>
 
-    <span class="k">def</span> <span class="fm">__lt__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__lt__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot; `bool` Less than &quot;&quot;&quot;</span>
         <span class="k">try</span><span class="p">:</span>
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">value</span> <span class="o">&lt;</span> <span class="n">other</span><span class="o">.</span><span class="n">value</span>
@@ -386,7 +386,7 @@
             <span class="k">pass</span>
         <span class="k">return</span> <span class="bp">NotImplemented</span>
 
-    <span class="k">def</span> <span class="fm">__ge__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__ge__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot; `bool` Greater than or equal to &quot;&quot;&quot;</span>
         <span class="k">try</span><span class="p">:</span>
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">value</span> <span class="o">&gt;=</span> <span class="n">other</span><span class="o">.</span><span class="n">value</span>
@@ -401,7 +401,7 @@
             <span class="k">pass</span>
         <span class="k">return</span> <span class="bp">NotImplemented</span>
 
-    <span class="k">def</span> <span class="fm">__le__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__le__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot; `bool` Less than or equal to &quot;&quot;&quot;</span>
         <span class="k">try</span><span class="p">:</span>
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">value</span> <span class="o">&lt;=</span> <span class="n">other</span><span class="o">.</span><span class="n">value</span>
@@ -416,7 +416,7 @@
             <span class="k">pass</span>
         <span class="k">return</span> <span class="bp">NotImplemented</span>
 
-    <span class="k">def</span> <span class="fm">__eq__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__eq__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot; `bool` Equal to &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span> <span class="ow">is</span> <span class="n">other</span><span class="o">.</span><span class="vm">__class__</span><span class="p">:</span>
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">value</span> <span class="o">==</span> <span class="n">other</span><span class="o">.</span><span class="n">value</span>
@@ -437,7 +437,7 @@
 
 <div class="viewcode-block" id="IntegrationType">
 <a class="viewcode-back" href="../../api/enums.html#discord_http.enums.IntegrationType">[docs]</a>
-<span class="k">class</span> <span class="nc">IntegrationType</span><span class="p">(</span><span class="n">BaseEnum</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">IntegrationType</span><span class="p">(</span><span class="n">BaseEnum</span><span class="p">):</span>
     <span class="n">guild</span> <span class="o">=</span> <span class="mi">0</span>
     <span class="n">user</span> <span class="o">=</span> <span class="mi">1</span></div>
 
@@ -445,7 +445,7 @@
 
 <div class="viewcode-block" id="DefaultAvatarType">
 <a class="viewcode-back" href="../../api/enums.html#discord_http.enums.DefaultAvatarType">[docs]</a>
-<span class="k">class</span> <span class="nc">DefaultAvatarType</span><span class="p">(</span><span class="n">BaseEnum</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">DefaultAvatarType</span><span class="p">(</span><span class="n">BaseEnum</span><span class="p">):</span>
     <span class="n">blurple</span> <span class="o">=</span> <span class="mi">0</span>
     <span class="n">grey</span> <span class="o">=</span> <span class="mi">1</span>
     <span class="n">gray</span> <span class="o">=</span> <span class="mi">1</span>
@@ -458,7 +458,7 @@
 
 <div class="viewcode-block" id="InviteType">
 <a class="viewcode-back" href="../../api/enums.html#discord_http.enums.InviteType">[docs]</a>
-<span class="k">class</span> <span class="nc">InviteType</span><span class="p">(</span><span class="n">BaseEnum</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">InviteType</span><span class="p">(</span><span class="n">BaseEnum</span><span class="p">):</span>
     <span class="n">guild</span> <span class="o">=</span> <span class="mi">0</span>
     <span class="n">group</span> <span class="o">=</span> <span class="mi">1</span>
     <span class="n">dm</span> <span class="o">=</span> <span class="mi">2</span>
@@ -468,7 +468,7 @@
 
 <div class="viewcode-block" id="ApplicationCommandType">
 <a class="viewcode-back" href="../../api/enums.html#discord_http.enums.ApplicationCommandType">[docs]</a>
-<span class="k">class</span> <span class="nc">ApplicationCommandType</span><span class="p">(</span><span class="n">BaseEnum</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">ApplicationCommandType</span><span class="p">(</span><span class="n">BaseEnum</span><span class="p">):</span>
     <span class="n">chat_input</span> <span class="o">=</span> <span class="mi">1</span>
     <span class="n">user</span> <span class="o">=</span> <span class="mi">2</span>
     <span class="n">message</span> <span class="o">=</span> <span class="mi">3</span></div>
@@ -477,7 +477,7 @@
 
 <div class="viewcode-block" id="ReactionType">
 <a class="viewcode-back" href="../../api/enums.html#discord_http.enums.ReactionType">[docs]</a>
-<span class="k">class</span> <span class="nc">ReactionType</span><span class="p">(</span><span class="n">BaseEnum</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">ReactionType</span><span class="p">(</span><span class="n">BaseEnum</span><span class="p">):</span>
     <span class="n">normal</span> <span class="o">=</span> <span class="mi">0</span>
     <span class="n">burst</span> <span class="o">=</span> <span class="mi">1</span></div>
 
@@ -485,7 +485,7 @@
 
 <div class="viewcode-block" id="DefaultNotificationLevel">
 <a class="viewcode-back" href="../../api/enums.html#discord_http.enums.DefaultNotificationLevel">[docs]</a>
-<span class="k">class</span> <span class="nc">DefaultNotificationLevel</span><span class="p">(</span><span class="n">BaseEnum</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">DefaultNotificationLevel</span><span class="p">(</span><span class="n">BaseEnum</span><span class="p">):</span>
     <span class="n">all_messages</span> <span class="o">=</span> <span class="mi">0</span>
     <span class="n">only_mentions</span> <span class="o">=</span> <span class="mi">1</span></div>
 
@@ -493,7 +493,7 @@
 
 <div class="viewcode-block" id="MFALevel">
 <a class="viewcode-back" href="../../api/enums.html#discord_http.enums.MFALevel">[docs]</a>
-<span class="k">class</span> <span class="nc">MFALevel</span><span class="p">(</span><span class="n">BaseEnum</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">MFALevel</span><span class="p">(</span><span class="n">BaseEnum</span><span class="p">):</span>
     <span class="n">none</span> <span class="o">=</span> <span class="mi">0</span>
     <span class="n">elevated</span> <span class="o">=</span> <span class="mi">1</span></div>
 
@@ -501,7 +501,7 @@
 
 <div class="viewcode-block" id="MessageType">
 <a class="viewcode-back" href="../../api/enums.html#discord_http.enums.MessageType">[docs]</a>
-<span class="k">class</span> <span class="nc">MessageType</span><span class="p">(</span><span class="n">BaseEnum</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">MessageType</span><span class="p">(</span><span class="n">BaseEnum</span><span class="p">):</span>
     <span class="n">default</span> <span class="o">=</span> <span class="mi">0</span>
     <span class="n">recipient_add</span> <span class="o">=</span> <span class="mi">1</span>
     <span class="n">recipient_remove</span> <span class="o">=</span> <span class="mi">2</span>
@@ -544,7 +544,7 @@
 
 <div class="viewcode-block" id="MessageReferenceType">
 <a class="viewcode-back" href="../../api/enums.html#discord_http.enums.MessageReferenceType">[docs]</a>
-<span class="k">class</span> <span class="nc">MessageReferenceType</span><span class="p">(</span><span class="n">BaseEnum</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">MessageReferenceType</span><span class="p">(</span><span class="n">BaseEnum</span><span class="p">):</span>
     <span class="n">default</span> <span class="o">=</span> <span class="mi">0</span>
     <span class="n">forward</span> <span class="o">=</span> <span class="mi">1</span></div>
 
@@ -552,7 +552,7 @@
 
 <div class="viewcode-block" id="ContentFilterLevel">
 <a class="viewcode-back" href="../../api/enums.html#discord_http.enums.ContentFilterLevel">[docs]</a>
-<span class="k">class</span> <span class="nc">ContentFilterLevel</span><span class="p">(</span><span class="n">BaseEnum</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">ContentFilterLevel</span><span class="p">(</span><span class="n">BaseEnum</span><span class="p">):</span>
     <span class="n">disabled</span> <span class="o">=</span> <span class="mi">0</span>
     <span class="n">members_without_roles</span> <span class="o">=</span> <span class="mi">1</span>
     <span class="n">all_members</span> <span class="o">=</span> <span class="mi">2</span></div>
@@ -561,7 +561,7 @@
 
 <div class="viewcode-block" id="AuditLogType">
 <a class="viewcode-back" href="../../api/enums.html#discord_http.enums.AuditLogType">[docs]</a>
-<span class="k">class</span> <span class="nc">AuditLogType</span><span class="p">(</span><span class="n">BaseEnum</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">AuditLogType</span><span class="p">(</span><span class="n">BaseEnum</span><span class="p">):</span>
     <span class="c1"># Unknown value is only here because Discord</span>
     <span class="c1"># might add new audit log without documenting it</span>
     <span class="n">unknown</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span>
@@ -637,7 +637,7 @@
     <span class="n">guild_scheduled_event_exception_delete</span> <span class="o">=</span> <span class="mi">202</span>
 
     <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">target_type</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">target_type</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="n">category_map</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span>
             <span class="o">-</span><span class="mi">1</span><span class="p">:</span> <span class="s2">&quot;all&quot;</span><span class="p">,</span>
             <span class="mi">73</span><span class="p">:</span> <span class="s2">&quot;channel&quot;</span>
@@ -674,7 +674,7 @@
 
 
 
-<span class="k">class</span> <span class="nc">Locale</span><span class="p">(</span><span class="n">BaseEnum</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">Locale</span><span class="p">(</span><span class="n">BaseEnum</span><span class="p">):</span>
     <span class="n">american_english</span> <span class="o">=</span> <span class="s2">&quot;en-US&quot;</span>
     <span class="n">british_english</span> <span class="o">=</span> <span class="s2">&quot;en-GB&quot;</span>
     <span class="n">bulgarian</span> <span class="o">=</span> <span class="s2">&quot;bg&quot;</span>
@@ -711,7 +711,7 @@
 
 <div class="viewcode-block" id="ScheduledEventEntityType">
 <a class="viewcode-back" href="../../api/enums.html#discord_http.enums.ScheduledEventEntityType">[docs]</a>
-<span class="k">class</span> <span class="nc">ScheduledEventEntityType</span><span class="p">(</span><span class="n">BaseEnum</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">ScheduledEventEntityType</span><span class="p">(</span><span class="n">BaseEnum</span><span class="p">):</span>
     <span class="n">stage_instance</span> <span class="o">=</span> <span class="mi">1</span>
     <span class="n">voice</span> <span class="o">=</span> <span class="mi">2</span>
     <span class="n">external</span> <span class="o">=</span> <span class="mi">3</span></div>
@@ -720,7 +720,7 @@
 
 <div class="viewcode-block" id="ScheduledEventStatusType">
 <a class="viewcode-back" href="../../api/enums.html#discord_http.enums.ScheduledEventStatusType">[docs]</a>
-<span class="k">class</span> <span class="nc">ScheduledEventStatusType</span><span class="p">(</span><span class="n">BaseEnum</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">ScheduledEventStatusType</span><span class="p">(</span><span class="n">BaseEnum</span><span class="p">):</span>
     <span class="n">scheduled</span> <span class="o">=</span> <span class="mi">1</span>
     <span class="n">active</span> <span class="o">=</span> <span class="mi">2</span>
     <span class="n">completed</span> <span class="o">=</span> <span class="mi">3</span>
@@ -730,7 +730,7 @@
 
 <div class="viewcode-block" id="VerificationLevel">
 <a class="viewcode-back" href="../../api/enums.html#discord_http.enums.VerificationLevel">[docs]</a>
-<span class="k">class</span> <span class="nc">VerificationLevel</span><span class="p">(</span><span class="n">BaseEnum</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">VerificationLevel</span><span class="p">(</span><span class="n">BaseEnum</span><span class="p">):</span>
     <span class="n">none</span> <span class="o">=</span> <span class="mi">0</span>
     <span class="n">low</span> <span class="o">=</span> <span class="mi">1</span>
     <span class="n">medium</span> <span class="o">=</span> <span class="mi">2</span>
@@ -741,7 +741,7 @@
 
 <div class="viewcode-block" id="ExpireBehaviour">
 <a class="viewcode-back" href="../../api/enums.html#discord_http.enums.ExpireBehaviour">[docs]</a>
-<span class="k">class</span> <span class="nc">ExpireBehaviour</span><span class="p">(</span><span class="n">BaseEnum</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">ExpireBehaviour</span><span class="p">(</span><span class="n">BaseEnum</span><span class="p">):</span>
     <span class="n">remove_role</span> <span class="o">=</span> <span class="mi">0</span>
     <span class="n">kick</span> <span class="o">=</span> <span class="mi">1</span></div>
 
@@ -749,7 +749,7 @@
 
 <div class="viewcode-block" id="ChannelType">
 <a class="viewcode-back" href="../../api/enums.html#discord_http.enums.ChannelType">[docs]</a>
-<span class="k">class</span> <span class="nc">ChannelType</span><span class="p">(</span><span class="n">BaseEnum</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">ChannelType</span><span class="p">(</span><span class="n">BaseEnum</span><span class="p">):</span>
     <span class="n">unknown</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span>
     <span class="n">guild_text</span> <span class="o">=</span> <span class="mi">0</span>
     <span class="n">dm</span> <span class="o">=</span> <span class="mi">1</span>
@@ -770,7 +770,7 @@
 
 <div class="viewcode-block" id="CommandOptionType">
 <a class="viewcode-back" href="../../api/enums.html#discord_http.enums.CommandOptionType">[docs]</a>
-<span class="k">class</span> <span class="nc">CommandOptionType</span><span class="p">(</span><span class="n">BaseEnum</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">CommandOptionType</span><span class="p">(</span><span class="n">BaseEnum</span><span class="p">):</span>
     <span class="n">sub_command</span> <span class="o">=</span> <span class="mi">1</span>
     <span class="n">sub_command_group</span> <span class="o">=</span> <span class="mi">2</span>
     <span class="n">string</span> <span class="o">=</span> <span class="mi">3</span>
@@ -787,7 +787,7 @@
 
 <div class="viewcode-block" id="WebhookType">
 <a class="viewcode-back" href="../../api/enums.html#discord_http.enums.WebhookType">[docs]</a>
-<span class="k">class</span> <span class="nc">WebhookType</span><span class="p">(</span><span class="n">BaseEnum</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">WebhookType</span><span class="p">(</span><span class="n">BaseEnum</span><span class="p">):</span>
     <span class="n">incoming</span> <span class="o">=</span> <span class="mi">1</span>
     <span class="n">channel_follower</span> <span class="o">=</span> <span class="mi">2</span>
     <span class="n">application</span> <span class="o">=</span> <span class="mi">3</span></div>
@@ -796,7 +796,7 @@
 
 <div class="viewcode-block" id="ResponseType">
 <a class="viewcode-back" href="../../api/enums.html#discord_http.enums.ResponseType">[docs]</a>
-<span class="k">class</span> <span class="nc">ResponseType</span><span class="p">(</span><span class="n">BaseEnum</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">ResponseType</span><span class="p">(</span><span class="n">BaseEnum</span><span class="p">):</span>
     <span class="n">pong</span> <span class="o">=</span> <span class="mi">1</span>
     <span class="n">channel_message_with_source</span> <span class="o">=</span> <span class="mi">4</span>
     <span class="n">deferred_channel_message_with_source</span> <span class="o">=</span> <span class="mi">5</span>
@@ -811,7 +811,7 @@
 
 <div class="viewcode-block" id="VideoQualityType">
 <a class="viewcode-back" href="../../api/enums.html#discord_http.enums.VideoQualityType">[docs]</a>
-<span class="k">class</span> <span class="nc">VideoQualityType</span><span class="p">(</span><span class="n">BaseEnum</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">VideoQualityType</span><span class="p">(</span><span class="n">BaseEnum</span><span class="p">):</span>
     <span class="n">auto</span> <span class="o">=</span> <span class="mi">1</span>
     <span class="n">full</span> <span class="o">=</span> <span class="mi">2</span></div>
 
@@ -819,7 +819,7 @@
 
 <div class="viewcode-block" id="ForumLayoutType">
 <a class="viewcode-back" href="../../api/enums.html#discord_http.enums.ForumLayoutType">[docs]</a>
-<span class="k">class</span> <span class="nc">ForumLayoutType</span><span class="p">(</span><span class="n">BaseEnum</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">ForumLayoutType</span><span class="p">(</span><span class="n">BaseEnum</span><span class="p">):</span>
     <span class="n">not_set</span> <span class="o">=</span> <span class="mi">0</span>
     <span class="n">list_view</span> <span class="o">=</span> <span class="mi">1</span>
     <span class="n">gallery_view</span> <span class="o">=</span> <span class="mi">2</span></div>
@@ -828,7 +828,7 @@
 
 <div class="viewcode-block" id="SortOrderType">
 <a class="viewcode-back" href="../../api/enums.html#discord_http.enums.SortOrderType">[docs]</a>
-<span class="k">class</span> <span class="nc">SortOrderType</span><span class="p">(</span><span class="n">BaseEnum</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">SortOrderType</span><span class="p">(</span><span class="n">BaseEnum</span><span class="p">):</span>
     <span class="n">latest_activity</span> <span class="o">=</span> <span class="mi">0</span>
     <span class="n">creation_date</span> <span class="o">=</span> <span class="mi">1</span></div>
 
@@ -836,7 +836,7 @@
 
 <div class="viewcode-block" id="EntitlementType">
 <a class="viewcode-back" href="../../api/enums.html#discord_http.enums.EntitlementType">[docs]</a>
-<span class="k">class</span> <span class="nc">EntitlementType</span><span class="p">(</span><span class="n">BaseEnum</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">EntitlementType</span><span class="p">(</span><span class="n">BaseEnum</span><span class="p">):</span>
     <span class="n">purchase</span> <span class="o">=</span> <span class="mi">1</span>
     <span class="n">premium_subscription</span> <span class="o">=</span> <span class="mi">2</span>
     <span class="n">developer_gift</span> <span class="o">=</span> <span class="mi">3</span>
@@ -850,7 +850,7 @@
 
 <div class="viewcode-block" id="AutoModRuleTriggerType">
 <a class="viewcode-back" href="../../api/enums.html#discord_http.enums.AutoModRuleTriggerType">[docs]</a>
-<span class="k">class</span> <span class="nc">AutoModRuleTriggerType</span><span class="p">(</span><span class="n">BaseEnum</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">AutoModRuleTriggerType</span><span class="p">(</span><span class="n">BaseEnum</span><span class="p">):</span>
     <span class="n">keyword</span> <span class="o">=</span> <span class="mi">1</span>
     <span class="n">harmful_link</span> <span class="o">=</span> <span class="mi">2</span>
     <span class="n">spam</span> <span class="o">=</span> <span class="mi">3</span>
@@ -862,7 +862,7 @@
 
 <div class="viewcode-block" id="AutoModRuleEventType">
 <a class="viewcode-back" href="../../api/enums.html#discord_http.enums.AutoModRuleEventType">[docs]</a>
-<span class="k">class</span> <span class="nc">AutoModRuleEventType</span><span class="p">(</span><span class="n">BaseEnum</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">AutoModRuleEventType</span><span class="p">(</span><span class="n">BaseEnum</span><span class="p">):</span>
     <span class="n">message_send</span> <span class="o">=</span> <span class="mi">1</span>
     <span class="n">member_update</span> <span class="o">=</span> <span class="mi">2</span></div>
 
@@ -870,7 +870,7 @@
 
 <div class="viewcode-block" id="AutoModRuleActionType">
 <a class="viewcode-back" href="../../api/enums.html#discord_http.enums.AutoModRuleActionType">[docs]</a>
-<span class="k">class</span> <span class="nc">AutoModRuleActionType</span><span class="p">(</span><span class="n">BaseEnum</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">AutoModRuleActionType</span><span class="p">(</span><span class="n">BaseEnum</span><span class="p">):</span>
     <span class="n">block_message</span> <span class="o">=</span> <span class="mi">1</span>
     <span class="n">send_alert_message</span> <span class="o">=</span> <span class="mi">2</span>
     <span class="n">timeout</span> <span class="o">=</span> <span class="mi">3</span>
@@ -880,7 +880,7 @@
 
 <div class="viewcode-block" id="AutoModRulePresetType">
 <a class="viewcode-back" href="../../api/enums.html#discord_http.enums.AutoModRulePresetType">[docs]</a>
-<span class="k">class</span> <span class="nc">AutoModRulePresetType</span><span class="p">(</span><span class="n">BaseEnum</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">AutoModRulePresetType</span><span class="p">(</span><span class="n">BaseEnum</span><span class="p">):</span>
     <span class="n">profanity</span> <span class="o">=</span> <span class="mi">1</span>
     <span class="n">sexual_content</span> <span class="o">=</span> <span class="mi">2</span>
     <span class="n">slurs</span> <span class="o">=</span> <span class="mi">3</span></div>
@@ -889,7 +889,7 @@
 
 <div class="viewcode-block" id="EntitlementOwnerType">
 <a class="viewcode-back" href="../../api/enums.html#discord_http.enums.EntitlementOwnerType">[docs]</a>
-<span class="k">class</span> <span class="nc">EntitlementOwnerType</span><span class="p">(</span><span class="n">BaseEnum</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">EntitlementOwnerType</span><span class="p">(</span><span class="n">BaseEnum</span><span class="p">):</span>
     <span class="n">guild</span> <span class="o">=</span> <span class="mi">1</span>
     <span class="n">user</span> <span class="o">=</span> <span class="mi">2</span></div>
 
@@ -897,7 +897,7 @@
 
 <div class="viewcode-block" id="SKUType">
 <a class="viewcode-back" href="../../api/enums.html#discord_http.enums.SKUType">[docs]</a>
-<span class="k">class</span> <span class="nc">SKUType</span><span class="p">(</span><span class="n">BaseEnum</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">SKUType</span><span class="p">(</span><span class="n">BaseEnum</span><span class="p">):</span>
     <span class="n">durable</span> <span class="o">=</span> <span class="mi">2</span>
     <span class="n">consumable</span> <span class="o">=</span> <span class="mi">3</span>
     <span class="n">subscription</span> <span class="o">=</span> <span class="mi">5</span>
@@ -907,7 +907,7 @@
 
 <div class="viewcode-block" id="InteractionType">
 <a class="viewcode-back" href="../../api/enums.html#discord_http.enums.InteractionType">[docs]</a>
-<span class="k">class</span> <span class="nc">InteractionType</span><span class="p">(</span><span class="n">BaseEnum</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">InteractionType</span><span class="p">(</span><span class="n">BaseEnum</span><span class="p">):</span>
     <span class="n">ping</span> <span class="o">=</span> <span class="mi">1</span>
     <span class="n">application_command</span> <span class="o">=</span> <span class="mi">2</span>
     <span class="n">message_component</span> <span class="o">=</span> <span class="mi">3</span>
@@ -918,7 +918,7 @@
 
 <div class="viewcode-block" id="StickerType">
 <a class="viewcode-back" href="../../api/enums.html#discord_http.enums.StickerType">[docs]</a>
-<span class="k">class</span> <span class="nc">StickerType</span><span class="p">(</span><span class="n">BaseEnum</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">StickerType</span><span class="p">(</span><span class="n">BaseEnum</span><span class="p">):</span>
     <span class="n">standard</span> <span class="o">=</span> <span class="mi">1</span>
     <span class="n">guild</span> <span class="o">=</span> <span class="mi">2</span></div>
 
@@ -926,7 +926,7 @@
 
 <div class="viewcode-block" id="StickerFormatType">
 <a class="viewcode-back" href="../../api/enums.html#discord_http.enums.StickerFormatType">[docs]</a>
-<span class="k">class</span> <span class="nc">StickerFormatType</span><span class="p">(</span><span class="n">BaseEnum</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">StickerFormatType</span><span class="p">(</span><span class="n">BaseEnum</span><span class="p">):</span>
     <span class="n">png</span> <span class="o">=</span> <span class="mi">1</span>
     <span class="n">apng</span> <span class="o">=</span> <span class="mi">2</span>
     <span class="n">lottie</span> <span class="o">=</span> <span class="mi">3</span>
@@ -936,7 +936,7 @@
 
 <div class="viewcode-block" id="ComponentType">
 <a class="viewcode-back" href="../../api/enums.html#discord_http.enums.ComponentType">[docs]</a>
-<span class="k">class</span> <span class="nc">ComponentType</span><span class="p">(</span><span class="n">BaseEnum</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">ComponentType</span><span class="p">(</span><span class="n">BaseEnum</span><span class="p">):</span>
     <span class="n">action_row</span> <span class="o">=</span> <span class="mi">1</span>
     <span class="n">button</span> <span class="o">=</span> <span class="mi">2</span>
     <span class="n">string_select</span> <span class="o">=</span> <span class="mi">3</span>
@@ -950,7 +950,7 @@
 
 <div class="viewcode-block" id="ButtonStyles">
 <a class="viewcode-back" href="../../api/enums.html#discord_http.enums.ButtonStyles">[docs]</a>
-<span class="k">class</span> <span class="nc">ButtonStyles</span><span class="p">(</span><span class="n">BaseEnum</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">ButtonStyles</span><span class="p">(</span><span class="n">BaseEnum</span><span class="p">):</span>
     <span class="c1"># Original names</span>
     <span class="n">primary</span> <span class="o">=</span> <span class="mi">1</span>
     <span class="n">secondary</span> <span class="o">=</span> <span class="mi">2</span>
@@ -972,7 +972,7 @@
 
 <div class="viewcode-block" id="TextStyles">
 <a class="viewcode-back" href="../../api/enums.html#discord_http.enums.TextStyles">[docs]</a>
-<span class="k">class</span> <span class="nc">TextStyles</span><span class="p">(</span><span class="n">BaseEnum</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">TextStyles</span><span class="p">(</span><span class="n">BaseEnum</span><span class="p">):</span>
     <span class="n">short</span> <span class="o">=</span> <span class="mi">1</span>
     <span class="n">paragraph</span> <span class="o">=</span> <span class="mi">2</span></div>
 
@@ -980,7 +980,7 @@
 
 <div class="viewcode-block" id="PermissionType">
 <a class="viewcode-back" href="../../api/enums.html#discord_http.enums.PermissionType">[docs]</a>
-<span class="k">class</span> <span class="nc">PermissionType</span><span class="p">(</span><span class="n">BaseEnum</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">PermissionType</span><span class="p">(</span><span class="n">BaseEnum</span><span class="p">):</span>
     <span class="n">role</span> <span class="o">=</span> <span class="mi">0</span>
     <span class="n">member</span> <span class="o">=</span> <span class="mi">1</span></div>
 
@@ -988,7 +988,7 @@
 
 <div class="viewcode-block" id="PrivacyLevelType">
 <a class="viewcode-back" href="../../api/enums.html#discord_http.enums.PrivacyLevelType">[docs]</a>
-<span class="k">class</span> <span class="nc">PrivacyLevelType</span><span class="p">(</span><span class="n">BaseEnum</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">PrivacyLevelType</span><span class="p">(</span><span class="n">BaseEnum</span><span class="p">):</span>
     <span class="n">public</span> <span class="o">=</span> <span class="mi">1</span>
     <span class="n">guild_only</span> <span class="o">=</span> <span class="mi">2</span></div>
 
