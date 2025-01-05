@@ -350,6 +350,18 @@ class Command:
                     self.__list_choices.append(parameter.name)
                     ptype = origin.type
 
+                # If literal, replicate Choice
+                elif origin is Literal:
+                    self.__list_choices.append(parameter.name)
+                    ptype = CommandOptionType.string
+
+                    if not getattr(self.command, "__choices_params__", {}):
+                        self.command.__choices_params__ = {}
+
+                    self.command.__choices_params__[parameter.name] = {
+                        str(g): str(g) for g in parameter.annotation.__args__
+                    }
+
                 # PyRight may not recognize 'Range' due to dynamic typing.
                 # Assuming 'origin' is a Range object.
                 elif isinstance(origin, Range):  # type: ignore[arg-type]
@@ -1018,6 +1030,9 @@ class Choice(Generic[ChoiceT]):
         self.key: ChoiceT = key
         self.value: ChoiceT = value
         self.type: CommandOptionType = CommandOptionType.string
+
+    def __str__(self) -> str:
+        return str(self.key)
 
     def __class_getitem__(cls, obj):
         if isinstance(obj, tuple):

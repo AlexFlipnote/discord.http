@@ -10,6 +10,7 @@ import logging
 import secrets
 
 from datetime import time, timedelta
+from typing import Literal
 
 from discord_http import (
     Context, Embed, File, Member,
@@ -645,6 +646,11 @@ async def test_delete_role(ctx: Context, role: Role):
 @client.command()
 async def test_channel(ctx: Context, channel: VoiceChannel):
     return ctx.response.send_message(f"You chose {channel} {repr(channel)}")
+
+
+@client.command(name="test_literal")
+async def test_literal(ctx: Context, choice: Literal["very", "Nice", "test"]):
+    return ctx.response.send_message(f"You chose {choice}")
 
 
 @client.command()
