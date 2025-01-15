@@ -2000,6 +2000,81 @@ class PartialGuild(PartialBase):
             for data in r.response
         ]
 
+    def _ban_delete_time_converter(
+        self,
+        delete_message_days: int | None = 0,
+        delete_message_seconds: int | None = 0,
+    ) -> int:
+        _delete_seconds = 0
+
+        if delete_message_days and delete_message_seconds:
+            raise ValueError("Cannot specify both delete_message_days and delete_message_seconds")
+
+        if delete_message_days:
+            if delete_message_days not in range(0, 8):
+                raise ValueError("delete_message_days must be between 0 and 7")
+            _delete_seconds = int(timedelta(days=delete_message_days).total_seconds())
+
+        if delete_message_seconds:
+            if delete_message_seconds not in range(0, 604801):
+                raise ValueError("delete_message_seconds must be between 0 and 604,800")
+            _delete_seconds = delete_message_seconds
+
+        return _delete_seconds
+
+    async def bulk_ban(
+        self,
+        *members: "Member | PartialMember | int",
+        delete_message_days: int | None = 0,
+        delete_message_seconds: int | None = 0,
+        reason: str | None = None,
+    ) -> list["PartialMember"]:
+        """
+        Ban multiple members from the server
+
+        Parameters
+        ----------
+        *members: `Union[Member, PartialMember, int]`
+            The members to ban
+        """
+        payload: dict[str, list[str] | int] = {
+            # To avoid duplicate IDs, we use set()
+            "user_ids": list(set([str(int(g)) for g in members]))
+        }
+
+        if not payload["user_ids"]:
+            raise ValueError("Cannot ban an empty list of members")
+
+        if len(payload["user_ids"]) > 200:  # type: ignore
+            raise ValueError("Cannot ban more than 200 members at once")
+
+        if delete_message_days or delete_message_seconds:
+            payload["delete_message_seconds"] = self._ban_delete_time_converter(
+                delete_message_days=delete_message_days,
+                delete_message_seconds=delete_message_seconds
+            )
+
+        r = await self._state.query(
+            "POST",
+            f"/guilds/{self.id}/bulk-ban",
+            reason=reason,
+            json=payload
+        )
+
+        banned_users = r.response.get("banned_users", [])
+        if not banned_users:
+            return []
+
+        from .member import PartialMember
+        return [
+            PartialMember(
+                state=self._state,
+                id=int(g),
+                guild_id=self.id
+            )
+            for g in banned_users
+        ]
+
     async def ban(
         self,
         member: "Member | PartialMember | int",
@@ -2023,18 +2098,11 @@ class PartialGuild(PartialBase):
             How many seconds of messages to delete
         """
         payload = {}
-        if delete_message_days and delete_message_seconds:
-            raise ValueError("Cannot specify both delete_message_days and delete_message_seconds")
-
-        if delete_message_days:
-            if delete_message_days not in range(0, 8):
-                raise ValueError("delete_message_days must be between 0 and 7")
-            payload["delete_message_seconds"] = int(timedelta(days=delete_message_days).total_seconds())
-
-        if delete_message_seconds:
-            if delete_message_seconds not in range(0, 604801):
-                raise ValueError("delete_message_seconds must be between 0 and 604,800")
-            payload["delete_message_seconds"] = delete_message_seconds
+        if delete_message_days or delete_message_seconds:
+            payload["delete_message_seconds"] = self._ban_delete_time_converter(
+                delete_message_days=delete_message_days,
+                delete_message_seconds=delete_message_seconds
+            )
 
         await self._state.query(
             "PUT",

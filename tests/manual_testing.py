@@ -330,12 +330,25 @@ async def test_webhook(ctx: Context):
 
 
 @client.command()
-async def test_ban(ctx: Context, member: Member, reason: str):
+async def test_ban(
+    ctx: Context,
+    member: Member,
+    reason: str,
+    ban_type: Literal["normal", "bulk"]
+):
     """ Ban a member """
-    await member.ban(reason=reason)
-    return ctx.response.send_message(
-        f"Banned {member} for {reason}"
-    )
+    async def call_after():
+        if ban_type == "bulk":
+            r = await ctx.guild.bulk_ban(member, reason=reason)
+            print(f"1: {r}")
+        else:
+            await ctx.guild.ban(member, reason=reason)
+
+        return await ctx.edit_original_response(
+            content=f"Banned {member} for {reason}"
+        )
+
+    return ctx.response.defer(thinking=True, call_after=call_after)
 
 
 @client.command()
