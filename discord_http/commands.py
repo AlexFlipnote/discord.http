@@ -352,7 +352,7 @@ class Command:
 
                 # If literal, replicate Choice
                 elif origin is Literal:
-                    self.__list_choices.append(parameter.name)
+                    # self.__list_choices.append(parameter.name)
                     ptype = CommandOptionType.string
 
                     if not getattr(self.command, "__choices_params__", {}):
