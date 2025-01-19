@@ -543,6 +543,15 @@ class Context:
             for g in data.get("entitlements", [])
         ]
 
+        self.last_message_id: int | None = None
+        if data.get("channel", {}).get("last_message_id", None):
+            self.last_message_id = int(data["channel"]["last_message_id"])
+
+        self.recipients: list[User] = [
+            User(state=self.bot.state, data=g)
+            for g in data.get("channel", {}).get("recipients", [])
+        ]
+
         # Should not be used, but if you *really* want the raw data, here it is
         self._data: dict = data
 
@@ -553,18 +562,22 @@ class Context:
         if data.get("channel_id", None):
             self.channel_id = int(data["channel_id"])
 
-        self._channel: Optional[BaseChannel] = None
-        if data.get("channel", None):
-            self._channel = channel_types[data["channel"]["type"]](
-                state=self.bot.state,
-                data=data["channel"]
-            )
-
         self._guild: Optional[PartialGuild] = None
         if data.get("guild_id", None):
             self._guild = PartialGuild(
                 state=self.bot.state,
                 id=int(data["guild_id"])
+            )
+
+        self._channel: Optional[BaseChannel] = None
+        if data.get("channel", None):
+            _channel_data = data["channel"]
+            if self._guild:
+                _channel_data["guild_id"] = self._guild.id
+
+            self._channel = channel_types[_channel_data["type"]](
+                state=self.bot.state,
+                data=_channel_data
             )
 
         self.message: Optional[Message] = None
@@ -647,11 +660,22 @@ class Context:
             if cache:
                 return cache
 
+        if self._channel:
+            # Prefer the channel from context
+            return self._channel
+
         return PartialChannel(
             state=self.bot.state,
             id=self.channel_id,
             guild_id=self.guild.id if self.guild else None
         )
+
+    @property
+    def channel_type(self) -> ChannelType:
+        """ `ChannelType` Returns the type of the channel """
+        if self._channel:
+            return self._channel.type
+        return ChannelType.unknown
 
     @property
     def created_at(self) -> datetime:

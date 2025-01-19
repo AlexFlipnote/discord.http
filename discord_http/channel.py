@@ -1904,6 +1904,11 @@ class PartialThread(PartialChannel):
     def __repr__(self) -> str:
         return f"<PartialThread id={self.id} type={self.type}>"
 
+    @property
+    def type(self) -> ChannelType:
+        """ `ChannelType`: Returns the channel's type """
+        return self._raw_type
+
 
 class PublicThread(BaseChannel):
     def __init__(self, *, state: "DiscordAPI", data: dict):
@@ -2111,6 +2116,11 @@ class ForumThread(PublicThread):
             data=data["message"],
             guild=self.guild
         )
+
+    @property
+    def type(self) -> ChannelType:
+        """ `ChannelType`: Returns the channel's type """
+        return ChannelType.guild_public_thread
 
 
 class NewsThread(PublicThread):
