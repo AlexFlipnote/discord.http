@@ -2076,6 +2076,7 @@ class ForumChannel(PublicThread):
     def __repr__(self) -> str:
         return f"<ForumChannel id={self.id} name='{self.name}'>"
 
+    @property
     def type(self) -> ChannelType:
         """ `ChannelType`: Returns the channel's type """
         return ChannelType.guild_forum
