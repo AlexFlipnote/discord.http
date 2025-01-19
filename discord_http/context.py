@@ -744,6 +744,8 @@ class Context:
             Thread ID to send the message to
         poll: `Optional[Poll]`
             Poll to send with the message
+        flags: `Optional[MessageFlags]`
+            Flags of the message
         delete_after: `Optional[float]`
             How long to wait before deleting the message
 

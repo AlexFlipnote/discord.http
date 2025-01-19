@@ -5,7 +5,7 @@ from . import utils
 from .asset import Asset
 from .embeds import Embed
 from .file import File
-from .flags import Permissions, PublicFlags, GuildMemberFlags
+from .flags import Permissions, PublicFlags, GuildMemberFlags, MessageFlags
 from .guild import Guild, PartialGuild
 from .mentions import AllowedMentions
 from .object import PartialBase, Snowflake
@@ -97,6 +97,7 @@ class PartialMember(PartialBase):
         view: Optional[View] = MISSING,
         tts: Optional[bool] = False,
         type: Union[ResponseType, int] = 4,
+        flags: Optional[MessageFlags] = MISSING,
         allowed_mentions: Optional[AllowedMentions] = MISSING,
         delete_after: Optional[float] = None
     ) -> "Message":
@@ -123,6 +124,8 @@ class PartialMember(PartialBase):
             Whether the message should be sent as TTS
         type: `Optional[ResponseType]`
             Type of the message
+        flags: `Optional[MessageFlags]`
+            Flags of the message
         allowed_mentions: `Optional[AllowedMentions]`
             Allowed mentions of the message
         delete_after: `Optional[float]`
@@ -143,6 +146,7 @@ class PartialMember(PartialBase):
             view=view,
             tts=tts,
             type=type,
+            flags=flags,
             allowed_mentions=allowed_mentions,
             delete_after=delete_after
         )

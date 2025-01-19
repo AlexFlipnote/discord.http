@@ -6,7 +6,7 @@ from .colour import Colour
 from .embeds import Embed
 from .enums import DefaultAvatarType
 from .file import File
-from .flags import PublicFlags
+from .flags import PublicFlags, MessageFlags
 from .mentions import AllowedMentions
 from .object import PartialBase
 from .response import ResponseType, MessageResponse
@@ -56,6 +56,7 @@ class PartialUser(PartialBase):
         view: Optional[View] = MISSING,
         tts: Optional[bool] = False,
         type: Union[ResponseType, int] = 4,
+        flags: Optional[MessageFlags] = MISSING,
         allowed_mentions: Optional[AllowedMentions] = MISSING,
         delete_after: Optional[float] = None
     ) -> "Message":
@@ -82,6 +83,8 @@ class PartialUser(PartialBase):
             Whether the message should be sent as TTS
         type: `Optional[ResponseType]`
             Which type of response should be sent
+        flags: `Optional[MessageFlags]`
+            Flags of the message
         allowed_mentions: `Optional[AllowedMentions]`
             Allowed mentions of the message
         delete_after: `Optional[float]`
@@ -105,6 +108,7 @@ class PartialUser(PartialBase):
             view=view,
             tts=tts,
             type=type,
+            flags=flags,
             allowed_mentions=allowed_mentions,
         )
 

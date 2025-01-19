@@ -4,6 +4,7 @@ from . import utils
 from .embeds import Embed
 from .enums import ResponseType
 from .file import File
+from .flags import MessageFlags
 from .mentions import AllowedMentions
 from .multipart import MultipartData
 from .object import PartialBase
@@ -69,6 +70,7 @@ class PartialWebhook(PartialBase):
         type: Union[ResponseType, int] = 4,
         allowed_mentions: Optional[AllowedMentions] = MISSING,
         wait: Literal[False],
+        flags: Optional[MessageFlags] = MISSING,
         thread_id: Optional[int] = MISSING,
         poll: Optional["Poll"] = MISSING,
     ) -> None:
@@ -90,6 +92,7 @@ class PartialWebhook(PartialBase):
         type: Union[ResponseType, int] = 4,
         allowed_mentions: Optional[AllowedMentions] = MISSING,
         wait: bool = True,
+        flags: Optional[MessageFlags] = MISSING,
         thread_id: Optional[int] = MISSING,
         poll: Optional["Poll"] = MISSING,
     ) -> "WebhookMessage":
@@ -110,6 +113,7 @@ class PartialWebhook(PartialBase):
         type: Union[ResponseType, int] = 4,
         allowed_mentions: Optional[AllowedMentions] = MISSING,
         wait: bool = True,
+        flags: Optional[MessageFlags] = MISSING,
         thread_id: Optional[int] = MISSING,
         poll: Optional["Poll"] = MISSING,
     ) -> Optional["WebhookMessage"]:
@@ -142,6 +146,8 @@ class PartialWebhook(PartialBase):
             Allowed mentions of the message
         wait: `bool`
             Whether to wait for the message to be sent
+        flags: `Optional[MessageFlags]`
+            Flags of the message
         thread_id: `Optional[int]`
             Thread ID to send the message to
         poll: `Optional[Poll]`
@@ -176,6 +182,7 @@ class PartialWebhook(PartialBase):
             ephemeral=ephemeral,
             view=view,
             type=type,
+            flags=flags,
             poll=poll,
             allowed_mentions=allowed_mentions
         )
