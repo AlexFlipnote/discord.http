@@ -536,6 +536,12 @@ This will only return channels that are in the same guild as the category.</p>
 <dt class="sig sig-object py" id="discord_http.channel.ForumChannel">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">discord_http.channel.</span></span><span class="sig-name descname"><span class="pre">ForumChannel</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">state</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="http.html#discord_http.http.DiscordAPI" title="discord_http.http.DiscordAPI"><span class="pre">DiscordAPI</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">data</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/discord_http/channel.html#ForumChannel"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#discord_http.channel.ForumChannel" title="Link to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#discord_http.channel.PublicThread" title="discord_http.channel.PublicThread"><code class="xref py py-class docutils literal notranslate"><span class="pre">PublicThread</span></code></a></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="discord_http.channel.ForumChannel.type">
+<span class="sig-name descname"><span class="pre">type</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="enums.html#discord_http.enums.ChannelType" title="discord_http.enums.ChannelType"><span class="pre">ChannelType</span></a></span></span><a class="reference internal" href="../_modules/discord_http/channel.html#ForumChannel.type"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#discord_http.channel.ForumChannel.type" title="Link to this definition">¶</a></dt>
+<dd><p><cite>ChannelType</cite>: Returns the channel’s type</p>
+</dd></dl>
+
 </dd></dl>
 
 <dl class="py class">
@@ -620,6 +626,17 @@ This will only return channels that are in the same guild as the category.</p>
 <dt class="sig sig-object py" id="discord_http.channel.NewsThread">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">discord_http.channel.</span></span><span class="sig-name descname"><span class="pre">NewsThread</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">state</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="http.html#discord_http.http.DiscordAPI" title="discord_http.http.DiscordAPI"><span class="pre">DiscordAPI</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">data</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/discord_http/channel.html#NewsThread"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#discord_http.channel.NewsThread" title="Link to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#discord_http.channel.PublicThread" title="discord_http.channel.PublicThread"><code class="xref py py-class docutils literal notranslate"><span class="pre">PublicThread</span></code></a></p>
+<dl class="py property">
+<dt class="sig sig-object py" id="discord_http.channel.NewsThread.type">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">type</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="enums.html#discord_http.enums.ChannelType" title="discord_http.enums.ChannelType"><span class="pre">ChannelType</span></a></em><a class="headerlink" href="#discord_http.channel.NewsThread.type" title="Link to this definition">¶</a></dt>
+<dd><p>Returns the channel’s type</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><cite>ChannelType</cite></p>
+</dd>
+</dl>
+</dd></dl>
+
 </dd></dl>
 
 <dl class="py class">
@@ -1083,7 +1100,7 @@ However since this is Partial, it will always return Permissions.none()</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="discord_http.channel.PartialChannel.send">
-<em class="property"><span class="pre">async</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">send</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">content:</span> <span class="pre">str</span> <span class="pre">|</span> <span class="pre">None</span> <span class="pre">=</span> <span class="pre">&lt;MISSING&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">embed:</span> <span class="pre">~discord_http.embeds.Embed</span> <span class="pre">|</span> <span class="pre">None</span> <span class="pre">=</span> <span class="pre">&lt;MISSING&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">embeds:</span> <span class="pre">list[~discord_http.embeds.Embed]</span> <span class="pre">|</span> <span class="pre">None</span> <span class="pre">=</span> <span class="pre">&lt;MISSING&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">file:</span> <span class="pre">~discord_http.file.File</span> <span class="pre">|</span> <span class="pre">None</span> <span class="pre">=</span> <span class="pre">&lt;MISSING&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">files:</span> <span class="pre">list[~discord_http.file.File]</span> <span class="pre">|</span> <span class="pre">None</span> <span class="pre">=</span> <span class="pre">&lt;MISSING&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">view:</span> <span class="pre">~discord_http.view.View</span> <span class="pre">|</span> <span class="pre">None</span> <span class="pre">=</span> <span class="pre">&lt;MISSING&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tts:</span> <span class="pre">bool</span> <span class="pre">|</span> <span class="pre">None</span> <span class="pre">=</span> <span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">type:</span> <span class="pre">~discord_http.enums.ResponseType</span> <span class="pre">|</span> <span class="pre">int</span> <span class="pre">=</span> <span class="pre">4</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">poll:</span> <span class="pre">Poll</span> <span class="pre">|</span> <span class="pre">None</span> <span class="pre">=</span> <span class="pre">&lt;MISSING&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">allowed_mentions:</span> <span class="pre">~discord_http.mentions.AllowedMentions</span> <span class="pre">|</span> <span class="pre">None</span> <span class="pre">=</span> <span class="pre">&lt;MISSING&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">delete_after:</span> <span class="pre">float</span> <span class="pre">|</span> <span class="pre">None</span> <span class="pre">=</span> <span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="message.html#discord_http.message.Message" title="discord_http.message.Message"><span class="pre">Message</span></a></span></span><a class="reference internal" href="../_modules/discord_http/channel.html#PartialChannel.send"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#discord_http.channel.PartialChannel.send" title="Link to this definition">¶</a></dt>
+<em class="property"><span class="pre">async</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">send</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">content:</span> <span class="pre">str</span> <span class="pre">|</span> <span class="pre">None</span> <span class="pre">=</span> <span class="pre">&lt;MISSING&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">embed:</span> <span class="pre">~discord_http.embeds.Embed</span> <span class="pre">|</span> <span class="pre">None</span> <span class="pre">=</span> <span class="pre">&lt;MISSING&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">embeds:</span> <span class="pre">list[~discord_http.embeds.Embed]</span> <span class="pre">|</span> <span class="pre">None</span> <span class="pre">=</span> <span class="pre">&lt;MISSING&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">file:</span> <span class="pre">~discord_http.file.File</span> <span class="pre">|</span> <span class="pre">None</span> <span class="pre">=</span> <span class="pre">&lt;MISSING&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">files:</span> <span class="pre">list[~discord_http.file.File]</span> <span class="pre">|</span> <span class="pre">None</span> <span class="pre">=</span> <span class="pre">&lt;MISSING&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">view:</span> <span class="pre">~discord_http.view.View</span> <span class="pre">|</span> <span class="pre">None</span> <span class="pre">=</span> <span class="pre">&lt;MISSING&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tts:</span> <span class="pre">bool</span> <span class="pre">|</span> <span class="pre">None</span> <span class="pre">=</span> <span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">type:</span> <span class="pre">~discord_http.enums.ResponseType</span> <span class="pre">|</span> <span class="pre">int</span> <span class="pre">=</span> <span class="pre">4</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">poll:</span> <span class="pre">Poll</span> <span class="pre">|</span> <span class="pre">None</span> <span class="pre">=</span> <span class="pre">&lt;MISSING&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">flags:</span> <span class="pre">~discord_http.flags.MessageFlags</span> <span class="pre">|</span> <span class="pre">None</span> <span class="pre">=</span> <span class="pre">&lt;MISSING&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">allowed_mentions:</span> <span class="pre">~discord_http.mentions.AllowedMentions</span> <span class="pre">|</span> <span class="pre">None</span> <span class="pre">=</span> <span class="pre">&lt;MISSING&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">delete_after:</span> <span class="pre">float</span> <span class="pre">|</span> <span class="pre">None</span> <span class="pre">=</span> <span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="message.html#discord_http.message.Message" title="discord_http.message.Message"><span class="pre">Message</span></a></span></span><a class="reference internal" href="../_modules/discord_http/channel.html#PartialChannel.send"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#discord_http.channel.PartialChannel.send" title="Link to this definition">¶</a></dt>
 <dd><p>Send a message to the channel</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -1098,6 +1115,7 @@ However since this is Partial, it will always return Permissions.none()</p>
 <li><p><strong>type</strong> (<cite>Optional[ResponseType]</cite>) – The type of response to the message</p></li>
 <li><p><strong>allowed_mentions</strong> (<cite>Optional[AllowedMentions]</cite>) – The allowed mentions for the message</p></li>
 <li><p><strong>poll</strong> (<cite>Optional[Poll]</cite>) – The poll to be sent</p></li>
+<li><p><strong>flags</strong> (<cite>Optional[MessageFlags]</cite>) – Flags of the message</p></li>
 <li><p><strong>delete_after</strong> (<cite>Optional[float]</cite>) – How long to wait before deleting the message</p></li>
 </ul>
 </dd>
@@ -1212,6 +1230,17 @@ There are two ways you can use this:</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type<span class="colon">:</span></dt>
 <dd class="field-odd"><p><cite>PartialUser</cite></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="discord_http.channel.PublicThread.type">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">type</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="enums.html#discord_http.enums.ChannelType" title="discord_http.enums.ChannelType"><span class="pre">ChannelType</span></a></em><a class="headerlink" href="#discord_http.channel.PublicThread.type" title="Link to this definition">¶</a></dt>
+<dd><p>Returns the channel’s type</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><cite>ChannelType</cite></p>
 </dd>
 </dl>
 </dd></dl>
@@ -1443,7 +1472,10 @@ Defaults to <cite>PrivacyLevelType.guild_only</cite></p></li>
 <li><a class="reference internal" href="#discord_http.channel.DirectoryChannel.type"><code class="docutils literal notranslate"><span class="pre">DirectoryChannel.type</span></code></a></li>
 </ul>
 </li>
-<li><a class="reference internal" href="#discord_http.channel.ForumChannel"><code class="docutils literal notranslate"><span class="pre">ForumChannel</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.channel.ForumChannel"><code class="docutils literal notranslate"><span class="pre">ForumChannel</span></code></a><ul>
+<li><a class="reference internal" href="#discord_http.channel.ForumChannel.type"><code class="docutils literal notranslate"><span class="pre">ForumChannel.type()</span></code></a></li>
+</ul>
+</li>
 <li><a class="reference internal" href="#discord_http.channel.ForumTag"><code class="docutils literal notranslate"><span class="pre">ForumTag</span></code></a><ul>
 <li><a class="reference internal" href="#discord_http.channel.ForumTag.create"><code class="docutils literal notranslate"><span class="pre">ForumTag.create()</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.channel.ForumTag.from_data"><code class="docutils literal notranslate"><span class="pre">ForumTag.from_data()</span></code></a></li>
@@ -1459,7 +1491,10 @@ Defaults to <cite>PrivacyLevelType.guild_only</cite></p></li>
 <li><a class="reference internal" href="#discord_http.channel.NewsChannel.type"><code class="docutils literal notranslate"><span class="pre">NewsChannel.type</span></code></a></li>
 </ul>
 </li>
-<li><a class="reference internal" href="#discord_http.channel.NewsThread"><code class="docutils literal notranslate"><span class="pre">NewsThread</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.channel.NewsThread"><code class="docutils literal notranslate"><span class="pre">NewsThread</span></code></a><ul>
+<li><a class="reference internal" href="#discord_http.channel.NewsThread.type"><code class="docutils literal notranslate"><span class="pre">NewsThread.type</span></code></a></li>
+</ul>
+</li>
 <li><a class="reference internal" href="#discord_http.channel.PartialChannel"><code class="docutils literal notranslate"><span class="pre">PartialChannel</span></code></a><ul>
 <li><a class="reference internal" href="#discord_http.channel.PartialChannel.add_thread_member"><code class="docutils literal notranslate"><span class="pre">PartialChannel.add_thread_member()</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.channel.PartialChannel.bulk_delete_messages"><code class="docutils literal notranslate"><span class="pre">PartialChannel.bulk_delete_messages()</span></code></a></li>
@@ -1504,6 +1539,7 @@ Defaults to <cite>PrivacyLevelType.guild_only</cite></p></li>
 <li><a class="reference internal" href="#discord_http.channel.PublicThread.guild"><code class="docutils literal notranslate"><span class="pre">PublicThread.guild</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.channel.PublicThread.last_message"><code class="docutils literal notranslate"><span class="pre">PublicThread.last_message</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.channel.PublicThread.owner"><code class="docutils literal notranslate"><span class="pre">PublicThread.owner</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.channel.PublicThread.type"><code class="docutils literal notranslate"><span class="pre">PublicThread.type</span></code></a></li>
 </ul>
 </li>
 <li><a class="reference internal" href="#discord_http.channel.StageChannel"><code class="docutils literal notranslate"><span class="pre">StageChannel</span></code></a><ul>

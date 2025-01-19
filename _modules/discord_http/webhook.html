@@ -298,6 +298,7 @@
 <span class="kn">from</span><span class="w"> </span><span class="nn">.embeds</span><span class="w"> </span><span class="kn">import</span> <span class="n">Embed</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">.enums</span><span class="w"> </span><span class="kn">import</span> <span class="n">ResponseType</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">.file</span><span class="w"> </span><span class="kn">import</span> <span class="n">File</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.flags</span><span class="w"> </span><span class="kn">import</span> <span class="n">MessageFlags</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">.mentions</span><span class="w"> </span><span class="kn">import</span> <span class="n">AllowedMentions</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">.multipart</span><span class="w"> </span><span class="kn">import</span> <span class="n">MultipartData</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">.object</span><span class="w"> </span><span class="kn">import</span> <span class="n">PartialBase</span>
@@ -368,6 +369,7 @@
         <span class="nb">type</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">ResponseType</span><span class="p">,</span> <span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="mi">4</span><span class="p">,</span>
         <span class="n">allowed_mentions</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">AllowedMentions</span><span class="p">]</span> <span class="o">=</span> <span class="n">MISSING</span><span class="p">,</span>
         <span class="n">wait</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="kc">False</span><span class="p">],</span>
+        <span class="n">flags</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">MessageFlags</span><span class="p">]</span> <span class="o">=</span> <span class="n">MISSING</span><span class="p">,</span>
         <span class="n">thread_id</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="n">MISSING</span><span class="p">,</span>
         <span class="n">poll</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="s2">&quot;Poll&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">MISSING</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
@@ -389,6 +391,7 @@
         <span class="nb">type</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">ResponseType</span><span class="p">,</span> <span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="mi">4</span><span class="p">,</span>
         <span class="n">allowed_mentions</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">AllowedMentions</span><span class="p">]</span> <span class="o">=</span> <span class="n">MISSING</span><span class="p">,</span>
         <span class="n">wait</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+        <span class="n">flags</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">MessageFlags</span><span class="p">]</span> <span class="o">=</span> <span class="n">MISSING</span><span class="p">,</span>
         <span class="n">thread_id</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="n">MISSING</span><span class="p">,</span>
         <span class="n">poll</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="s2">&quot;Poll&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">MISSING</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;WebhookMessage&quot;</span><span class="p">:</span>
@@ -411,6 +414,7 @@
         <span class="nb">type</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">ResponseType</span><span class="p">,</span> <span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="mi">4</span><span class="p">,</span>
         <span class="n">allowed_mentions</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">AllowedMentions</span><span class="p">]</span> <span class="o">=</span> <span class="n">MISSING</span><span class="p">,</span>
         <span class="n">wait</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+        <span class="n">flags</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">MessageFlags</span><span class="p">]</span> <span class="o">=</span> <span class="n">MISSING</span><span class="p">,</span>
         <span class="n">thread_id</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="n">MISSING</span><span class="p">,</span>
         <span class="n">poll</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="s2">&quot;Poll&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">MISSING</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="s2">&quot;WebhookMessage&quot;</span><span class="p">]:</span>
@@ -443,6 +447,8 @@
 <span class="sd">            Allowed mentions of the message</span>
 <span class="sd">        wait: `bool`</span>
 <span class="sd">            Whether to wait for the message to be sent</span>
+<span class="sd">        flags: `Optional[MessageFlags]`</span>
+<span class="sd">            Flags of the message</span>
 <span class="sd">        thread_id: `Optional[int]`</span>
 <span class="sd">            Thread ID to send the message to</span>
 <span class="sd">        poll: `Optional[Poll]`</span>
@@ -477,6 +483,7 @@
             <span class="n">ephemeral</span><span class="o">=</span><span class="n">ephemeral</span><span class="p">,</span>
             <span class="n">view</span><span class="o">=</span><span class="n">view</span><span class="p">,</span>
             <span class="nb">type</span><span class="o">=</span><span class="nb">type</span><span class="p">,</span>
+            <span class="n">flags</span><span class="o">=</span><span class="n">flags</span><span class="p">,</span>
             <span class="n">poll</span><span class="o">=</span><span class="n">poll</span><span class="p">,</span>
             <span class="n">allowed_mentions</span><span class="o">=</span><span class="n">allowed_mentions</span>
         <span class="p">)</span>
