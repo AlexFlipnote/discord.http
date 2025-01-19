@@ -536,10 +536,15 @@ This will only return channels that are in the same guild as the category.</p>
 <dt class="sig sig-object py" id="discord_http.channel.ForumChannel">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">discord_http.channel.</span></span><span class="sig-name descname"><span class="pre">ForumChannel</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">state</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="http.html#discord_http.http.DiscordAPI" title="discord_http.http.DiscordAPI"><span class="pre">DiscordAPI</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">data</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/discord_http/channel.html#ForumChannel"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#discord_http.channel.ForumChannel" title="Link to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#discord_http.channel.PublicThread" title="discord_http.channel.PublicThread"><code class="xref py py-class docutils literal notranslate"><span class="pre">PublicThread</span></code></a></p>
-<dl class="py method">
+<dl class="py property">
 <dt class="sig sig-object py" id="discord_http.channel.ForumChannel.type">
-<span class="sig-name descname"><span class="pre">type</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="enums.html#discord_http.enums.ChannelType" title="discord_http.enums.ChannelType"><span class="pre">ChannelType</span></a></span></span><a class="reference internal" href="../_modules/discord_http/channel.html#ForumChannel.type"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#discord_http.channel.ForumChannel.type" title="Link to this definition">¶</a></dt>
-<dd><p><cite>ChannelType</cite>: Returns the channel’s type</p>
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">type</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="enums.html#discord_http.enums.ChannelType" title="discord_http.enums.ChannelType"><span class="pre">ChannelType</span></a></em><a class="headerlink" href="#discord_http.channel.ForumChannel.type" title="Link to this definition">¶</a></dt>
+<dd><p>Returns the channel’s type</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><cite>ChannelType</cite></p>
+</dd>
+</dl>
 </dd></dl>
 
 </dd></dl>
@@ -586,6 +591,17 @@ This will only return channels that are in the same guild as the category.</p>
 <dt class="sig sig-object py" id="discord_http.channel.ForumThread">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">discord_http.channel.</span></span><span class="sig-name descname"><span class="pre">ForumThread</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">state</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="http.html#discord_http.http.DiscordAPI" title="discord_http.http.DiscordAPI"><span class="pre">DiscordAPI</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">data</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/discord_http/channel.html#ForumThread"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#discord_http.channel.ForumThread" title="Link to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#discord_http.channel.PublicThread" title="discord_http.channel.PublicThread"><code class="xref py py-class docutils literal notranslate"><span class="pre">PublicThread</span></code></a></p>
+<dl class="py property">
+<dt class="sig sig-object py" id="discord_http.channel.ForumThread.type">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">type</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="enums.html#discord_http.enums.ChannelType" title="discord_http.enums.ChannelType"><span class="pre">ChannelType</span></a></em><a class="headerlink" href="#discord_http.channel.ForumThread.type" title="Link to this definition">¶</a></dt>
+<dd><p>Returns the channel’s type</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><cite>ChannelType</cite></p>
+</dd>
+</dl>
+</dd></dl>
+
 </dd></dl>
 
 <dl class="py class">
@@ -1178,6 +1194,17 @@ There are two ways you can use this:</p>
 <dt class="sig sig-object py" id="discord_http.channel.PartialThread">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">discord_http.channel.</span></span><span class="sig-name descname"><span class="pre">PartialThread</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">state</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="http.html#discord_http.http.DiscordAPI" title="discord_http.http.DiscordAPI"><span class="pre">DiscordAPI</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">guild_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">parent_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">type</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="enums.html#discord_http.enums.ChannelType" title="discord_http.enums.ChannelType"><span class="pre">ChannelType</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">int</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/discord_http/channel.html#PartialThread"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#discord_http.channel.PartialThread" title="Link to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#discord_http.channel.PartialChannel" title="discord_http.channel.PartialChannel"><code class="xref py py-class docutils literal notranslate"><span class="pre">PartialChannel</span></code></a></p>
+<dl class="py property">
+<dt class="sig sig-object py" id="discord_http.channel.PartialThread.type">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">type</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="enums.html#discord_http.enums.ChannelType" title="discord_http.enums.ChannelType"><span class="pre">ChannelType</span></a></em><a class="headerlink" href="#discord_http.channel.PartialThread.type" title="Link to this definition">¶</a></dt>
+<dd><p>Returns the channel’s type</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><cite>ChannelType</cite></p>
+</dd>
+</dl>
+</dd></dl>
+
 </dd></dl>
 
 <dl class="py class">
@@ -1473,7 +1500,7 @@ Defaults to <cite>PrivacyLevelType.guild_only</cite></p></li>
 </ul>
 </li>
 <li><a class="reference internal" href="#discord_http.channel.ForumChannel"><code class="docutils literal notranslate"><span class="pre">ForumChannel</span></code></a><ul>
-<li><a class="reference internal" href="#discord_http.channel.ForumChannel.type"><code class="docutils literal notranslate"><span class="pre">ForumChannel.type()</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.channel.ForumChannel.type"><code class="docutils literal notranslate"><span class="pre">ForumChannel.type</span></code></a></li>
 </ul>
 </li>
 <li><a class="reference internal" href="#discord_http.channel.ForumTag"><code class="docutils literal notranslate"><span class="pre">ForumTag</span></code></a><ul>
@@ -1482,7 +1509,10 @@ Defaults to <cite>PrivacyLevelType.guild_only</cite></p></li>
 <li><a class="reference internal" href="#discord_http.channel.ForumTag.to_dict"><code class="docutils literal notranslate"><span class="pre">ForumTag.to_dict()</span></code></a></li>
 </ul>
 </li>
-<li><a class="reference internal" href="#discord_http.channel.ForumThread"><code class="docutils literal notranslate"><span class="pre">ForumThread</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.channel.ForumThread"><code class="docutils literal notranslate"><span class="pre">ForumThread</span></code></a><ul>
+<li><a class="reference internal" href="#discord_http.channel.ForumThread.type"><code class="docutils literal notranslate"><span class="pre">ForumThread.type</span></code></a></li>
+</ul>
+</li>
 <li><a class="reference internal" href="#discord_http.channel.GroupDMChannel"><code class="docutils literal notranslate"><span class="pre">GroupDMChannel</span></code></a><ul>
 <li><a class="reference internal" href="#discord_http.channel.GroupDMChannel.type"><code class="docutils literal notranslate"><span class="pre">GroupDMChannel.type</span></code></a></li>
 </ul>
@@ -1530,7 +1560,10 @@ Defaults to <cite>PrivacyLevelType.guild_only</cite></p></li>
 <li><a class="reference internal" href="#discord_http.channel.PartialChannel.typing"><code class="docutils literal notranslate"><span class="pre">PartialChannel.typing()</span></code></a></li>
 </ul>
 </li>
-<li><a class="reference internal" href="#discord_http.channel.PartialThread"><code class="docutils literal notranslate"><span class="pre">PartialThread</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.channel.PartialThread"><code class="docutils literal notranslate"><span class="pre">PartialThread</span></code></a><ul>
+<li><a class="reference internal" href="#discord_http.channel.PartialThread.type"><code class="docutils literal notranslate"><span class="pre">PartialThread.type</span></code></a></li>
+</ul>
+</li>
 <li><a class="reference internal" href="#discord_http.channel.PrivateThread"><code class="docutils literal notranslate"><span class="pre">PrivateThread</span></code></a><ul>
 <li><a class="reference internal" href="#discord_http.channel.PrivateThread.type"><code class="docutils literal notranslate"><span class="pre">PrivateThread.type</span></code></a></li>
 </ul>

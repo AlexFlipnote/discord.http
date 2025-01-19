@@ -863,6 +863,15 @@
             <span class="k">for</span> <span class="n">g</span> <span class="ow">in</span> <span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;entitlements&quot;</span><span class="p">,</span> <span class="p">[])</span>
         <span class="p">]</span>
 
+        <span class="bp">self</span><span class="o">.</span><span class="n">last_message_id</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="k">if</span> <span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;channel&quot;</span><span class="p">,</span> <span class="p">{})</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;last_message_id&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">last_message_id</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="s2">&quot;channel&quot;</span><span class="p">][</span><span class="s2">&quot;last_message_id&quot;</span><span class="p">])</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">recipients</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">User</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="n">User</span><span class="p">(</span><span class="n">state</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">bot</span><span class="o">.</span><span class="n">state</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">g</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">g</span> <span class="ow">in</span> <span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;channel&quot;</span><span class="p">,</span> <span class="p">{})</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;recipients&quot;</span><span class="p">,</span> <span class="p">[])</span>
+        <span class="p">]</span>
+
         <span class="c1"># Should not be used, but if you *really* want the raw data, here it is</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_data</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="n">data</span>
 
@@ -873,18 +882,22 @@
         <span class="k">if</span> <span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;channel_id&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">):</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">channel_id</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="s2">&quot;channel_id&quot;</span><span class="p">])</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">_channel</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">BaseChannel</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
-        <span class="k">if</span> <span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;channel&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">):</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_channel</span> <span class="o">=</span> <span class="n">channel_types</span><span class="p">[</span><span class="n">data</span><span class="p">[</span><span class="s2">&quot;channel&quot;</span><span class="p">][</span><span class="s2">&quot;type&quot;</span><span class="p">]](</span>
-                <span class="n">state</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">bot</span><span class="o">.</span><span class="n">state</span><span class="p">,</span>
-                <span class="n">data</span><span class="o">=</span><span class="n">data</span><span class="p">[</span><span class="s2">&quot;channel&quot;</span><span class="p">]</span>
-            <span class="p">)</span>
-
         <span class="bp">self</span><span class="o">.</span><span class="n">_guild</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">PartialGuild</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="k">if</span> <span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;guild_id&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">):</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_guild</span> <span class="o">=</span> <span class="n">PartialGuild</span><span class="p">(</span>
                 <span class="n">state</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">bot</span><span class="o">.</span><span class="n">state</span><span class="p">,</span>
                 <span class="nb">id</span><span class="o">=</span><span class="nb">int</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="s2">&quot;guild_id&quot;</span><span class="p">])</span>
+            <span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_channel</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">BaseChannel</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="k">if</span> <span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;channel&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">):</span>
+            <span class="n">_channel_data</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s2">&quot;channel&quot;</span><span class="p">]</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_guild</span><span class="p">:</span>
+                <span class="n">_channel_data</span><span class="p">[</span><span class="s2">&quot;guild_id&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_guild</span><span class="o">.</span><span class="n">id</span>
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">_channel</span> <span class="o">=</span> <span class="n">channel_types</span><span class="p">[</span><span class="n">_channel_data</span><span class="p">[</span><span class="s2">&quot;type&quot;</span><span class="p">]](</span>
+                <span class="n">state</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">bot</span><span class="o">.</span><span class="n">state</span><span class="p">,</span>
+                <span class="n">data</span><span class="o">=</span><span class="n">_channel_data</span>
             <span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">message</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Message</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
@@ -967,11 +980,22 @@
             <span class="k">if</span> <span class="n">cache</span><span class="p">:</span>
                 <span class="k">return</span> <span class="n">cache</span>
 
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_channel</span><span class="p">:</span>
+            <span class="c1"># Prefer the channel from context</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_channel</span>
+
         <span class="k">return</span> <span class="n">PartialChannel</span><span class="p">(</span>
             <span class="n">state</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">bot</span><span class="o">.</span><span class="n">state</span><span class="p">,</span>
             <span class="nb">id</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">channel_id</span><span class="p">,</span>
             <span class="n">guild_id</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">guild</span><span class="o">.</span><span class="n">id</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">guild</span> <span class="k">else</span> <span class="kc">None</span>
         <span class="p">)</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">channel_type</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ChannelType</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot; `ChannelType` Returns the type of the channel &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_channel</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_channel</span><span class="o">.</span><span class="n">type</span>
+        <span class="k">return</span> <span class="n">ChannelType</span><span class="o">.</span><span class="n">unknown</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">created_at</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">datetime</span><span class="p">:</span>
