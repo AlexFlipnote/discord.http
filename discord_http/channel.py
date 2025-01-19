@@ -16,7 +16,7 @@ from .enums import (
     SortOrderType, ForumLayoutType, PrivacyLevelType
 )
 from .file import File
-from .flags import PermissionOverwrite, ChannelFlags, Permissions
+from .flags import PermissionOverwrite, ChannelFlags, Permissions, MessageFlags
 from .mentions import AllowedMentions
 from .multipart import MultipartData
 from .object import PartialBase, Snowflake
@@ -412,6 +412,7 @@ class PartialChannel(PartialBase):
         tts: Optional[bool] = False,
         type: Union[ResponseType, int] = 4,
         poll: Optional["Poll"] = MISSING,
+        flags: Optional[MessageFlags] = MISSING,
         allowed_mentions: Optional[AllowedMentions] = MISSING,
         delete_after: Optional[float] = None
     ) -> "Message":
@@ -440,6 +441,8 @@ class PartialChannel(PartialBase):
             The allowed mentions for the message
         poll: `Optional[Poll]`
             The poll to be sent
+        flags: `Optional[MessageFlags]`
+            Flags of the message
         delete_after: `Optional[float]`
             How long to wait before deleting the message
 
@@ -458,6 +461,7 @@ class PartialChannel(PartialBase):
             tts=tts,
             type=type,
             poll=poll,
+            flags=flags,
             allowed_mentions=allowed_mentions,
         )
 
@@ -1928,6 +1932,11 @@ class PublicThread(BaseChannel):
         return f"<PublicThread id={self.id} name='{self.name}'>"
 
     @property
+    def type(self) -> ChannelType:
+        """ `ChannelType`: Returns the channel's type """
+        return ChannelType.guild_public_thread
+
+    @property
     def guild(self) -> "Guild | PartialGuild | None":
         """ `PartialGuild`: Returns a partial guild object """
         if not self.guild_id:
@@ -2067,6 +2076,10 @@ class ForumChannel(PublicThread):
     def __repr__(self) -> str:
         return f"<ForumChannel id={self.id} name='{self.name}'>"
 
+    def type(self) -> ChannelType:
+        """ `ChannelType`: Returns the channel's type """
+        return ChannelType.guild_forum
+
     def _from_data(self, data: dict):
         if data.get("default_reaction_emoji", None):
             _target = (
@@ -2105,6 +2118,11 @@ class NewsThread(PublicThread):
 
     def __repr__(self) -> str:
         return f"<NewsThread id={self.id} name='{self.name}'>"
+
+    @property
+    def type(self) -> ChannelType:
+        """ `ChannelType`: Returns the channel's type """
+        return ChannelType.guild_news_thread
 
 
 class PrivateThread(PublicThread):
