@@ -308,7 +308,9 @@
 
 <span class="k">if</span> <span class="n">TYPE_CHECKING</span><span class="p">:</span>
     <span class="kn">from</span><span class="w"> </span><span class="nn">.</span><span class="w"> </span><span class="kn">import</span> <span class="n">Snowflake</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">.member</span><span class="w"> </span><span class="kn">import</span> <span class="n">Member</span>
     <span class="kn">from</span><span class="w"> </span><span class="nn">.channel</span><span class="w"> </span><span class="kn">import</span> <span class="n">BaseChannel</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">.role</span><span class="w"> </span><span class="kn">import</span> <span class="n">Role</span>
     <span class="kn">from</span><span class="w"> </span><span class="nn">.context</span><span class="w"> </span><span class="kn">import</span> <span class="n">Context</span>
     <span class="kn">from</span><span class="w"> </span><span class="nn">.response</span><span class="w"> </span><span class="kn">import</span> <span class="n">BaseResponse</span>
 
@@ -609,6 +611,7 @@
         <span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_options</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">dict</span><span class="p">]</span> <span class="o">=</span> <span class="n">options</span> <span class="ow">or</span> <span class="p">[]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_default_values</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="p">[]</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
         <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;&lt;Select custom_id=&#39;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">custom_id</span><span class="si">}</span><span class="s2">&#39;&gt;&quot;</span>
@@ -676,6 +679,8 @@
 
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">placeholder</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">payload</span><span class="p">[</span><span class="s2">&quot;placeholder&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">placeholder</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_default_values</span><span class="p">:</span>
+            <span class="n">payload</span><span class="p">[</span><span class="s2">&quot;default_values&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_default_values</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_options</span><span class="p">:</span>
             <span class="n">payload</span><span class="p">[</span><span class="s2">&quot;options&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_options</span>
 
@@ -694,6 +699,7 @@
         <span class="n">custom_id</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">min_values</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span>
         <span class="n">max_values</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span>
+        <span class="n">default_values</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="s2">&quot;Member | int&quot;</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">row</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">disabled</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
     <span class="p">):</span>
@@ -706,6 +712,12 @@
             <span class="n">max_values</span><span class="o">=</span><span class="n">max_values</span><span class="p">,</span>
             <span class="n">disabled</span><span class="o">=</span><span class="n">disabled</span>
         <span class="p">)</span>
+
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">default_values</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_default_values</span> <span class="o">=</span> <span class="p">[</span>
+                <span class="p">{</span><span class="s2">&quot;id&quot;</span><span class="p">:</span> <span class="nb">str</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">g</span><span class="p">)),</span> <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;user&quot;</span><span class="p">}</span>
+                <span class="k">for</span> <span class="n">g</span> <span class="ow">in</span> <span class="n">default_values</span>
+            <span class="p">]</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
         <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;&lt;UserSelect custom_id=&#39;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">custom_id</span><span class="si">}</span><span class="s2">&#39;&gt;&quot;</span></div>
@@ -722,6 +734,7 @@
         <span class="n">custom_id</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">min_values</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span>
         <span class="n">max_values</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span>
+        <span class="n">default_values</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="s2">&quot;Role | int&quot;</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">row</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">disabled</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
     <span class="p">):</span>
@@ -734,6 +747,12 @@
             <span class="n">max_values</span><span class="o">=</span><span class="n">max_values</span><span class="p">,</span>
             <span class="n">disabled</span><span class="o">=</span><span class="n">disabled</span>
         <span class="p">)</span>
+
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">default_values</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_default_values</span> <span class="o">=</span> <span class="p">[</span>
+                <span class="p">{</span><span class="s2">&quot;id&quot;</span><span class="p">:</span> <span class="nb">str</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">g</span><span class="p">)),</span> <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;role&quot;</span><span class="p">}</span>
+                <span class="k">for</span> <span class="n">g</span> <span class="ow">in</span> <span class="n">default_values</span>
+            <span class="p">]</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
         <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;&lt;RoleSelect custom_id=&#39;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">custom_id</span><span class="si">}</span><span class="s2">&#39;&gt;&quot;</span></div>
@@ -750,6 +769,7 @@
         <span class="n">custom_id</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">min_values</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span>
         <span class="n">max_values</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span>
+        <span class="n">default_values</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="s2">&quot;Member | Role | int&quot;</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">row</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">disabled</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
     <span class="p">):</span>
@@ -762,6 +782,13 @@
             <span class="n">max_values</span><span class="o">=</span><span class="n">max_values</span><span class="p">,</span>
             <span class="n">disabled</span><span class="o">=</span><span class="n">disabled</span>
         <span class="p">)</span>
+
+        <span class="c1"># NOTE: Will be changed to accept roles too</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">default_values</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_default_values</span> <span class="o">=</span> <span class="p">[</span>
+                <span class="p">{</span><span class="s2">&quot;id&quot;</span><span class="p">:</span> <span class="nb">str</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">g</span><span class="p">)),</span> <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;user&quot;</span><span class="p">}</span>
+                <span class="k">for</span> <span class="n">g</span> <span class="ow">in</span> <span class="n">default_values</span>
+            <span class="p">]</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
         <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;&lt;MentionableSelect custom_id=&#39;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">custom_id</span><span class="si">}</span><span class="s2">&#39;&gt;&quot;</span></div>
@@ -778,6 +805,7 @@
         <span class="n">custom_id</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">min_values</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span>
         <span class="n">max_values</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span>
+        <span class="n">default_values</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="s2">&quot;BaseChannel | int&quot;</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">row</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">disabled</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
     <span class="p">):</span>
@@ -798,6 +826,12 @@
                 <span class="bp">self</span><span class="o">.</span><span class="n">_channel_types</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">c</span><span class="p">))</span>
             <span class="k">else</span><span class="p">:</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">_channel_types</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">c</span><span class="o">.</span><span class="n">type</span><span class="p">))</span>
+
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">default_values</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_default_values</span> <span class="o">=</span> <span class="p">[</span>
+                <span class="p">{</span><span class="s2">&quot;id&quot;</span><span class="p">:</span> <span class="nb">str</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">g</span><span class="p">)),</span> <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;channel&quot;</span><span class="p">}</span>
+                <span class="k">for</span> <span class="n">g</span> <span class="ow">in</span> <span class="n">default_values</span>
+            <span class="p">]</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
         <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;&lt;ChannelSelect custom_id=&#39;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">custom_id</span><span class="si">}</span><span class="s2">&#39;&gt;&quot;</span>
