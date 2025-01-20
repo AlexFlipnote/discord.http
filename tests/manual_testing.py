@@ -21,7 +21,7 @@ from discord_http import (
     utils, VoiceChannel, Select,
     TextStyles, User, UserSelect, tasks,
     TextChannel, Attachment, PermissionOverwrite,
-    Poll, AutoModRuleEventType, AutoModRuleTriggerType
+    Poll, AutoModRuleEventType, AutoModRuleTriggerType, MentionableSelect
 )
 
 with open("./config.json") as f:
@@ -771,8 +771,15 @@ async def test_button(ctx: Context):
         default=True
     )
 
+    multi_select = MentionableSelect(
+        placeholder="testing...",
+        custom_id="test_multi_select",
+        default_values=[ctx.user.id]
+    )
+
     view = View(
         select_menu,
+        multi_select,
         Button(label="funny", custom_id="funny:1337"),
         Button(label="modal test", custom_id="test_send_modal_local"),
         Link(url="https://alexflipnote.dev", label="Test", emoji="👍"),

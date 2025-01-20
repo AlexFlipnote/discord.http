@@ -14,7 +14,9 @@ from .enums import (
 
 if TYPE_CHECKING:
     from . import Snowflake
+    from .member import Member
     from .channel import BaseChannel
+    from .role import Role
     from .context import Context
     from .response import BaseResponse
 
@@ -289,6 +291,7 @@ class Select(Item):
         )
 
         self._options: list[dict] = options or []
+        self._default_values: list[dict[str, str]] = []
 
     def __repr__(self) -> str:
         return f"<Select custom_id='{self.custom_id}'>"
@@ -351,6 +354,8 @@ class Select(Item):
 
         if self.placeholder is not None:
             payload["placeholder"] = self.placeholder
+        if self._default_values:
+            payload["default_values"] = self._default_values
         if self._options:
             payload["options"] = self._options
 
@@ -365,6 +370,7 @@ class UserSelect(Select):
         custom_id: str | None = None,
         min_values: int | None = 1,
         max_values: int | None = 1,
+        default_values: list["Member | int"] | None = None,
         row: int | None = None,
         disabled: bool = False
     ):
@@ -378,6 +384,12 @@ class UserSelect(Select):
             disabled=disabled
         )
 
+        if isinstance(default_values, list):
+            self._default_values = [
+                {"id": str(int(g)), "type": "user"}
+                for g in default_values
+            ]
+
     def __repr__(self) -> str:
         return f"<UserSelect custom_id='{self.custom_id}'>"
 
@@ -390,6 +402,7 @@ class RoleSelect(Select):
         custom_id: str | None = None,
         min_values: int | None = 1,
         max_values: int | None = 1,
+        default_values: list["Role | int"] | None = None,
         row: int | None = None,
         disabled: bool = False
     ):
@@ -403,6 +416,12 @@ class RoleSelect(Select):
             disabled=disabled
         )
 
+        if isinstance(default_values, list):
+            self._default_values = [
+                {"id": str(int(g)), "type": "role"}
+                for g in default_values
+            ]
+
     def __repr__(self) -> str:
         return f"<RoleSelect custom_id='{self.custom_id}'>"
 
@@ -415,6 +434,7 @@ class MentionableSelect(Select):
         custom_id: str | None = None,
         min_values: int | None = 1,
         max_values: int | None = 1,
+        default_values: list["Member | Role | int"] | None = None,
         row: int | None = None,
         disabled: bool = False
     ):
@@ -428,6 +448,13 @@ class MentionableSelect(Select):
             disabled=disabled
         )
 
+        # NOTE: Will be changed to accept roles too
+        if isinstance(default_values, list):
+            self._default_values = [
+                {"id": str(int(g)), "type": "user"}
+                for g in default_values
+            ]
+
     def __repr__(self) -> str:
         return f"<MentionableSelect custom_id='{self.custom_id}'>"
 
@@ -440,6 +467,7 @@ class ChannelSelect(Select):
         custom_id: str | None = None,
         min_values: int | None = 1,
         max_values: int | None = 1,
+        default_values: list["BaseChannel | int"] | None = None,
         row: int | None = None,
         disabled: bool = False
     ):
@@ -460,6 +488,12 @@ class ChannelSelect(Select):
                 self._channel_types.append(int(c))
             else:
                 self._channel_types.append(int(c.type))
+
+        if isinstance(default_values, list):
+            self._default_values = [
+                {"id": str(int(g)), "type": "channel"}
+                for g in default_values
+            ]
 
     def __repr__(self) -> str:
         return f"<ChannelSelect custom_id='{self.custom_id}'>"
