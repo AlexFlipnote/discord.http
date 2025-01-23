@@ -15,6 +15,7 @@ from .channel import (
 )
 from .cooldowns import Cooldown
 from .embeds import Embed
+from .errors import CheckFailed
 from .entitlements import Entitlements
 from .enums import (
     ApplicationCommandType, CommandOptionType,
@@ -970,6 +971,12 @@ class Context:
 
                     case CommandOptionType.user:
                         if "members" in resolved:
+                            if option["value"] not in resolved["members"]:
+                                raise CheckFailed(
+                                    "It would seem that the user you are trying to get is not within reach. "
+                                    "Please check if the user is in the same channel as the command."
+                                )
+
                             member_data = resolved["members"][option["value"]]
                             member_data["user"] = resolved["users"][option["value"]]
 
@@ -981,6 +988,7 @@ class Context:
                                 guild=self.guild,
                                 data=member_data
                             )
+
                         else:
                             kwargs[option["name"]] = User(
                                 state=self.bot.state,

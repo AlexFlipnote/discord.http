@@ -5,7 +5,7 @@ from . import utils
 from .asset import Asset
 from .embeds import Embed
 from .file import File
-from .flags import Permissions, PublicFlags, GuildMemberFlags, MessageFlags
+from .flags import Permissions, UserFlags, GuildMemberFlags, MessageFlags
 from .guild import Guild, PartialGuild
 from .mentions import AllowedMentions
 from .object import PartialBase, Snowflake
@@ -552,9 +552,9 @@ class Member(PartialMember):
         return self._user.discriminator
 
     @property
-    def public_flags(self) -> PublicFlags:
+    def public_flags(self) -> UserFlags:
         """ `int`: Returns the public flags of the member """
-        return self._user.public_flags or PublicFlags(0)
+        return self._user.public_flags or UserFlags(0)
 
     @property
     def banner(self) -> Optional[Asset]:

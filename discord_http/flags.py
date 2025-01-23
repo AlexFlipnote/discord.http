@@ -15,7 +15,7 @@ __all__ = (
     "MessageFlags",
     "PermissionOverwrite",
     "Permissions",
-    "PublicFlags",
+    "UserFlags",
     "SKUFlags",
     "SystemChannelFlags",
 )
@@ -194,6 +194,11 @@ class GuildMemberFlags(BaseFlag):
     completed_onboarding = 1 << 1
     bypasses_verification = 1 << 2
     started_onboarding = 1 << 3
+    is_guest = 1 << 4
+    started_home_actions = 1 << 5
+    completed_home_actions = 1 << 6
+    automod_quarantined_username = 1 << 7
+    dm_settings_upsell_acknowledged = 1 << 9
 
 
 class ChannelFlags(BaseFlag):
@@ -202,7 +207,7 @@ class ChannelFlags(BaseFlag):
     hide_media_download_options = 1 << 15
 
 
-class PublicFlags(BaseFlag):
+class UserFlags(BaseFlag):
     staff = 1 << 0
     partner = 1 << 1
     hypesquad = 1 << 2
@@ -217,7 +222,9 @@ class PublicFlags(BaseFlag):
     verified_developer = 1 << 17
     certified_moderator = 1 << 18
     bot_http_interactions = 1 << 19
+    spammer = 1 << 20
     active_developer = 1 << 22
+    provisional_account = 1 << 23
 
 
 class AttachmentFlags(BaseFlag):

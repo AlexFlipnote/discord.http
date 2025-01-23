@@ -6,7 +6,7 @@ from .colour import Colour
 from .embeds import Embed
 from .enums import DefaultAvatarType
 from .file import File
-from .flags import PublicFlags, MessageFlags
+from .flags import UserFlags, MessageFlags
 from .mentions import AllowedMentions
 from .object import PartialBase
 from .response import ResponseType, MessageResponse
@@ -192,7 +192,7 @@ class User(PartialUser):
         self.avatar_decoration: Optional[Asset] = None
         self.global_name: Optional[str] = data.get("global_name", None)
 
-        self.public_flags: Optional[PublicFlags] = None
+        self.public_flags: UserFlags | None = None
 
         # This might change a lot
         self.clan: Optional[dict] = data.get("clan", None)
@@ -233,7 +233,7 @@ class User(PartialUser):
             )
 
         if data.get("public_flags", None):
-            self.public_flags = PublicFlags(data["public_flags"])
+            self.public_flags = UserFlags(data["public_flags"])
 
     @property
     def global_avatar(self) -> Optional[Asset]:
