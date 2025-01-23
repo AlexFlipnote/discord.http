@@ -299,7 +299,7 @@
 <span class="kn">from</span><span class="w"> </span><span class="nn">.asset</span><span class="w"> </span><span class="kn">import</span> <span class="n">Asset</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">.embeds</span><span class="w"> </span><span class="kn">import</span> <span class="n">Embed</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">.file</span><span class="w"> </span><span class="kn">import</span> <span class="n">File</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">.flags</span><span class="w"> </span><span class="kn">import</span> <span class="n">Permissions</span><span class="p">,</span> <span class="n">PublicFlags</span><span class="p">,</span> <span class="n">GuildMemberFlags</span><span class="p">,</span> <span class="n">MessageFlags</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.flags</span><span class="w"> </span><span class="kn">import</span> <span class="n">Permissions</span><span class="p">,</span> <span class="n">UserFlags</span><span class="p">,</span> <span class="n">GuildMemberFlags</span><span class="p">,</span> <span class="n">MessageFlags</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">.guild</span><span class="w"> </span><span class="kn">import</span> <span class="n">Guild</span><span class="p">,</span> <span class="n">PartialGuild</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">.mentions</span><span class="w"> </span><span class="kn">import</span> <span class="n">AllowedMentions</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">.object</span><span class="w"> </span><span class="kn">import</span> <span class="n">PartialBase</span><span class="p">,</span> <span class="n">Snowflake</span>
@@ -887,9 +887,9 @@
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_user</span><span class="o">.</span><span class="n">discriminator</span>
 
     <span class="nd">@property</span>
-    <span class="k">def</span><span class="w"> </span><span class="nf">public_flags</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">PublicFlags</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">public_flags</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">UserFlags</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot; `int`: Returns the public flags of the member &quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_user</span><span class="o">.</span><span class="n">public_flags</span> <span class="ow">or</span> <span class="n">PublicFlags</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_user</span><span class="o">.</span><span class="n">public_flags</span> <span class="ow">or</span> <span class="n">UserFlags</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">banner</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Asset</span><span class="p">]:</span>

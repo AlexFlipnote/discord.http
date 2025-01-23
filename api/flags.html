@@ -506,8 +506,18 @@
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">discord_http.flags.</span></span><span class="sig-name descname"><span class="pre">GuildMemberFlags</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">names</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">module</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">qualname</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">type</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">start</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">boundary</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/discord_http/flags.html#GuildMemberFlags"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#discord_http.flags.GuildMemberFlags" title="Link to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#discord_http.flags.BaseFlag" title="discord_http.flags.BaseFlag"><code class="xref py py-class docutils literal notranslate"><span class="pre">BaseFlag</span></code></a></p>
 <dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.flags.GuildMemberFlags.automod_quarantined_username">
+<span class="sig-name descname"><span class="pre">automod_quarantined_username</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">128</span></em><a class="headerlink" href="#discord_http.flags.GuildMemberFlags.automod_quarantined_username" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
 <dt class="sig sig-object py" id="discord_http.flags.GuildMemberFlags.bypasses_verification">
 <span class="sig-name descname"><span class="pre">bypasses_verification</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">4</span></em><a class="headerlink" href="#discord_http.flags.GuildMemberFlags.bypasses_verification" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.flags.GuildMemberFlags.completed_home_actions">
+<span class="sig-name descname"><span class="pre">completed_home_actions</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">64</span></em><a class="headerlink" href="#discord_http.flags.GuildMemberFlags.completed_home_actions" title="Link to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py attribute">
@@ -518,6 +528,21 @@
 <dl class="py attribute">
 <dt class="sig sig-object py" id="discord_http.flags.GuildMemberFlags.did_rejoin">
 <span class="sig-name descname"><span class="pre">did_rejoin</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">1</span></em><a class="headerlink" href="#discord_http.flags.GuildMemberFlags.did_rejoin" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.flags.GuildMemberFlags.dm_settings_upsell_acknowledged">
+<span class="sig-name descname"><span class="pre">dm_settings_upsell_acknowledged</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">512</span></em><a class="headerlink" href="#discord_http.flags.GuildMemberFlags.dm_settings_upsell_acknowledged" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.flags.GuildMemberFlags.is_guest">
+<span class="sig-name descname"><span class="pre">is_guest</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">16</span></em><a class="headerlink" href="#discord_http.flags.GuildMemberFlags.is_guest" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.flags.GuildMemberFlags.started_home_actions">
+<span class="sig-name descname"><span class="pre">started_home_actions</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">32</span></em><a class="headerlink" href="#discord_http.flags.GuildMemberFlags.started_home_actions" title="Link to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py attribute">
@@ -869,87 +894,6 @@
 </dd></dl>
 
 <dl class="py class">
-<dt class="sig sig-object py" id="discord_http.flags.PublicFlags">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">discord_http.flags.</span></span><span class="sig-name descname"><span class="pre">PublicFlags</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">names</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">module</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">qualname</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">type</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">start</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">boundary</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/discord_http/flags.html#PublicFlags"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#discord_http.flags.PublicFlags" title="Link to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference internal" href="#discord_http.flags.BaseFlag" title="discord_http.flags.BaseFlag"><code class="xref py py-class docutils literal notranslate"><span class="pre">BaseFlag</span></code></a></p>
-<dl class="py attribute">
-<dt class="sig sig-object py" id="discord_http.flags.PublicFlags.active_developer">
-<span class="sig-name descname"><span class="pre">active_developer</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">4194304</span></em><a class="headerlink" href="#discord_http.flags.PublicFlags.active_developer" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="discord_http.flags.PublicFlags.bot_http_interactions">
-<span class="sig-name descname"><span class="pre">bot_http_interactions</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">524288</span></em><a class="headerlink" href="#discord_http.flags.PublicFlags.bot_http_interactions" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="discord_http.flags.PublicFlags.bug_hunter_level_1">
-<span class="sig-name descname"><span class="pre">bug_hunter_level_1</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">8</span></em><a class="headerlink" href="#discord_http.flags.PublicFlags.bug_hunter_level_1" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="discord_http.flags.PublicFlags.bug_hunter_level_2">
-<span class="sig-name descname"><span class="pre">bug_hunter_level_2</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">16384</span></em><a class="headerlink" href="#discord_http.flags.PublicFlags.bug_hunter_level_2" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="discord_http.flags.PublicFlags.certified_moderator">
-<span class="sig-name descname"><span class="pre">certified_moderator</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">262144</span></em><a class="headerlink" href="#discord_http.flags.PublicFlags.certified_moderator" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="discord_http.flags.PublicFlags.hypesquad">
-<span class="sig-name descname"><span class="pre">hypesquad</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">4</span></em><a class="headerlink" href="#discord_http.flags.PublicFlags.hypesquad" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="discord_http.flags.PublicFlags.hypesquad_online_house_1">
-<span class="sig-name descname"><span class="pre">hypesquad_online_house_1</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">64</span></em><a class="headerlink" href="#discord_http.flags.PublicFlags.hypesquad_online_house_1" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="discord_http.flags.PublicFlags.hypesquad_online_house_2">
-<span class="sig-name descname"><span class="pre">hypesquad_online_house_2</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">128</span></em><a class="headerlink" href="#discord_http.flags.PublicFlags.hypesquad_online_house_2" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="discord_http.flags.PublicFlags.hypesquad_online_house_3">
-<span class="sig-name descname"><span class="pre">hypesquad_online_house_3</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">256</span></em><a class="headerlink" href="#discord_http.flags.PublicFlags.hypesquad_online_house_3" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="discord_http.flags.PublicFlags.partner">
-<span class="sig-name descname"><span class="pre">partner</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">2</span></em><a class="headerlink" href="#discord_http.flags.PublicFlags.partner" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="discord_http.flags.PublicFlags.premium_early_supporter">
-<span class="sig-name descname"><span class="pre">premium_early_supporter</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">512</span></em><a class="headerlink" href="#discord_http.flags.PublicFlags.premium_early_supporter" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="discord_http.flags.PublicFlags.staff">
-<span class="sig-name descname"><span class="pre">staff</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">1</span></em><a class="headerlink" href="#discord_http.flags.PublicFlags.staff" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="discord_http.flags.PublicFlags.team_pseudo_user">
-<span class="sig-name descname"><span class="pre">team_pseudo_user</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">1024</span></em><a class="headerlink" href="#discord_http.flags.PublicFlags.team_pseudo_user" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="discord_http.flags.PublicFlags.verified_bot">
-<span class="sig-name descname"><span class="pre">verified_bot</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">65536</span></em><a class="headerlink" href="#discord_http.flags.PublicFlags.verified_bot" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="discord_http.flags.PublicFlags.verified_developer">
-<span class="sig-name descname"><span class="pre">verified_developer</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">131072</span></em><a class="headerlink" href="#discord_http.flags.PublicFlags.verified_developer" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
-
-</dd></dl>
-
-<dl class="py class">
 <dt class="sig sig-object py" id="discord_http.flags.SKUFlags">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">discord_http.flags.</span></span><span class="sig-name descname"><span class="pre">SKUFlags</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">names</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">module</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">qualname</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">type</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">start</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">boundary</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/discord_http/flags.html#SKUFlags"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#discord_http.flags.SKUFlags" title="Link to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#discord_http.flags.BaseFlag" title="discord_http.flags.BaseFlag"><code class="xref py py-class docutils literal notranslate"><span class="pre">BaseFlag</span></code></a></p>
@@ -1002,6 +946,97 @@
 <dl class="py attribute">
 <dt class="sig sig-object py" id="discord_http.flags.SystemChannelFlags.suppress_role_subscription_purchase_notifications_replies">
 <span class="sig-name descname"><span class="pre">suppress_role_subscription_purchase_notifications_replies</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">32</span></em><a class="headerlink" href="#discord_http.flags.SystemChannelFlags.suppress_role_subscription_purchase_notifications_replies" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="discord_http.flags.UserFlags">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">discord_http.flags.</span></span><span class="sig-name descname"><span class="pre">UserFlags</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">names</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">module</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">qualname</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">type</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">start</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">boundary</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/discord_http/flags.html#UserFlags"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#discord_http.flags.UserFlags" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#discord_http.flags.BaseFlag" title="discord_http.flags.BaseFlag"><code class="xref py py-class docutils literal notranslate"><span class="pre">BaseFlag</span></code></a></p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.flags.UserFlags.active_developer">
+<span class="sig-name descname"><span class="pre">active_developer</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">4194304</span></em><a class="headerlink" href="#discord_http.flags.UserFlags.active_developer" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.flags.UserFlags.bot_http_interactions">
+<span class="sig-name descname"><span class="pre">bot_http_interactions</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">524288</span></em><a class="headerlink" href="#discord_http.flags.UserFlags.bot_http_interactions" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.flags.UserFlags.bug_hunter_level_1">
+<span class="sig-name descname"><span class="pre">bug_hunter_level_1</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">8</span></em><a class="headerlink" href="#discord_http.flags.UserFlags.bug_hunter_level_1" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.flags.UserFlags.bug_hunter_level_2">
+<span class="sig-name descname"><span class="pre">bug_hunter_level_2</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">16384</span></em><a class="headerlink" href="#discord_http.flags.UserFlags.bug_hunter_level_2" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.flags.UserFlags.certified_moderator">
+<span class="sig-name descname"><span class="pre">certified_moderator</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">262144</span></em><a class="headerlink" href="#discord_http.flags.UserFlags.certified_moderator" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.flags.UserFlags.hypesquad">
+<span class="sig-name descname"><span class="pre">hypesquad</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">4</span></em><a class="headerlink" href="#discord_http.flags.UserFlags.hypesquad" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.flags.UserFlags.hypesquad_online_house_1">
+<span class="sig-name descname"><span class="pre">hypesquad_online_house_1</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">64</span></em><a class="headerlink" href="#discord_http.flags.UserFlags.hypesquad_online_house_1" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.flags.UserFlags.hypesquad_online_house_2">
+<span class="sig-name descname"><span class="pre">hypesquad_online_house_2</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">128</span></em><a class="headerlink" href="#discord_http.flags.UserFlags.hypesquad_online_house_2" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.flags.UserFlags.hypesquad_online_house_3">
+<span class="sig-name descname"><span class="pre">hypesquad_online_house_3</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">256</span></em><a class="headerlink" href="#discord_http.flags.UserFlags.hypesquad_online_house_3" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.flags.UserFlags.partner">
+<span class="sig-name descname"><span class="pre">partner</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">2</span></em><a class="headerlink" href="#discord_http.flags.UserFlags.partner" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.flags.UserFlags.premium_early_supporter">
+<span class="sig-name descname"><span class="pre">premium_early_supporter</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">512</span></em><a class="headerlink" href="#discord_http.flags.UserFlags.premium_early_supporter" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.flags.UserFlags.provisional_account">
+<span class="sig-name descname"><span class="pre">provisional_account</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">8388608</span></em><a class="headerlink" href="#discord_http.flags.UserFlags.provisional_account" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.flags.UserFlags.spammer">
+<span class="sig-name descname"><span class="pre">spammer</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">1048576</span></em><a class="headerlink" href="#discord_http.flags.UserFlags.spammer" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.flags.UserFlags.staff">
+<span class="sig-name descname"><span class="pre">staff</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">1</span></em><a class="headerlink" href="#discord_http.flags.UserFlags.staff" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.flags.UserFlags.team_pseudo_user">
+<span class="sig-name descname"><span class="pre">team_pseudo_user</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">1024</span></em><a class="headerlink" href="#discord_http.flags.UserFlags.team_pseudo_user" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.flags.UserFlags.verified_bot">
+<span class="sig-name descname"><span class="pre">verified_bot</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">65536</span></em><a class="headerlink" href="#discord_http.flags.UserFlags.verified_bot" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.flags.UserFlags.verified_developer">
+<span class="sig-name descname"><span class="pre">verified_developer</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">131072</span></em><a class="headerlink" href="#discord_http.flags.UserFlags.verified_developer" title="Link to this definition">¶</a></dt>
 <dd></dd></dl>
 
 </dd></dl>
@@ -1103,9 +1138,14 @@
 </ul>
 </li>
 <li><a class="reference internal" href="#discord_http.flags.GuildMemberFlags"><code class="docutils literal notranslate"><span class="pre">GuildMemberFlags</span></code></a><ul>
+<li><a class="reference internal" href="#discord_http.flags.GuildMemberFlags.automod_quarantined_username"><code class="docutils literal notranslate"><span class="pre">GuildMemberFlags.automod_quarantined_username</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.flags.GuildMemberFlags.bypasses_verification"><code class="docutils literal notranslate"><span class="pre">GuildMemberFlags.bypasses_verification</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.flags.GuildMemberFlags.completed_home_actions"><code class="docutils literal notranslate"><span class="pre">GuildMemberFlags.completed_home_actions</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.flags.GuildMemberFlags.completed_onboarding"><code class="docutils literal notranslate"><span class="pre">GuildMemberFlags.completed_onboarding</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.flags.GuildMemberFlags.did_rejoin"><code class="docutils literal notranslate"><span class="pre">GuildMemberFlags.did_rejoin</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.flags.GuildMemberFlags.dm_settings_upsell_acknowledged"><code class="docutils literal notranslate"><span class="pre">GuildMemberFlags.dm_settings_upsell_acknowledged</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.flags.GuildMemberFlags.is_guest"><code class="docutils literal notranslate"><span class="pre">GuildMemberFlags.is_guest</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.flags.GuildMemberFlags.started_home_actions"><code class="docutils literal notranslate"><span class="pre">GuildMemberFlags.started_home_actions</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.flags.GuildMemberFlags.started_onboarding"><code class="docutils literal notranslate"><span class="pre">GuildMemberFlags.started_onboarding</span></code></a></li>
 </ul>
 </li>
@@ -1182,24 +1222,6 @@
 <li><a class="reference internal" href="#discord_http.flags.Permissions.view_guild_insights"><code class="docutils literal notranslate"><span class="pre">Permissions.view_guild_insights</span></code></a></li>
 </ul>
 </li>
-<li><a class="reference internal" href="#discord_http.flags.PublicFlags"><code class="docutils literal notranslate"><span class="pre">PublicFlags</span></code></a><ul>
-<li><a class="reference internal" href="#discord_http.flags.PublicFlags.active_developer"><code class="docutils literal notranslate"><span class="pre">PublicFlags.active_developer</span></code></a></li>
-<li><a class="reference internal" href="#discord_http.flags.PublicFlags.bot_http_interactions"><code class="docutils literal notranslate"><span class="pre">PublicFlags.bot_http_interactions</span></code></a></li>
-<li><a class="reference internal" href="#discord_http.flags.PublicFlags.bug_hunter_level_1"><code class="docutils literal notranslate"><span class="pre">PublicFlags.bug_hunter_level_1</span></code></a></li>
-<li><a class="reference internal" href="#discord_http.flags.PublicFlags.bug_hunter_level_2"><code class="docutils literal notranslate"><span class="pre">PublicFlags.bug_hunter_level_2</span></code></a></li>
-<li><a class="reference internal" href="#discord_http.flags.PublicFlags.certified_moderator"><code class="docutils literal notranslate"><span class="pre">PublicFlags.certified_moderator</span></code></a></li>
-<li><a class="reference internal" href="#discord_http.flags.PublicFlags.hypesquad"><code class="docutils literal notranslate"><span class="pre">PublicFlags.hypesquad</span></code></a></li>
-<li><a class="reference internal" href="#discord_http.flags.PublicFlags.hypesquad_online_house_1"><code class="docutils literal notranslate"><span class="pre">PublicFlags.hypesquad_online_house_1</span></code></a></li>
-<li><a class="reference internal" href="#discord_http.flags.PublicFlags.hypesquad_online_house_2"><code class="docutils literal notranslate"><span class="pre">PublicFlags.hypesquad_online_house_2</span></code></a></li>
-<li><a class="reference internal" href="#discord_http.flags.PublicFlags.hypesquad_online_house_3"><code class="docutils literal notranslate"><span class="pre">PublicFlags.hypesquad_online_house_3</span></code></a></li>
-<li><a class="reference internal" href="#discord_http.flags.PublicFlags.partner"><code class="docutils literal notranslate"><span class="pre">PublicFlags.partner</span></code></a></li>
-<li><a class="reference internal" href="#discord_http.flags.PublicFlags.premium_early_supporter"><code class="docutils literal notranslate"><span class="pre">PublicFlags.premium_early_supporter</span></code></a></li>
-<li><a class="reference internal" href="#discord_http.flags.PublicFlags.staff"><code class="docutils literal notranslate"><span class="pre">PublicFlags.staff</span></code></a></li>
-<li><a class="reference internal" href="#discord_http.flags.PublicFlags.team_pseudo_user"><code class="docutils literal notranslate"><span class="pre">PublicFlags.team_pseudo_user</span></code></a></li>
-<li><a class="reference internal" href="#discord_http.flags.PublicFlags.verified_bot"><code class="docutils literal notranslate"><span class="pre">PublicFlags.verified_bot</span></code></a></li>
-<li><a class="reference internal" href="#discord_http.flags.PublicFlags.verified_developer"><code class="docutils literal notranslate"><span class="pre">PublicFlags.verified_developer</span></code></a></li>
-</ul>
-</li>
 <li><a class="reference internal" href="#discord_http.flags.SKUFlags"><code class="docutils literal notranslate"><span class="pre">SKUFlags</span></code></a><ul>
 <li><a class="reference internal" href="#discord_http.flags.SKUFlags.available"><code class="docutils literal notranslate"><span class="pre">SKUFlags.available</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.flags.SKUFlags.guild_subscription"><code class="docutils literal notranslate"><span class="pre">SKUFlags.guild_subscription</span></code></a></li>
@@ -1213,6 +1235,26 @@
 <li><a class="reference internal" href="#discord_http.flags.SystemChannelFlags.suppress_premium_subscriptions"><code class="docutils literal notranslate"><span class="pre">SystemChannelFlags.suppress_premium_subscriptions</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.flags.SystemChannelFlags.suppress_role_subscription_purchase_notifications"><code class="docutils literal notranslate"><span class="pre">SystemChannelFlags.suppress_role_subscription_purchase_notifications</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.flags.SystemChannelFlags.suppress_role_subscription_purchase_notifications_replies"><code class="docutils literal notranslate"><span class="pre">SystemChannelFlags.suppress_role_subscription_purchase_notifications_replies</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#discord_http.flags.UserFlags"><code class="docutils literal notranslate"><span class="pre">UserFlags</span></code></a><ul>
+<li><a class="reference internal" href="#discord_http.flags.UserFlags.active_developer"><code class="docutils literal notranslate"><span class="pre">UserFlags.active_developer</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.flags.UserFlags.bot_http_interactions"><code class="docutils literal notranslate"><span class="pre">UserFlags.bot_http_interactions</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.flags.UserFlags.bug_hunter_level_1"><code class="docutils literal notranslate"><span class="pre">UserFlags.bug_hunter_level_1</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.flags.UserFlags.bug_hunter_level_2"><code class="docutils literal notranslate"><span class="pre">UserFlags.bug_hunter_level_2</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.flags.UserFlags.certified_moderator"><code class="docutils literal notranslate"><span class="pre">UserFlags.certified_moderator</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.flags.UserFlags.hypesquad"><code class="docutils literal notranslate"><span class="pre">UserFlags.hypesquad</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.flags.UserFlags.hypesquad_online_house_1"><code class="docutils literal notranslate"><span class="pre">UserFlags.hypesquad_online_house_1</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.flags.UserFlags.hypesquad_online_house_2"><code class="docutils literal notranslate"><span class="pre">UserFlags.hypesquad_online_house_2</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.flags.UserFlags.hypesquad_online_house_3"><code class="docutils literal notranslate"><span class="pre">UserFlags.hypesquad_online_house_3</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.flags.UserFlags.partner"><code class="docutils literal notranslate"><span class="pre">UserFlags.partner</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.flags.UserFlags.premium_early_supporter"><code class="docutils literal notranslate"><span class="pre">UserFlags.premium_early_supporter</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.flags.UserFlags.provisional_account"><code class="docutils literal notranslate"><span class="pre">UserFlags.provisional_account</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.flags.UserFlags.spammer"><code class="docutils literal notranslate"><span class="pre">UserFlags.spammer</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.flags.UserFlags.staff"><code class="docutils literal notranslate"><span class="pre">UserFlags.staff</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.flags.UserFlags.team_pseudo_user"><code class="docutils literal notranslate"><span class="pre">UserFlags.team_pseudo_user</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.flags.UserFlags.verified_bot"><code class="docutils literal notranslate"><span class="pre">UserFlags.verified_bot</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.flags.UserFlags.verified_developer"><code class="docutils literal notranslate"><span class="pre">UserFlags.verified_developer</span></code></a></li>
 </ul>
 </li>
 </ul>

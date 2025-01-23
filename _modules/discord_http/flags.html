@@ -309,7 +309,7 @@
     <span class="s2">&quot;MessageFlags&quot;</span><span class="p">,</span>
     <span class="s2">&quot;PermissionOverwrite&quot;</span><span class="p">,</span>
     <span class="s2">&quot;Permissions&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;PublicFlags&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;UserFlags&quot;</span><span class="p">,</span>
     <span class="s2">&quot;SKUFlags&quot;</span><span class="p">,</span>
     <span class="s2">&quot;SystemChannelFlags&quot;</span><span class="p">,</span>
 <span class="p">)</span>
@@ -519,7 +519,12 @@
     <span class="n">did_rejoin</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">&lt;&lt;</span> <span class="mi">0</span>
     <span class="n">completed_onboarding</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">&lt;&lt;</span> <span class="mi">1</span>
     <span class="n">bypasses_verification</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">&lt;&lt;</span> <span class="mi">2</span>
-    <span class="n">started_onboarding</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">&lt;&lt;</span> <span class="mi">3</span></div>
+    <span class="n">started_onboarding</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">&lt;&lt;</span> <span class="mi">3</span>
+    <span class="n">is_guest</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">&lt;&lt;</span> <span class="mi">4</span>
+    <span class="n">started_home_actions</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">&lt;&lt;</span> <span class="mi">5</span>
+    <span class="n">completed_home_actions</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">&lt;&lt;</span> <span class="mi">6</span>
+    <span class="n">automod_quarantined_username</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">&lt;&lt;</span> <span class="mi">7</span>
+    <span class="n">dm_settings_upsell_acknowledged</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">&lt;&lt;</span> <span class="mi">9</span></div>
 
 
 
@@ -532,9 +537,9 @@
 
 
 
-<div class="viewcode-block" id="PublicFlags">
-<a class="viewcode-back" href="../../api/flags.html#discord_http.flags.PublicFlags">[docs]</a>
-<span class="k">class</span><span class="w"> </span><span class="nc">PublicFlags</span><span class="p">(</span><span class="n">BaseFlag</span><span class="p">):</span>
+<div class="viewcode-block" id="UserFlags">
+<a class="viewcode-back" href="../../api/flags.html#discord_http.flags.UserFlags">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">UserFlags</span><span class="p">(</span><span class="n">BaseFlag</span><span class="p">):</span>
     <span class="n">staff</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">&lt;&lt;</span> <span class="mi">0</span>
     <span class="n">partner</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">&lt;&lt;</span> <span class="mi">1</span>
     <span class="n">hypesquad</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">&lt;&lt;</span> <span class="mi">2</span>
@@ -549,7 +554,9 @@
     <span class="n">verified_developer</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">&lt;&lt;</span> <span class="mi">17</span>
     <span class="n">certified_moderator</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">&lt;&lt;</span> <span class="mi">18</span>
     <span class="n">bot_http_interactions</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">&lt;&lt;</span> <span class="mi">19</span>
-    <span class="n">active_developer</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">&lt;&lt;</span> <span class="mi">22</span></div>
+    <span class="n">spammer</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">&lt;&lt;</span> <span class="mi">20</span>
+    <span class="n">active_developer</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">&lt;&lt;</span> <span class="mi">22</span>
+    <span class="n">provisional_account</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">&lt;&lt;</span> <span class="mi">23</span></div>
 
 
 

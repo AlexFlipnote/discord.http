@@ -300,7 +300,7 @@
 <span class="kn">from</span><span class="w"> </span><span class="nn">.embeds</span><span class="w"> </span><span class="kn">import</span> <span class="n">Embed</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">.enums</span><span class="w"> </span><span class="kn">import</span> <span class="n">DefaultAvatarType</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">.file</span><span class="w"> </span><span class="kn">import</span> <span class="n">File</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">.flags</span><span class="w"> </span><span class="kn">import</span> <span class="n">PublicFlags</span><span class="p">,</span> <span class="n">MessageFlags</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.flags</span><span class="w"> </span><span class="kn">import</span> <span class="n">UserFlags</span><span class="p">,</span> <span class="n">MessageFlags</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">.mentions</span><span class="w"> </span><span class="kn">import</span> <span class="n">AllowedMentions</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">.object</span><span class="w"> </span><span class="kn">import</span> <span class="n">PartialBase</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">.response</span><span class="w"> </span><span class="kn">import</span> <span class="n">ResponseType</span><span class="p">,</span> <span class="n">MessageResponse</span>
@@ -500,7 +500,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">avatar_decoration</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Asset</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">global_name</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;global_name&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">public_flags</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">PublicFlags</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">public_flags</span><span class="p">:</span> <span class="n">UserFlags</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
 
         <span class="c1"># This might change a lot</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">clan</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">dict</span><span class="p">]</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;clan&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
@@ -541,7 +541,7 @@
             <span class="p">)</span>
 
         <span class="k">if</span> <span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;public_flags&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">):</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">public_flags</span> <span class="o">=</span> <span class="n">PublicFlags</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="s2">&quot;public_flags&quot;</span><span class="p">])</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">public_flags</span> <span class="o">=</span> <span class="n">UserFlags</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="s2">&quot;public_flags&quot;</span><span class="p">])</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">global_avatar</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Asset</span><span class="p">]:</span>

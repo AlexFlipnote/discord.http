@@ -309,6 +309,7 @@
 <span class="p">)</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">.cooldowns</span><span class="w"> </span><span class="kn">import</span> <span class="n">Cooldown</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">.embeds</span><span class="w"> </span><span class="kn">import</span> <span class="n">Embed</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.errors</span><span class="w"> </span><span class="kn">import</span> <span class="n">CheckFailed</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">.entitlements</span><span class="w"> </span><span class="kn">import</span> <span class="n">Entitlements</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">.enums</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
     <span class="n">ApplicationCommandType</span><span class="p">,</span> <span class="n">CommandOptionType</span><span class="p">,</span>
@@ -1305,6 +1306,12 @@
 
                     <span class="k">case</span> <span class="n">CommandOptionType</span><span class="o">.</span><span class="n">user</span><span class="p">:</span>
                         <span class="k">if</span> <span class="s2">&quot;members&quot;</span> <span class="ow">in</span> <span class="n">resolved</span><span class="p">:</span>
+                            <span class="k">if</span> <span class="n">option</span><span class="p">[</span><span class="s2">&quot;value&quot;</span><span class="p">]</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">resolved</span><span class="p">[</span><span class="s2">&quot;members&quot;</span><span class="p">]:</span>
+                                <span class="k">raise</span> <span class="n">CheckFailed</span><span class="p">(</span>
+                                    <span class="s2">&quot;It would seem that the user you are trying to get is not within reach. &quot;</span>
+                                    <span class="s2">&quot;Please check if the user is in the same channel as the command.&quot;</span>
+                                <span class="p">)</span>
+
                             <span class="n">member_data</span> <span class="o">=</span> <span class="n">resolved</span><span class="p">[</span><span class="s2">&quot;members&quot;</span><span class="p">][</span><span class="n">option</span><span class="p">[</span><span class="s2">&quot;value&quot;</span><span class="p">]]</span>
                             <span class="n">member_data</span><span class="p">[</span><span class="s2">&quot;user&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">resolved</span><span class="p">[</span><span class="s2">&quot;users&quot;</span><span class="p">][</span><span class="n">option</span><span class="p">[</span><span class="s2">&quot;value&quot;</span><span class="p">]]</span>
 
@@ -1316,6 +1323,7 @@
                                 <span class="n">guild</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">guild</span><span class="p">,</span>
                                 <span class="n">data</span><span class="o">=</span><span class="n">member_data</span>
                             <span class="p">)</span>
+
                         <span class="k">else</span><span class="p">:</span>
                             <span class="n">kwargs</span><span class="p">[</span><span class="n">option</span><span class="p">[</span><span class="s2">&quot;name&quot;</span><span class="p">]]</span> <span class="o">=</span> <span class="n">User</span><span class="p">(</span>
                                 <span class="n">state</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">bot</span><span class="o">.</span><span class="n">state</span><span class="p">,</span>
