@@ -1329,14 +1329,18 @@ class Message(PartialMessage):
                     # This is only done through the gateway
                     _fake_member = m["member"]
                     _fake_member["user"] = m
-                    Member(
-                        state=self._state,
-                        guild=self.guild,  # type: ignore
-                        data=_fake_member
+                    self.mentions.append(
+                        Member(
+                            state=self._state,
+                            guild=self.guild,  # type: ignore
+                            data=_fake_member
+                        )
                     )
 
                 else:
-                    User(state=self._state, data=m)
+                    self.mentions.append(
+                        User(state=self._state, data=m)
+                    )
 
     def is_system(self) -> bool:
         """ `bool`: Returns whether the message is a system message """
