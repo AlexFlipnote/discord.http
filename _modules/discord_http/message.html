@@ -1724,14 +1724,18 @@
                     <span class="c1"># This is only done through the gateway</span>
                     <span class="n">_fake_member</span> <span class="o">=</span> <span class="n">m</span><span class="p">[</span><span class="s2">&quot;member&quot;</span><span class="p">]</span>
                     <span class="n">_fake_member</span><span class="p">[</span><span class="s2">&quot;user&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">m</span>
-                    <span class="n">Member</span><span class="p">(</span>
-                        <span class="n">state</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_state</span><span class="p">,</span>
-                        <span class="n">guild</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">guild</span><span class="p">,</span>  <span class="c1"># type: ignore</span>
-                        <span class="n">data</span><span class="o">=</span><span class="n">_fake_member</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">mentions</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+                        <span class="n">Member</span><span class="p">(</span>
+                            <span class="n">state</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_state</span><span class="p">,</span>
+                            <span class="n">guild</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">guild</span><span class="p">,</span>  <span class="c1"># type: ignore</span>
+                            <span class="n">data</span><span class="o">=</span><span class="n">_fake_member</span>
+                        <span class="p">)</span>
                     <span class="p">)</span>
 
                 <span class="k">else</span><span class="p">:</span>
-                    <span class="n">User</span><span class="p">(</span><span class="n">state</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_state</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">m</span><span class="p">)</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">mentions</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+                        <span class="n">User</span><span class="p">(</span><span class="n">state</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_state</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">m</span><span class="p">)</span>
+                    <span class="p">)</span>
 
 <div class="viewcode-block" id="Message.is_system">
 <a class="viewcode-back" href="../../api/message.html#discord_http.message.Message.is_system">[docs]</a>

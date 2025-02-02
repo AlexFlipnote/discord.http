@@ -104,7 +104,7 @@ in to your `bot's application page <https://discord.com/developers/applications>
 Inside the bot configuration page, you will see a section called "Interactions Endpoint URL",
 paste your URL there and save the settings.
 
-The URL you past in there is the root URL, there's no need to add ``/interactions`` or similar to the end of it.
+The URL you paste in there is the root URL, there's no need to add ``/interactions`` or similar to the end of it.
 So if your domain is ``example.com``, you put that inside the bot's interaction URL setting.
 
 .. image:: ../_static/images/getting_started/interaction_url.png
