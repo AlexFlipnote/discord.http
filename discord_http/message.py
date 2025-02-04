@@ -1183,30 +1183,36 @@ class MessageSnapshot:
         data: dict
     ):
         self._state = state
+        self._message: dict = data.get("message", {})
 
-        self.type: MessageType = MessageType(data.get("type", 0))
-        self.content: str = data.get("content", "")
+        self.type: MessageType = MessageType(self._message.get("type", 0))
+        self.content: str = self._message.get("content", "")
 
         self.timestamp: datetime | None = None
         self.edited_timestamp: datetime | None = None
 
         self.embeds: list[Embed] = [
             Embed.from_dict(embed)
-            for embed in data.get("embeds", [])
+            for embed in self._message.get("embeds", [])
         ]
 
         self.attachments: list[Attachment] = [
             Attachment(state=state, data=a)
-            for a in data.get("attachments", [])
+            for a in self._message.get("attachments", [])
         ]
 
         self._from_data(data)
 
     def _from_data(self, data: dict) -> None:
-        if data.get("edited_timestamp", None):
-            self.edited_timestamp = utils.parse_time(data["edited_timestamp"])
-        if data.get("timestamp", None):
-            self.timestamp = utils.parse_time(data["timestamp"])
+        if self._message.get("edited_timestamp", None):
+            self.edited_timestamp = utils.parse_time(
+                self._message["edited_timestamp"]
+            )
+
+        if self._message.get("timestamp", None):
+            self.timestamp = utils.parse_time(
+                self._message["timestamp"]
+            )
 
 
 class Message(PartialMessage):
