@@ -2073,7 +2073,7 @@ class ForumChannel(PublicThread):
 
         self.tags: list[ForumTag] = [
             ForumTag(data=g)
-            for g in data.get("tags", [])
+            for g in data.get("available_tags", [])
         ]
 
         self._from_data(data)
