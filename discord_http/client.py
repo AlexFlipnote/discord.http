@@ -72,7 +72,7 @@ class Client:
         gateway_cache: Optional["GatewayCacheFlags"] = None,
         intents: Optional["Intents"] = None,
         logging_level: int = logging.INFO,
-        call_after_delay: float = 0.1,
+        call_after_delay: float | int = 0.1,
         disable_default_get_path: bool = False,
         debug_events: bool = False
     ):
@@ -116,7 +116,7 @@ class Client:
             Intents to use, only used if `enable_gateway` is `True`
         logging_level: `int`
             Logging level to use, if not provided, it will use `logging.INFO`
-        call_after_delay: `float`
+        call_after_delay: `float | int`
             How long to wait before calling the `call_after` coroutine
         debug_events: `bool`
             Whether to log events or not, if not provided, `on_raw_*` events will not be useable
@@ -138,7 +138,7 @@ class Client:
         self.playing_status: Optional["PlayingStatus"] = playing_status
         self.guild_ready_timeout: float = guild_ready_timeout
         self.chunk_guilds_on_startup: bool = chunk_guilds_on_startup
-        self.call_after_delay: float = call_after_delay
+        self.call_after_delay: float | int = call_after_delay
         self.intents: Intents | None = intents
 
         self.gateway: Optional["GatewayClient"] = None

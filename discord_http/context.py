@@ -617,7 +617,7 @@ class Context:
 
     async def _background_task_manager(self, call_after: Callable) -> None:
         try:
-            if isinstance(self.bot.call_after_delay, float):
+            if isinstance(self.bot.call_after_delay, (int, float)):
                 await asyncio.sleep(self.bot.call_after_delay)
                 # Somehow, Discord thinks @original messages is HTTP 404
                 # Give them a smaaaall chance to fix it
