@@ -40,7 +40,7 @@ from .webhook import Webhook
 
 if TYPE_CHECKING:
     from .client import Client
-    from .commands import Command
+    from .commands import Command, LocaleTypes
 
 _log = logging.getLogger(__name__)
 
@@ -552,6 +552,9 @@ class Context:
             User(state=self.bot.state, data=g)
             for g in data.get("channel", {}).get("recipients", [])
         ]
+
+        self.locale: "LocaleTypes | None" = data.get("locale", None)
+        self.guild_locale: "LocaleTypes | None" = data.get("guild_locale", None)
 
         # Should not be used, but if you *really* want the raw data, here it is
         self._data: dict = data
