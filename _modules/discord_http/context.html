@@ -321,7 +321,7 @@
 <span class="kn">from</span><span class="w"> </span><span class="nn">.guild</span><span class="w"> </span><span class="kn">import</span> <span class="n">Guild</span><span class="p">,</span> <span class="n">PartialGuild</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">.member</span><span class="w"> </span><span class="kn">import</span> <span class="n">Member</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">.mentions</span><span class="w"> </span><span class="kn">import</span> <span class="n">AllowedMentions</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">.message</span><span class="w"> </span><span class="kn">import</span> <span class="n">Message</span><span class="p">,</span> <span class="n">Attachment</span><span class="p">,</span> <span class="n">Poll</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.message</span><span class="w"> </span><span class="kn">import</span> <span class="n">Message</span><span class="p">,</span> <span class="n">Attachment</span><span class="p">,</span> <span class="n">Poll</span><span class="p">,</span> <span class="n">WebhookMessage</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">.response</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
     <span class="n">MessageResponse</span><span class="p">,</span> <span class="n">DeferResponse</span><span class="p">,</span>
     <span class="n">AutocompleteResponse</span><span class="p">,</span> <span class="n">ModalResponse</span><span class="p">,</span>
@@ -330,11 +330,10 @@
 <span class="kn">from</span><span class="w"> </span><span class="nn">.role</span><span class="w"> </span><span class="kn">import</span> <span class="n">Role</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">.user</span><span class="w"> </span><span class="kn">import</span> <span class="n">User</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">.view</span><span class="w"> </span><span class="kn">import</span> <span class="n">View</span><span class="p">,</span> <span class="n">Modal</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">.webhook</span><span class="w"> </span><span class="kn">import</span> <span class="n">Webhook</span>
 
 <span class="k">if</span> <span class="n">TYPE_CHECKING</span><span class="p">:</span>
     <span class="kn">from</span><span class="w"> </span><span class="nn">.client</span><span class="w"> </span><span class="kn">import</span> <span class="n">Client</span>
-    <span class="kn">from</span><span class="w"> </span><span class="nn">.commands</span><span class="w"> </span><span class="kn">import</span> <span class="n">Command</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">.commands</span><span class="w"> </span><span class="kn">import</span> <span class="n">Command</span><span class="p">,</span> <span class="n">LocaleTypes</span>
 
 <span class="n">_log</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
 
@@ -854,9 +853,9 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">modal_values</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">options</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">dict</span><span class="p">]</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;data&quot;</span><span class="p">,</span> <span class="p">{})</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;options&quot;</span><span class="p">,</span> <span class="p">[])</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">followup_token</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;token&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_followup_token</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;token&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">_original_response</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Message</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_original_response</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">WebhookMessage</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_raw_resolved</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;data&quot;</span><span class="p">,</span> <span class="p">{})</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;resolved&quot;</span><span class="p">,</span> <span class="p">{})</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">entitlements</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">Entitlements</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span>
@@ -872,6 +871,9 @@
             <span class="n">User</span><span class="p">(</span><span class="n">state</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">bot</span><span class="o">.</span><span class="n">state</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">g</span><span class="p">)</span>
             <span class="k">for</span> <span class="n">g</span> <span class="ow">in</span> <span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;channel&quot;</span><span class="p">,</span> <span class="p">{})</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;recipients&quot;</span><span class="p">,</span> <span class="p">[])</span>
         <span class="p">]</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">locale</span><span class="p">:</span> <span class="s2">&quot;LocaleTypes | None&quot;</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;locale&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">guild_locale</span><span class="p">:</span> <span class="s2">&quot;LocaleTypes | None&quot;</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;guild_locale&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
 
         <span class="c1"># Should not be used, but if you *really* want the raw data, here it is</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_data</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="n">data</span>
@@ -937,7 +939,7 @@
 
     <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">_background_task_manager</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">call_after</span><span class="p">:</span> <span class="n">Callable</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="k">try</span><span class="p">:</span>
-            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">bot</span><span class="o">.</span><span class="n">call_after_delay</span><span class="p">,</span> <span class="nb">float</span><span class="p">):</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">bot</span><span class="o">.</span><span class="n">call_after_delay</span><span class="p">,</span> <span class="p">(</span><span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">)):</span>
                 <span class="k">await</span> <span class="n">asyncio</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">bot</span><span class="o">.</span><span class="n">call_after_delay</span><span class="p">)</span>
                 <span class="c1"># Somehow, Discord thinks @original messages is HTTP 404</span>
                 <span class="c1"># Give them a smaaaall chance to fix it</span>
@@ -1032,20 +1034,6 @@
 <span class="w">        </span><span class="sd">&quot;&quot;&quot; `InteractionResponse` Returns the response to the interaction &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="n">InteractionResponse</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
 
-    <span class="nd">@property</span>
-    <span class="k">def</span><span class="w"> </span><span class="nf">followup</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Webhook</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot; `Webhook` Returns the followup webhook object &quot;&quot;&quot;</span>
-        <span class="n">payload</span> <span class="o">=</span> <span class="p">{</span>
-            <span class="s2">&quot;application_id&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">bot</span><span class="o">.</span><span class="n">application_id</span><span class="p">,</span>
-            <span class="s2">&quot;token&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">followup_token</span><span class="p">,</span>
-            <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="mi">3</span><span class="p">,</span>
-        <span class="p">}</span>
-
-        <span class="k">return</span> <span class="n">Webhook</span><span class="o">.</span><span class="n">from_state</span><span class="p">(</span>
-            <span class="n">state</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">bot</span><span class="o">.</span><span class="n">state</span><span class="p">,</span>
-            <span class="n">data</span><span class="o">=</span><span class="n">payload</span>
-        <span class="p">)</span>
-
 <div class="viewcode-block" id="Context.send">
 <a class="viewcode-back" href="../../api/context.html#discord_http.context.Context.send">[docs]</a>
     <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">send</span><span class="p">(</span>
@@ -1064,7 +1052,7 @@
         <span class="n">poll</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Poll</span><span class="p">]</span> <span class="o">=</span> <span class="n">MISSING</span><span class="p">,</span>
         <span class="n">flags</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">MessageFlags</span><span class="p">]</span> <span class="o">=</span> <span class="n">MISSING</span><span class="p">,</span>
         <span class="n">delete_after</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
-    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Message</span><span class="p">:</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">WebhookMessage</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Send a message after responding with an empty response in the initial interaction</span>
 
@@ -1145,16 +1133,115 @@
 
         <span class="n">r</span> <span class="o">=</span> <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">bot</span><span class="o">.</span><span class="n">state</span><span class="o">.</span><span class="n">query</span><span class="p">(</span>
             <span class="s2">&quot;POST&quot;</span><span class="p">,</span>
-            <span class="sa">f</span><span class="s2">&quot;/interactions/</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">id</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">followup_token</span><span class="si">}</span><span class="s2">/callback&quot;</span><span class="p">,</span>
+            <span class="sa">f</span><span class="s2">&quot;/interactions/</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">id</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_followup_token</span><span class="si">}</span><span class="s2">/callback&quot;</span><span class="p">,</span>
             <span class="n">data</span><span class="o">=</span><span class="n">multidata</span><span class="o">.</span><span class="n">finish</span><span class="p">(),</span>
             <span class="n">params</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;with_response&quot;</span><span class="p">:</span> <span class="s2">&quot;true&quot;</span><span class="p">},</span>
             <span class="n">headers</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;Content-Type&quot;</span><span class="p">:</span> <span class="n">multidata</span><span class="o">.</span><span class="n">content_type</span><span class="p">}</span>
         <span class="p">)</span>
 
-        <span class="n">_msg</span> <span class="o">=</span> <span class="n">Message</span><span class="p">(</span>
+        <span class="n">_msg</span> <span class="o">=</span> <span class="n">WebhookMessage</span><span class="p">(</span>
             <span class="n">state</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">bot</span><span class="o">.</span><span class="n">state</span><span class="p">,</span>
             <span class="n">data</span><span class="o">=</span><span class="n">r</span><span class="o">.</span><span class="n">response</span><span class="p">[</span><span class="s2">&quot;resource&quot;</span><span class="p">][</span><span class="s2">&quot;message&quot;</span><span class="p">],</span>
-            <span class="n">guild</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">guild</span>
+            <span class="n">application_id</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">bot</span><span class="o">.</span><span class="n">application_id</span><span class="p">,</span>  <span class="c1"># type: ignore</span>
+            <span class="n">token</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_followup_token</span>
+        <span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">delete_after</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">await</span> <span class="n">_msg</span><span class="o">.</span><span class="n">delete</span><span class="p">(</span><span class="n">delay</span><span class="o">=</span><span class="nb">float</span><span class="p">(</span><span class="n">delete_after</span><span class="p">))</span>
+        <span class="k">return</span> <span class="n">_msg</span></div>
+
+
+<div class="viewcode-block" id="Context.create_followup_response">
+<a class="viewcode-back" href="../../api/context.html#discord_http.context.Context.create_followup_response">[docs]</a>
+    <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">create_followup_response</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">content</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">MISSING</span><span class="p">,</span>
+        <span class="o">*</span><span class="p">,</span>
+        <span class="n">embed</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Embed</span><span class="p">]</span> <span class="o">=</span> <span class="n">MISSING</span><span class="p">,</span>
+        <span class="n">embeds</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="n">Embed</span><span class="p">]]</span> <span class="o">=</span> <span class="n">MISSING</span><span class="p">,</span>
+        <span class="n">file</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">File</span><span class="p">]</span> <span class="o">=</span> <span class="n">MISSING</span><span class="p">,</span>
+        <span class="n">files</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="n">File</span><span class="p">]]</span> <span class="o">=</span> <span class="n">MISSING</span><span class="p">,</span>
+        <span class="n">ephemeral</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">bool</span><span class="p">]</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+        <span class="n">view</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">View</span><span class="p">]</span> <span class="o">=</span> <span class="n">MISSING</span><span class="p">,</span>
+        <span class="n">tts</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">bool</span><span class="p">]</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+        <span class="nb">type</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">ResponseType</span><span class="p">,</span> <span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="mi">4</span><span class="p">,</span>
+        <span class="n">allowed_mentions</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">AllowedMentions</span><span class="p">]</span> <span class="o">=</span> <span class="n">MISSING</span><span class="p">,</span>
+        <span class="n">poll</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Poll</span><span class="p">]</span> <span class="o">=</span> <span class="n">MISSING</span><span class="p">,</span>
+        <span class="n">flags</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">MessageFlags</span><span class="p">]</span> <span class="o">=</span> <span class="n">MISSING</span><span class="p">,</span>
+        <span class="n">delete_after</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">WebhookMessage</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Creates a new followup response to the interaction</span>
+
+<span class="sd">        Do not use this to create a followup response when defer was called before.</span>
+<span class="sd">        Use `edit_original_response` instead.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        content: `Optional[str]`</span>
+<span class="sd">            Content of the message</span>
+<span class="sd">        embed: `Optional[Embed]`</span>
+<span class="sd">            Embed of the message</span>
+<span class="sd">        embeds: `Optional[list[Embed]]`</span>
+<span class="sd">            Embeds of the message</span>
+<span class="sd">        file: `Optional[File]`</span>
+<span class="sd">            File of the message</span>
+<span class="sd">        files: `Optional[Union[list[File], File]]`</span>
+<span class="sd">            Files of the message</span>
+<span class="sd">        ephemeral: `bool`</span>
+<span class="sd">            Whether the message should be sent as ephemeral</span>
+<span class="sd">        view: `Optional[View]`</span>
+<span class="sd">            Components of the message</span>
+<span class="sd">        type: `Optional[ResponseType]`</span>
+<span class="sd">            Which type of response should be sent</span>
+<span class="sd">        allowed_mentions: `Optional[AllowedMentions]`</span>
+<span class="sd">            Allowed mentions of the message</span>
+<span class="sd">        wait: `bool`</span>
+<span class="sd">            Whether to wait for the message to be sent</span>
+<span class="sd">        thread_id: `Optional[int]`</span>
+<span class="sd">            Thread ID to send the message to</span>
+<span class="sd">        poll: `Optional[Poll]`</span>
+<span class="sd">            Poll to send with the message</span>
+<span class="sd">        flags: `Optional[MessageFlags]`</span>
+<span class="sd">            Flags of the message</span>
+<span class="sd">        delete_after: `Optional[float]`</span>
+<span class="sd">            How long to wait before deleting the message</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        `Message`</span>
+<span class="sd">            Returns the message that was sent</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">payload</span> <span class="o">=</span> <span class="n">MessageResponse</span><span class="p">(</span>
+            <span class="n">content</span><span class="o">=</span><span class="n">content</span><span class="p">,</span>
+            <span class="n">embed</span><span class="o">=</span><span class="n">embed</span><span class="p">,</span>
+            <span class="n">embeds</span><span class="o">=</span><span class="n">embeds</span><span class="p">,</span>
+            <span class="n">ephemeral</span><span class="o">=</span><span class="n">ephemeral</span><span class="p">,</span>
+            <span class="n">view</span><span class="o">=</span><span class="n">view</span><span class="p">,</span>
+            <span class="n">tts</span><span class="o">=</span><span class="n">tts</span><span class="p">,</span>
+            <span class="n">file</span><span class="o">=</span><span class="n">file</span><span class="p">,</span>
+            <span class="n">files</span><span class="o">=</span><span class="n">files</span><span class="p">,</span>
+            <span class="nb">type</span><span class="o">=</span><span class="nb">type</span><span class="p">,</span>
+            <span class="n">poll</span><span class="o">=</span><span class="n">poll</span><span class="p">,</span>
+            <span class="n">flags</span><span class="o">=</span><span class="n">flags</span><span class="p">,</span>
+            <span class="n">allowed_mentions</span><span class="o">=</span><span class="p">(</span>
+                <span class="n">allowed_mentions</span> <span class="ow">or</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">bot</span><span class="o">.</span><span class="n">_default_allowed_mentions</span>
+            <span class="p">)</span>
+        <span class="p">)</span>
+
+        <span class="n">r</span> <span class="o">=</span> <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">bot</span><span class="o">.</span><span class="n">state</span><span class="o">.</span><span class="n">query</span><span class="p">(</span>
+            <span class="s2">&quot;POST&quot;</span><span class="p">,</span>
+            <span class="sa">f</span><span class="s2">&quot;/webhooks/</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">bot</span><span class="o">.</span><span class="n">application_id</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_followup_token</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+            <span class="n">data</span><span class="o">=</span><span class="n">payload</span><span class="o">.</span><span class="n">to_multipart</span><span class="p">(</span><span class="n">is_request</span><span class="o">=</span><span class="kc">True</span><span class="p">),</span>
+            <span class="n">headers</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;Content-Type&quot;</span><span class="p">:</span> <span class="n">payload</span><span class="o">.</span><span class="n">content_type</span><span class="p">}</span>
+        <span class="p">)</span>
+
+        <span class="n">_msg</span> <span class="o">=</span> <span class="n">WebhookMessage</span><span class="p">(</span>
+            <span class="n">state</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">bot</span><span class="o">.</span><span class="n">state</span><span class="p">,</span>
+            <span class="n">data</span><span class="o">=</span><span class="n">r</span><span class="o">.</span><span class="n">response</span><span class="p">,</span>
+            <span class="n">application_id</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">bot</span><span class="o">.</span><span class="n">application_id</span><span class="p">,</span>  <span class="c1"># type: ignore</span>
+            <span class="n">token</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_followup_token</span>
         <span class="p">)</span>
 
         <span class="k">if</span> <span class="n">delete_after</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
@@ -1164,21 +1251,22 @@
 
 <div class="viewcode-block" id="Context.original_response">
 <a class="viewcode-back" href="../../api/context.html#discord_http.context.Context.original_response">[docs]</a>
-    <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">original_response</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Message</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot; `Message` Returns the original response to the interaction &quot;&quot;&quot;</span>
+    <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">original_response</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">WebhookMessage</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot; `Message` Fetch the original response to the interaction &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_original_response</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_original_response</span>
 
         <span class="n">r</span> <span class="o">=</span> <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">bot</span><span class="o">.</span><span class="n">state</span><span class="o">.</span><span class="n">query</span><span class="p">(</span>
             <span class="s2">&quot;GET&quot;</span><span class="p">,</span>
-            <span class="sa">f</span><span class="s2">&quot;/webhooks/</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">bot</span><span class="o">.</span><span class="n">application_id</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">followup_token</span><span class="si">}</span><span class="s2">/messages/@original&quot;</span><span class="p">,</span>
+            <span class="sa">f</span><span class="s2">&quot;/webhooks/</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">bot</span><span class="o">.</span><span class="n">application_id</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_followup_token</span><span class="si">}</span><span class="s2">/messages/@original&quot;</span><span class="p">,</span>
             <span class="n">retry_codes</span><span class="o">=</span><span class="p">[</span><span class="mi">404</span><span class="p">]</span>
         <span class="p">)</span>
 
-        <span class="n">msg</span> <span class="o">=</span> <span class="n">Message</span><span class="p">(</span>
+        <span class="n">msg</span> <span class="o">=</span> <span class="n">WebhookMessage</span><span class="p">(</span>
             <span class="n">state</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">bot</span><span class="o">.</span><span class="n">state</span><span class="p">,</span>
             <span class="n">data</span><span class="o">=</span><span class="n">r</span><span class="o">.</span><span class="n">response</span><span class="p">,</span>
-            <span class="n">guild</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">guild</span>
+            <span class="n">application_id</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">bot</span><span class="o">.</span><span class="n">application_id</span><span class="p">,</span>  <span class="c1"># type: ignore</span>
+            <span class="n">token</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_followup_token</span>
         <span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_original_response</span> <span class="o">=</span> <span class="n">msg</span>
@@ -1197,7 +1285,7 @@
         <span class="n">attachment</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">File</span><span class="p">]</span> <span class="o">=</span> <span class="n">MISSING</span><span class="p">,</span>
         <span class="n">attachments</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="n">File</span><span class="p">]]</span> <span class="o">=</span> <span class="n">MISSING</span><span class="p">,</span>
         <span class="n">allowed_mentions</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">AllowedMentions</span><span class="p">]</span> <span class="o">=</span> <span class="n">MISSING</span>
-    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Message</span><span class="p">:</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">WebhookMessage</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot; `Message` Edit the original response to the interaction &quot;&quot;&quot;</span>
         <span class="n">payload</span> <span class="o">=</span> <span class="n">MessageResponse</span><span class="p">(</span>
             <span class="n">content</span><span class="o">=</span><span class="n">content</span><span class="p">,</span>
@@ -1211,16 +1299,17 @@
 
         <span class="n">r</span> <span class="o">=</span> <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">bot</span><span class="o">.</span><span class="n">state</span><span class="o">.</span><span class="n">query</span><span class="p">(</span>
             <span class="s2">&quot;PATCH&quot;</span><span class="p">,</span>
-            <span class="sa">f</span><span class="s2">&quot;/webhooks/</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">bot</span><span class="o">.</span><span class="n">application_id</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">followup_token</span><span class="si">}</span><span class="s2">/messages/@original&quot;</span><span class="p">,</span>
+            <span class="sa">f</span><span class="s2">&quot;/webhooks/</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">bot</span><span class="o">.</span><span class="n">application_id</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_followup_token</span><span class="si">}</span><span class="s2">/messages/@original&quot;</span><span class="p">,</span>
             <span class="n">headers</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;Content-Type&quot;</span><span class="p">:</span> <span class="n">payload</span><span class="o">.</span><span class="n">content_type</span><span class="p">},</span>
             <span class="n">data</span><span class="o">=</span><span class="n">payload</span><span class="o">.</span><span class="n">to_multipart</span><span class="p">(</span><span class="n">is_request</span><span class="o">=</span><span class="kc">True</span><span class="p">),</span>
             <span class="n">retry_codes</span><span class="o">=</span><span class="p">[</span><span class="mi">404</span><span class="p">]</span>
         <span class="p">)</span>
 
-        <span class="n">msg</span> <span class="o">=</span> <span class="n">Message</span><span class="p">(</span>
+        <span class="n">msg</span> <span class="o">=</span> <span class="n">WebhookMessage</span><span class="p">(</span>
             <span class="n">state</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">bot</span><span class="o">.</span><span class="n">state</span><span class="p">,</span>
             <span class="n">data</span><span class="o">=</span><span class="n">r</span><span class="o">.</span><span class="n">response</span><span class="p">,</span>
-            <span class="n">guild</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">guild</span>
+            <span class="n">application_id</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">bot</span><span class="o">.</span><span class="n">application_id</span><span class="p">,</span>  <span class="c1"># type: ignore</span>
+            <span class="n">token</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_followup_token</span>
         <span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_original_response</span> <span class="o">=</span> <span class="n">msg</span>
@@ -1233,7 +1322,7 @@
 <span class="w">        </span><span class="sd">&quot;&quot;&quot; Delete the original response to the interaction &quot;&quot;&quot;</span>
         <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">bot</span><span class="o">.</span><span class="n">state</span><span class="o">.</span><span class="n">query</span><span class="p">(</span>
             <span class="s2">&quot;DELETE&quot;</span><span class="p">,</span>
-            <span class="sa">f</span><span class="s2">&quot;/webhooks/</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">bot</span><span class="o">.</span><span class="n">application_id</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">followup_token</span><span class="si">}</span><span class="s2">/messages/@original&quot;</span><span class="p">,</span>
+            <span class="sa">f</span><span class="s2">&quot;/webhooks/</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">bot</span><span class="o">.</span><span class="n">application_id</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_followup_token</span><span class="si">}</span><span class="s2">/messages/@original&quot;</span><span class="p">,</span>
             <span class="n">retry_codes</span><span class="o">=</span><span class="p">[</span><span class="mi">404</span><span class="p">]</span>
         <span class="p">)</span></div>
 
