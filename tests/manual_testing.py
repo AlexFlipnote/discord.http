@@ -120,7 +120,9 @@ async def test_automod(ctx: Context):
             reason="Testing automod"
         )
 
-        await ctx.followup.send(f"Created automod {automod.name}, waiting 3 seconds to edit")
+        await ctx.edit_original_response(
+            content=f"Created automod {automod.name}, waiting 3 seconds to edit"
+        )
 
         await asyncio.sleep(3)
         automod = await automod.edit(
@@ -162,7 +164,9 @@ async def test_group_command3(ctx: Context, test: str):
 async def test_followup(ctx: Context, user: Member):
     """ My name jeff """
     async def pong():
-        msg = await ctx.followup.send(f"Hello there {user.mention}")
+        msg = await ctx.edit_original_response(
+            content=f"Hello there {user.mention}"
+        )
         print(msg.mentions)
 
     return ctx.response.defer(thinking=True, call_after=pong)
@@ -274,7 +278,9 @@ async def test_fetch_members(ctx: Context, guild_id: str):
         ]
 
         print("\n".join([str(m) for m in members]))
-        await ctx.followup.send(f"Members: {len(members):,}")
+        await ctx.edit_original_response(
+            content=f"Members: {len(members):,}"
+        )
 
     return ctx.response.defer(thinking=True, call_after=call_after)
 
@@ -402,7 +408,9 @@ async def test_emoji(ctx: Context):
             image=File("./images/boomer.png")
         )
 
-        msg = await ctx.followup.send(f"Emoji created: {emoji}")
+        msg = await ctx.edit_original_response(
+            content=f"Emoji created: {emoji}"
+        )
 
         await asyncio.sleep(3)
         await emoji.delete()
@@ -421,10 +429,10 @@ async def test_sticker(ctx: Context):
             file=File("./images/boomer.png", filename="test.png"),
             reason="lol"
         )
-        await ctx.followup.send(
+        await ctx.edit_original_response(content=(
             f"Sticker {sticker.name} created\n"
             f"{sticker.url}"
-        )
+        ))
 
     return ctx.response.defer(thinking=True, call_after=followup)
 
@@ -471,9 +479,9 @@ async def test_range(ctx: Context, text: commands.Range[int, 1, 4]):
 async def test_followup_file(ctx: Context):
     """ My name jeff """
     async def pong():
-        await ctx.followup.send(
-            "Hello there",
-            file=File("./images/boomer.png", filename="test.png")
+        await ctx.edit_original_response(
+            content="Hello there",
+            attachment=File("./images/boomer.png", filename="test.png")
         )
 
     return ctx.response.defer(thinking=True, call_after=pong)
@@ -591,7 +599,9 @@ async def test_create_role(ctx: Context, name: str):
                 "send_messages", "manage_messages"
             )
         )
-        await ctx.followup.send(f"Created role {role}")
+        await ctx.edit_original_response(
+            content=f"Created role {role}"
+        )
 
     return ctx.response.defer(thinking=True, call_after=followup)
 
@@ -601,7 +611,9 @@ async def test_fetch_channels(ctx: Context):
     async def followup():
         channels = await ctx.guild.fetch_channels()
         print(channels)
-        await ctx.followup.send(f"Fetched {len(channels)} channels")
+        await ctx.edit_original_response(
+            content=f"Fetched {len(channels)} channels"
+        )
 
     return ctx.response.defer(thinking=True, call_after=followup)
 
@@ -696,7 +708,7 @@ async def test_dm(ctx: Context):
 
     async def followup():
         await ctx.user.send("Hello there")
-        await ctx.followup.send("Sent DM now yes yes")
+        await ctx.edit_original_response(content="Sent DM now yes yes")
 
     return ctx.response.defer(thinking=True, call_after=followup)
 
@@ -704,7 +716,7 @@ async def test_dm(ctx: Context):
 @client.command()
 async def test_ratelimit(ctx: Context):
     async def followup():
-        await ctx.followup.send("Hello, it is time to spam!")
+        await ctx.edit_original_response(content="Hello, it is time to spam!")
         await asyncio.sleep(2)
         for i in range(15):
             await ctx.channel.send(f"hi there {i}")
@@ -718,10 +730,10 @@ async def test_create_channel(ctx: Context, name: str):
     async def followup():
         channel = await ctx.guild.create_text_channel(name=name)
         edit_channel = await channel.edit(name="test2", nsfw=True)
-        await ctx.followup.send(
+        await ctx.edit_original_response(content=(
             f"Created channel {channel}, "
             f"then renamed it to {edit_channel.name}"
-        )
+        ))
 
     return ctx.response.defer(thinking=True, call_after=followup)
 
@@ -857,13 +869,15 @@ async def test_bool(ctx: Context, prompt: bool):
 async def test_history(ctx: Context, limit: int | None = None):
     async def followup():
         msgs = []
-        async for msg in ctx.channel.fetch_history(limit=limit):
+        async for msg in ctx.channel.fetch_history(limit=limit or 100):
             msgs.append(msg)
         print("\n".join([
             f"{m.created_at}: {m.content}"
             for m in msgs
         ]))
-        await ctx.followup.send(f"Got {len(msgs)} messages")
+        await ctx.edit_original_response(
+            content=f"Got {len(msgs)} messages"
+        )
 
     return ctx.response.defer(thinking=True, call_after=followup)
 
@@ -941,6 +955,31 @@ async def on_test_button_change(ctx: Context):
 async def test_decoration(ctx: Context):
     return ctx.response.send_message(
         f"Decoration: {ctx.user.avatar_decoration}"
+    )
+
+
+@client.command()
+async def test_edit_followup(ctx: Context):
+    view = View(
+        Button(label="Hello world", custom_id="test_followup_edit"),
+    )
+
+    return ctx.response.send_message(
+        "Nice test",
+        view=view
+    )
+
+
+@client.interaction(r"test_followup_edit", regex=True)
+async def test_edit_followup_interaction(ctx: Context):
+    async def call_after():
+        await asyncio.sleep(2)
+        await ctx.edit_original_response(content="Nice test 1337")
+
+    return ctx.response.send_message(
+        "Nice test 2",
+        ephemeral=True,
+        call_after=call_after
     )
 
 
