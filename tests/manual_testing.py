@@ -975,6 +975,12 @@ async def test_edit_followup_interaction(ctx: Context):
     async def call_after():
         await asyncio.sleep(2)
         await ctx.edit_original_response(content="Nice test 1337")
+        msg = await ctx.create_followup_response(
+            "Nice test 2",
+            file=File("./images/boomer.png", filename="test.png"),
+            ephemeral=True
+        )
+        await msg.edit(content="Nice test 3")
 
     return ctx.response.send_message(
         "Nice test 2",

@@ -36,7 +36,6 @@ from .response import (
 from .role import Role
 from .user import User
 from .view import View, Modal
-from .webhook import Webhook
 
 if TYPE_CHECKING:
     from .client import Client
@@ -534,7 +533,7 @@ class Context:
         self.modal_values: dict[str, str] = {}
 
         self.options: list[dict] = data.get("data", {}).get("options", [])
-        self.followup_token: str = data.get("token", None)
+        self._followup_token: str = data.get("token", None)
 
         self._original_response: Optional[WebhookMessage] = None
         self._raw_resolved: dict = data.get("data", {}).get("resolved", {})
@@ -712,26 +711,6 @@ class Context:
         """ `InteractionResponse` Returns the response to the interaction """
         return InteractionResponse(self)
 
-    @property
-    def followup(self) -> Webhook:
-        """
-        `Webhook` Returns the followup webhook object
-
-        .. deprecated:: 2.0.12
-            This behavior is deprecated, and you should use the Edit Original Interaction Response instead.
-            This will be removed in a future version when Discord removes it too.
-        """
-        payload = {
-            "application_id": self.bot.application_id,
-            "token": self.followup_token,
-            "type": 3,
-        }
-
-        return Webhook.from_state(
-            state=self.bot.state,
-            data=payload
-        )
-
     async def send(
         self,
         content: Optional[str] = MISSING,
@@ -829,7 +808,7 @@ class Context:
 
         r = await self.bot.state.query(
             "POST",
-            f"/interactions/{self.id}/{self.followup_token}/callback",
+            f"/interactions/{self.id}/{self._followup_token}/callback",
             data=multidata.finish(),
             params={"with_response": "true"},
             headers={"Content-Type": multidata.content_type}
@@ -839,7 +818,102 @@ class Context:
             state=self.bot.state,
             data=r.response["resource"]["message"],
             application_id=self.bot.application_id,  # type: ignore
-            token=self.followup_token
+            token=self._followup_token
+        )
+
+        if delete_after is not None:
+            await _msg.delete(delay=float(delete_after))
+        return _msg
+
+    async def create_followup_response(
+        self,
+        content: Optional[str] = MISSING,
+        *,
+        embed: Optional[Embed] = MISSING,
+        embeds: Optional[list[Embed]] = MISSING,
+        file: Optional[File] = MISSING,
+        files: Optional[list[File]] = MISSING,
+        ephemeral: Optional[bool] = False,
+        view: Optional[View] = MISSING,
+        tts: Optional[bool] = False,
+        type: Union[ResponseType, int] = 4,
+        allowed_mentions: Optional[AllowedMentions] = MISSING,
+        poll: Optional[Poll] = MISSING,
+        flags: Optional[MessageFlags] = MISSING,
+        delete_after: Optional[float] = None
+    ) -> WebhookMessage:
+        """
+        Creates a new followup response to the interaction
+
+        Do not use this to create a followup response when defer was called before.
+        Use `edit_original_response` instead.
+
+        Parameters
+        ----------
+        content: `Optional[str]`
+            Content of the message
+        embed: `Optional[Embed]`
+            Embed of the message
+        embeds: `Optional[list[Embed]]`
+            Embeds of the message
+        file: `Optional[File]`
+            File of the message
+        files: `Optional[Union[list[File], File]]`
+            Files of the message
+        ephemeral: `bool`
+            Whether the message should be sent as ephemeral
+        view: `Optional[View]`
+            Components of the message
+        type: `Optional[ResponseType]`
+            Which type of response should be sent
+        allowed_mentions: `Optional[AllowedMentions]`
+            Allowed mentions of the message
+        wait: `bool`
+            Whether to wait for the message to be sent
+        thread_id: `Optional[int]`
+            Thread ID to send the message to
+        poll: `Optional[Poll]`
+            Poll to send with the message
+        flags: `Optional[MessageFlags]`
+            Flags of the message
+        delete_after: `Optional[float]`
+            How long to wait before deleting the message
+
+        Returns
+        -------
+        `Message`
+            Returns the message that was sent
+        """
+        payload = MessageResponse(
+            content=content,
+            embed=embed,
+            embeds=embeds,
+            ephemeral=ephemeral,
+            view=view,
+            tts=tts,
+            file=file,
+            files=files,
+            type=type,
+            poll=poll,
+            flags=flags,
+            allowed_mentions=(
+                allowed_mentions or
+                self.bot._default_allowed_mentions
+            )
+        )
+
+        r = await self.bot.state.query(
+            "POST",
+            f"/webhooks/{self.bot.application_id}/{self._followup_token}",
+            data=payload.to_multipart(is_request=True),
+            headers={"Content-Type": payload.content_type}
+        )
+
+        _msg = WebhookMessage(
+            state=self.bot.state,
+            data=r.response,
+            application_id=self.bot.application_id,  # type: ignore
+            token=self._followup_token
         )
 
         if delete_after is not None:
@@ -853,7 +927,7 @@ class Context:
 
         r = await self.bot.state.query(
             "GET",
-            f"/webhooks/{self.bot.application_id}/{self.followup_token}/messages/@original",
+            f"/webhooks/{self.bot.application_id}/{self._followup_token}/messages/@original",
             retry_codes=[404]
         )
 
@@ -861,7 +935,7 @@ class Context:
             state=self.bot.state,
             data=r.response,
             application_id=self.bot.application_id,  # type: ignore
-            token=self.followup_token
+            token=self._followup_token
         )
 
         self._original_response = msg
@@ -891,7 +965,7 @@ class Context:
 
         r = await self.bot.state.query(
             "PATCH",
-            f"/webhooks/{self.bot.application_id}/{self.followup_token}/messages/@original",
+            f"/webhooks/{self.bot.application_id}/{self._followup_token}/messages/@original",
             headers={"Content-Type": payload.content_type},
             data=payload.to_multipart(is_request=True),
             retry_codes=[404]
@@ -901,7 +975,7 @@ class Context:
             state=self.bot.state,
             data=r.response,
             application_id=self.bot.application_id,  # type: ignore
-            token=self.followup_token
+            token=self._followup_token
         )
 
         self._original_response = msg
@@ -911,7 +985,7 @@ class Context:
         """ Delete the original response to the interaction """
         await self.bot.state.query(
             "DELETE",
-            f"/webhooks/{self.bot.application_id}/{self.followup_token}/messages/@original",
+            f"/webhooks/{self.bot.application_id}/{self._followup_token}/messages/@original",
             retry_codes=[404]
         )
 
