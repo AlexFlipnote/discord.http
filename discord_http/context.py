@@ -27,7 +27,7 @@ from .flags import Permissions, MessageFlags
 from .guild import Guild, PartialGuild
 from .member import Member
 from .mentions import AllowedMentions
-from .message import Message, Attachment, Poll
+from .message import Message, Attachment, Poll, WebhookMessage
 from .response import (
     MessageResponse, DeferResponse,
     AutocompleteResponse, ModalResponse,
@@ -536,7 +536,7 @@ class Context:
         self.options: list[dict] = data.get("data", {}).get("options", [])
         self.followup_token: str = data.get("token", None)
 
-        self._original_response: Optional[Message] = None
+        self._original_response: Optional[WebhookMessage] = None
         self._raw_resolved: dict = data.get("data", {}).get("resolved", {})
 
         self.entitlements: list[Entitlements] = [
@@ -714,7 +714,13 @@ class Context:
 
     @property
     def followup(self) -> Webhook:
-        """ `Webhook` Returns the followup webhook object """
+        """
+        `Webhook` Returns the followup webhook object
+
+        .. deprecated:: 2.0.12
+            This behavior is deprecated, and you should use the Edit Original Interaction Response instead.
+            This will be removed in a future version when Discord removes it too.
+        """
         payload = {
             "application_id": self.bot.application_id,
             "token": self.followup_token,
@@ -742,7 +748,7 @@ class Context:
         poll: Optional[Poll] = MISSING,
         flags: Optional[MessageFlags] = MISSING,
         delete_after: Optional[float] = None
-    ) -> Message:
+    ) -> WebhookMessage:
         """
         Send a message after responding with an empty response in the initial interaction
 
@@ -829,18 +835,19 @@ class Context:
             headers={"Content-Type": multidata.content_type}
         )
 
-        _msg = Message(
+        _msg = WebhookMessage(
             state=self.bot.state,
             data=r.response["resource"]["message"],
-            guild=self.guild
+            application_id=self.bot.application_id,  # type: ignore
+            token=self.followup_token
         )
 
         if delete_after is not None:
             await _msg.delete(delay=float(delete_after))
         return _msg
 
-    async def original_response(self) -> Message:
-        """ `Message` Returns the original response to the interaction """
+    async def original_response(self) -> WebhookMessage:
+        """ `Message` Fetch the original response to the interaction """
         if self._original_response is not None:
             return self._original_response
 
@@ -850,10 +857,11 @@ class Context:
             retry_codes=[404]
         )
 
-        msg = Message(
+        msg = WebhookMessage(
             state=self.bot.state,
             data=r.response,
-            guild=self.guild
+            application_id=self.bot.application_id,  # type: ignore
+            token=self.followup_token
         )
 
         self._original_response = msg
@@ -869,7 +877,7 @@ class Context:
         attachment: Optional[File] = MISSING,
         attachments: Optional[list[File]] = MISSING,
         allowed_mentions: Optional[AllowedMentions] = MISSING
-    ) -> Message:
+    ) -> WebhookMessage:
         """ `Message` Edit the original response to the interaction """
         payload = MessageResponse(
             content=content,
@@ -889,10 +897,11 @@ class Context:
             retry_codes=[404]
         )
 
-        msg = Message(
+        msg = WebhookMessage(
             state=self.bot.state,
             data=r.response,
-            guild=self.guild
+            application_id=self.bot.application_id,  # type: ignore
+            token=self.followup_token
         )
 
         self._original_response = msg
