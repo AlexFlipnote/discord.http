@@ -472,7 +472,7 @@ integration (twitch only currently)</p>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="discord_http.integrations.Integration.account">
-<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">account</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="#discord_http.integrations.IntegrationAccount" title="discord_http.integrations.IntegrationAccount"><span class="pre">IntegrationAccount</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#discord_http.integrations.Integration.account" title="Link to this definition">¶</a></dt>
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">account</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="#discord_http.integrations.IntegrationAccount" title="discord_http.integrations.IntegrationAccount"><span class="pre">IntegrationAccount</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">dict</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#discord_http.integrations.Integration.account" title="Link to this definition">¶</a></dt>
 <dd><p>The account associated with this integration, if available.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type<span class="colon">:</span></dt>
@@ -507,16 +507,16 @@ integration (twitch only currently)</p>
 
 <dl class="py class">
 <dt class="sig sig-object py" id="discord_http.integrations.IntegrationAccount">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">discord_http.integrations.</span></span><span class="sig-name descname"><span class="pre">IntegrationAccount</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">state</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="http.html#discord_http.http.DiscordAPI" title="discord_http.http.DiscordAPI"><span class="pre">DiscordAPI</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/discord_http/integrations.html#IntegrationAccount"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#discord_http.integrations.IntegrationAccount" title="Link to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference internal" href="object.html#discord_http.object.PartialBase" title="discord_http.object.PartialBase"><code class="xref py py-class docutils literal notranslate"><span class="pre">PartialBase</span></code></a></p>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">discord_http.integrations.</span></span><span class="sig-name descname"><span class="pre">IntegrationAccount</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">state</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="http.html#discord_http.http.DiscordAPI" title="discord_http.http.DiscordAPI"><span class="pre">DiscordAPI</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/discord_http/integrations.html#IntegrationAccount"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#discord_http.integrations.IntegrationAccount" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
 <p>Represents an integration’s account.</p>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="discord_http.integrations.IntegrationAccount.id">
 <span class="sig-name descname"><span class="pre">id</span></span><a class="headerlink" href="#discord_http.integrations.IntegrationAccount.id" title="Link to this definition">¶</a></dt>
-<dd><p>The ID of the account.</p>
+<dd><p>The ID of the account, can be either int or str.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></p>
+<dd class="field-odd"><p><cite>int | str</cite></p>
 </dd>
 </dl>
 </dd></dl>
@@ -527,7 +527,7 @@ integration (twitch only currently)</p>
 <dd><p>The name of the account.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></p>
+<dd class="field-odd"><p><cite>str</cite></p>
 </dd>
 </dl>
 </dd></dl>
