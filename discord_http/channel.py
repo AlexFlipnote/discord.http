@@ -1,3 +1,4 @@
+# flake8: noqa: E731
 import asyncio
 import time
 
@@ -1105,6 +1106,7 @@ class PartialChannel(PartialBase):
         after: Optional[Union[datetime, "Message", Snowflake, int]] = None,
         around: Optional[Union[datetime, "Message", Snowflake, int]] = None,
         limit: Optional[int] = 100,
+        oldest_first: bool = False
     ) -> AsyncIterator["Message"]:
         """
         Fetch the channel's message history
@@ -1126,7 +1128,6 @@ class PartialChannel(PartialBase):
         `Message`
             The message object
         """
-
         async def _get_history(limit: int, **kwargs):
             params = {"limit": limit}
             for key, value in kwargs.items():
@@ -1185,10 +1186,17 @@ class PartialChannel(PartialBase):
             strategy, state = _around_http, utils.normalize_entity_id(around)
         elif after:
             strategy, state = _after_http, utils.normalize_entity_id(after)
+            if before:
+                predicate = lambda x: int(x["id"]) < utils.normalize_entity_id(before)
         elif before:
             strategy, state = _before_http, utils.normalize_entity_id(before)
+            if after:
+                predicate = lambda x: int(x["id"]) > utils.normalize_entity_id(after)
         else:
             strategy, state = _before_http, None
+
+        """elif before:
+            strategy, state = _before_http, utils.normalize_entity_id(before)"""
 
         # Must be imported here to avoid circular import
         # From the top of the file
@@ -1201,6 +1209,11 @@ class PartialChannel(PartialBase):
 
             strategy: Callable
             messages, state, limit = await strategy(http_limit, state, limit)
+
+            if oldest_first:
+                messages = reversed(messages)
+            if predicate:
+                messages = filter(predicate, messages)
 
             i = 0
             for i, msg in enumerate(messages, start=1):
