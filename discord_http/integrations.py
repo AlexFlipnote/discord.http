@@ -12,26 +12,30 @@ if TYPE_CHECKING:
     from .guild import PartialGuild, Guild
 
 
-class IntegrationAccount(PartialBase):
-    """Represents an integration's account.
+class IntegrationAccount:
+    """
+    Represents an integration's account.
 
     Attributes
     ----------
-    id: :class:`int`
-        The ID of the account.
-    name: :class:`str`
+    id: `int | str`
+        The ID of the account, can be either int or str.
+    name: `str`
         The name of the account.
     """
     def __init__(
         self,
         *,
         state: "DiscordAPI",
-        id: int,
+        id: int | str,
         name: str
     ) -> None:
-        super().__init__(id=int(id))
         self._state = state
         self.name: str = name
+
+        self.id: str | int = str(id)
+        if self.id.isdigit():
+            self.id = int(self.id)
 
 
 class IntegrationApplication(PartialBase):
@@ -61,6 +65,11 @@ class IntegrationApplication(PartialBase):
         self._icon: str | None = data["icon"]
         self.description: str = data["description"]
         self._bot: dict | None = data.get("bot")
+
+        self.summary: str = data.get("summary", "")
+        self.is_monetized: bool = data.get("is_monetized", False)
+        self.is_verified: bool = data.get("is_verified", False)
+        self.is_discoverable: bool = data.get("is_discoverable", False)
 
     @property
     def icon(self) -> Asset | None:
@@ -208,17 +217,17 @@ class Integration(PartialIntegration):
             application_id=utils.get_int(data.get("application", {}), "id")
         )
 
-        self._application: dict | None = data.get("application")
+        self._application: dict | None = data.get("application", None)
         self._state: "DiscordAPI" = state
-        self._user: dict | None = data.get("user")
-        self._account: dict | None = data.get("account")
+        self._user: dict | None = data.get("user", None)
+        self._account: dict | None = data.get("account", None)
 
         self.name: str = data["name"]
         self.type: str = data["type"]
 
         self.enabled: bool = data["enabled"]
         self.syncing: bool = data.get("syncing", False)
-        self.role_id: int | None = data.get("role_id")
+        self.role_id: int | None = data.get("role_id", None)
         self.enable_emoticons: bool = data.get("enable_emoticons", False)
         self.expire_behavior: ExpireBehaviour | None = (
             ExpireBehaviour(expire_behavior)
@@ -247,10 +256,19 @@ class Integration(PartialIntegration):
         )
 
     @property
-    def account(self) -> IntegrationAccount | None:
+    def account(self) -> IntegrationAccount | dict | None:
         """Optional[:class:`IntegrationAccount`]: The account associated with this integration, if available."""
         if not self._account:
             return None
+
+        if self.type != "discord":
+            # TODO: Make a better method to handle {type: youtube} data(?)
+            # Example:
+            # "account": {
+            #     "id": "UCFmE4R8CdklKgZDVPN6m",
+            #     "name": "InsertNameHere"
+            # }
+            return self._account
 
         return IntegrationAccount(
             state=self._state,
