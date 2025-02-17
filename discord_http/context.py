@@ -960,7 +960,10 @@ class Context:
             attachment=attachment,
             attachments=attachments,
             view=view,
-            allowed_mentions=allowed_mentions
+            allowed_mentions=(
+                allowed_mentions or
+                self.bot._default_allowed_mentions
+            )
         )
 
         r = await self.bot.state.query(

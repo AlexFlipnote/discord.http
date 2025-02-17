@@ -466,7 +466,7 @@ class PartialChannel(PartialBase):
             allowed_mentions=(
                 allowed_mentions or
                 self._state.bot._default_allowed_mentions
-            ),
+            )
         )
 
         r = await self._state.query(

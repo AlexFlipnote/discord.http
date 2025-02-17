@@ -923,7 +923,10 @@ class PartialMessage(PartialBase):
             view=view,
             attachment=attachment,
             attachments=attachments,
-            allowed_mentions=allowed_mentions
+            allowed_mentions=(
+                allowed_mentions or
+                self._state.bot._default_allowed_mentions
+            ),
         )
 
         r = await self._state.query(
@@ -1473,7 +1476,10 @@ class WebhookMessage(Message):
             view=view,
             attachment=attachment,
             attachments=attachments,
-            allowed_mentions=allowed_mentions
+            allowed_mentions=(
+                allowed_mentions or
+                self._state.bot._default_allowed_mentions
+            ),
         )
 
         r = await self._state.query(
