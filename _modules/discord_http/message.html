@@ -1377,7 +1377,10 @@
             <span class="n">files</span><span class="o">=</span><span class="n">files</span><span class="p">,</span>
             <span class="n">view</span><span class="o">=</span><span class="n">view</span><span class="p">,</span>
             <span class="n">tts</span><span class="o">=</span><span class="n">tts</span><span class="p">,</span>
-            <span class="n">allowed_mentions</span><span class="o">=</span><span class="n">allowed_mentions</span><span class="p">,</span>
+            <span class="n">allowed_mentions</span><span class="o">=</span><span class="p">(</span>
+                <span class="n">allowed_mentions</span> <span class="ow">or</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_state</span><span class="o">.</span><span class="n">bot</span><span class="o">.</span><span class="n">_default_allowed_mentions</span>
+            <span class="p">),</span>
             <span class="n">message_reference</span><span class="o">=</span><span class="n">MessageReference</span><span class="p">(</span>
                 <span class="n">state</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_state</span><span class="p">,</span>
                 <span class="n">data</span><span class="o">=</span><span class="p">{</span>

@@ -485,7 +485,10 @@
             <span class="nb">type</span><span class="o">=</span><span class="nb">type</span><span class="p">,</span>
             <span class="n">flags</span><span class="o">=</span><span class="n">flags</span><span class="p">,</span>
             <span class="n">poll</span><span class="o">=</span><span class="n">poll</span><span class="p">,</span>
-            <span class="n">allowed_mentions</span><span class="o">=</span><span class="n">allowed_mentions</span>
+            <span class="n">allowed_mentions</span><span class="o">=</span><span class="p">(</span>
+                <span class="n">allowed_mentions</span> <span class="ow">or</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_state</span><span class="o">.</span><span class="n">bot</span><span class="o">.</span><span class="n">_default_allowed_mentions</span>
+            <span class="p">)</span>
         <span class="p">)</span>
 
         <span class="n">multidata</span> <span class="o">=</span> <span class="n">MultipartData</span><span class="p">()</span>

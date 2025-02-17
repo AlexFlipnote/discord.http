@@ -292,7 +292,8 @@
         </div>
         <article role="main" id="furo-main-content">
           <h1>Source code for discord_http.channel</h1><div class="highlight"><pre>
-<span></span><span class="kn">import</span><span class="w"> </span><span class="nn">asyncio</span>
+<span></span><span class="c1"># flake8: noqa: E731</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">asyncio</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">time</span>
 
 <span class="kn">from</span><span class="w"> </span><span class="nn">datetime</span><span class="w"> </span><span class="kn">import</span> <span class="n">datetime</span><span class="p">,</span> <span class="n">timedelta</span>
@@ -784,7 +785,10 @@
             <span class="nb">type</span><span class="o">=</span><span class="nb">type</span><span class="p">,</span>
             <span class="n">poll</span><span class="o">=</span><span class="n">poll</span><span class="p">,</span>
             <span class="n">flags</span><span class="o">=</span><span class="n">flags</span><span class="p">,</span>
-            <span class="n">allowed_mentions</span><span class="o">=</span><span class="n">allowed_mentions</span><span class="p">,</span>
+            <span class="n">allowed_mentions</span><span class="o">=</span><span class="p">(</span>
+                <span class="n">allowed_mentions</span> <span class="ow">or</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_state</span><span class="o">.</span><span class="n">bot</span><span class="o">.</span><span class="n">_default_allowed_mentions</span>
+            <span class="p">),</span>
         <span class="p">)</span>
 
         <span class="n">r</span> <span class="o">=</span> <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">_state</span><span class="o">.</span><span class="n">query</span><span class="p">(</span>
@@ -1460,6 +1464,7 @@
         <span class="n">after</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="n">datetime</span><span class="p">,</span> <span class="s2">&quot;Message&quot;</span><span class="p">,</span> <span class="n">Snowflake</span><span class="p">,</span> <span class="nb">int</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">around</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="n">datetime</span><span class="p">,</span> <span class="s2">&quot;Message&quot;</span><span class="p">,</span> <span class="n">Snowflake</span><span class="p">,</span> <span class="nb">int</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">limit</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="mi">100</span><span class="p">,</span>
+        <span class="n">oldest_first</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">AsyncIterator</span><span class="p">[</span><span class="s2">&quot;Message&quot;</span><span class="p">]:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Fetch the channel&#39;s message history</span>
@@ -1481,7 +1486,6 @@
 <span class="sd">        `Message`</span>
 <span class="sd">            The message object</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-
         <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">_get_history</span><span class="p">(</span><span class="n">limit</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
             <span class="n">params</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;limit&quot;</span><span class="p">:</span> <span class="n">limit</span><span class="p">}</span>
             <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
@@ -1540,10 +1544,17 @@
             <span class="n">strategy</span><span class="p">,</span> <span class="n">state</span> <span class="o">=</span> <span class="n">_around_http</span><span class="p">,</span> <span class="n">utils</span><span class="o">.</span><span class="n">normalize_entity_id</span><span class="p">(</span><span class="n">around</span><span class="p">)</span>
         <span class="k">elif</span> <span class="n">after</span><span class="p">:</span>
             <span class="n">strategy</span><span class="p">,</span> <span class="n">state</span> <span class="o">=</span> <span class="n">_after_http</span><span class="p">,</span> <span class="n">utils</span><span class="o">.</span><span class="n">normalize_entity_id</span><span class="p">(</span><span class="n">after</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">before</span><span class="p">:</span>
+                <span class="n">predicate</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="nb">int</span><span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="s2">&quot;id&quot;</span><span class="p">])</span> <span class="o">&lt;</span> <span class="n">utils</span><span class="o">.</span><span class="n">normalize_entity_id</span><span class="p">(</span><span class="n">before</span><span class="p">)</span>
         <span class="k">elif</span> <span class="n">before</span><span class="p">:</span>
             <span class="n">strategy</span><span class="p">,</span> <span class="n">state</span> <span class="o">=</span> <span class="n">_before_http</span><span class="p">,</span> <span class="n">utils</span><span class="o">.</span><span class="n">normalize_entity_id</span><span class="p">(</span><span class="n">before</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">after</span><span class="p">:</span>
+                <span class="n">predicate</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="nb">int</span><span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="s2">&quot;id&quot;</span><span class="p">])</span> <span class="o">&gt;</span> <span class="n">utils</span><span class="o">.</span><span class="n">normalize_entity_id</span><span class="p">(</span><span class="n">after</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="n">strategy</span><span class="p">,</span> <span class="n">state</span> <span class="o">=</span> <span class="n">_before_http</span><span class="p">,</span> <span class="kc">None</span>
+
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;elif before:</span>
+<span class="sd">            strategy, state = _before_http, utils.normalize_entity_id(before)&quot;&quot;&quot;</span>
 
         <span class="c1"># Must be imported here to avoid circular import</span>
         <span class="c1"># From the top of the file</span>
@@ -1556,6 +1567,11 @@
 
             <span class="n">strategy</span><span class="p">:</span> <span class="n">Callable</span>
             <span class="n">messages</span><span class="p">,</span> <span class="n">state</span><span class="p">,</span> <span class="n">limit</span> <span class="o">=</span> <span class="k">await</span> <span class="n">strategy</span><span class="p">(</span><span class="n">http_limit</span><span class="p">,</span> <span class="n">state</span><span class="p">,</span> <span class="n">limit</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="n">oldest_first</span><span class="p">:</span>
+                <span class="n">messages</span> <span class="o">=</span> <span class="nb">reversed</span><span class="p">(</span><span class="n">messages</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">predicate</span><span class="p">:</span>
+                <span class="n">messages</span> <span class="o">=</span> <span class="nb">filter</span><span class="p">(</span><span class="n">predicate</span><span class="p">,</span> <span class="n">messages</span><span class="p">)</span>
 
             <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span>
             <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">msg</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">messages</span><span class="p">,</span> <span class="n">start</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
