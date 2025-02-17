@@ -1180,6 +1180,9 @@ class PartialChannel(PartialBase):
 
             return r.response, before_id, limit
 
+        # Default values
+        predicate = None
+
         if around:
             if limit is None:
                 raise ValueError("limit must be specified when using around")
@@ -1197,9 +1200,6 @@ class PartialChannel(PartialBase):
                 predicate = lambda x: int(x["id"]) > utils.normalize_entity_id(after)
         else:
             strategy, state = _before_http, None
-
-        """elif before:
-            strategy, state = _before_http, utils.normalize_entity_id(before)"""
 
         # Must be imported here to avoid circular import
         # From the top of the file
