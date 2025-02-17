@@ -1004,7 +1004,10 @@ class PartialMessage(PartialBase):
             files=files,
             view=view,
             tts=tts,
-            allowed_mentions=allowed_mentions,
+            allowed_mentions=(
+                allowed_mentions or
+                self._state.bot._default_allowed_mentions
+            ),
             message_reference=MessageReference(
                 state=self._state,
                 data={

@@ -463,7 +463,10 @@ class PartialChannel(PartialBase):
             type=type,
             poll=poll,
             flags=flags,
-            allowed_mentions=allowed_mentions,
+            allowed_mentions=(
+                allowed_mentions or
+                self._state.bot._default_allowed_mentions
+            ),
         )
 
         r = await self._state.query(

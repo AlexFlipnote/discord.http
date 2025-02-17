@@ -184,7 +184,10 @@ class PartialWebhook(PartialBase):
             type=type,
             flags=flags,
             poll=poll,
-            allowed_mentions=allowed_mentions
+            allowed_mentions=(
+                allowed_mentions or
+                self._state.bot._default_allowed_mentions
+            )
         )
 
         multidata = MultipartData()
