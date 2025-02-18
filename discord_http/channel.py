@@ -1237,7 +1237,7 @@ class PartialChannel(PartialBase):
         before: "datetime | Message | Snowflake | int | None" = None,
         after: "datetime | Message | Snowflake | int | None" = None,
         around: "datetime | Message | Snowflake | int | None" = None,
-        message_ids: list["Message | Snowflake | int"],
+        message_ids: list["Message | Snowflake"],
         limit: int | None = 100,
         reason: str | None = None
     ) -> None:
@@ -1264,7 +1264,7 @@ class PartialChannel(PartialBase):
         before: "datetime | Message | Snowflake | int | None" = None,
         after: "datetime | Message | Snowflake | int | None" = None,
         around: "datetime | Message | Snowflake | int | None" = None,
-        message_ids: list["Message | Snowflake | int"] | None = None,
+        message_ids: list["Message | Snowflake"] | None = None,
         limit: int | None = 100,
         reason: str | None = None
     ) -> list["Message"] | None:
