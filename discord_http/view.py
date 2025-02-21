@@ -6,10 +6,12 @@ import time
 
 from typing import TYPE_CHECKING, Callable
 
+from .asset import Asset
+from .colour import Colour
 from .emoji import EmojiParser
 from .enums import (
     ButtonStyles, ComponentType, TextStyles,
-    ChannelType
+    ChannelType, SeparatorSpacingType
 )
 
 if TYPE_CHECKING:
@@ -23,16 +25,27 @@ if TYPE_CHECKING:
 _log = logging.getLogger(__name__)
 
 __all__ = (
+    "ActionRow",
+    "ActionRow",
     "Button",
     "ChannelSelect",
+    "ContainerComponent",
+    "ContainerComponent",
+    "FileComponent",
     "Item",
     "Link",
+    "MediaGalleryComponent"
+    "MediaGalleryItem",
     "MentionableSelect",
     "Modal",
     "ModalItem",
     "Premium",
     "RoleSelect",
+    "SectionComponent",
     "Select",
+    "SeparatorComponent",
+    "TextDisplayComponent",
+    "ThumbnailComponent",
     "UserSelect",
     "View",
 )
@@ -505,6 +518,55 @@ class ChannelSelect(Select):
         return payload
 
 
+class TextDisplayComponent(Item):
+    def __init__(
+        self,
+        *,
+        content: str
+    ):
+        super().__init__(type=int(ComponentType.text_display))
+        self.content = content
+
+    def __repr__(self) -> str:
+        return f"<TextDisplay content='{self.content}'>"
+
+    def to_dict(self) -> dict:
+        """ `dict`: Returns a dict representation of the text display """
+        return {
+            "type": self.type,
+            "content": self.content
+        }
+
+
+class SeparatorComponent(Item):
+    def __init__(
+        self,
+        *,
+        spacing: SeparatorSpacingType | None = None,
+        divider: bool | None = None
+    ):
+        super().__init__(type=int(ComponentType.separator))
+
+        self.spacing: SeparatorSpacingType | None = spacing
+        self.divider: bool | None = divider
+
+    def __repr__(self) -> str:
+        return f"<Separator spacing={self.spacing} divider={self.divider}>"
+
+    def to_dict(self) -> dict:
+        """ `dict`: Returns a dict representation of the separator """
+        payload = {
+            "type": self.type
+        }
+
+        if self.spacing is not None:
+            payload["spacing"] = int(self.spacing)
+        if self.divider is not None:
+            payload["divider"] = self.divider
+
+        return payload
+
+
 class InteractionStorage:
     def __init__(self):
         self._event_wait = asyncio.Event()
@@ -694,8 +756,172 @@ class InteractionStorage:
         return self._store_interaction
 
 
+class ThumbnailComponent(Item):
+    def __init__(
+        self,
+        url: Asset | str,
+        *,
+        description: str | None = None,
+        spoiler: bool = False
+    ):
+        super().__init__(type=int(ComponentType.thumbnail))
+
+        self.url: str = str(url)
+        self.description: str | None = description
+        self.spoiler: bool = spoiler
+
+    def __repr__(self) -> str:
+        return f"<Thumbnail url='{self.url}'>"
+
+    def to_dict(self) -> dict:
+        """ `dict`: Returns a dict representation of the thumbnail """
+        payload = {
+            "type": self.type,
+            "media": {
+                "url": str(self.url)
+            }
+        }
+
+        if self.description is not None:
+            payload["description"] = self.description
+        if self.spoiler:
+            payload["spoiler"] = bool(self.spoiler)
+
+        return payload
+
+
+class SectionComponent(Item):
+    def __init__(
+        self,
+        *,
+        components: list[TextDisplayComponent],
+        accessory: Button | ThumbnailComponent
+    ):
+        super().__init__(type=int(ComponentType.section))
+
+        self.components: list[TextDisplayComponent] = components
+        self.accessory: Button | ThumbnailComponent = accessory
+
+        # Just for backwards compatibility
+        self.custom_id: None = None
+
+    def __repr__(self) -> str:
+        return f"<SectionComponent components={self.components} accessory={self.accessory}>"
+
+    def to_dict(self) -> dict:
+        """ `dict`: Returns a dict representation of the section component """
+        return {
+            "type": self.type,
+            "components": [g.to_dict() for g in self.components],
+            "accessory": self.accessory.to_dict()
+        }
+
+
+class ActionRow(Item):
+    def __init__(
+        self,
+        *components: Button | Select | Link
+    ):
+        super().__init__(type=int(ComponentType.action_row))
+
+        self.components = components
+
+    def __repr__(self) -> str:
+        return f"<ActionRow components={self.components}>"
+
+    def to_dict(self) -> dict:
+        """ `dict`: Returns a dict representation of the action row """
+        return {
+            "type": self.type,
+            "components": [g.to_dict() for g in self.components]
+        }
+
+
+class MediaGalleryItem:
+    def __init__(
+        self,
+        url: Asset | str,
+        *,
+        description: str | None = None,
+        spoiler: bool = False
+    ):
+        self.url: Asset | str = str(url)
+        self.description: str | None = description
+        self.spoiler: bool = spoiler
+
+    def __repr__(self) -> str:
+        return f"<MediaGalleryItem url={self.url}>"
+
+    def to_dict(self) -> dict:
+        """ `dict`: Returns a dict representation of the media gallery item """
+        return {
+            "media": {
+                "url": str(self.url)
+            },
+            "description": self.description,
+            "spoiler": self.spoiler
+        }
+
+
+class MediaGalleryComponent(Item):
+    def __init__(
+        self,
+        *items: MediaGalleryItem
+    ):
+        pass
+        # TODO Implement
+
+
+class FileComponent(Item):
+    def __init__(
+        self
+    ):
+        pass
+        # TODO Implement
+
+
+class ContainerComponent:
+    def __init__(
+        self,
+        *items: Item,
+        colour: Colour | int | None = None,
+        spoiler: bool | None = None,
+        row: int | None = None
+    ):
+        self.items = items
+        self.colour: Colour | int | None = colour
+        self.spoiler: bool | None = spoiler
+        self.row: int | None = row
+        self.type: int = int(ComponentType.container)
+
+        if len(items) <= 0:
+            raise ValueError("Cannot have no items in container")
+        if len(items) > 5:
+            raise ValueError("Cannot have more than 5 items in container")
+
+    def __repr__(self) -> str:
+        return f"<ContainerComponent items={self.items}>"
+
+    def to_dict(self) -> dict:
+        """ `dict`: Returns a dict representation of the container component """
+        payload = {
+            "type": int(ComponentType.container),
+            "components": [g.to_dict() for g in self.items]
+        }
+
+        if self.colour is not None:
+            payload["accent_color"] = int(self.colour)
+        if self.spoiler is not None:
+            payload["spoiler"] = bool(self.spoiler)
+
+        return payload
+
+
 class View(InteractionStorage):
-    def __init__(self, *items: Button | Select | Link):
+    def __init__(
+        self,
+        *items: Button | Select | Link | SectionComponent
+    ):
         super().__init__()
 
         self.items = items
@@ -716,7 +942,7 @@ class View(InteractionStorage):
         *,
         label: str | None = None,
         custom_id: str | None = None
-    ) -> Button | Select | Link | None:
+    ) -> Button | Select | Link | SectionComponent | None:
         """
         Get an item from the view that matches the parameters
 
@@ -814,7 +1040,7 @@ class View(InteractionStorage):
 
     def to_dict(self) -> list[dict]:
         """ `list[dict]`: Returns a dict representation of the view """
-        components: list[list[dict]] = [[] for _ in range(5)]
+        components: list[list[Item | ContainerComponent]] = [[] for _ in range(5)]
 
         for g in self.items:
             if g.row is None:
@@ -822,7 +1048,7 @@ class View(InteractionStorage):
                     i for i, _ in enumerate(components)
                     if len(components[i]) < 5 and
                     not any(
-                        g.get("type", 0) in self._select_types
+                        g.type in self._select_types
                         for g in components[i]
                     )
                 ), 0)
@@ -831,6 +1057,11 @@ class View(InteractionStorage):
                 if len(components[g.row]) >= 1:
                     raise ValueError(
                         "Cannot add select menu to row with other view items"
+                    )
+            elif isinstance(g, ContainerComponent):
+                if len(components[g.row]) >= 1:
+                    raise ValueError(
+                        "Cannot add section component to row with other view items"
                     )
             else:
                 if any(isinstance(i, Select) for i in components[g.row]):
@@ -843,14 +1074,22 @@ class View(InteractionStorage):
                     f"Cannot have more than 5 items in row {g.row}"
                 )
 
-            components[g.row].append(g.to_dict())
+            components[g.row].append(g)
 
         payload = []
 
         for c in components:
             if len(c) <= 0:
                 continue
-            payload.append({"type": 1, "components": c})
+
+            if len(c) == 1 and isinstance(c[0], ContainerComponent):
+                payload.append(c[0].to_dict())
+
+            else:
+                payload.append({
+                    "type": int(ComponentType.action_row),
+                    "components": [g.to_dict() for g in c]
+                })
 
         return payload
 
@@ -868,25 +1107,40 @@ class View(InteractionStorage):
             6: RoleSelect,
             7: MentionableSelect,
             8: ChannelSelect,
+            9: SectionComponent,
+            10: TextDisplayComponent,
+            11: ThumbnailComponent,
+            14: SeparatorComponent,
+            17: ContainerComponent,
         }
 
         for i, comp in enumerate(data.get("components", [])):
             for c in comp.get("components", []):
                 cls = cls_table[c.get("type", 2)]
 
-                if c.get("url", None):
-                    cls = Link
-                    try:
-                        del c["style"]
-                    except KeyError:
-                        pass
+                if isinstance(cls, ContainerComponent):
+                    _sect_comps = []
+                    for sc in c.get("components", []):
+                        _sect_cls = cls_table[sc.get("type", 2)]
+                        _sect_comps.append(_sect_cls(**sc))
 
-                if c.get("type", None):
-                    del c["type"]
-                if c.get("id", None):
-                    del c["id"]
+                    # TODO: Resolve pyright error
+                    items.append(cls(*_sect_comps))
 
-                items.append(cls(row=i, **c))
+                else:
+                    if c.get("url", None):
+                        cls = Link
+                        try:
+                            del c["style"]
+                        except KeyError:
+                            pass
+
+                    if c.get("type", None):
+                        del c["type"]
+                    if c.get("id", None):
+                        del c["id"]
+
+                    items.append(cls(row=i, **c))
 
         return View(*items)
 

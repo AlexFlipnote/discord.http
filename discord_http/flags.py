@@ -181,6 +181,7 @@ class MessageFlags(BaseFlag):
     failed_to_mention_some_roles_in_thread = 1 << 8
     suppress_notifications = 1 << 12
     is_voice_message = 1 << 13
+    is_components_v2 = 1 << 15
 
 
 class SKUFlags(BaseFlag):
