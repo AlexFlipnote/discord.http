@@ -906,7 +906,7 @@ class MediaGalleryComponent(Item):
         items: `MediaGalleryItem`
             Items to add to the media gallery
         """
-        self.items = self.items + (item,)
+        self.items += (item,)
 
     def to_dict(self) -> dict:
         """ `dict`: Returns a dict representation of the media gallery component """
@@ -1063,7 +1063,7 @@ class View(InteractionStorage):
         `Union[Button, Select, Link]`
             Returns the added item
         """
-        self.items = self.items + (item,)
+        self.items += (item,)
         return item
 
     def remove_items(
