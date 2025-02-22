@@ -706,7 +706,6 @@ class ChannelSelect(Select):
 class TextDisplayComponent(Item):
     def __init__(
         self,
-        *,
         content: str
     ):
         super().__init__(type=int(ComponentType.text_display))
@@ -1156,6 +1155,26 @@ class ContainerComponent:
     def __repr__(self) -> str:
         return f"<ContainerComponent items={self.items}>"
 
+    def add_item(self, item: Item) -> Item:
+        """
+        Add an item to the container component
+
+        Parameters
+        ----------
+        item: `Item`
+            The item to add to the container component
+
+        Returns
+        -------
+        `Item`
+            Returns the item that was added
+        """
+        if isinstance(item, ContainerComponent):
+            raise ValueError("Cannot add container component to container component")
+
+        self.items += (item,)
+        return item
+
     def to_dict(self) -> dict:
         """ `dict`: Returns a dict representation of the container component """
         payload = {
@@ -1191,7 +1210,8 @@ class View(InteractionStorage):
             int(ComponentType.user_select),
             int(ComponentType.role_select),
             int(ComponentType.mentionable_select),
-            int(ComponentType.channel_select)
+            int(ComponentType.channel_select),
+            int(ComponentType.container)
         ]
 
     def __repr__(self) -> str:
@@ -1235,8 +1255,8 @@ class View(InteractionStorage):
 
     def add_item(
         self,
-        item: Button | Select | Link
-    ) -> Button | Select | Link:
+        item: Button | Select | Link | ContainerComponent
+    ) -> Button | Select | Link | ContainerComponent:
         """
         Add an item to the view
 
