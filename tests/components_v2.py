@@ -10,17 +10,18 @@ from discord_http import (
     SeparatorComponent, MessageFlags, MessageResponse,
     SectionComponent, Button, ThumbnailComponent,
     ContainerComponent, ActionRow, FileComponent, File,
-    MediaGalleryComponent, MediaGalleryItem
+    MediaGalleryComponent, MediaGalleryItem, Member,
+    AllowedMentions
 )
 
-with open("./config.json") as f:
+with open("./config_v2.json") as f:
     config = json.load(f)
 
 client = Client(
     token=config["token"],
     application_id=config["application_id"],
     public_key=config["public_key"],
-    sync=True,
+    sync=config["sync"],
     guild_id=1317206872763404478
 )
 
@@ -88,7 +89,7 @@ async def test_command(ctx: Context):
             SectionComponent(
                 text,
                 accessory=ThumbnailComponent(
-                    url=ctx.user.display_avatar
+                    ctx.user.display_avatar
                 )
             ),
             ActionRow(
@@ -112,6 +113,54 @@ async def test_command(ctx: Context):
             view=view,
             files=[text_file_raw, raw_img1, raw_img2],
             flags=MessageFlags.is_components_v2
+        )
+
+    return ctx.response.send_empty(call_after=call_after)
+
+
+@client.command()
+async def profile(ctx: Context):
+    # Credit to example: souji
+    main = ContainerComponent(
+        SectionComponent(
+            TextDisplayComponent(
+                "## User details\n"
+                f"Username: {ctx.user.name}\n"
+                f"ID: {ctx.user.id}\n"
+                f"Created: {ctx.user.created_at}"
+            ),
+            accessory=ThumbnailComponent(
+                url=(
+                    ctx.user.global_avatar or
+                    ctx.user.default_avatar
+                )
+            )
+        )
+    )
+
+    if isinstance(ctx.user, Member):
+        pretty_roles = "".join([g.mention for g in ctx.user.roles])
+        split = SeparatorComponent(divider=True)
+        guild_data = SectionComponent(
+            TextDisplayComponent(
+                "## Guild details\n"
+                f"Nickname: {ctx.user.nick or 'None'}\n"
+                f"Joined: {ctx.user.joined_at}\n"
+                f"Roles ({len(ctx.user.roles)}): {pretty_roles}\n"
+            ),
+            accessory=ThumbnailComponent(
+                ctx.user.display_avatar
+            )
+        )
+
+        main.add_item(split)
+        main.add_item(guild_data)
+
+    async def call_after():
+        await ctx.send(
+            view=View(main),
+            flags=MessageFlags.is_components_v2,
+            allowed_mentions=AllowedMentions.none()
         )
 
     return ctx.response.send_empty(call_after=call_after)
