@@ -5,10 +5,13 @@ import secrets
 import time
 
 from typing import TYPE_CHECKING, Callable
+from io import BytesIO
 
 from .asset import Asset
 from .colour import Colour
 from .emoji import EmojiParser
+from .errors import HTTPException
+from .file import File
 from .enums import (
     ButtonStyles, ComponentType, TextStyles,
     ChannelType, SeparatorSpacingType
@@ -18,6 +21,7 @@ if TYPE_CHECKING:
     from . import Snowflake
     from .channel import BaseChannel
     from .context import Context
+    from .http import DiscordAPI
     from .member import Member
     from .response import BaseResponse
     from .role import Role
@@ -48,6 +52,7 @@ _components_v2 = (
 
 __all__ = (
     "ActionRow",
+    "AttachmentComponent",
     "Button",
     "ChannelSelect",
     "ContainerComponent",
@@ -74,6 +79,166 @@ __all__ = (
 def _garbage_id() -> str:
     """ `str`: Returns a random ID to satisfy Discord API """
     return secrets.token_hex(16)
+
+
+class AttachmentComponent:
+    def __init__(
+        self,
+        *,
+        state: "DiscordAPI",
+        data: dict
+    ):
+        self._state = state
+
+        self._file: dict | None = data.get("file", None)
+        self._media: dict | None = data.get("media", None)
+
+        self._edata = self._file or self._media
+        if self._edata is None:
+            raise ValueError("Either file or media must be provided")
+
+        # self.id: int = int(data["id"])
+        # Not sure if ID is needed here
+
+        self.spoiler: bool = data.get("spoiler", False)
+        self.filename: str | None = data.get("name", "")
+        self.size: int = data.get("size", 0)
+
+        self.url: str = self._edata["url"]
+        self.proxy_url: str = self._edata["proxy_url"]
+        self.height: int | None = self._edata.get("height", None)
+        self.width: int | None = self._edata.get("width", None)
+        self.placeholder: str | None = self._edata.get("placeholder", None)
+        self.placeholder_version: int | None = self._edata.get("placeholder_version", None)
+        self.content_type: str = self._edata["content_type"]
+        self.flags: int = self._edata.get("flags", 0)
+
+    def __str__(self) -> str:
+        if self.filename:
+            return f"attachment://{self.filename}"
+        return self.url
+
+    def __repr__(self) -> str:
+        return f"<AttachmentComponent url={self.url}>"
+
+    async def fetch(self, *, use_cached: bool = False) -> bytes:
+        """
+        Fetches the file from the attachment URL and returns it as bytes
+
+        Parameters
+        ----------
+        use_cached: `bool`
+            Whether to use the cached URL or not, defaults to `False`
+
+        Returns
+        -------
+        `bytes`
+            The attachment as bytes
+
+        Raises
+        ------
+        `HTTPException`
+            If the request returned anything other than 2XX
+        """
+        r = await self._state.http.request(
+            "GET",
+            self.proxy_url if use_cached else self.url,
+            res_method="read"
+        )
+
+        if r.status not in range(200, 300):
+            raise HTTPException(r)
+
+        return r.response
+
+    async def save(
+        self,
+        path: str,
+        *,
+        use_cached: bool = False
+    ) -> int:
+        """
+        Fetches the file from the attachment URL and saves it locally to the path
+
+        Parameters
+        ----------
+        path: `str`
+            Path to save the file to, which includes the filename and extension.
+            Example: `./path/to/file.png`
+        use_cached: `bool`
+            Whether to use the cached URL or not, defaults to `False`
+
+        Returns
+        -------
+        `int`
+            The amount of bytes written to the file
+        """
+        data = await self.fetch(use_cached=use_cached)
+        with open(path, "wb") as f:
+            return f.write(data)
+
+    async def to_file(
+        self,
+        *,
+        filename: str,
+        spoiler: bool = False
+    ) -> File:
+        """
+        Convert the attachment to a sendable File object for Message.send()
+
+        Parameters
+        ----------
+        filename: `Optional[str]`
+            Filename for the file, if empty, the attachment's filename will be used
+        spoiler: `bool`
+            Weather the file should be marked as a spoiler or not, defaults to `False`
+
+        Returns
+        -------
+        `File`
+            The attachment as a File object
+        """
+        data = await self.fetch()
+
+        return File(
+            data=BytesIO(data),
+            filename=str(filename),
+            spoiler=spoiler
+        )
+
+    def to_dict(self) -> dict:
+        """ `dict`: The attachment as a dictionary """
+        data = {
+            # "id": self.id,
+            "filename": self.filename,
+            "size": self.size,
+            "url": self.url,
+            "proxy_url": self.proxy_url,
+            "spoiler": self.spoiler,
+            "flags": self.flags
+        }
+
+        # TODO: Check if those are needed
+        """
+        if self.title is not None:
+            data["title"] = self.title
+        if self.description is not None:
+            data["description"] = self.description
+            """
+        if self.height:
+            data["height"] = self.height
+        if self.width:
+            data["width"] = self.width
+        if self.content_type:
+            data["content_type"] = self.content_type
+        """
+        if self.duration_secs:
+            data["duration_secs"] = self.duration_secs
+        if self.waveform:
+            data["waveform"] = self.waveform
+        """
+
+        return data
 
 
 class Item:
@@ -779,14 +944,14 @@ class InteractionStorage:
 class ThumbnailComponent(Item):
     def __init__(
         self,
-        url: Asset | str,
+        url: Asset | AttachmentComponent | str,
         *,
         description: str | None = None,
         spoiler: bool = False
     ):
         super().__init__(type=int(ComponentType.thumbnail))
 
-        self.url: str = str(url)
+        self.url: Asset | AttachmentComponent | str = str(url)
         self.description: str | None = description
         self.spoiler: bool = spoiler
 
@@ -815,12 +980,12 @@ class SectionComponent(Item):
         self,
         *,
         components: list[TextDisplayComponent],
-        accessory: Button | ThumbnailComponent
+        accessory: Button | ThumbnailComponent | AttachmentComponent
     ):
         super().__init__(type=int(ComponentType.section))
 
         self.components: list[TextDisplayComponent] = components
-        self.accessory: Button | ThumbnailComponent = accessory
+        self.accessory: Button | ThumbnailComponent | AttachmentComponent = accessory
 
         # Just for backwards compatibility
         self.custom_id: None = None
@@ -830,11 +995,23 @@ class SectionComponent(Item):
 
     def to_dict(self) -> dict:
         """ `dict`: Returns a dict representation of the section component """
-        return {
+        payload = {
             "type": self.type,
-            "components": [g.to_dict() for g in self.components],
-            "accessory": self.accessory.to_dict()
+            "components": [g.to_dict() for g in self.components]
         }
+
+        if isinstance(self.accessory, AttachmentComponent):
+            payload["accessory"] = {
+                "type": int(ComponentType.thumbnail),
+                "media": {
+                    "url": str(self.accessory.url)
+                }
+            }
+
+        else:
+            payload["accessory"] = self.accessory.to_dict()
+
+        return payload
 
 
 class ActionRow(Item):
@@ -849,6 +1026,20 @@ class ActionRow(Item):
     def __repr__(self) -> str:
         return f"<ActionRow components={self.components}>"
 
+    def add_item(
+        self,
+        item: Button | Select | Link
+    ) -> None:
+        """
+        Add an item to the action row
+
+        Parameters
+        ----------
+        item: `Union[Button, Select, Link]`
+            The item to add to the action row
+        """
+        self.components += (item,)
+
     def to_dict(self) -> dict:
         """ `dict`: Returns a dict representation of the action row """
         return {
@@ -860,12 +1051,12 @@ class ActionRow(Item):
 class MediaGalleryItem:
     def __init__(
         self,
-        url: Asset | str,
+        url: Asset | AttachmentComponent | str,
         *,
         description: str | None = None,
         spoiler: bool = False
     ):
-        self.url: Asset | str = str(url)
+        self.url: Asset | AttachmentComponent | str = str(url)
         self.description: str | None = description
         self.spoiler: bool = spoiler
 
@@ -919,12 +1110,12 @@ class MediaGalleryComponent(Item):
 class FileComponent(Item):
     def __init__(
         self,
-        file: Asset | str,
+        file: Asset | AttachmentComponent | str,
         *,
         spoiler: bool = False
     ):
         super().__init__(type=int(ComponentType.file))
-        self.file: Asset | str = file
+        self.file: Asset | AttachmentComponent | str = file
         self.spoiler: bool = spoiler
 
     def __repr__(self) -> str:
@@ -1167,7 +1358,7 @@ class View(InteractionStorage):
         return payload
 
     @classmethod
-    def from_dict(cls, data: dict) -> "View":
+    def from_dict(cls, *, state: "DiscordAPI", data: dict) -> "View":
         """ `View`: Returns a view from a dict provided by Discord """
         items = []
         if not data.get("components", None):
@@ -1193,21 +1384,84 @@ class View(InteractionStorage):
         for i, comp in enumerate(data.get("components", [])):
             if comp.get("type", 1) == int(ComponentType.container):
 
-                # TODO: Support backwards compatibility for v2 containers
-                continue
-
                 _sect_comps = []
                 for c in comp.get("components", []):
-                    cls = cls_table[c.get("type", 2)]
+                    raw_type = c.get("type", 2)
+                    cls = cls_table[raw_type]
 
                     if c.get("type", None):
                         del c["type"]
+
+                    # Not sure if ID is needed
                     if c.get("id", None):
                         del c["id"]
 
-                    _sect_comps.append(cls(**c))
+                    if raw_type == int(ComponentType.file):
+                        _sect_comps.append(
+                            FileComponent(
+                                file=AttachmentComponent(state=state, data=c)
+                            )
+                        )
 
-                items.append(ContainerComponent(*_sect_comps, row=i))
+                    elif raw_type == int(ComponentType.section):
+                        if c["accessory"].get("type", None) == int(ComponentType.button):
+                            if c["accessory"].get("type", None):
+                                del c["accessory"]["type"]
+                            if c["accessory"].get("id", None):
+                                del c["accessory"]["id"]
+
+                            acc_obj = Button(**c["accessory"])
+                        else:
+                            acc_obj = AttachmentComponent(state=state, data=c["accessory"])
+
+                        _sect_comps.append(
+                            SectionComponent(
+                                components=[
+                                    TextDisplayComponent(content=inner["content"])
+                                    for inner in c.get("components", [])
+                                ],
+                                accessory=acc_obj
+                            )
+                        )
+
+                    elif raw_type == int(ComponentType.media_gallery):
+                        _medias = []
+                        for m in c.get("items", []):
+                            _medias.append(
+                                MediaGalleryItem(
+                                    url=AttachmentComponent(state=state, data=m),
+                                    description=m.get("description", None),
+                                    spoiler=m.get("spoiler", False)
+                                )
+                            )
+
+                        _sect_comps.append(
+                            MediaGalleryComponent(*_medias)
+                        )
+
+                    elif raw_type == int(ComponentType.action_row):
+                        _act_row = ActionRow()
+                        for a in c.get("components", []):
+                            sub_cls = cls_table[a.get("type", 2)]
+                            if a.get("type", None):
+                                del a["type"]
+                            if a.get("id", None):
+                                del a["id"]
+
+                            _act_row.add_item(sub_cls(**a))
+
+                        _sect_comps.append(_act_row)
+
+                    else:
+                        _sect_comps.append(cls(**c))
+
+                kwargs = {}
+                if comp.get("accent_color", None):
+                    kwargs["colour"] = Colour(comp["accent_color"])
+                if comp.get("spoiler", None):
+                    kwargs["spoiler"] = bool(comp["spoiler"])
+
+                items.append(ContainerComponent(*_sect_comps, row=i, **kwargs))
 
             else:
                 for c in comp.get("components", []):
