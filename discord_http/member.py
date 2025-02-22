@@ -592,8 +592,8 @@ class Member(PartialMember):
         return self.nick or self.global_name or self.name
 
     @property
-    def display_avatar(self) -> Optional[Asset]:
-        """ `Optional[Asset]`: Returns the display avatar of the member """
+    def display_avatar(self) -> Asset:
+        """ `Asset`: Returns the display avatar of the member """
         return (
             self.avatar or
             self.global_avatar or

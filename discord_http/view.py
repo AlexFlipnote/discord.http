@@ -986,9 +986,6 @@ class SectionComponent(Item):
         self.components = components
         self.accessory: Button | ThumbnailComponent | AttachmentComponent = accessory
 
-        # Just for backwards compatibility
-        self.custom_id: None = None
-
     def __repr__(self) -> str:
         return f"<SectionComponent components={self.components} accessory={self.accessory}>"
 
@@ -1177,7 +1174,7 @@ class ContainerComponent:
 class View(InteractionStorage):
     def __init__(
         self,
-        *items: Button | Select | Link | SectionComponent
+        *items: Button | Select | Link | ContainerComponent
     ):
         super().__init__()
 
@@ -1205,7 +1202,7 @@ class View(InteractionStorage):
         *,
         label: str | None = None,
         custom_id: str | None = None
-    ) -> Button | Select | Link | SectionComponent | None:
+    ) -> Button | Select | Link | ContainerComponent | None:
         """
         Get an item from the view that matches the parameters
 
@@ -1224,7 +1221,7 @@ class View(InteractionStorage):
         for g in self.items:
             if (
                 custom_id is not None and
-                g.custom_id == custom_id
+                getattr(g, "custom_id", None) == custom_id
             ):
                 return g
             if (
@@ -1283,7 +1280,7 @@ class View(InteractionStorage):
         for g in self.items:
             if (
                 custom_id is not None and
-                g.custom_id == custom_id
+                getattr(g, "custom_id", None) == custom_id
             ):
                 removed += 1
                 continue
