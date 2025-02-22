@@ -11,7 +11,7 @@ from discord_http import (
     SectionComponent, Button, ThumbnailComponent,
     ContainerComponent, ActionRow, FileComponent, File,
     MediaGalleryComponent, MediaGalleryItem, Member,
-    AllowedMentions
+    AllowedMentions, DiscordTimestamp
 )
 
 with open("./config_v2.json") as f:
@@ -123,12 +123,10 @@ async def profile(ctx: Context):
     # Credit to example: souji
     main = ContainerComponent(
         SectionComponent(
-            TextDisplayComponent(
-                "## User details\n"
-                f"Username: {ctx.user.name}\n"
-                f"ID: {ctx.user.id}\n"
-                f"Created: {ctx.user.created_at}"
-            ),
+            "## User details\n"
+            f"Username: {ctx.user.name}\n"
+            f"ID: {ctx.user.id}\n"
+            f"Created: {DiscordTimestamp(ctx.user.created_at)}",
             accessory=ThumbnailComponent(
                 url=(
                     ctx.user.global_avatar or
@@ -142,12 +140,10 @@ async def profile(ctx: Context):
         pretty_roles = "".join([g.mention for g in ctx.user.roles])
         split = SeparatorComponent(divider=True)
         guild_data = SectionComponent(
-            TextDisplayComponent(
-                "## Guild details\n"
-                f"Nickname: {ctx.user.nick or 'None'}\n"
-                f"Joined: {ctx.user.joined_at}\n"
-                f"Roles ({len(ctx.user.roles)}): {pretty_roles}\n"
-            ),
+            "## Guild details\n"
+            f"Nickname: {ctx.user.nick or 'None'}\n"
+            f"Joined: {DiscordTimestamp(ctx.user.joined_at)}\n"
+            f"Roles ({len(ctx.user.roles)}): {pretty_roles}\n",
             accessory=ThumbnailComponent(
                 ctx.user.display_avatar
             )

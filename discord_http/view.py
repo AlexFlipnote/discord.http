@@ -977,12 +977,14 @@ class ThumbnailComponent(Item):
 class SectionComponent(Item):
     def __init__(
         self,
-        *components: TextDisplayComponent,
+        # This might change later if SectionComponent starts
+        # accepting more than just TextDisplayComponent
+        *components: TextDisplayComponent | str,
         accessory: Button | ThumbnailComponent | AttachmentComponent
     ):
         super().__init__(type=int(ComponentType.section))
 
-        self.components: list[TextDisplayComponent] = list(components)
+        self.components: list[TextDisplayComponent | str] = list(components)
         self.accessory: Button | ThumbnailComponent | AttachmentComponent = accessory
 
     def __repr__(self) -> str:
@@ -990,9 +992,18 @@ class SectionComponent(Item):
 
     def to_dict(self) -> dict:
         """ `dict`: Returns a dict representation of the section component """
+        _comps: list[TextDisplayComponent] = []
+        for g in self.components:
+            if isinstance(g, str):
+                _comps.append(TextDisplayComponent(g))
+            elif isinstance(g, TextDisplayComponent):
+                _comps.append(g)
+            else:
+                raise TypeError("Components must be TextDisplayComponent or str")
+
         payload = {
             "type": self.type,
-            "components": [g.to_dict() for g in self.components]
+            "components": [g.to_dict() for g in _comps]
         }
 
         if isinstance(self.accessory, AttachmentComponent):
@@ -1034,6 +1045,47 @@ class ActionRow(Item):
             The item to add to the action row
         """
         self.components.append(item)
+
+    def remove_items(
+        self,
+        *,
+        label: str | None = None,
+        custom_id: str | None = None
+    ) -> int:
+        """
+        Remove items from the action row
+
+        Parameters
+        ----------
+        label: `Optional[str]`
+            Label of the item
+        custom_id: `Optional[str]`
+            Custom ID of the item
+
+        Returns
+        -------
+        `int`
+            Returns the amount of items removed
+        """
+        removed = 0
+
+        for g in list(self.components):
+            if (
+                custom_id is not None and
+                getattr(g, "custom_id", None) == custom_id
+            ):
+                self.components.remove(g)
+                removed += 1
+
+            elif (
+                label is not None and
+                isinstance(g, Button) and
+                g.label == label
+            ):
+                self.components.remove(g)
+                removed += 1
+
+        return removed
 
     def to_dict(self) -> dict:
         """ `dict`: Returns a dict representation of the action row """
@@ -1316,27 +1368,23 @@ class View(InteractionStorage):
         `int`
             Returns the amount of items removed
         """
-        temp = []
         removed = 0
 
-        for g in self.items:
+        for g in list(self.items):
             if (
                 custom_id is not None and
                 getattr(g, "custom_id", None) == custom_id
             ):
+                self.items.remove(g)
                 removed += 1
-                continue
-            if (
+
+            elif (
                 label is not None and
                 isinstance(g, Button) and
                 g.label == label
             ):
+                self.items.remove(g)
                 removed += 1
-                continue
-
-            temp.append(g)
-
-        self.items = temp
 
         return removed
 
