@@ -1,3 +1,7 @@
+# To test this code, there are two ways:
+# 1. pip install git+https://github.com/AlexFlipnote/discord.http.git@feat/components_v2
+# 2. Download/Git Clone this repository and install
+
 import json
 
 from io import BytesIO
