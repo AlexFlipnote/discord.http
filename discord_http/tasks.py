@@ -67,7 +67,7 @@ class Loop:
         self._before_loop: Callable = self._default_before_loop
         self._after_loop: Callable = self._default_after_loop
 
-        self._whitelist_exceptions = (
+        self._whitelist_exceptions: tuple[type[Exception], ...] = (
             OSError,
             asyncio.TimeoutError,
             aiohttp.ClientError,
@@ -311,7 +311,7 @@ class Loop:
                 )
                 continue
 
-            self._whitelist_exceptions += (e,)
+            self._whitelist_exceptions += (e,)  # type: ignore
 
     def remove_exception(self, *exceptions: Exception) -> None:
         """ Removes exceptions from the whitelist of exceptions that are ignored """
