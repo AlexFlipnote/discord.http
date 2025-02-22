@@ -16,25 +16,45 @@ from .enums import (
 
 if TYPE_CHECKING:
     from . import Snowflake
-    from .member import Member
     from .channel import BaseChannel
-    from .role import Role
     from .context import Context
+    from .member import Member
     from .response import BaseResponse
+    from .role import Role
 
 _log = logging.getLogger(__name__)
 
+_components_v1 = (
+    ComponentType.action_row,
+    ComponentType.button,
+    ComponentType.string_select,
+    ComponentType.text_input,
+    ComponentType.user_select,
+    ComponentType.role_select,
+    ComponentType.mentionable_select,
+    ComponentType.channel_select,
+    ComponentType.container,
+)
+
+_components_v2 = (
+    ComponentType.action_row,
+    ComponentType.section,
+    ComponentType.text_display,
+    ComponentType.thumbnail,
+    ComponentType.media_gallery,
+    ComponentType.file,
+    ComponentType.separator,
+)
+
 __all__ = (
-    "ActionRow",
     "ActionRow",
     "Button",
     "ChannelSelect",
     "ContainerComponent",
-    "ContainerComponent",
     "FileComponent",
     "Item",
     "Link",
-    "MediaGalleryComponent"
+    "MediaGalleryComponent",
     "MediaGalleryItem",
     "MentionableSelect",
     "Modal",
@@ -868,16 +888,57 @@ class MediaGalleryComponent(Item):
         self,
         *items: MediaGalleryItem
     ):
-        pass
-        # TODO Implement
+        super().__init__(type=int(ComponentType.media_gallery))
+        self.items = items
+
+    def __repr__(self) -> str:
+        return f"<MediaGalleryComponent items={self.items}>"
+
+    def add_item(
+        self,
+        item: MediaGalleryItem
+    ) -> None:
+        """
+        Add items to the media gallery
+
+        Parameters
+        ----------
+        items: `MediaGalleryItem`
+            Items to add to the media gallery
+        """
+        self.items = self.items + (item,)
+
+    def to_dict(self) -> dict:
+        """ `dict`: Returns a dict representation of the media gallery component """
+        return {
+            "type": self.type,
+            "items": [g.to_dict() for g in self.items]
+        }
 
 
 class FileComponent(Item):
     def __init__(
-        self
+        self,
+        file: Asset | str,
+        *,
+        spoiler: bool = False
     ):
-        pass
-        # TODO Implement
+        super().__init__(type=int(ComponentType.file))
+        self.file: Asset | str = file
+        self.spoiler: bool = spoiler
+
+    def __repr__(self) -> str:
+        return f"<FileComponent file={self.file}>"
+
+    def to_dict(self) -> dict:
+        """ `dict`: Returns a dict representation of the file component """
+        return {
+            "type": self.type,
+            "file": {
+                "url": str(self.file)
+            },
+            "spoiler": self.spoiler
+        }
 
 
 class ContainerComponent:
@@ -888,6 +949,12 @@ class ContainerComponent:
         spoiler: bool | None = None,
         row: int | None = None
     ):
+        for i in items:
+            if i.type not in _components_v2:
+                raise ValueError(
+                    f"Component type {i.type} is not supported inside a container"
+                )
+
         self.items = items
         self.colour: Colour | int | None = colour
         self.spoiler: bool | None = spoiler
@@ -923,6 +990,12 @@ class View(InteractionStorage):
         *items: Button | Select | Link | SectionComponent
     ):
         super().__init__()
+
+        for i in items:
+            if i.type not in _components_v1:
+                raise ValueError(
+                    f"Component type {i.type} is not supported on a standard view"
+                )
 
         self.items = items
 
@@ -1101,6 +1174,7 @@ class View(InteractionStorage):
             return View(*[])
 
         cls_table = {
+            1: ActionRow,
             2: Button,
             3: Select,
             5: UserSelect,
@@ -1110,24 +1184,34 @@ class View(InteractionStorage):
             9: SectionComponent,
             10: TextDisplayComponent,
             11: ThumbnailComponent,
+            12: MediaGalleryComponent,
+            13: FileComponent,
             14: SeparatorComponent,
             17: ContainerComponent,
         }
 
         for i, comp in enumerate(data.get("components", [])):
-            for c in comp.get("components", []):
-                cls = cls_table[c.get("type", 2)]
+            if comp.get("type", 1) == int(ComponentType.container):
 
-                if isinstance(cls, ContainerComponent):
-                    _sect_comps = []
-                    for sc in c.get("components", []):
-                        _sect_cls = cls_table[sc.get("type", 2)]
-                        _sect_comps.append(_sect_cls(**sc))
+                # TODO: Support backwards compatibility for v2 containers
+                continue
 
-                    # TODO: Resolve pyright error
-                    items.append(cls(*_sect_comps))
+                _sect_comps = []
+                for c in comp.get("components", []):
+                    cls = cls_table[c.get("type", 2)]
 
-                else:
+                    if c.get("type", None):
+                        del c["type"]
+                    if c.get("id", None):
+                        del c["id"]
+
+                    _sect_comps.append(cls(**c))
+
+                items.append(ContainerComponent(*_sect_comps, row=i))
+
+            else:
+                for c in comp.get("components", []):
+                    cls = cls_table[c.get("type", 2)]
                     if c.get("url", None):
                         cls = Link
                         try:

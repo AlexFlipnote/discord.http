@@ -350,23 +350,15 @@ class InteractionResponse:
                 self._parent._background_task_manager(call_after)
             )
 
-        if embed is not MISSING and embeds is not MISSING:
-            raise ValueError("Cannot pass both embed and embeds")
-        if file is not MISSING and files is not MISSING:
-            raise ValueError("Cannot pass both file and files")
-
-        if isinstance(embed, Embed):
-            embeds = [embed]
-        if isinstance(file, File):
-            files = [file]
-
         return MessageResponse(
             content=content,
+            embed=embed,
             embeds=embeds,
             ephemeral=ephemeral,
             view=view,
             tts=tts,
-            attachments=files,
+            file=file,
+            files=files,
             type=type,
             poll=poll,
             flags=flags,
@@ -434,19 +426,11 @@ class InteractionResponse:
                 self._parent._background_task_manager(call_after)
             )
 
-        if embed is not MISSING and embeds is not MISSING:
-            raise ValueError("Cannot pass both embed and embeds")
-        if attachment is not MISSING and attachments is not MISSING:
-            raise ValueError("Cannot pass both attachment and attachments")
-
-        if isinstance(embed, Embed):
-            embeds = [embed]
-        if isinstance(attachment, File):
-            attachments = [attachment]
-
         return MessageResponse(
             content=content,
+            embed=embed,
             embeds=embeds,
+            attachment=attachment,
             attachments=attachments,
             view=view,
             type=int(ResponseType.update_message),
@@ -767,23 +751,15 @@ class Context:
         `Message`
             Returns the message that was sent
         """
-        if embed is not MISSING and embeds is not MISSING:
-            raise ValueError("Cannot pass both embed and embeds")
-        if file is not MISSING and files is not MISSING:
-            raise ValueError("Cannot pass both file and files")
-
-        if isinstance(embed, Embed):
-            embeds = [embed]
-        if isinstance(file, File):
-            files = [file]
-
         payload = MessageResponse(
             content=content,
+            embed=embed,
             embeds=embeds,
             ephemeral=ephemeral,
             view=view,
             tts=tts,
-            attachments=files,
+            file=file,
+            files=files,
             type=type,
             poll=poll,
             flags=flags,
