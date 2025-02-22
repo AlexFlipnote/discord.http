@@ -978,13 +978,12 @@ class ThumbnailComponent(Item):
 class SectionComponent(Item):
     def __init__(
         self,
-        *,
-        components: list[TextDisplayComponent],
+        *components: TextDisplayComponent,
         accessory: Button | ThumbnailComponent | AttachmentComponent
     ):
         super().__init__(type=int(ComponentType.section))
 
-        self.components: list[TextDisplayComponent] = components
+        self.components = components
         self.accessory: Button | ThumbnailComponent | AttachmentComponent = accessory
 
         # Just for backwards compatibility
@@ -1414,14 +1413,13 @@ class View(InteractionStorage):
                         else:
                             acc_obj = AttachmentComponent(state=state, data=c["accessory"])
 
+                        _texts = [
+                            TextDisplayComponent(content=inner["content"])
+                            for inner in c.get("components", [])
+                        ]
+
                         _sect_comps.append(
-                            SectionComponent(
-                                components=[
-                                    TextDisplayComponent(content=inner["content"])
-                                    for inner in c.get("components", [])
-                                ],
-                                accessory=acc_obj
-                            )
+                            SectionComponent(*_texts, accessory=acc_obj)
                         )
 
                     elif raw_type == int(ComponentType.media_gallery):
