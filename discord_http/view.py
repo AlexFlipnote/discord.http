@@ -982,7 +982,7 @@ class SectionComponent(Item):
     ):
         super().__init__(type=int(ComponentType.section))
 
-        self.components = components
+        self.components: list[TextDisplayComponent] = list(components)
         self.accessory: Button | ThumbnailComponent | AttachmentComponent = accessory
 
     def __repr__(self) -> str:
@@ -1016,7 +1016,7 @@ class ActionRow(Item):
     ):
         super().__init__(type=int(ComponentType.action_row))
 
-        self.components = components
+        self.components: list[Button | Select | Link] = list(components)
 
     def __repr__(self) -> str:
         return f"<ActionRow components={self.components}>"
@@ -1033,7 +1033,7 @@ class ActionRow(Item):
         item: `Union[Button, Select, Link]`
             The item to add to the action row
         """
-        self.components += (item,)
+        self.components.append(item)
 
     def to_dict(self) -> dict:
         """ `dict`: Returns a dict representation of the action row """
@@ -1075,7 +1075,7 @@ class MediaGalleryComponent(Item):
         *items: MediaGalleryItem
     ):
         super().__init__(type=int(ComponentType.media_gallery))
-        self.items = items
+        self.items: list[MediaGalleryItem] = list(items)
 
     def __repr__(self) -> str:
         return f"<MediaGalleryComponent items={self.items}>"
@@ -1092,7 +1092,7 @@ class MediaGalleryComponent(Item):
         items: `MediaGalleryItem`
             Items to add to the media gallery
         """
-        self.items += (item,)
+        self.items.append(item)
 
     def to_dict(self) -> dict:
         """ `dict`: Returns a dict representation of the media gallery component """
@@ -1141,7 +1141,7 @@ class ContainerComponent:
                     f"Component type {i.type} is not supported inside a container"
                 )
 
-        self.items = items
+        self.items: list[Item] = list(items)
         self.colour: Colour | int | None = colour
         self.spoiler: bool | None = spoiler
         self.row: int | None = row
@@ -1172,8 +1172,30 @@ class ContainerComponent:
         if isinstance(item, ContainerComponent):
             raise ValueError("Cannot add container component to container component")
 
-        self.items += (item,)
+        self.items.append(item)
         return item
+
+    def remove_index(
+        self,
+        index: int
+    ) -> Item | None:
+        """
+        Remove an item from the container component
+
+        Parameters
+        ----------
+        index: `int`
+            The index of the item to remove
+
+        Returns
+        -------
+        `bool`
+            Returns whether the item was removed
+        """
+        try:
+            return self.items.pop(index)
+        except IndexError:
+            return None
 
     def to_dict(self) -> dict:
         """ `dict`: Returns a dict representation of the container component """
@@ -1203,7 +1225,7 @@ class View(InteractionStorage):
                     f"Component type {i.type} is not supported on a standard view"
                 )
 
-        self.items = items
+        self.items: list[Button | Select | Link | ContainerComponent] = list(items)
 
         self._select_types: list[int] = [
             int(ComponentType.string_select),
@@ -1270,7 +1292,7 @@ class View(InteractionStorage):
         `Union[Button, Select, Link]`
             Returns the added item
         """
-        self.items += (item,)
+        self.items.append(item)
         return item
 
     def remove_items(
@@ -1314,7 +1336,7 @@ class View(InteractionStorage):
 
             temp.append(g)
 
-        self.items = tuple(temp)
+        self.items = temp
 
         return removed
 
