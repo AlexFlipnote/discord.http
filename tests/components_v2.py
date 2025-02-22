@@ -128,10 +128,8 @@ async def profile(ctx: Context):
             f"ID: {ctx.user.id}\n"
             f"Created: {DiscordTimestamp(ctx.user.created_at)}",
             accessory=ThumbnailComponent(
-                url=(
-                    ctx.user.global_avatar or
-                    ctx.user.default_avatar
-                )
+                ctx.user.global_avatar or
+                ctx.user.default_avatar
             )
         )
     )

@@ -487,6 +487,11 @@ def get_int(
 
 
 class DiscordTimestamp:
+    """
+    A class to represent a Discord timestamp.
+    This takes a datetime, int or timedelta and
+    converts it to a Discord timestamp.
+    """
     def __init__(self, ts: int | datetime | timedelta):
         self._ts = ts
         if isinstance(ts, datetime):
@@ -499,6 +504,12 @@ class DiscordTimestamp:
 
     def __str__(self) -> str:
         return self.default
+
+    def __int__(self) -> int:
+        if not isinstance(self._ts, int):
+            raise TypeError("ts somehow manged to be a non-int")
+
+        return self._ts
 
     def __repr__(self) -> str:
         return f"<DiscordTimestamp ts={self._ts}>"
