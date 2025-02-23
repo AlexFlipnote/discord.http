@@ -256,10 +256,15 @@ class MessageResponse(BaseResponse):
         }
 
         if self.content is not MISSING:
-            output["content"] = self.content
+            # Just force anything to a string, unless it's a None
+            output["content"] = (
+                str(self.content)
+                if self.content is not None
+                else None
+            )
 
         if self.tts:
-            output["tts"] = self.tts
+            output["tts"] = bool(self.tts)
 
         if self.message_reference is not MISSING:
             output["message_reference"] = self.message_reference.to_dict()
