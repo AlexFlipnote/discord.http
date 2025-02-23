@@ -10,7 +10,7 @@ from typing import (
     Coroutine, TypeVar
 )
 
-from . import utils
+from . import utils, __version__
 from .automod import PartialAutoModRule, AutoModRule
 from .backend import DiscordHTTP
 from .channel import PartialChannel, BaseChannel
@@ -239,7 +239,7 @@ class Client:
         if self.has_any_dispatch("ready"):
             self.dispatch("ready", client_object)
         else:
-            _log.info("discord.http is now ready")
+            _log.info(f"discord.http v{__version__} is now ready")
 
         if self.enable_gateway:
             # To avoid circular import, import here
