@@ -121,7 +121,7 @@ async def test_command(ctx: Context):
 @client.command()
 async def profile(ctx: Context):
     # Credit to example: souji
-    main = ContainerComponent(
+    view = View(
         SectionComponent(
             "## User details\n"
             f"Username: {ctx.user.name}\n"
@@ -147,12 +147,12 @@ async def profile(ctx: Context):
             )
         )
 
-        main.add_item(split)
-        main.add_item(guild_data)
+        view.add_item(split)
+        view.add_item(guild_data)
 
     async def call_after():
         await ctx.send(
-            view=View(main),
+            view=view,
             flags=MessageFlags.is_components_v2,
             allowed_mentions=AllowedMentions.none()
         )
@@ -162,9 +162,6 @@ async def profile(ctx: Context):
 
 @client.command("test_limit")
 async def test_limit(ctx: Context):
-    # TextDisplayComponent("Test"),
-    # SeparatorComponent(divider=True),
-    # TextDisplayComponent("Test 2")
     view = View(
         ActionRow(
             Button(label="Test", custom_id="test")
