@@ -105,9 +105,6 @@ class AttachmentComponent:
         if self._edata is None:
             raise ValueError("Either file or media must be provided")
 
-        # self.id: int = int(data["id"])
-        # Not sure if ID is needed here
-
         self.spoiler: bool = data.get("spoiler", False)
         self.filename: str | None = data.get("name", "")
         self.size: int = data.get("size", 0)
@@ -217,7 +214,6 @@ class AttachmentComponent:
     def to_dict(self) -> dict:
         """ `dict`: The attachment as a dictionary """
         data = {
-            # "id": self.id,
             "filename": self.filename,
             "size": self.size,
             "url": self.url,
@@ -226,25 +222,14 @@ class AttachmentComponent:
             "flags": self.flags
         }
 
-        # TODO: Check if those are needed
-        """
-        if self.title is not None:
-            data["title"] = self.title
-        if self.description is not None:
-            data["description"] = self.description
-            """
+        # TODO: Double check this to make sure it works both ways
+
         if self.height:
             data["height"] = self.height
         if self.width:
             data["width"] = self.width
         if self.content_type:
             data["content_type"] = self.content_type
-        """
-        if self.duration_secs:
-            data["duration_secs"] = self.duration_secs
-        if self.waveform:
-            data["waveform"] = self.waveform
-        """
 
         return data
 
