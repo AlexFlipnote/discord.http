@@ -1129,6 +1129,10 @@ class ActionRow(Item):
             9: SectionComponent,
         }
 
+        _default_value_dropdowns = (
+            UserSelect, RoleSelect, MentionableSelect, ChannelSelect
+        )
+
         for c in data.get("components", []):
             cls = cls_table[c.get("type", 2)]
             if c.get("url", None):
@@ -1142,6 +1146,12 @@ class ActionRow(Item):
                 del c["type"]
             if c.get("id", None):
                 del c["id"]
+
+            if cls in _default_value_dropdowns:
+                c["default_values"] = [
+                    int(g["id"])
+                    for g in c.get("default_values", [])
+                ]
 
             _items.append(cls(**c))
 
@@ -1251,8 +1261,6 @@ class ContainerComponent(Item):
         self.colour: Colour | int | None = colour
         self.spoiler: bool | None = spoiler
 
-        if len(items) <= 0:
-            raise ValueError("Cannot have no items in container")
         if len(items) > 5:
             raise ValueError("Cannot have more than 5 items in container")
 
@@ -1434,8 +1442,6 @@ class View(InteractionStorage):
 
     def to_dict(self) -> list[dict]:
         """ `list[dict]`: Returns a dict representation of the view """
-        if len(self.items) <= 0:
-            raise ValueError("Cannot have a view with no items")
         if len(self.items) > 10:
             raise ValueError("Cannot have a view with more than 10 items")
 
