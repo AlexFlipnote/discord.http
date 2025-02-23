@@ -274,7 +274,10 @@ class MessageResponse(BaseResponse):
             output["poll"] = self.poll.to_dict()
 
         if self.view is not MISSING:
-            output["components"] = self.view.to_dict()
+            if not self.view.items:
+                output["components"] = []
+            else:
+                output["components"] = self.view.to_dict()
 
         if self.allowed_mentions is not MISSING:
             output["allowed_mentions"] = self.allowed_mentions.to_dict()
