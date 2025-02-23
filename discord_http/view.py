@@ -28,8 +28,7 @@ if TYPE_CHECKING:
 
 _log = logging.getLogger(__name__)
 
-_components_v1 = (
-    ComponentType.action_row,
+_components_action_row = (
     ComponentType.button,
     ComponentType.string_select,
     ComponentType.text_input,
@@ -37,7 +36,6 @@ _components_v1 = (
     ComponentType.role_select,
     ComponentType.mentionable_select,
     ComponentType.channel_select,
-    ComponentType.container,
 )
 
 _components_v2 = (
@@ -48,6 +46,16 @@ _components_v2 = (
     ComponentType.media_gallery,
     ComponentType.file,
     ComponentType.separator,
+)
+
+_components_root = (
+    ComponentType.action_row,
+    ComponentType.section,
+    ComponentType.text_display,
+    ComponentType.media_gallery,
+    ComponentType.file,
+    ComponentType.separator,
+    ComponentType.container,
 )
 
 __all__ = (
@@ -242,12 +250,11 @@ class AttachmentComponent:
 
 
 class Item:
-    def __init__(self, *, type: int, row: int | None = None):
-        self.row: int | None = row
-        self.type: int = type
+    def __init__(self, *, type: ComponentType):
+        self.type: ComponentType = type
 
     def __repr__(self) -> str:
-        return f"<Item type={self.type} row={self.row}>"
+        return f"<Item type={self.type}>"
 
     def to_dict(self) -> dict:
         """ `dict`: Returns a dict representation of the item """
@@ -321,13 +328,12 @@ class Button(Item):
         label: str | None = None,
         style: ButtonStyles | str | int = ButtonStyles.primary,
         disabled: bool = False,
-        row: int | None = None,
         custom_id: str | None = None,
         sku_id: "Snowflake | int | None" = None,
         emoji: str | dict | None = None,
         url: str | None = None
     ):
-        super().__init__(type=int(ComponentType.button), row=row)
+        super().__init__(type=ComponentType.button)
 
         self.label: str | None = label
         self.disabled: bool = disabled
@@ -359,7 +365,7 @@ class Button(Item):
     def to_dict(self) -> dict:
         """ `dict`: Returns a dict representation of the button """
         payload = {
-            "type": self.type,
+            "type": int(self.type),
             "style": int(self.style),
             "disabled": self.disabled,
         }
@@ -397,9 +403,7 @@ class Button(Item):
 class Premium(Button):
     def __init__(
         self,
-        *,
-        sku_id: "Snowflake | int",
-        row: int | None = None,
+        sku_id: "Snowflake | int"
     ):
         """
         Button alias for the premium SKU style
@@ -413,8 +417,7 @@ class Premium(Button):
         """
         super().__init__(
             sku_id=sku_id,
-            style=ButtonStyles.premium,
-            row=row
+            style=ButtonStyles.premium
         )
 
     def __repr__(self) -> str:
@@ -427,7 +430,6 @@ class Link(Button):
         *,
         url: str,
         label: str | None = None,
-        row: int | None = None,
         emoji: str | None = None,
         disabled: bool = False
     ):
@@ -450,7 +452,6 @@ class Link(Button):
             label=label,
             emoji=emoji,
             style=ButtonStyles.link,
-            row=row,
             disabled=disabled
         )
 
@@ -469,14 +470,12 @@ class Select(Item):
         custom_id: str | None = None,
         min_values: int | None = 1,
         max_values: int | None = 1,
-        row: int | None = None,
         disabled: bool = False,
         options: list[dict] | None = None,
-        _type: int | None = None
+        _type: ComponentType | None = None
     ):
         super().__init__(
-            row=row,
-            type=_type or int(ComponentType.string_select)
+            type=_type or ComponentType.string_select
         )
 
         self.placeholder: str | None = placeholder
@@ -543,7 +542,7 @@ class Select(Item):
     def to_dict(self) -> dict:
         """ `dict`: Returns a dict representation of the select menu """
         payload = {
-            "type": self.type,
+            "type": int(self.type),
             "custom_id": self.custom_id,
             "min_values": self.min_values,
             "max_values": self.max_values,
@@ -569,12 +568,10 @@ class UserSelect(Select):
         min_values: int | None = 1,
         max_values: int | None = 1,
         default_values: list["Member | int"] | None = None,
-        row: int | None = None,
         disabled: bool = False
     ):
         super().__init__(
-            row=row,
-            _type=int(ComponentType.user_select),
+            _type=ComponentType.user_select,
             placeholder=placeholder,
             custom_id=custom_id,
             min_values=min_values,
@@ -601,12 +598,10 @@ class RoleSelect(Select):
         min_values: int | None = 1,
         max_values: int | None = 1,
         default_values: list["Role | int"] | None = None,
-        row: int | None = None,
         disabled: bool = False
     ):
         super().__init__(
-            row=row,
-            _type=int(ComponentType.role_select),
+            _type=ComponentType.role_select,
             placeholder=placeholder,
             custom_id=custom_id,
             min_values=min_values,
@@ -633,12 +628,10 @@ class MentionableSelect(Select):
         min_values: int | None = 1,
         max_values: int | None = 1,
         default_values: list["Member | Role | int"] | None = None,
-        row: int | None = None,
         disabled: bool = False
     ):
         super().__init__(
-            row=row,
-            _type=int(ComponentType.mentionable_select),
+            _type=ComponentType.mentionable_select,
             placeholder=placeholder,
             custom_id=custom_id,
             min_values=min_values,
@@ -666,12 +659,10 @@ class ChannelSelect(Select):
         min_values: int | None = 1,
         max_values: int | None = 1,
         default_values: list["BaseChannel | int"] | None = None,
-        row: int | None = None,
         disabled: bool = False
     ):
         super().__init__(
-            row=row,
-            _type=int(ComponentType.channel_select),
+            _type=ComponentType.channel_select,
             placeholder=placeholder,
             custom_id=custom_id,
             min_values=min_values,
@@ -708,7 +699,7 @@ class TextDisplayComponent(Item):
         self,
         content: str
     ):
-        super().__init__(type=int(ComponentType.text_display))
+        super().__init__(type=ComponentType.text_display)
         self.content = content
 
     def __repr__(self) -> str:
@@ -717,7 +708,7 @@ class TextDisplayComponent(Item):
     def to_dict(self) -> dict:
         """ `dict`: Returns a dict representation of the text display """
         return {
-            "type": self.type,
+            "type": int(self.type),
             "content": self.content
         }
 
@@ -729,7 +720,7 @@ class SeparatorComponent(Item):
         spacing: SeparatorSpacingType | None = None,
         divider: bool | None = None
     ):
-        super().__init__(type=int(ComponentType.separator))
+        super().__init__(type=ComponentType.separator)
 
         self.spacing: SeparatorSpacingType | None = spacing
         self.divider: bool | None = divider
@@ -739,8 +730,8 @@ class SeparatorComponent(Item):
 
     def to_dict(self) -> dict:
         """ `dict`: Returns a dict representation of the separator """
-        payload = {
-            "type": self.type
+        payload: dict = {
+            "type": int(self.type)
         }
 
         if self.spacing is not None:
@@ -948,7 +939,7 @@ class ThumbnailComponent(Item):
         description: str | None = None,
         spoiler: bool = False
     ):
-        super().__init__(type=int(ComponentType.thumbnail))
+        super().__init__(type=ComponentType.thumbnail)
 
         self.url: Asset | AttachmentComponent | str = str(url)
         self.description: str | None = description
@@ -960,7 +951,7 @@ class ThumbnailComponent(Item):
     def to_dict(self) -> dict:
         """ `dict`: Returns a dict representation of the thumbnail """
         payload = {
-            "type": self.type,
+            "type": int(self.type),
             "media": {
                 "url": str(self.url)
             }
@@ -982,7 +973,7 @@ class SectionComponent(Item):
         *components: TextDisplayComponent | str,
         accessory: Button | ThumbnailComponent | AttachmentComponent
     ):
-        super().__init__(type=int(ComponentType.section))
+        super().__init__(type=ComponentType.section)
 
         self.components: list[TextDisplayComponent | str] = list(components)
         self.accessory: Button | ThumbnailComponent | AttachmentComponent = accessory
@@ -1002,7 +993,7 @@ class SectionComponent(Item):
                 raise TypeError("Components must be TextDisplayComponent or str")
 
         payload = {
-            "type": self.type,
+            "type": int(self.type),
             "components": [g.to_dict() for g in _comps]
         }
 
@@ -1025,9 +1016,23 @@ class ActionRow(Item):
         self,
         *components: Button | Select | Link
     ):
-        super().__init__(type=int(ComponentType.action_row))
+        super().__init__(type=ComponentType.action_row)
+
+        for i in components:
+            if i.type not in _components_action_row:
+                raise ValueError(
+                    f"Component type {i.type} is not supported inside an action row"
+                )
 
         self.components: list[Button | Select | Link] = list(components)
+
+        self._select_types: list[ComponentType] = [
+            ComponentType.string_select,
+            ComponentType.user_select,
+            ComponentType.role_select,
+            ComponentType.mentionable_select,
+            ComponentType.channel_select
+        ]
 
     def __repr__(self) -> str:
         return f"<ActionRow components={self.components}>"
@@ -1044,6 +1049,11 @@ class ActionRow(Item):
         item: `Union[Button, Select, Link]`
             The item to add to the action row
         """
+        if item.type not in _components_action_row:
+            raise ValueError(
+                f"Component type {item.type} is not supported inside an action row"
+            )
+
         self.components.append(item)
 
     def remove_items(
@@ -1089,10 +1099,53 @@ class ActionRow(Item):
 
     def to_dict(self) -> dict:
         """ `dict`: Returns a dict representation of the action row """
+        if len(self.components) <= 0:
+            raise ValueError("Cannot have an action row with no components")
+        if len(self.components) > 5:
+            raise ValueError("Cannot have an action row with more than 5 components")
+        if (
+            len(self.components) > 1 and
+            any(g.type in self._select_types for g in self.components)
+        ):
+            raise ValueError("Cannot have an action row with more than two items if any select menu is present")
+
         return {
-            "type": self.type,
+            "type": int(self.type),
             "components": [g.to_dict() for g in self.components]
         }
+
+    @classmethod
+    def from_dict(cls, data: dict) -> "ActionRow":
+        """ `ActionRow`: Returns an action row from a dict provided by Discord """
+        _items = []
+
+        cls_table = {
+            2: Button,
+            3: Select,
+            5: UserSelect,
+            6: RoleSelect,
+            7: MentionableSelect,
+            8: ChannelSelect,
+            9: SectionComponent,
+        }
+
+        for c in data.get("components", []):
+            cls = cls_table[c.get("type", 2)]
+            if c.get("url", None):
+                cls = Link
+                try:
+                    del c["style"]
+                except KeyError:
+                    pass
+
+            if c.get("type", None):
+                del c["type"]
+            if c.get("id", None):
+                del c["id"]
+
+            _items.append(cls(**c))
+
+        return ActionRow(*_items)
 
 
 class MediaGalleryItem:
@@ -1126,7 +1179,7 @@ class MediaGalleryComponent(Item):
         self,
         *items: MediaGalleryItem
     ):
-        super().__init__(type=int(ComponentType.media_gallery))
+        super().__init__(type=ComponentType.media_gallery)
         self.items: list[MediaGalleryItem] = list(items)
 
     def __repr__(self) -> str:
@@ -1149,7 +1202,7 @@ class MediaGalleryComponent(Item):
     def to_dict(self) -> dict:
         """ `dict`: Returns a dict representation of the media gallery component """
         return {
-            "type": self.type,
+            "type": int(self.type),
             "items": [g.to_dict() for g in self.items]
         }
 
@@ -1161,7 +1214,7 @@ class FileComponent(Item):
         *,
         spoiler: bool = False
     ):
-        super().__init__(type=int(ComponentType.file))
+        super().__init__(type=ComponentType.file)
         self.file: Asset | AttachmentComponent | str = file
         self.spoiler: bool = spoiler
 
@@ -1171,7 +1224,7 @@ class FileComponent(Item):
     def to_dict(self) -> dict:
         """ `dict`: Returns a dict representation of the file component """
         return {
-            "type": self.type,
+            "type": int(self.type),
             "file": {
                 "url": str(self.file)
             },
@@ -1179,14 +1232,15 @@ class FileComponent(Item):
         }
 
 
-class ContainerComponent:
+class ContainerComponent(Item):
     def __init__(
         self,
         *items: Item,
         colour: Colour | int | None = None,
-        spoiler: bool | None = None,
-        row: int | None = None
+        spoiler: bool | None = None
     ):
+        super().__init__(type=ComponentType.container)
+
         for i in items:
             if i.type not in _components_v2:
                 raise ValueError(
@@ -1196,8 +1250,6 @@ class ContainerComponent:
         self.items: list[Item] = list(items)
         self.colour: Colour | int | None = colour
         self.spoiler: bool | None = spoiler
-        self.row: int | None = row
-        self.type: int = int(ComponentType.container)
 
         if len(items) <= 0:
             raise ValueError("Cannot have no items in container")
@@ -1252,7 +1304,7 @@ class ContainerComponent:
     def to_dict(self) -> dict:
         """ `dict`: Returns a dict representation of the container component """
         payload = {
-            "type": int(ComponentType.container),
+            "type": int(self.type),
             "components": [g.to_dict() for g in self.items]
         }
 
@@ -1265,28 +1317,17 @@ class ContainerComponent:
 
 
 class View(InteractionStorage):
-    def __init__(
-        self,
-        *items: Button | Select | Link | ContainerComponent
-    ):
+    def __init__(self, *items: Item):
         super().__init__()
 
         for i in items:
-            if i.type not in _components_v1:
+            if i.type not in _components_root:
                 raise ValueError(
-                    f"Component type {i.type} is not supported on a standard view"
+                    f"Component type {i.type} is not supported as a stand-alone component. "
+                    "Either use an action row, container or section component"
                 )
 
-        self.items: list[Button | Select | Link | ContainerComponent] = list(items)
-
-        self._select_types: list[int] = [
-            int(ComponentType.string_select),
-            int(ComponentType.user_select),
-            int(ComponentType.role_select),
-            int(ComponentType.mentionable_select),
-            int(ComponentType.channel_select),
-            int(ComponentType.container)
-        ]
+        self.items: list[Item] = list(items)
 
     def __repr__(self) -> str:
         return f"<View items={list(self.items)}>"
@@ -1296,7 +1337,7 @@ class View(InteractionStorage):
         *,
         label: str | None = None,
         custom_id: str | None = None
-    ) -> Button | Select | Link | ContainerComponent | None:
+    ) -> Item | None:
         """
         Get an item from the view that matches the parameters
 
@@ -1327,10 +1368,7 @@ class View(InteractionStorage):
 
         return None
 
-    def add_item(
-        self,
-        item: Button | Select | Link | ContainerComponent
-    ) -> Button | Select | Link | ContainerComponent:
+    def add_item(self, item: Item) -> Item:
         """
         Add an item to the view
 
@@ -1344,6 +1382,12 @@ class View(InteractionStorage):
         `Union[Button, Select, Link]`
             Returns the added item
         """
+        if item.type not in _components_root:
+            raise ValueError(
+                f"Component type {item.type} is not supported as a stand-alone component. "
+                "Either use an action row, container or section component"
+            )
+
         self.items.append(item)
         return item
 
@@ -1390,58 +1434,12 @@ class View(InteractionStorage):
 
     def to_dict(self) -> list[dict]:
         """ `list[dict]`: Returns a dict representation of the view """
-        components: list[list[Item | ContainerComponent]] = [[] for _ in range(5)]
+        if len(self.items) <= 0:
+            raise ValueError("Cannot have a view with no items")
+        if len(self.items) > 10:
+            raise ValueError("Cannot have a view with more than 10 items")
 
-        for g in self.items:
-            if g.row is None:
-                g.row = next((
-                    i for i, _ in enumerate(components)
-                    if len(components[i]) < 5 and
-                    not any(
-                        g.type in self._select_types
-                        for g in components[i]
-                    )
-                ), 0)
-
-            if isinstance(g, Select):
-                if len(components[g.row]) >= 1:
-                    raise ValueError(
-                        "Cannot add select menu to row with other view items"
-                    )
-            elif isinstance(g, ContainerComponent):
-                if len(components[g.row]) >= 1:
-                    raise ValueError(
-                        "Cannot add section component to row with other view items"
-                    )
-            else:
-                if any(isinstance(i, Select) for i in components[g.row]):
-                    raise ValueError(
-                        "Cannot add component to row with select menu"
-                    )
-
-            if len(components[g.row]) >= 5:
-                raise ValueError(
-                    f"Cannot have more than 5 items in row {g.row}"
-                )
-
-            components[g.row].append(g)
-
-        payload = []
-
-        for c in components:
-            if len(c) <= 0:
-                continue
-
-            if len(c) == 1 and isinstance(c[0], ContainerComponent):
-                payload.append(c[0].to_dict())
-
-            else:
-                payload.append({
-                    "type": int(ComponentType.action_row),
-                    "components": [g.to_dict() for g in c]
-                })
-
-        return payload
+        return [g.to_dict() for g in self.items]
 
     @classmethod
     def from_dict(cls, *, state: "DiscordAPI", data: dict) -> "View":
@@ -1467,103 +1465,85 @@ class View(InteractionStorage):
             17: ContainerComponent,
         }
 
-        for i, comp in enumerate(data.get("components", [])):
-            if comp.get("type", 1) == int(ComponentType.container):
+        def _v2_resolver(c: dict):
+            raw_type = c.get("type", 1)
+            cls = cls_table[raw_type]
 
+            if c.get("type", None):
+                del c["type"]
+            if c.get("id", None):
+                del c["id"]
+
+            if raw_type == int(ComponentType.file):
+                return FileComponent(
+                    file=AttachmentComponent(state=state, data=c)
+                )
+
+            elif raw_type == int(ComponentType.section):
+                if c["accessory"].get("type", None) == int(ComponentType.button):
+                    if c["accessory"].get("type", None):
+                        del c["accessory"]["type"]
+                    if c["accessory"].get("id", None):
+                        del c["accessory"]["id"]
+
+                    acc_obj = Button(**c["accessory"])
+                else:
+                    acc_obj = AttachmentComponent(state=state, data=c["accessory"])
+
+                _texts = [
+                    TextDisplayComponent(content=inner["content"])
+                    for inner in c.get("components", [])
+                ]
+
+                return SectionComponent(*_texts, accessory=acc_obj)
+
+            elif raw_type == int(ComponentType.media_gallery):
+                _medias = []
+                for m in c.get("items", []):
+                    _medias.append(
+                        MediaGalleryItem(
+                            url=AttachmentComponent(state=state, data=m),
+                            description=m.get("description", None),
+                            spoiler=m.get("spoiler", False)
+                        )
+                    )
+
+                return MediaGalleryComponent(*_medias)
+
+            elif raw_type == int(ComponentType.action_row):
+                _act_row = ActionRow()
+                for a in c.get("components", []):
+                    sub_cls = cls_table[a.get("type", 2)]
+                    if a.get("type", None):
+                        del a["type"]
+                    if a.get("id", None):
+                        del a["id"]
+
+                    _act_row.add_item(sub_cls(**a))
+
+                return _act_row
+
+            else:
+                return cls(**c)
+
+        for comp in data.get("components", []):
+            if ComponentType(comp.get("type", 1)) == ComponentType.container:
                 _sect_comps = []
                 for c in comp.get("components", []):
-                    raw_type = c.get("type", 2)
-                    cls = cls_table[raw_type]
-
-                    if c.get("type", None):
-                        del c["type"]
-
-                    # Not sure if ID is needed
-                    if c.get("id", None):
-                        del c["id"]
-
-                    if raw_type == int(ComponentType.file):
-                        _sect_comps.append(
-                            FileComponent(
-                                file=AttachmentComponent(state=state, data=c)
-                            )
-                        )
-
-                    elif raw_type == int(ComponentType.section):
-                        if c["accessory"].get("type", None) == int(ComponentType.button):
-                            if c["accessory"].get("type", None):
-                                del c["accessory"]["type"]
-                            if c["accessory"].get("id", None):
-                                del c["accessory"]["id"]
-
-                            acc_obj = Button(**c["accessory"])
-                        else:
-                            acc_obj = AttachmentComponent(state=state, data=c["accessory"])
-
-                        _texts = [
-                            TextDisplayComponent(content=inner["content"])
-                            for inner in c.get("components", [])
-                        ]
-
-                        _sect_comps.append(
-                            SectionComponent(*_texts, accessory=acc_obj)
-                        )
-
-                    elif raw_type == int(ComponentType.media_gallery):
-                        _medias = []
-                        for m in c.get("items", []):
-                            _medias.append(
-                                MediaGalleryItem(
-                                    url=AttachmentComponent(state=state, data=m),
-                                    description=m.get("description", None),
-                                    spoiler=m.get("spoiler", False)
-                                )
-                            )
-
-                        _sect_comps.append(
-                            MediaGalleryComponent(*_medias)
-                        )
-
-                    elif raw_type == int(ComponentType.action_row):
-                        _act_row = ActionRow()
-                        for a in c.get("components", []):
-                            sub_cls = cls_table[a.get("type", 2)]
-                            if a.get("type", None):
-                                del a["type"]
-                            if a.get("id", None):
-                                del a["id"]
-
-                            _act_row.add_item(sub_cls(**a))
-
-                        _sect_comps.append(_act_row)
-
-                    else:
-                        _sect_comps.append(cls(**c))
-
+                    _sect_comps.append(_v2_resolver(c))
                 kwargs = {}
                 if comp.get("accent_color", None):
                     kwargs["colour"] = Colour(comp["accent_color"])
                 if comp.get("spoiler", None):
                     kwargs["spoiler"] = bool(comp["spoiler"])
 
-                items.append(ContainerComponent(*_sect_comps, row=i, **kwargs))
+                items.append(ContainerComponent(*_sect_comps, **kwargs))
+
+            elif ComponentType(comp.get("type", 1)) == ComponentType.action_row:
+                items.append(ActionRow.from_dict(comp))
 
             else:
-                for c in comp.get("components", []):
-                    cls = cls_table[c.get("type", 2)]
-                    if c.get("url", None):
-                        cls = Link
-                        try:
-                            del c["style"]
-                        except KeyError:
-                            pass
-
-                    if c.get("type", None):
-                        del c["type"]
-                    if c.get("id", None):
-                        del c["id"]
-
-                    items.append(cls(row=i, **c))
+                items.append(_v2_resolver(comp))
 
         return View(*items)
 

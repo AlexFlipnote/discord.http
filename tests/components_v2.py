@@ -81,8 +81,8 @@ async def test_command(ctx: Context):
             text,
             SeparatorComponent(),
             text2,
-            colour=0xFF0000,
-            row=2
+            colour=0xFF0000
+
         ),
         ContainerComponent(
             text_file,
@@ -153,6 +153,37 @@ async def profile(ctx: Context):
     async def call_after():
         await ctx.send(
             view=View(main),
+            flags=MessageFlags.is_components_v2,
+            allowed_mentions=AllowedMentions.none()
+        )
+
+    return ctx.response.send_empty(call_after=call_after)
+
+
+@client.command("test_limit")
+async def test_limit(ctx: Context):
+    # TextDisplayComponent("Test"),
+    # SeparatorComponent(divider=True),
+    # TextDisplayComponent("Test 2")
+    view = View(
+        ActionRow(
+            Button(label="Test", custom_id="test")
+        ),
+        *[TextDisplayComponent("nice test") for _ in range(9)],
+    )
+
+    async def call_after():
+        test = MessageResponse(
+            view=view,
+            flags=MessageFlags.is_components_v2,
+            allowed_mentions=AllowedMentions.none()
+        )
+
+        with open("./debug.json", "w", encoding="utf-8") as f:
+            json.dump(test.to_dict(), f, indent=2)
+
+        await ctx.send(
+            view=view,
             flags=MessageFlags.is_components_v2,
             allowed_mentions=AllowedMentions.none()
         )
