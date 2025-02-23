@@ -1,4 +1,4 @@
-from discord_http import Context, Client, View, Button, NotFound
+from discord_http import Context, Client, View, Button, NotFound, ActionRow
 
 client = Client(
     token="BOT_TOKEN",
@@ -12,8 +12,10 @@ client = Client(
 async def confirm(ctx: Context):
     """ Prompt to be 100% sure """
     view = View(
-        Button(label="Yes", custom_id="yes", style="green"),
-        Button(label="No", custom_id="no", style="red")
+        ActionRow(
+            Button(label="Yes", custom_id="yes", style="green"),
+            Button(label="No", custom_id="no", style="red")
+        )
     )
 
     async def call_after():

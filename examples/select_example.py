@@ -1,4 +1,4 @@
-from discord_http import Client, Context, View, Select
+from discord_http import Client, Context, View, Select, ActionRow
 
 
 client = Client(
@@ -21,7 +21,7 @@ def selection_menu(disabled: bool = False) -> View:
     select.add_item(label="Blue", value="blue")
     select.add_item(label="Yellow", value="yellow")
 
-    return View(select)
+    return View(ActionRow(select))
 
 
 @client.command()

@@ -1,4 +1,4 @@
-from discord_http import Context, Client, View, Button
+from discord_http import Context, Client, View, Button, ActionRow
 
 client = Client(
     token="BOT_TOKEN",
@@ -12,10 +12,12 @@ client = Client(
 async def button_test(ctx: Context):
     """ A simple ping command """
     view = View(
-        Button(
-            label="Click me",
-            style="green",
-            custom_id=f"user:{ctx.user.id}"
+        ActionRow(
+            Button(
+                label="Click me",
+                style="green",
+                custom_id=f"user:{ctx.user.id}"
+            )
         )
     )
 
