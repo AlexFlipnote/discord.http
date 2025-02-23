@@ -310,11 +310,6 @@ class PartialMember(PartialBase):
             Roles to add to the member
         reason: `Optional[str]`
             The reason for adding the roles
-
-        Parameters
-        ----------
-        reason: `Optional[str]`
-            The reason for adding the roles
         """
         for role in roles:
             if isinstance(role, PartialRole):
