@@ -30,7 +30,7 @@ Repository = "https://github.com/AlexFlipnote/discord.http"
 
 [project.optional-dependencies]
 dev = ["pyright", "flake8", "toml"]
-docs = ["sphinx", "furo", "myst-parser"]
+docs = ["sphinx", "furo", "myst-parser", "sphinx-autodoc-typehints"]
 maintainer = ["twine", "wheel", "build"]
 
 [tool.setuptools]
