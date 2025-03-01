@@ -188,6 +188,36 @@ async def test_limit(ctx: Context):
     return ctx.response.send_empty(call_after=call_after)
 
 
+@client.command("demo_conversation")
+async def demo_conversation(ctx: Context):
+    view = View()
+
+    user = SectionComponent(
+        "What's the meaning of life?",
+        accessory=ThumbnailComponent(
+            ctx.user.display_avatar
+        )
+    )
+
+    split = SeparatorComponent(divider=True)
+
+    bot = SectionComponent(
+        "Ah, the classic question! 🤔 The meaning of life can vary for each person. "
+        "Some find meaning in connections with others, pursuing passions, or seeking knowledge, "
+        "while others might reflect on spirituality or enjoy life's little moments! "
+        "🌟 What do you think gives life meaning?",
+        accessory=ThumbnailComponent(
+            ctx.bot.user.display_avatar
+        )
+    )
+
+    view.add_item(user)
+    view.add_item(split)
+    view.add_item(bot)
+
+    return ctx.response.send_message(view=view, flags=MessageFlags.is_components_v2)
+
+
 @client.interaction("press_me")
 async def press_me(ctx: Context):
     view = ctx.message.view

@@ -2591,7 +2591,7 @@ class Guild(PartialGuild):
                 guild=self,
                 data=g
             )
-            for g in data["roles"]
+            for g in data.get("roles", [])
         }
 
         self._cache_emojis = {
@@ -2600,7 +2600,7 @@ class Guild(PartialGuild):
                 guild=self,
                 data=g
             )
-            for g in data["emojis"]
+            for g in data.get("emojis", [])
         }
 
         self._cache_stickers = {
@@ -2609,7 +2609,7 @@ class Guild(PartialGuild):
                 guild=self,
                 data=g
             )
-            for g in data["stickers"]
+            for g in data.get("stickers", [])
         }
 
         if data.get("member_count", None):
