@@ -926,7 +926,8 @@ class Context:
         view: Optional[View] = MISSING,
         attachment: Optional[File] = MISSING,
         attachments: Optional[list[File]] = MISSING,
-        allowed_mentions: Optional[AllowedMentions] = MISSING
+        allowed_mentions: Optional[AllowedMentions] = MISSING,
+        flags: Optional[MessageFlags] = MISSING,
     ) -> WebhookMessage:
         """ `Message` Edit the original response to the interaction """
         payload = MessageResponse(
@@ -936,6 +937,7 @@ class Context:
             attachment=attachment,
             attachments=attachments,
             view=view,
+            flags=flags,
             allowed_mentions=(
                 allowed_mentions or
                 self.bot._default_allowed_mentions
