@@ -1246,8 +1246,8 @@ class ContainerComponent(Item):
         self.colour: Colour | int | None = colour
         self.spoiler: bool | None = spoiler
 
-        if len(items) > 5:
-            raise ValueError("Cannot have more than 5 items in container")
+        if len(items) > 10:
+            raise ValueError("Cannot have more than 10 items in container")
 
     def __repr__(self) -> str:
         return f"<ContainerComponent items={self.items}>"
