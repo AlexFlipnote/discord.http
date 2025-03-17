@@ -367,6 +367,7 @@ class Member(PartialMember):
         self._user = User(state=state, data=data["user"])
 
         self.avatar: Optional[Asset] = None
+        self.banner: Optional[Asset] = None
 
         self.flags: GuildMemberFlags = GuildMemberFlags(data["flags"])
         self.pending: bool = data.get("pending", False)
@@ -392,10 +393,14 @@ class Member(PartialMember):
         return str(self._user)
 
     def _from_data(self, data: dict) -> None:
-        has_avatar = data.get("avatar", None)
-        if has_avatar:
+        if data.get("avatar", None):
             self.avatar = Asset._from_guild_avatar(
-                self._state, self.guild.id, self.id, has_avatar
+                self._state, self.guild.id, self.id, data["avatar"]
+            )
+
+        if data.get("banner", None):
+            self.banner = Asset._from_guild_banner(
+                self._state, self.guild.id, self.id, data["banner"]
             )
 
         if data.get("communication_disabled_until", None):
@@ -555,11 +560,6 @@ class Member(PartialMember):
         return self._user.public_flags or UserFlags(0)
 
     @property
-    def banner(self) -> Optional[Asset]:
-        """ `Optional[Asset]`: Returns the banner of the member if available """
-        return self._user.banner
-
-    @property
     def avatar_decoration(self) -> Optional[Asset]:
         """ `Optional[Asset]`: Returns the avatar decoration of the member """
         return self._user.avatar_decoration
@@ -585,6 +585,14 @@ class Member(PartialMember):
     def display_name(self) -> str:
         """ `str`: Returns the display name of the member """
         return self.nick or self.global_name or self.name
+
+    @property
+    def display_banner(self) -> Asset | None:
+        """ `Asset`: Returns the display banner of the member """
+        return (
+            self.banner or
+            self.global_banner
+        )
 
     @property
     def display_avatar(self) -> Asset:
