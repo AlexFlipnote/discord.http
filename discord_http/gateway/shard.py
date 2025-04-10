@@ -95,6 +95,8 @@ class Status:
 
     @property
     def ping(self) -> float:
+        if not self.can_resume():
+            return 0.0
         return self._last_recv - self._last_send
 
     def reset(self) -> None:
