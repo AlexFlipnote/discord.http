@@ -517,7 +517,7 @@ class Context:
         self.modal_values: dict[str, str] = {}
 
         self.options: list[dict] = data.get("data", {}).get("options", [])
-        self._followup_token: str = data.get("token", None)
+        self._followup_token: str = data.get("token", "")
 
         self._original_response: Optional[WebhookMessage] = None
         self._raw_resolved: dict = data.get("data", {}).get("resolved", {})
