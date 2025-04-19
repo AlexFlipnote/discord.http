@@ -69,6 +69,7 @@ Automatically generated documentation index for your convenience:
   :hidden:
   :caption: Development
 
+  pages/format
   pages/contribute
   pages/license
   pages/discord

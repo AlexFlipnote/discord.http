@@ -1,4 +1,4 @@
-from typing import TYPE_CHECKING, Optional, Literal, overload
+from typing import TYPE_CHECKING, Literal, overload
 
 from . import utils
 from .embeds import Embed
@@ -72,7 +72,7 @@ class PartialWebhook(PartialBase):
         wait: Literal[False],
         flags: MessageFlags | None = MISSING,
         thread_id: int | None = MISSING,
-        poll: Optional["Poll"] = MISSING,
+        poll: "Poll | None" = MISSING,
     ) -> None:
         ...
 
@@ -94,7 +94,7 @@ class PartialWebhook(PartialBase):
         wait: bool = True,
         flags: MessageFlags | None = MISSING,
         thread_id: int | None = MISSING,
-        poll: Optional["Poll"] = MISSING,
+        poll: "Poll | None" = MISSING,
     ) -> "WebhookMessage":
         ...
 
@@ -115,8 +115,8 @@ class PartialWebhook(PartialBase):
         wait: bool = True,
         flags: MessageFlags | None = MISSING,
         thread_id: int | None = MISSING,
-        poll: Optional["Poll"] = MISSING,
-    ) -> Optional["WebhookMessage"]:
+        poll: "Poll | None" = MISSING,
+    ) -> "WebhookMessage | None":
         """
         Send a message with the webhook.
 
@@ -155,7 +155,6 @@ class PartialWebhook(PartialBase):
 
         Returns
         -------
-        `Optional[WebhookMessage]`
             The message that was sent, if `wait` is `True`.
 
         Raises
@@ -284,7 +283,6 @@ class PartialWebhook(PartialBase):
 
         Returns
         -------
-        `Webhook`
             The webhook that was edited
         """
         payload = {}
@@ -364,7 +362,6 @@ class Webhook(PartialWebhook):
 
         Returns
         -------
-        `Webhook`
             The webhook that was created
         """
         cls_ = cls(state=state, data=data)
@@ -373,7 +370,7 @@ class Webhook(PartialWebhook):
 
     @property
     def guild(self) -> "Guild | PartialGuild | None":
-        """ `Optional[PartialGuild]`: Returns the guild the webhook is in. """
+        """ Returns the guild the webhook is in. """
         if not self.guild_id:
             return None
 
@@ -385,8 +382,8 @@ class Webhook(PartialWebhook):
         return PartialGuild(state=self._state, id=self.guild_id)
 
     @property
-    def channel(self) -> Optional["PartialChannel"]:
-        """ `Optional[PartialChannel]`: Returns the channel the webhook is in. """
+    def channel(self) -> "PartialChannel | None":
+        """ Returns the channel the webhook is in. """
         if self.channel_id:
             from .channel import PartialChannel
             return PartialChannel(
