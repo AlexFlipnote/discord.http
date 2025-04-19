@@ -97,7 +97,7 @@ class Snowflake:
 
     @property
     def created_at(self) -> datetime:
-        """ `datetime`: The datetime of the snowflake """
+        """ The datetime of the snowflake """
         return utils.snowflake_time(self.id)
 
 

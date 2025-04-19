@@ -88,11 +88,11 @@ class _ResolveParser:
 
     @classmethod
     def none(cls, ctx: "Context") -> Self:
-        """ `SelectValues`: with no values """
+        """ with no values """
         return cls(ctx, {})
 
     def is_empty(self) -> bool:
-        """ `bool`: Whether no values were selected """
+        """ Whether no values were selected """
         return not any(self._parsed_data.values())
 
     def _parse_resolved(self, ctx: "Context", key: str, data: dict):
@@ -133,22 +133,22 @@ class ResolvedValues(_ResolveParser):
 
     @property
     def members(self) -> list[Member]:
-        """ `List[Member]`: of members resolved """
+        """ of members resolved """
         return self._parsed_data["members"]
 
     @property
     def users(self) -> list[User]:
-        """ `List[User]`: of users resolved """
+        """ of users resolved """
         return self._parsed_data["users"]
 
     @property
     def channels(self) -> list[BaseChannel]:
-        """ `List[BaseChannel]`: of channels resolved """
+        """ of channels resolved """
         return self._parsed_data["channels"]
 
     @property
     def roles(self) -> list[Role]:
-        """ `List[Role]`: of roles resolved """
+        """ of roles resolved """
         return self._parsed_data["roles"]
 
 
@@ -158,7 +158,7 @@ class SelectValues(ResolvedValues):
 
     @property
     def strings(self) -> list[str]:
-        """ `List[str]`: of strings selected """
+        """ of strings selected """
         return self._parsed_data["strings"]
 
 
@@ -634,7 +634,7 @@ class Context:
 
     @property
     def channel(self) -> "BaseChannel | PartialChannel | None":
-        """ `BaseChannel | PartialChannel`: Returns the channel the interaction was made in """
+        """ Returns the channel the interaction was made in """
         if not self.channel_id:
             return None
 

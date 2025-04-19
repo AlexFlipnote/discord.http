@@ -51,7 +51,7 @@ class BaseEnum(_Enum):
     """ Enum, but with more comparison operators to make life easier """
     @classmethod
     def random(cls) -> Self:
-        """ `Enum`: Return a random enum """
+        """ Return a random enum """
         return random.choice(list(cls))
 
     def __str__(self) -> str:

@@ -34,17 +34,17 @@ class Colour:
 
     @property
     def r(self) -> int:
-        """ `int`: Returns the red component of the colour """
+        """ Returns the red component of the colour """
         return self._get_byte(2)
 
     @property
     def g(self) -> int:
-        """ `int`: Returns the green component of the colour """
+        """ Returns the green component of the colour """
         return self._get_byte(1)
 
     @property
     def b(self) -> int:
-        """ `int`: Returns the blue component of the colour """
+        """ Returns the blue component of the colour """
         return self._get_byte(0)
 
     @classmethod
@@ -69,7 +69,7 @@ class Colour:
         return cls((r << 16) + (g << 8) + b)
 
     def to_rgb(self) -> tuple[int, int, int]:
-        """ `tuple[int, int, int]`: Returns the RGB values of the colour` """
+        """ Returns the RGB values of the colour` """
         return (self.r, self.g, self.b)
 
     @classmethod
@@ -104,12 +104,12 @@ class Colour:
         return cls(int(hex, 16))
 
     def to_hex(self) -> str:
-        """ `str`: Returns the hex value of the colour """
+        """ Returns the hex value of the colour """
         return f"#{self.value:06x}"
 
     @classmethod
     def default(cls) -> Self:
-        """ `Colour`: Returns the default colour (#000000, Black) """
+        """ Returns the default colour (#000000, Black) """
         return cls(0)
 
     @classmethod
@@ -139,102 +139,102 @@ class Colour:
 
     @classmethod
     def turquoise(cls) -> Self:
-        """ `Colour`: Returns the turquoise colour """
+        """ Returns the turquoise colour """
         return cls(0x1abc9c)
 
     @classmethod
     def green_sea(cls) -> Self:
-        """ `Colour`: Returns the green sea colour """
+        """ Returns the green sea colour """
         return cls(0x16a085)
 
     @classmethod
     def emerald(cls) -> Self:
-        """ `Colour`: Returns the emerald colour """
+        """ Returns the emerald colour """
         return cls(0x2ecc71)
 
     @classmethod
     def nephritis(cls) -> Self:
-        """ `Colour`: Returns the nephritis colour """
+        """ Returns the nephritis colour """
         return cls(0x27ae60)
 
     @classmethod
     def peter_river(cls) -> Self:
-        """ `Colour`: Returns the peter river colour """
+        """ Returns the peter river colour """
         return cls(0x3498db)
 
     @classmethod
     def belize_hole(cls) -> Self:
-        """ `Colour`: Returns the belize hole colour """
+        """ Returns the belize hole colour """
         return cls(0x2980b9)
 
     @classmethod
     def amethyst(cls) -> Self:
-        """ `Colour`: Returns the amethyst colour """
+        """ Returns the amethyst colour """
         return cls(0x9b59b6)
 
     @classmethod
     def wisteria(cls) -> Self:
-        """ `Colour`: Returns the wisteria colour """
+        """ Returns the wisteria colour """
         return cls(0x8e44ad)
 
     @classmethod
     def mellow_melon(cls) -> Self:
-        """ `Colour`: Returns the mellow melon colour """
+        """ Returns the mellow melon colour """
         return cls(0xe91e63)
 
     @classmethod
     def plum_perfect(cls) -> Self:
-        """ `Colour`: Returns the plum perfect colour """
+        """ Returns the plum perfect colour """
         return cls(0xad1457)
 
     @classmethod
     def sun_flower(cls) -> Self:
-        """ `Colour`: Returns the sun flower colour """
+        """ Returns the sun flower colour """
         return cls(0xf1c40f)
 
     @classmethod
     def orange(cls) -> Self:
-        """ `Colour`: Returns the orange colour """
+        """ Returns the orange colour """
         return cls(0xf39c12)
 
     @classmethod
     def carrot(cls) -> Self:
-        """ `Colour`: Returns the carrot colour """
+        """ Returns the carrot colour """
         return cls(0xe67e22)
 
     @classmethod
     def pumpkin(cls) -> Self:
-        """ `Colour`: Returns the pumpkin colour """
+        """ Returns the pumpkin colour """
         return cls(0xd35400)
 
     @classmethod
     def alizarin(cls) -> Self:
-        """ `Colour`: Returns the alizarin colour """
+        """ Returns the alizarin colour """
         return cls(0xe74c3c)
 
     @classmethod
     def pomegranate(cls) -> Self:
-        """ `Colour`: Returns the pomegranate colour """
+        """ Returns the pomegranate colour """
         return cls(0xc0392b)
 
     @classmethod
     def dusty_sky(cls) -> Self:
-        """ `Colour`: Returns the dusty sky colour """
+        """ Returns the dusty sky colour """
         return cls(0x95a5a6)
 
     @classmethod
     def harrison_grey(cls) -> Self:
-        """ `Colour`: Returns the harrison grey colour """
+        """ Returns the harrison grey colour """
         return cls(0x979c9f)
 
     @classmethod
     def whale_shark(cls) -> Self:
-        """ `Colour`: Returns the whale shark colour """
+        """ Returns the whale shark colour """
         return cls(0x607d8b)
 
     @classmethod
     def blue_sentinel(cls) -> Self:
-        """ `Colour`: Returns the blue sentinel colour """
+        """ Returns the blue sentinel colour """
         return cls(0x546e7a)
 
 

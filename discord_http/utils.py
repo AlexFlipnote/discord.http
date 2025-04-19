@@ -6,7 +6,8 @@ import unicodedata
 
 from base64 import b64encode
 from datetime import datetime, timedelta, UTC
-from typing import Any, Iterator, TYPE_CHECKING
+from typing import Any, TYPE_CHECKING
+from collections.abc import Iterator
 
 from .file import File
 
@@ -31,39 +32,39 @@ def traceback_maker(
     advance: bool = True
 ) -> str:
     """
-    Takes a traceback from an error and returns it as a string
+    Takes a traceback from an error and returns it as a string.
 
     Useful if you wish to get traceback in any other forms than the console
 
     Parameters
     ----------
-    err: `Exception`
+    err:
         The error to get the traceback from
-    advance: `bool`
+    advance:
         Whether to include the traceback or not
 
     Returns
     -------
-    `str`
         The traceback of the error
     """
-    _traceback = "".join(traceback.format_tb(err.__traceback__))
-    error = f"{_traceback}{type(err).__name__}: {err}"
+    traceback_ = "".join(traceback.format_tb(err.__traceback__))
+    error = f"{traceback_}{type(err).__name__}: {err}"
     return error if advance else f"{type(err).__name__}: {err}"
 
 
-def snowflake_time(id: "Snowflake | int") -> datetime:
+def snowflake_time(
+    id: "Snowflake | int"  # noqa: A002
+) -> datetime:
     """
-    Get the datetime from a discord snowflake
+    Get the datetime from a discord snowflak.
 
     Parameters
     ----------
-    id: `int`
+    id:
         The snowflake to get the datetime from
 
     Returns
     -------
-    `datetime`
         The datetime of the snowflake
     """
     return datetime.fromtimestamp(
@@ -78,18 +79,17 @@ def time_snowflake(
     high: bool = False
 ) -> int:
     """
-    Get a discord snowflake from a datetime
+    Get a discord snowflake from a datetime.
 
     Parameters
     ----------
-    dt: `datetime`
+    dt:
         The datetime to get the snowflake from
-    high: `bool`
+    high:
         Whether to get the high snowflake or not
 
     Returns
     -------
-    `int`
         The snowflake of the datetime
 
     Raises
@@ -108,16 +108,15 @@ def time_snowflake(
 
 def parse_time(ts: str | int) -> datetime:
     """
-    Parse a timestamp from a string or int
+    Parse a timestamp from a string or int.
 
     Parameters
     ----------
-    ts: `str` | `int`
+    ts:
         The timestamp to parse
 
     Returns
     -------
-    `datetime`
         The datetime of the timestamp
 
     Raises
@@ -132,7 +131,8 @@ def parse_time(ts: str | int) -> datetime:
         elif ts_length >= 13:  # Milliseconds
             ts = ts // 1000
         return datetime.fromtimestamp(ts, tz=UTC)
-    elif isinstance(ts, str):
+
+    if isinstance(ts, str):
         return datetime.fromisoformat(ts)
 
     raise TypeError("ts must be a str or int")
@@ -142,17 +142,17 @@ def normalize_entity_id(
     entry: "datetime | int | str | Snowflake"
 ) -> int:
     """
-    Translates a search ID or datetime to a Snowflake
+    Translates a search ID or datetime to a Snowflake.
+
     Mostly used for audit-logs, messages, and similar API calls
 
     Parameters
     ----------
-    entry: `datetime | int | str | Snowflake`
+    entry:
         The entry to translate
 
     Returns
     -------
-    `Snowflake`
         The translated
 
     Raises
@@ -183,16 +183,15 @@ def normalize_entity_id(
 
 def unicode_name(text: str) -> str:
     """
-    Get the unicode name of a string
+    Get the unicode name of a string.
 
     Parameters
     ----------
-    text: `str`
+    text:
         The text to get the unicode name from
 
     Returns
     -------
-    `str`
         The unicode name of the text
     """
     try:
@@ -211,19 +210,19 @@ def oauth_url(
     scope: str | None = None,
     user_install: bool = False,
     **kwargs: str
-):
+) -> str:
     """
-    Get the oauth url of a user
+    Get the oauth url of a user.
 
     Parameters
     ----------
-    client_id: `Snowflake | int`
+    client_id:
         Application ID to invite to the server
-    scope: `str | None`
+    scope:
         Changing the scope of the oauth url, default: `bot+applications.commands`
-    user_install: `bool`
+    user_install:
         Whether the bot is allowed to be installed on the user's account
-    kwargs: `str`
+    kwargs:
         The query parameters to add to the url
 
     Returns
@@ -255,18 +254,17 @@ def divide_chunks(
     n: int
 ) -> list[list[Any]]:
     """
-    Divide a list into chunks
+    Divide a list into chunks.
 
     Parameters
     ----------
-    array: `list[Any]`
+    array:
         The list to divide
-    n: `int`
+    n:
         The amount of chunks to divide the list into
 
     Returns
     -------
-    `list[list[Any]]`
         The divided list
     """
     return [
@@ -277,11 +275,10 @@ def divide_chunks(
 
 def utcnow() -> datetime:
     """
-    Alias for `datetime.now(UTC)`
+    Alias for `datetime.now(UTC)`.
 
     Returns
     -------
-    `datetime`
         The current time in UTC
     """
     return datetime.now(UTC)
@@ -291,11 +288,11 @@ def add_to_datetime(
     ts: datetime | timedelta | int
 ) -> datetime:
     """
-    Converts different Python timestamps to a `datetime` object
+    Converts different Python timestamps to a `datetime` object.
 
     Parameters
     ----------
-    ts: `Union[datetime, timedelta, dtime, int]`
+    ts:
         The timestamp to convert
         - `datetime`: Returns the datetime, but in UTC format
         - `timedelta`: Adds the timedelta to the current time
@@ -303,7 +300,6 @@ def add_to_datetime(
 
     Returns
     -------
-    `datetime`
         The timestamp in UTC format
 
     Raises
@@ -313,7 +309,7 @@ def add_to_datetime(
     `TypeError`
         Invalid type for timestamp provided
     """
-    _now = utcnow()
+    now = utcnow()
 
     match ts:
         case x if isinstance(x, datetime):
@@ -328,10 +324,10 @@ def add_to_datetime(
             return x.astimezone(UTC)
 
         case x if isinstance(x, timedelta):
-            return _now + x
+            return now + x
 
         case x if isinstance(x, int):
-            return _now + timedelta(seconds=x)
+            return now + timedelta(seconds=x)
 
         case _:
             raise TypeError(
@@ -342,16 +338,15 @@ def add_to_datetime(
 
 def mime_type_image(image: bytes) -> str:
     """
-    Get the mime type of an image
+    Get the mime type of an image.
 
     Parameters
     ----------
-    image: `bytes`
+    image:
         The image to get the mime type from
 
     Returns
     -------
-    `str`
         The mime type of the image
 
     Raises
@@ -381,16 +376,15 @@ def mime_type_image(image: bytes) -> str:
 
 def mime_type_audio(audio: bytes) -> str:
     """
-    Get the mime type of an audio
+    Get the mime type of an audio.
 
     Parameters
     ----------
-    audio: `bytes`
+    audio:
         The audio to get the mime type from
 
     Returns
     -------
-    `str`
         The mime type of the audio
 
     Raises
@@ -403,9 +397,8 @@ def mime_type_audio(audio: bytes) -> str:
             return "audio/ogg"
 
         case x if (
-            x.startswith(b"ID3") or
-            x.startswith(b"\xff\xd8\xff") or
-            (x[0] == 0xff and (x[1] & 0xe0) == 0xe0)
+            x.startswith((b"ID3", b"\xff\xd8\xff")) or
+            (x[0] == 255 and x[1] & 224 == 224)
         ):
             return "audio/mpeg"
 
@@ -415,16 +408,15 @@ def mime_type_audio(audio: bytes) -> str:
 
 def bytes_to_base64(image: File | bytes) -> str:
     """
-    Convert bytes to base64
+    Convert bytes to base64.
 
     Parameters
     ----------
-    image: `Union[File, bytes]`
+    image:
         The image to convert to base64
 
     Returns
     -------
-    `str`
         The base64 of the image
 
     Raises
@@ -452,23 +444,22 @@ def get_int(
     data: dict,
     key: str,
     *,
-    default: Any | None = None
+    default: Any | None = None  # noqa: ANN401
 ) -> int | None:
     """
-    Get an integer from a dictionary, similar to `dict.get`
+    Get an integer from a dictionary, similar to `dict.get`.
 
     Parameters
     ----------
-    data: `dict`
+    data:
         The dictionary to get the integer from
-    key: `str`
+    key:
         The key to get the integer from
-    default: `Any | None`
+    default:
         The default value to return if the key is not found
 
     Returns
     -------
-    `Optional[int]`
         The integer from the dictionary
 
     Raises
@@ -476,7 +467,7 @@ def get_int(
     `ValueError`
         The key returned a non-digit value
     """
-    output: str | None = data.get(key, None)
+    output: str | None = data.get(key)
     if output is None:
         return default
     if isinstance(output, int):
@@ -489,6 +480,7 @@ def get_int(
 class DiscordTimestamp:
     """
     A class to represent a Discord timestamp.
+
     This takes a datetime, int or timedelta and
     converts it to a Discord timestamp.
     """
@@ -516,7 +508,8 @@ class DiscordTimestamp:
 
     def _fmt(self, fmt: str | None = None) -> str:
         """
-        `str`: Returns the timestamp in a specified format.
+        Returns the timestamp in a specified format.
+
         Mostly used internally, but can be used externally I guess..?
 
         Parameters
@@ -535,48 +528,49 @@ class DiscordTimestamp:
 
     @property
     def default(self) -> str:
-        """ `str`: 31. January 2000 16:01 """
+        """ Returned format: 31. January 2000 16:01. """
         return self._fmt()
 
     @property
     def short_time(self) -> str:
-        """ `str`: 16:01 """
+        """ Returned format: 16:01. """
         return self._fmt("t")
 
     @property
     def long_time(self) -> str:
-        """ `str`: 16:01:02 """
+        """ Returned format: 16:01:02. """
         return self._fmt("T")
 
     @property
     def short_date(self) -> str:
-        """ `str`: 31/01/2000 """
+        """ Returned format: 31/01/2000. """
         return self._fmt("d")
 
     @property
     def long_date(self) -> str:
-        """ `str`: 31. January 2000 """
+        """ Returned format: 31. January 2000. """
         return self._fmt("D")
 
     @property
     def short_date_time(self) -> str:
-        """ `str`: 31. January 2000 16:01 """
+        """ Returned format: 31. January 2000 16:01. """
         return self._fmt("f")
 
     @property
     def long_date_time(self) -> str:
-        """ `str`: Monday 31. January 2000 16:01 """
+        """ Returned format: Monday 31. January 2000 16:01. """
         return self._fmt("F")
 
     @property
     def relative_time(self) -> str:
-        """ `str`: 21 years ago """
+        """ 21 years ago. """
         return self._fmt("R")
 
 
 class _MissingType:
     """
-    A class to represent a missing value in a dictionary
+    A class to represent a missing value in a dictionary.
+
     This is used in favour of accepting None as a value
 
     It is also filled with a bunch of methods to make it
@@ -584,6 +578,9 @@ class _MissingType:
     """
     def __init__(self) -> None:
         self.id: int = -1
+
+    def __hash__(self) -> int:
+        return 0
 
     def __str__(self) -> str:
         return ""
@@ -604,9 +601,9 @@ class _MissingType:
         return {}
 
     def __bytes__(self) -> bytes:
-        return bytes()
+        return b""
 
-    def __eq__(self, other) -> bool:
+    def __eq__(self, other) -> bool:  # noqa: ANN001
         return False
 
     def __bool__(self) -> bool:
@@ -658,7 +655,7 @@ class CustomFormatter(logging.Formatter):
         )
 
     def format(self, record: logging.LogRecord) -> str:
-        """ Format the log """
+        """ Format the log. """
         match record.levelno:
             case logging.DEBUG:
                 prefix = self._prefix_fmt(
@@ -704,11 +701,11 @@ def setup_logger(
     level: int = logging.INFO
 ) -> None:
     """
-    Setup the logger
+    Setup the logger.
 
     Parameters
     ----------
-    level: `Optional[int]`
+    level:
         The level of the logger
     """
     lib, _, _ = __name__.partition(".")

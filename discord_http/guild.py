@@ -87,7 +87,7 @@ class PartialScheduledEvent(PartialBase):
 
     @property
     def guild(self) -> "Guild | PartialGuild":
-        """ `PartialGuild`: The guild object this event is in """
+        """ The guild object this event is in """
         cache = self._state.cache.get_guild(self.guild_id)
         if cache:
             return cache
@@ -100,7 +100,7 @@ class PartialScheduledEvent(PartialBase):
         return f"https://discord.com/events/{self.guild_id}/{self.id}"
 
     async def fetch(self) -> "ScheduledEvent":
-        """ `ScheduledEvent`: Fetches more information about the event """
+        """ Fetches more information about the event """
         r = await self._state.query(
             "GET",
             f"/guilds/{self.guild_id}/scheduled-events/{self.id}"
@@ -323,7 +323,7 @@ class PartialGuild(PartialBase):
 
     @property
     def large(self) -> bool:
-        """ `bool`: Whether the guild is considered large """
+        """ Whether the guild is considered large """
         if self._large is None:
             if self.member_count is not None:
                 return self.member_count >= 250
@@ -332,7 +332,7 @@ class PartialGuild(PartialBase):
 
     @property
     def chunked(self) -> bool:
-        """ `bool`: Whether the guild is chunked or not """
+        """ Whether the guild is chunked or not """
         count = self.member_count
         if count is None:
             return False
@@ -550,7 +550,7 @@ class PartialGuild(PartialBase):
 
     @property
     def default_role(self) -> PartialRole:
-        """ `Role`: Returns the default role, but as a partial role object """
+        """ Returns the default role, but as a partial role object """
         return PartialRole(
             state=self._state,
             id=self.id,
@@ -566,7 +566,7 @@ class PartialGuild(PartialBase):
         )
 
     async def fetch(self) -> "Guild":
-        """ `Guild`: Fetches more information about the guild """
+        """ Fetches more information about the guild """
         r = await self._state.query(
             "GET",
             f"/guilds/{self.id}"
@@ -578,7 +578,7 @@ class PartialGuild(PartialBase):
         )
 
     def get_partial_automod_rule(self, automod_id: int) -> PartialAutoModRule:
-        """ `PartialAutoModRule`: Returns a partial automod rule object """
+        """ Returns a partial automod rule object """
         return PartialAutoModRule(
             state=self._state,
             id=automod_id,
@@ -586,7 +586,7 @@ class PartialGuild(PartialBase):
         )
 
     async def fetch_automod_rule(self, automod_id: int) -> AutoModRule:
-        """ `AutoModRule`: Fetches a automod rule from the guild """
+        """ Fetches a automod rule from the guild """
         automod = self.get_partial_automod_rule(automod_id)
         return await automod.fetch()
 
@@ -733,7 +733,7 @@ class PartialGuild(PartialBase):
         )
 
     async def fetch_roles(self) -> list[Role]:
-        """ `list[Role]`: Fetches all the roles in the guild """
+        """ Fetches all the roles in the guild """
         r = await self._state.query(
             "GET",
             f"/guilds/{self.id}/roles"
@@ -749,7 +749,7 @@ class PartialGuild(PartialBase):
         ]
 
     async def fetch_stickers(self) -> list[Sticker]:
-        """ `list[Sticker]`: Fetches all the stickers in the guild """
+        """ Fetches all the stickers in the guild """
         r = await self._state.query(
             "GET",
             f"/guilds/{self.id}/stickers"
@@ -765,7 +765,7 @@ class PartialGuild(PartialBase):
         ]
 
     async def fetch_scheduled_events_list(self) -> list[ScheduledEvent]:
-        """ `list[ScheduledEvent]`: Fetches all the scheduled events in the guild """
+        """ Fetches all the scheduled events in the guild """
         r = await self._state.query(
             "GET",
             f"/guilds/{self.id}/scheduled-events?with_user_count=true"
@@ -780,7 +780,7 @@ class PartialGuild(PartialBase):
         ]
 
     async def fetch_emojis(self) -> list[Emoji]:
-        """ `list[Emoji]`: Fetches all the emojis in the guild """
+        """ Fetches all the emojis in the guild """
         r = await self._state.query(
             "GET",
             f"/guilds/{self.id}/emojis"
@@ -796,7 +796,7 @@ class PartialGuild(PartialBase):
         ]
 
     async def fetch_soundboard_sounds(self) -> list[SoundboardSound]:
-        """ `list[SoundboardSound]`: Fetches all the soundboard sounds in the guild """
+        """ Fetches all the soundboard sounds in the guild """
         r = await self._state.query(
             "GET",
             f"/guilds/{self.id}/soundboard-sounds"
@@ -1802,12 +1802,12 @@ class PartialGuild(PartialBase):
         )
 
     async def fetch_soundboard_sound(self, sound_id: int) -> SoundboardSound:
-        """ `SoundboardSound`: Fetches a soundboard sound from the guild """
+        """ Fetches a soundboard sound from the guild """
         sound = self.get_partial_soundboard_sound(sound_id)
         return await sound.fetch()
 
     async def fetch_emoji(self, emoji_id: int) -> Emoji:
-        """ `Emoji`: Fetches an emoji from the guild """
+        """ Fetches an emoji from the guild """
         emoji = self.get_partial_emoji(emoji_id)
         return await emoji.fetch()
 
@@ -1973,7 +1973,7 @@ class PartialGuild(PartialBase):
                 )
 
     async def fetch_regions(self) -> list["VoiceRegion"]:
-        """ `list[VoiceRegion]`: Fetches all the voice regions for the guild """
+        """ Fetches all the voice regions for the guild """
         r = await self._state.query(
             "GET",
             f"/guilds/{self.id}/regions"
@@ -1985,7 +1985,7 @@ class PartialGuild(PartialBase):
         ]
 
     async def fetch_invites(self) -> list["Invite"]:
-        """ `list[Invite]`: Fetches all the invites for the guild """
+        """ Fetches all the invites for the guild """
         r = await self._state.query(
             "GET",
             f"/guilds/{self.id}/invites"
@@ -2158,7 +2158,7 @@ class PartialGuild(PartialBase):
         )
 
     async def fetch_channels(self) -> list[type["BaseChannel"]]:
-        """ `list[BaseChannel]`: Fetches all the channels in the guild """
+        """ Fetches all the channels in the guild """
         r = await self._state.query(
             "GET",
             f"/guilds/{self.id}/channels"
@@ -2648,7 +2648,7 @@ class Guild(PartialGuild):
 
     @property
     def emojis_limit(self) -> int:
-        """ `int`: The maximum amount of emojis the guild can have """
+        """ The maximum amount of emojis the guild can have """
         return max(
             200 if "MORE_EMOJI" in self.features else 50,
             self._GUILD_LIMITS[self.premium_tier].emojis
@@ -2656,7 +2656,7 @@ class Guild(PartialGuild):
 
     @property
     def stickers_limit(self) -> int:
-        """ `int`: The maximum amount of stickers the guild can have """
+        """ The maximum amount of stickers the guild can have """
         return max(
             60 if "MORE_STICKERS" in self.features else 0,
             self._GUILD_LIMITS[self.premium_tier].stickers
@@ -2664,7 +2664,7 @@ class Guild(PartialGuild):
 
     @property
     def bitrate_limit(self) -> int:
-        """ `float`: The maximum bitrate the guild can have """
+        """ The maximum bitrate the guild can have """
         return max(
             self._GUILD_LIMITS[1].bitrate if "VIP_REGIONS" in self.features else 96_000,
             self._GUILD_LIMITS[self.premium_tier].bitrate
@@ -2672,26 +2672,26 @@ class Guild(PartialGuild):
 
     @property
     def filesize_limit(self) -> int:
-        """ `int`: The maximum filesize the guild can have """
+        """ The maximum filesize the guild can have """
         return self._GUILD_LIMITS[self.premium_tier].filesize
 
     @property
     def icon(self) -> Optional[Asset]:
-        """ `Optional[Asset]`: The guild's icon """
+        """ The guild's icon """
         if self._icon is None:
             return None
         return Asset._from_guild_image(self._state, self.id, self._icon, path="icons")
 
     @property
     def banner(self) -> Optional[Asset]:
-        """ `Optional[Asset]`: The guild's banner """
+        """ The guild's banner """
         if self._banner is None:
             return None
         return Asset._from_guild_image(self._state, self.id, self._banner, path="banners")
 
     @property
     def default_role(self) -> Role:
-        """ `Role`: The guild's default role, which is always provided """
+        """ The guild's default role, which is always provided """
         role = self.get_role(self.id)
         if not role:
             raise ValueError("The default Guild role was somehow not found...?")
@@ -2699,7 +2699,7 @@ class Guild(PartialGuild):
 
     @property
     def premium_subscriber_role(self) -> Optional[Role]:
-        """ `Optional[Role]`: The guild's premium subscriber role if available """
+        """ The guild's premium subscriber role if available """
         return next(
             (r for r in self.roles if isinstance(r, Role) and r.is_premium_subscriber()),
             None
@@ -2707,7 +2707,7 @@ class Guild(PartialGuild):
 
     @property
     def self_role(self) -> Optional[Role]:
-        """ `Optional[Role]`: The guild's bot role if available """
+        """ The guild's bot role if available """
         return next(
             (
                 r for r in self.roles

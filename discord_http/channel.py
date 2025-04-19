@@ -120,7 +120,7 @@ class PartialChannel(PartialBase):
 
     @property
     def mention(self) -> str:
-        """ `str`: The channel's mention """
+        """ The channel's mention """
         return f"<#{self.id}>"
 
     @property
@@ -206,7 +206,7 @@ class PartialChannel(PartialBase):
 
     @property
     def type(self) -> ChannelType:
-        """ `ChannelType`: Returns the channel's type """
+        """ Returns the channel's type """
         return self._raw_type
 
     def get_partial_message(self, message_id: int) -> "PartialMessage":
@@ -558,7 +558,7 @@ class PartialChannel(PartialBase):
         return temp_class._class_to_return(data=data, state=state)  # type: ignore
 
     async def fetch(self) -> "BaseChannel":
-        """ `BaseChannel`: Fetches the channel and returns the channel object """
+        """ Fetches the channel and returns the channel object """
         r = await self._state.query(
             "GET",
             f"/channels/{self.id}"
@@ -1587,12 +1587,12 @@ class BaseChannel(PartialChannel):
 
     @property
     def mention(self) -> str:
-        """ `str`: The channel's mention """
+        """ The channel's mention """
         return f"<#{self.id}>"
 
     @property
     def type(self) -> ChannelType:
-        """ `ChannelType`: Returns the channel's type """
+        """ Returns the channel's type """
         return ChannelType.guild_text
 
     @classmethod
@@ -1637,7 +1637,7 @@ class TextChannel(BaseChannel):
 
     @property
     def type(self) -> ChannelType:
-        """ `ChannelType`: Returns the channel's type """
+        """ Returns the channel's type """
         if self._raw_type == 0:
             return ChannelType.guild_text
         return ChannelType.guild_news
@@ -1675,12 +1675,12 @@ class DMChannel(BaseChannel):
 
     @property
     def type(self) -> ChannelType:
-        """ `ChannelType`: Returns the channel's type """
+        """ Returns the channel's type """
         return ChannelType.dm
 
     @property
     def mention(self) -> str:
-        """ `str`: The channel's mention """
+        """ The channel's mention """
         return f"<@{self.id}>"
 
     async def edit(self, *args, **kwargs) -> None:
@@ -1704,7 +1704,7 @@ class StoreChannel(BaseChannel):
 
     @property
     def type(self) -> ChannelType:
-        """ `ChannelType`: Returns the channel's type """
+        """ Returns the channel's type """
         return ChannelType.guild_store
 
 
@@ -1717,7 +1717,7 @@ class GroupDMChannel(BaseChannel):
 
     @property
     def type(self) -> ChannelType:
-        """ `ChannelType`: Returns the channel's type """
+        """ Returns the channel's type """
         return ChannelType.group_dm
 
 
@@ -1730,7 +1730,7 @@ class DirectoryChannel(BaseChannel):
 
     @property
     def type(self) -> ChannelType:
-        """ `ChannelType`: Returns the channel's type """
+        """ Returns the channel's type """
         return ChannelType.guild_directory
 
 
@@ -1743,7 +1743,7 @@ class CategoryChannel(BaseChannel):
 
     @property
     def type(self) -> ChannelType:
-        """ `ChannelType`: Returns the channel's type """
+        """ Returns the channel's type """
         return ChannelType.guild_category
 
     @property
@@ -1898,7 +1898,7 @@ class NewsChannel(BaseChannel):
 
     @property
     def type(self) -> ChannelType:
-        """ `ChannelType`: Returns the channel's type """
+        """ Returns the channel's type """
         return ChannelType.guild_news
 
 
@@ -1922,7 +1922,7 @@ class PartialThread(PartialChannel):
 
     @property
     def type(self) -> ChannelType:
-        """ `ChannelType`: Returns the channel's type """
+        """ Returns the channel's type """
         return self._raw_type
 
 
@@ -1954,12 +1954,12 @@ class PublicThread(BaseChannel):
 
     @property
     def type(self) -> ChannelType:
-        """ `ChannelType`: Returns the channel's type """
+        """ Returns the channel's type """
         return ChannelType.guild_public_thread
 
     @property
     def guild(self) -> "Guild | PartialGuild | None":
-        """ `PartialGuild`: Returns a partial guild object """
+        """ Returns a partial guild object """
         if not self.guild_id:
             return None
 
@@ -1972,7 +1972,7 @@ class PublicThread(BaseChannel):
 
     @property
     def owner(self) -> Optional["PartialUser"]:
-        """ `PartialUser`: Returns a partial user object """
+        """ Returns a partial user object """
         if not self.owner_id:
             return None
 
@@ -1981,7 +1981,7 @@ class PublicThread(BaseChannel):
 
     @property
     def last_message(self) -> Optional["PartialMessage"]:
-        """ `Optional[PartialMessage]`: Returns a partial message object if the last message ID is available """
+        """ Returns a partial message object if the last message ID is available """
         if not self.last_message_id:
             return None
 
@@ -2099,7 +2099,7 @@ class ForumChannel(PublicThread):
 
     @property
     def type(self) -> ChannelType:
-        """ `ChannelType`: Returns the channel's type """
+        """ Returns the channel's type """
         return ChannelType.guild_forum
 
     def _from_data(self, data: dict):
@@ -2135,7 +2135,7 @@ class ForumThread(PublicThread):
 
     @property
     def type(self) -> ChannelType:
-        """ `ChannelType`: Returns the channel's type """
+        """ Returns the channel's type """
         return ChannelType.guild_public_thread
 
 
@@ -2148,7 +2148,7 @@ class NewsThread(PublicThread):
 
     @property
     def type(self) -> ChannelType:
-        """ `ChannelType`: Returns the channel's type """
+        """ Returns the channel's type """
         return ChannelType.guild_news_thread
 
 
@@ -2158,7 +2158,7 @@ class PrivateThread(PublicThread):
 
     @property
     def type(self) -> ChannelType:
-        """ `ChannelType`: Returns the channel's type """
+        """ Returns the channel's type """
         return ChannelType.guild_private_thread
 
 
@@ -2168,7 +2168,7 @@ class Thread(PublicThread):
 
     @property
     def type(self) -> ChannelType:
-        """ `ChannelType`: Returns the channel's type """
+        """ Returns the channel's type """
         if self._raw_type == 11:
             return ChannelType.guild_public_thread
         return ChannelType.guild_private_thread
@@ -2203,7 +2203,7 @@ class VoiceChannel(BaseChannel):
 
     @property
     def type(self) -> ChannelType:
-        """ `ChannelType`: Returns the channel's type """
+        """ Returns the channel's type """
         return ChannelType.guild_voice
 
 

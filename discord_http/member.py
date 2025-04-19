@@ -69,11 +69,11 @@ class PartialMember(PartialBase):
 
     @property
     def default_avatar(self) -> Asset:
-        """ `Asset`: Alias for `User.default_avatar` """
+        """ Alias for `User.default_avatar` """
         return self._user.default_avatar
 
     async def fetch(self) -> "Member":
-        """ `Fetch`: Fetches the member from the API """
+        """ Fetches the member from the API """
         r = await self._state.query(
             "GET",
             f"/guilds/{self.guild_id}/members/{self.id}"
@@ -155,7 +155,7 @@ class PartialMember(PartialBase):
         )
 
     async def create_dm(self) -> "DMChannel":
-        """ `DMChannel`: Create a DM channel with the user """
+        """ Create a DM channel with the user """
         return await self._user.create_dm()
 
     async def ban(
@@ -346,7 +346,7 @@ class PartialMember(PartialBase):
 
     @property
     def mention(self) -> str:
-        """ `str`: The mention of the member """
+        """ The mention of the member """
         return f"<@!{self.id}>"
 
 
@@ -415,7 +415,7 @@ class Member(PartialMember):
 
     @property
     def roles(self) -> list[Role | PartialRole]:
-        """ `list[Role | PartialRole]`: Returns the roles of the member """
+        """ Returns the roles of the member """
         if self.guild.roles:
             # If there is a guild cache, we could potentially return full Role object
             g_roles = [r.id for r in self._roles]
@@ -449,7 +449,7 @@ class Member(PartialMember):
         ), None)
 
     def is_timed_out(self) -> bool:
-        """ `bool`: Returns whether the member is timed out or not """
+        """ Returns whether the member is timed out or not """
         if self.communication_disabled_until is None:
             return False
         return utils.utcnow() < self.communication_disabled_until
@@ -528,17 +528,17 @@ class Member(PartialMember):
 
     @property
     def name(self) -> str:
-        """ `str`: Returns the username of the member """
+        """ Returns the username of the member """
         return self._user.name
 
     @property
     def bot(self) -> bool:
-        """ `bool`: Returns whether the member is a bot """
+        """ Returns whether the member is a bot """
         return self._user.bot
 
     @property
     def system(self) -> bool:
-        """ `bool`: Returns whether the member is a system user """
+        """ Returns whether the member is a system user """
         return self._user.system
 
     @property
@@ -556,12 +556,12 @@ class Member(PartialMember):
 
     @property
     def public_flags(self) -> UserFlags:
-        """ `int`: Returns the public flags of the member """
+        """ Returns the public flags of the member """
         return self._user.public_flags or UserFlags(0)
 
     @property
     def avatar_decoration(self) -> Optional[Asset]:
-        """ `Optional[Asset]`: Returns the avatar decoration of the member """
+        """ Returns the avatar decoration of the member """
         return self._user.avatar_decoration
 
     @property
@@ -573,22 +573,22 @@ class Member(PartialMember):
 
     @property
     def global_avatar(self) -> Optional[Asset]:
-        """ `Optional[Asset]`: Shortcut for `User.avatar` """
+        """ Shortcut for `User.avatar` """
         return self._user.avatar
 
     @property
     def global_banner(self) -> Optional[Asset]:
-        """ `Optional[Asset]`: Shortcut for `User.banner` """
+        """ Shortcut for `User.banner` """
         return self._user.banner
 
     @property
     def display_name(self) -> str:
-        """ `str`: Returns the display name of the member """
+        """ Returns the display name of the member """
         return self.nick or self.global_name or self.name
 
     @property
     def display_banner(self) -> Asset | None:
-        """ `Asset`: Returns the display banner of the member """
+        """ Returns the display banner of the member """
         return (
             self.banner or
             self.global_banner
@@ -596,7 +596,7 @@ class Member(PartialMember):
 
     @property
     def display_avatar(self) -> Asset:
-        """ `Asset`: Returns the display avatar of the member """
+        """ Returns the display avatar of the member """
         return (
             self.avatar or
             self.global_avatar or
@@ -633,7 +633,7 @@ class PartialThreadMember(PartialMember):
 
     @property
     def thread(self) -> "PartialChannel | Thread":
-        """ `PartialChannel | Thread"`: The thread the member is in """
+        """ The thread the member is in """
         return (
             self.guild.get_channel(self.thread_id) or
             self.guild.get_partial_channel(self.thread_id)
@@ -660,7 +660,7 @@ class ThreadMember(Member):
 
     @property
     def thread(self) -> "PartialChannel | Thread":
-        """ `PartialChannel | Thread"`: The thread the member is in """
+        """ The thread the member is in """
         return (
             self.guild.get_channel(self.thread_id) or
             self.guild.get_partial_channel(self.thread_id)

@@ -16,7 +16,7 @@ class MultipartData:
 
     @property
     def content_type(self) -> str:
-        """ `str`: The content type of the multipart data """
+        """ The content type of the multipart data """
         return f"multipart/form-data; boundary={self.boundary}"
 
     def attach(
@@ -82,6 +82,6 @@ class MultipartData:
         return None
 
     def finish(self) -> bytes:
-        """ `bytes`: Return the multipart data to be sent to Discord """
+        """ Return the multipart data to be sent to Discord """
         self.bufs.append(f"\r\n--{self.boundary}--\r\n".encode())
         return b"".join(self.bufs)

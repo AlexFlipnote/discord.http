@@ -102,7 +102,7 @@ class CooldownCache:
         )
 
     def create_bucket(self) -> "Cooldown":
-        """ `Cooldown`: Creates a new cooldown bucket. """
+        """ Creates a new cooldown bucket. """
         return self._cooldown.copy()
 
     def get_bucket(
@@ -271,5 +271,5 @@ class Cooldown:
         self._last = 0.0
 
     def copy(self) -> "Cooldown":
-        """ `Cooldown`: Copies the cooldown. """
+        """ Copies the cooldown. """
         return Cooldown(self.rate, self.per)

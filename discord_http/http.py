@@ -336,7 +336,7 @@ class DiscordAPI:
         return value
 
     def create_jitter(self) -> float:
-        """ `float`: Simply returns a random float between 0 and 1 """
+        """ Simply returns a random float between 0 and 1 """
         return random.random()
 
     @overload

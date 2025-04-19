@@ -51,7 +51,7 @@ class File:
 
     @property
     def filename(self) -> str:
-        """ `str`: The filename of the file """
+        """ The filename of the file """
         return f"{'SPOILER_' if self.spoiler else ''}{self._filename}"
 
     def reset(self, *, seek: int | bool = True) -> None:
@@ -66,7 +66,7 @@ class File:
             self.data.close()
 
     def to_dict(self, index: int) -> dict:
-        """ `dict`: The file as a dictionary """
+        """ The file as a dictionary """
         payload = {
             "id": index,
             "filename": self.filename

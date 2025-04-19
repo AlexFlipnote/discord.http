@@ -45,13 +45,13 @@ class Ping(Snowflake):
 
     @property
     def application(self) -> "PartialUser":
-        """ `User`: Returns the user object of the bot """
+        """ Returns the user object of the bot """
         from .user import PartialUser
         return PartialUser(state=self._state, id=self.application_id)
 
     @property
     def user(self) -> "User":
-        """ `User`: Returns the user object of the bot """
+        """ Returns the user object of the bot """
         from .user import User
         return User(state=self._state, data=self._raw_user)
 
@@ -62,7 +62,7 @@ class BaseResponse:
 
     @property
     def content_type(self) -> str:
-        """ `str`: Returns the content type of the response """
+        """ Returns the content type of the response """
         multidata = MultipartData()
         return multidata.content_type
 
@@ -91,7 +91,7 @@ class DeferResponse(BaseResponse):
             self.flags |= MessageFlags.ephemeral
 
     def to_dict(self) -> dict:
-        """ `dict`: Returns the response as a `dict` """
+        """ Returns the response as a `dict` """
         return {
             "type": (
                 int(ResponseType.deferred_channel_message_with_source)
@@ -103,7 +103,7 @@ class DeferResponse(BaseResponse):
         }
 
     def to_multipart(self) -> bytes:
-        """ `bytes`: Returns the response as a `bytes` """
+        """ Returns the response as a `bytes` """
         multidata = MultipartData()
         multidata.attach("payload_json", self.to_dict())
 
@@ -118,7 +118,7 @@ class AutocompleteResponse(BaseResponse):
         self.choices = choices
 
     def to_dict(self) -> dict:
-        """ `dict`: Returns the response as a `dict` """
+        """ Returns the response as a `dict` """
         return {
             "type": int(ResponseType.application_command_autocomplete_result),
             "data": {
@@ -130,7 +130,7 @@ class AutocompleteResponse(BaseResponse):
         }
 
     def to_multipart(self) -> bytes:
-        """ `bytes`: Returns the response as a `bytes` """
+        """ Returns the response as a `bytes` """
         multidata = MultipartData()
         multidata.attach("payload_json", self.to_dict())
 
@@ -142,14 +142,14 @@ class ModalResponse(BaseResponse):
         self.modal = modal
 
     def to_dict(self) -> dict:
-        """ `dict`: Returns the response as a `dict` """
+        """ Returns the response as a `dict` """
         return {
             "type": int(ResponseType.modal),
             "data": self.modal.to_dict()
         }
 
     def to_multipart(self) -> bytes:
-        """ `bytes`: Returns the response as a `bytes` """
+        """ Returns the response as a `bytes` """
         multidata = MultipartData()
         multidata.attach("payload_json", self.to_dict())
 
@@ -161,11 +161,11 @@ class EmptyResponse(BaseResponse):
         pass
 
     def to_dict(self) -> dict:
-        """ `dict`: Returns the response as a `dict` """
+        """ Returns the response as a `dict` """
         return {}
 
     def to_multipart(self) -> bytes:
-        """ `bytes`: Returns the response as a `bytes` """
+        """ Returns the response as a `bytes` """
         return b""
 
 

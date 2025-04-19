@@ -24,7 +24,7 @@ class PartialVoiceState(PartialBase):
         self,
         *,
         state: "DiscordAPI",
-        id: int,
+        id: int,  # noqa: A002
         channel_id: int | None = None,
         guild_id: int | None = None,
     ):
@@ -38,11 +38,10 @@ class PartialVoiceState(PartialBase):
 
     async def fetch(self) -> "VoiceState":
         """
-        Fetches the voice state of the member
+        Fetches the voice state of the member.
 
         Returns
         -------
-        `VoiceState`
             The voice state of the member
 
         Raises
@@ -59,16 +58,16 @@ class PartialVoiceState(PartialBase):
             f"/guilds/{self.guild_id}/voice-states/{self.id}"
         )
 
-        _guild = self._state.cache.get_guild(self.guild_id)
-        _channel = None
+        guild = self._state.cache.get_guild(self.guild_id)
+        channel = None
         if self.channel_id is not None:
-            _channel = self._state.cache.get_channel(self.guild_id, self.channel_id)
+            channel = self._state.cache.get_channel(self.guild_id, self.channel_id)
 
         return VoiceState(
             state=self._state,
             data=r.response,
-            guild=_guild,
-            channel=_channel
+            guild=guild,
+            channel=channel
         )
 
     async def edit(
@@ -77,11 +76,11 @@ class PartialVoiceState(PartialBase):
         suppress: bool = MISSING,
     ) -> None:
         """
-        Updates the voice state of the member
+        Updates the voice state of the member.
 
         Parameters
         ----------
-        suppress: `bool`
+        suppress:
             Whether to suppress the user
         """
         if not self.guild_id:
@@ -139,7 +138,7 @@ class VoiceState(PartialVoiceState):
         return f"<VoiceState id={self.user} session_id='{self.session_id}'>"
 
     def _from_data(self, data: dict) -> None:
-        if data.get("member", None) and self.guild:
+        if data.get("member") and self.guild:
             from .member import Member
             self.member = Member(
                 state=self._state,
@@ -147,7 +146,7 @@ class VoiceState(PartialVoiceState):
                 data=data["member"]
             )
 
-        if data.get("request_to_speak_timestamp", None):
+        if data.get("request_to_speak_timestamp"):
             self.request_to_speak_timestamp = utils.parse_time(
                 data["request_to_speak_timestamp"]
             )

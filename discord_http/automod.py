@@ -186,7 +186,7 @@ class PartialAutoModRule(PartialBase):
 
     @property
     def guild(self) -> "Guild | PartialGuild | None":
-        """ `PartialGuild`: The guild object this event is in """
+        """ The guild object this event is in """
         if not self.guild_id:
             return None
 
@@ -198,7 +198,7 @@ class PartialAutoModRule(PartialBase):
         return PartialGuild(state=self._state, id=self.guild_id)
 
     async def fetch(self) -> "AutoModRule":
-        """ `AutoModRule`: Fetches more information about the automod rule """
+        """ Fetches more information about the automod rule """
         r = await self._state.query(
             "GET",
             f"/guilds/{self.guild_id}/auto-moderation/rules/{self.id}"
@@ -411,7 +411,7 @@ class AutoModRule(PartialAutoModRule):
 
     @property
     def creator(self) -> PartialUser:
-        """ `PartialUser`: The user that created the automod rule in User object form """
+        """ The user that created the automod rule in User object form """
         return PartialUser(
             state=self._state,
             id=self.creator_id

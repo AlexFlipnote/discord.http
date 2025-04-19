@@ -35,7 +35,7 @@ class PartialSticker(PartialBase):
         return f"<PartialSticker id={self.id}>"
 
     async def fetch(self) -> "Sticker":
-        """ `Sticker`: Returns the sticker data """
+        """ Returns the sticker data """
         r = await self._state.query(
             "GET",
             f"/stickers/{self.id}"
@@ -174,7 +174,7 @@ class PartialSticker(PartialBase):
 
     @property
     def url(self) -> str:
-        """ `str`: Returns the sticker's URL """
+        """ Returns the sticker's URL """
         return f"https://media.discordapp.net/stickers/{self.id}.png"
 
 
@@ -213,7 +213,7 @@ class Sticker(PartialSticker):
 
     @property
     def url(self) -> str:
-        """ `str`: Returns the sticker's URL """
+        """ Returns the sticker's URL """
         format = "png"
         if self.format_type == StickerFormatType.gif:
             format = "gif"

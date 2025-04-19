@@ -270,7 +270,7 @@ class AutomodExecution:
 
     @property
     def rule(self) -> PartialAutoModRule:
-        """ `PartialAutoModRule`: Returns a partial object of automod rule """
+        """ Returns a partial object of automod rule """
         return PartialAutoModRule(
             state=self._state,
             id=self.rule_id,
@@ -352,7 +352,7 @@ class Reaction:
 
     @property
     def guild(self) -> "Guild | PartialGuild | None":
-        """ `PartialGuild` | `None`: The guild the message was sent in """
+        """ The guild the message was sent in """
         if not self.guild_id:
             return None
 
@@ -390,7 +390,7 @@ class Reaction:
 
     @property
     def message(self) -> "PartialMessage | None":
-        """ `PartialMessage` | `None`: Returns the message if a message_id is available """
+        """ Returns the message if a message_id is available """
         if not self.channel_id or not self.message_id:
             return None
 
@@ -555,13 +555,13 @@ class ThreadMembersUpdatePayload:
 
     @property
     def guild(self) -> "PartialGuild":
-        """ `PartialGuild`: The guild the thread is in """
+        """ The guild the thread is in """
         bot = self._state.bot
         return bot.cache.get_guild(self.guild_id) or bot.get_partial_guild(self.guild_id)
 
     @property
     def thread(self) -> "PartialChannel | Thread":
-        """ `PartialChannel` | `Thread`: The thread the members were updated in """
+        """ The thread the members were updated in """
         return self.guild.get_channel(self.id) or self.guild.get_partial_channel(self.id)
 
     @property

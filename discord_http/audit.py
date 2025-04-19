@@ -391,7 +391,7 @@ class AuditLogEntry(Snowflake):
 
     @property
     def user(self) -> User | PartialUser | None:
-        """ `User`: Returns the user object of the audit log if available """
+        """ Returns the user object of the audit log if available """
         if not self.user_id:
             return None
         return self._convert_target_user(self.user_id)

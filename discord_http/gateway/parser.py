@@ -68,7 +68,7 @@ class GuildMembersChunk:
 
     @property
     def guild(self) -> "Guild | PartialGuild":
-        """ `Guild | PartialGuild`: The guild the chunk belongs to """
+        """ The guild the chunk belongs to """
         return self._state.cache.get_guild(self.guild_id) or PartialGuild(
             state=self._state,
             id=self.guild_id
@@ -116,7 +116,7 @@ class GuildMembersChunk:
                     )
 
     async def wait(self) -> list["Member"]:
-        """ `list[Member]`: Waits for the chunk to be ready """
+        """ Waits for the chunk to be ready """
         future = self._state.bot.loop.create_future()
         self._waiters.append(future)
         try:
@@ -125,7 +125,7 @@ class GuildMembersChunk:
             self._waiters.remove(future)
 
     def get_future(self) -> asyncio.Future[list[Member]]:
-        """ `asyncio.Future[list[Member]]`: Returns the future for the chunk """
+        """ Returns the future for the chunk """
         future = self._state.bot.loop.create_future()
         self._waiters.append(future)
         return future

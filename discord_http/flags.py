@@ -38,12 +38,12 @@ class BaseFlag(_FlagPyMeta):
 
     @classmethod
     def all(cls) -> Self:
-        """ `BaseFlag`: Returns a flag with all the flags """
+        """ Returns a flag with all the flags """
         return cls(sum([int(g) for g in cls.__members__.values()]))
 
     @classmethod
     def none(cls) -> Self:
-        """ `BaseFlag`: Returns a flag with no flags """
+        """ Returns a flag with no flags """
         return cls(0)
 
     @classmethod
@@ -71,14 +71,14 @@ class BaseFlag(_FlagPyMeta):
 
     @property
     def list_names(self) -> list[str]:
-        """ `list[str]`: Returns a list of all the names of the flag """
+        """ Returns a list of all the names of the flag """
         return [
             g.name or "UNKNOWN"
             for g in self
         ]
 
     def to_names(self) -> list[str]:
-        """ `list[str]`: Returns the current names of the flag """
+        """ Returns the current names of the flag """
         return [
             name for name, member in self.__class__.__members__.items()
             if member in self
@@ -165,7 +165,7 @@ class BaseFlag(_FlagPyMeta):
         return self
 
     def copy(self) -> Self:
-        """ `BaseFlag`: Returns a copy of the flag """
+        """ Returns a copy of the flag """
         return self.__class__(self.value)
 
 
@@ -360,11 +360,11 @@ class PermissionOverwrite:
         )
 
     def is_role(self) -> bool:
-        """ `bool`: Returns whether the overwrite is a role overwrite """
+        """ Returns whether the overwrite is a role overwrite """
         return self.target_type == PermissionType.role
 
     def is_member(self) -> bool:
-        """ `bool`: Returns whether the overwrite is a member overwrite """
+        """ Returns whether the overwrite is a member overwrite """
         return self.target_type == PermissionType.member
 
     @classmethod
@@ -385,7 +385,7 @@ class PermissionOverwrite:
         }
 
     def copy(self) -> Self:
-        """ `BaseFlag`: Returns a copy of the flag """
+        """ Returns a copy of the flag """
         return self.__class__(
             target=self.target,
             allow=self.allow,

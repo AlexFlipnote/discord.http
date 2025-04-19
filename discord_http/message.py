@@ -157,7 +157,7 @@ class JumpURL:
 
     @property
     def guild(self) -> Optional["Guild | PartialGuild"]:
-        """ `Optional[PartialGuild]`: The guild the message was sent in """
+        """ The guild the message was sent in """
         if not self.guild_id:
             return None
 
@@ -172,7 +172,7 @@ class JumpURL:
         )
 
     async def fetch_guild(self) -> "Guild":
-        """ `Optional[Guild]`: Returns the guild the message was sent in """
+        """ Returns the guild the message was sent in """
         if not self.guild_id:
             raise ValueError("Cannot fetch a guild without a guild_id available")
 
@@ -204,12 +204,12 @@ class JumpURL:
         )
 
     async def fetch_channel(self) -> "BaseChannel":
-        """ `BaseChannel`: Returns the channel the message was sent in """
+        """ Returns the channel the message was sent in """
         return await self.channel.fetch()
 
     @property
     def message(self) -> Optional["PartialMessage"]:
-        """ `Optional[PartialMessage]`: Returns the message if a message_id is available """
+        """ Returns the message if a message_id is available """
         if not self.channel_id or not self.message_id:
             return None
 
@@ -221,7 +221,7 @@ class JumpURL:
         )
 
     async def fetch_message(self) -> "Message":
-        """ `Message`: Returns the message if a message_id is available """
+        """ Returns the message if a message_id is available """
         if not self.message_id:
             raise ValueError("Cannot fetch a message without a message_id available")
 
@@ -229,7 +229,7 @@ class JumpURL:
 
     @property
     def url(self) -> str:
-        """ `Optional[str]`: Returns the jump URL """
+        """ Returns the jump URL """
         if self.channel_id and self.message_id:
             return f"https://discord.com/channels/{self.guild_id or '@me'}/{self.channel_id}/{self.message_id}"
         return f"https://discord.com/channels/{self.guild_id or '@me'}/{self.channel_id}"
@@ -447,7 +447,7 @@ class MessageReference:
 
     @property
     def jump_url(self) -> JumpURL:
-        """ `JumpURL`: The jump URL of the message """
+        """ The jump URL of the message """
         return JumpURL(
             state=self._state,
             url=f"https://discord.com/channels/{self.guild_id or '@me'}/{self.channel_id}/{self.message_id}"
@@ -455,7 +455,7 @@ class MessageReference:
 
     @property
     def guild(self) -> "Guild | PartialGuild | None":
-        """ `Optional[PartialGuild]`: The guild the message was sent in """
+        """ The guild the message was sent in """
         if not self.guild_id:
             return None
 
@@ -471,7 +471,7 @@ class MessageReference:
 
     @property
     def channel(self) -> "PartialChannel | None":
-        """ `Optional[PartialChannel]`: Returns the channel the message was sent in """
+        """ Returns the channel the message was sent in """
         if not self.channel_id:
             return None
 
@@ -493,7 +493,7 @@ class MessageReference:
 
     @property
     def message(self) -> "PartialMessage | None":
-        """ `Optional[PartialMessage]`: Returns the message if a message_id and channel_id is available """
+        """ Returns the message if a message_id and channel_id is available """
         if not self.channel_id or not self.message_id:
             return None
 
@@ -505,7 +505,7 @@ class MessageReference:
         )
 
     def to_dict(self) -> dict:
-        """ `dict`: Returns the message reference as a dictionary """
+        """ Returns the message reference as a dictionary """
         payload = {}
 
         if self.guild_id:
@@ -556,7 +556,7 @@ class Attachment:
         )
 
     def is_spoiler(self) -> bool:
-        """ `bool`: Whether the attachment is a spoiler or not """
+        """ Whether the attachment is a spoiler or not """
         return self.filename.startswith("SPOILER_")
 
     def is_voice_message(self) -> bool:
@@ -653,7 +653,7 @@ class Attachment:
         )
 
     def to_dict(self) -> dict:
-        """ `dict`: The attachment as a dictionary """
+        """ The attachment as a dictionary """
         data = {
             "id": self.id,
             "filename": self.filename,
@@ -702,7 +702,7 @@ class PartialMessage(PartialBase):
 
     @property
     def channel(self) -> "BaseChannel | PartialChannel":
-        """ `PartialChannel`: Returns the channel the message was sent in """
+        """ Returns the channel the message was sent in """
         if self.guild_id:
             cache = self._state.cache.get_channel_thread(
                 guild_id=self.guild_id,
@@ -721,7 +721,7 @@ class PartialMessage(PartialBase):
 
     @property
     def guild(self) -> "Guild | PartialGuild | None":
-        """ `PartialGuild` | `None`: Returns the guild the message was sent in """
+        """ Returns the guild the message was sent in """
         if not self.guild_id:
             return None
 
@@ -734,14 +734,14 @@ class PartialMessage(PartialBase):
 
     @property
     def jump_url(self) -> JumpURL:
-        """ `JumpURL`: Returns the jump URL of the message, GuildID will always be @me """
+        """ Returns the jump URL of the message, GuildID will always be @me """
         return JumpURL(
             state=self._state,
             url=f"https://discord.com/channels/@me/{self.channel_id}/{self.id}"
         )
 
     async def fetch(self) -> "Message":
-        """ `Message`: Returns the message object """
+        """ Returns the message object """
         r = await self._state.query(
             "GET",
             f"/channels/{self.channel.id}/messages/{self.id}"
@@ -1362,7 +1362,7 @@ class Message(PartialMessage):
                     )
 
     def is_system(self) -> bool:
-        """ `bool`: Returns whether the message is a system message """
+        """ Returns whether the message is a system message """
         return self.type not in (
             MessageType.default,
             MessageType.reply,
@@ -1373,7 +1373,7 @@ class Message(PartialMessage):
 
     @property
     def emojis(self) -> list[EmojiParser]:
-        """ `list[EmojiParser]`: Returns the emojis in the message """
+        """ Returns the emojis in the message """
         return [
             EmojiParser(f"<{e[0]}:{e[1]}:{e[2]}>")
             for e in utils.re_emoji.findall(self.content)
@@ -1381,7 +1381,7 @@ class Message(PartialMessage):
 
     @property
     def jump_url(self) -> JumpURL:
-        """ `JumpURL`: Returns the jump URL of the message """
+        """ Returns the jump URL of the message """
         return JumpURL(
             state=self._state,
             url=f"https://discord.com/channels/{self.guild_id or '@me'}/{self.channel_id}/{self.id}"
@@ -1422,7 +1422,7 @@ class Message(PartialMessage):
 
     @property
     def jump_urls(self) -> list[JumpURL]:
-        """ `list[JumpURL]`: Returns the jump URLs in the message """
+        """ Returns the jump URLs in the message """
         return [
             JumpURL(
                 state=self._state,

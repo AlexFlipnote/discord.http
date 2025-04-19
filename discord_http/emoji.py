@@ -83,20 +83,20 @@ class EmojiParser:
 
     @property
     def url(self) -> str | None:
-        """ `str`: Returns the URL of the emoji if it's a Discord emoji """
+        """ Returns the URL of the emoji if it's a Discord emoji """
         if self.discord_emoji:
             return f"{Asset.BASE}/emojis/{self.id}.{'gif' if self.animated else 'png'}"
         return None
 
     def to_dict(self) -> dict:
-        """ `dict`: Returns a dict representation of the emoji """
+        """ Returns a dict representation of the emoji """
         if self.discord_emoji:
             # Include animated if it's a Discord emoji
             return {"id": self.id, "name": self.name, "animated": self.animated}
         return {"name": self.name, "id": None}
 
     def to_forum_dict(self) -> dict:
-        """ `dict`: Returns a dict representation of emoji to forum/media channel """
+        """ Returns a dict representation of emoji to forum/media channel """
         payload = {
             "emoji_name": self.name,
             "emoji_id": None
@@ -108,7 +108,7 @@ class EmojiParser:
         return payload
 
     def to_reaction(self) -> str:
-        """ `str`: Returns a string representation of the emoji """
+        """ Returns a string representation of the emoji """
         if self.discord_emoji:
             return f"{self.name}:{self.id}"
         return self.name
@@ -132,7 +132,7 @@ class PartialEmoji(PartialBase):
 
     @property
     def guild(self) -> "Guild | PartialGuild | None":
-        """ `PartialGuild`: The guild of the member. """
+        """ The guild of the member. """
         if not self.guild_id:
             return None
 
@@ -319,5 +319,5 @@ class Emoji(PartialEmoji):
 
     @property
     def url(self) -> str:
-        """ `str`: Returns the URL of the emoji """
+        """ Returns the URL of the emoji """
         return f"{Asset.BASE}/emojis/{self.id}.{'gif' if self.animated else 'png'}"

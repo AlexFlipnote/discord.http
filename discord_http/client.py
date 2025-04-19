@@ -473,7 +473,7 @@ class Client:
         return self.cache.get_guild(guild_id)
 
     def is_ready(self) -> bool:
-        """ `bool`: Indicates if the client is ready. """
+        """ Indicates if the client is ready. """
         return (
             self._ready is not None and
             self._ready.is_set()
@@ -1560,7 +1560,7 @@ class Client:
         return await member.fetch()
 
     async def fetch_application_emojis(self) -> list[Emoji]:
-        """ `list[Emoji]`: Fetches all emojis available to the application. """
+        """ Fetches all emojis available to the application. """
         r = await self.state.query(
             "GET",
             f"/applications/{self.application_id}/emojis"
@@ -1624,7 +1624,7 @@ class Client:
         )
 
     async def fetch_skus(self) -> list[SKU]:
-        """ `list[SKU]`: Fetches all SKUs available to the bot. """
+        """ Fetches all SKUs available to the bot. """
         r = await self.state.query(
             "GET",
             f"/applications/{self.application_id}/skus"

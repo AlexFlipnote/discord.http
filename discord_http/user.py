@@ -41,7 +41,7 @@ class PartialUser(PartialBase):
 
     @property
     def mention(self) -> str:
-        """ `str`: Returns a string that allows you to mention the user """
+        """ Returns a string that allows you to mention the user """
         return f"<@!{self.id}>"
 
     async def send(
@@ -133,7 +133,7 @@ class PartialUser(PartialBase):
         return _msg
 
     async def create_dm(self) -> "DMChannel":
-        """ `DMChannel`: Creates a DM channel with the user """
+        """ Creates a DM channel with the user """
         r = await self._state.query(
             "POST",
             "/users/@me/channels",
@@ -147,7 +147,7 @@ class PartialUser(PartialBase):
         )
 
     async def fetch(self) -> "User":
-        """ `User`: Fetches the user """
+        """ Fetches the user """
         r = await self._state.query(
             "GET",
             f"/users/{self.id}"
@@ -160,7 +160,7 @@ class PartialUser(PartialBase):
 
     @property
     def default_avatar(self) -> Asset:
-        """ `Asset`: Returns the default avatar of the user """
+        """ Returns the default avatar of the user """
         return Asset._from_default_avatar(
             self._state,
             (self.id >> 22) % len(DefaultAvatarType)
@@ -240,17 +240,17 @@ class User(PartialUser):
 
     @property
     def global_avatar(self) -> Optional[Asset]:
-        """ `Asset`: Alias for `User.avatar` """
+        """ Alias for `User.avatar` """
         return self.avatar
 
     @property
     def display_name(self) -> str:
-        """ `str`: Returns the user's display name """
+        """ Returns the user's display name """
         return self.global_name or self.name
 
     @property
     def display_avatar(self) -> Asset:
-        """ `Asset`: Returns the display avatar of the member """
+        """ Returns the display avatar of the member """
         return self.avatar or self.default_avatar
 
 

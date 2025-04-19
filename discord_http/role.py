@@ -38,7 +38,7 @@ class PartialRole(PartialBase):
 
     @property
     def guild(self) -> "Guild | PartialGuild":
-        """ `PartialGuild`: Returns the guild this role is in """
+        """ Returns the guild this role is in """
         cache = self._state.cache.get_guild(self.guild_id)
         if cache:
             return cache
@@ -48,7 +48,7 @@ class PartialRole(PartialBase):
 
     @property
     def mention(self) -> str:
-        """ `str`: Returns a string that mentions the role """
+        """ Returns a string that mentions the role """
         return f"<@&{self.id}>"
 
     async def add_role(
@@ -286,7 +286,7 @@ class Role(PartialRole):
 
     @property
     def icon(self) -> Asset | None:
-        """ `Asset | None`: Returns the icon of the role if it's custom """
+        """ Returns the icon of the role if it's custom """
         if self._icon is None:
             return None
 
@@ -299,25 +299,25 @@ class Role(PartialRole):
 
     @property
     def display_icon(self) -> Asset | str | None:
-        """ `Asset | str | None`: Returns the display icon of the role """
+        """ Returns the display icon of the role """
         return self.icon or self.unicode_emoji
 
     def is_bot_managed(self) -> bool:
-        """ `bool`: Returns whether the role is bot managed """
+        """ Returns whether the role is bot managed """
         return self.bot_id is not None
 
     def is_integration(self) -> bool:
-        """ `bool`: Returns whether the role is an integration """
+        """ Returns whether the role is an integration """
         return self.integration_id is not None
 
     def is_premium_subscriber(self) -> bool:
-        """ `bool`: Returns whether the role is a premium subscriber """
+        """ Returns whether the role is a premium subscriber """
         return self._premium_subscriber
 
     def is_available_for_purchase(self) -> bool:
-        """ `bool`: Returns whether the role is available for purchase """
+        """ Returns whether the role is available for purchase """
         return self._available_for_purchase
 
     def is_guild_connection(self) -> bool:
-        """ `bool`: Returns whether the role is a guild connection """
+        """ Returns whether the role is a guild connection """
         return self._guild_connections

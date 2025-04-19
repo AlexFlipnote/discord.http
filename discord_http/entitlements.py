@@ -109,7 +109,7 @@ class PartialEntitlements(PartialBase):
         return f"<PartialEntitlements id={self.id}>"
 
     async def fetch(self) -> "Entitlements":
-        """ `Entitlements`: Fetches the entitlement. """
+        """ Fetches the entitlement. """
         r = await self._state.query(
             "GET",
             f"/applications/{self._state.application_id}/entitlements/{self.id}"
@@ -185,7 +185,7 @@ class Entitlements(PartialEntitlements):
 
     @property
     def guild(self) -> Guild | PartialGuild | None:
-        """ `PartialGuild | None`: Returns the guild the entitlement is in """
+        """ Returns the guild the entitlement is in """
         if not self.guild_id:
             return None
 
@@ -197,5 +197,5 @@ class Entitlements(PartialEntitlements):
         return PartialGuild(state=self._state, id=self.guild_id)
 
     def is_consumed(self) -> bool:
-        """ `bool`: Returns whether the entitlement is consumed or not. """
+        """ Returns whether the entitlement is consumed or not. """
         return bool(self._data_consumed)
