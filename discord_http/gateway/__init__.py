@@ -7,7 +7,7 @@ it was later expanded to also handle the gateway events.
 To get it working, you will need to use the `enable_gateway` parameter in the Client().
 """
 
-# ruff: noqa: F403, F401
+# ruff: noqa: F403
 from .activity import *
 from .cache import *
 from .client import *

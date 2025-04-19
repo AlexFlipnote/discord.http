@@ -1,3 +1,3 @@
-# ruff: noqa: F403, F401
+# ruff: noqa: F403
 from .channels import *
 from .guilds import *
