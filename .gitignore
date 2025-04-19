@@ -1,6 +1,7 @@
 # Custom ignore
 *.config.json
 config.json
+tests/*.json
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

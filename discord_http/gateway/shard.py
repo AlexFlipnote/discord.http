@@ -95,6 +95,8 @@ class Status:
 
     @property
     def ping(self) -> float:
+        if not self.can_resume():
+            return 0.0
         return self._last_recv - self._last_send
 
     def reset(self) -> None:
@@ -108,7 +110,11 @@ class Status:
     def update_sequence(self, sequence: int) -> None:
         self.sequence = sequence
 
-    def update_ready_data(self, data: dict) -> None:
+    def update_ready_data(self, data: dict | None) -> None:
+        if data is None:
+            # This should never really happen
+            return None
+
         self.session_id = data["session_id"]
         self.gateway = yarl.URL(data["resume_gateway_url"])
 

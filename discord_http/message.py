@@ -11,7 +11,7 @@ from .emoji import EmojiParser
 from .enums import MessageReferenceType, MessageType, InteractionType
 from .errors import HTTPException
 from .file import File
-from .flags import AttachmentFlags
+from .flags import AttachmentFlags, MessageFlags
 from .mentions import AllowedMentions
 from .object import PartialBase, Snowflake
 from .response import MessageResponse
@@ -889,7 +889,8 @@ class PartialMessage(PartialBase):
         view: Optional[View] = MISSING,
         attachment: Optional[File] = MISSING,
         attachments: Optional[list[File]] = MISSING,
-        allowed_mentions: Optional[AllowedMentions] = MISSING
+        allowed_mentions: Optional[AllowedMentions] = MISSING,
+        flags: Optional[MessageFlags] = MISSING
     ) -> "Message":
         """
         Edit the message
@@ -910,6 +911,8 @@ class PartialMessage(PartialBase):
             New attachments of the message
         allowed_mentions: `Optional[AllowedMentions]`
             Allowed mentions of the message
+        flags: `Optional[MessageFlags]`
+            Flags of the message
 
         Returns
         -------
@@ -923,6 +926,7 @@ class PartialMessage(PartialBase):
             view=view,
             attachment=attachment,
             attachments=attachments,
+            flags=flags,
             allowed_mentions=(
                 allowed_mentions or
                 self._state.bot._default_allowed_mentions
@@ -1286,7 +1290,10 @@ class Message(PartialMessage):
 
     def _from_data(self, data: dict):
         if data.get("components", None):
-            self.view = View.from_dict(data)
+            self.view = View.from_dict(
+                state=self._state,
+                data=data
+            )
 
         if data.get("message_reference", None):
             self.reference = MessageReference(
@@ -1442,6 +1449,7 @@ class WebhookMessage(Message):
         attachment: Optional[File] = MISSING,
         attachments: Optional[list[File]] = MISSING,
         view: Optional[View] = MISSING,
+        flags: Optional[MessageFlags] = MISSING,
         allowed_mentions: Optional[AllowedMentions] = MISSING
     ) -> "WebhookMessage":
         """
@@ -1463,6 +1471,8 @@ class WebhookMessage(Message):
             Components of the message
         allowed_mentions: `Optional[AllowedMentions]`
             Allowed mentions of the message
+        flags: `Optional[MessageFlags]`
+            Flags of the message
 
         Returns
         -------
@@ -1476,6 +1486,7 @@ class WebhookMessage(Message):
             view=view,
             attachment=attachment,
             attachments=attachments,
+            flags=flags,
             allowed_mentions=(
                 allowed_mentions or
                 self._state.bot._default_allowed_mentions

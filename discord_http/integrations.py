@@ -13,29 +13,29 @@ if TYPE_CHECKING:
 
 
 class IntegrationAccount:
-    """
-    Represents an integration's account.
-
-    Attributes
-    ----------
-    id: `int | str`
-        The ID of the account, can be either int or str.
-    name: `str`
-        The name of the account.
-    """
     def __init__(
         self,
         *,
         state: "DiscordAPI",
-        id: int | str,
-        name: str
+        data: dict,
     ) -> None:
         self._state = state
-        self.name: str = name
+        self.name: str = data.get("name", "")
 
-        self.id: str | int = str(id)
+        self.id: str | int = str(data["id"])
         if self.id.isdigit():
             self.id = int(self.id)
+
+    def __repr__(self) -> str:
+        return f"<IntegrationAccount id={self.id} name={self.name}>"
+
+    def __str__(self) -> str:
+        return self.name
+
+    def __int__(self) -> int:
+        if not isinstance(self.id, int):
+            raise TypeError("IntegrationAccount.id is not an int")
+        return self.id
 
 
 class IntegrationApplication(PartialBase):
@@ -261,19 +261,9 @@ class Integration(PartialIntegration):
         if not self._account:
             return None
 
-        if self.type != "discord":
-            # TODO: Make a better method to handle {type: youtube} data(?)
-            # Example:
-            # "account": {
-            #     "id": "UCFmE4R8CdklKgZDVPN6m",
-            #     "name": "InsertNameHere"
-            # }
-            return self._account
-
         return IntegrationAccount(
             state=self._state,
-            id=int(self._account["id"]),
-            name=self._account["name"]
+            data=self._account
         )
 
     @property

@@ -210,18 +210,19 @@ class MessageResponse(BaseResponse):
         if embed is not MISSING and embeds is not MISSING:
             raise TypeError("Cannot pass both embed and embeds")
         if embed is not MISSING:
-            if embed is None:
-                self.embeds = []
-            else:
-                self.embeds = [embed]
+            self.embeds = [embed]
 
         if attachment is not MISSING and attachments is not MISSING:
             raise TypeError("Cannot pass both attachment and attachments")
         if attachment is not MISSING:
-            if attachment is None:
-                self.attachments = []
-            else:
-                self.attachments = [attachment]
+            self.attachments = [attachment]
+
+        if embed is None or embeds is None:
+            self.embeds = []
+        if file is None or files is None:
+            self.files = []
+        if attachment is None or attachments is None:
+            self.attachments = []
 
         if self.view is not MISSING and self.view is None:
             self.view = View()
@@ -255,10 +256,15 @@ class MessageResponse(BaseResponse):
         }
 
         if self.content is not MISSING:
-            output["content"] = self.content
+            # Just force anything to a string, unless it's a None
+            output["content"] = (
+                str(self.content)
+                if self.content is not None
+                else None
+            )
 
         if self.tts:
-            output["tts"] = self.tts
+            output["tts"] = bool(self.tts)
 
         if self.message_reference is not MISSING:
             output["message_reference"] = self.message_reference.to_dict()
@@ -273,7 +279,10 @@ class MessageResponse(BaseResponse):
             output["poll"] = self.poll.to_dict()
 
         if self.view is not MISSING:
-            output["components"] = self.view.to_dict()
+            if not self.view.items:
+                output["components"] = []
+            else:
+                output["components"] = self.view.to_dict()
 
         if self.allowed_mentions is not MISSING:
             output["allowed_mentions"] = self.allowed_mentions.to_dict()

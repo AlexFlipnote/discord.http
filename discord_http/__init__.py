@@ -1,4 +1,4 @@
-__version__ = "2.1.4"
+__version__ = "2.2.0"
 
 # flake8: noqa: F401
 from .asset import *
@@ -30,7 +30,7 @@ from .role import *
 from .soundboard import *
 from .sticker import *
 from .user import *
-from .utils import MISSING, DISCORD_EPOCH, _MissingType
+from .utils import MISSING, DISCORD_EPOCH, _MissingType, DiscordTimestamp
 from .view import *
 from .voice import *
 from .webhook import *

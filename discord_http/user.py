@@ -249,8 +249,8 @@ class User(PartialUser):
         return self.global_name or self.name
 
     @property
-    def display_avatar(self) -> Optional[Asset]:
-        """ `Optional[Asset]`: Returns the display avatar of the member """
+    def display_avatar(self) -> Asset:
+        """ `Asset`: Returns the display avatar of the member """
         return self.avatar or self.default_avatar
 
 

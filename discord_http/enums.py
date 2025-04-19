@@ -36,6 +36,7 @@ __all__ = (
     "SKUType",
     "ScheduledEventEntityType",
     "ScheduledEventStatusType",
+    "SeparatorSpacingType",
     "SortOrderType",
     "StickerFormatType",
     "StickerType",
@@ -540,6 +541,8 @@ class StickerFormatType(BaseEnum):
 
 class ComponentType(BaseEnum):
     action_row = 1
+
+    # Components v1
     button = 2
     string_select = 3
     text_input = 4
@@ -547,6 +550,20 @@ class ComponentType(BaseEnum):
     role_select = 6
     mentionable_select = 7
     channel_select = 8
+
+    # Components v2
+    section = 9
+    text_display = 10
+    thumbnail = 11
+    media_gallery = 12
+    file = 13
+    separator = 14
+    container = 17
+
+
+class SeparatorSpacingType(BaseEnum):
+    small = 1
+    large = 2
 
 
 class ButtonStyles(BaseEnum):

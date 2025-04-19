@@ -1,4 +1,4 @@
-from discord_http import Context, Client, View, Button
+from discord_http import Context, Client, View, Button, ActionRow
 
 client = Client(
     token="BOT_TOKEN",
@@ -10,10 +10,12 @@ client = Client(
 
 def lovely_button(disabled: bool = False) -> View:
     return View(
-        Button(
-            label="Click me!",
-            custom_id="button_click",
-            disabled=disabled
+        ActionRow(
+            Button(
+                label="Click me!",
+                custom_id="button_click",
+                disabled=disabled
+            )
         )
     )
 

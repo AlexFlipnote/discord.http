@@ -21,7 +21,8 @@ from discord_http import (
     utils, VoiceChannel, Select,
     TextStyles, User, UserSelect, tasks,
     TextChannel, Attachment, PermissionOverwrite,
-    Poll, AutoModRuleEventType, AutoModRuleTriggerType, MentionableSelect
+    Poll, AutoModRuleEventType, AutoModRuleTriggerType,
+    MentionableSelect, ActionRow
 )
 
 with open("./config.json") as f:
@@ -491,8 +492,10 @@ async def test_followup_file(ctx: Context):
 async def test_local_view(ctx: Context):
     """ Testing a local view lmao """
     view = View(
-        Button(label="Hello world", custom_id="test_local_1"),
-        Button(label="Goodbye world", custom_id="test_local_2"),
+        ActionRow(
+            Button(label="Hello world", custom_id="test_local_1"),
+            Button(label="Goodbye world", custom_id="test_local_2"),
+        )
     )
 
     async def call_after():
@@ -790,34 +793,34 @@ async def test_button(ctx: Context):
     )
 
     view = View(
-        select_menu,
-        multi_select,
-        Button(label="funny", custom_id="funny:1337"),
-        Button(label="modal test", custom_id="test_send_modal_local"),
-        Link(url="https://alexflipnote.dev", label="Test", emoji="👍"),
-        Link(
-            url="https://alexflipnote.dev",
-            label="Test, but custom",
-            emoji="<:AlexHeart:785620361118875729>",
-            row=2,
+        ActionRow(select_menu),
+        ActionRow(multi_select),
+        ActionRow(
+            Button(label="funny", custom_id="funny:1337"),
+            Button(label="modal test", custom_id="test_send_modal_local"),
+            Link(url="https://alexflipnote.dev", label="Test", emoji="👍"),
+            Link(
+                url="https://alexflipnote.dev",
+                label="Test, but custom",
+                emoji="<:AlexHeart:785620361118875729>",
+            ),
+            Link(
+                url="https://alexflipnote.dev",
+                label="Test, but animated custom",
+                emoji="<a:aAlexClap:1074318927250870322>",
+            ),
         ),
-        Link(
-            url="https://alexflipnote.dev",
-            label="Test, but animated custom",
-            emoji="<a:aAlexClap:1074318927250870322>",
-            row=2,
-        ),
-        Link(
-            url="https://alexflipnote.dev",
-            label="Test, but custom",
-            emoji="<:AlexHeart:785620361118875729>",
-            row=3,
-        ),
-        Link(
-            url="https://alexflipnote.dev",
-            label="Test, but animated custom",
-            emoji="<a:aAlexClap:1074318927250870322>",
-            row=3,
+        ActionRow(
+            Link(
+                url="https://alexflipnote.dev",
+                label="Test, but custom",
+                emoji="<:AlexHeart:785620361118875729>",
+            ),
+            Link(
+                url="https://alexflipnote.dev",
+                label="Test, but animated custom",
+                emoji="<a:aAlexClap:1074318927250870322>",
+            )
         )
     )
 
@@ -829,7 +832,7 @@ async def test_button(ctx: Context):
 async def test_select(ctx: Context):
     select = Select(placeholder="testing...", custom_id="test_select")
     select.add_item(label="Hi", value="test:hi", description="This is a description")
-    view = View(select)
+    view = View(ActionRow(select))
     return ctx.response.send_message("Hi there", view=view)
 
 
@@ -847,9 +850,11 @@ async def test_custom_check(ctx: Context):
 @client.command()
 async def test_user_select(ctx: Context):
     view = View(
-        UserSelect(
-            placeholder="testing users..",
-            custom_id="test_user_select"
+        ActionRow(
+            UserSelect(
+                placeholder="testing users..",
+                custom_id="test_user_select"
+            )
         )
     )
 
@@ -913,12 +918,17 @@ async def test_modal(ctx: Context):
 @client.command()
 async def test_button_change(ctx: Context):
     buttons = [
-        Button(
-            label=str(i),
-            custom_id=f"test_button_change:{i}",
-            style=ButtonStyles.gray
+        ActionRow(
+            *[
+                Button(
+                    label=f"{ii}-{i}",
+                    custom_id=f"test_button_change:{ii}-{i}",
+                    style=ButtonStyles.gray
+                )
+                for ii in range(5)
+            ]
         )
-        for i in range(5 * 5)
+        for i in range(5)
     ]
 
     return ctx.response.send_message(
@@ -937,16 +947,19 @@ async def test_empty_response(ctx: Context):
     return ctx.response.send_empty(call_after=call_after)
 
 
-@client.interaction(r"test_button_change:[0-9]{1}", regex=True)
+@client.interaction(r"test_button_change:[0-9]{1}\-[0-9]{1}", regex=True)
 async def on_test_button_change(ctx: Context):
     view = ctx.message.view
 
-    for b in view.items:
-        if not isinstance(b, Button):
+    for a in view.items:
+        if not isinstance(a, ActionRow):
             continue
-        b.style = ButtonStyles.random()
-        if b.style == ButtonStyles.url:
-            b.style = ButtonStyles.green
+        for b in a.components:
+            if not isinstance(b, Button):
+                continue
+            b.style = ButtonStyles.random()
+            if b.style in (ButtonStyles.url, ButtonStyles.premium):
+                b.style = ButtonStyles.green
 
     return ctx.response.edit_message(view=view)
 
@@ -961,7 +974,9 @@ async def test_decoration(ctx: Context):
 @client.command()
 async def test_edit_followup(ctx: Context):
     view = View(
-        Button(label="Hello world", custom_id="test_followup_edit"),
+        ActionRow(
+            Button(label="Hello world", custom_id="test_followup_edit"),
+        )
     )
 
     return ctx.response.send_message(

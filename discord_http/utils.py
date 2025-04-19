@@ -486,6 +486,94 @@ def get_int(
     return int(output)
 
 
+class DiscordTimestamp:
+    """
+    A class to represent a Discord timestamp.
+    This takes a datetime, int or timedelta and
+    converts it to a Discord timestamp.
+    """
+    def __init__(self, ts: int | datetime | timedelta):
+        self._ts = ts
+        if isinstance(ts, datetime):
+            self._ts = int(ts.timestamp())
+        elif isinstance(ts, timedelta):
+            self._ts = int((utcnow() + ts).timestamp())
+
+        if not isinstance(self._ts, int):
+            raise TypeError("ts must be an int, datetime or timedelta")
+
+    def __str__(self) -> str:
+        return self.default
+
+    def __int__(self) -> int:
+        if not isinstance(self._ts, int):
+            raise TypeError("ts somehow manged to be a non-int")
+
+        return self._ts
+
+    def __repr__(self) -> str:
+        return f"<DiscordTimestamp ts={self._ts}>"
+
+    def _fmt(self, fmt: str | None = None) -> str:
+        """
+        `str`: Returns the timestamp in a specified format.
+        Mostly used internally, but can be used externally I guess..?
+
+        Parameters
+        ----------
+        fmt: `Optional[str]`
+            The format to return the timestamp in
+
+        Returns
+        -------
+        `str`
+            The timestamp in the specified format for Discord
+        """
+        if fmt is None:
+            return f"<t:{self._ts}>"
+        return f"<t:{self._ts}:{fmt}>"
+
+    @property
+    def default(self) -> str:
+        """ `str`: 31. January 2000 16:01 """
+        return self._fmt()
+
+    @property
+    def short_time(self) -> str:
+        """ `str`: 16:01 """
+        return self._fmt("t")
+
+    @property
+    def long_time(self) -> str:
+        """ `str`: 16:01:02 """
+        return self._fmt("T")
+
+    @property
+    def short_date(self) -> str:
+        """ `str`: 31/01/2000 """
+        return self._fmt("d")
+
+    @property
+    def long_date(self) -> str:
+        """ `str`: 31. January 2000 """
+        return self._fmt("D")
+
+    @property
+    def short_date_time(self) -> str:
+        """ `str`: 31. January 2000 16:01 """
+        return self._fmt("f")
+
+    @property
+    def long_date_time(self) -> str:
+        """ `str`: Monday 31. January 2000 16:01 """
+        return self._fmt("F")
+
+    @property
+    def relative_time(self) -> str:
+        """ `str`: 21 years ago """
+        return self._fmt("R")
+
+
 class _MissingType:
     """
     A class to represent a missing value in a dictionary

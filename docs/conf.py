@@ -14,10 +14,10 @@ extensions = [
     "sphinx.ext.autodoc",
     "sphinx.ext.extlinks",
     "sphinx.ext.napoleon",
-    "sphinx.ext.viewcode",
     "sphinx.ext.intersphinx",
 
     # Third party extensions
+    "sphinx_autodoc_typehints",
     "myst_parser",
     "seo_support",
 ]
@@ -31,10 +31,18 @@ html_title = "discord.http docs"
 html_favicon = "favicon.ico"
 master_doc = "index"
 
+autodoc_typehints = "description"
+typehints_use_signature_return = True
+
 source_suffix = {
     ".rst": "restructuredtext",
     ".txt": "markdown",
     ".md": "markdown",
+}
+
+intersphinx_mapping = {
+    "py": ("https://docs.python.org/3", None),
+    "aio": ("https://docs.aiohttp.org/en/stable/", None),
 }
 
 # Link tree

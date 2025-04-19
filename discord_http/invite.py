@@ -33,6 +33,8 @@ class PartialInvite:
         self.channel_id = channel_id
         self.guild_id = guild_id
 
+        self.guild: "Guild | PartialGuild | None" = self._get_guild
+
     def __str__(self) -> str:
         return self.url
 
@@ -40,8 +42,8 @@ class PartialInvite:
         return f"<PartialInvite code='{self.code}'>"
 
     @property
-    def guild(self) -> Guild | PartialGuild | None:
-        """ `Optional[PartialGuild]`: The guild the invite is in """
+    def _get_guild(self) -> Guild | PartialGuild | None:
+        """ `Optional[PartialGuild]`: Used to create the guild object for `Invite.guild` """
         if not self.guild_id:
             return None
 
@@ -156,6 +158,12 @@ class Invite(PartialInvite):
 
         if data.get("inviter", None):
             self.inviter = User(state=self._state, data=data["inviter"])
+
+        if data.get("guild", None):
+            try:
+                self.guild = Guild(state=self._state, data=data["guild"])
+            except KeyError:
+                pass
 
     def is_vanity(self) -> bool:
         """ `bool`: Whether the invite is a vanity invite """
