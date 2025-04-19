@@ -221,8 +221,6 @@ class AttachmentComponent:
             "flags": self.flags
         }
 
-        # TODO: Double check this to make sure it works both ways
-
         if self.height:
             data["height"] = self.height
         if self.width:

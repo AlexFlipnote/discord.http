@@ -139,11 +139,11 @@ class Status:
         ignore_warning: bool = False
     ) -> None:
         """
-        Acknowledges the heartbeat
+        Acknowledges the heartbeat.
 
         Parameters
         ----------
-        ignore_warning: `bool`
+        ignore_warning:
             Whether to ignore the warning or not
             (This is only used before the shard is ready)
             ((If I find a way to fix it, I will remove this))
@@ -208,7 +208,7 @@ class Shard:
 
     @property
     def url(self) -> str:
-        """ Returns the websocket url for the client """
+        """ Returns the websocket url for the client. """
         if not isinstance(self.api_version, int):
             raise TypeError("api_version must be of type int")
 
@@ -241,12 +241,14 @@ class Shard:
         ratelimit: bool = False
     ) -> None:
         """
-        Sends a message to the websocket
+        Sends a message to the websocket.
 
         Parameters
         ----------
-        message: `Union[dict, PayloadType]`
+        message:
             The message to send to the websocket
+        ratelimit:
+            Whether to ratelimit the message or not
         """
         if isinstance(message, PayloadType):
             message = self.payload(message)
@@ -273,13 +275,13 @@ class Shard:
         kill: bool = False
     ) -> None:
         """
-        Closes the websocket for good, or forcefully
+        Closes the websocket for good, or forcefully.
 
         Parameters
         ----------
-        code: `Optional[int]`
+        code:
             The close code to use
-        kill: `bool`
+        kill:
             Whether to kill the shard and never reconnect instance
         """
         code = code or 1000
@@ -289,11 +291,11 @@ class Shard:
 
     async def received_message(self, raw_msg: str | bytes) -> None:
         """
-        Handling the recieved data from the websocket
+        Handling the recieved data from the websocket.
 
         Parameters
         ----------
-        msg: `Union[bytes, str]`
+        raw_msg:
             The message to receive
         """
         self._last_activity = utils.utcnow()
@@ -358,7 +360,7 @@ class Shard:
 
                     if data is True:
                         _log.error(f"Shard {self.shard_id} session invalidated, not attempting reboot...")
-                        # TODO: Add a way to kill shard maybe?
+                        # Add a way to kill shard maybe?
 
                     elif data is False:
                         _log.warning(f"Shard {self.shard_id} session invalidated, resetting instance")
@@ -376,7 +378,7 @@ class Shard:
             case "READY":
                 self.status.update_sequence(msg["s"])
                 self.status.update_ready_data(data)
-                asyncio.create_task(self._delay_ready())
+                asyncio.create_task(self._delay_ready())  # noqa: RUF006
 
             case "RESUMED":
                 if self.bot.has_any_dispatch("shard_resumed"):
@@ -397,6 +399,24 @@ class Shard:
         user_ids: list[Snowflake | int] | None = None,
         nonce: str | None = None
     ) -> None:
+        """
+        Sends a guild members chunk.
+
+        Parameters
+        ----------
+        guild_id:
+            The guild id to send the chunk to
+        query:
+            What to query for, by default None
+        limit:
+            The limit of members to fetch, by default 0
+        presences:
+            If to fetch presences, by default False
+        user_ids:
+            UserIDs to find, by default None
+        nonce:
+            The nonce to use, by default None
+        """
         payload = {
             "guild_id": str(guild_id),
             "limit": int(limit),
@@ -410,8 +430,8 @@ class Shard:
             payload["presences"] = True
 
         if nonce is not None:
-            _nonce = str(nonce)
-            if len(_nonce) > 32:
+            nonce_ = str(nonce)
+            if len(nonce_) > 32:
                 _log.warning("Nonce is probably too long, it might be ignored by Discord")
 
             payload["nonce"] = str(nonce)
@@ -430,7 +450,26 @@ class Shard:
         presences: bool = False,
         user_ids: list[Snowflake | int] | None = None
     ) -> list["Member"]:
-        """ Test """
+        """
+        Query members.
+
+        Parameters
+        ----------
+        guild_id:
+            The guild id to query
+        query:
+            The query to use, by default None
+        limit:
+            The limit of members to fetch, by default 0
+        presences:
+            If to fetch presences, by default False
+        user_ids:
+            UserIDs to find, by default None
+
+        Returns
+        -------
+            The members found
+        """
         chunker = GuildMembersChunk(state=self.bot.state, guild_id=int(guild_id))
         self.parser._chunk_requests[chunker.nonce] = chunker
 
@@ -476,6 +515,20 @@ class Shard:
         *,
         wait: bool = True
     ) -> list["Member"] | asyncio.Future[list["Member"]]:
+        """
+        Chunks the guild.
+
+        Parameters
+        ----------
+        guild_id:
+            The guild id to chunk
+        wait:
+            Whether to wait for the chunk to be ready or not
+
+        Returns
+        -------
+            The chunk of members
+        """
         chunker = GuildMembersChunk(
             state=self.bot.state, guild_id=int(guild_id),
             cache=True
@@ -591,7 +644,8 @@ class Shard:
 
     async def _delay_ready(self) -> None:
         """
-        Purposfully delays the ready event
+        Purposfully delays the ready event.
+
         Then make shard ready when last GUILD_CREATE is received
         """
         try:
@@ -636,12 +690,20 @@ class Shard:
             _log.info(f"Shard {self.shard_id} ready")
 
     async def wait_until_ready(self) -> None:
-        """
-        Waits until the shard is ready
-        """
+        """ Waits until the shard is ready. """
         await self._ready.wait()
 
-    async def on_event(self, name: str, event: Any) -> None:
+    async def on_event(self, name: str, event: dict) -> None:
+        """
+        Handles an event.
+
+        Parameters
+        ----------
+        name:
+            The name of the event
+        event:
+            The event data
+        """
         new_name = name.lower()
         data: dict = event.get("d", {})
 
@@ -651,8 +713,8 @@ class Shard:
         if self.debug_events:
             self.bot.dispatch("raw_socket_received", event)
 
-        _parse_event = getattr(self.parser, new_name, None)
-        if not _parse_event:
+        parse_event = getattr(self.parser, new_name, None)
+        if not parse_event:
             return
 
         match name:
@@ -664,11 +726,11 @@ class Shard:
 
             case _:  # Any other event that does not need special handling
                 try:
-                    self._send_dispatch(new_name, *_parse_event(data))
+                    self._send_dispatch(new_name, *parse_event(data))
                 except Exception as e:
                     _log.error(f"Error while parsing event {new_name}", exc_info=e)
 
-    def _send_dispatch(self, name: str, *args: Any) -> None:
+    def _send_dispatch(self, name: str, *args: Any) -> None:  # noqa: ANN401
         try:
             self.bot.dispatch(name, *args)
         except Exception as e:
@@ -682,11 +744,11 @@ class Shard:
         if unavailable is False:
             (guild,) = self.parser.guild_available(data)
             guild.unavailable = False
-            _event_name = "guild_available"
+            event_name = "guild_available"
 
         else:
             (guild,) = self.parser.guild_create(data)
-            _event_name = "guild_create"
+            event_name = "guild_create"
 
         if not self._ready.is_set():
             # We still want to parse GUILD_CREATE
@@ -694,22 +756,22 @@ class Shard:
             self._guild_create_queue.put_nowait(data)
             return
 
-        self._send_dispatch(_event_name, guild)
+        self._send_dispatch(event_name, guild)
 
     def _parse_guild_delete(self, data: dict) -> None:
         if data.get("unavailable"):
             (guild,) = self.parser.guild_unavailable(data)
             guild.unavailable = True
-            _event_name = "guild_unavailable"
+            event_name = "guild_unavailable"
 
         else:
             (guild,) = self.parser.guild_delete(data)
-            _event_name = "guild_delete"
+            event_name = "guild_delete"
 
-        self._send_dispatch(_event_name, guild)
+        self._send_dispatch(event_name, guild)
 
     def connect(self) -> None:
-        """ Connect the websocket """
+        """ Connect the websocket. """
         self._connection = asyncio.ensure_future(
             self._socket_manager()
         )
@@ -720,7 +782,7 @@ class Shard:
 
         Parameters
         ----------
-        status: `PlayingStatus`
+        status:
             The status to change to.
         """
         _log.debug(f"Changing presence in Shard {self.shard_id} to {status}")
@@ -730,7 +792,18 @@ class Shard:
         })
 
     def payload(self, op: PayloadType) -> dict:
-        """ Returns a payload for the websocket """
+        """
+        Returns a payload for the websocket.
+
+        Parameters
+        ----------
+        op:
+            The op to get the payload for
+
+        Returns
+        -------
+            The payload
+        """
         if not isinstance(op, PayloadType):
             raise TypeError("op must be of type PayloadType")
 

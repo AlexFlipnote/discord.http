@@ -6,7 +6,7 @@ on:
 
 jobs:
   ruff:
-    name: Ruff linting
+    name: Ruff
     runs-on: ubuntu-latest
     steps:
       - name: Fetch PR
@@ -26,7 +26,7 @@ jobs:
         run: make lint
 
   pyright:
-    name: Pyright type check
+    name: Pyright
     runs-on: ubuntu-latest
     steps:
       - name: Fetch PR
