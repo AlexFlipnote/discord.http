@@ -4,7 +4,7 @@
     <meta name="viewport" content="width=device-width,initial-scale=1"/>
     <meta name="color-scheme" content="light dark"><meta content="discord.http docs" property="og:title"><meta content="Python library that handles interactions from Discord POST requests." name="description"><meta content="Python library that handles interactions from Discord POST requests." property="og:description"><meta property="og:image" content="/_static/favicon.ico"><meta name="theme-color" content="#14bae4"><meta property="og:locale" content="en_GB"><meta name="keywords" content="discord, http, api, interaction, quart, webhook, slash><meta name="revisit-after" content="2 days"><link rel="index" title="Index" href="#" /><link rel="search" title="Search" href="search.html" />
 
-    <link rel="shortcut icon" href="_static/favicon.ico"/><!-- Generated with Sphinx 8.1.3 and Furo 2024.08.06 --><title>Index - discord.http docs</title>
+    <link rel="shortcut icon" href="_static/favicon.ico"/><!-- Generated with Sphinx 8.2.3 and Furo 2024.08.06 --><title>Index - discord.http docs</title>
 <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=03e43079" />
     <link rel="stylesheet" type="text/css" href="_static/styles/furo.css?v=354aac6f" />
     <link rel="stylesheet" type="text/css" href="_static/styles/furo-extensions.css?v=302659d7" />
@@ -252,6 +252,7 @@
 </ul>
 <p class="caption" role="heading"><span class="caption-text">Development</span></p>
 <ul>
+<li class="toctree-l1"><a class="reference internal" href="pages/format.html">Style guide</a></li>
 <li class="toctree-l1"><a class="reference internal" href="pages/contribute.html">Contributing</a></li>
 <li class="toctree-l1"><a class="reference internal" href="pages/license.html">License</a></li>
 <li class="toctree-l1"><a class="reference external" href="https://discord.gg/yqb7vATbjH">Discord</a></li>
@@ -303,6 +304,8 @@
 </li>
         <li><a href="api/enums.html#discord_http.enums.ComponentType.action_row">action_row (discord_http.enums.ComponentType attribute)</a>
 </li>
+        <li><a href="api/view.html#discord_http.view.ActionRow">ActionRow (class in discord_http.view)</a>
+</li>
         <li><a href="api/enums.html#discord_http.enums.ScheduledEventStatusType.active">active (discord_http.enums.ScheduledEventStatusType attribute)</a>
 </li>
         <li><a href="api/flags.html#discord_http.flags.UserFlags.active_developer">active_developer (discord_http.flags.UserFlags attribute)</a>
@@ -345,9 +348,15 @@
         </ul></li>
         <li><a href="api/client.html#discord_http.client.Client.add_interaction">add_interaction() (discord_http.client.Client method)</a>
 </li>
-        <li><a href="api/view.html#discord_http.view.Modal.add_item">add_item() (discord_http.view.Modal method)</a>
+        <li><a href="api/view.html#discord_http.view.ActionRow.add_item">add_item() (discord_http.view.ActionRow method)</a>
 
         <ul>
+          <li><a href="api/view.html#discord_http.view.ContainerComponent.add_item">(discord_http.view.ContainerComponent method)</a>
+</li>
+          <li><a href="api/view.html#discord_http.view.MediaGalleryComponent.add_item">(discord_http.view.MediaGalleryComponent method)</a>
+</li>
+          <li><a href="api/view.html#discord_http.view.Modal.add_item">(discord_http.view.Modal method)</a>
+</li>
           <li><a href="api/view.html#discord_http.view.Select.add_item">(discord_http.view.Select method)</a>
 </li>
           <li><a href="api/view.html#discord_http.view.View.add_item">(discord_http.view.View method)</a>
@@ -391,6 +400,8 @@
 </li>
         <li><a href="api/enums.html#discord_http.enums.StickerFormatType.apng">apng (discord_http.enums.StickerFormatType attribute)</a>
 </li>
+    </ul></td>
+    <td style="width: 33%; vertical-align: top;"><ul>
         <li><a href="api/enums.html#discord_http.enums.WebhookType.application">application (discord_http.enums.WebhookType attribute)</a>
 
         <ul>
@@ -399,8 +410,6 @@
           <li><a href="api/response.html#discord_http.response.Ping.application">(discord_http.response.Ping property)</a>
 </li>
         </ul></li>
-    </ul></td>
-    <td style="width: 33%; vertical-align: top;"><ul>
         <li><a href="api/flags.html#discord_http.flags.ApplicationFlags.application_auto_moderation_rule_create_badge">application_auto_moderation_rule_create_badge (discord_http.flags.ApplicationFlags attribute)</a>
 </li>
         <li><a href="api/enums.html#discord_http.enums.InteractionType.application_command">application_command (discord_http.enums.InteractionType attribute)</a>
@@ -430,6 +439,8 @@
         <li><a href="api/message.html#discord_http.message.Attachment">Attachment (class in discord_http.message)</a>
 </li>
         <li><a href="api/enums.html#discord_http.enums.CommandOptionType.attachment">attachment (discord_http.enums.CommandOptionType attribute)</a>
+</li>
+        <li><a href="api/view.html#discord_http.view.AttachmentComponent">AttachmentComponent (class in discord_http.view)</a>
 </li>
         <li><a href="api/flags.html#discord_http.flags.AttachmentFlags">AttachmentFlags (class in discord_http.flags)</a>
 </li>
@@ -510,11 +521,7 @@
         <li><a href="api/guild.html#discord_http.guild.BanEntry">BanEntry (class in discord_http.guild)</a>
 </li>
         <li><a href="api/guild.html#discord_http.guild.Guild.banner">banner (discord_http.guild.Guild property)</a>
-
-        <ul>
-          <li><a href="api/member.html#discord_http.member.Member.banner">(discord_http.member.Member property)</a>
 </li>
-        </ul></li>
         <li><a href="api/asset.html#discord_http.asset.Asset.BASE">BASE (discord_http.asset.Asset attribute)</a>
 
         <ul>
@@ -541,14 +548,14 @@
 </li>
         <li><a href="api/colour.html#discord_http.colour.Colour.blue_sentinel">blue_sentinel() (discord_http.colour.Colour class method)</a>
 </li>
-    </ul></td>
-    <td style="width: 33%; vertical-align: top;"><ul>
         <li><a href="api/enums.html#discord_http.enums.ButtonStyles.blurple">blurple (discord_http.enums.ButtonStyles attribute)</a>
 
         <ul>
           <li><a href="api/enums.html#discord_http.enums.DefaultAvatarType.blurple">(discord_http.enums.DefaultAvatarType attribute)</a>
 </li>
         </ul></li>
+    </ul></td>
+    <td style="width: 33%; vertical-align: top;"><ul>
         <li><a href="api/enums.html#discord_http.enums.CommandOptionType.boolean">boolean (discord_http.enums.CommandOptionType attribute)</a>
 </li>
         <li><a href="api/integrations.html#discord_http.integrations.IntegrationApplication.bot">bot (discord_http.integrations.IntegrationApplication property)</a>
@@ -741,10 +748,10 @@
           <li><a href="api/commands.html#discord_http.commands.command">(in module discord_http.commands)</a>
 </li>
         </ul></li>
-    </ul></td>
-    <td style="width: 33%; vertical-align: top;"><ul>
         <li><a href="api/errors.html#discord_http.errors.CommandError">CommandError</a>
 </li>
+    </ul></td>
+    <td style="width: 33%; vertical-align: top;"><ul>
         <li><a href="api/errors.html#discord_http.errors.CommandOnCooldown">CommandOnCooldown</a>
 </li>
         <li><a href="api/enums.html#discord_http.enums.CommandOptionType">CommandOptionType (class in discord_http.enums)</a>
@@ -764,6 +771,10 @@
         <li><a href="api/enums.html#discord_http.enums.SKUType.consumable">consumable (discord_http.enums.SKUType attribute)</a>
 </li>
         <li><a href="api/entitlements.html#discord_http.entitlements.PartialEntitlements.consume">consume() (discord_http.entitlements.PartialEntitlements method)</a>
+</li>
+        <li><a href="api/enums.html#discord_http.enums.ComponentType.container">container (discord_http.enums.ComponentType attribute)</a>
+</li>
+        <li><a href="api/view.html#discord_http.view.ContainerComponent">ContainerComponent (class in discord_http.view)</a>
 </li>
         <li><a href="api/multipart.html#discord_http.multipart.MultipartData.content_type">content_type (discord_http.multipart.MultipartData property)</a>
 </li>
@@ -1301,6 +1312,8 @@
           <li><a href="api/user.html#discord_http.user.User.display_avatar">(discord_http.user.User property)</a>
 </li>
         </ul></li>
+        <li><a href="api/member.html#discord_http.member.Member.display_banner">display_banner (discord_http.member.Member property)</a>
+</li>
         <li><a href="api/role.html#discord_http.role.Role.display_icon">display_icon (discord_http.role.Role property)</a>
 </li>
         <li><a href="api/member.html#discord_http.member.Member.display_name">display_name (discord_http.member.Member property)</a>
@@ -1476,6 +1489,8 @@
 </li>
           <li><a href="api/user.html#discord_http.user.PartialUser.fetch">(discord_http.user.PartialUser method)</a>
 </li>
+          <li><a href="api/view.html#discord_http.view.AttachmentComponent.fetch">(discord_http.view.AttachmentComponent method)</a>
+</li>
           <li><a href="api/voice.html#discord_http.voice.PartialVoiceState.fetch">(discord_http.voice.PartialVoiceState method)</a>
 </li>
           <li><a href="api/webhook.html#discord_http.webhook.PartialWebhook.fetch">(discord_http.webhook.PartialWebhook method)</a>
@@ -1557,10 +1572,10 @@
           <li><a href="api/message.html#discord_http.message.JumpURL.fetch_message">(discord_http.message.JumpURL method)</a>
 </li>
         </ul></li>
-    </ul></td>
-    <td style="width: 33%; vertical-align: top;"><ul>
         <li><a href="api/channel.html#discord_http.channel.PartialChannel.fetch_pins">fetch_pins() (discord_http.channel.PartialChannel method)</a>
 </li>
+    </ul></td>
+    <td style="width: 33%; vertical-align: top;"><ul>
         <li><a href="api/message.html#discord_http.message.PartialMessage.fetch_poll_voters">fetch_poll_voters() (discord_http.message.PartialMessage method)</a>
 </li>
         <li><a href="api/guild.html#discord_http.guild.PartialGuild.fetch_public_threads">fetch_public_threads() (discord_http.guild.PartialGuild method)</a>
@@ -1611,6 +1626,10 @@
 </li>
         <li><a href="api/file.html#discord_http.file.File">File (class in discord_http.file)</a>
 </li>
+        <li><a href="api/enums.html#discord_http.enums.ComponentType.file">file (discord_http.enums.ComponentType attribute)</a>
+</li>
+        <li><a href="api/view.html#discord_http.view.FileComponent">FileComponent (class in discord_http.view)</a>
+</li>
         <li><a href="api/file.html#discord_http.file.File.filename">filename (discord_http.file.File property)</a>
 </li>
         <li><a href="api/guild.html#discord_http.guild.Guild.filesize_limit">filesize_limit (discord_http.guild.Guild property)</a>
@@ -1653,6 +1672,8 @@
           <li><a href="api/flags.html#discord_http.flags.PermissionOverwrite.from_dict">(discord_http.flags.PermissionOverwrite class method)</a>
 </li>
           <li><a href="api/message.html#discord_http.message.Poll.from_dict">(discord_http.message.Poll class method)</a>
+</li>
+          <li><a href="api/view.html#discord_http.view.ActionRow.from_dict">(discord_http.view.ActionRow class method)</a>
 </li>
           <li><a href="api/view.html#discord_http.view.View.from_dict">(discord_http.view.View class method)</a>
 </li>
@@ -1898,8 +1919,6 @@
 </li>
           <li><a href="api/integrations.html#discord_http.integrations.PartialIntegration.guild">(discord_http.integrations.PartialIntegration property)</a>
 </li>
-          <li><a href="api/invite.html#discord_http.invite.PartialInvite.guild">(discord_http.invite.PartialInvite property)</a>
-</li>
           <li><a href="api/member.html#discord_http.member.PartialMember.guild">(discord_http.member.PartialMember property)</a>
 </li>
           <li><a href="api/message.html#discord_http.message.JumpURL.guild">(discord_http.message.JumpURL property)</a>
@@ -2116,8 +2135,6 @@
         <ul>
           <li><a href="api/integrations.html#discord_http.integrations.Integration.id">(discord_http.integrations.Integration attribute)</a>
 </li>
-          <li><a href="api/integrations.html#discord_http.integrations.IntegrationAccount.id">(discord_http.integrations.IntegrationAccount attribute)</a>
-</li>
           <li><a href="api/integrations.html#discord_http.integrations.IntegrationApplication.id">(discord_http.integrations.IntegrationApplication attribute)</a>
 </li>
           <li><a href="api/integrations.html#discord_http.integrations.PartialIntegration.id">(discord_http.integrations.PartialIntegration attribute)</a>
@@ -2169,10 +2186,10 @@
 </li>
         <li><a href="gateway/enums.html#discord_http.gateway.enums.PayloadType.invalidate_session">invalidate_session (discord_http.gateway.enums.PayloadType attribute)</a>
 </li>
-    </ul></td>
-    <td style="width: 33%; vertical-align: top;"><ul>
         <li><a href="api/errors.html#discord_http.errors.InvalidMember">InvalidMember</a>
 </li>
+    </ul></td>
+    <td style="width: 33%; vertical-align: top;"><ul>
         <li><a href="api/invite.html#discord_http.invite.Invite">Invite (class in discord_http.invite)</a>
 </li>
         <li><a href="api/enums.html#discord_http.enums.AuditLogType.invite_create">invite_create (discord_http.enums.AuditLogType attribute)</a>
@@ -2190,6 +2207,8 @@
         <li><a href="api/tasks.html#discord_http.tasks.Loop.is_being_cancelled">is_being_cancelled() (discord_http.tasks.Loop method)</a>
 </li>
         <li><a href="api/role.html#discord_http.role.Role.is_bot_managed">is_bot_managed() (discord_http.role.Role method)</a>
+</li>
+        <li><a href="api/flags.html#discord_http.flags.MessageFlags.is_components_v2">is_components_v2 (discord_http.flags.MessageFlags attribute)</a>
 </li>
         <li><a href="api/entitlements.html#discord_http.entitlements.Entitlements.is_consumed">is_consumed() (discord_http.entitlements.Entitlements method)</a>
 </li>
@@ -2297,8 +2316,12 @@
   <h2>L</h2>
   <table style="width: 100%" class="indextable genindextable"><tr>
     <td style="width: 33%; vertical-align: top;"><ul>
-        <li><a href="api/guild.html#discord_http.guild.PartialGuild.large">large (discord_http.guild.PartialGuild property)</a>
+        <li><a href="api/enums.html#discord_http.enums.SeparatorSpacingType.large">large (discord_http.enums.SeparatorSpacingType attribute)</a>
+
+        <ul>
+          <li><a href="api/guild.html#discord_http.guild.PartialGuild.large">(discord_http.guild.PartialGuild property)</a>
 </li>
+        </ul></li>
         <li><a href="api/channel.html#discord_http.channel.PublicThread.last_message">last_message (discord_http.channel.PublicThread property)</a>
 </li>
         <li><a href="gateway/object.html#discord_http.gateway.object.ChannelPinsUpdate.last_pin_timestamp">last_pin_timestamp (discord_http.gateway.object.ChannelPinsUpdate attribute)</a>
@@ -2378,6 +2401,12 @@
         <li><a href="api/guild.html#discord_http.guild.Guild.me">me (discord_http.guild.Guild property)</a>
 </li>
         <li><a href="api/http.html#discord_http.http.DiscordAPI.me">me() (discord_http.http.DiscordAPI method)</a>
+</li>
+        <li><a href="api/enums.html#discord_http.enums.ComponentType.media_gallery">media_gallery (discord_http.enums.ComponentType attribute)</a>
+</li>
+        <li><a href="api/view.html#discord_http.view.MediaGalleryComponent">MediaGalleryComponent (class in discord_http.view)</a>
+</li>
+        <li><a href="api/view.html#discord_http.view.MediaGalleryItem">MediaGalleryItem (class in discord_http.view)</a>
 </li>
         <li><a href="api/enums.html#discord_http.enums.VerificationLevel.medium">medium (discord_http.enums.VerificationLevel attribute)</a>
 </li>
@@ -2479,10 +2508,10 @@
 </li>
         <li><a href="api/enums.html#discord_http.enums.AuditLogType.message_delete">message_delete (discord_http.enums.AuditLogType attribute)</a>
 </li>
-        <li><a href="api/enums.html#discord_http.enums.AuditLogType.message_pin">message_pin (discord_http.enums.AuditLogType attribute)</a>
-</li>
     </ul></td>
     <td style="width: 33%; vertical-align: top;"><ul>
+        <li><a href="api/enums.html#discord_http.enums.AuditLogType.message_pin">message_pin (discord_http.enums.AuditLogType attribute)</a>
+</li>
         <li><a href="api/enums.html#discord_http.enums.AutoModRuleEventType.message_send">message_send (discord_http.enums.AutoModRuleEventType attribute)</a>
 </li>
         <li><a href="api/enums.html#discord_http.enums.AuditLogType.message_unpin">message_unpin (discord_http.enums.AuditLogType attribute)</a>
@@ -2613,8 +2642,6 @@
         <li><a href="api/integrations.html#discord_http.integrations.Integration.name">name (discord_http.integrations.Integration attribute)</a>
 
         <ul>
-          <li><a href="api/integrations.html#discord_http.integrations.IntegrationAccount.name">(discord_http.integrations.IntegrationAccount attribute)</a>
-</li>
           <li><a href="api/integrations.html#discord_http.integrations.IntegrationApplication.name">(discord_http.integrations.IntegrationApplication attribute)</a>
 </li>
           <li><a href="api/member.html#discord_http.member.Member.name">(discord_http.member.Member property)</a>
@@ -2626,14 +2653,14 @@
 </li>
         <li><a href="api/channel.html#discord_http.channel.NewsThread">NewsThread (class in discord_http.channel)</a>
 </li>
-    </ul></td>
-    <td style="width: 33%; vertical-align: top;"><ul>
         <li><a href="api/enums.html#discord_http.enums.MFALevel.none">none (discord_http.enums.MFALevel attribute)</a>
 
         <ul>
           <li><a href="api/enums.html#discord_http.enums.VerificationLevel.none">(discord_http.enums.VerificationLevel attribute)</a>
 </li>
         </ul></li>
+    </ul></td>
+    <td style="width: 33%; vertical-align: top;"><ul>
         <li><a href="api/flags.html#discord_http.flags.BaseFlag.none">none() (discord_http.flags.BaseFlag class method)</a>
 
         <ul>
@@ -2944,10 +2971,16 @@
 </li>
         <li><a href="api/embeds.html#discord_http.embeds.Embed.remove_image">remove_image() (discord_http.embeds.Embed method)</a>
 </li>
+        <li><a href="api/view.html#discord_http.view.ContainerComponent.remove_index">remove_index() (discord_http.view.ContainerComponent method)</a>
+</li>
         <li><a href="api/client.html#discord_http.client.Client.remove_interaction">remove_interaction() (discord_http.client.Client method)</a>
 </li>
-        <li><a href="api/view.html#discord_http.view.View.remove_items">remove_items() (discord_http.view.View method)</a>
+        <li><a href="api/view.html#discord_http.view.ActionRow.remove_items">remove_items() (discord_http.view.ActionRow method)</a>
+
+        <ul>
+          <li><a href="api/view.html#discord_http.view.View.remove_items">(discord_http.view.View method)</a>
 </li>
+        </ul></li>
         <li><a href="api/client.html#discord_http.client.Client.remove_listener">remove_listener() (discord_http.client.Client method)</a>
 </li>
         <li><a href="api/message.html#discord_http.message.PartialMessage.remove_reaction">remove_reaction() (discord_http.message.PartialMessage method)</a>
@@ -2960,10 +2993,10 @@
 </li>
         <li><a href="api/channel.html#discord_http.channel.PartialChannel.remove_thread_member">remove_thread_member() (discord_http.channel.PartialChannel method)</a>
 </li>
-        <li><a href="api/embeds.html#discord_http.embeds.Embed.remove_thumbnail">remove_thumbnail() (discord_http.embeds.Embed method)</a>
-</li>
     </ul></td>
     <td style="width: 33%; vertical-align: top;"><ul>
+        <li><a href="api/embeds.html#discord_http.embeds.Embed.remove_thumbnail">remove_thumbnail() (discord_http.embeds.Embed method)</a>
+</li>
         <li><a href="gateway/object.html#discord_http.gateway.object.ThreadMembersUpdatePayload.removed_member_ids">removed_member_ids (discord_http.gateway.object.ThreadMembersUpdatePayload attribute)</a>
 </li>
         <li><a href="gateway/object.html#discord_http.gateway.object.ThreadMembersUpdatePayload.removed_members">removed_members (discord_http.gateway.object.ThreadMembersUpdatePayload property)</a>
@@ -3063,6 +3096,8 @@
         <ul>
           <li><a href="api/message.html#discord_http.message.Attachment.save">(discord_http.message.Attachment method)</a>
 </li>
+          <li><a href="api/view.html#discord_http.view.AttachmentComponent.save">(discord_http.view.AttachmentComponent method)</a>
+</li>
         </ul></li>
         <li><a href="api/enums.html#discord_http.enums.ScheduledEventStatusType.scheduled">scheduled (discord_http.enums.ScheduledEventStatusType attribute)</a>
 </li>
@@ -3077,6 +3112,10 @@
         <li><a href="api/guild.html#discord_http.guild.PartialGuild.search_members">search_members() (discord_http.guild.PartialGuild method)</a>
 </li>
         <li><a href="api/enums.html#discord_http.enums.ButtonStyles.secondary">secondary (discord_http.enums.ButtonStyles attribute)</a>
+</li>
+        <li><a href="api/enums.html#discord_http.enums.ComponentType.section">section (discord_http.enums.ComponentType attribute)</a>
+</li>
+        <li><a href="api/view.html#discord_http.view.SectionComponent">SectionComponent (class in discord_http.view)</a>
 </li>
         <li><a href="api/view.html#discord_http.view.Select">Select (class in discord_http.view)</a>
 </li>
@@ -3114,6 +3153,12 @@
 </li>
         <li><a href="api/flags.html#discord_http.flags.Permissions.send_voice_messages">send_voice_messages (discord_http.flags.Permissions attribute)</a>
 </li>
+        <li><a href="api/enums.html#discord_http.enums.ComponentType.separator">separator (discord_http.enums.ComponentType attribute)</a>
+</li>
+        <li><a href="api/view.html#discord_http.view.SeparatorComponent">SeparatorComponent (class in discord_http.view)</a>
+</li>
+        <li><a href="api/enums.html#discord_http.enums.SeparatorSpacingType">SeparatorSpacingType (class in discord_http.enums)</a>
+</li>
         <li><a href="api/embeds.html#discord_http.embeds.Embed.set_author">set_author() (discord_http.embeds.Embed method)</a>
 </li>
         <li><a href="api/client.html#discord_http.client.Client.set_backend">set_backend() (discord_http.client.Client method)</a>
@@ -3150,6 +3195,8 @@
 </li>
         <li><a href="api/enums.html#discord_http.enums.AutoModRulePresetType.slurs">slurs (discord_http.enums.AutoModRulePresetType attribute)</a>
 </li>
+        <li><a href="api/enums.html#discord_http.enums.SeparatorSpacingType.small">small (discord_http.enums.SeparatorSpacingType attribute)</a>
+</li>
         <li><a href="api/object.html#discord_http.object.Snowflake">Snowflake (class in discord_http.object)</a>
 </li>
         <li><a href="api/enums.html#discord_http.enums.SortOrderType">SortOrderType (class in discord_http.enums)</a>
@@ -3164,6 +3211,8 @@
 </li>
         <li><a href="api/flags.html#discord_http.flags.UserFlags.spammer">spammer (discord_http.flags.UserFlags attribute)</a>
 </li>
+    </ul></td>
+    <td style="width: 33%; vertical-align: top;"><ul>
         <li><a href="api/flags.html#discord_http.flags.Permissions.speak">speak (discord_http.flags.Permissions attribute)</a>
 </li>
         <li><a href="gateway/flags.html#discord_http.gateway.flags.ActivityFlags.spectate">spectate (discord_http.gateway.flags.ActivityFlags attribute)</a>
@@ -3172,8 +3221,6 @@
 </li>
         <li><a href="api/enums.html#discord_http.enums.MessageType.stage_end">stage_end (discord_http.enums.MessageType attribute)</a>
 </li>
-    </ul></td>
-    <td style="width: 33%; vertical-align: top;"><ul>
         <li><a href="api/channel.html#discord_http.channel.StageChannel.stage_instance">stage_instance (discord_http.channel.StageChannel property)</a>
 
         <ul>
@@ -3310,9 +3357,13 @@
 </li>
         <li><a href="api/guild.html#discord_http.guild.PartialGuild.text_channels">text_channels (discord_http.guild.PartialGuild property)</a>
 </li>
+        <li><a href="api/enums.html#discord_http.enums.ComponentType.text_display">text_display (discord_http.enums.ComponentType attribute)</a>
+</li>
         <li><a href="api/enums.html#discord_http.enums.ComponentType.text_input">text_input (discord_http.enums.ComponentType attribute)</a>
 </li>
         <li><a href="api/channel.html#discord_http.channel.TextChannel">TextChannel (class in discord_http.channel)</a>
+</li>
+        <li><a href="api/view.html#discord_http.view.TextDisplayComponent">TextDisplayComponent (class in discord_http.view)</a>
 </li>
         <li><a href="api/enums.html#discord_http.enums.TextStyles">TextStyles (class in discord_http.enums)</a>
 </li>
@@ -3348,7 +3399,13 @@
           <li><a href="api/guild.html#discord_http.guild.PartialGuild.threads">(discord_http.guild.PartialGuild property)</a>
 </li>
         </ul></li>
-        <li><a href="api/flags.html#discord_http.flags.AttachmentFlags.thumbnail">thumbnail (discord_http.flags.AttachmentFlags attribute)</a>
+        <li><a href="api/enums.html#discord_http.enums.ComponentType.thumbnail">thumbnail (discord_http.enums.ComponentType attribute)</a>
+
+        <ul>
+          <li><a href="api/flags.html#discord_http.flags.AttachmentFlags.thumbnail">(discord_http.flags.AttachmentFlags attribute)</a>
+</li>
+        </ul></li>
+        <li><a href="api/view.html#discord_http.view.ThumbnailComponent">ThumbnailComponent (class in discord_http.view)</a>
 </li>
         <li><a href="api/enums.html#discord_http.enums.AutoModRuleActionType.timeout">timeout (discord_http.enums.AutoModRuleActionType attribute)</a>
 </li>
@@ -3387,17 +3444,37 @@
 </li>
           <li><a href="api/response.html#discord_http.response.MessageResponse.to_dict">(discord_http.response.MessageResponse method)</a>
 </li>
+          <li><a href="api/view.html#discord_http.view.ActionRow.to_dict">(discord_http.view.ActionRow method)</a>
+</li>
+          <li><a href="api/view.html#discord_http.view.AttachmentComponent.to_dict">(discord_http.view.AttachmentComponent method)</a>
+</li>
           <li><a href="api/view.html#discord_http.view.Button.to_dict">(discord_http.view.Button method)</a>
 </li>
           <li><a href="api/view.html#discord_http.view.ChannelSelect.to_dict">(discord_http.view.ChannelSelect method)</a>
 </li>
+          <li><a href="api/view.html#discord_http.view.ContainerComponent.to_dict">(discord_http.view.ContainerComponent method)</a>
+</li>
+          <li><a href="api/view.html#discord_http.view.FileComponent.to_dict">(discord_http.view.FileComponent method)</a>
+</li>
           <li><a href="api/view.html#discord_http.view.Item.to_dict">(discord_http.view.Item method)</a>
+</li>
+          <li><a href="api/view.html#discord_http.view.MediaGalleryComponent.to_dict">(discord_http.view.MediaGalleryComponent method)</a>
+</li>
+          <li><a href="api/view.html#discord_http.view.MediaGalleryItem.to_dict">(discord_http.view.MediaGalleryItem method)</a>
 </li>
           <li><a href="api/view.html#discord_http.view.Modal.to_dict">(discord_http.view.Modal method)</a>
 </li>
           <li><a href="api/view.html#discord_http.view.ModalItem.to_dict">(discord_http.view.ModalItem method)</a>
 </li>
+          <li><a href="api/view.html#discord_http.view.SectionComponent.to_dict">(discord_http.view.SectionComponent method)</a>
+</li>
           <li><a href="api/view.html#discord_http.view.Select.to_dict">(discord_http.view.Select method)</a>
+</li>
+          <li><a href="api/view.html#discord_http.view.SeparatorComponent.to_dict">(discord_http.view.SeparatorComponent method)</a>
+</li>
+          <li><a href="api/view.html#discord_http.view.TextDisplayComponent.to_dict">(discord_http.view.TextDisplayComponent method)</a>
+</li>
+          <li><a href="api/view.html#discord_http.view.ThumbnailComponent.to_dict">(discord_http.view.ThumbnailComponent method)</a>
 </li>
           <li><a href="api/view.html#discord_http.view.View.to_dict">(discord_http.view.View method)</a>
 </li>
@@ -3405,7 +3482,11 @@
     </ul></td>
     <td style="width: 33%; vertical-align: top;"><ul>
         <li><a href="api/message.html#discord_http.message.Attachment.to_file">to_file() (discord_http.message.Attachment method)</a>
+
+        <ul>
+          <li><a href="api/view.html#discord_http.view.AttachmentComponent.to_file">(discord_http.view.AttachmentComponent method)</a>
 </li>
+        </ul></li>
         <li><a href="api/emoji.html#discord_http.emoji.EmojiParser.to_forum_dict">to_forum_dict() (discord_http.emoji.EmojiParser method)</a>
 </li>
         <li><a href="api/colour.html#discord_http.colour.Colour.to_hex">to_hex() (discord_http.colour.Colour method)</a>
