@@ -116,7 +116,7 @@ class AttachmentComponent:
         self.width: int | None = self._edata.get("width", None)
         self.placeholder: str | None = self._edata.get("placeholder", None)
         self.placeholder_version: int | None = self._edata.get("placeholder_version", None)
-        self.content_type: str = self._edata["content_type"]
+        self.content_type: str | None = self._edata.get("content_type", None)
         self.flags: int = self._edata.get("flags", 0)
 
     def __str__(self) -> str:
