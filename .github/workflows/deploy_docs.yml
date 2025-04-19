@@ -1,9 +1,8 @@
 name: Fetch, build and deploy docs
 
 on:
-  push:
-    branches:
-      - master
+  release:
+    types: [published]
 
 jobs:
   deploy:
