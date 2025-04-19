@@ -320,7 +320,7 @@ it is used internally by <code class="xref py py-class docutils literal notransl
 <dl class="py method">
 <dt class="sig sig-object py" id="discord_http.http.DiscordAPI.create_jitter">
 <span class="sig-name descname"><span class="pre">create_jitter</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><span class="pre">float</span></a></span></span><a class="headerlink" href="#discord_http.http.DiscordAPI.create_jitter" title="Link to this definition">¶</a></dt>
-<dd><p>Simply returns a random float between 0 and 1</p>
+<dd><p>Simply returns a random float between 0 and 1.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></a></span></p>
@@ -331,16 +331,16 @@ it is used internally by <code class="xref py py-class docutils literal notransl
 <dl class="py method">
 <dt class="sig sig-object py" id="discord_http.http.DiscordAPI.fetch_commands">
 <em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">fetch_commands</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">guild_id</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.13)"><span class="pre">dict</span></a></span></span><a class="headerlink" href="#discord_http.http.DiscordAPI.fetch_commands" title="Link to this definition">¶</a></dt>
-<dd><p>Fetches the commands for the bot</p>
+<dd><p>Fetches the commands for the bot.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>guild_id</strong> (<cite>int | None</cite>) – The guild ID to fetch the commands for (if None, commands will be global)</p>
+<dd class="field-odd"><p><strong>guild_id</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a> | <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></span>) – The guild ID to fetch the commands for (if None, commands will be global)</p>
 </dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>The response from the request</p>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">dict</span></code></a></span></p>
 </dd>
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><cite>dict</cite></p>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The response from the request</p>
 </dd>
 <dt class="field-even">Raises<span class="colon">:</span></dt>
 <dd class="field-even"><p><a class="reference internal" href="errors.html#discord_http.errors.HTTPException" title="discord_http.errors.HTTPException"><strong>HTTPException</strong></a> – If the request returned anything other than 200.
@@ -352,7 +352,8 @@ it is used internally by <code class="xref py py-class docutils literal notransl
 <dl class="py method">
 <dt class="sig sig-object py" id="discord_http.http.DiscordAPI.get_ratelimit">
 <span class="sig-name descname"><span class="pre">get_ratelimit</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">key</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Ratelimit</span></span></span><a class="headerlink" href="#discord_http.http.DiscordAPI.get_ratelimit" title="Link to this definition">¶</a></dt>
-<dd><dl class="field-list simple">
+<dd><p>Get a ratelimit object from the bucket.</p>
+<dl class="field-list simple">
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">Ratelimit</span></code></span></p>
 </dd>
@@ -365,13 +366,13 @@ it is used internally by <code class="xref py py-class docutils literal notransl
 <dl class="py method">
 <dt class="sig sig-object py" id="discord_http.http.DiscordAPI.me">
 <em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">me</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="user.html#discord_http.user.UserClient" title="discord_http.user.UserClient"><span class="pre">UserClient</span></a></span></span><a class="headerlink" href="#discord_http.http.DiscordAPI.me" title="Link to this definition">¶</a></dt>
-<dd><p><cite>User</cite>: Fetches the bot’s user information</p>
+<dd><p>Fetches the bot’s user information.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Returns<span class="colon">:</span></dt>
-<dd class="field-odd"><p>The bot’s user object</p>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><a class="reference internal" href="user.html#discord_http.user.UserClient" title="discord_http.user.UserClient"><code class="xref py py-class docutils literal notranslate"><span class="pre">UserClient</span></code></a></span></p>
 </dd>
-<dt class="field-even">Return type<span class="colon">:</span></dt>
-<dd class="field-even"><p><cite>User</cite></p>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The bot’s user object</p>
 </dd>
 <dt class="field-odd">Raises<span class="colon">:</span></dt>
 <dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#RuntimeError" title="(in Python v3.13)"><strong>RuntimeError</strong></a> – <ul class="simple">
@@ -386,21 +387,22 @@ it is used internally by <code class="xref py py-class docutils literal notransl
 <dl class="py method">
 <dt class="sig sig-object py" id="discord_http.http.DiscordAPI.query">
 <em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">query</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">method</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">path</span></span></em>, <em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">res_method</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'json'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">retry_codes</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#discord_http.http.HTTPResponse" title="discord_http.http.HTTPResponse"><span class="pre">HTTPResponse</span></a></span></span><a class="headerlink" href="#discord_http.http.DiscordAPI.query" title="Link to this definition">¶</a></dt>
-<dd><p>Make a request to the Discord API</p>
+<dd><p>Make a request to the Discord API.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>method</strong> (<cite>str</cite>) – Which HTTP method to use</p></li>
-<li><p><strong>path</strong> (<cite>str</cite>) – The path to make the request to</p></li>
-<li><p><strong>res_method</strong> (<cite>str</cite>) – The method to use to get the response</p></li>
-<li><p><strong>retry_codes</strong> (<cite>list[int]</cite>) – The HTTP codes to retry regardless of the response</p></li>
+<li><p><strong>method</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Literal" title="(in Python v3.13)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Literal</span></code></a>[<code class="docutils literal notranslate"><span class="pre">'GET'</span></code>, <code class="docutils literal notranslate"><span class="pre">'POST'</span></code>, <code class="docutils literal notranslate"><span class="pre">'DELETE'</span></code>, <code class="docutils literal notranslate"><span class="pre">'PUT'</span></code>, <code class="docutils literal notranslate"><span class="pre">'HEAD'</span></code>, <code class="docutils literal notranslate"><span class="pre">'PATCH'</span></code>, <code class="docutils literal notranslate"><span class="pre">'OPTIONS'</span></code>]</span>) – Which HTTP method to use</p></li>
+<li><p><strong>path</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></span>) – The path to make the request to</p></li>
+<li><p><strong>res_method</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Literal" title="(in Python v3.13)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Literal</span></code></a>[<code class="docutils literal notranslate"><span class="pre">'text'</span></code>, <code class="docutils literal notranslate"><span class="pre">'read'</span></code>, <code class="docutils literal notranslate"><span class="pre">'json'</span></code>]</span>) – The method to use to get the response</p></li>
+<li><p><strong>retry_codes</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">list</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a>] | <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></span>) – The HTTP codes to retry regardless of the response</p></li>
+<li><p><strong>**kwargs</strong> – The keyword arguments to pass to the aiohttp.ClientSession.request method</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>The response from the request</p>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><a class="reference internal" href="#discord_http.http.HTTPResponse" title="discord_http.http.HTTPResponse"><code class="xref py py-class docutils literal notranslate"><span class="pre">HTTPResponse</span></code></a></span></p>
 </dd>
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><cite>HTTPResponse</cite></p>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The response from the request</p>
 </dd>
 <dt class="field-even">Raises<span class="colon">:</span></dt>
 <dd class="field-even"><ul class="simple">
@@ -418,19 +420,19 @@ it is used internally by <code class="xref py py-class docutils literal notransl
 <dl class="py method">
 <dt class="sig sig-object py" id="discord_http.http.DiscordAPI.update_commands">
 <em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">update_commands</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">guild_id</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.13)"><span class="pre">dict</span></a></span></span><a class="headerlink" href="#discord_http.http.DiscordAPI.update_commands" title="Link to this definition">¶</a></dt>
-<dd><p>Updates the commands for the bot</p>
+<dd><p>Updates the commands for the bot.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>data</strong> (<cite>list[dict]</cite>) – The JSON data to send to Discord API</p></li>
-<li><p><strong>guild_id</strong> (<cite>int | None</cite>) – The guild ID to update the commands for (if None, commands will be global)</p></li>
+<li><p><strong>data</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">list</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">dict</span></code></a>] | <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">dict</span></code></a></span>) – The JSON data to send to Discord API</p></li>
+<li><p><strong>guild_id</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a> | <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></span>) – The guild ID to update the commands for (if None, commands will be global)</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>The response from the request</p>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">dict</span></code></a></span></p>
 </dd>
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><cite>dict</cite></p>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The response from the request</p>
 </dd>
 </dl>
 </dd></dl>

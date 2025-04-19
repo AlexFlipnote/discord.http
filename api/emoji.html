@@ -319,7 +319,7 @@
 <dl class="py property">
 <dt class="sig sig-object py" id="discord_http.emoji.Emoji.url">
 <em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">url</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a></em><a class="headerlink" href="#discord_http.emoji.Emoji.url" title="Link to this definition">¶</a></dt>
-<dd><p>Returns the URL of the emoji</p>
+<dd><p>Returns the URL of the emoji.</p>
 </dd></dl>
 
 </dd></dl>
@@ -328,25 +328,32 @@
 <dt class="sig sig-object py" id="discord_http.emoji.EmojiParser">
 <em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">discord_http.emoji.</span></span><span class="sig-name descname"><span class="pre">EmojiParser</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">emoji</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#discord_http.emoji.EmojiParser" title="Link to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
-<p>This is used to accept any input and convert
-to either a normal emoji or a Discord emoji automatically.</p>
+<p>Used to accept any input and convert to either a normal emoji or a Discord emoji automatically.</p>
 <p>It is used for things like reactions, forum, components, etc</p>
-<section id="examples">
-<h3>Examples:<a class="headerlink" href="#examples" title="Link to this heading">¶</a></h3>
+<p class="rubric">Examples</p>
 <ul class="simple">
 <li><p><cite>EmojiParser(”👍”)</cite></p></li>
 <li><p><cite>EmojiParser(“&lt;:name:1234567890&gt;”)</cite></p></li>
 <li><p><cite>EmojiParser(“1234567890”)</cite></p></li>
 </ul>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>emoji</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><em>str</em></a>)</p>
+</dd>
+</dl>
 <dl class="py method">
 <dt class="sig sig-object py" id="discord_http.emoji.EmojiParser.from_dict">
 <em class="property"><span class="k"><span class="pre">classmethod</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">from_dict</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Self" title="(in Python v3.13)"><span class="pre">Self</span></a></span></span><a class="headerlink" href="#discord_http.emoji.EmojiParser.from_dict" title="Link to this definition">¶</a></dt>
-<dd><dl class="field-list simple">
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">Self</span></code></span></p>
+<dd><p>Create an emoji from a dictionary.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>data</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">dict</span></code></a></span>) – The dictionary to create the emoji from</p>
 </dd>
-<dt class="field-even">Parameters<span class="colon">:</span></dt>
-<dd class="field-even"><p><strong>data</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.13)"><em>dict</em></a>)</p>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">Self</span></code></span></p>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The emoji</p>
 </dd>
 </dl>
 </dd></dl>
@@ -354,7 +361,7 @@ to either a normal emoji or a Discord emoji automatically.</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="discord_http.emoji.EmojiParser.to_dict">
 <span class="sig-name descname"><span class="pre">to_dict</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.13)"><span class="pre">dict</span></a></span></span><a class="headerlink" href="#discord_http.emoji.EmojiParser.to_dict" title="Link to this definition">¶</a></dt>
-<dd><p>Returns a dict representation of the emoji</p>
+<dd><p>Returns a dict representation of the emoji.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">dict</span></code></a></span></p>
@@ -365,7 +372,7 @@ to either a normal emoji or a Discord emoji automatically.</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="discord_http.emoji.EmojiParser.to_forum_dict">
 <span class="sig-name descname"><span class="pre">to_forum_dict</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.13)"><span class="pre">dict</span></a></span></span><a class="headerlink" href="#discord_http.emoji.EmojiParser.to_forum_dict" title="Link to this definition">¶</a></dt>
-<dd><p>Returns a dict representation of emoji to forum/media channel</p>
+<dd><p>Returns a dict representation of emoji to forum/media channel.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">dict</span></code></a></span></p>
@@ -376,7 +383,7 @@ to either a normal emoji or a Discord emoji automatically.</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="discord_http.emoji.EmojiParser.to_reaction">
 <span class="sig-name descname"><span class="pre">to_reaction</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a></span></span><a class="headerlink" href="#discord_http.emoji.EmojiParser.to_reaction" title="Link to this definition">¶</a></dt>
-<dd><p>Returns a string representation of the emoji</p>
+<dd><p>Returns a string representation of the emoji.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></span></p>
@@ -387,15 +394,9 @@ to either a normal emoji or a Discord emoji automatically.</p>
 <dl class="py property">
 <dt class="sig sig-object py" id="discord_http.emoji.EmojiParser.url">
 <em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">url</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></em><a class="headerlink" href="#discord_http.emoji.EmojiParser.url" title="Link to this definition">¶</a></dt>
-<dd><p>Returns the URL of the emoji if it’s a Discord emoji</p>
+<dd><p>Returns the URL of the emoji if it’s a Discord emoji.</p>
 </dd></dl>
 
-</section>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>emoji</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><em>str</em></a>)</p>
-</dd>
-</dl>
 </dd></dl>
 
 <dl class="py class">
@@ -418,7 +419,7 @@ to either a normal emoji or a Discord emoji automatically.</p>
 <p>If <cite>guild_id</cite> is not defined, it will delete the emoji from the application.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>reason</strong> (<cite>str | None</cite>) – The reason for deleting the emoji.</p>
+<dd class="field-odd"><p><strong>reason</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a> | <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></span>) – The reason for deleting the emoji.</p>
 </dd>
 <dt class="field-even">Return type<span class="colon">:</span></dt>
 <dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></span></p>
@@ -428,21 +429,21 @@ to either a normal emoji or a Discord emoji automatically.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="discord_http.emoji.PartialEmoji.edit">
-<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">edit</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name=&lt;MISSING&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">roles=&lt;MISSING&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">reason=None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#discord_http.emoji.PartialEmoji.edit" title="Link to this definition">¶</a></dt>
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">edit</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name=&lt;MISSING&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">roles=&lt;MISSING&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">reason=None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#discord_http.emoji.Emoji" title="discord_http.emoji.Emoji"><span class="pre">Emoji</span></a></span></span><a class="headerlink" href="#discord_http.emoji.PartialEmoji.edit" title="Link to this definition">¶</a></dt>
 <dd><p>Edits the emoji.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>name</strong> (<cite>str | None</cite>) – The new name of the emoji.</p></li>
-<li><p><strong>roles</strong> (<cite>list[PartialRole | int] | None</cite>) – Roles that are allowed to use the emoji. (Only for guilds)</p></li>
-<li><p><strong>reason</strong> (<cite>str | None</cite>) – The reason for editing the emoji. (Only for guilds)</p></li>
+<li><p><strong>name</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a> | <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></span>) – The new name of the emoji.</p></li>
+<li><p><strong>roles</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">list</span></code></a>[<a class="reference internal" href="role.html#discord_http.role.PartialRole" title="discord_http.role.PartialRole"><code class="xref py py-class docutils literal notranslate"><span class="pre">PartialRole</span></code></a> | <a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a>] | <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></span>) – Roles that are allowed to use the emoji. (Only for guilds)</p></li>
+<li><p><strong>reason</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a> | <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></span>) – The reason for editing the emoji. (Only for guilds)</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>The edited emoji.</p>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><a class="reference internal" href="#discord_http.emoji.Emoji" title="discord_http.emoji.Emoji"><code class="xref py py-class docutils literal notranslate"><span class="pre">Emoji</span></code></a></span></p>
 </dd>
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><cite>Emoji</cite></p>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The edited emoji.</p>
 </dd>
 <dt class="field-even">Raises<span class="colon">:</span></dt>
 <dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#ValueError" title="(in Python v3.13)"><strong>ValueError</strong></a> – Whenever guild_id is not defined</p>

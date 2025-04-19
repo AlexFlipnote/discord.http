@@ -319,14 +319,14 @@
 <dl class="py method">
 <dt class="sig sig-object py" id="discord_http.channel.BaseChannel.from_dict">
 <em class="property"><span class="k"><span class="pre">classmethod</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">from_dict</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">state</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">guild_id</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#discord_http.channel.BaseChannel" title="discord_http.channel.BaseChannel"><span class="pre">BaseChannel</span></a></span></span><a class="headerlink" href="#discord_http.channel.BaseChannel.from_dict" title="Link to this definition">¶</a></dt>
-<dd><p>Create a channel object from a dictionary
-Requires the state to be set</p>
+<dd><p>Create a channel object from a dictionary.</p>
+<p>Requires the state to be set</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>state</strong> (<cite>DiscordAPI</cite>) – The state to use</p></li>
-<li><p><strong>data</strong> (<cite>dict</cite>) – Data provided by Discord API</p></li>
-<li><p><strong>guild_id</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><em>int</em></a><em> | </em><em>None</em>)</p></li>
+<li><p><strong>state</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference internal" href="http.html#discord_http.http.DiscordAPI" title="discord_http.http.DiscordAPI"><code class="xref py py-class docutils literal notranslate"><span class="pre">DiscordAPI</span></code></a></span>) – The state to use</p></li>
+<li><p><strong>data</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">dict</span></code></a></span>) – Data provided by Discord API</p></li>
+<li><p><strong>guild_id</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a> | <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></span>) – Guild ID to create the channel object with</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
@@ -341,17 +341,17 @@ Requires the state to be set</p>
 <dl class="py property">
 <dt class="sig sig-object py" id="discord_http.channel.BaseChannel.mention">
 <em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">mention</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a></em><a class="headerlink" href="#discord_http.channel.BaseChannel.mention" title="Link to this definition">¶</a></dt>
-<dd><p>The channel’s mention</p>
+<dd><p>The channel’s mention.</p>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="discord_http.channel.BaseChannel.permissions_for">
 <span class="sig-name descname"><span class="pre">permissions_for</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">member</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="flags.html#discord_http.flags.Permissions" title="discord_http.flags.Permissions"><span class="pre">Permissions</span></a></span></span><a class="headerlink" href="#discord_http.channel.BaseChannel.permissions_for" title="Link to this definition">¶</a></dt>
-<dd><p>Returns the permissions for a member in the channel.
-Note that this only works if you are using Gateway with guild, role and channel cache.</p>
+<dd><p>Returns the permissions for a member in the channel.</p>
+<p>Note that this only works if you are using Gateway with guild, role and channel cache.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>member</strong> (<cite>Member</cite>) – The member to get the permissions for.</p>
+<dd class="field-odd"><p><strong>member</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference internal" href="member.html#discord_http.member.Member" title="discord_http.member.Member"><code class="xref py py-class docutils literal notranslate"><span class="pre">Member</span></code></a></span>) – The member to get the permissions for.</p>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>The permissions for the member in the channel.</p>
@@ -365,7 +365,7 @@ Note that this only works if you are using Gateway with guild, role and channel 
 <dl class="py property">
 <dt class="sig sig-object py" id="discord_http.channel.BaseChannel.type">
 <em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">type</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="enums.html#discord_http.enums.ChannelType" title="discord_http.enums.ChannelType"><span class="pre">ChannelType</span></a></em><a class="headerlink" href="#discord_http.channel.BaseChannel.type" title="Link to this definition">¶</a></dt>
-<dd><p>Returns the channel’s type</p>
+<dd><p>Returns the channel’s type.</p>
 </dd></dl>
 
 </dd></dl>
@@ -385,30 +385,26 @@ Note that this only works if you are using Gateway with guild, role and channel 
 <dl class="py property">
 <dt class="sig sig-object py" id="discord_http.channel.CategoryChannel.channels">
 <em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">channels</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.13)"><span class="pre">list</span></a><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#discord_http.channel.BaseChannel" title="discord_http.channel.BaseChannel"><span class="pre">BaseChannel</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="#discord_http.channel.PartialChannel" title="discord_http.channel.PartialChannel"><span class="pre">PartialChannel</span></a><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#discord_http.channel.CategoryChannel.channels" title="Link to this definition">¶</a></dt>
-<dd><p>Returns a list of channels in this category.
-This will only return channels that are in the same guild as the category.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><cite>list[BaseChannel | PartialChannel]</cite></p>
-</dd>
-</dl>
+<dd><p>Returns a list of channels in this category.</p>
+<p>This will only return channels that are in the same guild as the category.</p>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="discord_http.channel.CategoryChannel.create_stage_channel">
 <em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">create_stage_channel</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#discord_http.channel.StageChannel" title="discord_http.channel.StageChannel"><span class="pre">StageChannel</span></a></span></span><a class="headerlink" href="#discord_http.channel.CategoryChannel.create_stage_channel" title="Link to this definition">¶</a></dt>
-<dd><p>Create a stage channel</p>
+<dd><p>Create a stage channel.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>name</strong> (<cite>str</cite>) – The name of the channel</p></li>
-<li><p><strong>bitrate</strong> (<cite>Optional[int]</cite>) – The bitrate of the channel</p></li>
-<li><p><strong>user_limit</strong> (<cite>Optional[int]</cite>) – The user limit of the channel</p></li>
-<li><p><strong>overwrites</strong> (<cite>Optional[list[PermissionOverwrite]]</cite>) – The permission overwrites of the category</p></li>
-<li><p><strong>position</strong> (<cite>Optional[int]</cite>) – The position of the channel</p></li>
-<li><p><strong>video_quality_mode</strong> (<cite>Optional[Union[VideoQualityType, int]]</cite>) – The video quality mode of the channel</p></li>
-<li><p><strong>parent_id</strong> (<cite>Optional[Union[Snowflake, int]]</cite>) – The Category ID where the channel will be placed</p></li>
-<li><p><strong>reason</strong> (<cite>Optional[str]</cite>) – The reason for creating the stage channel</p></li>
+<li><p><strong>name</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></span>) – The name of the channel</p></li>
+<li><p><strong>bitrate</strong> – The bitrate of the channel</p></li>
+<li><p><strong>user_limit</strong> – The user limit of the channel</p></li>
+<li><p><strong>overwrites</strong> – The permission overwrites of the category</p></li>
+<li><p><strong>position</strong> – The position of the channel</p></li>
+<li><p><strong>video_quality_mode</strong> – The video quality mode of the channel</p></li>
+<li><p><strong>parent_id</strong> – The Category ID where the channel will be placed</p></li>
+<li><p><strong>reason</strong> – The reason for creating the stage channel</p></li>
+<li><p><strong>**kwargs</strong> – Keyword arguments to pass to the channel, look above</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
@@ -423,17 +419,18 @@ This will only return channels that are in the same guild as the category.</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="discord_http.channel.CategoryChannel.create_text_channel">
 <em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">create_text_channel</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#discord_http.channel.TextChannel" title="discord_http.channel.TextChannel"><span class="pre">TextChannel</span></a></span></span><a class="headerlink" href="#discord_http.channel.CategoryChannel.create_text_channel" title="Link to this definition">¶</a></dt>
-<dd><p>Create a text channel in the category</p>
+<dd><p>Create a text channel in the category.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>name</strong> (<cite>str</cite>) – The name of the channel</p></li>
-<li><p><strong>topic</strong> (<cite>Optional[str]</cite>) – The topic of the channel</p></li>
-<li><p><strong>rate_limit_per_user</strong> (<cite>Optional[int]</cite>) – The rate limit per user of the channel</p></li>
-<li><p><strong>overwrites</strong> (<cite>Optional[list[PermissionOverwrite]]</cite>) – The permission overwrites of the category</p></li>
-<li><p><strong>parent_id</strong> (<cite>Optional[Snowflake]</cite>) – The Category ID where the channel will be placed</p></li>
-<li><p><strong>nsfw</strong> (<cite>Optional[bool]</cite>) – Whether the channel is NSFW or not</p></li>
-<li><p><strong>reason</strong> (<cite>Optional[str]</cite>) – The reason for creating the text channel</p></li>
+<li><p><strong>name</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></span>) – The name of the channel</p></li>
+<li><p><strong>topic</strong> – The topic of the channel</p></li>
+<li><p><strong>rate_limit_per_user</strong> – The rate limit per user of the channel</p></li>
+<li><p><strong>overwrites</strong> – The permission overwrites of the category</p></li>
+<li><p><strong>parent_id</strong> – The Category ID where the channel will be placed</p></li>
+<li><p><strong>nsfw</strong> – Whether the channel is NSFW or not</p></li>
+<li><p><strong>reason</strong> – The reason for creating the text channel</p></li>
+<li><p><strong>**kwargs</strong> – Keyword arguments to pass to the channel, look above</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
@@ -448,19 +445,20 @@ This will only return channels that are in the same guild as the category.</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="discord_http.channel.CategoryChannel.create_voice_channel">
 <em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">create_voice_channel</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#discord_http.channel.VoiceChannel" title="discord_http.channel.VoiceChannel"><span class="pre">VoiceChannel</span></a></span></span><a class="headerlink" href="#discord_http.channel.CategoryChannel.create_voice_channel" title="Link to this definition">¶</a></dt>
-<dd><p>Create a voice channel to category</p>
+<dd><p>Create a voice channel to category.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>name</strong> (<cite>str</cite>) – The name of the channel</p></li>
-<li><p><strong>bitrate</strong> (<cite>Optional[int]</cite>) – The bitrate of the channel</p></li>
-<li><p><strong>user_limit</strong> (<cite>Optional[int]</cite>) – The user limit of the channel</p></li>
-<li><p><strong>rate_limit_per_user</strong> (<cite>Optional</cite>) – The rate limit per user of the channel</p></li>
-<li><p><strong>overwrites</strong> (<cite>Optional[list[PermissionOverwrite]]</cite>) – The permission overwrites of the category</p></li>
-<li><p><strong>position</strong> (<cite>Optional[int]</cite>) – The position of the channel</p></li>
-<li><p><strong>parent_id</strong> (<cite>Optional[Snowflake]</cite>) – The Category ID where the channel will be placed</p></li>
-<li><p><strong>nsfw</strong> (<cite>Optional[bool]</cite>) – Whether the channel is NSFW or not</p></li>
-<li><p><strong>reason</strong> (<cite>Optional[str]</cite>) – The reason for creating the voice channel</p></li>
+<li><p><strong>name</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></span>) – The name of the channel</p></li>
+<li><p><strong>bitrate</strong> – The bitrate of the channel</p></li>
+<li><p><strong>user_limit</strong> – The user limit of the channel</p></li>
+<li><p><strong>rate_limit_per_user</strong> – The rate limit per user of the channel</p></li>
+<li><p><strong>overwrites</strong> – The permission overwrites of the category</p></li>
+<li><p><strong>position</strong> – The position of the channel</p></li>
+<li><p><strong>parent_id</strong> – The Category ID where the channel will be placed</p></li>
+<li><p><strong>nsfw</strong> – Whether the channel is NSFW or not</p></li>
+<li><p><strong>reason</strong> – The reason for creating the voice channel</p></li>
+<li><p><strong>**kwargs</strong> – Keyword arguments to pass to the channel, look above</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
@@ -475,7 +473,7 @@ This will only return channels that are in the same guild as the category.</p>
 <dl class="py property">
 <dt class="sig sig-object py" id="discord_http.channel.CategoryChannel.type">
 <em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">type</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="enums.html#discord_http.enums.ChannelType" title="discord_http.enums.ChannelType"><span class="pre">ChannelType</span></a></em><a class="headerlink" href="#discord_http.channel.CategoryChannel.type" title="Link to this definition">¶</a></dt>
-<dd><p>Returns the channel’s type</p>
+<dd><p>Returns the channel’s type.</p>
 </dd></dl>
 
 </dd></dl>
@@ -495,7 +493,7 @@ This will only return channels that are in the same guild as the category.</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="discord_http.channel.DMChannel.edit">
 <em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">edit</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></span></span><a class="headerlink" href="#discord_http.channel.DMChannel.edit" title="Link to this definition">¶</a></dt>
-<dd><p>Only here to prevent errors</p>
+<dd><p>Only here to prevent errors.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Raises<span class="colon">:</span></dt>
 <dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#TypeError" title="(in Python v3.13)"><strong>TypeError</strong></a> – If you try to edit a DM channel</p>
@@ -509,13 +507,13 @@ This will only return channels that are in the same guild as the category.</p>
 <dl class="py property">
 <dt class="sig sig-object py" id="discord_http.channel.DMChannel.mention">
 <em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">mention</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a></em><a class="headerlink" href="#discord_http.channel.DMChannel.mention" title="Link to this definition">¶</a></dt>
-<dd><p>The channel’s mention</p>
+<dd><p>The channel’s mention.</p>
 </dd></dl>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="discord_http.channel.DMChannel.type">
 <em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">type</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="enums.html#discord_http.enums.ChannelType" title="discord_http.enums.ChannelType"><span class="pre">ChannelType</span></a></em><a class="headerlink" href="#discord_http.channel.DMChannel.type" title="Link to this definition">¶</a></dt>
-<dd><p>Returns the channel’s type</p>
+<dd><p>Returns the channel’s type.</p>
 </dd></dl>
 
 </dd></dl>
@@ -535,7 +533,7 @@ This will only return channels that are in the same guild as the category.</p>
 <dl class="py property">
 <dt class="sig sig-object py" id="discord_http.channel.DirectoryChannel.type">
 <em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">type</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="enums.html#discord_http.enums.ChannelType" title="discord_http.enums.ChannelType"><span class="pre">ChannelType</span></a></em><a class="headerlink" href="#discord_http.channel.DirectoryChannel.type" title="Link to this definition">¶</a></dt>
-<dd><p>Returns the channel’s type</p>
+<dd><p>Returns the channel’s type.</p>
 </dd></dl>
 
 </dd></dl>
@@ -555,7 +553,7 @@ This will only return channels that are in the same guild as the category.</p>
 <dl class="py property">
 <dt class="sig sig-object py" id="discord_http.channel.ForumChannel.type">
 <em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">type</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="enums.html#discord_http.enums.ChannelType" title="discord_http.enums.ChannelType"><span class="pre">ChannelType</span></a></em><a class="headerlink" href="#discord_http.channel.ForumChannel.type" title="Link to this definition">¶</a></dt>
-<dd><p>Returns the channel’s type</p>
+<dd><p>Returns the channel’s type.</p>
 </dd></dl>
 
 </dd></dl>
@@ -572,14 +570,14 @@ This will only return channels that are in the same guild as the category.</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="discord_http.channel.ForumTag.create">
 <em class="property"><span class="k"><span class="pre">classmethod</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">create</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">emoji_id</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">emoji_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">moderated</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#discord_http.channel.ForumTag" title="discord_http.channel.ForumTag"><span class="pre">ForumTag</span></a></span></span><a class="headerlink" href="#discord_http.channel.ForumTag.create" title="Link to this definition">¶</a></dt>
-<dd><p>Create a forum tag, used for editing available_tags</p>
+<dd><p>Create a forum tag, used for editing available_tags.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>name</strong> (<cite>Optional[str]</cite>) – The name of the tag</p></li>
-<li><p><strong>emoji_id</strong> (<cite>Optional[int]</cite>) – The emoji ID of the tag</p></li>
-<li><p><strong>emoji_name</strong> (<cite>Optional[str]</cite>) – The emoji name of the tag</p></li>
-<li><p><strong>moderated</strong> (<cite>bool</cite>) – If the tag is moderated</p></li>
+<li><p><strong>name</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a> | <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></span>) – The name of the tag</p></li>
+<li><p><strong>emoji_id</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a> | <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></span>) – The emoji ID of the tag</p></li>
+<li><p><strong>emoji_name</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a> | <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></span>) – The emoji name of the tag</p></li>
+<li><p><strong>moderated</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></a></span>) – If the tag is moderated</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
@@ -594,12 +592,16 @@ This will only return channels that are in the same guild as the category.</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="discord_http.channel.ForumTag.from_data">
 <em class="property"><span class="k"><span class="pre">classmethod</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">from_data</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">data</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Self" title="(in Python v3.13)"><span class="pre">Self</span></a></span></span><a class="headerlink" href="#discord_http.channel.ForumTag.from_data" title="Link to this definition">¶</a></dt>
-<dd><dl class="field-list simple">
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">Self</span></code></span></p>
+<dd><p>Create a forum tag from a dictionary.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>data</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">dict</span></code></a></span>) – The dictionary to create the forum tag from</p>
 </dd>
-<dt class="field-even">Parameters<span class="colon">:</span></dt>
-<dd class="field-even"><p><strong>data</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.13)"><em>dict</em></a>)</p>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">Self</span></code></span></p>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The forum tag</p>
 </dd>
 </dl>
 </dd></dl>
@@ -607,7 +609,8 @@ This will only return channels that are in the same guild as the category.</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="discord_http.channel.ForumTag.to_dict">
 <span class="sig-name descname"><span class="pre">to_dict</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.13)"><span class="pre">dict</span></a></span></span><a class="headerlink" href="#discord_http.channel.ForumTag.to_dict" title="Link to this definition">¶</a></dt>
-<dd><dl class="field-list simple">
+<dd><p>The forum tag as a dictionary.</p>
+<dl class="field-list simple">
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">dict</span></code></a></span></p>
 </dd>
@@ -631,7 +634,7 @@ This will only return channels that are in the same guild as the category.</p>
 <dl class="py property">
 <dt class="sig sig-object py" id="discord_http.channel.ForumThread.type">
 <em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">type</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="enums.html#discord_http.enums.ChannelType" title="discord_http.enums.ChannelType"><span class="pre">ChannelType</span></a></em><a class="headerlink" href="#discord_http.channel.ForumThread.type" title="Link to this definition">¶</a></dt>
-<dd><p>Returns the channel’s type</p>
+<dd><p>Returns the channel’s type.</p>
 </dd></dl>
 
 </dd></dl>
@@ -651,7 +654,7 @@ This will only return channels that are in the same guild as the category.</p>
 <dl class="py property">
 <dt class="sig sig-object py" id="discord_http.channel.GroupDMChannel.type">
 <em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">type</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="enums.html#discord_http.enums.ChannelType" title="discord_http.enums.ChannelType"><span class="pre">ChannelType</span></a></em><a class="headerlink" href="#discord_http.channel.GroupDMChannel.type" title="Link to this definition">¶</a></dt>
-<dd><p>Returns the channel’s type</p>
+<dd><p>Returns the channel’s type.</p>
 </dd></dl>
 
 </dd></dl>
@@ -671,7 +674,7 @@ This will only return channels that are in the same guild as the category.</p>
 <dl class="py property">
 <dt class="sig sig-object py" id="discord_http.channel.NewsChannel.type">
 <em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">type</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="enums.html#discord_http.enums.ChannelType" title="discord_http.enums.ChannelType"><span class="pre">ChannelType</span></a></em><a class="headerlink" href="#discord_http.channel.NewsChannel.type" title="Link to this definition">¶</a></dt>
-<dd><p>Returns the channel’s type</p>
+<dd><p>Returns the channel’s type.</p>
 </dd></dl>
 
 </dd></dl>
@@ -691,7 +694,7 @@ This will only return channels that are in the same guild as the category.</p>
 <dl class="py property">
 <dt class="sig sig-object py" id="discord_http.channel.NewsThread.type">
 <em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">type</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="enums.html#discord_http.enums.ChannelType" title="discord_http.enums.ChannelType"><span class="pre">ChannelType</span></a></em><a class="headerlink" href="#discord_http.channel.NewsThread.type" title="Link to this definition">¶</a></dt>
-<dd><p>Returns the channel’s type</p>
+<dd><p>Returns the channel’s type.</p>
 </dd></dl>
 
 </dd></dl>
@@ -712,10 +715,10 @@ This will only return channels that are in the same guild as the category.</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="discord_http.channel.PartialChannel.add_thread_member">
 <em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">add_thread_member</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">user_id</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></span></span><a class="headerlink" href="#discord_http.channel.PartialChannel.add_thread_member" title="Link to this definition">¶</a></dt>
-<dd><p>Add a thread member</p>
+<dd><p>Add a thread member.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>user_id</strong> (<cite>int</cite>) – The user ID to add</p>
+<dd class="field-odd"><p><strong>user_id</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a></span>) – The user ID to add</p>
 </dd>
 <dt class="field-even">Return type<span class="colon">:</span></dt>
 <dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></span></p>
@@ -726,17 +729,17 @@ This will only return channels that are in the same guild as the category.</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="discord_http.channel.PartialChannel.bulk_delete_messages">
 <em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">bulk_delete_messages</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">check</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">before</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">after</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">around</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">message_ids</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">limit</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">100</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">reason</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.13)"><span class="pre">list</span></a><span class="p"><span class="pre">[</span></span><a class="reference internal" href="message.html#discord_http.message.Message" title="discord_http.message.Message"><span class="pre">Message</span></a><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></span></span><a class="headerlink" href="#discord_http.channel.PartialChannel.bulk_delete_messages" title="Link to this definition">¶</a></dt>
-<dd><p>Deletes messages in bulk</p>
+<dd><p>Deletes messages in bulk.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>check</strong> (<cite>Callable[[Message], bool] | None</cite>) – A function to check if the message should be deleted</p></li>
-<li><p><strong>before</strong> (<cite>datetime | Message | Snowflake | int | None</cite>) – The message before which to delete</p></li>
-<li><p><strong>after</strong> (<cite>datetime | Message | Snowflake | int | None</cite>) – The message after which to delete</p></li>
-<li><p><strong>around</strong> (<cite>datetime | Message | Snowflake | int | None</cite>) – The message around which to delete</p></li>
-<li><p><strong>message_ids</strong> (<cite>list[Message | Snowflake | int] | None</cite>) – The message IDs to delete</p></li>
-<li><p><strong>limit</strong> (<cite>int | None</cite>) – The maximum amount of messages to delete</p></li>
-<li><p><strong>reason</strong> (<cite>str | None</cite>) – The reason for deleting the messages</p></li>
+<li><p><strong>check</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/collections.abc.html#collections.abc.Callable" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Callable</span></code></a>[[<a class="reference internal" href="message.html#discord_http.message.Message" title="discord_http.message.Message"><code class="xref py py-class docutils literal notranslate"><span class="pre">Message</span></code></a>], <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></a>] | <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></span>) – A function to check if the message should be deleted</p></li>
+<li><p><strong>before</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/datetime.html#datetime.datetime" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">datetime</span></code></a> | <a class="reference internal" href="message.html#discord_http.message.Message" title="discord_http.message.Message"><code class="xref py py-class docutils literal notranslate"><span class="pre">Message</span></code></a> | <a class="reference internal" href="object.html#discord_http.object.Snowflake" title="discord_http.object.Snowflake"><code class="xref py py-class docutils literal notranslate"><span class="pre">Snowflake</span></code></a> | <a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a> | <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></span>) – The message before which to delete</p></li>
+<li><p><strong>after</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/datetime.html#datetime.datetime" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">datetime</span></code></a> | <a class="reference internal" href="message.html#discord_http.message.Message" title="discord_http.message.Message"><code class="xref py py-class docutils literal notranslate"><span class="pre">Message</span></code></a> | <a class="reference internal" href="object.html#discord_http.object.Snowflake" title="discord_http.object.Snowflake"><code class="xref py py-class docutils literal notranslate"><span class="pre">Snowflake</span></code></a> | <a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a> | <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></span>) – The message after which to delete</p></li>
+<li><p><strong>around</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/datetime.html#datetime.datetime" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">datetime</span></code></a> | <a class="reference internal" href="message.html#discord_http.message.Message" title="discord_http.message.Message"><code class="xref py py-class docutils literal notranslate"><span class="pre">Message</span></code></a> | <a class="reference internal" href="object.html#discord_http.object.Snowflake" title="discord_http.object.Snowflake"><code class="xref py py-class docutils literal notranslate"><span class="pre">Snowflake</span></code></a> | <a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a> | <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></span>) – The message around which to delete</p></li>
+<li><p><strong>message_ids</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">list</span></code></a>[<a class="reference internal" href="message.html#discord_http.message.Message" title="discord_http.message.Message"><code class="xref py py-class docutils literal notranslate"><span class="pre">Message</span></code></a> | <a class="reference internal" href="object.html#discord_http.object.Snowflake" title="discord_http.object.Snowflake"><code class="xref py py-class docutils literal notranslate"><span class="pre">Snowflake</span></code></a>] | <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></span>) – The message IDs to delete</p></li>
+<li><p><strong>limit</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a> | <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></span>) – The maximum amount of messages to delete</p></li>
+<li><p><strong>reason</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a> | <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></span>) – The reason for deleting the messages</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
@@ -752,29 +755,28 @@ If you provide message_ids upfront, it will skip history search and delete</p>
 <dl class="py property">
 <dt class="sig sig-object py" id="discord_http.channel.PartialChannel.channel">
 <em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">channel</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="#discord_http.channel.BaseChannel" title="discord_http.channel.BaseChannel"><span class="pre">BaseChannel</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="#discord_http.channel.CategoryChannel" title="discord_http.channel.CategoryChannel"><span class="pre">CategoryChannel</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="#discord_http.channel.PartialChannel" title="discord_http.channel.PartialChannel"><span class="pre">PartialChannel</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></em><a class="headerlink" href="#discord_http.channel.PartialChannel.channel" title="Link to this definition">¶</a></dt>
-<dd><p><cite>BaseChannel | CategoryChannel | PartialChannel | None</cite>:
-Returns the channel the thread is in.
-Only returns a full object if cache is enabled for guild and channel.</p>
+<dd><p>Returns the channel the thread is in.</p>
+<p>Only returns a full object if cache is enabled for guild and channel.</p>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="discord_http.channel.PartialChannel.create_forum_or_media">
 <em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">create_forum_or_media</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span></em>, <em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">content</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">embed</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">embeds</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">file</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">files</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">allowed_mentions</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">view</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">auto_archive_duration</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">4320</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rate_limit_per_user</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">applied_tags</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#discord_http.channel.ForumThread" title="discord_http.channel.ForumThread"><span class="pre">ForumThread</span></a></span></span><a class="headerlink" href="#discord_http.channel.PartialChannel.create_forum_or_media" title="Link to this definition">¶</a></dt>
-<dd><p>Create a forum or media thread in the channel</p>
+<dd><p>Create a forum or media thread in the channel.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>name</strong> (<cite>str</cite>) – The name of the thread</p></li>
-<li><p><strong>content</strong> (<cite>Optional[str]</cite>) – The content of the message</p></li>
-<li><p><strong>embed</strong> (<cite>Optional[Embed]</cite>) – Embed to be sent</p></li>
-<li><p><strong>embeds</strong> (<cite>Optional[list[Embed]]</cite>) – List of embeds to be sent</p></li>
-<li><p><strong>file</strong> (<cite>Optional[File]</cite>) – File to be sent</p></li>
-<li><p><strong>files</strong> (<cite>Optional[list[File]]</cite>) – List of files to be sent</p></li>
-<li><p><strong>allowed_mentions</strong> (<cite>Optional[AllowedMentions]</cite>) – The allowed mentions for the message</p></li>
-<li><p><strong>view</strong> (<cite>Optional[View]</cite>) – The view to be sent</p></li>
-<li><p><strong>auto_archive_duration</strong> (<cite>Optional[int]</cite>) – The duration in minutes to automatically archive the thread after recent activity</p></li>
-<li><p><strong>rate_limit_per_user</strong> (<cite>Optional[int]</cite>) – How long the slowdown should be</p></li>
-<li><p><strong>applied_tags</strong> (<cite>Optional[list[Union[&amp;quot;ForumTag&amp;quot;, int]]]</cite>) – The tags to be applied to the thread</p></li>
+<li><p><strong>name</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></span>) – The name of the thread</p></li>
+<li><p><strong>content</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a> | <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></span>) – The content of the message</p></li>
+<li><p><strong>embed</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference internal" href="embeds.html#discord_http.embeds.Embed" title="discord_http.embeds.Embed"><code class="xref py py-class docutils literal notranslate"><span class="pre">Embed</span></code></a> | <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></span>) – Embed to be sent</p></li>
+<li><p><strong>embeds</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">list</span></code></a>[<a class="reference internal" href="embeds.html#discord_http.embeds.Embed" title="discord_http.embeds.Embed"><code class="xref py py-class docutils literal notranslate"><span class="pre">Embed</span></code></a>] | <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></span>) – List of embeds to be sent</p></li>
+<li><p><strong>file</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference internal" href="file.html#discord_http.file.File" title="discord_http.file.File"><code class="xref py py-class docutils literal notranslate"><span class="pre">File</span></code></a> | <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></span>) – File to be sent</p></li>
+<li><p><strong>files</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">list</span></code></a>[<a class="reference internal" href="file.html#discord_http.file.File" title="discord_http.file.File"><code class="xref py py-class docutils literal notranslate"><span class="pre">File</span></code></a>] | <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></span>) – List of files to be sent</p></li>
+<li><p><strong>allowed_mentions</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference internal" href="mentions.html#discord_http.mentions.AllowedMentions" title="discord_http.mentions.AllowedMentions"><code class="xref py py-class docutils literal notranslate"><span class="pre">AllowedMentions</span></code></a> | <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></span>) – The allowed mentions for the message</p></li>
+<li><p><strong>view</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference internal" href="view.html#discord_http.view.View" title="discord_http.view.View"><code class="xref py py-class docutils literal notranslate"><span class="pre">View</span></code></a> | <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></span>) – The view to be sent</p></li>
+<li><p><strong>auto_archive_duration</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a> | <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></span>) – The duration in minutes to automatically archive the thread after recent activity</p></li>
+<li><p><strong>rate_limit_per_user</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a> | <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></span>) – How long the slowdown should be</p></li>
+<li><p><strong>applied_tags</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">list</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Union" title="(in Python v3.13)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code></a>[<a class="reference internal" href="#discord_http.channel.ForumTag" title="discord_http.channel.ForumTag"><code class="xref py py-class docutils literal notranslate"><span class="pre">ForumTag</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a>]] | <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></span>) – The tags to be applied to the thread</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
@@ -789,14 +791,14 @@ Only returns a full object if cache is enabled for guild and channel.</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="discord_http.channel.PartialChannel.create_invite">
 <em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">create_invite</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_age</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">86400</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_uses</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">temporary</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">unique</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="invite.html#discord_http.invite.Invite" title="discord_http.invite.Invite"><span class="pre">Invite</span></a></span></span><a class="headerlink" href="#discord_http.channel.PartialChannel.create_invite" title="Link to this definition">¶</a></dt>
-<dd><p>Create an invite for the channel</p>
+<dd><p>Create an invite for the channel.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>max_age</strong> (<cite>Union[timedelta, int]</cite>) – How long the invite should last</p></li>
-<li><p><strong>temporary</strong> (<cite>bool</cite>) – If the invite should be temporary</p></li>
-<li><p><strong>unique</strong> (<cite>bool</cite>) – If the invite should be unique</p></li>
-<li><p><strong>max_uses</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><em>int</em></a><em> | </em><em>None</em>)</p></li>
+<li><p><strong>max_age</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/datetime.html#datetime.timedelta" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">timedelta</span></code></a> | <a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a></span>) – How long the invite should last</p></li>
+<li><p><strong>max_uses</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a> | <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></span>) – The maximum amount of uses for the invite</p></li>
+<li><p><strong>temporary</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></a></span>) – If the invite should be temporary</p></li>
+<li><p><strong>unique</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></a></span>) – If the invite should be unique</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
@@ -811,16 +813,16 @@ Only returns a full object if cache is enabled for guild and channel.</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="discord_http.channel.PartialChannel.create_thread">
 <em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">create_thread</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span></em>, <em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">type</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">ChannelType.guild_private_thread</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">auto_archive_duration</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">4320</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">invitable</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rate_limit_per_user</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">reason</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#discord_http.channel.PublicThread" title="discord_http.channel.PublicThread"><span class="pre">PublicThread</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="#discord_http.channel.PrivateThread" title="discord_http.channel.PrivateThread"><span class="pre">PrivateThread</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="#discord_http.channel.NewsThread" title="discord_http.channel.NewsThread"><span class="pre">NewsThread</span></a></span></span><a class="headerlink" href="#discord_http.channel.PartialChannel.create_thread" title="Link to this definition">¶</a></dt>
-<dd><p>Creates a thread in the channel</p>
+<dd><p>Creates a thread in the channel.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>name</strong> (<cite>str</cite>) – The name of the thread</p></li>
-<li><p><strong>type</strong> (<cite>Optional[Union[ChannelType, int]]</cite>) – The type of thread to create</p></li>
-<li><p><strong>auto_archive_duration</strong> (<cite>Optional[int]</cite>) – The duration in minutes to automatically archive the thread after recent activity</p></li>
-<li><p><strong>invitable</strong> (<cite>bool</cite>) – If the thread is invitable</p></li>
-<li><p><strong>rate_limit_per_user</strong> (<cite>Optional[Union[timedelta, int]]</cite>) – How long the slowdown should be</p></li>
-<li><p><strong>reason</strong> (<cite>Optional[str]</cite>) – The reason for creating the thread</p></li>
+<li><p><strong>name</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></span>) – The name of the thread</p></li>
+<li><p><strong>type</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference internal" href="enums.html#discord_http.enums.ChannelType" title="discord_http.enums.ChannelType"><code class="xref py py-class docutils literal notranslate"><span class="pre">ChannelType</span></code></a> | <a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a></span>) – The type of thread to create</p></li>
+<li><p><strong>auto_archive_duration</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a> | <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></span>) – The duration in minutes to automatically archive the thread after recent activity</p></li>
+<li><p><strong>invitable</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></a></span>) – If the thread is invitable</p></li>
+<li><p><strong>rate_limit_per_user</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/datetime.html#datetime.timedelta" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">timedelta</span></code></a> | <a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a> | <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></span>) – How long the slowdown should be</p></li>
+<li><p><strong>reason</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a> | <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></span>) – The reason for creating the thread</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
@@ -842,13 +844,13 @@ Only returns a full object if cache is enabled for guild and channel.</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="discord_http.channel.PartialChannel.create_webhook">
 <em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">create_webhook</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span></em>, <em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">avatar</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">reason</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="webhook.html#discord_http.webhook.Webhook" title="discord_http.webhook.Webhook"><span class="pre">Webhook</span></a></span></span><a class="headerlink" href="#discord_http.channel.PartialChannel.create_webhook" title="Link to this definition">¶</a></dt>
-<dd><p>Create a webhook for the channel</p>
+<dd><p>Create a webhook for the channel.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>name</strong> (<cite>str</cite>) – The name of the webhook</p></li>
-<li><p><strong>avatar</strong> (<cite>Optional[File]</cite>) – The avatar of the webhook</p></li>
-<li><p><strong>reason</strong> (<cite>Optional[str]</cite>) – The reason for creating the webhook that appears in audit logs</p></li>
+<li><p><strong>name</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></span>) – The name of the webhook</p></li>
+<li><p><strong>avatar</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference internal" href="file.html#discord_http.file.File" title="discord_http.file.File"><code class="xref py py-class docutils literal notranslate"><span class="pre">File</span></code></a> | <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#bytes" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bytes</span></code></a> | <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></span>) – The avatar of the webhook</p></li>
+<li><p><strong>reason</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a> | <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></span>) – The reason for creating the webhook that appears in audit logs</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
@@ -863,10 +865,10 @@ Only returns a full object if cache is enabled for guild and channel.</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="discord_http.channel.PartialChannel.delete">
 <em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">delete</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">reason</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></span></span><a class="headerlink" href="#discord_http.channel.PartialChannel.delete" title="Link to this definition">¶</a></dt>
-<dd><p>Delete the channel</p>
+<dd><p>Delete the channel.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>reason</strong> (<cite>Optional[str]</cite>) – The reason for deleting the channel</p>
+<dd class="field-odd"><p><strong>reason</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a> | <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></span>) – The reason for deleting the channel</p>
 </dd>
 <dt class="field-even">Return type<span class="colon">:</span></dt>
 <dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></span></p>
@@ -877,12 +879,12 @@ Only returns a full object if cache is enabled for guild and channel.</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="discord_http.channel.PartialChannel.delete_permission">
 <em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">delete_permission</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">id</span></span></em>, <em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">reason</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></span></span><a class="headerlink" href="#discord_http.channel.PartialChannel.delete_permission" title="Link to this definition">¶</a></dt>
-<dd><p>Delete a permission overwrite for the channel</p>
+<dd><p>Delete a permission overwrite for the channel.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>id</strong> (<cite>Union[Snowflake, int]</cite>) – The ID of the overwrite</p></li>
-<li><p><strong>reason</strong> (<cite>Optional[str]</cite>) – The reason for deleting the overwrite</p></li>
+<li><p><strong>id</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference internal" href="object.html#discord_http.object.Snowflake" title="discord_http.object.Snowflake"><code class="xref py py-class docutils literal notranslate"><span class="pre">Snowflake</span></code></a> | <a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a></span>) – The ID of the overwrite</p></li>
+<li><p><strong>reason</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a> | <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></span>) – The reason for deleting the overwrite</p></li>
 </ul>
 </dd>
 <dt class="field-even">Return type<span class="colon">:</span></dt>
@@ -894,37 +896,37 @@ Only returns a full object if cache is enabled for guild and channel.</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="discord_http.channel.PartialChannel.edit">
 <em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">edit</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name=&lt;MISSING&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">type=&lt;MISSING&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">position=&lt;MISSING&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">topic=&lt;MISSING&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">nsfw=&lt;MISSING&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rate_limit_per_user=&lt;MISSING&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bitrate=&lt;MISSING&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">user_limit=&lt;MISSING&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">overwrites=&lt;MISSING&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">parent_id=&lt;MISSING&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rtc_region=&lt;MISSING&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">video_quality_mode=&lt;MISSING&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">default_auto_archive_duration=&lt;MISSING&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">flags=&lt;MISSING&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">available_tags=&lt;MISSING&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">default_reaction_emoji=&lt;MISSING&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">default_thread_rate_limit_per_user=&lt;MISSING&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">default_sort_order=&lt;MISSING&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">default_forum_layout=&lt;MISSING&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">archived=&lt;MISSING&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">auto_archive_duration=&lt;MISSING&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">locked=&lt;MISSING&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">invitable=&lt;MISSING&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">applied_tags=&lt;MISSING&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">reason=None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Self" title="(in Python v3.13)"><span class="pre">Self</span></a></span></span><a class="headerlink" href="#discord_http.channel.PartialChannel.edit" title="Link to this definition">¶</a></dt>
-<dd><p>Edit the channel</p>
+<dd><p>Edit the channel.</p>
 <p>Note that this method globaly edits any channel type.
 So be sure to use the correct parameters for the channel.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>name</strong> (<cite>Optional[str]</cite>) – New name of the channel (All)</p></li>
-<li><p><strong>type</strong> (<cite>Optional[Union[ChannelType, int]]</cite>) – The new type of the channel (Text, Announcement)</p></li>
-<li><p><strong>position</strong> (<cite>Optional[int]</cite>) – The new position of the channel (All)</p></li>
-<li><p><strong>topic</strong> (<cite>Optional[str]</cite>) – The new topic of the channel (Text, Announcement, Forum, Media)</p></li>
-<li><p><strong>nsfw</strong> (<cite>Optional[bool]</cite>) – If the channel should be NSFW (Text, Voice, Announcement, Stage, Forum, Media)</p></li>
-<li><p><strong>rate_limit_per_user</strong> (<cite>Optional[int]</cite>) – How long the slowdown should be (Text, Voice, Stage, Forum, Media)</p></li>
-<li><p><strong>bitrate</strong> (<cite>Optional[int]</cite>) – The new bitrate of the channel (Voice, Stage)</p></li>
-<li><p><strong>user_limit</strong> (<cite>Optional[int]</cite>) – The new user limit of the channel (Voice, Stage)</p></li>
-<li><p><strong>overwrites</strong> (<cite>Optional[list[PermissionOverwrite]]</cite>) – The new permission overwrites of the channel (All)</p></li>
-<li><p><strong>parent_id</strong> (<cite>Optional[Union[Snowflake, int]]</cite>) – The new parent ID of the channel (Text, Voice, Announcement, Stage, Forum, Media)</p></li>
-<li><p><strong>rtc_region</strong> (<cite>Optional[str]</cite>) – The new RTC region of the channel (Voice, Stage)</p></li>
-<li><p><strong>video_quality_mode</strong> (<cite>Optional[Union[VideoQualityType, int]]</cite>) – The new video quality mode of the channel (Voice, Stage)</p></li>
-<li><p><strong>default_auto_archive_duration</strong> (<cite>Optional[int]</cite>) – The new default auto archive duration of the channel (Text, Announcement, Forum, Media)</p></li>
-<li><p><strong>flags</strong> (<cite>Optional[ChannelFlags]</cite>) – The new flags of the channel (Forum, Media)</p></li>
-<li><p><strong>available_tags</strong> (<cite>Optional[list[ForumTag]]</cite>) – The new available tags of the channel (Forum, Media)</p></li>
-<li><p><strong>default_reaction_emoji</strong> (<cite>Optional[str]</cite>) – The new default reaction emoji of the channel (Forum, Media)</p></li>
-<li><p><strong>default_thread_rate_limit_per_user</strong> (<cite>Optional[int]</cite>) – The new default thread rate limit per user of the channel (Text, Forum, Media)</p></li>
-<li><p><strong>default_sort_order</strong> (<cite>Optional[Union[SortOrderType, int]]</cite>) – The new default sort order of the channel (Forum, Media)</p></li>
-<li><p><strong>default_forum_layout</strong> (<cite>Optional[Union[ForumLayoutType, int]]</cite>) – The new default forum layout of the channel (Forum)</p></li>
-<li><p><strong>archived</strong> (<cite>Optional[bool]</cite>) – If the thread should be archived (Thread, Forum)</p></li>
-<li><p><strong>auto_archive_duration</strong> (<cite>Optional[int]</cite>) – The new auto archive duration of the thread (Thread, Forum)</p></li>
-<li><p><strong>locked</strong> (<cite>Optional[bool]</cite>) – If the thread should be locked (Thread, Forum)</p></li>
-<li><p><strong>invitable</strong> (<cite>Optional[bool]</cite>) – If the thread should be invitable by everyone (Thread)</p></li>
-<li><p><strong>applied_tags</strong> (<cite>Optional[list[Union[ForumTag, int]]</cite>) – The new applied tags of the forum thread (Forum, Media)</p></li>
-<li><p><strong>reason</strong> (<cite>Optional[str]</cite>) – The reason for editing the channel (All)</p></li>
+<li><p><strong>name</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a> | <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></span>) – New name of the channel (All)</p></li>
+<li><p><strong>type</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference internal" href="enums.html#discord_http.enums.ChannelType" title="discord_http.enums.ChannelType"><code class="xref py py-class docutils literal notranslate"><span class="pre">ChannelType</span></code></a> | <a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a> | <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></span>) – The new type of the channel (Text, Announcement)</p></li>
+<li><p><strong>position</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a> | <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></span>) – The new position of the channel (All)</p></li>
+<li><p><strong>topic</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a> | <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></span>) – The new topic of the channel (Text, Announcement, Forum, Media)</p></li>
+<li><p><strong>nsfw</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></a> | <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></span>) – If the channel should be NSFW (Text, Voice, Announcement, Stage, Forum, Media)</p></li>
+<li><p><strong>rate_limit_per_user</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a> | <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></span>) – How long the slowdown should be (Text, Voice, Stage, Forum, Media)</p></li>
+<li><p><strong>bitrate</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a> | <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></span>) – The new bitrate of the channel (Voice, Stage)</p></li>
+<li><p><strong>user_limit</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a> | <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></span>) – The new user limit of the channel (Voice, Stage)</p></li>
+<li><p><strong>overwrites</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">list</span></code></a>[<a class="reference internal" href="flags.html#discord_http.flags.PermissionOverwrite" title="discord_http.flags.PermissionOverwrite"><code class="xref py py-class docutils literal notranslate"><span class="pre">PermissionOverwrite</span></code></a>] | <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></span>) – The new permission overwrites of the channel (All)</p></li>
+<li><p><strong>parent_id</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference internal" href="object.html#discord_http.object.Snowflake" title="discord_http.object.Snowflake"><code class="xref py py-class docutils literal notranslate"><span class="pre">Snowflake</span></code></a> | <a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a> | <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></span>) – The new parent ID of the channel (Text, Voice, Announcement, Stage, Forum, Media)</p></li>
+<li><p><strong>rtc_region</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a> | <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></span>) – The new RTC region of the channel (Voice, Stage)</p></li>
+<li><p><strong>video_quality_mode</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference internal" href="enums.html#discord_http.enums.VideoQualityType" title="discord_http.enums.VideoQualityType"><code class="xref py py-class docutils literal notranslate"><span class="pre">VideoQualityType</span></code></a> | <a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a> | <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></span>) – The new video quality mode of the channel (Voice, Stage)</p></li>
+<li><p><strong>default_auto_archive_duration</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a> | <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></span>) – The new default auto archive duration of the channel (Text, Announcement, Forum, Media)</p></li>
+<li><p><strong>flags</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference internal" href="flags.html#discord_http.flags.ChannelFlags" title="discord_http.flags.ChannelFlags"><code class="xref py py-class docutils literal notranslate"><span class="pre">ChannelFlags</span></code></a> | <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></span>) – The new flags of the channel (Forum, Media)</p></li>
+<li><p><strong>available_tags</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">list</span></code></a>[<a class="reference internal" href="#discord_http.channel.ForumTag" title="discord_http.channel.ForumTag"><code class="xref py py-class docutils literal notranslate"><span class="pre">ForumTag</span></code></a>] | <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></span>) – The new available tags of the channel (Forum, Media)</p></li>
+<li><p><strong>default_reaction_emoji</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a> | <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></span>) – The new default reaction emoji of the channel (Forum, Media)</p></li>
+<li><p><strong>default_thread_rate_limit_per_user</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a> | <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></span>) – The new default thread rate limit per user of the channel (Text, Forum, Media)</p></li>
+<li><p><strong>default_sort_order</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference internal" href="enums.html#discord_http.enums.SortOrderType" title="discord_http.enums.SortOrderType"><code class="xref py py-class docutils literal notranslate"><span class="pre">SortOrderType</span></code></a> | <a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a> | <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></span>) – The new default sort order of the channel (Forum, Media)</p></li>
+<li><p><strong>default_forum_layout</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference internal" href="enums.html#discord_http.enums.ForumLayoutType" title="discord_http.enums.ForumLayoutType"><code class="xref py py-class docutils literal notranslate"><span class="pre">ForumLayoutType</span></code></a> | <a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a> | <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></span>) – The new default forum layout of the channel (Forum)</p></li>
+<li><p><strong>archived</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></a> | <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></span>) – If the thread should be archived (Thread, Forum)</p></li>
+<li><p><strong>auto_archive_duration</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a> | <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></span>) – The new auto archive duration of the thread (Thread, Forum)</p></li>
+<li><p><strong>locked</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></a> | <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></span>) – If the thread should be locked (Thread, Forum)</p></li>
+<li><p><strong>invitable</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></a> | <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></span>) – If the thread should be invitable by everyone (Thread)</p></li>
+<li><p><strong>applied_tags</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">list</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Union" title="(in Python v3.13)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code></a>[<a class="reference internal" href="#discord_http.channel.ForumTag" title="discord_http.channel.ForumTag"><code class="xref py py-class docutils literal notranslate"><span class="pre">ForumTag</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a>]] | <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></span>) – The new applied tags of the forum thread (Forum, Media)</p></li>
+<li><p><strong>reason</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a> | <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></span>) – The reason for editing the channel (All)</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
@@ -939,7 +941,7 @@ So be sure to use the correct parameters for the channel.</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="discord_http.channel.PartialChannel.fetch">
 <em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">fetch</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#discord_http.channel.BaseChannel" title="discord_http.channel.BaseChannel"><span class="pre">BaseChannel</span></a></span></span><a class="headerlink" href="#discord_http.channel.PartialChannel.fetch" title="Link to this definition">¶</a></dt>
-<dd><p>Fetches the channel and returns the channel object</p>
+<dd><p>Fetches the channel and returns the channel object.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><a class="reference internal" href="#discord_http.channel.BaseChannel" title="discord_http.channel.BaseChannel"><code class="xref py py-class docutils literal notranslate"><span class="pre">BaseChannel</span></code></a></span></p>
@@ -950,16 +952,16 @@ So be sure to use the correct parameters for the channel.</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="discord_http.channel.PartialChannel.fetch_archived_private_threads">
 <em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">fetch_archived_private_threads</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">client</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.13)"><span class="pre">list</span></a><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#discord_http.channel.PrivateThread" title="discord_http.channel.PrivateThread"><span class="pre">PrivateThread</span></a><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#discord_http.channel.PartialChannel.fetch_archived_private_threads" title="Link to this definition">¶</a></dt>
-<dd><p>Fetch all archived private threads</p>
+<dd><p>Fetch all archived private threads.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>client</strong> (<cite>bool</cite>) – If it should fetch only where the client is a member of the thread</p>
+<dd class="field-odd"><p><strong>client</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></a></span>) – If it should fetch only where the client is a member of the thread</p>
 </dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>The list of private threads</p>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">list</span></code></a>[<a class="reference internal" href="#discord_http.channel.PrivateThread" title="discord_http.channel.PrivateThread"><code class="xref py py-class docutils literal notranslate"><span class="pre">PrivateThread</span></code></a>]</span></p>
 </dd>
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><cite>list[PrivateThread]</cite></p>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The list of private threads</p>
 </dd>
 </dl>
 </dd></dl>
@@ -967,7 +969,7 @@ So be sure to use the correct parameters for the channel.</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="discord_http.channel.PartialChannel.fetch_archived_public_threads">
 <em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">fetch_archived_public_threads</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.13)"><span class="pre">list</span></a><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#discord_http.channel.PublicThread" title="discord_http.channel.PublicThread"><span class="pre">PublicThread</span></a><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#discord_http.channel.PartialChannel.fetch_archived_public_threads" title="Link to this definition">¶</a></dt>
-<dd><p>Fetch all archived public threads</p>
+<dd><p>Fetch all archived public threads.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns<span class="colon">:</span></dt>
 <dd class="field-odd"><p>The list of public threads</p>
@@ -980,24 +982,24 @@ So be sure to use the correct parameters for the channel.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="discord_http.channel.PartialChannel.fetch_history">
-<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">fetch_history</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">before</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">after</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">around</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">limit</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">100</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">oldest_first</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.AsyncIterator" title="(in Python v3.13)"><span class="pre">AsyncIterator</span></a><span class="p"><span class="pre">[</span></span><a class="reference internal" href="message.html#discord_http.message.Message" title="discord_http.message.Message"><span class="pre">Message</span></a><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#discord_http.channel.PartialChannel.fetch_history" title="Link to this definition">¶</a></dt>
-<dd><p>Fetch the channel’s message history</p>
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">fetch_history</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">before</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">after</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">around</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">limit</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">100</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">oldest_first</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/collections.abc.html#collections.abc.AsyncIterator" title="(in Python v3.13)"><span class="pre">AsyncIterator</span></a><span class="p"><span class="pre">[</span></span><a class="reference internal" href="message.html#discord_http.message.Message" title="discord_http.message.Message"><span class="pre">Message</span></a><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#discord_http.channel.PartialChannel.fetch_history" title="Link to this definition">¶</a></dt>
+<dd><p>Fetch the channel’s message history.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>before</strong> (<cite>Optional[Union[datetime, Message, Snowflake, int]]</cite>) – Get messages before this message</p></li>
-<li><p><strong>after</strong> (<cite>Optional[Union[datetime, Message, Snowflake, int]]</cite>) – Get messages after this message</p></li>
-<li><p><strong>around</strong> (<cite>Optional[Union[datetime, Message, Snowflake, int]]</cite>) – Get messages around this message</p></li>
-<li><p><strong>limit</strong> (<cite>Optional[int]</cite>) – The maximum amount of messages to fetch.
+<li><p><strong>before</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Union" title="(in Python v3.13)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/datetime.html#datetime.datetime" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">datetime</span></code></a>, <a class="reference internal" href="message.html#discord_http.message.Message" title="discord_http.message.Message"><code class="xref py py-class docutils literal notranslate"><span class="pre">Message</span></code></a>, <a class="reference internal" href="object.html#discord_http.object.Snowflake" title="discord_http.object.Snowflake"><code class="xref py py-class docutils literal notranslate"><span class="pre">Snowflake</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a>]</span>) – Get messages before this message</p></li>
+<li><p><strong>after</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Union" title="(in Python v3.13)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/datetime.html#datetime.datetime" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">datetime</span></code></a>, <a class="reference internal" href="message.html#discord_http.message.Message" title="discord_http.message.Message"><code class="xref py py-class docutils literal notranslate"><span class="pre">Message</span></code></a>, <a class="reference internal" href="object.html#discord_http.object.Snowflake" title="discord_http.object.Snowflake"><code class="xref py py-class docutils literal notranslate"><span class="pre">Snowflake</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a>]</span>) – Get messages after this message</p></li>
+<li><p><strong>around</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Union" title="(in Python v3.13)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/datetime.html#datetime.datetime" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">datetime</span></code></a>, <a class="reference internal" href="message.html#discord_http.message.Message" title="discord_http.message.Message"><code class="xref py py-class docutils literal notranslate"><span class="pre">Message</span></code></a>, <a class="reference internal" href="object.html#discord_http.object.Snowflake" title="discord_http.object.Snowflake"><code class="xref py py-class docutils literal notranslate"><span class="pre">Snowflake</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a>]</span>) – Get messages around this message</p></li>
+<li><p><strong>limit</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a> | <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></span>) – The maximum amount of messages to fetch.
 <cite>None</cite> will fetch all users.</p></li>
-<li><p><strong>oldest_first</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><em>bool</em></a>)</p></li>
+<li><p><strong>oldest_first</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></a></span>) – Whether to fetch the oldest messages first</p></li>
 </ul>
 </dd>
 <dt class="field-even">Yields<span class="colon">:</span></dt>
 <dd class="field-even"><p><cite>Message</cite> – The message object</p>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.AsyncIterator" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">AsyncIterator</span></code></a>[<a class="reference internal" href="message.html#discord_http.message.Message" title="discord_http.message.Message"><code class="xref py py-class docutils literal notranslate"><span class="pre">Message</span></code></a>]</span></p>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/collections.abc.html#collections.abc.AsyncIterator" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">AsyncIterator</span></code></a>[<a class="reference internal" href="message.html#discord_http.message.Message" title="discord_http.message.Message"><code class="xref py py-class docutils literal notranslate"><span class="pre">Message</span></code></a>]</span></p>
 </dd>
 </dl>
 </dd></dl>
@@ -1005,10 +1007,10 @@ So be sure to use the correct parameters for the channel.</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="discord_http.channel.PartialChannel.fetch_message">
 <em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">fetch_message</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">message_id</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="message.html#discord_http.message.Message" title="discord_http.message.Message"><span class="pre">Message</span></a></span></span><a class="headerlink" href="#discord_http.channel.PartialChannel.fetch_message" title="Link to this definition">¶</a></dt>
-<dd><p>Fetch a message from the channel</p>
+<dd><p>Fetch a message from the channel.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>message_id</strong> (<cite>int</cite>) – The message ID to fetch</p>
+<dd class="field-odd"><p><strong>message_id</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a></span>) – The message ID to fetch</p>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>The message object</p>
@@ -1022,7 +1024,7 @@ So be sure to use the correct parameters for the channel.</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="discord_http.channel.PartialChannel.fetch_pins">
 <em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">fetch_pins</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.13)"><span class="pre">list</span></a><span class="p"><span class="pre">[</span></span><a class="reference internal" href="message.html#discord_http.message.Message" title="discord_http.message.Message"><span class="pre">Message</span></a><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#discord_http.channel.PartialChannel.fetch_pins" title="Link to this definition">¶</a></dt>
-<dd><p>Fetch all pinned messages for the channel in question</p>
+<dd><p>Fetch all pinned messages for the channel in question.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns<span class="colon">:</span></dt>
 <dd class="field-odd"><p>The list of pinned messages</p>
@@ -1036,10 +1038,10 @@ So be sure to use the correct parameters for the channel.</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="discord_http.channel.PartialChannel.fetch_thread_member">
 <em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">fetch_thread_member</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">user_id</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="member.html#discord_http.member.ThreadMember" title="discord_http.member.ThreadMember"><span class="pre">ThreadMember</span></a></span></span><a class="headerlink" href="#discord_http.channel.PartialChannel.fetch_thread_member" title="Link to this definition">¶</a></dt>
-<dd><p>Fetch a thread member</p>
+<dd><p>Fetch a thread member.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>user_id</strong> (<cite>int</cite>) – The user ID to fetch</p>
+<dd class="field-odd"><p><strong>user_id</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a></span>) – The user ID to fetch</p>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>The thread member object</p>
@@ -1053,7 +1055,7 @@ So be sure to use the correct parameters for the channel.</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="discord_http.channel.PartialChannel.fetch_thread_members">
 <em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">fetch_thread_members</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.13)"><span class="pre">list</span></a><span class="p"><span class="pre">[</span></span><a class="reference internal" href="member.html#discord_http.member.ThreadMember" title="discord_http.member.ThreadMember"><span class="pre">ThreadMember</span></a><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#discord_http.channel.PartialChannel.fetch_thread_members" title="Link to this definition">¶</a></dt>
-<dd><p>Fetch all thread members</p>
+<dd><p>Fetch all thread members.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns<span class="colon">:</span></dt>
 <dd class="field-odd"><p>The list of thread members</p>
@@ -1067,10 +1069,10 @@ So be sure to use the correct parameters for the channel.</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="discord_http.channel.PartialChannel.follow_announcement_channel">
 <em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">follow_announcement_channel</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">source_channel_id</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></span></span><a class="headerlink" href="#discord_http.channel.PartialChannel.follow_announcement_channel" title="Link to this definition">¶</a></dt>
-<dd><p>Follow an announcement channel to send messages to the webhook</p>
+<dd><p>Follow an announcement channel to send messages to the webhook.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>source_channel_id</strong> (<cite>int</cite>) – The channel ID to follow</p>
+<dd class="field-odd"><p><strong>source_channel_id</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference internal" href="object.html#discord_http.object.Snowflake" title="discord_http.object.Snowflake"><code class="xref py py-class docutils literal notranslate"><span class="pre">Snowflake</span></code></a> | <a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a></span>) – The channel ID to follow</p>
 </dd>
 <dt class="field-even">Return type<span class="colon">:</span></dt>
 <dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></span></p>
@@ -1081,13 +1083,13 @@ So be sure to use the correct parameters for the channel.</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="discord_http.channel.PartialChannel.from_dict">
 <em class="property"><span class="k"><span class="pre">classmethod</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">from_dict</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">state</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Self" title="(in Python v3.13)"><span class="pre">Self</span></a></span></span><a class="headerlink" href="#discord_http.channel.PartialChannel.from_dict" title="Link to this definition">¶</a></dt>
-<dd><p>Create a channel object from a dictionary
-Requires the state to be set</p>
+<dd><p>Create a channel object from a dictionary.</p>
+<p>Requires the state to be set</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>state</strong> (<cite>DiscordAPI</cite>) – The state to use</p></li>
-<li><p><strong>data</strong> (<cite>dict</cite>) – Data provided by Discord API</p></li>
+<li><p><strong>state</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference internal" href="http.html#discord_http.http.DiscordAPI" title="discord_http.http.DiscordAPI"><code class="xref py py-class docutils literal notranslate"><span class="pre">DiscordAPI</span></code></a></span>) – The state to use</p></li>
+<li><p><strong>data</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">dict</span></code></a></span>) – Data provided by Discord API</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
@@ -1102,16 +1104,16 @@ Requires the state to be set</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="discord_http.channel.PartialChannel.get_partial_message">
 <span class="sig-name descname"><span class="pre">get_partial_message</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">message_id</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="message.html#discord_http.message.PartialMessage" title="discord_http.message.PartialMessage"><span class="pre">PartialMessage</span></a></span></span><a class="headerlink" href="#discord_http.channel.PartialChannel.get_partial_message" title="Link to this definition">¶</a></dt>
-<dd><p>Get a partial message object from the channel</p>
+<dd><p>Get a partial message object from the channel.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>message_id</strong> (<cite>int</cite>) – The message ID to get the partial message from</p>
+<dd class="field-odd"><p><strong>message_id</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a></span>) – The message ID to get the partial message from</p>
 </dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>The partial message object</p>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><a class="reference internal" href="message.html#discord_http.message.PartialMessage" title="discord_http.message.PartialMessage"><code class="xref py py-class docutils literal notranslate"><span class="pre">PartialMessage</span></code></a></span></p>
 </dd>
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><cite>PartialMessage</cite></p>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The partial message object</p>
 </dd>
 </dl>
 </dd></dl>
@@ -1119,15 +1121,14 @@ Requires the state to be set</p>
 <dl class="py property">
 <dt class="sig sig-object py" id="discord_http.channel.PartialChannel.guild">
 <em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">guild</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="guild.html#discord_http.guild.Guild" title="discord_http.guild.Guild"><span class="pre">Guild</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="guild.html#discord_http.guild.PartialGuild" title="discord_http.guild.PartialGuild"><span class="pre">PartialGuild</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></em><a class="headerlink" href="#discord_http.channel.PartialChannel.guild" title="Link to this definition">¶</a></dt>
-<dd><p><cite>Optional[Guild | PartialGuild]</cite>:
-The guild the channel belongs to (if available).
-If you are using gateway cache, it can return full object too</p>
+<dd><p>The guild the channel belongs to (if available).</p>
+<p>If you are using gateway cache, it can return full object too</p>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="discord_http.channel.PartialChannel.join_thread">
 <em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">join_thread</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></span></span><a class="headerlink" href="#discord_http.channel.PartialChannel.join_thread" title="Link to this definition">¶</a></dt>
-<dd><p>Make the bot join a thread</p>
+<dd><p>Make the bot join a thread.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></span></p>
@@ -1138,7 +1139,7 @@ If you are using gateway cache, it can return full object too</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="discord_http.channel.PartialChannel.leave_thread">
 <em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">leave_thread</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></span></span><a class="headerlink" href="#discord_http.channel.PartialChannel.leave_thread" title="Link to this definition">¶</a></dt>
-<dd><p>Make the bot leave a thread</p>
+<dd><p>Make the bot leave a thread.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></span></p>
@@ -1149,25 +1150,24 @@ If you are using gateway cache, it can return full object too</p>
 <dl class="py property">
 <dt class="sig sig-object py" id="discord_http.channel.PartialChannel.mention">
 <em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">mention</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a></em><a class="headerlink" href="#discord_http.channel.PartialChannel.mention" title="Link to this definition">¶</a></dt>
-<dd><p>The channel’s mention</p>
+<dd><p>The channel’s mention.</p>
 </dd></dl>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="discord_http.channel.PartialChannel.parent">
 <em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">parent</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="#discord_http.channel.BaseChannel" title="discord_http.channel.BaseChannel"><span class="pre">BaseChannel</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="#discord_http.channel.CategoryChannel" title="discord_http.channel.CategoryChannel"><span class="pre">CategoryChannel</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="#discord_http.channel.PartialChannel" title="discord_http.channel.PartialChannel"><span class="pre">PartialChannel</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></em><a class="headerlink" href="#discord_http.channel.PartialChannel.parent" title="Link to this definition">¶</a></dt>
-<dd><p><cite>BaseChannel | CategoryChannel | PartialChannel | None</cite>:
-Returns the parent channel of the thread or the parent category of the channel.
-Only returns a full object if cache is enabled for guild and channel.</p>
+<dd><p>Returns the parent channel of the thread or the parent category of the channel.</p>
+<p>Only returns a full object if cache is enabled for guild and channel.</p>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="discord_http.channel.PartialChannel.permissions_for">
 <span class="sig-name descname"><span class="pre">permissions_for</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">member</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="flags.html#discord_http.flags.Permissions" title="discord_http.flags.Permissions"><span class="pre">Permissions</span></a></span></span><a class="headerlink" href="#discord_http.channel.PartialChannel.permissions_for" title="Link to this definition">¶</a></dt>
-<dd><p>Returns the permissions for a member in the channel.
-However since this is Partial, it will always return Permissions.none()</p>
+<dd><p>Returns the permissions for a member in the channel.</p>
+<p>However since this is Partial, it will always return Permissions.none()</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>member</strong> (<cite>Member</cite>) – The member to get the permissions for.</p>
+<dd class="field-odd"><p><strong>member</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference internal" href="member.html#discord_http.member.Member" title="discord_http.member.Member"><code class="xref py py-class docutils literal notranslate"><span class="pre">Member</span></code></a></span>) – The member to get the permissions for.</p>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>The permissions for the member in the channel.</p>
@@ -1181,10 +1181,10 @@ However since this is Partial, it will always return Permissions.none()</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="discord_http.channel.PartialChannel.remove_thread_member">
 <em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">remove_thread_member</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">user_id</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></span></span><a class="headerlink" href="#discord_http.channel.PartialChannel.remove_thread_member" title="Link to this definition">¶</a></dt>
-<dd><p>Remove a thread member</p>
+<dd><p>Remove a thread member.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>user_id</strong> (<cite>int</cite>) – The user ID to remove</p>
+<dd class="field-odd"><p><strong>user_id</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a></span>) – The user ID to remove</p>
 </dd>
 <dt class="field-even">Return type<span class="colon">:</span></dt>
 <dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></span></p>
@@ -1195,22 +1195,22 @@ However since this is Partial, it will always return Permissions.none()</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="discord_http.channel.PartialChannel.send">
 <em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">send</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">content=&lt;MISSING&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">embed=&lt;MISSING&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">embeds=&lt;MISSING&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">file=&lt;MISSING&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">files=&lt;MISSING&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">view=&lt;MISSING&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tts=False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">type=4</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">poll=&lt;MISSING&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">flags=&lt;MISSING&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">allowed_mentions=&lt;MISSING&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">delete_after=None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="message.html#discord_http.message.Message" title="discord_http.message.Message"><span class="pre">Message</span></a></span></span><a class="headerlink" href="#discord_http.channel.PartialChannel.send" title="Link to this definition">¶</a></dt>
-<dd><p>Send a message to the channel</p>
+<dd><p>Send a message to the channel.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>content</strong> (<cite>Optional[str]</cite>) – Cotnent of the message</p></li>
-<li><p><strong>embed</strong> (<cite>Optional[Embed]</cite>) – Includes an embed object</p></li>
-<li><p><strong>embeds</strong> (<cite>Optional[list[Embed]]</cite>) – List of embed objects</p></li>
-<li><p><strong>file</strong> (<cite>Optional[File]</cite>) – A file object</p></li>
-<li><p><strong>files</strong> (<cite>Union[list[File], File]</cite>) – A list of file objects</p></li>
-<li><p><strong>view</strong> (<cite>View</cite>) – Send components to the message</p></li>
-<li><p><strong>tts</strong> (<cite>bool</cite>) – If the message should be sent as a TTS message</p></li>
-<li><p><strong>type</strong> (<cite>Optional[ResponseType]</cite>) – The type of response to the message</p></li>
-<li><p><strong>allowed_mentions</strong> (<cite>Optional[AllowedMentions]</cite>) – The allowed mentions for the message</p></li>
-<li><p><strong>poll</strong> (<cite>Optional[Poll]</cite>) – The poll to be sent</p></li>
-<li><p><strong>flags</strong> (<cite>Optional[MessageFlags]</cite>) – Flags of the message</p></li>
-<li><p><strong>delete_after</strong> (<cite>Optional[float]</cite>) – How long to wait before deleting the message</p></li>
+<li><p><strong>content</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a> | <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></span>) – Cotnent of the message</p></li>
+<li><p><strong>embed</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference internal" href="embeds.html#discord_http.embeds.Embed" title="discord_http.embeds.Embed"><code class="xref py py-class docutils literal notranslate"><span class="pre">Embed</span></code></a> | <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></span>) – Includes an embed object</p></li>
+<li><p><strong>embeds</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">list</span></code></a>[<a class="reference internal" href="embeds.html#discord_http.embeds.Embed" title="discord_http.embeds.Embed"><code class="xref py py-class docutils literal notranslate"><span class="pre">Embed</span></code></a>] | <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></span>) – List of embed objects</p></li>
+<li><p><strong>file</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference internal" href="file.html#discord_http.file.File" title="discord_http.file.File"><code class="xref py py-class docutils literal notranslate"><span class="pre">File</span></code></a> | <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></span>) – A file object</p></li>
+<li><p><strong>files</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">list</span></code></a>[<a class="reference internal" href="file.html#discord_http.file.File" title="discord_http.file.File"><code class="xref py py-class docutils literal notranslate"><span class="pre">File</span></code></a>] | <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></span>) – A list of file objects</p></li>
+<li><p><strong>view</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference internal" href="view.html#discord_http.view.View" title="discord_http.view.View"><code class="xref py py-class docutils literal notranslate"><span class="pre">View</span></code></a> | <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></span>) – Send components to the message</p></li>
+<li><p><strong>tts</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></a> | <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></span>) – If the message should be sent as a TTS message</p></li>
+<li><p><strong>type</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference internal" href="enums.html#discord_http.enums.ResponseType" title="discord_http.enums.ResponseType"><code class="xref py py-class docutils literal notranslate"><span class="pre">ResponseType</span></code></a> | <a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a></span>) – The type of response to the message</p></li>
+<li><p><strong>allowed_mentions</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference internal" href="mentions.html#discord_http.mentions.AllowedMentions" title="discord_http.mentions.AllowedMentions"><code class="xref py py-class docutils literal notranslate"><span class="pre">AllowedMentions</span></code></a> | <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></span>) – The allowed mentions for the message</p></li>
+<li><p><strong>poll</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Optional" title="(in Python v3.13)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code></a>[<a class="reference internal" href="message.html#discord_http.message.Poll" title="discord_http.message.Poll"><code class="xref py py-class docutils literal notranslate"><span class="pre">Poll</span></code></a>]</span>) – The poll to be sent</p></li>
+<li><p><strong>flags</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference internal" href="flags.html#discord_http.flags.MessageFlags" title="discord_http.flags.MessageFlags"><code class="xref py py-class docutils literal notranslate"><span class="pre">MessageFlags</span></code></a> | <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></span>) – Flags of the message</p></li>
+<li><p><strong>delete_after</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></a> | <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></span>) – How long to wait before deleting the message</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
@@ -1225,12 +1225,12 @@ However since this is Partial, it will always return Permissions.none()</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="discord_http.channel.PartialChannel.set_permission">
 <em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">set_permission</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">overwrite</span></span></em>, <em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">reason</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></span></span><a class="headerlink" href="#discord_http.channel.PartialChannel.set_permission" title="Link to this definition">¶</a></dt>
-<dd><p>Set a permission overwrite for the channel</p>
+<dd><p>Set a permission overwrite for the channel.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>overwrite</strong> (<cite>PermissionOverwrite</cite>) – The new overwrite permissions for the spesific role/user</p></li>
-<li><p><strong>reason</strong> (<cite>Optional[str]</cite>) – The reason for editing the overwrite</p></li>
+<li><p><strong>overwrite</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference internal" href="flags.html#discord_http.flags.PermissionOverwrite" title="discord_http.flags.PermissionOverwrite"><code class="xref py py-class docutils literal notranslate"><span class="pre">PermissionOverwrite</span></code></a></span>) – The new overwrite permissions for the spesific role/user</p></li>
+<li><p><strong>reason</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a> | <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></span>) – The reason for editing the overwrite</p></li>
 </ul>
 </dd>
 <dt class="field-even">Return type<span class="colon">:</span></dt>
@@ -1242,19 +1242,16 @@ However since this is Partial, it will always return Permissions.none()</p>
 <dl class="py property">
 <dt class="sig sig-object py" id="discord_http.channel.PartialChannel.type">
 <em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">type</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="enums.html#discord_http.enums.ChannelType" title="discord_http.enums.ChannelType"><span class="pre">ChannelType</span></a></em><a class="headerlink" href="#discord_http.channel.PartialChannel.type" title="Link to this definition">¶</a></dt>
-<dd><p>Returns the channel’s type</p>
+<dd><p>Returns the channel’s type.</p>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="discord_http.channel.PartialChannel.typing">
 <span class="sig-name descname"><span class="pre">typing</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Typing</span></span></span><a class="headerlink" href="#discord_http.channel.PartialChannel.typing" title="Link to this definition">¶</a></dt>
-<dd><p>Makes the bot trigger the typing indicator.
-There are two ways you can use this:
-:rtype: <span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">Typing</span></code></span></p>
-<ul class="simple">
-<li><p>Usual await call</p></li>
-<li><p>Using <cite>async with</cite> to type as long as you need</p></li>
-</ul>
+<dd><p>Makes the bot trigger the typing indicator.</p>
+<p>There are two ways you can use this:
+- Usual await call
+- Using <cite>async with</cite> to type as long as you need</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Method 1</span>
 <span class="k">await</span> <span class="n">channel</span><span class="o">.</span><span class="n">typing</span><span class="p">()</span>  <span class="c1"># Stops after 10 seconds or message sent</span>
 
@@ -1265,7 +1262,7 @@ There are two ways you can use this:
 </div>
 <dl class="field-list simple">
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><em>Typing</em></p>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">Typing</span></code></span></p>
 </dd>
 </dl>
 </dd></dl>
@@ -1290,7 +1287,7 @@ There are two ways you can use this:
 <dl class="py property">
 <dt class="sig sig-object py" id="discord_http.channel.PartialThread.type">
 <em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">type</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="enums.html#discord_http.enums.ChannelType" title="discord_http.enums.ChannelType"><span class="pre">ChannelType</span></a></em><a class="headerlink" href="#discord_http.channel.PartialThread.type" title="Link to this definition">¶</a></dt>
-<dd><p>Returns the channel’s type</p>
+<dd><p>Returns the channel’s type.</p>
 </dd></dl>
 
 </dd></dl>
@@ -1310,7 +1307,7 @@ There are two ways you can use this:
 <dl class="py property">
 <dt class="sig sig-object py" id="discord_http.channel.PrivateThread.type">
 <em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">type</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="enums.html#discord_http.enums.ChannelType" title="discord_http.enums.ChannelType"><span class="pre">ChannelType</span></a></em><a class="headerlink" href="#discord_http.channel.PrivateThread.type" title="Link to this definition">¶</a></dt>
-<dd><p>Returns the channel’s type</p>
+<dd><p>Returns the channel’s type.</p>
 </dd></dl>
 
 </dd></dl>
@@ -1330,25 +1327,25 @@ There are two ways you can use this:
 <dl class="py property">
 <dt class="sig sig-object py" id="discord_http.channel.PublicThread.guild">
 <em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">guild</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="guild.html#discord_http.guild.Guild" title="discord_http.guild.Guild"><span class="pre">Guild</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="guild.html#discord_http.guild.PartialGuild" title="discord_http.guild.PartialGuild"><span class="pre">PartialGuild</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></em><a class="headerlink" href="#discord_http.channel.PublicThread.guild" title="Link to this definition">¶</a></dt>
-<dd><p>Returns a partial guild object</p>
+<dd><p>Returns a partial guild object.</p>
 </dd></dl>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="discord_http.channel.PublicThread.last_message">
 <em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">last_message</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="message.html#discord_http.message.PartialMessage" title="discord_http.message.PartialMessage"><span class="pre">PartialMessage</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></em><a class="headerlink" href="#discord_http.channel.PublicThread.last_message" title="Link to this definition">¶</a></dt>
-<dd><p>Returns a partial message object if the last message ID is available</p>
+<dd><p>Returns a partial message object if the last message ID is available.</p>
 </dd></dl>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="discord_http.channel.PublicThread.owner">
 <em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">owner</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="user.html#discord_http.user.PartialUser" title="discord_http.user.PartialUser"><span class="pre">PartialUser</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></em><a class="headerlink" href="#discord_http.channel.PublicThread.owner" title="Link to this definition">¶</a></dt>
-<dd><p>Returns a partial user object</p>
+<dd><p>Returns a partial user object.</p>
 </dd></dl>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="discord_http.channel.PublicThread.type">
 <em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">type</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="enums.html#discord_http.enums.ChannelType" title="discord_http.enums.ChannelType"><span class="pre">ChannelType</span></a></em><a class="headerlink" href="#discord_http.channel.PublicThread.type" title="Link to this definition">¶</a></dt>
-<dd><p>Returns the channel’s type</p>
+<dd><p>Returns the channel’s type.</p>
 </dd></dl>
 
 </dd></dl>
@@ -1368,16 +1365,16 @@ There are two ways you can use this:
 <dl class="py method">
 <dt class="sig sig-object py" id="discord_http.channel.StageChannel.create_stage_instance">
 <em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">create_stage_instance</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">topic</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">privacy_level=&lt;MISSING&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">send_start_notification=&lt;MISSING&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">guild_scheduled_event=&lt;MISSING&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">reason=None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">StageInstance</span></span></span><a class="headerlink" href="#discord_http.channel.StageChannel.create_stage_instance" title="Link to this definition">¶</a></dt>
-<dd><p>Create a stage instance</p>
+<dd><p>Create a stage instance.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>topic</strong> (<cite>str</cite>) – The topic of the stage instance</p></li>
-<li><p><strong>privacy_level</strong> (<cite>PrivacyLevelType</cite>) – The privacy level of the stage instance.
+<li><p><strong>topic</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></span>) – The topic of the stage instance</p></li>
+<li><p><strong>privacy_level</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference internal" href="enums.html#discord_http.enums.PrivacyLevelType" title="discord_http.enums.PrivacyLevelType"><code class="xref py py-class docutils literal notranslate"><span class="pre">PrivacyLevelType</span></code></a></span>) – The privacy level of the stage instance.
 Defaults to <cite>PrivacyLevelType.guild_only</cite></p></li>
-<li><p><strong>send_start_notification</strong> (<cite>bool</cite>) – Whether to notify &#64;everyone that the stage instance has started.</p></li>
-<li><p><strong>guild_scheduled_event</strong> (<cite>Optional[Snowflake | int]</cite>) – The guild scheduled event to associate with this stage instance.</p></li>
-<li><p><strong>reason</strong> (<cite>Optional[str]</cite>) – The reason for creating the stage instance</p></li>
+<li><p><strong>send_start_notification</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></a></span>) – Whether to notify &#64;everyone that the stage instance has started.</p></li>
+<li><p><strong>guild_scheduled_event</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference internal" href="object.html#discord_http.object.Snowflake" title="discord_http.object.Snowflake"><code class="xref py py-class docutils literal notranslate"><span class="pre">Snowflake</span></code></a> | <a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a></span>) – The guild scheduled event to associate with this stage instance.</p></li>
+<li><p><strong>reason</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a> | <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></span>) – The reason for creating the stage instance</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
@@ -1392,7 +1389,7 @@ Defaults to <cite>PrivacyLevelType.guild_only</cite></p></li>
 <dl class="py method">
 <dt class="sig sig-object py" id="discord_http.channel.StageChannel.fetch_stage_instance">
 <em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">fetch_stage_instance</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">StageInstance</span></span></span><a class="headerlink" href="#discord_http.channel.StageChannel.fetch_stage_instance" title="Link to this definition">¶</a></dt>
-<dd><p>Fetch the stage instance associated with this stage channel</p>
+<dd><p>Fetch the stage instance associated with this stage channel.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns<span class="colon">:</span></dt>
 <dd class="field-odd"><p>The stage instance of the channel</p>
@@ -1417,7 +1414,7 @@ Defaults to <cite>PrivacyLevelType.guild_only</cite></p></li>
 <dl class="py property">
 <dt class="sig sig-object py" id="discord_http.channel.StageChannel.type">
 <em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">type</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="enums.html#discord_http.enums.ChannelType" title="discord_http.enums.ChannelType"><span class="pre">ChannelType</span></a></em><a class="headerlink" href="#discord_http.channel.StageChannel.type" title="Link to this definition">¶</a></dt>
-<dd><p>Returns the channel’s type</p>
+<dd><p>Returns the channel’s type.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type<span class="colon">:</span></dt>
 <dd class="field-odd"><p><cite>ChannelType</cite></p>
@@ -1442,7 +1439,7 @@ Defaults to <cite>PrivacyLevelType.guild_only</cite></p></li>
 <dl class="py property">
 <dt class="sig sig-object py" id="discord_http.channel.StoreChannel.type">
 <em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">type</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="enums.html#discord_http.enums.ChannelType" title="discord_http.enums.ChannelType"><span class="pre">ChannelType</span></a></em><a class="headerlink" href="#discord_http.channel.StoreChannel.type" title="Link to this definition">¶</a></dt>
-<dd><p>Returns the channel’s type</p>
+<dd><p>Returns the channel’s type.</p>
 </dd></dl>
 
 </dd></dl>
@@ -1462,7 +1459,7 @@ Defaults to <cite>PrivacyLevelType.guild_only</cite></p></li>
 <dl class="py property">
 <dt class="sig sig-object py" id="discord_http.channel.TextChannel.type">
 <em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">type</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="enums.html#discord_http.enums.ChannelType" title="discord_http.enums.ChannelType"><span class="pre">ChannelType</span></a></em><a class="headerlink" href="#discord_http.channel.TextChannel.type" title="Link to this definition">¶</a></dt>
-<dd><p>Returns the channel’s type</p>
+<dd><p>Returns the channel’s type.</p>
 </dd></dl>
 
 </dd></dl>
@@ -1482,7 +1479,7 @@ Defaults to <cite>PrivacyLevelType.guild_only</cite></p></li>
 <dl class="py property">
 <dt class="sig sig-object py" id="discord_http.channel.Thread.type">
 <em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">type</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="enums.html#discord_http.enums.ChannelType" title="discord_http.enums.ChannelType"><span class="pre">ChannelType</span></a></em><a class="headerlink" href="#discord_http.channel.Thread.type" title="Link to this definition">¶</a></dt>
-<dd><p>Returns the channel’s type</p>
+<dd><p>Returns the channel’s type.</p>
 </dd></dl>
 
 </dd></dl>
@@ -1502,7 +1499,7 @@ Defaults to <cite>PrivacyLevelType.guild_only</cite></p></li>
 <dl class="py property">
 <dt class="sig sig-object py" id="discord_http.channel.VoiceChannel.type">
 <em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">type</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="enums.html#discord_http.enums.ChannelType" title="discord_http.enums.ChannelType"><span class="pre">ChannelType</span></a></em><a class="headerlink" href="#discord_http.channel.VoiceChannel.type" title="Link to this definition">¶</a></dt>
-<dd><p>Returns the channel’s type</p>
+<dd><p>Returns the channel’s type.</p>
 </dd></dl>
 
 </dd></dl>

@@ -321,7 +321,7 @@
 <dl class="py property">
 <dt class="sig sig-object py" id="discord_http.gateway.object.AutomodExecution.rule">
 <em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">rule</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="../api/automod.html#discord_http.automod.PartialAutoModRule" title="discord_http.automod.PartialAutoModRule"><span class="pre">PartialAutoModRule</span></a></em><a class="headerlink" href="#discord_http.gateway.object.AutomodExecution.rule" title="Link to this definition">¶</a></dt>
-<dd><p>Returns a partial object of automod rule</p>
+<dd><p>Returns a partial object of automod rule.</p>
 </dd></dl>
 
 </dd></dl>
@@ -360,33 +360,18 @@
 <dt class="sig sig-object py" id="discord_http.gateway.object.ChannelPinsUpdate.channel">
 <span class="sig-name descname"><span class="pre">channel</span></span><a class="headerlink" href="#discord_http.gateway.object.ChannelPinsUpdate.channel" title="Link to this definition">¶</a></dt>
 <dd><p>The channel the pins were updated in.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><cite>BaseChannel</cite> | <cite>PartialChannel</cite></p>
-</dd>
-</dl>
 </dd></dl>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="discord_http.gateway.object.ChannelPinsUpdate.last_pin_timestamp">
 <span class="sig-name descname"><span class="pre">last_pin_timestamp</span></span><a class="headerlink" href="#discord_http.gateway.object.ChannelPinsUpdate.last_pin_timestamp" title="Link to this definition">¶</a></dt>
 <dd><p>The last time a pin was updated in the channel.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><cite>datetime</cite> | <cite>None</cite></p>
-</dd>
-</dl>
 </dd></dl>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="discord_http.gateway.object.ChannelPinsUpdate.guild">
 <span class="sig-name descname"><span class="pre">guild</span></span><a class="headerlink" href="#discord_http.gateway.object.ChannelPinsUpdate.guild" title="Link to this definition">¶</a></dt>
 <dd><p>The guild the channel is in. If the channel is a DM channel, this will be <cite>None</cite>.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><cite>PartialGuild</cite> | <cite>Guild</cite> | <cite>None</cite></p>
-</dd>
-</dl>
 </dd></dl>
 
 </dd></dl>
@@ -423,7 +408,8 @@
 <dl class="py method">
 <dt class="sig sig-object py" id="discord_http.gateway.object.PlayingStatus.to_dict">
 <span class="sig-name descname"><span class="pre">to_dict</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.13)"><span class="pre">dict</span></a></span></span><a class="headerlink" href="#discord_http.gateway.object.PlayingStatus.to_dict" title="Link to this definition">¶</a></dt>
-<dd><dl class="field-list simple">
+<dd><p>The playing status as a dictionary.</p>
+<dl class="field-list simple">
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">dict</span></code></a></span></p>
 </dd>
@@ -481,25 +467,20 @@
 <dl class="py property">
 <dt class="sig sig-object py" id="discord_http.gateway.object.Reaction.channel">
 <em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">channel</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="../api/channel.html#discord_http.channel.PartialChannel" title="discord_http.channel.PartialChannel"><span class="pre">PartialChannel</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></em><a class="headerlink" href="#discord_http.gateway.object.Reaction.channel" title="Link to this definition">¶</a></dt>
-<dd><p>Returns the channel the message was sent in.
-If guild and channel cache is enabled, it can also return full channel object.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><cite>BaseChannel | PartialChannel</cite></p>
-</dd>
-</dl>
+<dd><p>Returns the channel the message was sent in.</p>
+<p>If guild and channel cache is enabled, it can also return full channel object.</p>
 </dd></dl>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="discord_http.gateway.object.Reaction.guild">
 <em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">guild</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="../api/guild.html#discord_http.guild.Guild" title="discord_http.guild.Guild"><span class="pre">Guild</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="../api/guild.html#discord_http.guild.PartialGuild" title="discord_http.guild.PartialGuild"><span class="pre">PartialGuild</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></em><a class="headerlink" href="#discord_http.gateway.object.Reaction.guild" title="Link to this definition">¶</a></dt>
-<dd><p>The guild the message was sent in</p>
+<dd><p>The guild the message was sent in.</p>
 </dd></dl>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="discord_http.gateway.object.Reaction.message">
 <em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">message</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="../api/message.html#discord_http.message.PartialMessage" title="discord_http.message.PartialMessage"><span class="pre">PartialMessage</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></em><a class="headerlink" href="#discord_http.gateway.object.Reaction.message" title="Link to this definition">¶</a></dt>
-<dd><p>Returns the message if a message_id is available</p>
+<dd><p>Returns the message if a message_id is available.</p>
 </dd></dl>
 
 </dd></dl>
@@ -521,11 +502,6 @@ If guild and channel cache is enabled, it can also return full channel object.</
 <dt class="sig sig-object py" id="discord_http.gateway.object.ThreadListSyncPayload.guild_id">
 <span class="sig-name descname"><span class="pre">guild_id</span></span><a class="headerlink" href="#discord_http.gateway.object.ThreadListSyncPayload.guild_id" title="Link to this definition">¶</a></dt>
 <dd><p>The guild ID the threads are in.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><cite>int</cite></p>
-</dd>
-</dl>
 </dd></dl>
 
 <dl class="py attribute">
@@ -536,7 +512,7 @@ If this is empty, it means all threads in the guild are being synced.</p>
 <p>This may contains ids of channels that have no active threads.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><cite>list`[`int</cite>]</p>
+<dd class="field-odd"><p>]</p>
 </dd>
 </dl>
 </dd></dl>
@@ -544,14 +520,16 @@ If this is empty, it means all threads in the guild are being synced.</p>
 <dl class="py property">
 <dt class="sig sig-object py" id="discord_http.gateway.object.ThreadListSyncPayload.channels">
 <em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">channels</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.13)"><span class="pre">list</span></a><span class="p"><span class="pre">[</span></span><a class="reference internal" href="../api/channel.html#discord_http.channel.PartialChannel" title="discord_http.channel.PartialChannel"><span class="pre">PartialChannel</span></a><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#discord_http.gateway.object.ThreadListSyncPayload.channels" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>The channels in the thread list.</p>
+</dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="discord_http.gateway.object.ThreadListSyncPayload.combined">
-<span class="sig-name descname"><span class="pre">combined</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Iterator" title="(in Python v3.13)"><span class="pre">Iterator</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.13)"><span class="pre">tuple</span></a><span class="p"><span class="pre">[</span></span><a class="reference internal" href="../api/channel.html#discord_http.channel.PartialChannel" title="discord_http.channel.PartialChannel"><span class="pre">PartialChannel</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.13)"><span class="pre">tuple</span></a><span class="p"><span class="pre">[</span></span><a class="reference internal" href="../api/channel.html#discord_http.channel.Thread" title="discord_http.channel.Thread"><span class="pre">Thread</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.13)"><span class="pre">list</span></a><span class="p"><span class="pre">[</span></span><span class="pre">PartialThreadMember</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#discord_http.gateway.object.ThreadListSyncPayload.combined" title="Link to this definition">¶</a></dt>
-<dd><dl class="field-list simple">
+<span class="sig-name descname"><span class="pre">combined</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/collections.abc.html#collections.abc.Iterator" title="(in Python v3.13)"><span class="pre">Iterator</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.13)"><span class="pre">tuple</span></a><span class="p"><span class="pre">[</span></span><a class="reference internal" href="../api/channel.html#discord_http.channel.PartialChannel" title="discord_http.channel.PartialChannel"><span class="pre">PartialChannel</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.13)"><span class="pre">tuple</span></a><span class="p"><span class="pre">[</span></span><a class="reference internal" href="../api/channel.html#discord_http.channel.Thread" title="discord_http.channel.Thread"><span class="pre">Thread</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.13)"><span class="pre">list</span></a><span class="p"><span class="pre">[</span></span><span class="pre">PartialThreadMember</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#discord_http.gateway.object.ThreadListSyncPayload.combined" title="Link to this definition">¶</a></dt>
+<dd><p>Returns a combined iterator of channels and threads.</p>
+<dl class="field-list simple">
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Iterator" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Iterator</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">tuple</span></code></a>[<a class="reference internal" href="../api/channel.html#discord_http.channel.PartialChannel" title="discord_http.channel.PartialChannel"><code class="xref py py-class docutils literal notranslate"><span class="pre">PartialChannel</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">tuple</span></code></a>[<a class="reference internal" href="../api/channel.html#discord_http.channel.Thread" title="discord_http.channel.Thread"><code class="xref py py-class docutils literal notranslate"><span class="pre">Thread</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">list</span></code></a>[<code class="xref py py-class docutils literal notranslate"><span class="pre">PartialThreadMember</span></code>]]]]</span></p>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/collections.abc.html#collections.abc.Iterator" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Iterator</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">tuple</span></code></a>[<a class="reference internal" href="../api/channel.html#discord_http.channel.PartialChannel" title="discord_http.channel.PartialChannel"><code class="xref py py-class docutils literal notranslate"><span class="pre">PartialChannel</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">tuple</span></code></a>[<a class="reference internal" href="../api/channel.html#discord_http.channel.Thread" title="discord_http.channel.Thread"><code class="xref py py-class docutils literal notranslate"><span class="pre">Thread</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">list</span></code></a>[<code class="xref py py-class docutils literal notranslate"><span class="pre">PartialThreadMember</span></code>]]]]</span></p>
 </dd>
 </dl>
 </dd></dl>
@@ -559,17 +537,20 @@ If this is empty, it means all threads in the guild are being synced.</p>
 <dl class="py property">
 <dt class="sig sig-object py" id="discord_http.gateway.object.ThreadListSyncPayload.guild">
 <em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">guild</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="../api/guild.html#discord_http.guild.PartialGuild" title="discord_http.guild.PartialGuild"><span class="pre">PartialGuild</span></a></em><a class="headerlink" href="#discord_http.gateway.object.ThreadListSyncPayload.guild" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>The guild the thread is in.</p>
+</dd></dl>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="discord_http.gateway.object.ThreadListSyncPayload.members">
 <em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">members</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.13)"><span class="pre">list</span></a><span class="p"><span class="pre">[</span></span><span class="pre">PartialThreadMember</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#discord_http.gateway.object.ThreadListSyncPayload.members" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>The members in the thread list.</p>
+</dd></dl>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="discord_http.gateway.object.ThreadListSyncPayload.threads">
 <em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">threads</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.13)"><span class="pre">list</span></a><span class="p"><span class="pre">[</span></span><a class="reference internal" href="../api/channel.html#discord_http.channel.Thread" title="discord_http.channel.Thread"><span class="pre">Thread</span></a><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#discord_http.gateway.object.ThreadListSyncPayload.threads" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>The threads in the thread list.</p>
+</dd></dl>
 
 </dd></dl>
 
@@ -590,50 +571,30 @@ If this is empty, it means all threads in the guild are being synced.</p>
 <dt class="sig sig-object py" id="discord_http.gateway.object.ThreadMembersUpdatePayload.id">
 <span class="sig-name descname"><span class="pre">id</span></span><a class="headerlink" href="#discord_http.gateway.object.ThreadMembersUpdatePayload.id" title="Link to this definition">¶</a></dt>
 <dd><p>The ID of the thread.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><cite>int</cite></p>
-</dd>
-</dl>
 </dd></dl>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="discord_http.gateway.object.ThreadMembersUpdatePayload.guild_id">
 <span class="sig-name descname"><span class="pre">guild_id</span></span><a class="headerlink" href="#discord_http.gateway.object.ThreadMembersUpdatePayload.guild_id" title="Link to this definition">¶</a></dt>
 <dd><p>The guild ID the thread is in.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><cite>int</cite></p>
-</dd>
-</dl>
 </dd></dl>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="discord_http.gateway.object.ThreadMembersUpdatePayload.member_count">
 <span class="sig-name descname"><span class="pre">member_count</span></span><a class="headerlink" href="#discord_http.gateway.object.ThreadMembersUpdatePayload.member_count" title="Link to this definition">¶</a></dt>
 <dd><p>The total number of members in the thread, capped at 50.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><cite>int</cite></p>
-</dd>
-</dl>
 </dd></dl>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="discord_http.gateway.object.ThreadMembersUpdatePayload.removed_member_ids">
 <span class="sig-name descname"><span class="pre">removed_member_ids</span></span><a class="headerlink" href="#discord_http.gateway.object.ThreadMembersUpdatePayload.removed_member_ids" title="Link to this definition">¶</a></dt>
 <dd><p>The IDs of the members that were removed from the thread.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><cite>list[int]</cite></p>
-</dd>
-</dl>
 </dd></dl>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="discord_http.gateway.object.ThreadMembersUpdatePayload.added_members">
 <em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">added_members</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.13)"><span class="pre">list</span></a><span class="p"><span class="pre">[</span></span><a class="reference internal" href="../api/member.html#discord_http.member.ThreadMember" title="discord_http.member.ThreadMember"><span class="pre">ThreadMember</span></a><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#discord_http.gateway.object.ThreadMembersUpdatePayload.added_members" title="Link to this definition">¶</a></dt>
-<dd><p>The members that were added to the thread</p>
+<dd><p>The members that were added to the thread.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type<span class="colon">:</span></dt>
 <dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.13)">list</a>[PartialThreadMember]</p>
@@ -644,13 +605,13 @@ If this is empty, it means all threads in the guild are being synced.</p>
 <dl class="py property">
 <dt class="sig sig-object py" id="discord_http.gateway.object.ThreadMembersUpdatePayload.guild">
 <em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">guild</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="../api/guild.html#discord_http.guild.PartialGuild" title="discord_http.guild.PartialGuild"><span class="pre">PartialGuild</span></a></em><a class="headerlink" href="#discord_http.gateway.object.ThreadMembersUpdatePayload.guild" title="Link to this definition">¶</a></dt>
-<dd><p>The guild the thread is in</p>
+<dd><p>The guild the thread is in.</p>
 </dd></dl>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="discord_http.gateway.object.ThreadMembersUpdatePayload.removed_members">
 <em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">removed_members</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.13)"><span class="pre">list</span></a><span class="p"><span class="pre">[</span></span><a class="reference internal" href="../api/member.html#discord_http.member.PartialMember" title="discord_http.member.PartialMember"><span class="pre">PartialMember</span></a><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#discord_http.gateway.object.ThreadMembersUpdatePayload.removed_members" title="Link to this definition">¶</a></dt>
-<dd><p>The members that were removed from the thread</p>
+<dd><p>The members that were removed from the thread.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type<span class="colon">:</span></dt>
 <dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.13)">list</a>[<a class="reference internal" href="../api/member.html#discord_http.member.PartialMember" title="discord_http.member.PartialMember">PartialMember</a>]</p>
@@ -661,7 +622,7 @@ If this is empty, it means all threads in the guild are being synced.</p>
 <dl class="py property">
 <dt class="sig sig-object py" id="discord_http.gateway.object.ThreadMembersUpdatePayload.thread">
 <em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">thread</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="../api/channel.html#discord_http.channel.PartialChannel" title="discord_http.channel.PartialChannel"><span class="pre">PartialChannel</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="../api/channel.html#discord_http.channel.Thread" title="discord_http.channel.Thread"><span class="pre">Thread</span></a></em><a class="headerlink" href="#discord_http.gateway.object.ThreadMembersUpdatePayload.thread" title="Link to this definition">¶</a></dt>
-<dd><p>The thread the members were updated in</p>
+<dd><p>The thread the members were updated in.</p>
 </dd></dl>
 
 </dd></dl>
@@ -685,44 +646,24 @@ If this is empty, it means all threads in the guild are being synced.</p>
 <dt class="sig sig-object py" id="discord_http.gateway.object.TypingStartEvent.guild">
 <span class="sig-name descname"><span class="pre">guild</span></span><a class="headerlink" href="#discord_http.gateway.object.TypingStartEvent.guild" title="Link to this definition">¶</a></dt>
 <dd><p>The guild the typing event was triggered in. If the channel is a DM channel, this will be <cite>None</cite>.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><cite>PartialGuild</cite> | <cite>Guild</cite> | <cite>None</cite></p>
-</dd>
-</dl>
 </dd></dl>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="discord_http.gateway.object.TypingStartEvent.channel">
 <span class="sig-name descname"><span class="pre">channel</span></span><a class="headerlink" href="#discord_http.gateway.object.TypingStartEvent.channel" title="Link to this definition">¶</a></dt>
 <dd><p>The channel the typing event was triggered in.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><cite>BaseChannel</cite> | <cite>PartialChannel</cite> | <cite>None</cite></p>
-</dd>
-</dl>
 </dd></dl>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="discord_http.gateway.object.TypingStartEvent.user">
 <span class="sig-name descname"><span class="pre">user</span></span><a class="headerlink" href="#discord_http.gateway.object.TypingStartEvent.user" title="Link to this definition">¶</a></dt>
 <dd><p>The user that started typing.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><cite>PartialUser</cite> | <cite>User</cite> | <cite>Member</cite> | <cite>PartialMember</cite></p>
-</dd>
-</dl>
 </dd></dl>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="discord_http.gateway.object.TypingStartEvent.timestamp">
 <span class="sig-name descname"><span class="pre">timestamp</span></span><a class="headerlink" href="#discord_http.gateway.object.TypingStartEvent.timestamp" title="Link to this definition">¶</a></dt>
 <dd><p>The time the user started typing.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><cite>datetime</cite></p>
-</dd>
-</dl>
 </dd></dl>
 
 </dd></dl>

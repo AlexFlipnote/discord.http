@@ -318,45 +318,45 @@
 <dl class="py property">
 <dt class="sig sig-object py" id="discord_http.context.Context.channel">
 <em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">channel</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="channel.html#discord_http.channel.BaseChannel" title="discord_http.channel.BaseChannel"><span class="pre">BaseChannel</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="channel.html#discord_http.channel.PartialChannel" title="discord_http.channel.PartialChannel"><span class="pre">PartialChannel</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></em><a class="headerlink" href="#discord_http.context.Context.channel" title="Link to this definition">¶</a></dt>
-<dd><p>Returns the channel the interaction was made in</p>
+<dd><p>Returns the channel the interaction was made in.</p>
 </dd></dl>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="discord_http.context.Context.channel_type">
 <em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">channel_type</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="enums.html#discord_http.enums.ChannelType" title="discord_http.enums.ChannelType"><span class="pre">ChannelType</span></a></em><a class="headerlink" href="#discord_http.context.Context.channel_type" title="Link to this definition">¶</a></dt>
-<dd><p><cite>ChannelType</cite> Returns the type of the channel</p>
+<dd><p>Returns the type of the channel.</p>
 </dd></dl>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="discord_http.context.Context.cooldown">
 <em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">cooldown</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="cooldowns.html#discord_http.cooldowns.Cooldown" title="discord_http.cooldowns.Cooldown"><span class="pre">Cooldown</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></em><a class="headerlink" href="#discord_http.context.Context.cooldown" title="Link to this definition">¶</a></dt>
-<dd><p><cite>Optional[Cooldown]</cite> Returns the context cooldown</p>
+<dd><p>Returns the context cooldown.</p>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="discord_http.context.Context.create_followup_response">
 <em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">create_followup_response</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">content=&lt;MISSING&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">embed=&lt;MISSING&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">embeds=&lt;MISSING&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">file=&lt;MISSING&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">files=&lt;MISSING&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ephemeral=False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">view=&lt;MISSING&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tts=False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">type=4</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">allowed_mentions=&lt;MISSING&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">poll=&lt;MISSING&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">flags=&lt;MISSING&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">delete_after=None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="message.html#discord_http.message.WebhookMessage" title="discord_http.message.WebhookMessage"><span class="pre">WebhookMessage</span></a></span></span><a class="headerlink" href="#discord_http.context.Context.create_followup_response" title="Link to this definition">¶</a></dt>
-<dd><p>Creates a new followup response to the interaction</p>
+<dd><p>Creates a new followup response to the interaction.</p>
 <p>Do not use this to create a followup response when defer was called before.
 Use <cite>edit_original_response</cite> instead.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>content</strong> (<cite>Optional[str]</cite>) – Content of the message</p></li>
-<li><p><strong>embed</strong> (<cite>Optional[Embed]</cite>) – Embed of the message</p></li>
-<li><p><strong>embeds</strong> (<cite>Optional[list[Embed]]</cite>) – Embeds of the message</p></li>
-<li><p><strong>file</strong> (<cite>Optional[File]</cite>) – File of the message</p></li>
-<li><p><strong>files</strong> (<cite>Optional[Union[list[File], File]]</cite>) – Files of the message</p></li>
-<li><p><strong>ephemeral</strong> (<cite>bool</cite>) – Whether the message should be sent as ephemeral</p></li>
-<li><p><strong>view</strong> (<cite>Optional[View]</cite>) – Components of the message</p></li>
-<li><p><strong>type</strong> (<cite>Optional[ResponseType]</cite>) – Which type of response should be sent</p></li>
-<li><p><strong>allowed_mentions</strong> (<cite>Optional[AllowedMentions]</cite>) – Allowed mentions of the message</p></li>
-<li><p><strong>wait</strong> (<cite>bool</cite>) – Whether to wait for the message to be sent</p></li>
-<li><p><strong>thread_id</strong> (<cite>Optional[int]</cite>) – Thread ID to send the message to</p></li>
-<li><p><strong>poll</strong> (<cite>Optional[Poll]</cite>) – Poll to send with the message</p></li>
-<li><p><strong>flags</strong> (<cite>Optional[MessageFlags]</cite>) – Flags of the message</p></li>
-<li><p><strong>delete_after</strong> (<cite>Optional[float]</cite>) – How long to wait before deleting the message</p></li>
-<li><p><strong>tts</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><em>bool</em></a><em> | </em><em>None</em>)</p></li>
+<li><p><strong>content</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a> | <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></span>) – Content of the message</p></li>
+<li><p><strong>embed</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference internal" href="embeds.html#discord_http.embeds.Embed" title="discord_http.embeds.Embed"><code class="xref py py-class docutils literal notranslate"><span class="pre">Embed</span></code></a> | <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></span>) – Embed of the message</p></li>
+<li><p><strong>embeds</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">list</span></code></a>[<a class="reference internal" href="embeds.html#discord_http.embeds.Embed" title="discord_http.embeds.Embed"><code class="xref py py-class docutils literal notranslate"><span class="pre">Embed</span></code></a>] | <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></span>) – Embeds of the message</p></li>
+<li><p><strong>file</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference internal" href="file.html#discord_http.file.File" title="discord_http.file.File"><code class="xref py py-class docutils literal notranslate"><span class="pre">File</span></code></a> | <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></span>) – File of the message</p></li>
+<li><p><strong>files</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">list</span></code></a>[<a class="reference internal" href="file.html#discord_http.file.File" title="discord_http.file.File"><code class="xref py py-class docutils literal notranslate"><span class="pre">File</span></code></a>] | <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></span>) – Files of the message</p></li>
+<li><p><strong>ephemeral</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></a> | <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></span>) – Whether the message should be sent as ephemeral</p></li>
+<li><p><strong>view</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference internal" href="view.html#discord_http.view.View" title="discord_http.view.View"><code class="xref py py-class docutils literal notranslate"><span class="pre">View</span></code></a> | <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></span>) – Components of the message</p></li>
+<li><p><strong>type</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference internal" href="enums.html#discord_http.enums.ResponseType" title="discord_http.enums.ResponseType"><code class="xref py py-class docutils literal notranslate"><span class="pre">ResponseType</span></code></a> | <a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a></span>) – Which type of response should be sent</p></li>
+<li><p><strong>allowed_mentions</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference internal" href="mentions.html#discord_http.mentions.AllowedMentions" title="discord_http.mentions.AllowedMentions"><code class="xref py py-class docutils literal notranslate"><span class="pre">AllowedMentions</span></code></a> | <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></span>) – Allowed mentions of the message</p></li>
+<li><p><strong>wait</strong> – Whether to wait for the message to be sent</p></li>
+<li><p><strong>thread_id</strong> – Thread ID to send the message to</p></li>
+<li><p><strong>poll</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference internal" href="message.html#discord_http.message.Poll" title="discord_http.message.Poll"><code class="xref py py-class docutils literal notranslate"><span class="pre">Poll</span></code></a> | <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></span>) – Poll to send with the message</p></li>
+<li><p><strong>tts</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></a> | <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></span>) – Whether the message should be sent as TTS</p></li>
+<li><p><strong>flags</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference internal" href="flags.html#discord_http.flags.MessageFlags" title="discord_http.flags.MessageFlags"><code class="xref py py-class docutils literal notranslate"><span class="pre">MessageFlags</span></code></a> | <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></span>) – Flags of the message</p></li>
+<li><p><strong>delete_after</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></a> | <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></span>) – How long to wait before deleting the message</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
@@ -371,13 +371,13 @@ Use <cite>edit_original_response</cite> instead.</p>
 <dl class="py property">
 <dt class="sig sig-object py" id="discord_http.context.Context.created_at">
 <em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">created_at</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/datetime.html#datetime.datetime" title="(in Python v3.13)"><span class="pre">datetime</span></a></em><a class="headerlink" href="#discord_http.context.Context.created_at" title="Link to this definition">¶</a></dt>
-<dd><p><cite>datetime</cite> Returns the time the interaction was created</p>
+<dd><p>Returns the time the interaction was created.</p>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="discord_http.context.Context.delete_original_response">
 <em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">delete_original_response</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></span></span><a class="headerlink" href="#discord_http.context.Context.delete_original_response" title="Link to this definition">¶</a></dt>
-<dd><p>Delete the original response to the interaction</p>
+<dd><p>Delete the original response to the interaction.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></span></p>
@@ -388,7 +388,7 @@ Use <cite>edit_original_response</cite> instead.</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="discord_http.context.Context.edit_original_response">
 <em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">edit_original_response</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">content=&lt;MISSING&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">embed=&lt;MISSING&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">embeds=&lt;MISSING&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">view=&lt;MISSING&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">attachment=&lt;MISSING&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">attachments=&lt;MISSING&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">allowed_mentions=&lt;MISSING&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">flags=&lt;MISSING&gt;</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="message.html#discord_http.message.WebhookMessage" title="discord_http.message.WebhookMessage"><span class="pre">WebhookMessage</span></a></span></span><a class="headerlink" href="#discord_http.context.Context.edit_original_response" title="Link to this definition">¶</a></dt>
-<dd><p><cite>Message</cite> Edit the original response to the interaction</p>
+<dd><p>Edit the original response to the interaction.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><a class="reference internal" href="message.html#discord_http.message.WebhookMessage" title="discord_http.message.WebhookMessage"><code class="xref py py-class docutils literal notranslate"><span class="pre">WebhookMessage</span></code></a></span></p>
@@ -411,25 +411,20 @@ Use <cite>edit_original_response</cite> instead.</p>
 <dl class="py property">
 <dt class="sig sig-object py" id="discord_http.context.Context.expires_at">
 <em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">expires_at</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/datetime.html#datetime.datetime" title="(in Python v3.13)"><span class="pre">datetime</span></a></em><a class="headerlink" href="#discord_http.context.Context.expires_at" title="Link to this definition">¶</a></dt>
-<dd><p><cite>datetime</cite> Returns the time the interaction expires</p>
+<dd><p>Returns the time the interaction expires.</p>
 </dd></dl>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="discord_http.context.Context.guild">
 <em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">guild</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="guild.html#discord_http.guild.Guild" title="discord_http.guild.Guild"><span class="pre">Guild</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="guild.html#discord_http.guild.PartialGuild" title="discord_http.guild.PartialGuild"><span class="pre">PartialGuild</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></em><a class="headerlink" href="#discord_http.context.Context.guild" title="Link to this definition">¶</a></dt>
-<dd><p>Returns the guild the interaction was made in
-If you are using gateway cache, it can return full object too</p>
-<dl class="field-list simple">
-<dt class="field-odd">Type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><cite>Guild | PartialGuild | None</cite></p>
-</dd>
-</dl>
+<dd><p>Returns the guild the interaction was made in.</p>
+<p>If you are using gateway cache, it can return full object too</p>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="discord_http.context.Context.is_expired">
 <span class="sig-name descname"><span class="pre">is_expired</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><span class="pre">bool</span></a></span></span><a class="headerlink" href="#discord_http.context.Context.is_expired" title="Link to this definition">¶</a></dt>
-<dd><p><cite>bool</cite> Returns whether the interaction is expired</p>
+<dd><p>Returns whether the interaction is expired.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></a></span></p>
@@ -440,7 +435,7 @@ If you are using gateway cache, it can return full object too</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="discord_http.context.Context.original_response">
 <em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">original_response</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="message.html#discord_http.message.WebhookMessage" title="discord_http.message.WebhookMessage"><span class="pre">WebhookMessage</span></a></span></span><a class="headerlink" href="#discord_http.context.Context.original_response" title="Link to this definition">¶</a></dt>
-<dd><p><cite>Message</cite> Fetch the original response to the interaction</p>
+<dd><p>Fetch the original response to the interaction.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><a class="reference internal" href="message.html#discord_http.message.WebhookMessage" title="discord_http.message.WebhookMessage"><code class="xref py py-class docutils literal notranslate"><span class="pre">WebhookMessage</span></code></a></span></p>
@@ -451,31 +446,31 @@ If you are using gateway cache, it can return full object too</p>
 <dl class="py property">
 <dt class="sig sig-object py" id="discord_http.context.Context.response">
 <em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">response</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="#discord_http.context.InteractionResponse" title="discord_http.context.InteractionResponse"><span class="pre">InteractionResponse</span></a></em><a class="headerlink" href="#discord_http.context.Context.response" title="Link to this definition">¶</a></dt>
-<dd><p><cite>InteractionResponse</cite> Returns the response to the interaction</p>
+<dd><p>Returns the response to the interaction.</p>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="discord_http.context.Context.send">
 <em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">send</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">content=&lt;MISSING&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">embed=&lt;MISSING&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">embeds=&lt;MISSING&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">file=&lt;MISSING&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">files=&lt;MISSING&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ephemeral=False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">view=&lt;MISSING&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tts=False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">type=4</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">allowed_mentions=&lt;MISSING&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">poll=&lt;MISSING&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">flags=&lt;MISSING&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">delete_after=None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="message.html#discord_http.message.WebhookMessage" title="discord_http.message.WebhookMessage"><span class="pre">WebhookMessage</span></a></span></span><a class="headerlink" href="#discord_http.context.Context.send" title="Link to this definition">¶</a></dt>
-<dd><p>Send a message after responding with an empty response in the initial interaction</p>
+<dd><p>Send a message after responding with an empty response in the initial interaction.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>content</strong> (<cite>Optional[str]</cite>) – Content of the message</p></li>
-<li><p><strong>embed</strong> (<cite>Optional[Embed]</cite>) – Embed of the message</p></li>
-<li><p><strong>embeds</strong> (<cite>Optional[list[Embed]]</cite>) – Embeds of the message</p></li>
-<li><p><strong>file</strong> (<cite>Optional[File]</cite>) – File of the message</p></li>
-<li><p><strong>files</strong> (<cite>Optional[Union[list[File], File]]</cite>) – Files of the message</p></li>
-<li><p><strong>ephemeral</strong> (<cite>bool</cite>) – Whether the message should be sent as ephemeral</p></li>
-<li><p><strong>view</strong> (<cite>Optional[View]</cite>) – Components of the message</p></li>
-<li><p><strong>type</strong> (<cite>Optional[ResponseType]</cite>) – Which type of response should be sent</p></li>
-<li><p><strong>allowed_mentions</strong> (<cite>Optional[AllowedMentions]</cite>) – Allowed mentions of the message</p></li>
-<li><p><strong>wait</strong> (<cite>bool</cite>) – Whether to wait for the message to be sent</p></li>
-<li><p><strong>thread_id</strong> (<cite>Optional[int]</cite>) – Thread ID to send the message to</p></li>
-<li><p><strong>poll</strong> (<cite>Optional[Poll]</cite>) – Poll to send with the message</p></li>
-<li><p><strong>flags</strong> (<cite>Optional[MessageFlags]</cite>) – Flags of the message</p></li>
-<li><p><strong>delete_after</strong> (<cite>Optional[float]</cite>) – How long to wait before deleting the message</p></li>
-<li><p><strong>tts</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><em>bool</em></a><em> | </em><em>None</em>)</p></li>
+<li><p><strong>content</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a> | <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></span>) – Content of the message</p></li>
+<li><p><strong>embed</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference internal" href="embeds.html#discord_http.embeds.Embed" title="discord_http.embeds.Embed"><code class="xref py py-class docutils literal notranslate"><span class="pre">Embed</span></code></a> | <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></span>) – Embed of the message</p></li>
+<li><p><strong>embeds</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">list</span></code></a>[<a class="reference internal" href="embeds.html#discord_http.embeds.Embed" title="discord_http.embeds.Embed"><code class="xref py py-class docutils literal notranslate"><span class="pre">Embed</span></code></a>] | <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></span>) – Embeds of the message</p></li>
+<li><p><strong>file</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference internal" href="file.html#discord_http.file.File" title="discord_http.file.File"><code class="xref py py-class docutils literal notranslate"><span class="pre">File</span></code></a> | <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></span>) – File of the message</p></li>
+<li><p><strong>files</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">list</span></code></a>[<a class="reference internal" href="file.html#discord_http.file.File" title="discord_http.file.File"><code class="xref py py-class docutils literal notranslate"><span class="pre">File</span></code></a>] | <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></span>) – Files of the message</p></li>
+<li><p><strong>ephemeral</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></a> | <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></span>) – Whether the message should be sent as ephemeral</p></li>
+<li><p><strong>view</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference internal" href="view.html#discord_http.view.View" title="discord_http.view.View"><code class="xref py py-class docutils literal notranslate"><span class="pre">View</span></code></a> | <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></span>) – Components of the message</p></li>
+<li><p><strong>type</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference internal" href="enums.html#discord_http.enums.ResponseType" title="discord_http.enums.ResponseType"><code class="xref py py-class docutils literal notranslate"><span class="pre">ResponseType</span></code></a> | <a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a></span>) – Which type of response should be sent</p></li>
+<li><p><strong>allowed_mentions</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference internal" href="mentions.html#discord_http.mentions.AllowedMentions" title="discord_http.mentions.AllowedMentions"><code class="xref py py-class docutils literal notranslate"><span class="pre">AllowedMentions</span></code></a> | <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></span>) – Allowed mentions of the message</p></li>
+<li><p><strong>wait</strong> – Whether to wait for the message to be sent</p></li>
+<li><p><strong>thread_id</strong> – Thread ID to send the message to</p></li>
+<li><p><strong>poll</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference internal" href="message.html#discord_http.message.Poll" title="discord_http.message.Poll"><code class="xref py py-class docutils literal notranslate"><span class="pre">Poll</span></code></a> | <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></span>) – Poll to send with the message</p></li>
+<li><p><strong>tts</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></a> | <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></span>) – Whether the message should be sent as TTS</p></li>
+<li><p><strong>flags</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference internal" href="flags.html#discord_http.flags.MessageFlags" title="discord_http.flags.MessageFlags"><code class="xref py py-class docutils literal notranslate"><span class="pre">MessageFlags</span></code></a> | <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></span>) – Flags of the message</p></li>
+<li><p><strong>delete_after</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></a> | <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></span>) – How long to wait before deleting the message</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
@@ -501,21 +496,21 @@ If you are using gateway cache, it can return full object too</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="discord_http.context.InteractionResponse.defer">
 <span class="sig-name descname"><span class="pre">defer</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ephemeral=False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">thinking=False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">flags=&lt;MISSING&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">call_after=None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="response.html#discord_http.response.DeferResponse" title="discord_http.response.DeferResponse"><span class="pre">DeferResponse</span></a></span></span><a class="headerlink" href="#discord_http.context.InteractionResponse.defer" title="Link to this definition">¶</a></dt>
-<dd><p>Defer the response to the interaction</p>
+<dd><p>Defer the response to the interaction.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>ephemeral</strong> (<cite>bool</cite>) – If the response should be ephemeral (show only to the user)</p></li>
-<li><p><strong>thinking</strong> (<cite>bool</cite>) – If the response should show the “thinking” status</p></li>
-<li><p><strong>flags</strong> (<cite>Optional[int]</cite>) – The flags of the message (overrides ephemeral)</p></li>
-<li><p><strong>call_after</strong> (<cite>Optional[Callable]</cite>) – A coroutine to run after the response is sent</p></li>
+<li><p><strong>ephemeral</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></a></span>) – If the response should be ephemeral (show only to the user)</p></li>
+<li><p><strong>thinking</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></a></span>) – If the response should show the “thinking” status</p></li>
+<li><p><strong>flags</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference internal" href="flags.html#discord_http.flags.MessageFlags" title="discord_http.flags.MessageFlags"><code class="xref py py-class docutils literal notranslate"><span class="pre">MessageFlags</span></code></a> | <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></span>) – The flags of the message (overrides ephemeral)</p></li>
+<li><p><strong>call_after</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/collections.abc.html#collections.abc.Callable" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Callable</span></code></a> | <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></span>) – A coroutine to run after the response is sent</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>The response to the interaction</p>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><a class="reference internal" href="response.html#discord_http.response.DeferResponse" title="discord_http.response.DeferResponse"><code class="xref py py-class docutils literal notranslate"><span class="pre">DeferResponse</span></code></a></span></p>
 </dd>
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><cite>DeferResponse</cite></p>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The response to the interaction</p>
 </dd>
 <dt class="field-even">Raises<span class="colon">:</span></dt>
 <dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#TypeError" title="(in Python v3.13)"><strong>TypeError</strong></a> – If <cite>call_after</cite> is not a coroutine</p>
@@ -526,26 +521,26 @@ If you are using gateway cache, it can return full object too</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="discord_http.context.InteractionResponse.edit_message">
 <span class="sig-name descname"><span class="pre">edit_message</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">content=&lt;MISSING&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">embed=&lt;MISSING&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">embeds=&lt;MISSING&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">view=&lt;MISSING&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">attachment=&lt;MISSING&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">attachments=&lt;MISSING&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">allowed_mentions=&lt;MISSING&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">flags=&lt;MISSING&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">call_after=None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="response.html#discord_http.response.MessageResponse" title="discord_http.response.MessageResponse"><span class="pre">MessageResponse</span></a></span></span><a class="headerlink" href="#discord_http.context.InteractionResponse.edit_message" title="Link to this definition">¶</a></dt>
-<dd><p>Edit the original message of the interaction</p>
+<dd><p>Edit the original message of the interaction.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>content</strong> (<cite>Optional[str]</cite>) – Content of the message</p></li>
-<li><p><strong>embed</strong> (<cite>Optional[Embed]</cite>) – Embed to edit the message with</p></li>
-<li><p><strong>embeds</strong> (<cite>Optional[list[Embed]]</cite>) – Multiple embeds to edit the message with</p></li>
-<li><p><strong>view</strong> (<cite>Optional[View]</cite>) – Components to include in the message</p></li>
-<li><p><strong>attachment</strong> (<cite>Optional[File]</cite>) – New file to edit the message with</p></li>
-<li><p><strong>attachments</strong> (<cite>Optional[Union[list[File], File]]</cite>) – Multiple new files to edit the message with</p></li>
-<li><p><strong>allowed_mentions</strong> (<cite>Optional[AllowedMentions]</cite>) – Allowed mentions for the message</p></li>
-<li><p><strong>flags</strong> (<cite>Optional[int]</cite>) – The flags of the message</p></li>
-<li><p><strong>call_after</strong> (<cite>Optional[Callable]</cite>) – A coroutine to run after the response is sent</p></li>
+<li><p><strong>content</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a> | <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></span>) – Content of the message</p></li>
+<li><p><strong>embed</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference internal" href="embeds.html#discord_http.embeds.Embed" title="discord_http.embeds.Embed"><code class="xref py py-class docutils literal notranslate"><span class="pre">Embed</span></code></a> | <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></span>) – Embed to edit the message with</p></li>
+<li><p><strong>embeds</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">list</span></code></a>[<a class="reference internal" href="embeds.html#discord_http.embeds.Embed" title="discord_http.embeds.Embed"><code class="xref py py-class docutils literal notranslate"><span class="pre">Embed</span></code></a>] | <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></span>) – Multiple embeds to edit the message with</p></li>
+<li><p><strong>view</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference internal" href="view.html#discord_http.view.View" title="discord_http.view.View"><code class="xref py py-class docutils literal notranslate"><span class="pre">View</span></code></a> | <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></span>) – Components to include in the message</p></li>
+<li><p><strong>attachment</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference internal" href="file.html#discord_http.file.File" title="discord_http.file.File"><code class="xref py py-class docutils literal notranslate"><span class="pre">File</span></code></a> | <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></span>) – New file to edit the message with</p></li>
+<li><p><strong>attachments</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">list</span></code></a>[<a class="reference internal" href="file.html#discord_http.file.File" title="discord_http.file.File"><code class="xref py py-class docutils literal notranslate"><span class="pre">File</span></code></a>] | <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></span>) – Multiple new files to edit the message with</p></li>
+<li><p><strong>allowed_mentions</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference internal" href="mentions.html#discord_http.mentions.AllowedMentions" title="discord_http.mentions.AllowedMentions"><code class="xref py py-class docutils literal notranslate"><span class="pre">AllowedMentions</span></code></a> | <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></span>) – Allowed mentions for the message</p></li>
+<li><p><strong>flags</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference internal" href="flags.html#discord_http.flags.MessageFlags" title="discord_http.flags.MessageFlags"><code class="xref py py-class docutils literal notranslate"><span class="pre">MessageFlags</span></code></a> | <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></span>) – The flags of the message</p></li>
+<li><p><strong>call_after</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/collections.abc.html#collections.abc.Callable" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Callable</span></code></a> | <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></span>) – A coroutine to run after the response is sent</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>The response to the interaction</p>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><a class="reference internal" href="response.html#discord_http.response.MessageResponse" title="discord_http.response.MessageResponse"><code class="xref py py-class docutils literal notranslate"><span class="pre">MessageResponse</span></code></a></span></p>
 </dd>
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><cite>MessageResponse</cite></p>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The response to the interaction</p>
 </dd>
 <dt class="field-even">Raises<span class="colon">:</span></dt>
 <dd class="field-even"><ul class="simple">
@@ -563,8 +558,7 @@ If you are using gateway cache, it can return full object too</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="discord_http.context.InteractionResponse.pong">
 <span class="sig-name descname"><span class="pre">pong</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.13)"><span class="pre">dict</span></a></span></span><a class="headerlink" href="#discord_http.context.InteractionResponse.pong" title="Link to this definition">¶</a></dt>
-<dd><p>Only used to acknowledge a ping from
-Discord Developer portal Interaction URL</p>
+<dd><p>Only used to acknowledge a ping from Discord Developer portal Interaction URL.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">dict</span></code></a></span></p>
@@ -575,16 +569,16 @@ Discord Developer portal Interaction URL</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="discord_http.context.InteractionResponse.send_autocomplete">
 <span class="sig-name descname"><span class="pre">send_autocomplete</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">choices</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="response.html#discord_http.response.AutocompleteResponse" title="discord_http.response.AutocompleteResponse"><span class="pre">AutocompleteResponse</span></a></span></span><a class="headerlink" href="#discord_http.context.InteractionResponse.send_autocomplete" title="Link to this definition">¶</a></dt>
-<dd><p>Send an autocomplete response to the interaction</p>
+<dd><p>Send an autocomplete response to the interaction.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>choices</strong> (<cite>dict[Union[str, int, float], str]</cite>) – The choices to send</p>
+<dd class="field-odd"><p><strong>choices</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">dict</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Any" title="(in Python v3.13)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Any</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>]</span>) – The choices to send</p>
 </dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>The response to the interaction</p>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><a class="reference internal" href="response.html#discord_http.response.AutocompleteResponse" title="discord_http.response.AutocompleteResponse"><code class="xref py py-class docutils literal notranslate"><span class="pre">AutocompleteResponse</span></code></a></span></p>
 </dd>
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><cite>AutocompleteResponse</cite></p>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The response to the interaction</p>
 </dd>
 <dt class="field-even">Raises<span class="colon">:</span></dt>
 <dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#TypeError" title="(in Python v3.13)"><strong>TypeError</strong></a> – <ul class="simple">
@@ -599,16 +593,16 @@ Discord Developer portal Interaction URL</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="discord_http.context.InteractionResponse.send_empty">
 <span class="sig-name descname"><span class="pre">send_empty</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">call_after</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">EmptyResponse</span></span></span><a class="headerlink" href="#discord_http.context.InteractionResponse.send_empty" title="Link to this definition">¶</a></dt>
-<dd><p>Send an empty response to the interaction</p>
+<dd><p>Send an empty response to the interaction.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>call_after</strong> (<cite>Optional[Callable]</cite>) – A coroutine to run after the response is sent</p>
+<dd class="field-odd"><p><strong>call_after</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/collections.abc.html#collections.abc.Callable" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Callable</span></code></a> | <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></span>) – A coroutine to run after the response is sent</p>
 </dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>The response to the interaction</p>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">EmptyResponse</span></code></span></p>
 </dd>
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><cite>EmptyResponse</cite></p>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The response to the interaction</p>
 </dd>
 </dl>
 </dd></dl>
@@ -616,30 +610,30 @@ Discord Developer portal Interaction URL</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="discord_http.context.InteractionResponse.send_message">
 <span class="sig-name descname"><span class="pre">send_message</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">content=&lt;MISSING&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">embed=&lt;MISSING&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">embeds=&lt;MISSING&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">file=&lt;MISSING&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">files=&lt;MISSING&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ephemeral=False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">view=&lt;MISSING&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tts=False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">type=4</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">allowed_mentions=&lt;MISSING&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">poll=&lt;MISSING&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">flags=&lt;MISSING&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">call_after=None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="response.html#discord_http.response.MessageResponse" title="discord_http.response.MessageResponse"><span class="pre">MessageResponse</span></a></span></span><a class="headerlink" href="#discord_http.context.InteractionResponse.send_message" title="Link to this definition">¶</a></dt>
-<dd><p>Send a message to the interaction</p>
+<dd><p>Send a message to the interaction.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>content</strong> (<cite>Optional[str]</cite>) – Content of the message</p></li>
-<li><p><strong>embed</strong> (<cite>Optional[Embed]</cite>) – The embed to send</p></li>
-<li><p><strong>embeds</strong> (<cite>Optional[list[Embed]]</cite>) – Multiple embeds to send</p></li>
-<li><p><strong>file</strong> (<cite>Optional[File]</cite>) – A file to send</p></li>
-<li><p><strong>files</strong> (<cite>Optional[Union[list[File], File]]</cite>) – Multiple files to send</p></li>
-<li><p><strong>ephemeral</strong> (<cite>bool</cite>) – If the message should be ephemeral (show only to the user)</p></li>
-<li><p><strong>view</strong> (<cite>Optional[View]</cite>) – Components to include in the message</p></li>
-<li><p><strong>tts</strong> (<cite>bool</cite>) – Whether the message should be sent using text-to-speech</p></li>
-<li><p><strong>type</strong> (<cite>Optional[ResponseType]</cite>) – The type of response to send</p></li>
-<li><p><strong>allowed_mentions</strong> (<cite>Optional[AllowedMentions]</cite>) – Allowed mentions for the message</p></li>
-<li><p><strong>flags</strong> (<cite>Optional[int]</cite>) – The flags of the message (overrides ephemeral)</p></li>
-<li><p><strong>call_after</strong> (<cite>Optional[Callable]</cite>) – A coroutine to run after the response is sent</p></li>
-<li><p><strong>poll</strong> (<a class="reference internal" href="message.html#discord_http.message.Poll" title="discord_http.message.Poll"><em>Poll</em></a><em> | </em><em>None</em>)</p></li>
+<li><p><strong>content</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a> | <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></span>) – Content of the message</p></li>
+<li><p><strong>embed</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference internal" href="embeds.html#discord_http.embeds.Embed" title="discord_http.embeds.Embed"><code class="xref py py-class docutils literal notranslate"><span class="pre">Embed</span></code></a> | <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></span>) – The embed to send</p></li>
+<li><p><strong>embeds</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">list</span></code></a>[<a class="reference internal" href="embeds.html#discord_http.embeds.Embed" title="discord_http.embeds.Embed"><code class="xref py py-class docutils literal notranslate"><span class="pre">Embed</span></code></a>] | <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></span>) – Multiple embeds to send</p></li>
+<li><p><strong>file</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference internal" href="file.html#discord_http.file.File" title="discord_http.file.File"><code class="xref py py-class docutils literal notranslate"><span class="pre">File</span></code></a> | <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></span>) – A file to send</p></li>
+<li><p><strong>files</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">list</span></code></a>[<a class="reference internal" href="file.html#discord_http.file.File" title="discord_http.file.File"><code class="xref py py-class docutils literal notranslate"><span class="pre">File</span></code></a>] | <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></span>) – Multiple files to send</p></li>
+<li><p><strong>ephemeral</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></a> | <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></span>) – If the message should be ephemeral (show only to the user)</p></li>
+<li><p><strong>view</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference internal" href="view.html#discord_http.view.View" title="discord_http.view.View"><code class="xref py py-class docutils literal notranslate"><span class="pre">View</span></code></a> | <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></span>) – Components to include in the message</p></li>
+<li><p><strong>tts</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></a> | <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></span>) – Whether the message should be sent using text-to-speech</p></li>
+<li><p><strong>type</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference internal" href="enums.html#discord_http.enums.ResponseType" title="discord_http.enums.ResponseType"><code class="xref py py-class docutils literal notranslate"><span class="pre">ResponseType</span></code></a> | <a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a></span>) – The type of response to send</p></li>
+<li><p><strong>allowed_mentions</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference internal" href="mentions.html#discord_http.mentions.AllowedMentions" title="discord_http.mentions.AllowedMentions"><code class="xref py py-class docutils literal notranslate"><span class="pre">AllowedMentions</span></code></a> | <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></span>) – Allowed mentions for the message</p></li>
+<li><p><strong>flags</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference internal" href="flags.html#discord_http.flags.MessageFlags" title="discord_http.flags.MessageFlags"><code class="xref py py-class docutils literal notranslate"><span class="pre">MessageFlags</span></code></a> | <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></span>) – The flags of the message (overrides ephemeral)</p></li>
+<li><p><strong>poll</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference internal" href="message.html#discord_http.message.Poll" title="discord_http.message.Poll"><code class="xref py py-class docutils literal notranslate"><span class="pre">Poll</span></code></a> | <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></span>) – The poll to be sent</p></li>
+<li><p><strong>call_after</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/collections.abc.html#collections.abc.Callable" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Callable</span></code></a> | <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></span>) – A coroutine to run after the response is sent</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>The response to the interaction</p>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><a class="reference internal" href="response.html#discord_http.response.MessageResponse" title="discord_http.response.MessageResponse"><code class="xref py py-class docutils literal notranslate"><span class="pre">MessageResponse</span></code></a></span></p>
 </dd>
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><cite>MessageResponse</cite></p>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The response to the interaction</p>
 </dd>
 <dt class="field-even">Raises<span class="colon">:</span></dt>
 <dd class="field-even"><ul class="simple">
@@ -657,19 +651,19 @@ Discord Developer portal Interaction URL</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="discord_http.context.InteractionResponse.send_modal">
 <span class="sig-name descname"><span class="pre">send_modal</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">modal</span></span></em>, <em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">call_after</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">ModalResponse</span></span></span><a class="headerlink" href="#discord_http.context.InteractionResponse.send_modal" title="Link to this definition">¶</a></dt>
-<dd><p>Send a modal to the interaction</p>
+<dd><p>Send a modal to the interaction.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>modal</strong> (<cite>Modal</cite>) – The modal to send</p></li>
-<li><p><strong>call_after</strong> (<cite>Optional[Callable]</cite>) – A coroutine to run after the response is sent</p></li>
+<li><p><strong>modal</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference internal" href="view.html#discord_http.view.Modal" title="discord_http.view.Modal"><code class="xref py py-class docutils literal notranslate"><span class="pre">Modal</span></code></a></span>) – The modal to send</p></li>
+<li><p><strong>call_after</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/collections.abc.html#collections.abc.Callable" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Callable</span></code></a> | <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></span>) – A coroutine to run after the response is sent</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>The response to the interaction</p>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">ModalResponse</span></code></span></p>
 </dd>
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><cite>ModalResponse</cite></p>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The response to the interaction</p>
 </dd>
 <dt class="field-even">Raises<span class="colon">:</span></dt>
 <dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#TypeError" title="(in Python v3.13)"><strong>TypeError</strong></a> – <ul class="simple">

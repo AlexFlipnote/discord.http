@@ -387,19 +387,16 @@
 <dl class="py method">
 <dt class="sig sig-object py" id="discord_http.flags.BaseFlag.add_flags">
 <span class="sig-name descname"><span class="pre">add_flags</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">flag_name</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Self" title="(in Python v3.13)"><span class="pre">Self</span></a></span></span><a class="headerlink" href="#discord_http.flags.BaseFlag.add_flags" title="Link to this definition">¶</a></dt>
-<dd><p>Add a flag by name</p>
+<dd><p>Add a flag by name.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>name</strong> (<cite>Union[Self, str]</cite>) – The flag to add</p></li>
-<li><p><strong>flag_name</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Self" title="(in Python v3.13)"><em>Self</em></a><em> | </em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><em>str</em></a>)</p></li>
-</ul>
+<dd class="field-odd"><p><strong>*flag_name</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Union" title="(in Python v3.13)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code></a>[<code class="xref py py-class docutils literal notranslate"><span class="pre">Self</span></code>, <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>]</span>) – The flag to add</p>
 </dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>The flag with the added flag</p>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">Self</span></code></span></p>
 </dd>
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><cite>BaseFlag</cite></p>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The flag with the added flag</p>
 </dd>
 <dt class="field-even">Raises<span class="colon">:</span></dt>
 <dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#ValueError" title="(in Python v3.13)"><strong>ValueError</strong></a> – The flag name is not a valid flag</p>
@@ -410,7 +407,7 @@
 <dl class="py method">
 <dt class="sig sig-object py" id="discord_http.flags.BaseFlag.all">
 <em class="property"><span class="k"><span class="pre">classmethod</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">all</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Self" title="(in Python v3.13)"><span class="pre">Self</span></a></span></span><a class="headerlink" href="#discord_http.flags.BaseFlag.all" title="Link to this definition">¶</a></dt>
-<dd><p>Returns a flag with all the flags</p>
+<dd><p>Returns a flag with all the flags.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">Self</span></code></span></p>
@@ -421,7 +418,7 @@
 <dl class="py method">
 <dt class="sig sig-object py" id="discord_http.flags.BaseFlag.copy">
 <span class="sig-name descname"><span class="pre">copy</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Self" title="(in Python v3.13)"><span class="pre">Self</span></a></span></span><a class="headerlink" href="#discord_http.flags.BaseFlag.copy" title="Link to this definition">¶</a></dt>
-<dd><p>Returns a copy of the flag</p>
+<dd><p>Returns a copy of the flag.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">Self</span></code></span></p>
@@ -432,16 +429,16 @@
 <dl class="py method">
 <dt class="sig sig-object py" id="discord_http.flags.BaseFlag.from_names">
 <em class="property"><span class="k"><span class="pre">classmethod</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">from_names</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Self" title="(in Python v3.13)"><span class="pre">Self</span></a></span></span><a class="headerlink" href="#discord_http.flags.BaseFlag.from_names" title="Link to this definition">¶</a></dt>
-<dd><p>Create a flag from names</p>
+<dd><p>Create a flag from names.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>*args</strong> (<cite>str</cite>) – The names of the flags to create</p>
+<dd class="field-odd"><p><strong>*args</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></span>) – The names of the flags to create</p>
 </dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>The flag with the added flags</p>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">Self</span></code></span></p>
 </dd>
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><cite>BaseFlag</cite></p>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The flag with the added flags</p>
 </dd>
 <dt class="field-even">Raises<span class="colon">:</span></dt>
 <dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#ValueError" title="(in Python v3.13)"><strong>ValueError</strong></a> – The flag name is not a valid flag</p>
@@ -452,13 +449,13 @@
 <dl class="py property">
 <dt class="sig sig-object py" id="discord_http.flags.BaseFlag.list_names">
 <em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">list_names</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.13)"><span class="pre">list</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#discord_http.flags.BaseFlag.list_names" title="Link to this definition">¶</a></dt>
-<dd><p>Returns a list of all the names of the flag</p>
+<dd><p>Returns a list of all the names of the flag.</p>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="discord_http.flags.BaseFlag.none">
 <em class="property"><span class="k"><span class="pre">classmethod</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">none</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Self" title="(in Python v3.13)"><span class="pre">Self</span></a></span></span><a class="headerlink" href="#discord_http.flags.BaseFlag.none" title="Link to this definition">¶</a></dt>
-<dd><p>Returns a flag with no flags</p>
+<dd><p>Returns a flag with no flags.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">Self</span></code></span></p>
@@ -469,16 +466,16 @@
 <dl class="py method">
 <dt class="sig sig-object py" id="discord_http.flags.BaseFlag.remove_flags">
 <span class="sig-name descname"><span class="pre">remove_flags</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">flag_name</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Self" title="(in Python v3.13)"><span class="pre">Self</span></a></span></span><a class="headerlink" href="#discord_http.flags.BaseFlag.remove_flags" title="Link to this definition">¶</a></dt>
-<dd><p>Remove a flag by name</p>
+<dd><p>Remove a flag by name.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>flag_name</strong> (<cite>Union[Self, str]</cite>) – The flag to remove</p>
+<dd class="field-odd"><p><strong>flag_name</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Union" title="(in Python v3.13)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code></a>[<code class="xref py py-class docutils literal notranslate"><span class="pre">Self</span></code>, <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>]</span>) – The flag to remove</p>
 </dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>The flag with the removed flag</p>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">Self</span></code></span></p>
 </dd>
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><cite>BaseFlag</cite></p>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The flag with the removed flag</p>
 </dd>
 <dt class="field-even">Raises<span class="colon">:</span></dt>
 <dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#ValueError" title="(in Python v3.13)"><strong>ValueError</strong></a> – The flag name is not a valid flag</p>
@@ -489,7 +486,7 @@
 <dl class="py method">
 <dt class="sig sig-object py" id="discord_http.flags.BaseFlag.to_names">
 <span class="sig-name descname"><span class="pre">to_names</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.13)"><span class="pre">list</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#discord_http.flags.BaseFlag.to_names" title="Link to this definition">¶</a></dt>
-<dd><p>Returns the current names of the flag</p>
+<dd><p>Returns the current names of the flag.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">list</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>]</span></p>
@@ -654,7 +651,7 @@
 <dl class="py method">
 <dt class="sig sig-object py" id="discord_http.flags.PermissionOverwrite.copy">
 <span class="sig-name descname"><span class="pre">copy</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Self" title="(in Python v3.13)"><span class="pre">Self</span></a></span></span><a class="headerlink" href="#discord_http.flags.PermissionOverwrite.copy" title="Link to this definition">¶</a></dt>
-<dd><p>Returns a copy of the flag</p>
+<dd><p>Returns a copy of the flag.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">Self</span></code></span></p>
@@ -665,12 +662,16 @@
 <dl class="py method">
 <dt class="sig sig-object py" id="discord_http.flags.PermissionOverwrite.from_dict">
 <em class="property"><span class="k"><span class="pre">classmethod</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">from_dict</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Self" title="(in Python v3.13)"><span class="pre">Self</span></a></span></span><a class="headerlink" href="#discord_http.flags.PermissionOverwrite.from_dict" title="Link to this definition">¶</a></dt>
-<dd><dl class="field-list simple">
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">Self</span></code></span></p>
+<dd><p>Create a permission overwrite from a dictionary.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>data</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">dict</span></code></a></span>) – The dictionary to create the permission overwrite from</p>
 </dd>
-<dt class="field-even">Parameters<span class="colon">:</span></dt>
-<dd class="field-even"><p><strong>data</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.13)"><em>dict</em></a>)</p>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">Self</span></code></span></p>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The permission overwrite</p>
 </dd>
 </dl>
 </dd></dl>
@@ -678,7 +679,7 @@
 <dl class="py method">
 <dt class="sig sig-object py" id="discord_http.flags.PermissionOverwrite.is_member">
 <span class="sig-name descname"><span class="pre">is_member</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><span class="pre">bool</span></a></span></span><a class="headerlink" href="#discord_http.flags.PermissionOverwrite.is_member" title="Link to this definition">¶</a></dt>
-<dd><p>Returns whether the overwrite is a member overwrite</p>
+<dd><p>Returns whether the overwrite is a member overwrite.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></a></span></p>
@@ -689,7 +690,7 @@
 <dl class="py method">
 <dt class="sig sig-object py" id="discord_http.flags.PermissionOverwrite.is_role">
 <span class="sig-name descname"><span class="pre">is_role</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><span class="pre">bool</span></a></span></span><a class="headerlink" href="#discord_http.flags.PermissionOverwrite.is_role" title="Link to this definition">¶</a></dt>
-<dd><p>Returns whether the overwrite is a role overwrite</p>
+<dd><p>Returns whether the overwrite is a role overwrite.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></a></span></p>
@@ -700,7 +701,8 @@
 <dl class="py method">
 <dt class="sig sig-object py" id="discord_http.flags.PermissionOverwrite.to_dict">
 <span class="sig-name descname"><span class="pre">to_dict</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.13)"><span class="pre">dict</span></a></span></span><a class="headerlink" href="#discord_http.flags.PermissionOverwrite.to_dict" title="Link to this definition">¶</a></dt>
-<dd><dl class="field-list simple">
+<dd><p>Returns the permission overwrite as a dictionary.</p>
+<dl class="field-list simple">
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">dict</span></code></a></span></p>
 </dd>
@@ -744,6 +746,16 @@
 <dd></dd></dl>
 
 <dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.flags.Permissions.create_events">
+<span class="sig-name descname"><span class="pre">create_events</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">17592186044416</span></em><a class="headerlink" href="#discord_http.flags.Permissions.create_events" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.flags.Permissions.create_guild_expressions">
+<span class="sig-name descname"><span class="pre">create_guild_expressions</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">8796093022208</span></em><a class="headerlink" href="#discord_http.flags.Permissions.create_guild_expressions" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
 <dt class="sig sig-object py" id="discord_http.flags.Permissions.create_instant_invite">
 <span class="sig-name descname"><span class="pre">create_instant_invite</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">1</span></em><a class="headerlink" href="#discord_http.flags.Permissions.create_instant_invite" title="Link to this definition">¶</a></dt>
 <dd></dd></dl>
@@ -771,15 +783,19 @@
 <dl class="py method">
 <dt class="sig sig-object py" id="discord_http.flags.Permissions.handle_overwrite">
 <span class="sig-name descname"><span class="pre">handle_overwrite</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">allow</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">deny</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#discord_http.flags.Permissions" title="discord_http.flags.Permissions"><span class="pre">Permissions</span></a></span></span><a class="headerlink" href="#discord_http.flags.Permissions.handle_overwrite" title="Link to this definition">¶</a></dt>
-<dd><dl class="field-list simple">
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><a class="reference internal" href="#discord_http.flags.Permissions" title="discord_http.flags.Permissions"><code class="xref py py-class docutils literal notranslate"><span class="pre">Permissions</span></code></a></span></p>
-</dd>
-<dt class="field-even">Parameters<span class="colon">:</span></dt>
-<dd class="field-even"><ul class="simple">
-<li><p><strong>allow</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><em>int</em></a>)</p></li>
-<li><p><strong>deny</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><em>int</em></a>)</p></li>
+<dd><p>Handles the overwrite of permissions.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>allow</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a></span>) – The permission flag integer to allow</p></li>
+<li><p><strong>deny</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a></span>) – The permission flag integer to deny</p></li>
 </ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><a class="reference internal" href="#discord_http.flags.Permissions" title="discord_http.flags.Permissions"><code class="xref py py-class docutils literal notranslate"><span class="pre">Permissions</span></code></a></span></p>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The permissions with the overwrite applied</p>
 </dd>
 </dl>
 </dd></dl>
@@ -1252,6 +1268,8 @@
 <li><a class="reference internal" href="#discord_http.flags.Permissions.ban_members"><code class="docutils literal notranslate"><span class="pre">Permissions.ban_members</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.flags.Permissions.change_nickname"><code class="docutils literal notranslate"><span class="pre">Permissions.change_nickname</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.flags.Permissions.connect"><code class="docutils literal notranslate"><span class="pre">Permissions.connect</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.flags.Permissions.create_events"><code class="docutils literal notranslate"><span class="pre">Permissions.create_events</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.flags.Permissions.create_guild_expressions"><code class="docutils literal notranslate"><span class="pre">Permissions.create_guild_expressions</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.flags.Permissions.create_instant_invite"><code class="docutils literal notranslate"><span class="pre">Permissions.create_instant_invite</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.flags.Permissions.create_private_threads"><code class="docutils literal notranslate"><span class="pre">Permissions.create_private_threads</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.flags.Permissions.create_public_threads"><code class="docutils literal notranslate"><span class="pre">Permissions.create_public_threads</span></code></a></li>

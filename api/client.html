@@ -305,7 +305,7 @@
 <span id="discord-http-client-module"></span><h2>discord_http.client module<a class="headerlink" href="#module-discord_http.client" title="Link to this heading">¶</a></h2>
 <dl class="py class">
 <dt class="sig sig-object py" id="discord_http.client.Client">
-<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">discord_http.client.</span></span><span class="sig-name descname"><span class="pre">Client</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">token</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">application_id=None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">public_key=None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">guild_id=None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sync=False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">api_version=10</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">loop=None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">allowed_mentions=&lt;discord_http.mentions.AllowedMentions</span> <span class="pre">object&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">enable_gateway=False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">automatic_shards=True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">playing_status=None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">chunk_guilds_on_startup=False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">guild_ready_timeout=2.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">gateway_cache=None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">intents=None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">logging_level=20</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">call_after_delay=0.1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">disable_default_get_path=False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">debug_events=False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#discord_http.client.Client" title="Link to this definition">¶</a></dt>
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">discord_http.client.</span></span><span class="sig-name descname"><span class="pre">Client</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">token</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">application_id</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">public_key</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">guild_id</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sync</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">api_version</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">10</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">loop</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">allowed_mentions</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">enable_gateway</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">automatic_shards</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">playing_status</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">chunk_guilds_on_startup</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">guild_ready_timeout</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">2.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">gateway_cache</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">intents</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">logging_level</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">20</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">call_after_delay</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">disable_default_get_path</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">debug_events</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#discord_http.client.Client" title="Link to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -317,7 +317,7 @@
 <li><p><strong>sync</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><em>bool</em></a>)</p></li>
 <li><p><strong>api_version</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><em>int</em></a>)</p></li>
 <li><p><strong>loop</strong> (<em>AbstractEventLoop</em><em> | </em><em>None</em>)</p></li>
-<li><p><strong>allowed_mentions</strong> (<a class="reference internal" href="mentions.html#discord_http.mentions.AllowedMentions" title="discord_http.mentions.AllowedMentions"><em>AllowedMentions</em></a>)</p></li>
+<li><p><strong>allowed_mentions</strong> (<a class="reference internal" href="mentions.html#discord_http.mentions.AllowedMentions" title="discord_http.mentions.AllowedMentions"><em>AllowedMentions</em></a><em> | </em><em>None</em>)</p></li>
 <li><p><strong>enable_gateway</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><em>bool</em></a>)</p></li>
 <li><p><strong>automatic_shards</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><em>bool</em></a>)</p></li>
 <li><p><strong>playing_status</strong> (<a class="reference internal" href="../gateway/object.html#discord_http.gateway.object.PlayingStatus" title="discord_http.gateway.object.PlayingStatus"><em>PlayingStatus</em></a><em> | </em><em>None</em>)</p></li>
@@ -338,7 +338,7 @@
 <dd><p>Adds a cog to the bot.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>cog</strong> (<cite>Cog</cite>) – The cog to add to the bot.</p>
+<dd class="field-odd"><p><strong>cog</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference internal" href="commands.html#discord_http.commands.Cog" title="discord_http.commands.Cog"><code class="xref py py-class docutils literal notranslate"><span class="pre">Cog</span></code></a></span>) – The cog to add to the bot.</p>
 </dd>
 <dt class="field-even">Return type<span class="colon">:</span></dt>
 <dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></span></p>
@@ -352,10 +352,7 @@
 <dd><p>Adds a command to the bot.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>command</strong> (<cite>Command</cite>) – The command to add to the bot.</p></li>
-<li><p><strong>func</strong> (<a class="reference internal" href="commands.html#discord_http.commands.Command" title="discord_http.commands.Command"><em>Command</em></a>)</p></li>
-</ul>
+<dd class="field-odd"><p><strong>func</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference internal" href="commands.html#discord_http.commands.Command" title="discord_http.commands.Command"><code class="xref py py-class docutils literal notranslate"><span class="pre">Command</span></code></a></span>) – The command to add to the bot.</p>
 </dd>
 <dt class="field-even">Return type<span class="colon">:</span></dt>
 <dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><a class="reference internal" href="commands.html#discord_http.commands.Command" title="discord_http.commands.Command"><code class="xref py py-class docutils literal notranslate"><span class="pre">Command</span></code></a></span></p>
@@ -365,14 +362,14 @@
 
 <dl class="py method">
 <dt class="sig sig-object py" id="discord_http.client.Client.add_global_cmd_check">
-<span class="sig-name descname"><span class="pre">add_global_cmd_check</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">func</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Callable" title="(in Python v3.13)"><span class="pre">Callable</span></a></span></span><a class="headerlink" href="#discord_http.client.Client.add_global_cmd_check" title="Link to this definition">¶</a></dt>
-<dd><p>Add a check that will be run before every command</p>
+<span class="sig-name descname"><span class="pre">add_global_cmd_check</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">func</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/collections.abc.html#collections.abc.Callable" title="(in Python v3.13)"><span class="pre">Callable</span></a></span></span><a class="headerlink" href="#discord_http.client.Client.add_global_cmd_check" title="Link to this definition">¶</a></dt>
+<dd><p>Add a check that will be run before every command.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>func</strong> (<cite>Callable</cite>) – The function to add</p>
+<dd class="field-odd"><p><strong>func</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/collections.abc.html#collections.abc.Callable" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Callable</span></code></a></span>) – The function to add</p>
 </dd>
 <dt class="field-even">Return type<span class="colon">:</span></dt>
-<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Callable" title="(in Python v3.13)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Callable</span></code></a></span></p>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/collections.abc.html#collections.abc.Callable" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Callable</span></code></a></span></p>
 </dd>
 </dl>
 </dd></dl>
@@ -380,10 +377,10 @@
 <dl class="py method">
 <dt class="sig sig-object py" id="discord_http.client.Client.add_group">
 <span class="sig-name descname"><span class="pre">add_group</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="commands.html#discord_http.commands.SubGroup" title="discord_http.commands.SubGroup"><span class="pre">SubGroup</span></a></span></span><a class="headerlink" href="#discord_http.client.Client.add_group" title="Link to this definition">¶</a></dt>
-<dd><p>Used to add a sub-command group</p>
+<dd><p>Used to add a sub-command group.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>name</strong> (<cite>str</cite>) – Name of the group</p>
+<dd class="field-odd"><p><strong>name</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></span>) – Name of the group</p>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>The created group</p>
@@ -400,10 +397,7 @@
 <dd><p>Adds an interaction to the bot.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>interaction</strong> (<cite>Interaction</cite>) – The interaction to add to the bot.</p></li>
-<li><p><strong>func</strong> (<a class="reference internal" href="commands.html#discord_http.commands.Interaction" title="discord_http.commands.Interaction"><em>Interaction</em></a>)</p></li>
-</ul>
+<dd class="field-odd"><p><strong>func</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference internal" href="commands.html#discord_http.commands.Interaction" title="discord_http.commands.Interaction"><code class="xref py py-class docutils literal notranslate"><span class="pre">Interaction</span></code></a></span>) – The interaction to add to the bot.</p>
 </dd>
 <dt class="field-even">Return type<span class="colon">:</span></dt>
 <dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><a class="reference internal" href="commands.html#discord_http.commands.Interaction" title="discord_http.commands.Interaction"><code class="xref py py-class docutils literal notranslate"><span class="pre">Interaction</span></code></a></span></p>
@@ -417,7 +411,7 @@
 <dd><p>Adds a listener to the bot.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>func</strong> (<cite>Listener</cite>) – The listener to add to the bot.</p>
+<dd class="field-odd"><p><strong>func</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference internal" href="commands.html#discord_http.commands.Listener" title="discord_http.commands.Listener"><code class="xref py py-class docutils literal notranslate"><span class="pre">Listener</span></code></a></span>) – The listener to add to the bot.</p>
 </dd>
 <dt class="field-even">Return type<span class="colon">:</span></dt>
 <dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><a class="reference internal" href="commands.html#discord_http.commands.Listener" title="discord_http.commands.Listener"><code class="xref py py-class docutils literal notranslate"><span class="pre">Listener</span></code></a></span></p>
@@ -427,17 +421,20 @@
 
 <dl class="py method">
 <dt class="sig sig-object py" id="discord_http.client.Client.command">
-<span class="sig-name descname"><span class="pre">command</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">description</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">guild_ids</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">guild_install</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">user_install</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#discord_http.client.Client.command" title="Link to this definition">¶</a></dt>
-<dd><p>Used to register a command</p>
+<span class="sig-name descname"><span class="pre">command</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">description</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">guild_ids</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">guild_install</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">user_install</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/collections.abc.html#collections.abc.Callable" title="(in Python v3.13)"><span class="pre">Callable</span></a></span></span><a class="headerlink" href="#discord_http.client.Client.command" title="Link to this definition">¶</a></dt>
+<dd><p>Used to register a command.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>name</strong> (<cite>Optional[str]</cite>) – Name of the command, if not provided, it will use the function name</p></li>
-<li><p><strong>description</strong> (<cite>Optional[str]</cite>) – Description of the command, if not provided, it will use the function docstring</p></li>
-<li><p><strong>guild_ids</strong> (<cite>Optional[list[Union[Snowflake, int]]]</cite>) – List of guild IDs to register the command in</p></li>
-<li><p><strong>user_install</strong> (<cite>bool</cite>) – Whether the command can be installed by users or not</p></li>
-<li><p><strong>guild_install</strong> (<cite>bool</cite>) – Whether the command can be installed by guilds or not</p></li>
+<li><p><strong>name</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a> | <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></span>) – Name of the command, if not provided, it will use the function name</p></li>
+<li><p><strong>description</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a> | <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></span>) – Description of the command, if not provided, it will use the function docstring</p></li>
+<li><p><strong>guild_ids</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">list</span></code></a>[<a class="reference internal" href="object.html#discord_http.object.Snowflake" title="discord_http.object.Snowflake"><code class="xref py py-class docutils literal notranslate"><span class="pre">Snowflake</span></code></a> | <a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a>] | <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></span>) – List of guild IDs to register the command in</p></li>
+<li><p><strong>user_install</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></a></span>) – Whether the command can be installed by users or not</p></li>
+<li><p><strong>guild_install</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></a></span>) – Whether the command can be installed by guilds or not</p></li>
 </ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/collections.abc.html#collections.abc.Callable" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Callable</span></code></a></span></p>
 </dd>
 </dl>
 </dd></dl>
@@ -449,8 +446,8 @@
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>name</strong> (<cite>str</cite>) – Name of emoji</p></li>
-<li><p><strong>image</strong> (<cite>Union[File, bytes]</cite>) – The image data to use for the emoji.</p></li>
+<li><p><strong>name</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></span>) – Name of emoji</p></li>
+<li><p><strong>image</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference internal" href="file.html#discord_http.file.File" title="discord_http.file.File"><code class="xref py py-class docutils literal notranslate"><span class="pre">File</span></code></a> | <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#bytes" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bytes</span></code></a></span>) – The image data to use for the emoji.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
@@ -465,14 +462,14 @@
 <dl class="py method">
 <dt class="sig sig-object py" id="discord_http.client.Client.create_guild">
 <em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">create_guild</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span></em>, <em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">icon</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">reason</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="guild.html#discord_http.guild.Guild" title="discord_http.guild.Guild"><span class="pre">Guild</span></a></span></span><a class="headerlink" href="#discord_http.client.Client.create_guild" title="Link to this definition">¶</a></dt>
-<dd><p>Create a guild</p>
+<dd><p>Create a guild.</p>
 <p>Note that the bot must be in less than 10 guilds to use this endpoint</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>name</strong> (<cite>str</cite>) – The name of the guild</p></li>
-<li><p><strong>icon</strong> (<cite>Optional[File]</cite>) – The icon of the guild</p></li>
-<li><p><strong>reason</strong> (<cite>Optional[str]</cite>) – The reason for creating the guild</p></li>
+<li><p><strong>name</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></span>) – The name of the guild</p></li>
+<li><p><strong>icon</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference internal" href="file.html#discord_http.file.File" title="discord_http.file.File"><code class="xref py py-class docutils literal notranslate"><span class="pre">File</span></code></a> | <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#bytes" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bytes</span></code></a> | <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></span>) – The icon of the guild</p></li>
+<li><p><strong>reason</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a> | <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></span>) – The reason for creating the guild</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
@@ -486,15 +483,18 @@
 
 <dl class="py method">
 <dt class="sig sig-object py" id="discord_http.client.Client.dispatch">
-<span class="sig-name descname"><span class="pre">dispatch</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">event_name</span></span></em>, <em class="sig-param"><span class="positional-only-separator o"><abbr title="Positional-only parameter separator (PEP 570)"><span class="pre">/</span></abbr></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#discord_http.client.Client.dispatch" title="Link to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">dispatch</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">event_name</span></span></em>, <em class="sig-param"><span class="positional-only-separator o"><abbr title="Positional-only parameter separator (PEP 570)"><span class="pre">/</span></abbr></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></span></span><a class="headerlink" href="#discord_http.client.Client.dispatch" title="Link to this definition">¶</a></dt>
 <dd><p>Dispatches an event to all listeners of that event.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>event_name</strong> (<cite>str</cite>) – The name of the event to dispatch.</p></li>
-<li><p><strong>*args</strong> (<cite>Any</cite>) – The arguments to pass to the event.</p></li>
-<li><p><strong>**kwargs</strong> (<cite>Any</cite>) – The keyword arguments to pass to the event.</p></li>
+<li><p><strong>event_name</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></span>) – The name of the event to dispatch.</p></li>
+<li><p><strong>*args</strong> – The arguments to pass to the event.</p></li>
+<li><p><strong>**kwargs</strong> – The keyword arguments to pass to the event.</p></li>
 </ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></span></p>
 </dd>
 </dl>
 </dd></dl>
@@ -513,19 +513,19 @@
 <dl class="py method">
 <dt class="sig sig-object py" id="discord_http.client.Client.fetch_automod_rule">
 <em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">fetch_automod_rule</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">rule_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">guild_id</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="automod.html#discord_http.automod.AutoModRule" title="discord_http.automod.AutoModRule"><span class="pre">AutoModRule</span></a></span></span><a class="headerlink" href="#discord_http.client.Client.fetch_automod_rule" title="Link to this definition">¶</a></dt>
-<dd><p>Fetches a automod object</p>
+<dd><p>Fetches a automod object.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>rule_id</strong> (<cite>int</cite>) – The ID of the automod rule</p></li>
-<li><p><strong>guild_id</strong> (<cite>int</cite>) – The Guild ID where it comes from</p></li>
+<li><p><strong>rule_id</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a></span>) – The ID of the automod rule</p></li>
+<li><p><strong>guild_id</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a></span>) – The Guild ID where it comes from</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>The automod object</p>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><a class="reference internal" href="automod.html#discord_http.automod.AutoModRule" title="discord_http.automod.AutoModRule"><code class="xref py py-class docutils literal notranslate"><span class="pre">AutoModRule</span></code></a></span></p>
 </dd>
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><cite>AutoModRule</cite></p>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The automod object</p>
 </dd>
 </dl>
 </dd></dl>
@@ -537,8 +537,8 @@
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>channel_id</strong> (<cite>int</cite>) – Channel ID to fetch the channel object with.</p></li>
-<li><p><strong>guild_id</strong> (<cite>Optional[int]</cite>) – Guild ID to fetch the channel object with.</p></li>
+<li><p><strong>channel_id</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a></span>) – Channel ID to fetch the channel object with.</p></li>
+<li><p><strong>guild_id</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a> | <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></span>) – Guild ID to fetch the channel object with.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
@@ -557,16 +557,16 @@
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>emoji_id</strong> (<cite>int</cite>) – The ID of the emoji in question</p></li>
-<li><p><strong>guild_id</strong> (<cite>Optional[int]</cite>) – Guild ID of the emoji.
+<li><p><strong>emoji_id</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a></span>) – The ID of the emoji in question</p></li>
+<li><p><strong>guild_id</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a> | <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></span>) – Guild ID of the emoji.
 If None, it will fetch the emoji from the application</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>The emoji object</p>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><a class="reference internal" href="emoji.html#discord_http.emoji.Emoji" title="discord_http.emoji.Emoji"><code class="xref py py-class docutils literal notranslate"><span class="pre">Emoji</span></code></a></span></p>
 </dd>
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><cite>Emoji</cite></p>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The emoji object</p>
 </dd>
 </dl>
 </dd></dl>
@@ -577,7 +577,7 @@ If None, it will fetch the emoji from the application</p></li>
 <dd><p>Fetches an entitlement object.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>entitlement_id</strong> (<cite>int</cite>) – Entitlement ID to fetch the entitlement object with.</p>
+<dd class="field-odd"><p><strong>entitlement_id</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a></span>) – Entitlement ID to fetch the entitlement object with.</p>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>The entitlement object.</p>
@@ -590,19 +590,19 @@ If None, it will fetch the emoji from the application</p></li>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="discord_http.client.Client.fetch_entitlement_list">
-<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">fetch_entitlement_list</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">user_id</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sku_ids</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">before</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">after</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">limit</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">100</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">guild_id</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">exclude_ended</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.AsyncIterator" title="(in Python v3.13)"><span class="pre">AsyncIterator</span></a><span class="p"><span class="pre">[</span></span><a class="reference internal" href="entitlements.html#discord_http.entitlements.Entitlements" title="discord_http.entitlements.Entitlements"><span class="pre">Entitlements</span></a><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#discord_http.client.Client.fetch_entitlement_list" title="Link to this definition">¶</a></dt>
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">fetch_entitlement_list</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">user_id</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sku_ids</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">before</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">after</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">limit</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">100</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">guild_id</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">exclude_ended</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/collections.abc.html#collections.abc.AsyncIterator" title="(in Python v3.13)"><span class="pre">AsyncIterator</span></a><span class="p"><span class="pre">[</span></span><a class="reference internal" href="entitlements.html#discord_http.entitlements.Entitlements" title="discord_http.entitlements.Entitlements"><span class="pre">Entitlements</span></a><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#discord_http.client.Client.fetch_entitlement_list" title="Link to this definition">¶</a></dt>
 <dd><p>Fetches a list of entitlement objects with optional filters.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>user_id</strong> (<cite>Optional[int]</cite>) – Show entitlements for a specific user ID.</p></li>
-<li><p><strong>sku_ids</strong> (<cite>Optional[list[int]]</cite>) – Show entitlements for a specific SKU ID.</p></li>
-<li><p><strong>before</strong> (<cite>Optional[int]</cite>) – Only show entitlements before this entitlement ID.</p></li>
-<li><p><strong>after</strong> (<cite>Optional[int]</cite>) – Only show entitlements after this entitlement ID.</p></li>
-<li><p><strong>limit</strong> (<cite>int</cite>) – Limit the amount of entitlements to fetch.
+<li><p><strong>user_id</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a> | <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></span>) – Show entitlements for a specific user ID.</p></li>
+<li><p><strong>sku_ids</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">list</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a>] | <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></span>) – Show entitlements for a specific SKU ID.</p></li>
+<li><p><strong>before</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a> | <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></span>) – Only show entitlements before this entitlement ID.</p></li>
+<li><p><strong>after</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a> | <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></span>) – Only show entitlements after this entitlement ID.</p></li>
+<li><p><strong>limit</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a> | <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></span>) – Limit the amount of entitlements to fetch.
 Use <cite>None</cite> to fetch all entitlements.</p></li>
-<li><p><strong>guild_id</strong> (<cite>Optional[int]</cite>) – Show entitlements for a specific guild ID.</p></li>
-<li><p><strong>exclude_ended</strong> (<cite>bool</cite>) – Whether to exclude ended entitlements or not.</p></li>
+<li><p><strong>guild_id</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a> | <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></span>) – Show entitlements for a specific guild ID.</p></li>
+<li><p><strong>exclude_ended</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></a></span>) – Whether to exclude ended entitlements or not.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
@@ -620,7 +620,7 @@ Use <cite>None</cite> to fetch all entitlements.</p></li>
 <dd><p>Fetches a guild object.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>guild_id</strong> (<cite>int</cite>) – Guild ID to fetch the guild object with.</p>
+<dd class="field-odd"><p><strong>guild_id</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a></span>) – Guild ID to fetch the guild object with.</p>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>The guild object.</p>
@@ -637,7 +637,7 @@ Use <cite>None</cite> to fetch all entitlements.</p></li>
 <dd><p>Fetches an invite object.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>invite_code</strong> (<cite>str</cite>) – Invite code to fetch the invite object with.</p>
+<dd class="field-odd"><p><strong>invite_code</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></span>) – Invite code to fetch the invite object with.</p>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>The invite object.</p>
@@ -655,8 +655,8 @@ Use <cite>None</cite> to fetch all entitlements.</p></li>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>guild_id</strong> (<cite>int</cite>) – Guild ID that the member is in.</p></li>
-<li><p><strong>user_id</strong> (<cite>int</cite>) – User ID to fetch the member object with.</p></li>
+<li><p><strong>guild_id</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a></span>) – Guild ID that the member is in.</p></li>
+<li><p><strong>user_id</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a></span>) – User ID to fetch the member object with.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
@@ -675,9 +675,9 @@ Use <cite>None</cite> to fetch all entitlements.</p></li>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>message_id</strong> (<cite>int</cite>) – Message ID to fetch the message object with.</p></li>
-<li><p><strong>channel_id</strong> (<cite>int</cite>) – Channel ID to fetch the message object with.</p></li>
-<li><p><strong>guild_id</strong> (<cite>Optional[int]</cite>) – Guild ID to fetch the message object from.</p></li>
+<li><p><strong>message_id</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a></span>) – Message ID to fetch the message object with.</p></li>
+<li><p><strong>channel_id</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a></span>) – Channel ID to fetch the message object with.</p></li>
+<li><p><strong>guild_id</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a> | <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></span>) – Guild ID to fetch the message object from.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
@@ -691,13 +691,13 @@ Use <cite>None</cite> to fetch all entitlements.</p></li>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="discord_http.client.Client.fetch_scheduled_event">
-<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">fetch_scheduled_event</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">guild_id</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="guild.html#discord_http.guild.ScheduledEvent" title="discord_http.guild.ScheduledEvent"><span class="pre">ScheduledEvent</span></a></span></span><a class="headerlink" href="#discord_http.client.Client.fetch_scheduled_event" title="Link to this definition">¶</a></dt>
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">fetch_scheduled_event</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">event_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">guild_id</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="guild.html#discord_http.guild.ScheduledEvent" title="discord_http.guild.ScheduledEvent"><span class="pre">ScheduledEvent</span></a></span></span><a class="headerlink" href="#discord_http.client.Client.fetch_scheduled_event" title="Link to this definition">¶</a></dt>
 <dd><p>Fetches a scheduled event object.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>id</strong> (<cite>int</cite>) – The ID of the scheduled event.</p></li>
-<li><p><strong>guild_id</strong> (<cite>int</cite>) – The guild ID of the scheduled event.</p></li>
+<li><p><strong>event_id</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a></span>) – The ID of the scheduled event.</p></li>
+<li><p><strong>guild_id</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a></span>) – The guild ID of the scheduled event.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
@@ -727,9 +727,8 @@ Use <cite>None</cite> to fetch all entitlements.</p></li>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>sticker_id</strong> (<cite>int</cite>) – Sound ID to fetch the soundboard sound object with.</p></li>
-<li><p><strong>guild_id</strong> (<cite>int</cite>) – Guild ID to fetch the soundboard sound object from.</p></li>
-<li><p><strong>sound_id</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><em>int</em></a>)</p></li>
+<li><p><strong>sound_id</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a></span>) – Sound ID to fetch the soundboard sound object with.</p></li>
+<li><p><strong>guild_id</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a></span>) – Guild ID to fetch the soundboard sound object from.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
@@ -748,15 +747,15 @@ Use <cite>None</cite> to fetch all entitlements.</p></li>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>sticker_id</strong> (<cite>int</cite>) – Sticker ID to fetch the sticker object with.</p></li>
-<li><p><strong>guild_id</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><em>int</em></a><em> | </em><em>None</em>)</p></li>
+<li><p><strong>sticker_id</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a></span>) – Sticker ID to fetch the sticker object with.</p></li>
+<li><p><strong>guild_id</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a> | <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></span>) – Guild ID to fetch the sticker object from.</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>The sticker object.</p>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><a class="reference internal" href="sticker.html#discord_http.sticker.Sticker" title="discord_http.sticker.Sticker"><code class="xref py py-class docutils literal notranslate"><span class="pre">Sticker</span></code></a></span></p>
 </dd>
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><cite>Sticker</cite></p>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The sticker object.</p>
 </dd>
 </dl>
 </dd></dl>
@@ -767,7 +766,7 @@ Use <cite>None</cite> to fetch all entitlements.</p></li>
 <dd><p>Fetches a user object.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>user_id</strong> (<cite>int</cite>) – User ID to fetch the user object with.</p>
+<dd class="field-odd"><p><strong>user_id</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a></span>) – User ID to fetch the user object with.</p>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>The user object.</p>
@@ -785,8 +784,8 @@ Use <cite>None</cite> to fetch all entitlements.</p></li>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>member_id</strong> (<cite>int</cite>) – The ID of the member to fetch the voice state from</p></li>
-<li><p><strong>guild_id</strong> (<cite>Optional[int]</cite>) – Guild ID to fetch the voice state from</p></li>
+<li><p><strong>member_id</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a></span>) – The ID of the member to fetch the voice state from</p></li>
+<li><p><strong>guild_id</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a> | <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></span>) – Guild ID to fetch the voice state from</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
@@ -805,8 +804,8 @@ Use <cite>None</cite> to fetch all entitlements.</p></li>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>webhook_id</strong> (<cite>int</cite>) – Webhook ID to fetch the webhook object with.</p></li>
-<li><p><strong>webhook_token</strong> (<cite>Optional[str]</cite>) – Webhook token to fetch the webhook object with.</p></li>
+<li><p><strong>webhook_id</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a></span>) – Webhook ID to fetch the webhook object with.</p></li>
+<li><p><strong>webhook_token</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a> | <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></span>) – Webhook token to fetch the webhook object with.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
@@ -824,7 +823,7 @@ Use <cite>None</cite> to fetch all entitlements.</p></li>
 <dd><p>Finds an interaction by its Custom ID.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>custom_id</strong> (<cite>str</cite>) – The Custom ID to find the interaction with.
+<dd class="field-odd"><p><strong>custom_id</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></span>) – The Custom ID to find the interaction with.
 Will automatically convert to regex matching
 if some interaction Custom IDs are regex.</p>
 </dd>
@@ -843,7 +842,7 @@ if some interaction Custom IDs are regex.</p>
 <dd><p>Get a channel object from the cache.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>channel_id</strong> (<cite>int</cite>) – The ID of the channel to get.</p>
+<dd class="field-odd"><p><strong>channel_id</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a> | <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></span>) – The ID of the channel to get.</p>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>The channel object with the specified ID, or <cite>None</cite> if not found.</p>
@@ -860,13 +859,13 @@ if some interaction Custom IDs are regex.</p>
 <dd><p>Get a guild object from the cache.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>guild_id</strong> (<cite>int</cite>) – The ID of the guild to get.</p>
+<dd class="field-odd"><p><strong>guild_id</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a></span>) – The ID of the guild to get.</p>
 </dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>The guild object with the specified ID, or <cite>None</cite> if not found.</p>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><a class="reference internal" href="guild.html#discord_http.guild.Guild" title="discord_http.guild.Guild"><code class="xref py py-class docutils literal notranslate"><span class="pre">Guild</span></code></a> | <a class="reference internal" href="guild.html#discord_http.guild.PartialGuild" title="discord_http.guild.PartialGuild"><code class="xref py py-class docutils literal notranslate"><span class="pre">PartialGuild</span></code></a> | <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></span></p>
 </dd>
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><cite>Guild | PartialGuild | None</cite></p>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The guild object with the specified ID, or <cite>None</cite> if not found.</p>
 </dd>
 </dl>
 </dd></dl>
@@ -874,19 +873,19 @@ if some interaction Custom IDs are regex.</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="discord_http.client.Client.get_partial_automod_rule">
 <span class="sig-name descname"><span class="pre">get_partial_automod_rule</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">rule_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">guild_id</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="automod.html#discord_http.automod.PartialAutoModRule" title="discord_http.automod.PartialAutoModRule"><span class="pre">PartialAutoModRule</span></a></span></span><a class="headerlink" href="#discord_http.client.Client.get_partial_automod_rule" title="Link to this definition">¶</a></dt>
-<dd><p>Creates a partial automod object</p>
+<dd><p>Creates a partial automod object.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>rule_id</strong> (<cite>int</cite>) – The ID of the automod rule</p></li>
-<li><p><strong>guild_id</strong> (<cite>int</cite>) – The Guild ID where it comes from</p></li>
+<li><p><strong>rule_id</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a></span>) – The ID of the automod rule</p></li>
+<li><p><strong>guild_id</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a></span>) – The Guild ID where it comes from</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>The partial automod object</p>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><a class="reference internal" href="automod.html#discord_http.automod.PartialAutoModRule" title="discord_http.automod.PartialAutoModRule"><code class="xref py py-class docutils literal notranslate"><span class="pre">PartialAutoModRule</span></code></a></span></p>
 </dd>
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><cite>PartialAutoModRule</cite></p>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The partial automod object</p>
 </dd>
 </dl>
 </dd></dl>
@@ -898,8 +897,8 @@ if some interaction Custom IDs are regex.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>channel_id</strong> (<cite>int</cite>) – Channel ID to create the partial channel object with.</p></li>
-<li><p><strong>guild_id</strong> (<cite>Optional[int]</cite>) – Guild ID to create the partial channel object with.</p></li>
+<li><p><strong>channel_id</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a></span>) – Channel ID to create the partial channel object with.</p></li>
+<li><p><strong>guild_id</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a> | <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></span>) – Guild ID to create the partial channel object with.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
@@ -918,8 +917,8 @@ if some interaction Custom IDs are regex.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>emoji_id</strong> (<cite>int</cite>) – Emoji ID to create the partial emoji object with.</p></li>
-<li><p><strong>guild_id</strong> (<cite>Optional[int]</cite>) – Guild ID of where the emoji comes from.
+<li><p><strong>emoji_id</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a></span>) – Emoji ID to create the partial emoji object with.</p></li>
+<li><p><strong>guild_id</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a> | <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></span>) – Guild ID of where the emoji comes from.
 If None, it will get the emoji from the application.</p></li>
 </ul>
 </dd>
@@ -938,7 +937,7 @@ If None, it will get the emoji from the application.</p></li>
 <dd><p>Creates a partial entitlement object.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>entitlement_id</strong> (<cite>int</cite>) – Entitlement ID to create the partial entitlement object with.</p>
+<dd class="field-odd"><p><strong>entitlement_id</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a></span>) – Entitlement ID to create the partial entitlement object with.</p>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>The partial entitlement object.</p>
@@ -955,7 +954,7 @@ If None, it will get the emoji from the application.</p></li>
 <dd><p>Creates a partial guild object.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>guild_id</strong> (<cite>int</cite>) – Guild ID to create the partial guild object with.</p>
+<dd class="field-odd"><p><strong>guild_id</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a></span>) – Guild ID to create the partial guild object with.</p>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>The partial guild object.</p>
@@ -973,16 +972,16 @@ If None, it will get the emoji from the application.</p></li>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>invite_code</strong> (<cite>str</cite>) – Invite code to create the partial invite object with.</p></li>
-<li><p><strong>channel_id</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><em>int</em></a><em> | </em><em>None</em>)</p></li>
-<li><p><strong>guild_id</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><em>int</em></a><em> | </em><em>None</em>)</p></li>
+<li><p><strong>invite_code</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></span>) – Invite code to create the partial invite object with.</p></li>
+<li><p><strong>channel_id</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a> | <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></span>) – Channel ID to create the partial invite object with.</p></li>
+<li><p><strong>guild_id</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a> | <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></span>) – Guild ID to create the partial invite object with.</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>The partial invite object.</p>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><a class="reference internal" href="invite.html#discord_http.invite.PartialInvite" title="discord_http.invite.PartialInvite"><code class="xref py py-class docutils literal notranslate"><span class="pre">PartialInvite</span></code></a></span></p>
 </dd>
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><cite>PartialInvite</cite></p>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The partial invite object.</p>
 </dd>
 </dl>
 </dd></dl>
@@ -994,8 +993,8 @@ If None, it will get the emoji from the application.</p></li>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>user_id</strong> (<cite>int</cite>) – User ID to create the partial member object with.</p></li>
-<li><p><strong>guild_id</strong> (<cite>int</cite>) – Guild ID that the member is in.</p></li>
+<li><p><strong>user_id</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a></span>) – User ID to create the partial member object with.</p></li>
+<li><p><strong>guild_id</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a></span>) – Guild ID that the member is in.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
@@ -1014,9 +1013,9 @@ If None, it will get the emoji from the application.</p></li>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>message_id</strong> (<cite>int</cite>) – Message ID to create the partial message object with.</p></li>
-<li><p><strong>channel_id</strong> (<cite>int</cite>) – Channel ID to create the partial message object with.</p></li>
-<li><p><strong>guild_id</strong> (<cite>Optional[int]</cite>) – Guild ID to create the partial message object with.</p></li>
+<li><p><strong>message_id</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a></span>) – Message ID to create the partial message object with.</p></li>
+<li><p><strong>channel_id</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a></span>) – Channel ID to create the partial message object with.</p></li>
+<li><p><strong>guild_id</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a> | <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></span>) – Guild ID to create the partial message object with.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
@@ -1035,8 +1034,8 @@ If None, it will get the emoji from the application.</p></li>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>role_id</strong> (<cite>int</cite>) – Role ID to create the partial role object with.</p></li>
-<li><p><strong>guild_id</strong> (<cite>int</cite>) – Guild ID that the role is in.</p></li>
+<li><p><strong>role_id</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a></span>) – Role ID to create the partial role object with.</p></li>
+<li><p><strong>guild_id</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a></span>) – Guild ID that the role is in.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
@@ -1050,13 +1049,13 @@ If None, it will get the emoji from the application.</p></li>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="discord_http.client.Client.get_partial_scheduled_event">
-<span class="sig-name descname"><span class="pre">get_partial_scheduled_event</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">guild_id</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="guild.html#discord_http.guild.PartialScheduledEvent" title="discord_http.guild.PartialScheduledEvent"><span class="pre">PartialScheduledEvent</span></a></span></span><a class="headerlink" href="#discord_http.client.Client.get_partial_scheduled_event" title="Link to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">get_partial_scheduled_event</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">event_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">guild_id</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="guild.html#discord_http.guild.PartialScheduledEvent" title="discord_http.guild.PartialScheduledEvent"><span class="pre">PartialScheduledEvent</span></a></span></span><a class="headerlink" href="#discord_http.client.Client.get_partial_scheduled_event" title="Link to this definition">¶</a></dt>
 <dd><p>Creates a partial scheduled event object.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>id</strong> (<cite>int</cite>) – The ID of the scheduled event.</p></li>
-<li><p><strong>guild_id</strong> (<cite>int</cite>) – The guild ID of the scheduled event.</p></li>
+<li><p><strong>event_id</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a></span>) – The ID of the scheduled event.</p></li>
+<li><p><strong>guild_id</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a></span>) – The guild ID of the scheduled event.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
@@ -1092,16 +1091,15 @@ If None, it will get the emoji from the application.</p></li>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>sticker_id</strong> (<cite>int</cite>) – Sound ID to create the partial soundboard sound object with.</p></li>
-<li><p><strong>guild_id</strong> (<cite>Optional[int]</cite>) – Guild ID to create the partial soundboard sound object with.</p></li>
-<li><p><strong>sound_id</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><em>int</em></a>)</p></li>
+<li><p><strong>sound_id</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a></span>) – Sound ID to create the partial soundboard sound object with.</p></li>
+<li><p><strong>guild_id</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a> | <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></span>) – Guild ID to create the partial soundboard sound object with.</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>The partial soundboard sound object.</p>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><a class="reference internal" href="soundboard.html#discord_http.soundboard.PartialSoundboardSound" title="discord_http.soundboard.PartialSoundboardSound"><code class="xref py py-class docutils literal notranslate"><span class="pre">PartialSoundboardSound</span></code></a></span></p>
 </dd>
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><cite>PartialSoundboardSound</cite></p>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The partial soundboard sound object.</p>
 </dd>
 </dl>
 </dd></dl>
@@ -1113,15 +1111,15 @@ If None, it will get the emoji from the application.</p></li>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>sticker_id</strong> (<cite>int</cite>) – Sticker ID to create the partial sticker object with.</p></li>
-<li><p><strong>guild_id</strong> (<cite>Optional[int]</cite>) – Guild ID to create the partial sticker object with.</p></li>
+<li><p><strong>sticker_id</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a></span>) – Sticker ID to create the partial sticker object with.</p></li>
+<li><p><strong>guild_id</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a> | <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></span>) – Guild ID to create the partial sticker object with.</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>The partial sticker object.</p>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><a class="reference internal" href="sticker.html#discord_http.sticker.PartialSticker" title="discord_http.sticker.PartialSticker"><code class="xref py py-class docutils literal notranslate"><span class="pre">PartialSticker</span></code></a></span></p>
 </dd>
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><cite>PartialSticker</cite></p>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The partial sticker object.</p>
 </dd>
 </dl>
 </dd></dl>
@@ -1132,7 +1130,7 @@ If None, it will get the emoji from the application.</p></li>
 <dd><p>Creates a partial user object.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>user_id</strong> (<cite>int</cite>) – User ID to create the partial user object with.</p>
+<dd class="field-odd"><p><strong>user_id</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a></span>) – User ID to create the partial user object with.</p>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>The partial user object.</p>
@@ -1150,9 +1148,9 @@ If None, it will get the emoji from the application.</p></li>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>member_id</strong> (<cite>int</cite>) – The ID of the member to create the partial voice state from</p></li>
-<li><p><strong>guild_id</strong> (<cite>Optional[int]</cite>) – Guild ID to create the partial voice state from</p></li>
-<li><p><strong>channel_id</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><em>int</em></a><em> | </em><em>None</em>)</p></li>
+<li><p><strong>member_id</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a></span>) – The ID of the member to create the partial voice state from</p></li>
+<li><p><strong>guild_id</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a> | <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></span>) – Guild ID to create the partial voice state from</p></li>
+<li><p><strong>channel_id</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a> | <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></span>) – Channel ID to create the partial voice state from</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
@@ -1171,8 +1169,8 @@ If None, it will get the emoji from the application.</p></li>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>webhook_id</strong> (<cite>int</cite>) – Webhook ID to create the partial webhook object with.</p></li>
-<li><p><strong>webhook_token</strong> (<cite>Optional[str]</cite>) – Webhook token to create the partial webhook object with.</p></li>
+<li><p><strong>webhook_id</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a></span>) – Webhook ID to create the partial webhook object with.</p></li>
+<li><p><strong>webhook_token</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a> | <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></span>) – Webhook token to create the partial webhook object with.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
@@ -1187,16 +1185,16 @@ If None, it will get the emoji from the application.</p></li>
 <dl class="py method">
 <dt class="sig sig-object py" id="discord_http.client.Client.get_shard_by_guild_id">
 <span class="sig-name descname"><span class="pre">get_shard_by_guild_id</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">guild_id</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><span class="pre">int</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></span></span><a class="headerlink" href="#discord_http.client.Client.get_shard_by_guild_id" title="Link to this definition">¶</a></dt>
-<dd><p>Returns the shard ID of the shard that the guild is in</p>
+<dd><p>Returns the shard ID of the shard that the guild is in.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>guild_id</strong> (<cite>Snowflake | int</cite>) – The ID of the guild to get the shard ID of</p>
+<dd class="field-odd"><p><strong>guild_id</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference internal" href="object.html#discord_http.object.Snowflake" title="discord_http.object.Snowflake"><code class="xref py py-class docutils literal notranslate"><span class="pre">Snowflake</span></code></a> | <a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a></span>) – The ID of the guild to get the shard ID of</p>
 </dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>The shard ID of the guild, or <cite>None</cite> if not found</p>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a> | <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></span></p>
 </dd>
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><cite>int | None</cite></p>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The shard ID of the guild, or <cite>None</cite> if not found</p>
 </dd>
 <dt class="field-even">Raises<span class="colon">:</span></dt>
 <dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#NotImplementedError" title="(in Python v3.13)"><strong>NotImplementedError</strong></a> – If the gateway is not available</p>
@@ -1206,14 +1204,17 @@ If None, it will get the emoji from the application.</p></li>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="discord_http.client.Client.group">
-<span class="sig-name descname"><span class="pre">group</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">description</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#discord_http.client.Client.group" title="Link to this definition">¶</a></dt>
-<dd><p>Used to register a sub-command group</p>
+<span class="sig-name descname"><span class="pre">group</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">description</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/collections.abc.html#collections.abc.Callable" title="(in Python v3.13)"><span class="pre">Callable</span></a></span></span><a class="headerlink" href="#discord_http.client.Client.group" title="Link to this definition">¶</a></dt>
+<dd><p>Used to register a sub-command group.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>name</strong> (<cite>Optional[str]</cite>) – Name of the group, if not provided, it will use the function name</p></li>
-<li><p><strong>description</strong> (<cite>Optional[str]</cite>) – Description of the group, if not provided, it will use the function docstring</p></li>
+<li><p><strong>name</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a> | <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></span>) – Name of the group, if not provided, it will use the function name</p></li>
+<li><p><strong>description</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a> | <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></span>) – Description of the group, if not provided, it will use the function docstring</p></li>
 </ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/collections.abc.html#collections.abc.Callable" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Callable</span></code></a></span></p>
 </dd>
 </dl>
 </dd></dl>
@@ -1221,13 +1222,8 @@ If None, it will get the emoji from the application.</p></li>
 <dl class="py property">
 <dt class="sig sig-object py" id="discord_http.client.Client.guilds">
 <em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">guilds</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.13)"><span class="pre">list</span></a><span class="p"><span class="pre">[</span></span><a class="reference internal" href="guild.html#discord_http.guild.Guild" title="discord_http.guild.Guild"><span class="pre">Guild</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="guild.html#discord_http.guild.PartialGuild" title="discord_http.guild.PartialGuild"><span class="pre">PartialGuild</span></a><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#discord_http.client.Client.guilds" title="Link to this definition">¶</a></dt>
-<dd><p>Returns a list of all the guilds the bot is in.
-Only useable if you are using gateway and caching</p>
-<dl class="field-list simple">
-<dt class="field-odd">Type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><cite>list[Guild]</cite></p>
-</dd>
-</dl>
+<dd><p>Returns a list of all the guilds the bot is in.</p>
+<p>Only useable if you are using gateway and caching</p>
 </dd></dl>
 
 <dl class="py method">
@@ -1236,7 +1232,7 @@ Only useable if you are using gateway and caching</p>
 <dd><p>Checks if the bot has any listeners for the event.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>event_name</strong> (<cite>str</cite>) – The name of the event to check for.</p>
+<dd class="field-odd"><p><strong>event_name</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></span>) – The name of the event to check for.</p>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>Whether the bot has any listeners for the event.</p>
@@ -1249,15 +1245,18 @@ Only useable if you are using gateway and caching</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="discord_http.client.Client.interaction">
-<span class="sig-name descname"><span class="pre">interaction</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">custom_id</span></span></em>, <em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">regex</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#discord_http.client.Client.interaction" title="Link to this definition">¶</a></dt>
-<dd><p>Used to register an interaction</p>
+<span class="sig-name descname"><span class="pre">interaction</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">custom_id</span></span></em>, <em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">regex</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/collections.abc.html#collections.abc.Callable" title="(in Python v3.13)"><span class="pre">Callable</span></a></span></span><a class="headerlink" href="#discord_http.client.Client.interaction" title="Link to this definition">¶</a></dt>
+<dd><p>Used to register an interaction.</p>
 <p>This does support regex, so you can use <cite>r”regex here”</cite> as the custom_id</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>custom_id</strong> (<cite>str</cite>) – Custom ID of the interaction</p></li>
-<li><p><strong>regex</strong> (<cite>bool</cite>) – Whether the custom_id is a regex or not</p></li>
+<li><p><strong>custom_id</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></span>) – Custom ID of the interaction</p></li>
+<li><p><strong>regex</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></a></span>) – Whether the custom_id is a regex or not</p></li>
 </ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/collections.abc.html#collections.abc.Callable" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Callable</span></code></a></span></p>
 </dd>
 </dl>
 </dd></dl>
@@ -1276,7 +1275,8 @@ Only useable if you are using gateway and caching</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="discord_http.client.Client.is_shards_ready">
 <span class="sig-name descname"><span class="pre">is_shards_ready</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><span class="pre">bool</span></a></span></span><a class="headerlink" href="#discord_http.client.Client.is_shards_ready" title="Link to this definition">¶</a></dt>
-<dd><dl class="field-list simple">
+<dd><p>Indicates if the client is shards ready.</p>
+<dl class="field-list simple">
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></a></span></p>
 </dd>
@@ -1285,11 +1285,11 @@ Only useable if you are using gateway and caching</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="discord_http.client.Client.listener">
-<span class="sig-name descname"><span class="pre">listener</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#discord_http.client.Client.listener" title="Link to this definition">¶</a></dt>
-<dd><p>Used to register a listener</p>
+<span class="sig-name descname"><span class="pre">listener</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/collections.abc.html#collections.abc.Callable" title="(in Python v3.13)"><span class="pre">Callable</span></a></span></span><a class="headerlink" href="#discord_http.client.Client.listener" title="Link to this definition">¶</a></dt>
+<dd><p>Used to register a listener.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>name</strong> (<cite>Optional[str]</cite>) – Name of the listener, if not provided, it will use the function name</p>
+<dd class="field-odd"><p><strong>name</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a> | <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></span>) – Name of the listener, if not provided, it will use the function name</p>
 </dd>
 <dt class="field-even">Raises<span class="colon">:</span></dt>
 <dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#TypeError" title="(in Python v3.13)"><strong>TypeError</strong></a> – <ul class="simple">
@@ -1297,6 +1297,9 @@ Only useable if you are using gateway and caching</p>
     - If the listener is not a coroutine function</p></li>
 </ul>
 </p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/collections.abc.html#collections.abc.Callable" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Callable</span></code></a></span></p>
 </dd>
 </dl>
 </dd></dl>
@@ -1307,7 +1310,7 @@ Only useable if you are using gateway and caching</p>
 <dd><p>Loads an extension.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>package</strong> (<cite>str</cite>) – The package to load the extension from.</p>
+<dd class="field-odd"><p><strong>package</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></span>) – The package to load the extension from.</p>
 </dd>
 <dt class="field-even">Return type<span class="colon">:</span></dt>
 <dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></span></p>
@@ -1317,8 +1320,8 @@ Only useable if you are using gateway and caching</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="discord_http.client.Client.message_command">
-<span class="sig-name descname"><span class="pre">message_command</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">guild_ids</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">guild_install</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">user_install</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#discord_http.client.Client.message_command" title="Link to this definition">¶</a></dt>
-<dd><p>Used to register a message command</p>
+<span class="sig-name descname"><span class="pre">message_command</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">guild_ids</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">guild_install</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">user_install</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/collections.abc.html#collections.abc.Callable" title="(in Python v3.13)"><span class="pre">Callable</span></a></span></span><a class="headerlink" href="#discord_http.client.Client.message_command" title="Link to this definition">¶</a></dt>
+<dd><p>Used to register a message command.</p>
 <p>Example usage</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="nd">@message_command</span><span class="p">()</span>
 <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">content</span><span class="p">(</span><span class="n">ctx</span><span class="p">,</span> <span class="n">msg</span><span class="p">:</span> <span class="n">Message</span><span class="p">):</span>
@@ -1328,11 +1331,14 @@ Only useable if you are using gateway and caching</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>name</strong> (<cite>Optional[str]</cite>) – Name of the command, if not provided, it will use the function name</p></li>
-<li><p><strong>guild_ids</strong> (<cite>Optional[list[Union[Snowflake, int]]]</cite>) – List of guild IDs to register the command in</p></li>
-<li><p><strong>user_install</strong> (<cite>bool</cite>) – Whether the command can be installed by users or not</p></li>
-<li><p><strong>guild_install</strong> (<cite>bool</cite>) – Whether the command can be installed by guilds or not</p></li>
+<li><p><strong>name</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a> | <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></span>) – Name of the command, if not provided, it will use the function name</p></li>
+<li><p><strong>guild_ids</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">list</span></code></a>[<a class="reference internal" href="object.html#discord_http.object.Snowflake" title="discord_http.object.Snowflake"><code class="xref py py-class docutils literal notranslate"><span class="pre">Snowflake</span></code></a> | <a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a>] | <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></span>) – List of guild IDs to register the command in</p></li>
+<li><p><strong>user_install</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></a></span>) – Whether the command can be installed by users or not</p></li>
+<li><p><strong>guild_install</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></a></span>) – Whether the command can be installed by guilds or not</p></li>
 </ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/collections.abc.html#collections.abc.Callable" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Callable</span></code></a></span></p>
 </dd>
 </dl>
 </dd></dl>
@@ -1340,23 +1346,23 @@ Only useable if you are using gateway and caching</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="discord_http.client.Client.query_members">
 <em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">query_members</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">guild_id</span></span></em>, <em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">query</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">limit</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">presences</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">user_ids</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">shard_id</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.13)"><span class="pre">list</span></a><span class="p"><span class="pre">[</span></span><a class="reference internal" href="member.html#discord_http.member.Member" title="discord_http.member.Member"><span class="pre">Member</span></a><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#discord_http.client.Client.query_members" title="Link to this definition">¶</a></dt>
-<dd><p>Query members in a guild</p>
+<dd><p>Query members in a guild.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>guild_id</strong> (<cite>Snowflake | int</cite>) – The ID of the guild to query members in</p></li>
-<li><p><strong>query</strong> (<cite>str | None</cite>) – The query to search for</p></li>
-<li><p><strong>limit</strong> (<cite>int</cite>) – The maximum amount of members to return</p></li>
-<li><p><strong>presences</strong> (<cite>bool</cite>) – Whether to include presences in the response</p></li>
-<li><p><strong>user_ids</strong> (<cite>list[Snowflake | int] | None</cite>) – The user IDs to fetch members for</p></li>
-<li><p><strong>shard_id</strong> (<cite>int | None</cite>) – The shard ID to query the members from</p></li>
+<li><p><strong>guild_id</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference internal" href="object.html#discord_http.object.Snowflake" title="discord_http.object.Snowflake"><code class="xref py py-class docutils literal notranslate"><span class="pre">Snowflake</span></code></a> | <a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a></span>) – The ID of the guild to query members in</p></li>
+<li><p><strong>query</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a> | <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></span>) – The query to search for</p></li>
+<li><p><strong>limit</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a></span>) – The maximum amount of members to return</p></li>
+<li><p><strong>presences</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></a></span>) – Whether to include presences in the response</p></li>
+<li><p><strong>user_ids</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">list</span></code></a>[<a class="reference internal" href="object.html#discord_http.object.Snowflake" title="discord_http.object.Snowflake"><code class="xref py py-class docutils literal notranslate"><span class="pre">Snowflake</span></code></a> | <a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a>] | <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></span>) – The user IDs to fetch members for</p></li>
+<li><p><strong>shard_id</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a> | <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></span>) – The shard ID to query the members from</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>The members that matched the query</p>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">list</span></code></a>[<a class="reference internal" href="member.html#discord_http.member.Member" title="discord_http.member.Member"><code class="xref py py-class docutils literal notranslate"><span class="pre">Member</span></code></a>]</span></p>
 </dd>
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><cite>list[Member]</cite></p>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The members that matched the query</p>
 </dd>
 <dt class="field-even">Raises<span class="colon">:</span></dt>
 <dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#ValueError" title="(in Python v3.13)"><strong>ValueError</strong></a> – <ul class="simple">
@@ -1374,7 +1380,7 @@ Only useable if you are using gateway and caching</p>
 <dd><p>Removes a cog from the bot.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>cog</strong> (<cite>Cog</cite>) – The cog to remove from the bot.</p>
+<dd class="field-odd"><p><strong>cog</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference internal" href="commands.html#discord_http.commands.Cog" title="discord_http.commands.Cog"><code class="xref py py-class docutils literal notranslate"><span class="pre">Cog</span></code></a></span>) – The cog to remove from the bot.</p>
 </dd>
 <dt class="field-even">Return type<span class="colon">:</span></dt>
 <dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></span></p>
@@ -1388,10 +1394,7 @@ Only useable if you are using gateway and caching</p>
 <dd><p>Removes a command from the bot.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>command</strong> (<cite>Command</cite>) – The command to remove from the bot.</p></li>
-<li><p><strong>func</strong> (<a class="reference internal" href="commands.html#discord_http.commands.Command" title="discord_http.commands.Command"><em>Command</em></a>)</p></li>
-</ul>
+<dd class="field-odd"><p><strong>func</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference internal" href="commands.html#discord_http.commands.Command" title="discord_http.commands.Command"><code class="xref py py-class docutils literal notranslate"><span class="pre">Command</span></code></a></span>) – The command to remove from the bot.</p>
 </dd>
 <dt class="field-even">Return type<span class="colon">:</span></dt>
 <dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></span></p>
@@ -1405,10 +1408,7 @@ Only useable if you are using gateway and caching</p>
 <dd><p>Removes an interaction from the bot.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>interaction</strong> (<cite>Interaction</cite>) – The interaction to remove from the bot.</p></li>
-<li><p><strong>func</strong> (<a class="reference internal" href="commands.html#discord_http.commands.Interaction" title="discord_http.commands.Interaction"><em>Interaction</em></a>)</p></li>
-</ul>
+<dd class="field-odd"><p><strong>func</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference internal" href="commands.html#discord_http.commands.Interaction" title="discord_http.commands.Interaction"><code class="xref py py-class docutils literal notranslate"><span class="pre">Interaction</span></code></a></span>) – The interaction to remove from the bot.</p>
 </dd>
 <dt class="field-even">Return type<span class="colon">:</span></dt>
 <dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></span></p>
@@ -1422,7 +1422,7 @@ Only useable if you are using gateway and caching</p>
 <dd><p>Removes a listener from the bot.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>func</strong> (<cite>Listener</cite>) – The listener to remove from the bot.</p>
+<dd class="field-odd"><p><strong>func</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference internal" href="commands.html#discord_http.commands.Listener" title="discord_http.commands.Listener"><code class="xref py py-class docutils literal notranslate"><span class="pre">Listener</span></code></a></span>) – The listener to remove from the bot.</p>
 </dd>
 <dt class="field-even">Return type<span class="colon">:</span></dt>
 <dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></span></p>
@@ -1433,7 +1433,7 @@ Only useable if you are using gateway and caching</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="discord_http.client.Client.set_backend">
 <span class="sig-name descname"><span class="pre">set_backend</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">cls</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></span></span><a class="headerlink" href="#discord_http.client.Client.set_backend" title="Link to this definition">¶</a></dt>
-<dd><p>Set the backend to use for the bot</p>
+<dd><p>Set the backend to use for the bot.</p>
 <p>Example of making one:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">discord_http</span><span class="w"> </span><span class="kn">import</span> <span class="n">DiscordHTTP</span>
 
@@ -1446,7 +1446,7 @@ Only useable if you are using gateway and caching</p>
 </div>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>cls</strong> (<cite>Optional[Callable]</cite>) – The backend to use for everything.
+<dd class="field-odd"><p><strong>cls</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/collections.abc.html#collections.abc.Callable" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Callable</span></code></a> | <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></span>) – The backend to use for everything.
 Leave empty to use the default backend.</p>
 </dd>
 <dt class="field-even">Return type<span class="colon">:</span></dt>
@@ -1458,7 +1458,7 @@ Leave empty to use the default backend.</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="discord_http.client.Client.set_context">
 <span class="sig-name descname"><span class="pre">set_context</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">cls</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></span></span><a class="headerlink" href="#discord_http.client.Client.set_context" title="Link to this definition">¶</a></dt>
-<dd><p>Get the context for a command, while allowing custom context as well</p>
+<dd><p>Get the context for a command, while allowing custom context as well.</p>
 <p>Example of making one:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">discord_http</span><span class="w"> </span><span class="kn">import</span> <span class="n">Context</span>
 
@@ -1471,7 +1471,7 @@ Leave empty to use the default backend.</p>
 </div>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>cls</strong> (<cite>Optional[Callable]</cite>) – The context to use for commands.
+<dd class="field-odd"><p><strong>cls</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/collections.abc.html#collections.abc.Callable" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Callable</span></code></a> | <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></span>) – The context to use for commands.
 Leave empty to use the default context.</p>
 </dd>
 <dt class="field-even">Return type<span class="colon">:</span></dt>
@@ -1483,8 +1483,8 @@ Leave empty to use the default context.</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="discord_http.client.Client.setup_hook">
 <em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">setup_hook</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></span></span><a class="headerlink" href="#discord_http.client.Client.setup_hook" title="Link to this definition">¶</a></dt>
-<dd><p>This will be running after the bot is ready, to get variables set up
-You can overwrite this function to do your own setup</p>
+<dd><p>Runs before the bot is ready, to get variables set up.</p>
+<p>You can overwrite this function to do your own setup</p>
 <p>Example:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">setup_hook</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
     <span class="c1"># Making database connection available through the bot</span>
@@ -1501,7 +1501,7 @@ You can overwrite this function to do your own setup</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="discord_http.client.Client.start">
 <span class="sig-name descname"><span class="pre">start</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">host</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'127.0.0.1'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">port</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">8080</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></span></span><a class="headerlink" href="#discord_http.client.Client.start" title="Link to this definition">¶</a></dt>
-<dd><p>Boot up the bot and start the HTTP server</p>
+<dd><p>Boot up the bot and start the HTTP server.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
@@ -1518,8 +1518,7 @@ You can overwrite this function to do your own setup</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="discord_http.client.Client.sync_commands">
 <em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">sync_commands</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></span></span><a class="headerlink" href="#discord_http.client.Client.sync_commands" title="Link to this definition">¶</a></dt>
-<dd><p>Make the bot fetch all current commands,
-to then sync them all to Discord API.</p>
+<dd><p>Make the bot fetch all current commands, to then sync them all to Discord API.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></span></p>
@@ -1533,7 +1532,7 @@ to then sync them all to Discord API.</p>
 <dd><p>Unloads an extension.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>package</strong> (<cite>str</cite>) – The package to unload the extension from.</p>
+<dd class="field-odd"><p><strong>package</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></span>) – The package to unload the extension from.</p>
 </dd>
 <dt class="field-even">Return type<span class="colon">:</span></dt>
 <dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></span></p>
@@ -1544,19 +1543,21 @@ to then sync them all to Discord API.</p>
 <dl class="py property">
 <dt class="sig sig-object py" id="discord_http.client.Client.user">
 <em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">user</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="user.html#discord_http.user.UserClient" title="discord_http.user.UserClient"><span class="pre">UserClient</span></a></em><a class="headerlink" href="#discord_http.client.Client.user" title="Link to this definition">¶</a></dt>
-<dd><p>returns: The bot’s user object
-:rtype: <cite>User</cite></p>
+<dd><p>Returns the bot’s user object.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Raises<span class="colon">:</span></dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#AttributeError" title="(in Python v3.13)"><strong>AttributeError</strong></a> – If used before the bot is ready</p>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The bot’s user object</p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#AttributeError" title="(in Python v3.13)"><strong>AttributeError</strong></a> – If used before the bot is ready</p>
 </dd>
 </dl>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="discord_http.client.Client.user_command">
-<span class="sig-name descname"><span class="pre">user_command</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">guild_ids</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">guild_install</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">user_install</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#discord_http.client.Client.user_command" title="Link to this definition">¶</a></dt>
-<dd><p>Used to register a user command</p>
+<span class="sig-name descname"><span class="pre">user_command</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">guild_ids</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">guild_install</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">user_install</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/collections.abc.html#collections.abc.Callable" title="(in Python v3.13)"><span class="pre">Callable</span></a></span></span><a class="headerlink" href="#discord_http.client.Client.user_command" title="Link to this definition">¶</a></dt>
+<dd><p>Used to register a user command.</p>
 <p>Example usage</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="nd">@user_command</span><span class="p">()</span>
 <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">content</span><span class="p">(</span><span class="n">ctx</span><span class="p">,</span> <span class="n">user</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Member</span><span class="p">,</span> <span class="n">User</span><span class="p">]):</span>
@@ -1566,11 +1567,14 @@ to then sync them all to Discord API.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>name</strong> (<cite>Optional[str]</cite>) – Name of the command, if not provided, it will use the function name</p></li>
-<li><p><strong>guild_ids</strong> (<cite>Optional[list[Union[Snowflake, int]]]</cite>) – List of guild IDs to register the command in</p></li>
-<li><p><strong>user_install</strong> (<cite>bool</cite>) – Whether the command can be installed by users or not</p></li>
-<li><p><strong>guild_install</strong> (<cite>bool</cite>) – Whether the command can be installed by guilds or not</p></li>
+<li><p><strong>name</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a> | <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></span>) – Name of the command, if not provided, it will use the function name</p></li>
+<li><p><strong>guild_ids</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">list</span></code></a>[<a class="reference internal" href="object.html#discord_http.object.Snowflake" title="discord_http.object.Snowflake"><code class="xref py py-class docutils literal notranslate"><span class="pre">Snowflake</span></code></a> | <a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a>] | <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></span>) – List of guild IDs to register the command in</p></li>
+<li><p><strong>user_install</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></a></span>) – Whether the command can be installed by users or not</p></li>
+<li><p><strong>guild_install</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></a></span>) – Whether the command can be installed by guilds or not</p></li>
 </ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/collections.abc.html#collections.abc.Callable" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Callable</span></code></a></span></p>
 </dd>
 </dl>
 </dd></dl>
