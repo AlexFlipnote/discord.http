@@ -39,6 +39,9 @@ flake8:  ## Run flake8 on the package
 type:  ## Run pyright on the package
 	@pyright discord_http --pythonversion 3.11
 
+lint:  ## Run ruff linter
+	@ruff check --config pyproject.toml
+
 clean:  ## Clean the project
 	@rm -rf build dist *.egg-info .venv docs/_build
 

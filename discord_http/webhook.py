@@ -1,4 +1,4 @@
-from typing import TYPE_CHECKING, Optional, Union, Literal, overload
+from typing import TYPE_CHECKING, Optional, Literal, overload
 
 from . import utils
 from .embeds import Embed
@@ -31,19 +31,19 @@ class PartialWebhook(PartialBase):
         self,
         *,
         state: "DiscordAPI",
-        id: int,
-        token: Optional[str] = None
+        id: int,  # noqa: A002
+        token: str | None = None
     ):
         super().__init__(id=int(id))
         self._state = state
         self._retry_codes = []
-        self.token: Optional[str] = token
+        self.token: str | None = token
 
     def __repr__(self) -> str:
         return f"<PartialWebhook id={self.id}>"
 
     async def fetch(self) -> "Webhook":
-        """ `Webhook`: Fetch the webhook """
+        """ Fetch the webhook. """
         r = await self._state.query(
             "GET",
             f"/webhooks/{self.id}"
@@ -57,21 +57,21 @@ class PartialWebhook(PartialBase):
     @overload
     async def send(
         self,
-        content: Optional[str] = MISSING,
+        content: str | None = MISSING,
         *,
-        username: Optional[str] = MISSING,
-        avatar_url: Optional[str] = MISSING,
-        embed: Optional[Embed] = MISSING,
-        embeds: Optional[list[Embed]] = MISSING,
-        file: Optional[File] = MISSING,
-        files: Optional[list[File]] = MISSING,
-        ephemeral: Optional[bool] = False,
-        view: Optional[View] = MISSING,
-        type: Union[ResponseType, int] = 4,
-        allowed_mentions: Optional[AllowedMentions] = MISSING,
+        username: str | None = MISSING,
+        avatar_url: str | None = MISSING,
+        embed: Embed | None = MISSING,
+        embeds: list[Embed] | None = MISSING,
+        file: File | None = MISSING,
+        files: list[File] | None = MISSING,
+        ephemeral: bool | None = False,
+        view: View | None = MISSING,
+        type: ResponseType | int = 4,
+        allowed_mentions: AllowedMentions | None = MISSING,
         wait: Literal[False],
-        flags: Optional[MessageFlags] = MISSING,
-        thread_id: Optional[int] = MISSING,
+        flags: MessageFlags | None = MISSING,
+        thread_id: int | None = MISSING,
         poll: Optional["Poll"] = MISSING,
     ) -> None:
         ...
@@ -79,78 +79,78 @@ class PartialWebhook(PartialBase):
     @overload
     async def send(
         self,
-        content: Optional[str] = MISSING,
+        content: str | None = MISSING,
         *,
-        username: Optional[str] = MISSING,
-        avatar_url: Optional[str] = MISSING,
-        embed: Optional[Embed] = MISSING,
-        embeds: Optional[list[Embed]] = MISSING,
-        file: Optional[File] = MISSING,
-        files: Optional[list[File]] = MISSING,
-        ephemeral: Optional[bool] = False,
-        view: Optional[View] = MISSING,
-        type: Union[ResponseType, int] = 4,
-        allowed_mentions: Optional[AllowedMentions] = MISSING,
+        username: str | None = MISSING,
+        avatar_url: str | None = MISSING,
+        embed: Embed | None = MISSING,
+        embeds: list[Embed] | None = MISSING,
+        file: File | None = MISSING,
+        files: list[File] | None = MISSING,
+        ephemeral: bool | None = False,
+        view: View | None = MISSING,
+        type: ResponseType | int = 4,
+        allowed_mentions: AllowedMentions | None = MISSING,
         wait: bool = True,
-        flags: Optional[MessageFlags] = MISSING,
-        thread_id: Optional[int] = MISSING,
+        flags: MessageFlags | None = MISSING,
+        thread_id: int | None = MISSING,
         poll: Optional["Poll"] = MISSING,
     ) -> "WebhookMessage":
         ...
 
     async def send(
         self,
-        content: Optional[str] = MISSING,
+        content: str | None = MISSING,
         *,
-        username: Optional[str] = MISSING,
-        avatar_url: Optional[str] = MISSING,
-        embed: Optional[Embed] = MISSING,
-        embeds: Optional[list[Embed]] = MISSING,
-        file: Optional[File] = MISSING,
-        files: Optional[list[File]] = MISSING,
-        ephemeral: Optional[bool] = False,
-        view: Optional[View] = MISSING,
-        type: Union[ResponseType, int] = 4,
-        allowed_mentions: Optional[AllowedMentions] = MISSING,
+        username: str | None = MISSING,
+        avatar_url: str | None = MISSING,
+        embed: Embed | None = MISSING,
+        embeds: list[Embed] | None = MISSING,
+        file: File | None = MISSING,
+        files: list[File] | None = MISSING,
+        ephemeral: bool | None = False,
+        view: View | None = MISSING,
+        type: ResponseType | int = 4,  # noqa: A002
+        allowed_mentions: AllowedMentions | None = MISSING,
         wait: bool = True,
-        flags: Optional[MessageFlags] = MISSING,
-        thread_id: Optional[int] = MISSING,
+        flags: MessageFlags | None = MISSING,
+        thread_id: int | None = MISSING,
         poll: Optional["Poll"] = MISSING,
     ) -> Optional["WebhookMessage"]:
         """
-        Send a message with the webhook
+        Send a message with the webhook.
 
         Parameters
         ----------
-        content: `Optional[str]`
+        content:
             Content of the message
-        username: `Optional[str]`
+        username:
             Username of the webhook
-        avatar_url: `Optional[str]`
+        avatar_url:
             Avatar URL of the webhook
-        embed: `Optional[Embed]`
+        embed:
             Embed of the message
-        embeds: `Optional[list[Embed]]`
+        embeds:
             Embeds of the message
-        file: `Optional[File]`
+        file:
             File of the message
-        files: `Optional[Union[list[File], File]]`
+        files:
             Files of the message
-        ephemeral: `bool`
+        ephemeral:
             Whether the message should be sent as ephemeral
-        view: `Optional[View]`
+        view:
             Components of the message
-        type: `Optional[ResponseType]`
+        type:
             Which type of response should be sent
-        allowed_mentions: `Optional[AllowedMentions]`
+        allowed_mentions:
             Allowed mentions of the message
-        wait: `bool`
+        wait:
             Whether to wait for the message to be sent
-        flags: `Optional[MessageFlags]`
+        flags:
             Flags of the message
-        thread_id: `Optional[int]`
+        thread_id:
             Thread ID to send the message to
-        poll: `Optional[Poll]`
+        poll:
             Poll to send with the message
 
         Returns
@@ -200,15 +200,15 @@ class PartialWebhook(PartialBase):
                     filename=file.filename
                 )
 
-        _modified_payload = payload.to_dict(is_request=True)
+        modified_payload = payload.to_dict(is_request=True)
         if username is not MISSING:
-            _modified_payload["username"] = str(username)
+            modified_payload["username"] = str(username)
         if avatar_url is not MISSING:
             if not avatar_url.startswith("https://"):
                 raise ValueError("avatar_url must start with https://")
-            _modified_payload["avatar_url"] = str(avatar_url)
+            modified_payload["avatar_url"] = str(avatar_url)
 
-        multidata.attach("payload_json", _modified_payload)
+        multidata.attach("payload_json", modified_payload)
 
         r = await self._state.query(
             "POST",
@@ -234,14 +234,14 @@ class PartialWebhook(PartialBase):
     async def delete(
         self,
         *,
-        reason: Optional[str] = None
+        reason: str | None = None
     ) -> None:
         """
-        Delete the webhook
+        Delete the webhook.
 
         Parameters
         ----------
-        reason: `Optional[str]`
+        reason:
             The reason for deleting the webhook
         """
         if self.token is None:
@@ -251,7 +251,7 @@ class PartialWebhook(PartialBase):
                 res_method="text"
             )
 
-            return None
+            return
 
         await self._state.query(
             "DELETE",
@@ -263,23 +263,23 @@ class PartialWebhook(PartialBase):
     async def edit(
         self,
         *,
-        name: Optional[str] = MISSING,
-        avatar: Optional[Union[File, bytes]] = MISSING,
-        channel_id: Optional[int] = MISSING,
-        reason: Optional[str] = None
+        name: str | None = MISSING,
+        avatar: File | bytes | None = MISSING,
+        channel_id: int | None = MISSING,
+        reason: str | None = None
     ) -> "Webhook":
         """
-        Edit the webhook
+        Edit the webhook.
 
         Parameters
         ----------
-        name: `Optional[str]`
+        name:
             Name of the webhook
-        avatar: `Optional[File]`
+        avatar:
             Avatar of the webhook
-        channel_id: `Optional[int]`
+        channel_id:
             Channel ID to move the webhook to
-        reason: `Optional[str]`
+        reason:
             Reason for the audit log
 
         Returns
@@ -294,15 +294,15 @@ class PartialWebhook(PartialBase):
         if avatar is not MISSING:
             payload["avatar"] = utils.bytes_to_base64(avatar)  # type: ignore
 
-        _api_url = f"/webhooks/{self.id}"
+        api_url = f"/webhooks/{self.id}"
 
         if channel_id is not MISSING and self.token is MISSING:
             payload["channel_id"] = str(channel_id)
-            _api_url += f"/{self.token}"
+            api_url += f"/{self.token}"
 
         r = await self._state.query(
             "PATCH",
-            _api_url,
+            api_url,
             json=payload,
             reason=reason
         )
@@ -315,7 +315,7 @@ class PartialWebhook(PartialBase):
 
 class Webhook(PartialWebhook):
     def __init__(self, *, state: "DiscordAPI", data: dict):
-        self.application_id: Optional[int] = utils.get_int(data, "application_id")
+        self.application_id: int | None = utils.get_int(data, "application_id")
 
         super().__init__(
             state=state,
@@ -324,15 +324,15 @@ class Webhook(PartialWebhook):
                 utils.get_int(data, "id") or
                 0
             ),
-            token=data.get("token", None)
+            token=data.get("token")
         )
 
-        self.name: Optional[str] = data.get("name", None)
-        self.avatar: Optional[str] = None
-        self.url: Optional[str] = data.get("url", None)
+        self.name: str | None = data.get("name")
+        self.avatar: str | None = None
+        self.url: str | None = data.get("url")
 
-        self.channel_id: Optional[int] = utils.get_int(data, "channel_id")
-        self.guild_id: Optional[int] = utils.get_int(data, "guild_id")
+        self.channel_id: int | None = utils.get_int(data, "channel_id")
+        self.guild_id: int | None = utils.get_int(data, "guild_id")
 
         self._from_data(data)
 
@@ -343,8 +343,8 @@ class Webhook(PartialWebhook):
         return self.name or "Unknown"
 
     def _from_data(self, data: dict) -> None:
-        self.user: Optional[User] = None
-        if data.get("user", None):
+        self.user: User | None = None
+        if data.get("user"):
             self.user = User(
                 state=self._state,
                 data=data["user"]
@@ -353,7 +353,7 @@ class Webhook(PartialWebhook):
     @classmethod
     def from_state(cls, *, state: "DiscordAPI", data: dict) -> "Webhook":
         """
-        Creates a webhook from data, usually used for followup responses
+        Creates a webhook from data, usually used for followup responses.
 
         Parameters
         ----------
@@ -367,13 +367,13 @@ class Webhook(PartialWebhook):
         `Webhook`
             The webhook that was created
         """
-        _cls = cls(state=state, data=data)
-        _cls._retry_codes = [404]
-        return _cls
+        cls_ = cls(state=state, data=data)
+        cls_._retry_codes = [404]
+        return cls_
 
     @property
     def guild(self) -> "Guild | PartialGuild | None":
-        """ `Optional[PartialGuild]`: Returns the guild the webhook is in """
+        """ `Optional[PartialGuild]`: Returns the guild the webhook is in. """
         if not self.guild_id:
             return None
 
@@ -386,7 +386,7 @@ class Webhook(PartialWebhook):
 
     @property
     def channel(self) -> Optional["PartialChannel"]:
-        """ `Optional[PartialChannel]`: Returns the channel the webhook is in """
+        """ `Optional[PartialChannel]`: Returns the channel the webhook is in. """
         if self.channel_id:
             from .channel import PartialChannel
             return PartialChannel(
