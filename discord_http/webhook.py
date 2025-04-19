@@ -357,9 +357,9 @@ class Webhook(PartialWebhook):
 
         Parameters
         ----------
-        state: `DiscordAPI`
+        state:
             The state to use for the webhook
-        data: `dict`
+        data:
             The data to use for the webhook
 
         Returns
