@@ -36,10 +36,9 @@ class File:
         else:
             if not self._filename:
                 self._filename = data
-            with open(data, "rb") as f:
-                self.data = f
-                self._original_pos = 0
-                self._owner = True
+            self.data = open(data, "rb")  # noqa: SIM115
+            self._original_pos = 0
+            self._owner = True
 
         self._closer = self.data.close
         self.data.close = lambda: None
