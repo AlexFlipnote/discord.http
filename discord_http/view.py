@@ -175,7 +175,6 @@ class AttachmentComponent:
 
         Returns
         -------
-        `int`
             The amount of bytes written to the file
         """
         data = await self.fetch(use_cached=use_cached)
@@ -1060,7 +1059,6 @@ class ActionRow(Item):
 
         Returns
         -------
-        `int`
             Returns the amount of items removed
         """
         removed = 0
@@ -1264,7 +1262,6 @@ class ContainerComponent(Item):
 
         Returns
         -------
-        `Item`
             Returns the item that was added
         """
         if isinstance(item, ContainerComponent):
@@ -1287,7 +1284,6 @@ class ContainerComponent(Item):
 
         Returns
         -------
-        `bool`
             Returns whether the item was removed
         """
         try:
@@ -1344,7 +1340,6 @@ class View(InteractionStorage):
 
         Returns
         -------
-        `Optional[Union[Button, Select, Link]]`
             Returns the item if found, otherwise `None`
         """
         for g in self.items:
@@ -1402,7 +1397,6 @@ class View(InteractionStorage):
 
         Returns
         -------
-        `int`
             Returns the amount of items removed
         """
         removed = 0
@@ -1593,7 +1587,6 @@ class Modal(InteractionStorage):
 
         Returns
         -------
-        `ModalItem`
             Returns the created modal item from the items list
         """
         item = ModalItem(

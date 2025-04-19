@@ -64,7 +64,6 @@ class GatewayClient:
 
         Returns
         -------
-        `Optional[Shard]`
             The shard object with the specified ID, or `None` if not found.
         """
         return self.__shards.get(shard_id, None)
@@ -148,7 +147,6 @@ class GatewayClient:
 
         Returns
         -------
-        `int`
             The shard ID of the guild
         """
         return (int(guild_id) >> 22) % self.shard_count

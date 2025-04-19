@@ -101,7 +101,6 @@ class CooldownCache:
 
         Returns
         -------
-        `int | tuple[int, int]`
             Key for the bucket.
         """
         return self._type(ctx)
@@ -146,7 +145,6 @@ class CooldownCache:
 
         Returns
         -------
-        `Cooldown`
             Cooldown bucket for the context.
         """
         if self._type is BucketType.default:
@@ -184,7 +182,6 @@ class CooldownCache:
 
         Returns
         -------
-        `float | None`
             Time left before the cooldown resets.
             Returns `None` if the rate limit was not exceeded.
         """
@@ -218,7 +215,6 @@ class Cooldown:
 
         Returns
         -------
-        `int`
             Amount of tokens available.
         """
         current = current or time.time()
@@ -243,7 +239,6 @@ class Cooldown:
 
         Returns
         -------
-        `float`
             Time left before the cooldown resets.
         """
         current = current or time.time()
@@ -272,7 +267,6 @@ class Cooldown:
 
         Returns
         -------
-        `float | None`
             Time left before the cooldown resets.
             Returns `None` if the rate limit was not exceeded.
         """

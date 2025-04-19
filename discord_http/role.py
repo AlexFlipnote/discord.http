@@ -156,7 +156,6 @@ class PartialRole(PartialBase):
 
         Returns
         -------
-        `Union[Role, PartialRole]`
             The edited role and its data
 
         Raises

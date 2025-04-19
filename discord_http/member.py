@@ -134,7 +134,6 @@ class PartialMember(PartialBase):
 
         Returns
         -------
-        `Message`
             The message sent
         """
         return await self._user.send(
@@ -255,7 +254,6 @@ class PartialMember(PartialBase):
 
         Returns
         -------
-        `Member`
             The edited member
 
         Raises
@@ -515,7 +513,6 @@ class Member(PartialMember):
 
         Returns
         -------
-        `bool`
             Whether the member has the permission(s)
         """
         if (

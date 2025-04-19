@@ -745,7 +745,6 @@ class Context:
 
         Returns
         -------
-        `Message`
             Returns the message that was sent
         """
         payload = MessageResponse(
@@ -856,7 +855,6 @@ class Context:
 
         Returns
         -------
-        `Message`
             Returns the message that was sent
         """
         payload = MessageResponse(

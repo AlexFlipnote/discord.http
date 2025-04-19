@@ -63,7 +63,6 @@ class Colour:
 
         Returns
         -------
-        `Colour`
             The colour object
         """
         return cls((r << 16) + (g << 8) + b)
@@ -84,7 +83,6 @@ class Colour:
 
         Returns
         -------
-        `Colour`
             The colour object
 
         Raises
@@ -127,7 +125,6 @@ class Colour:
 
         Returns
         -------
-        `Colour`
             The random colour
         """
         r = random.Random(str(seed)) if seed else random

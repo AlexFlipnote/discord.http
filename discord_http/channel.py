@@ -200,7 +200,6 @@ class PartialChannel(PartialBase):
 
         Returns
         -------
-        `Permissions`
             The permissions for the member in the channel.
         """
         return Permissions.none()
@@ -242,7 +241,6 @@ class PartialChannel(PartialBase):
 
         Returns
         -------
-        `Message`
             The message object
         """
         r = await self._state.query(
@@ -263,7 +261,6 @@ class PartialChannel(PartialBase):
 
         Returns
         -------
-        `list[Message]`
             The list of pinned messages
         """
         r = await self._state.query(
@@ -306,7 +303,6 @@ class PartialChannel(PartialBase):
 
         Returns
         -------
-        `list[PublicThread]`
             The list of public threads
         """
         r = await self._state.query(
@@ -379,7 +375,6 @@ class PartialChannel(PartialBase):
 
         Returns
         -------
-        `Invite`
             The invite object
         """
         if isinstance(max_age, timedelta):
@@ -450,7 +445,6 @@ class PartialChannel(PartialBase):
 
         Returns
         -------
-        `Message`
             The message object
         """
         payload = MessageResponse(
@@ -548,7 +542,6 @@ class PartialChannel(PartialBase):
 
         Returns
         -------
-        `BaseChannel`
             The channel object
         """
         temp_class = cls(
@@ -660,7 +653,6 @@ class PartialChannel(PartialBase):
 
         Returns
         -------
-        `BaseChannel`
             The channel object
         """
         payload = {}
@@ -892,7 +884,6 @@ class PartialChannel(PartialBase):
 
         Returns
         -------
-        `Webhook`
             The webhook object
         """
         payload = {"name": name}
@@ -954,7 +945,6 @@ class PartialChannel(PartialBase):
 
         Returns
         -------
-        `ForumThread`
             _description_
         """
         payload = {
@@ -1052,7 +1042,6 @@ class PartialChannel(PartialBase):
 
         Returns
         -------
-        `Union[PublicThread, PrivateThread, NewsThread]`
             The thread object
 
         Raises
@@ -1295,7 +1284,6 @@ class PartialChannel(PartialBase):
 
         Returns
         -------
-        `list[Message] | None`
             Returns a list of messages deleted
             If you provide message_ids upfront, it will skip history search and delete
         """
@@ -1430,7 +1418,6 @@ class PartialChannel(PartialBase):
 
         Returns
         -------
-        `ThreadMember`
             The thread member object
         """
         if not self.guild:
@@ -1455,7 +1442,6 @@ class PartialChannel(PartialBase):
 
         Returns
         -------
-        `list[ThreadMember]`
             The list of thread members
         """
         if not self.guild:
@@ -1526,7 +1512,6 @@ class BaseChannel(PartialChannel):
 
         Returns
         -------
-        `Permissions`
             The permissions for the member in the channel.
         """
         if getattr(self.guild, "owner_id", None) == member.id:
@@ -1625,7 +1610,6 @@ class BaseChannel(PartialChannel):
 
         Returns
         -------
-        `BaseChannel`
             The channel object
         """
         return cls(state=state, data=data)._class_to_return(
@@ -1811,7 +1795,6 @@ class CategoryChannel(BaseChannel):
 
         Returns
         -------
-        `TextChannel`
             The channel object
         """
         return await self.guild.create_text_channel(
@@ -1853,7 +1836,6 @@ class CategoryChannel(BaseChannel):
 
         Returns
         -------
-        `VoiceChannel`
             The channel object
         """
         return await self.guild.create_voice_channel(
@@ -1893,7 +1875,6 @@ class CategoryChannel(BaseChannel):
 
         Returns
         -------
-        `StageChannel`
             The created channel
         """
         return await self.guild.create_stage_channel(
@@ -2052,7 +2033,6 @@ class ForumTag:
 
         Returns
         -------
-        `ForumTag`
             The tag object
         """
         if emoji_id and emoji_name:
@@ -2328,7 +2308,6 @@ class StageInstance(PartialBase):
 
         Returns
         -------
-        `StageInstance`
             The edited stage instance
         """
         payload = {}
@@ -2394,7 +2373,6 @@ class StageChannel(VoiceChannel):
 
         Returns
         -------
-        `StageInstance`
             The stage instance of the channel
         """
         r = await self._state.query(
@@ -2436,7 +2414,6 @@ class StageChannel(VoiceChannel):
 
         Returns
         -------
-        `StageInstance`
             The created stage instance
         """
         payload = {

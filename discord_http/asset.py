@@ -49,7 +49,6 @@ class Asset:
 
         Returns
         -------
-        `bytes`
             The asset data
         """
         r = await self._state.http.request(
@@ -73,7 +72,6 @@ class Asset:
 
         Returns
         -------
-        `int`
             The amount of bytes written to the file
         """
         data = await self.fetch()
@@ -98,7 +96,6 @@ class Asset:
 
         Returns
         -------
-        `Self`
             The new asset object
         """
         url = yarl.URL(self.url)
@@ -131,7 +128,6 @@ class Asset:
 
         Returns
         -------
-        `Self`
             The new asset object, if animated, it will return no changes
         """
         if self._animated:
@@ -145,7 +141,6 @@ class Asset:
 
         Returns
         -------
-        `str`
             The URL of the asset
         """
         return self._url
@@ -157,7 +152,6 @@ class Asset:
 
         Returns
         -------
-        `str`
             The key of the asset
         """
         return self._key
@@ -168,7 +162,6 @@ class Asset:
 
         Returns
         -------
-        `bool`
             Whether the asset is animated or not
         """
         return self._animated

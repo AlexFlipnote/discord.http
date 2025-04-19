@@ -344,7 +344,6 @@ class PartialAutoModRule(PartialBase):
 
         Returns
         -------
-        `AutoModRule`
             The automod that was just edited
         """
         payload = {}

@@ -164,7 +164,6 @@ class PartialScheduledEvent(PartialBase):
 
         Returns
         -------
-        `ScheduledEvent`
             The edited event
 
         Raises
@@ -355,7 +354,6 @@ class PartialGuild(PartialBase):
 
         Returns
         -------
-        `Optional[Union["Member", "PartialMember"]`
             The member with the given ID, if it exists.
         """
         return self._cache_members.get(member_id, None)
@@ -371,7 +369,6 @@ class PartialGuild(PartialBase):
 
         Returns
         -------
-        `Optional[Union["BaseChannel", "PartialChannel"]`
             The channel with the given ID, if it exists.
         """
         return self._cache_channels.get(channel_id, None)
@@ -387,7 +384,6 @@ class PartialGuild(PartialBase):
 
         Returns
         -------
-        `Optional[Union["PartialThread", "PartialChannel"]`
             The thread with the given ID, if it exists.
         """
         return self._cache_threads.get(thread_id, None)
@@ -432,7 +428,6 @@ class PartialGuild(PartialBase):
 
         Returns
         -------
-        `Optional[Union["VoiceState", "PartialVoiceState"]`
             The voice state of the member, if it exists.
         """
         return self._cache_voice_states.get(member_id, None)
@@ -448,7 +443,6 @@ class PartialGuild(PartialBase):
 
         Returns
         -------
-        `Optional[Union["Role", "PartialRole"]`
             The role with the given ID, if it exists.
         """
         return self._cache_roles.get(role_id, None)
@@ -467,7 +461,6 @@ class PartialGuild(PartialBase):
 
         Returns
         -------
-        `Optional[Union["SoundboardSound", "PartialSoundboardSound"]`
             The soundboard sound with the given ID, if it exists.
         """
         return self._cache_soundboard_sounds.get(sound_id, None)
@@ -652,7 +645,6 @@ class PartialGuild(PartialBase):
 
         Returns
         -------
-        `AutoModRule`
             The automod that was just created
         """
         payload = {
@@ -954,7 +946,6 @@ class PartialGuild(PartialBase):
 
         Returns
         -------
-        `Role`
             The created role
         """
         payload = {
@@ -1652,7 +1643,6 @@ class PartialGuild(PartialBase):
 
         Returns
         -------
-        `PartialScheduledEvent`
             The partial scheduled event object.
         """
         return PartialScheduledEvent(
@@ -1675,7 +1665,6 @@ class PartialGuild(PartialBase):
 
         Returns
         -------
-        `ScheduledEvent`
             The scheduled event object.
         """
         event = self.get_partial_scheduled_event(id)
@@ -2327,7 +2316,6 @@ class PartialGuild(PartialBase):
 
         Returns
         -------
-        `list[Integration]`
             The integrations in the guild.
         """
         r = await self._state.query(
@@ -2708,7 +2696,7 @@ class Guild(PartialGuild):
 
         Returns
         -------
-            The role if it exists, else `None`
+            The role with the given ID, if it exists.
         """
         return next((
             r for r in self.roles
@@ -2727,7 +2715,7 @@ class Guild(PartialGuild):
 
         Returns
         -------
-            The role if it exists, else `None`
+            The role with the given name, if it exists.
         """
         return next((
             r for r in self.roles

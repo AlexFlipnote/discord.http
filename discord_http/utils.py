@@ -227,7 +227,6 @@ def oauth_url(
 
     Returns
     -------
-    `str`
         The oauth url of the user
     """
     output = (
@@ -519,7 +518,6 @@ class DiscordTimestamp:
 
         Returns
         -------
-        `str`
             The timestamp in the specified format for Discord
         """
         if fmt is None:

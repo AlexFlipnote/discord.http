@@ -642,7 +642,6 @@ class Client:
 
         Returns
         -------
-        `bool`
             Whether the bot has any listeners for the event.
         """
         event = next((
@@ -881,7 +880,6 @@ class Client:
 
         Returns
         -------
-        `SubGroup`
             The created group
         """
         subgroup = SubGroup(name=name)
@@ -963,7 +961,6 @@ class Client:
 
         Returns
         -------
-        `BaseChannel | PartialChannel | None`
             The channel object with the specified ID, or `None` if not found.
         """
         if channel_id is None:
@@ -994,7 +991,6 @@ class Client:
 
         Returns
         -------
-        `PartialChannel`
             The partial channel object.
         """
         return PartialChannel(
@@ -1021,7 +1017,6 @@ class Client:
 
         Returns
         -------
-        `BaseChannel`
             The channel object.
         """
         c = self.get_partial_channel(channel_id, guild_id=guild_id)
@@ -1129,7 +1124,6 @@ class Client:
 
         Returns
         -------
-        `PartialVoiceState`
             The partial voice state object.
         """
         return PartialVoiceState(
@@ -1156,7 +1150,6 @@ class Client:
 
         Returns
         -------
-        `VoiceState`
             The voice state object.
         """
         vs = self.get_partial_voice_state(
@@ -1185,7 +1178,6 @@ class Client:
 
         Returns
         -------
-        `PartialEmoji`
             The partial emoji object.
         """
         return PartialEmoji(
@@ -1318,7 +1310,6 @@ class Client:
 
         Returns
         -------
-        `SoundboardSound`
             The soundboard sound object.
         """
         sound = self.get_partial_soundboard_sound(
@@ -1342,7 +1333,6 @@ class Client:
 
         Returns
         -------
-        `Invite`
             The invite object.
         """
         invite = self.get_partial_invite(invite_code)
@@ -1368,7 +1358,6 @@ class Client:
 
         Returns
         -------
-        `PartialMessage`
             The partial message object.
         """
         return PartialMessage(
@@ -1398,7 +1387,6 @@ class Client:
 
         Returns
         -------
-        `Message`
             The message object
         """
         msg = self.get_partial_message(message_id, channel_id, guild_id)
@@ -1422,7 +1410,6 @@ class Client:
 
         Returns
         -------
-        `PartialWebhook`
             The partial webhook object.
         """
         return PartialWebhook(
@@ -1449,7 +1436,6 @@ class Client:
 
         Returns
         -------
-        `Webhook`
             The webhook object.
         """
         webhook = self.get_partial_webhook(
@@ -1473,7 +1459,6 @@ class Client:
 
         Returns
         -------
-        `PartialUser`
             The partial user object.
         """
         return PartialUser(
@@ -1495,7 +1480,6 @@ class Client:
 
         Returns
         -------
-        `User`
             The user object.
         """
         user = self.get_partial_user(user_id)
@@ -1518,7 +1502,6 @@ class Client:
 
         Returns
         -------
-        `PartialMember`
             The partial member object.
         """
         return PartialMember(
@@ -1544,7 +1527,6 @@ class Client:
 
         Returns
         -------
-        `Member`
             The member object.
         """
         member = self.get_partial_member(user_id, guild_id)
@@ -1580,7 +1562,6 @@ class Client:
 
         Returns
         -------
-        `Emoji`
             The created emoji object.
         """
         r = await self.state.query(
@@ -1606,7 +1587,6 @@ class Client:
 
         Returns
         -------
-        `PartialSKU`
             The partial SKU object.
         """
         return PartialSKU(
@@ -1640,7 +1620,6 @@ class Client:
 
         Returns
         -------
-        `PartialEntitlements`
             The partial entitlement object.
         """
         return PartialEntitlements(
@@ -1662,7 +1641,6 @@ class Client:
 
         Returns
         -------
-        `Entitlements`
             The entitlement object.
         """
         ent = self.get_partial_entitlement(entitlement_id)
@@ -1702,7 +1680,6 @@ class Client:
 
         Returns
         -------
-        `AsyncIterator[Entitlements]`
             The entitlement objects.
         """
         params: dict[str, Any] = {
@@ -1816,7 +1793,6 @@ class Client:
 
         Returns
         -------
-        `PartialScheduledEvent`
             The partial scheduled event object.
         """
         return PartialScheduledEvent(
@@ -1842,7 +1818,6 @@ class Client:
 
         Returns
         -------
-        `ScheduledEvent`
             The scheduled event object.
         """
         event = self.get_partial_scheduled_event(
@@ -1864,7 +1839,6 @@ class Client:
 
         Returns
         -------
-        `PartialGuild`
             The partial guild object.
         """
         return PartialGuild(
@@ -1886,7 +1860,6 @@ class Client:
 
         Returns
         -------
-        `Guild`
             The guild object.
         """
         guild = self.get_partial_guild(guild_id)
@@ -1915,7 +1888,6 @@ class Client:
 
         Returns
         -------
-        `Guild`
             The created guild
         """
         payload = {"name": name}
@@ -1952,7 +1924,6 @@ class Client:
 
         Returns
         -------
-        `PartialRole`
             The partial role object.
         """
         return PartialRole(
@@ -1977,7 +1948,6 @@ class Client:
 
         Returns
         -------
-        `Optional[Interaction]`
             The interaction that was found if any.
         """
         inter = self.interactions.get(custom_id, None)

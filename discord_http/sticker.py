@@ -242,7 +242,6 @@ class Sticker(PartialSticker):
 
         Returns
         -------
-        `Sticker`
             The edited sticker
         """
         if not self.guild:

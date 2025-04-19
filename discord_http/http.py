@@ -151,7 +151,6 @@ class HTTPClient:
 
         Returns
         -------
-        `HTTPResponse`
             The response from the request
         """
         if not res_method:
@@ -615,7 +614,6 @@ class DiscordAPI:
 
         Returns
         -------
-        `HTTPResponse`
             The response from the request
         """
         if not self.application_id:

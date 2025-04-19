@@ -428,7 +428,6 @@ class Command:
 
         Returns
         -------
-        `str`
             The mentionable string.
         """
         if self.id:
@@ -637,7 +636,6 @@ class Command:
 
         Returns
         -------
-        `dict`
             The dict of the command.
         """
         extra_locale = getattr(self.command, "__locales__", {})
@@ -947,7 +945,6 @@ class Interaction:
 
         Returns
         -------
-        `bool`
             Whether the custom ID matched or not.
         """
         if not self.regex:

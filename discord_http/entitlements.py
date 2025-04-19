@@ -50,7 +50,6 @@ class PartialSKU(PartialBase):
 
         Returns
         -------
-        `PartialEntitlements`
             The created entitlement.
         """
         r = await self._state.query(

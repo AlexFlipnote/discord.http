@@ -613,7 +613,6 @@ class Attachment:
 
         Returns
         -------
-        `int`
             The amount of bytes written to the file
         """
         data = await self.fetch(use_cached=use_cached)
@@ -921,7 +920,6 @@ class PartialMessage(PartialBase):
 
         Returns
         -------
-        `Message`
             The edited message
         """
         payload = MessageResponse(
@@ -1003,7 +1001,6 @@ class PartialMessage(PartialBase):
 
         Returns
         -------
-        `Message`
             The message object
         """
         payload = MessageResponse(
@@ -1148,7 +1145,6 @@ class PartialMessage(PartialBase):
 
         Returns
         -------
-        `PublicThread`
             The created thread
 
         Raises
@@ -1481,7 +1477,6 @@ class WebhookMessage(Message):
 
         Returns
         -------
-        `WebhookMessage`
             The edited message
         """
         payload = MessageResponse(
