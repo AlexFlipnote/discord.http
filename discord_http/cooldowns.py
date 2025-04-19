@@ -9,8 +9,8 @@ if TYPE_CHECKING:
 
 __all__ = (
     "BucketType",
-    "CooldownCache",
     "Cooldown",
+    "CooldownCache",
 )
 
 
@@ -23,6 +23,18 @@ class BucketType(BaseEnum):
     channel = 5
 
     def get_key(self, ctx: "Context") -> int | tuple[int, int]:
+        """
+        Returns the key for the bucket.
+
+        Parameters
+        ----------
+        ctx:
+            The bot context
+
+        Returns
+        -------
+            The key for the bucket
+        """
         match self:
             case BucketType.user:
                 return ctx.user.id
@@ -46,6 +58,18 @@ class BucketType(BaseEnum):
                 return 0
 
     def __call__(self, ctx: "Context") -> int | tuple[int, int]:
+        """
+        Returns the key for the bucket.
+
+        Parameters
+        ----------
+        ctx:
+            The bot context
+
+        Returns
+        -------
+            The key for the bucket
+        """
         return self.get_key(ctx)
 
 
@@ -53,7 +77,7 @@ class CooldownCache:
     def __init__(
         self,
         original: "Cooldown",
-        type: BucketType
+        type: BucketType  # noqa: A002
     ):
         self._cache: dict[int | tuple[int, int], Cooldown] = {}
         self._cooldown: Cooldown = original
@@ -72,7 +96,7 @@ class CooldownCache:
 
         Parameters
         ----------
-        ctx: `Context`
+        ctx:
             Context to create the key for.
 
         Returns
@@ -91,7 +115,7 @@ class CooldownCache:
 
         Parameters
         ----------
-        current: `float | None`
+        current:
             Current time to check the cache for.
         """
         current = current or time.time()
@@ -115,9 +139,9 @@ class CooldownCache:
 
         Parameters
         ----------
-        ctx: `Context`
+        ctx:
             Context to get the bucket for.
-        current: `float | None`
+        current:
             Current time to check the bucket for.
 
         Returns
@@ -151,11 +175,11 @@ class CooldownCache:
 
         Parameters
         ----------
-        ctx: `Context`
+        ctx:
             Context to update the rate limit for.
-        current: `float | None`
+        current:
             Current time to update the rate limit for.
-        tokens: `int`
+        tokens:
             Amount of tokens to remove from the rate limit.
 
         Returns
@@ -189,7 +213,7 @@ class Cooldown:
 
         Parameters
         ----------
-        current: `float | None`
+        current:
             The current time to check the tokens for.
 
         Returns
@@ -214,7 +238,7 @@ class Cooldown:
 
         Parameters
         ----------
-        current: `float | None`
+        current:
             The current time to check the retry after for.
 
         Returns
@@ -241,9 +265,9 @@ class Cooldown:
 
         Parameters
         ----------
-        current: `float | None`
+        current:
             The current time to update the rate limit for.
-        tokens: `int`
+        tokens:
             Amount of tokens to remove from the rate limit.
 
         Returns
@@ -264,6 +288,7 @@ class Cooldown:
 
         if self._tokens < 0:
             return self.per - (current - self._window)
+        return None
 
     def reset(self) -> None:
         """ Resets the rate limit. """

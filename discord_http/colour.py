@@ -1,6 +1,6 @@
 import random
 
-from typing import Any, Self
+from typing import Self
 
 from . import utils
 
@@ -34,31 +34,31 @@ class Colour:
 
     @property
     def r(self) -> int:
-        """ Returns the red component of the colour """
+        """ Returns the red component of the colour. """
         return self._get_byte(2)
 
     @property
     def g(self) -> int:
-        """ Returns the green component of the colour """
+        """ Returns the green component of the colour. """
         return self._get_byte(1)
 
     @property
     def b(self) -> int:
-        """ Returns the blue component of the colour """
+        """ Returns the blue component of the colour. """
         return self._get_byte(0)
 
     @classmethod
     def from_rgb(cls, r: int, g: int, b: int) -> Self:
         """
-        Creates a Colour object from RGB values
+        Creates a Colour object from RGB values.
 
         Parameters
         ----------
-        r: `int`
+        r:
             Red value
-        g: `int`
+        g:
             Green value
-        b: `int`
+        b:
             Blue value
 
         Returns
@@ -69,17 +69,17 @@ class Colour:
         return cls((r << 16) + (g << 8) + b)
 
     def to_rgb(self) -> tuple[int, int, int]:
-        """ Returns the RGB values of the colour` """
+        """ Returns the RGB values of the colour`. """
         return (self.r, self.g, self.b)
 
     @classmethod
-    def from_hex(cls, hex: str) -> Self:
+    def from_hex(cls, hex_value: str) -> Self:
         """
-        Creates a Colour object from a hex string
+        Creates a Colour object from a hex string.
 
         Parameters
         ----------
-        hex: `str`
+        hex_value:
             The hex string to convert
 
         Returns
@@ -92,38 +92,37 @@ class Colour:
         `ValueError`
             Invalid hex colour
         """
-        find_hex = utils.re_hex.search(hex)
+        find_hex = utils.re_hex.search(hex_value)
         if not find_hex:
-            raise ValueError(f"Invalid hex colour {hex!r}")
+            raise ValueError(f"Invalid hex colour {hex_value!r}")
 
-        if hex.startswith("#"):
-            hex = hex[1:]
-        if len(hex) == 3:
-            hex = hex * 2
+        hex_value = hex_value.removeprefix("#")
+        if len(hex_value) == 3:
+            hex_value = hex_value * 2
 
-        return cls(int(hex, 16))
+        return cls(int(hex_value, 16))
 
     def to_hex(self) -> str:
-        """ Returns the hex value of the colour """
+        """ Returns the hex value of the colour. """
         return f"#{self.value:06x}"
 
     @classmethod
     def default(cls) -> Self:
-        """ Returns the default colour (#000000, Black) """
+        """ Returns the default colour (#000000, Black). """
         return cls(0)
 
     @classmethod
     def random(
         cls,
         *,
-        seed: Any | None = None
+        seed: str | None = None
     ) -> Self:
         """
-        Creates a random colour
+        Creates a random colour.
 
         Parameters
         ----------
-        seed: `Optional[Any]`
+        seed:
             The seed to use for the random colour to make it deterministic
 
         Returns
@@ -131,7 +130,7 @@ class Colour:
         `Colour`
             The random colour
         """
-        r = random.Random(seed) if seed else random
+        r = random.Random(str(seed)) if seed else random
         return cls(r.randint(0, 0xFFFFFF))
 
     # Colours based on https://flatuicolors.com/palette/defo
@@ -139,107 +138,107 @@ class Colour:
 
     @classmethod
     def turquoise(cls) -> Self:
-        """ Returns the turquoise colour """
+        """ Returns the turquoise colour. """
         return cls(0x1abc9c)
 
     @classmethod
     def green_sea(cls) -> Self:
-        """ Returns the green sea colour """
+        """ Returns the green sea colour. """
         return cls(0x16a085)
 
     @classmethod
     def emerald(cls) -> Self:
-        """ Returns the emerald colour """
+        """ Returns the emerald colour. """
         return cls(0x2ecc71)
 
     @classmethod
     def nephritis(cls) -> Self:
-        """ Returns the nephritis colour """
+        """ Returns the nephritis colour. """
         return cls(0x27ae60)
 
     @classmethod
     def peter_river(cls) -> Self:
-        """ Returns the peter river colour """
+        """ Returns the peter river colour. """
         return cls(0x3498db)
 
     @classmethod
     def belize_hole(cls) -> Self:
-        """ Returns the belize hole colour """
+        """ Returns the belize hole colour. """
         return cls(0x2980b9)
 
     @classmethod
     def amethyst(cls) -> Self:
-        """ Returns the amethyst colour """
+        """ Returns the amethyst colour. """
         return cls(0x9b59b6)
 
     @classmethod
     def wisteria(cls) -> Self:
-        """ Returns the wisteria colour """
+        """ Returns the wisteria colour. """
         return cls(0x8e44ad)
 
     @classmethod
     def mellow_melon(cls) -> Self:
-        """ Returns the mellow melon colour """
+        """ Returns the mellow melon colour. """
         return cls(0xe91e63)
 
     @classmethod
     def plum_perfect(cls) -> Self:
-        """ Returns the plum perfect colour """
+        """ Returns the plum perfect colour. """
         return cls(0xad1457)
 
     @classmethod
     def sun_flower(cls) -> Self:
-        """ Returns the sun flower colour """
+        """ Returns the sun flower colour. """
         return cls(0xf1c40f)
 
     @classmethod
     def orange(cls) -> Self:
-        """ Returns the orange colour """
+        """ Returns the orange colour. """
         return cls(0xf39c12)
 
     @classmethod
     def carrot(cls) -> Self:
-        """ Returns the carrot colour """
+        """ Returns the carrot colour. """
         return cls(0xe67e22)
 
     @classmethod
     def pumpkin(cls) -> Self:
-        """ Returns the pumpkin colour """
+        """ Returns the pumpkin colour. """
         return cls(0xd35400)
 
     @classmethod
     def alizarin(cls) -> Self:
-        """ Returns the alizarin colour """
+        """ Returns the alizarin colour. """
         return cls(0xe74c3c)
 
     @classmethod
     def pomegranate(cls) -> Self:
-        """ Returns the pomegranate colour """
+        """ Returns the pomegranate colour. """
         return cls(0xc0392b)
 
     @classmethod
     def dusty_sky(cls) -> Self:
-        """ Returns the dusty sky colour """
+        """ Returns the dusty sky colour. """
         return cls(0x95a5a6)
 
     @classmethod
     def harrison_grey(cls) -> Self:
-        """ Returns the harrison grey colour """
+        """ Returns the harrison grey colour. """
         return cls(0x979c9f)
 
     @classmethod
     def whale_shark(cls) -> Self:
-        """ Returns the whale shark colour """
+        """ Returns the whale shark colour. """
         return cls(0x607d8b)
 
     @classmethod
     def blue_sentinel(cls) -> Self:
-        """ Returns the blue sentinel colour """
+        """ Returns the blue sentinel colour. """
         return cls(0x546e7a)
 
 
 class Color(Colour):
-    """ Alias for Colour """
+    """ Alias for Colour. """
     def __init__(self, value: int):
         super().__init__(value)
 

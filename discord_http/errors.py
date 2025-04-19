@@ -25,24 +25,20 @@ __all__ = (
 )
 
 
-class DiscordException(Exception):
-    """ Base exception for discord_http """
-    pass
+class DiscordException(Exception):  # noqa: N818
+    """ Base exception for discord_http. """
 
 
 class CheckFailed(DiscordException):
-    """ Raised whenever a check fails """
-    pass
+    """ Raised whenever a check fails. """
 
 
 class InvalidMember(CheckFailed):
-    """ Raised whenever a user was found, but not a member of a guild """
-    pass
+    """ Raised whenever a user was found, but not a member of a guild. """
 
 
 class CommandError(Exception):
-    """ Raised whenever a command error occurs """
-    pass
+    """ Raised whenever a command error occurs. """
 
 
 class CommandOnCooldown(CheckFailed):
@@ -55,21 +51,21 @@ class CommandOnCooldown(CheckFailed):
 
 
 class UserMissingPermissions(CheckFailed):
-    """ Raised whenever a user is missing permissions """
+    """ Raised whenever a user is missing permissions. """
     def __init__(self, perms: Permissions):
         self.permissions = perms
         super().__init__(f"Missing permissions: {', '.join(perms.list_names)}")
 
 
 class BotMissingPermissions(CheckFailed):
-    """ Raised whenever a bot is missing permissions """
+    """ Raised whenever a bot is missing permissions. """
     def __init__(self, perms: Permissions):
         self.permissions = perms
         super().__init__(f"Bot is missing permissions: {', '.join(perms.list_names)}")
 
 
 class HTTPException(DiscordException):
-    """ Base exception for HTTP requests """
+    """ Base exception for HTTP requests. """
     def __init__(self, r: "HTTPResponse"):
         self.request = r
         self.status: int = r.status
@@ -97,25 +93,20 @@ class HTTPException(DiscordException):
 
 
 class NotFound(HTTPException):
-    """ Raised whenever a HTTP request returns 404 """
-    pass
+    """ Raised whenever a HTTP request returns 404. """
 
 
 class Forbidden(HTTPException):
-    """ Raised whenever a HTTP request returns 403 """
-    pass
+    """ Raised whenever a HTTP request returns 403. """
 
 
 class AutomodBlock(HTTPException):
-    """ Raised whenever a HTTP request was blocked by Discord """
-    pass
+    """ Raised whenever a HTTP request was blocked by Discord. """
 
 
 class Ratelimited(HTTPException):
-    """ Raised whenever a HTTP request returns 429, but without a Retry-After header """
-    pass
+    """ Raised whenever a HTTP request returns 429, but without a Retry-After header. """
 
 
 class DiscordServerError(HTTPException):
-    """ Raised whenever an unexpected HTTP error occurs """
-    pass
+    """ Raised whenever an unexpected HTTP error occurs. """

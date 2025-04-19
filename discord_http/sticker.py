@@ -21,7 +21,7 @@ class PartialSticker(PartialBase):
         self,
         *,
         state: "DiscordAPI",
-        id: int,
+        id: int,  # noqa: A002
         name: str | None = None,
         guild_id: int | None = None
     ):
@@ -35,7 +35,7 @@ class PartialSticker(PartialBase):
         return f"<PartialSticker id={self.id}>"
 
     async def fetch(self) -> "Sticker":
-        """ Returns the sticker data """
+        """ Returns the sticker data. """
         r = await self._state.query(
             "GET",
             f"/stickers/{self.id}"
@@ -52,11 +52,10 @@ class PartialSticker(PartialBase):
     @property
     def guild(self) -> "Guild | PartialGuild | None":
         """
-        Returns the guild this sticker is in
+        Returns the guild this sticker is in.
 
         Returns
         -------
-        `PartialGuild`
             The guild this sticker is in
 
         Raises
@@ -84,24 +83,23 @@ class PartialSticker(PartialBase):
         reason: str | None = None
     ) -> "Sticker":
         """
-        Edits the sticker
+        Edits the sticker.
 
         Parameters
         ----------
-        guild_id: `Optional[int]`
+        guild_id:
             Guild ID to edit the sticker from
-        name: `Optional[str]`
+        name:
             Replacement name for the sticker
-        description: `Optional[str]`
+        description:
             Replacement description for the sticker
-        tags: `Optional[str]`
+        tags:
             Replacement tags for the sticker
-        reason: `Optional[str]`
+        reason:
             The reason for editing the sticker
 
         Returns
         -------
-        `Sticker`
             The edited sticker
 
         Raises
@@ -144,13 +142,13 @@ class PartialSticker(PartialBase):
         reason: str | None = None
     ) -> None:
         """
-        Deletes the sticker
+        Deletes the sticker.
 
         Parameters
         ----------
-        guild_id: `int`
+        guild_id:
             Guild ID to delete the sticker from
-        reason: `Optional[str]`
+        reason:
             The reason for deleting the sticker
 
         Raises
@@ -174,7 +172,7 @@ class PartialSticker(PartialBase):
 
     @property
     def url(self) -> str:
-        """ Returns the sticker's URL """
+        """ Returns the sticker's URL. """
         return f"https://media.discordapp.net/stickers/{self.id}.png"
 
 
@@ -213,12 +211,12 @@ class Sticker(PartialSticker):
 
     @property
     def url(self) -> str:
-        """ Returns the sticker's URL """
-        format = "png"
+        """ Returns the sticker's URL. """
+        img_format = "png"
         if self.format_type == StickerFormatType.gif:
-            format = "gif"
+            img_format = "gif"
 
-        return f"https://media.discordapp.net/stickers/{self.id}.{format}"
+        return f"https://media.discordapp.net/stickers/{self.id}.{img_format}"
 
     async def edit(
         self,
@@ -229,17 +227,17 @@ class Sticker(PartialSticker):
         reason: str | None = None
     ) -> "Sticker":
         """
-        Edits the sticker
+        Edits the sticker.
 
         Parameters
         ----------
-        name: `Optional[str]`
+        name:
             Name of the sticker
-        description: `Optional[str]`
+        description:
             Description of the sticker
-        tags: `Optional[str]`
+        tags:
             Tags of the sticker
-        reason: `Optional[str]`
+        reason:
             The reason for editing the sticker
 
         Returns
@@ -264,11 +262,11 @@ class Sticker(PartialSticker):
         reason: str | None = None
     ) -> None:
         """
-        Deletes the sticker
+        Deletes the sticker.
 
         Parameters
         ----------
-        reason: `Optional[str]`
+        reason:
             The reason for deleting the sticker
 
         Raises

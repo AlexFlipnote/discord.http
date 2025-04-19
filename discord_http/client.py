@@ -5,10 +5,10 @@ import logging
 
 from datetime import datetime
 from typing import (
-    Dict, Optional, Any, Callable,
-    Union, AsyncIterator, TYPE_CHECKING,
-    Coroutine, TypeVar
+    Optional, Any,
+    TYPE_CHECKING, TypeVar
 )
+from collections.abc import Callable, AsyncIterator, Coroutine
 
 from . import utils, __version__
 from .automod import PartialAutoModRule, AutoModRule
@@ -23,7 +23,7 @@ from .errors import CheckFailed
 from .file import File
 from .gateway.cache import Cache
 from .guild import PartialGuild, Guild, PartialScheduledEvent, ScheduledEvent
-from .http import DiscordAPI
+from .http import DiscordAPI, HTTPResponse
 from .invite import PartialInvite, Invite
 from .member import PartialMember, Member
 from .mentions import AllowedMentions
@@ -57,13 +57,13 @@ class Client:
         self,
         *,
         token: str,
-        application_id: Optional[int] = None,
-        public_key: Optional[str] = None,
-        guild_id: Optional[int] = None,
+        application_id: int | None = None,
+        public_key: str | None = None,
+        guild_id: int | None = None,
         sync: bool = False,
         api_version: int = 10,
-        loop: Optional[asyncio.AbstractEventLoop] = None,
-        allowed_mentions: AllowedMentions = AllowedMentions.all(),
+        loop: asyncio.AbstractEventLoop | None = None,
+        allowed_mentions: AllowedMentions | None = None,
         enable_gateway: bool = False,
         automatic_shards: bool = True,
         playing_status: "PlayingStatus | None" = None,
@@ -77,71 +77,71 @@ class Client:
         debug_events: bool = False
     ):
         """
-        The main client class for discord.http
+        The main client class for discord.http.
 
         Parameters
         ----------
-        token: `str`
+        token:
             Discord bot token
-        application_id: `Optional[int]`
+        application_id:
             Application ID of the bot, not the User ID
-        public_key: `Optional[str]`
+        public_key:
             Public key of the bot, used for validating interactions
-        guild_id: `Optional[int]`
+        guild_id:
             Guild ID to sync commands to, if not provided, it will sync to global
-        sync: `bool`
+        sync:
             Whether to sync commands on boot or not
-        api_version: `Optional[int]`
+        api_version:
             API version to use for both HTTP and WS, if not provided, it will use the default (10)
-        loop: `Optional[asyncio.AbstractEventLoop]`
+        loop:
             Event loop to use, if not provided, it will use `asyncio.get_running_loop()`
-        allowed_mentions: `AllowedMentions`
+        allowed_mentions:
             Allowed mentions to use, if not provided, it will use `AllowedMentions.all()`
-        enable_gateway: `bool`
+        enable_gateway:
             Whether to enable the gateway or not, which runs in the background
-        automatic_shards: `bool`
+        automatic_shards:
             Whether to automatically shard the bot or not
-        playing_status: `Optional[PlayingStatus]`
+        playing_status:
             The playing status to use, if not provided, it will use `None`.
             This is only used if `enable_gateway` is `True`.
-        chunk_guilds_on_startup: `bool`
+        chunk_guilds_on_startup:
             Whether to chunk guilds or not when booting, which will reduce the amount of requests
-        guild_ready_timeout: `float`
+        guild_ready_timeout:
             **Gateway**: How long to wait for last GUILD_CREATE to be recieved
             before triggering shard ready
-        gateway_cache: `Optional[GatewayCacheFlags]`
+        gateway_cache:
             How the gateway should cache, only used if `enable_gateway` is `True`.
             Leave empty to use no cache.
-        intents: `Optional[Intents]`
+        intents:
             Intents to use, only used if `enable_gateway` is `True`
-        logging_level: `int`
+        logging_level:
             Logging level to use, if not provided, it will use `logging.INFO`
-        call_after_delay: `float | int`
+        call_after_delay:
             How long to wait before calling the `call_after` coroutine
-        debug_events: `bool`
+        debug_events:
             Whether to log events or not, if not provided, `on_raw_*` events will not be useable
-        disable_default_get_path: `bool`
+        disable_default_get_path:
             Whether to disable the default GET path or not, if not provided, it will use `False`.
             The default GET path only provides information about the bot and when it was last rebooted.
             Usually a great tool to just validate that your bot is online.
         """
-        self.application_id: Optional[int] = application_id
+        self.application_id: int | None = application_id
         self.api_version: int = int(api_version)
-        self.public_key: Optional[str] = public_key
+        self.public_key: str | None = public_key
         self.token: str = token
         self.automatic_shards: bool = automatic_shards
-        self.guild_id: Optional[int] = guild_id
+        self.guild_id: int | None = guild_id
         self.sync: bool = sync
         self.logging_level: int = logging_level
         self.debug_events: bool = debug_events
         self.enable_gateway: bool = enable_gateway
-        self.playing_status: Optional["PlayingStatus"] = playing_status
+        self.playing_status: "PlayingStatus | None" = playing_status
         self.guild_ready_timeout: float = guild_ready_timeout
         self.chunk_guilds_on_startup: bool = chunk_guilds_on_startup
         self.call_after_delay: float | int = call_after_delay
         self.intents: Intents | None = intents
 
-        self.gateway: Optional["GatewayClient"] = None
+        self.gateway: "GatewayClient | None" = None
         self.disable_default_get_path: bool = disable_default_get_path
 
         try:
@@ -150,17 +150,17 @@ class Client:
             self.loop: asyncio.AbstractEventLoop = asyncio.new_event_loop()
             asyncio.set_event_loop(self.loop)
 
-        self.commands: Dict[str, Command] = {}
+        self.commands: dict[str, Command] = {}
         self.listeners: list[Listener] = []
-        self.interactions: Dict[str, Interaction] = {}
-        self.interactions_regex: Dict[str, Interaction] = {}
+        self.interactions: dict[str, Interaction] = {}
+        self.interactions_regex: dict[str, Interaction] = {}
 
         self._global_cmd_checks: list[Callable] = []
 
-        self._gateway_cache: Optional["GatewayCacheFlags"] = gateway_cache
-        self._ready: Optional[asyncio.Event] = asyncio.Event()
-        self._shards_ready: Optional[asyncio.Event] = asyncio.Event()
-        self._user_object: Optional[UserClient] = None
+        self._gateway_cache: "GatewayCacheFlags | None" = gateway_cache
+        self._ready: asyncio.Event | None = asyncio.Event()
+        self._shards_ready: asyncio.Event | None = asyncio.Event()
+        self._user_object: UserClient | None = None
 
         self._context: Callable = Context
 
@@ -169,7 +169,7 @@ class Client:
         self.backend: DiscordHTTP = DiscordHTTP(client=self)
 
         self._view_storage: dict[str | int, InteractionStorage] = {}
-        self._default_allowed_mentions = allowed_mentions
+        self._default_allowed_mentions = allowed_mentions or AllowedMentions.all()
 
         self._cogs: dict[str, list[Cog]] = {}
 
@@ -191,8 +191,7 @@ class Client:
         self,
         listener: "Listener",
         event_name: str,
-        *args: Any,
-        **kwargs: Any,
+        *args, **kwargs,  # noqa: ANN002
     ) -> None:
         try:
             if listener.cog is not None:
@@ -217,10 +216,7 @@ class Client:
                 pass
 
     async def _prepare_bot(self) -> None:
-        """
-        This will run prepare_setup() before boot
-        to make the user set up needed vars
-        """
+        """ Run prepare_setup() before boot to make the user set up needed vars. """
         await self.state.http._create_session()
 
         try:
@@ -229,7 +225,7 @@ class Client:
             # Make sure the error is readable and stop HTTP server here
             _log.error(e)
             await self.backend.shutdown()
-            return None
+            return
 
         await self.setup_hook()
         await self._prepare_commands()
@@ -254,7 +250,7 @@ class Client:
             _log.info("Starting discord.http/gateway client")
 
     async def __cleanup(self) -> None:
-        """ Called when the bot is shutting down """
+        """ Called when the bot is shutting down. """
         await self.state.http._close_session()
 
         if self.gateway:
@@ -271,8 +267,7 @@ class Client:
         self,
         listener: "Listener",
         event_name: str,
-        *args: Any,
-        **kwargs: Any
+        *args, **kwargs  # noqa: ANN002
     ) -> asyncio.Task:
         """ Schedules an event to be dispatched. """
         wrapped = self._run_event(
@@ -285,14 +280,14 @@ class Client:
         )
 
     async def _prepare_me(self) -> UserClient:
-        """ Gets the bot's user data, mostly used to validate token """
+        """ Gets the bot's user data, mostly used to validate token. """
         self._user_object = await self.state.me()
         _log.debug(f"/users/@me verified: {self.user} ({self.user.id})")
 
         return self.user
 
     async def _prepare_commands(self) -> None:
-        """ Only used to sync commands on boot """
+        """ Only used to sync commands on boot. """
         if self.sync:
             await self.sync_commands()
 
@@ -307,16 +302,15 @@ class Client:
         guild_id: Snowflake | int
     ) -> int | None:
         """
-        Returns the shard ID of the shard that the guild is in
+        Returns the shard ID of the shard that the guild is in.
 
         Parameters
         ----------
-        guild_id: `Snowflake | int`
+        guild_id:
             The ID of the guild to get the shard ID of
 
         Returns
         -------
-        `int | None`
             The shard ID of the guild, or `None` if not found
 
         Raises
@@ -342,26 +336,25 @@ class Client:
         shard_id: int | None = None
     ) -> list[Member]:
         """
-        Query members in a guild
+        Query members in a guild.
 
         Parameters
         ----------
-        guild_id: `Snowflake | int`
+        guild_id:
             The ID of the guild to query members in
-        query: `str | None`
+        query:
             The query to search for
-        limit: `int`
+        limit:
             The maximum amount of members to return
-        presences: `bool`
+        presences:
             Whether to include presences in the response
-        user_ids: `list[Snowflake | int] | None`
+        user_ids:
             The user IDs to fetch members for
-        shard_id: `int | None`
+        shard_id:
             The shard ID to query the members from
 
         Returns
         -------
-        `list[Member]`
             The members that matched the query
 
         Raises
@@ -391,10 +384,7 @@ class Client:
         )
 
     async def sync_commands(self) -> None:
-        """
-        Make the bot fetch all current commands,
-        to then sync them all to Discord API.
-        """
+        """ Make the bot fetch all current commands, to then sync them all to Discord API. """
         data = await self.state.update_commands(
             data=[
                 v.to_dict()
@@ -430,9 +420,10 @@ class Client:
     @property
     def user(self) -> UserClient:
         """
+        Returns the bot's user object.
+
         Returns
         -------
-        `User`
             The bot's user object
 
         Raises
@@ -451,7 +442,8 @@ class Client:
     @property
     def guilds(self) -> list[Guild | PartialGuild]:
         """
-        `list[Guild]`: Returns a list of all the guilds the bot is in.
+        Returns a list of all the guilds the bot is in.
+
         Only useable if you are using gateway and caching
         """
         return self.cache.guilds
@@ -462,12 +454,11 @@ class Client:
 
         Parameters
         ----------
-        guild_id: `int`
+        guild_id:
             The ID of the guild to get.
 
         Returns
         -------
-        `Guild | PartialGuild | None`
             The guild object with the specified ID, or `None` if not found.
         """
         return self.cache.get_guild(guild_id)
@@ -480,6 +471,7 @@ class Client:
         )
 
     def is_shards_ready(self) -> bool:
+        """ Indicates if the client is shards ready. """
         return (
             self._shards_ready is not None and
             self._shards_ready.is_set()
@@ -488,10 +480,10 @@ class Client:
     def set_context(
         self,
         *,
-        cls: Optional[Callable] = None
+        cls: Callable | None = None
     ) -> None:
         """
-        Get the context for a command, while allowing custom context as well
+        Get the context for a command, while allowing custom context as well.
 
         Example of making one:
 
@@ -507,7 +499,7 @@ class Client:
 
         Parameters
         ----------
-        cls: `Optional[Callable]`
+        cls:
             The context to use for commands.
             Leave empty to use the default context.
         """
@@ -519,10 +511,10 @@ class Client:
     def set_backend(
         self,
         *,
-        cls: Optional[Callable] = None
+        cls: Callable | None = None
     ) -> None:
         """
-        Set the backend to use for the bot
+        Set the backend to use for the bot.
 
         Example of making one:
 
@@ -538,7 +530,7 @@ class Client:
 
         Parameters
         ----------
-        cls: `Optional[Callable]`
+        cls:
             The backend to use for everything.
             Leave empty to use the default backend.
         """
@@ -549,7 +541,8 @@ class Client:
 
     async def setup_hook(self) -> None:
         """
-        This will be running after the bot is ready, to get variables set up
+        Runs before the bot is ready, to get variables set up.
+
         You can overwrite this function to do your own setup
 
         Example:
@@ -560,7 +553,6 @@ class Client:
                 # Making database connection available through the bot
                 self.pool = SQLite.Database()
         """
-        pass
 
     def start(
         self,
@@ -569,7 +561,7 @@ class Client:
         port: int = 8080
     ) -> None:
         """
-        Boot up the bot and start the HTTP server
+        Boot up the bot and start the HTTP server.
 
         Parameters
         ----------
@@ -612,19 +604,18 @@ class Client:
         self,
         event_name: str,
         /,
-        *args: Any,
-        **kwargs: Any
-    ):
+        *args, **kwargs  # noqa: ANN002
+    ) -> None:
         """
         Dispatches an event to all listeners of that event.
 
         Parameters
         ----------
-        event_name: `str`
+        event_name:
             The name of the event to dispatch.
-        *args: `Any`
+        *args:
             The arguments to pass to the event.
-        **kwargs: `Any`
+        **kwargs:
             The keyword arguments to pass to the event.
         """
         for listener in self.listeners:
@@ -646,7 +637,7 @@ class Client:
 
         Parameters
         ----------
-        event_name: `str`
+        event_name:
             The name of the event to check for.
 
         Returns
@@ -670,7 +661,7 @@ class Client:
 
         Parameters
         ----------
-        package: `str`
+        package:
             The package to load the extension from.
         """
         if package in self._cogs:
@@ -693,7 +684,7 @@ class Client:
 
         Parameters
         ----------
-        package: `str`
+        package:
             The package to unload the extension from.
         """
         if package not in self._cogs:
@@ -710,7 +701,7 @@ class Client:
 
         Parameters
         ----------
-        cog: `Cog`
+        cog:
             The cog to add to the bot.
         """
         await cog._inject(self)
@@ -721,37 +712,37 @@ class Client:
 
         Parameters
         ----------
-        cog: `Cog`
+        cog:
             The cog to remove from the bot.
         """
         await cog._eject(self)
 
     def command(
         self,
-        name: Optional[str] = None,
+        name: str | None = None,
         *,
-        description: Optional[str] = None,
-        guild_ids: Optional[list[Union[Snowflake, int]]] = None,
+        description: str | None = None,
+        guild_ids: list[Snowflake | int] | None = None,
         guild_install: bool = True,
         user_install: bool = False,
-    ):
+    ) -> Callable:
         """
-        Used to register a command
+        Used to register a command.
 
         Parameters
         ----------
-        name: `Optional[str]`
+        name:
             Name of the command, if not provided, it will use the function name
-        description: `Optional[str]`
+        description:
             Description of the command, if not provided, it will use the function docstring
-        guild_ids: `Optional[list[Union[Snowflake, int]]]`
+        guild_ids:
             List of guild IDs to register the command in
-        user_install: `bool`
+        user_install:
             Whether the command can be installed by users or not
-        guild_install: `bool`
+        guild_install:
             Whether the command can be installed by guilds or not
         """
-        def decorator(func):
+        def decorator(func: Callable) -> Command:
             command = Command(
                 func,
                 name=name or func.__name__,
@@ -767,14 +758,14 @@ class Client:
 
     def user_command(
         self,
-        name: Optional[str] = None,
+        name: str | None = None,
         *,
-        guild_ids: Optional[list[Union[Snowflake, int]]] = None,
+        guild_ids: list[Snowflake | int] | None = None,
         guild_install: bool = True,
         user_install: bool = False,
-    ):
+    ) -> Callable:
         """
-        Used to register a user command
+        Used to register a user command.
 
         Example usage
 
@@ -786,16 +777,16 @@ class Client:
 
         Parameters
         ----------
-        name: `Optional[str]`
+        name:
             Name of the command, if not provided, it will use the function name
-        guild_ids: `Optional[list[Union[Snowflake, int]]]`
+        guild_ids:
             List of guild IDs to register the command in
-        user_install: `bool`
+        user_install:
             Whether the command can be installed by users or not
-        guild_install: `bool`
+        guild_install:
             Whether the command can be installed by guilds or not
         """
-        def decorator(func):
+        def decorator(func: Callable) -> Command:
             command = Command(
                 func,
                 name=name or func.__name__,
@@ -811,14 +802,14 @@ class Client:
 
     def message_command(
         self,
-        name: Optional[str] = None,
+        name: str | None = None,
         *,
-        guild_ids: Optional[list[Union[Snowflake, int]]] = None,
+        guild_ids: list[Snowflake | int] | None = None,
         guild_install: bool = True,
         user_install: bool = False,
-    ):
+    ) -> Callable:
         """
-        Used to register a message command
+        Used to register a message command.
 
         Example usage
 
@@ -830,16 +821,16 @@ class Client:
 
         Parameters
         ----------
-        name: `Optional[str]`
+        name:
             Name of the command, if not provided, it will use the function name
-        guild_ids: `Optional[list[Union[Snowflake, int]]]`
+        guild_ids:
             List of guild IDs to register the command in
-        user_install: `bool`
+        user_install:
             Whether the command can be installed by users or not
-        guild_install: `bool`
+        guild_install:
             Whether the command can be installed by guilds or not
         """
-        def decorator(func):
+        def decorator(func: Callable) -> Command:
             command = Command(
                 func,
                 name=name or func.__name__,
@@ -855,21 +846,21 @@ class Client:
 
     def group(
         self,
-        name: Optional[str] = None,
+        name: str | None = None,
         *,
-        description: Optional[str] = None
-    ):
+        description: str | None = None
+    ) -> Callable:
         """
-        Used to register a sub-command group
+        Used to register a sub-command group.
 
         Parameters
         ----------
-        name: `Optional[str]`
+        name:
             Name of the group, if not provided, it will use the function name
-        description: `Optional[str]`
+        description:
             Description of the group, if not provided, it will use the function docstring
         """
-        def decorator(func):
+        def decorator(func: Callable) -> SubGroup:
             subgroup = SubGroup(
                 name=name or func.__name__,
                 description=description
@@ -881,11 +872,11 @@ class Client:
 
     def add_group(self, name: str) -> SubGroup:
         """
-        Used to add a sub-command group
+        Used to add a sub-command group.
 
         Parameters
         ----------
-        name: `str`
+        name:
             Name of the group
 
         Returns
@@ -902,39 +893,38 @@ class Client:
         custom_id: str,
         *,
         regex: bool = False
-    ):
+    ) -> Callable:
         """
-        Used to register an interaction
+        Used to register an interaction.
 
         This does support regex, so you can use `r"regex here"` as the custom_id
 
         Parameters
         ----------
-        custom_id: `str`
+        custom_id:
             Custom ID of the interaction
-        regex: `bool`
+        regex:
             Whether the custom_id is a regex or not
         """
-        def decorator(func):
-            command = self.add_interaction(Interaction(
+        def decorator(func: Callable) -> Interaction:
+            return self.add_interaction(Interaction(
                 func,
                 custom_id=custom_id,
                 regex=regex
             ))
-            return command
 
         return decorator
 
     def listener(
         self,
-        name: Optional[str] = None
-    ):
+        name: str | None = None
+    ) -> Callable:
         """
-        Used to register a listener
+        Used to register a listener.
 
         Parameters
         ----------
-        name: `Optional[str]`
+        name:
             Name of the listener, if not provided, it will use the function name
 
         Raises
@@ -943,10 +933,10 @@ class Client:
             - If the listener name is not a string
             - If the listener is not a coroutine function
         """
-        if not isinstance(name, (str, type(None))):
+        if not isinstance(name, str | type(None)):
             raise TypeError(f"Listener name must be a string, not {type(name)}")
 
-        def decorator(func):
+        def decorator(func: Callable) -> None:
             actual = func
             if isinstance(actual, staticmethod):
                 actual = actual.__func__
@@ -968,7 +958,7 @@ class Client:
 
         Parameters
         ----------
-        channel_id: `int`
+        channel_id:
             The ID of the channel to get.
 
         Returns
@@ -990,16 +980,16 @@ class Client:
         self,
         channel_id: int,
         *,
-        guild_id: Optional[int] = None
+        guild_id: int | None = None
     ) -> PartialChannel:
         """
         Creates a partial channel object.
 
         Parameters
         ----------
-        channel_id: `int`
+        channel_id:
             Channel ID to create the partial channel object with.
-        guild_id: `Optional[int]`
+        guild_id:
             Guild ID to create the partial channel object with.
 
         Returns
@@ -1017,16 +1007,16 @@ class Client:
         self,
         channel_id: int,
         *,
-        guild_id: Optional[int] = None
+        guild_id: int | None = None
     ) -> BaseChannel:
         """
         Fetches a channel object.
 
         Parameters
         ----------
-        channel_id: `int`
+        channel_id:
             Channel ID to fetch the channel object with.
-        guild_id: `Optional[int]`
+        guild_id:
             Guild ID to fetch the channel object with.
 
         Returns
@@ -1043,18 +1033,17 @@ class Client:
         guild_id: int
     ) -> PartialAutoModRule:
         """
-        Creates a partial automod object
+        Creates a partial automod object.
 
         Parameters
         ----------
-        rule_id: `int`
+        rule_id:
             The ID of the automod rule
-        guild_id: `int`
+        guild_id:
             The Guild ID where it comes from
 
         Returns
         -------
-        `PartialAutoModRule`
             The partial automod object
         """
         return PartialAutoModRule(
@@ -1069,18 +1058,17 @@ class Client:
         guild_id: int
     ) -> AutoModRule:
         """
-        Fetches a automod object
+        Fetches a automod object.
 
         Parameters
         ----------
-        rule_id: `int`
+        rule_id:
             The ID of the automod rule
-        guild_id: `int`
+        guild_id:
             The Guild ID where it comes from
 
         Returns
         -------
-        `AutoModRule`
             The automod object
         """
         automod = self.get_partial_automod_rule(
@@ -1094,20 +1082,23 @@ class Client:
         self,
         invite_code: str,
         *,
-        channel_id: Optional[int] = None,
-        guild_id: Optional[int] = None
+        channel_id: int | None = None,
+        guild_id: int | None = None
     ) -> PartialInvite:
         """
         Creates a partial invite object.
 
         Parameters
         ----------
-        invite_code: `str`
+        invite_code:
             Invite code to create the partial invite object with.
+        channel_id:
+            Channel ID to create the partial invite object with.
+        guild_id:
+            Guild ID to create the partial invite object with.
 
         Returns
         -------
-        `PartialInvite`
             The partial invite object.
         """
         return PartialInvite(
@@ -1121,18 +1112,20 @@ class Client:
         self,
         member_id: int,
         *,
-        guild_id: Optional[int] = None,
-        channel_id: Optional[int] = None
+        guild_id: int | None = None,
+        channel_id: int | None = None
     ) -> PartialVoiceState:
         """
         Creates a partial voice state object.
 
         Parameters
         ----------
-        member_id: `int`
+        member_id:
             The ID of the member to create the partial voice state from
-        guild_id: `Optional[int]`
+        guild_id:
             Guild ID to create the partial voice state from
+        channel_id:
+            Channel ID to create the partial voice state from
 
         Returns
         -------
@@ -1149,16 +1142,16 @@ class Client:
     async def fetch_voice_state(
         self,
         member_id: int,
-        guild_id: Optional[int] = None
+        guild_id: int | None = None
     ) -> VoiceState:
         """
         Fetches a voice state object.
 
         Parameters
         ----------
-        member_id: `int`
+        member_id:
             The ID of the member to fetch the voice state from
-        guild_id: `Optional[int]`
+        guild_id:
             Guild ID to fetch the voice state from
 
         Returns
@@ -1177,16 +1170,16 @@ class Client:
         self,
         emoji_id: int,
         *,
-        guild_id: Optional[int] = None
+        guild_id: int | None = None
     ) -> PartialEmoji:
         """
         Creates a partial emoji object.
 
         Parameters
         ----------
-        emoji_id: `int`
+        emoji_id:
             Emoji ID to create the partial emoji object with.
-        guild_id: `Optional[int]`
+        guild_id:
             Guild ID of where the emoji comes from.
             If None, it will get the emoji from the application.
 
@@ -1205,22 +1198,21 @@ class Client:
         self,
         emoji_id: int,
         *,
-        guild_id: Optional[int] = None
+        guild_id: int | None = None
     ) -> Emoji:
         """
         Fetches an emoji object.
 
         Parameters
         ----------
-        emoji_id: `int`
+        emoji_id:
             The ID of the emoji in question
-        guild_id: `Optional[int]`
+        guild_id:
             Guild ID of the emoji.
             If None, it will fetch the emoji from the application
 
         Returns
         -------
-        `Emoji`
             The emoji object
         """
         e = self.get_partial_emoji(
@@ -1234,21 +1226,20 @@ class Client:
         self,
         sticker_id: int,
         *,
-        guild_id: Optional[int] = None
+        guild_id: int | None = None
     ) -> PartialSticker:
         """
         Creates a partial sticker object.
 
         Parameters
         ----------
-        sticker_id: `int`
+        sticker_id:
             Sticker ID to create the partial sticker object with.
-        guild_id: `Optional[int]`
+        guild_id:
             Guild ID to create the partial sticker object with.
 
         Returns
         -------
-        `PartialSticker`
             The partial sticker object.
         """
         return PartialSticker(
@@ -1261,19 +1252,20 @@ class Client:
         self,
         sticker_id: int,
         *,
-        guild_id: Optional[int] = None
+        guild_id: int | None = None
     ) -> Sticker:
         """
         Fetches a sticker object.
 
         Parameters
         ----------
-        sticker_id: `int`
+        sticker_id:
             Sticker ID to fetch the sticker object with.
+        guild_id:
+            Guild ID to fetch the sticker object from.
 
         Returns
         -------
-        `Sticker`
             The sticker object.
         """
         sticker = self.get_partial_sticker(
@@ -1287,21 +1279,20 @@ class Client:
         self,
         sound_id: int,
         *,
-        guild_id: Optional[int] = None
+        guild_id: int | None = None
     ) -> PartialSoundboardSound:
         """
         Creates a partial sticker object.
 
         Parameters
         ----------
-        sticker_id: `int`
+        sound_id:
             Sound ID to create the partial soundboard sound object with.
-        guild_id: `Optional[int]`
+        guild_id:
             Guild ID to create the partial soundboard sound object with.
 
         Returns
         -------
-        `PartialSoundboardSound`
             The partial soundboard sound object.
         """
         return PartialSoundboardSound(
@@ -1320,9 +1311,9 @@ class Client:
 
         Parameters
         ----------
-        sticker_id: `int`
+        sound_id:
             Sound ID to fetch the soundboard sound object with.
-        guild_id: `int`
+        guild_id:
             Guild ID to fetch the soundboard sound object from.
 
         Returns
@@ -1346,7 +1337,7 @@ class Client:
 
         Parameters
         ----------
-        invite_code: `str`
+        invite_code:
             Invite code to fetch the invite object with.
 
         Returns
@@ -1368,11 +1359,11 @@ class Client:
 
         Parameters
         ----------
-        message_id: `int`
+        message_id:
             Message ID to create the partial message object with.
-        channel_id: `int`
+        channel_id:
             Channel ID to create the partial message object with.
-        guild_id: `Optional[int]`
+        guild_id:
             Guild ID to create the partial message object with.
 
         Returns
@@ -1398,11 +1389,11 @@ class Client:
 
         Parameters
         ----------
-        message_id: `int`
+        message_id:
             Message ID to fetch the message object with.
-        channel_id: `int`
+        channel_id:
             Channel ID to fetch the message object with.
-        guild_id: `Optional[int]`
+        guild_id:
             Guild ID to fetch the message object from.
 
         Returns
@@ -1417,16 +1408,16 @@ class Client:
         self,
         webhook_id: int,
         *,
-        webhook_token: Optional[str] = None
+        webhook_token: str | None = None
     ) -> PartialWebhook:
         """
         Creates a partial webhook object.
 
         Parameters
         ----------
-        webhook_id: `int`
+        webhook_id:
             Webhook ID to create the partial webhook object with.
-        webhook_token: `Optional[str]`
+        webhook_token:
             Webhook token to create the partial webhook object with.
 
         Returns
@@ -1444,16 +1435,16 @@ class Client:
         self,
         webhook_id: int,
         *,
-        webhook_token: Optional[str] = None
+        webhook_token: str | None = None
     ) -> Webhook:
         """
         Fetches a webhook object.
 
         Parameters
         ----------
-        webhook_id: `int`
+        webhook_id:
             Webhook ID to fetch the webhook object with.
-        webhook_token: `Optional[str]`
+        webhook_token:
             Webhook token to fetch the webhook object with.
 
         Returns
@@ -1477,7 +1468,7 @@ class Client:
 
         Parameters
         ----------
-        user_id: `int`
+        user_id:
             User ID to create the partial user object with.
 
         Returns
@@ -1499,7 +1490,7 @@ class Client:
 
         Parameters
         ----------
-        user_id: `int`
+        user_id:
             User ID to fetch the user object with.
 
         Returns
@@ -1520,9 +1511,9 @@ class Client:
 
         Parameters
         ----------
-        user_id: `int`
+        user_id:
             User ID to create the partial member object with.
-        guild_id: `int`
+        guild_id:
             Guild ID that the member is in.
 
         Returns
@@ -1546,9 +1537,9 @@ class Client:
 
         Parameters
         ----------
-        guild_id: `int`
+        guild_id:
             Guild ID that the member is in.
-        user_id: `int`
+        user_id:
             User ID to fetch the member object with.
 
         Returns
@@ -1575,16 +1566,16 @@ class Client:
         self,
         name: str,
         *,
-        image: Union[File, bytes]
+        image: File | bytes
     ) -> Emoji:
         """
         Creates an emoji for the application.
 
         Parameters
         ----------
-        name: `str`
+        name:
             Name of emoji
-        image: `Union[File, bytes]`
+        image:
             The image data to use for the emoji.
 
         Returns
@@ -1644,7 +1635,7 @@ class Client:
 
         Parameters
         ----------
-        entitlement_id: `int`
+        entitlement_id:
             Entitlement ID to create the partial entitlement object with.
 
         Returns
@@ -1666,7 +1657,7 @@ class Client:
 
         Parameters
         ----------
-        entitlement_id: `int`
+        entitlement_id:
             Entitlement ID to fetch the entitlement object with.
 
         Returns
@@ -1680,12 +1671,12 @@ class Client:
     async def fetch_entitlement_list(
         self,
         *,
-        user_id: Optional[int] = None,
-        sku_ids: Optional[list[int]] = None,
-        before: Optional[int] = None,
-        after: Optional[int] = None,
-        limit: Optional[int] = 100,
-        guild_id: Optional[int] = None,
+        user_id: int | None = None,
+        sku_ids: list[int] | None = None,
+        before: int | None = None,
+        after: int | None = None,
+        limit: int | None = 100,
+        guild_id: int | None = None,
         exclude_ended: bool = False
     ) -> AsyncIterator[Entitlements]:
         """
@@ -1693,20 +1684,20 @@ class Client:
 
         Parameters
         ----------
-        user_id: `Optional[int]`
+        user_id:
             Show entitlements for a specific user ID.
-        sku_ids: `Optional[list[int]]`
+        sku_ids:
             Show entitlements for a specific SKU ID.
-        before: `Optional[int]`
+        before:
             Only show entitlements before this entitlement ID.
-        after: `Optional[int]`
+        after:
             Only show entitlements after this entitlement ID.
-        limit: `int`
+        limit:
             Limit the amount of entitlements to fetch.
             Use `None` to fetch all entitlements.
-        guild_id: `Optional[int]`
+        guild_id:
             Show entitlements for a specific guild ID.
-        exclude_ended: `bool`
+        exclude_ended:
             Whether to exclude ended entitlements or not.
 
         Returns
@@ -1725,7 +1716,7 @@ class Client:
         if guild_id is not None:
             params["guild_id"] = int(guild_id)
 
-        def _resolve_id(entry) -> int:
+        def _resolve_id(entry: str | int | Snowflake) -> int:
             match entry:
                 case x if isinstance(x, Snowflake):
                     return int(x)
@@ -1744,7 +1735,7 @@ class Client:
                 case _:
                     raise TypeError("Got an unknown type for before/after")
 
-        async def _get_history(limit: int, **kwargs):
+        async def _get_history(limit: int, **kwargs) -> HTTPResponse[dict]:
             params["limit"] = min(limit, 100)
             for key, value in kwargs.items():
                 if value is None:
@@ -1759,9 +1750,9 @@ class Client:
 
         async def _after_http(
             http_limit: int,
-            after_id: Optional[int],
-            limit: Optional[int]
-        ):
+            after_id: int | None,
+            limit: int | None
+        ) -> tuple[dict, int | None, int | None]:
             r = await _get_history(limit=http_limit, after=after_id)
 
             if r.response:
@@ -1773,9 +1764,9 @@ class Client:
 
         async def _before_http(
             http_limit: int,
-            before_id: Optional[int],
-            limit: Optional[int]
-        ):
+            before_id: int | None,
+            limit: int | None
+        ) -> tuple[dict, int | None, int | None]:
             r = await _get_history(limit=http_limit, before=before_id)
 
             if r.response:
@@ -1801,15 +1792,16 @@ class Client:
             messages, state, limit = await strategy(http_limit, state, limit)
 
             i = 0
-            for i, ent in enumerate(messages, start=1):
+            for ent in messages:
                 yield Entitlements(state=self.state, data=ent)
+                i += 1
 
             if i < 100:
                 break
 
     def get_partial_scheduled_event(
         self,
-        id: int,
+        event_id: int,
         guild_id: int
     ) -> PartialScheduledEvent:
         """
@@ -1817,9 +1809,9 @@ class Client:
 
         Parameters
         ----------
-        id: `int`
+        event_id:
             The ID of the scheduled event.
-        guild_id: `int`
+        guild_id:
             The guild ID of the scheduled event.
 
         Returns
@@ -1829,13 +1821,13 @@ class Client:
         """
         return PartialScheduledEvent(
             state=self.state,
-            id=id,
+            id=event_id,
             guild_id=guild_id
         )
 
     async def fetch_scheduled_event(
         self,
-        id: int,
+        event_id: int,
         guild_id: int
     ) -> ScheduledEvent:
         """
@@ -1843,9 +1835,9 @@ class Client:
 
         Parameters
         ----------
-        id: `int`
+        event_id:
             The ID of the scheduled event.
-        guild_id: `int`
+        guild_id:
             The guild ID of the scheduled event.
 
         Returns
@@ -1854,7 +1846,7 @@ class Client:
             The scheduled event object.
         """
         event = self.get_partial_scheduled_event(
-            id, guild_id
+            event_id, guild_id
         )
         return await event.fetch()
 
@@ -1867,7 +1859,7 @@ class Client:
 
         Parameters
         ----------
-        guild_id: `int`
+        guild_id:
             Guild ID to create the partial guild object with.
 
         Returns
@@ -1889,7 +1881,7 @@ class Client:
 
         Parameters
         ----------
-        guild_id: `int`
+        guild_id:
             Guild ID to fetch the guild object with.
 
         Returns
@@ -1904,21 +1896,21 @@ class Client:
         self,
         name: str,
         *,
-        icon: Optional[Union[File, bytes]] = None,
-        reason: Optional[str] = None
+        icon: File | bytes | None = None,
+        reason: str | None = None
     ) -> "Guild":
         """
-        Create a guild
+        Create a guild.
 
         Note that the bot must be in less than 10 guilds to use this endpoint
 
         Parameters
         ----------
-        name: `str`
+        name:
             The name of the guild
-        icon: `Optional[File]`
+        icon:
             The icon of the guild
-        reason: `Optional[str]`
+        reason:
             The reason for creating the guild
 
         Returns
@@ -1953,9 +1945,9 @@ class Client:
 
         Parameters
         ----------
-        role_id: `int`
+        role_id:
             Role ID to create the partial role object with.
-        guild_id: `int`
+        guild_id:
             Guild ID that the role is in.
 
         Returns
@@ -1978,7 +1970,7 @@ class Client:
 
         Parameters
         ----------
-        custom_id: `str`
+        custom_id:
             The Custom ID to find the interaction with.
             Will automatically convert to regex matching
             if some interaction Custom IDs are regex.
@@ -2007,7 +1999,7 @@ class Client:
 
         Parameters
         ----------
-        func: `Listener`
+        func:
             The listener to add to the bot.
         """
         self.listeners.append(func)
@@ -2022,7 +2014,7 @@ class Client:
 
         Parameters
         ----------
-        func: `Listener`
+        func:
             The listener to remove from the bot.
         """
         self.listeners.remove(func)
@@ -2036,7 +2028,7 @@ class Client:
 
         Parameters
         ----------
-        command: `Command`
+        func:
             The command to add to the bot.
         """
         self.commands[func.name] = func
@@ -2051,7 +2043,7 @@ class Client:
 
         Parameters
         ----------
-        command: `Command`
+        func:
             The command to remove from the bot.
         """
         self.commands.pop(func.name, None)
@@ -2061,11 +2053,11 @@ class Client:
         func: Callable
     ) -> Callable:
         """
-        Add a check that will be run before every command
+        Add a check that will be run before every command.
 
         Parameters
         ----------
-        func: `Callable`
+        func:
             The function to add
         """
         self._global_cmd_checks.append(func)
@@ -2081,7 +2073,7 @@ class Client:
 
         Parameters
         ----------
-        interaction: `Interaction`
+        func:
             The interaction to add to the bot.
         """
         if func.regex:
@@ -2100,7 +2092,7 @@ class Client:
 
         Parameters
         ----------
-        interaction: `Interaction`
+        func:
             The interaction to remove from the bot.
         """
         if func.regex:

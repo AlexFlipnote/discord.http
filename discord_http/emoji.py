@@ -23,13 +23,12 @@ __all__ = (
 
 class EmojiParser:
     """
-    This is used to accept any input and convert
-    to either a normal emoji or a Discord emoji automatically.
+    Used to accept any input and convert to either a normal emoji or a Discord emoji automatically.
 
     It is used for things like reactions, forum, components, etc
 
-    Examples:
-    ---------
+    Examples
+    --------
     - `EmojiParser("👍")`
     - `EmojiParser("<:name:1234567890>")`
     - `EmojiParser("1234567890")`
@@ -44,11 +43,11 @@ class EmojiParser:
         is_custom: re.Match | None = utils.re_emoji.search(emoji)
 
         if is_custom:
-            _animated, _name, _id = is_custom.groups()
+            animated, name, id_ = is_custom.groups()
             self.discord_emoji = True
-            self.animated = bool(_animated)
-            self.name: str = _name
-            self.id = int(_id)
+            self.animated = bool(animated)
+            self.name: str = name
+            self.id = int(id_)
 
         elif emoji.isdigit():
             self.discord_emoji = True
@@ -73,30 +72,42 @@ class EmojiParser:
 
     @classmethod
     def from_dict(cls, data: dict) -> Self:
-        if data.get("id", None) is None:
+        """
+        Create an emoji from a dictionary.
+
+        Parameters
+        ----------
+        data:
+            The dictionary to create the emoji from
+
+        Returns
+        -------
+            The emoji
+        """
+        if data.get("id") is None:
             return cls(data["name"])
 
         return cls(
-            f"<{'a' if data.get('animated', None) else ''}:"
+            f"<{'a' if data.get('animated') else ''}:"
             f"{data['name']}:{data['id']}>"
         )
 
     @property
     def url(self) -> str | None:
-        """ Returns the URL of the emoji if it's a Discord emoji """
+        """ Returns the URL of the emoji if it's a Discord emoji. """
         if self.discord_emoji:
             return f"{Asset.BASE}/emojis/{self.id}.{'gif' if self.animated else 'png'}"
         return None
 
     def to_dict(self) -> dict:
-        """ Returns a dict representation of the emoji """
+        """ Returns a dict representation of the emoji. """
         if self.discord_emoji:
             # Include animated if it's a Discord emoji
             return {"id": self.id, "name": self.name, "animated": self.animated}
         return {"name": self.name, "id": None}
 
     def to_forum_dict(self) -> dict:
-        """ Returns a dict representation of emoji to forum/media channel """
+        """ Returns a dict representation of emoji to forum/media channel. """
         payload = {
             "emoji_name": self.name,
             "emoji_id": None
@@ -108,7 +119,7 @@ class EmojiParser:
         return payload
 
     def to_reaction(self) -> str:
-        """ Returns a string representation of the emoji """
+        """ Returns a string representation of the emoji. """
         if self.discord_emoji:
             return f"{self.name}:{self.id}"
         return self.name
@@ -119,7 +130,7 @@ class PartialEmoji(PartialBase):
         self,
         *,
         state: "DiscordAPI",
-        id: int,
+        id: int,  # noqa: A002
         guild_id: int | None = None
     ):
         super().__init__(id=int(id))
@@ -170,16 +181,15 @@ class PartialEmoji(PartialBase):
                 data=r.response
             )
 
-        else:
-            r = await self._state.query(
-                "GET",
-                f"/applications/{self._state.application_id}/emojis/{self.id}"
-            )
+        r = await self._state.query(
+            "GET",
+            f"/applications/{self._state.application_id}/emojis/{self.id}"
+        )
 
-            return Emoji(
-                state=self._state,
-                data=r.response
-            )
+        return Emoji(
+            state=self._state,
+            data=r.response
+        )
 
     async def delete(
         self,
@@ -193,7 +203,7 @@ class PartialEmoji(PartialBase):
 
         Parameters
         ----------
-        reason: `str | None`
+        reason:
             The reason for deleting the emoji.
         """
         if self.guild_id:
@@ -217,22 +227,21 @@ class PartialEmoji(PartialBase):
         name: str | None = MISSING,
         roles: list[PartialRole | int] | None = MISSING,
         reason: str | None = None
-    ):
+    ) -> "Emoji":
         """
         Edits the emoji.
 
         Parameters
         ----------
-        name: `str | None`
+        name:
             The new name of the emoji.
-        roles: `list[PartialRole | int] | None`
+        roles:
             Roles that are allowed to use the emoji. (Only for guilds)
-        reason: `str | None`
+        reason:
             The reason for editing the emoji. (Only for guilds)
 
         Returns
         -------
-        `Emoji`
             The edited emoji.
 
         Raises
@@ -265,17 +274,21 @@ class PartialEmoji(PartialBase):
                 data=r.response
             )
 
-        else:
-            if not payload.get("name", None):
-                raise ValueError(
-                    "name is required when guild_id for emoji is not defined"
-                )
-
-            r = await self._state.query(
-                "PATCH",
-                f"/applications/{self._state.application_id}/emojis/{self.id}",
-                json={"name": payload["name"]},
+        if not payload.get("name"):
+            raise ValueError(
+                "name is required when guild_id for emoji is not defined"
             )
+
+        r = await self._state.query(
+            "PATCH",
+            f"/applications/{self._state.application_id}/emojis/{self.id}",
+            json={"name": payload["name"]},
+        )
+
+        return Emoji(
+            state=self._state,
+            data=r.response
+        )
 
 
 class Emoji(PartialEmoji):
@@ -312,12 +325,12 @@ class Emoji(PartialEmoji):
     def __str__(self) -> str:
         return f"<{'a' if self.animated else ''}:{self.name}:{self.id}>"
 
-    def _from_data(self, data: dict):
-        if data.get("user", None):
+    def _from_data(self, data: dict) -> None:
+        if data.get("user"):
             from .user import User
             self.user = User(state=self._state, data=data["user"])
 
     @property
     def url(self) -> str:
-        """ Returns the URL of the emoji """
+        """ Returns the URL of the emoji. """
         return f"{Asset.BASE}/emojis/{self.id}.{'gif' if self.animated else 'png'}"

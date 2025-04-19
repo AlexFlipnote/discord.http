@@ -45,7 +45,7 @@ class Asset:
 
     async def fetch(self) -> bytes:
         """
-        Fetches the asset
+        Fetches the asset.
 
         Returns
         -------
@@ -63,7 +63,7 @@ class Asset:
 
     async def save(self, path: str) -> int:
         """
-        Fetches the file from the attachment URL and saves it locally to the path
+        Fetches the file from the attachment URL and saves it locally to the path.
 
         Parameters
         ----------
@@ -84,10 +84,10 @@ class Asset:
         self,
         *,
         size: int = MISSING,
-        format: AssetFormatTypes = MISSING
+        format: AssetFormatTypes = MISSING  # noqa: A002
     ) -> Self:
         """
-        Replace the asset with new values
+        Replace the asset with new values.
 
         Parameters
         ----------
@@ -107,10 +107,7 @@ class Asset:
         if format is not MISSING:
             url = url.with_path(f"{path}.{format}")
 
-        if size is not MISSING:
-            url = url.with_query(size=size)
-        else:
-            url = url.with_query(url.raw_query_string)
+        url = url.with_query(size=size) if size is not MISSING else url.with_query(url.raw_query_string)
 
         url = str(url)
         return self.__class__(
@@ -120,9 +117,12 @@ class Asset:
             animated=self._animated
         )
 
-    def with_static_format(self, format: StaticFormatTypes) -> Self:
+    def with_static_format(
+        self,
+        format: StaticFormatTypes  # noqa: A002
+    ) -> Self:
         """
-        Replace the asset with a static format
+        Replace the asset with a static format.
 
         Parameters
         ----------
@@ -141,7 +141,7 @@ class Asset:
     @property
     def url(self) -> str:
         """
-        The URL of the asset
+        The URL of the asset.
 
         Returns
         -------
@@ -153,7 +153,7 @@ class Asset:
     @property
     def key(self) -> str:
         """
-        The key of the asset
+        The key of the asset.
 
         Returns
         -------
@@ -164,7 +164,7 @@ class Asset:
 
     def is_animated(self) -> bool:
         """
-        Whether the asset is animated or not
+        Whether the asset is animated or not.
 
         Returns
         -------
@@ -181,10 +181,10 @@ class Asset:
         avatar: str
     ) -> Self:
         animated = avatar.startswith("a_")
-        format = "gif" if animated else "png"
+        format_ = "gif" if animated else "png"
         return cls(
             state=state,
-            url=f"{cls.BASE}/avatars/{user_id}/{avatar}.{format}?size=1024",
+            url=f"{cls.BASE}/avatars/{user_id}/{avatar}.{format_}?size=1024",
             key=avatar,
             animated=animated
         )
@@ -210,10 +210,10 @@ class Asset:
         avatar: str
     ) -> Self:
         animated = avatar.startswith("a_")
-        format = "gif" if animated else "png"
+        format_ = "gif" if animated else "png"
         return cls(
             state=state,
-            url=f"{cls.BASE}/guilds/{guild_id}/users/{member_id}/avatars/{avatar}.{format}?size=1024",
+            url=f"{cls.BASE}/guilds/{guild_id}/users/{member_id}/avatars/{avatar}.{format_}?size=1024",
             key=avatar,
             animated=animated
         )
@@ -227,10 +227,10 @@ class Asset:
         banner: str
     ) -> Self:
         animated = banner.startswith("a_")
-        format = "gif" if animated else "png"
+        format_ = "gif" if animated else "png"
         return cls(
             state=state,
-            url=f"{cls.BASE}/guilds/{guild_id}/users/{member_id}/banners/{banner}.{format}?size=1024",
+            url=f"{cls.BASE}/guilds/{guild_id}/users/{member_id}/banners/{banner}.{format_}?size=1024",
             key=banner,
             animated=animated
         )
@@ -244,10 +244,10 @@ class Asset:
         path: str
     ) -> Self:
         animated = image.startswith("a_")
-        format = "gif" if animated else "png"
+        format_ = "gif" if animated else "png"
         return cls(
             state=state,
-            url=f"{cls.BASE}/{path}/{guild_id}/{image}.{format}?size=1024",
+            url=f"{cls.BASE}/{path}/{guild_id}/{image}.{format_}?size=1024",
             key=image,
             animated=animated,
         )
@@ -287,10 +287,7 @@ class Asset:
         state: "DiscordAPI",
         decoration: str
     ) -> Self:
-        animated = (
-            decoration.startswith("v2_a_") or
-            decoration.startswith("a_")
-        )
+        animated = decoration.startswith(("v2_a_", "a_"))
 
         return cls(
             state=state,
@@ -307,10 +304,10 @@ class Asset:
         banner: str
     ) -> Self:
         animated = banner.startswith("a_")
-        format = "gif" if animated else "png"
+        format_ = "gif" if animated else "png"
         return cls(
             state=state,
-            url=f"{cls.BASE}/banners/{user_id}/{banner}.{format}?size=1024",
+            url=f"{cls.BASE}/banners/{user_id}/{banner}.{format_}?size=1024",
             key=banner,
             animated=animated
         )

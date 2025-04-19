@@ -1,6 +1,6 @@
+# ruff: noqa: F403, F401
 __version__ = "2.2.0"
 
-# flake8: noqa: F401
 from .asset import *
 from .audit import *
 from .automod import *

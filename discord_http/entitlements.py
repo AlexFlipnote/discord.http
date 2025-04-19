@@ -12,10 +12,10 @@ if TYPE_CHECKING:
     from .http import DiscordAPI
 
 __all__ = (
+    "SKU",
     "Entitlements",
     "PartialEntitlements",
     "PartialSKU",
-    "SKU",
 )
 
 
@@ -24,7 +24,7 @@ class PartialSKU(PartialBase):
         self,
         *,
         state: "DiscordAPI",
-        id: int
+        id: int  # noqa: A002
     ):
         super().__init__(id=int(id))
         self._state = state
@@ -100,7 +100,7 @@ class PartialEntitlements(PartialBase):
         self,
         *,
         state: "DiscordAPI",
-        id: int
+        id: int  # noqa: A002
     ):
         super().__init__(id=int(id))
         self._state = state
@@ -173,19 +173,19 @@ class Entitlements(PartialEntitlements):
     def __str__(self) -> str:
         return f"{self.sku}"
 
-    def _from_data(self, data: dict):
-        if data.get("user_id", None):
+    def _from_data(self, data: dict) -> None:
+        if data.get("user_id"):
             self.user = PartialUser(state=self._state, id=int(data["user_id"]))
 
-        if data.get("starts_at", None):
+        if data.get("starts_at"):
             self.starts_at = utils.parse_time(data["starts_at"])
 
-        if data.get("ends_at", None):
+        if data.get("ends_at"):
             self.ends_at = utils.parse_time(data["ends_at"])
 
     @property
     def guild(self) -> Guild | PartialGuild | None:
-        """ Returns the guild the entitlement is in """
+        """ Returns the guild the entitlement is in. """
         if not self.guild_id:
             return None
 

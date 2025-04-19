@@ -2,7 +2,8 @@ import inspect
 import logging
 import asyncio
 
-from typing import TYPE_CHECKING, Callable, Union, Optional, Any, Self
+from typing import TYPE_CHECKING, Any, Self
+from collections.abc import Callable
 from datetime import datetime, timedelta
 
 from . import utils
@@ -77,51 +78,51 @@ class _ResolveParser:
 
         self._from_data(ctx, data)
 
-    def _from_data(self, ctx: "Context", data: dict):
+    def _from_data(self, ctx: "Context", data: dict) -> None:
         self._parsed_data["strings"] = data.get("data", {}).get("values", [])
 
-        _resolved = data.get("data", {}).get("resolved", {})
+        resolved = data.get("data", {}).get("resolved", {})
         data_to_resolve = ["members", "users", "channels", "roles"]
 
         for key in data_to_resolve:
-            self._parse_resolved(ctx, key, _resolved)
+            self._parse_resolved(ctx, key, resolved)
 
     @classmethod
     def none(cls, ctx: "Context") -> Self:
-        """ with no values """
+        """ With no values. """
         return cls(ctx, {})
 
     def is_empty(self) -> bool:
-        """ Whether no values were selected """
+        """ Whether no values were selected. """
         return not any(self._parsed_data.values())
 
-    def _parse_resolved(self, ctx: "Context", key: str, data: dict):
-        if not data.get(key, {}):
-            return None
+    def _parse_resolved(self, ctx: "Context", key: str, data: dict) -> None:
+        if not data.get(key):
+            return
 
         for g in data[key]:
             if key == "members":
                 data["members"][g]["user"] = data["users"][g]
 
             to_append: list = self._parsed_data[key]
-            _data = data[key][g]
+            data_ = data[key][g]
 
             match key:
                 case "members":
                     if not ctx.guild:
                         raise ValueError("While parsing members, guild object was not available")
-                    to_append.append(Member(state=ctx.bot.state, guild=ctx.guild, data=_data))
+                    to_append.append(Member(state=ctx.bot.state, guild=ctx.guild, data=data_))
 
                 case "users":
-                    to_append.append(User(state=ctx.bot.state, data=_data))
+                    to_append.append(User(state=ctx.bot.state, data=data_))
 
                 case "channels":
-                    to_append.append(channel_types[_data["type"]](state=ctx.bot.state, data=_data))
+                    to_append.append(channel_types[data_["type"]](state=ctx.bot.state, data=data_))
 
                 case "roles":
                     if not ctx.guild:
                         raise ValueError("While parsing roles, guild object was not available")
-                    to_append.append(Role(state=ctx.bot.state, guild=ctx.guild, data=_data))
+                    to_append.append(Role(state=ctx.bot.state, guild=ctx.guild, data=data_))
 
                 case _:
                     pass
@@ -133,22 +134,22 @@ class ResolvedValues(_ResolveParser):
 
     @property
     def members(self) -> list[Member]:
-        """ of members resolved """
+        """ Of members resolved. """
         return self._parsed_data["members"]
 
     @property
     def users(self) -> list[User]:
-        """ of users resolved """
+        """ Of users resolved. """
         return self._parsed_data["users"]
 
     @property
     def channels(self) -> list[BaseChannel]:
-        """ of channels resolved """
+        """ Of channels resolved. """
         return self._parsed_data["channels"]
 
     @property
     def roles(self) -> list[Role]:
-        """ of roles resolved """
+        """ Of roles resolved. """
         return self._parsed_data["roles"]
 
 
@@ -158,7 +159,7 @@ class SelectValues(ResolvedValues):
 
     @property
     def strings(self) -> list[str]:
-        """ of strings selected """
+        """ Of strings selected. """
         return self._parsed_data["strings"]
 
 
@@ -167,10 +168,7 @@ class InteractionResponse:
         self._parent = parent
 
     def pong(self) -> dict:
-        """
-        Only used to acknowledge a ping from
-        Discord Developer portal Interaction URL
-        """
+        """ Only used to acknowledge a ping from Discord Developer portal Interaction URL. """
         return {"type": 1}
 
     def defer(
@@ -181,22 +179,21 @@ class InteractionResponse:
         call_after: Callable | None = None
     ) -> DeferResponse:
         """
-        Defer the response to the interaction
+        Defer the response to the interaction.
 
         Parameters
         ----------
-        ephemeral: `bool`
+        ephemeral:
             If the response should be ephemeral (show only to the user)
-        thinking: `bool`
+        thinking:
             If the response should show the "thinking" status
-        flags: `Optional[int]`
+        flags:
             The flags of the message (overrides ephemeral)
-        call_after: `Optional[Callable]`
+        call_after:
             A coroutine to run after the response is sent
 
         Returns
         -------
-        `DeferResponse`
             The response to the interaction
 
         Raises
@@ -218,21 +215,20 @@ class InteractionResponse:
         self,
         modal: Modal,
         *,
-        call_after: Optional[Callable] = None
+        call_after: Callable | None = None
     ) -> ModalResponse:
         """
-        Send a modal to the interaction
+        Send a modal to the interaction.
 
         Parameters
         ----------
-        modal: `Modal`
+        modal:
             The modal to send
-        call_after: `Optional[Callable]`
+        call_after:
             A coroutine to run after the response is sent
 
         Returns
         -------
-        `ModalResponse`
             The response to the interaction
 
         Raises
@@ -257,19 +253,18 @@ class InteractionResponse:
     def send_empty(
         self,
         *,
-        call_after: Optional[Callable] = None
+        call_after: Callable | None = None
     ) -> EmptyResponse:
         """
-        Send an empty response to the interaction
+        Send an empty response to the interaction.
 
         Parameters
         ----------
-        call_after: `Optional[Callable]`
+        call_after:
             A coroutine to run after the response is sent
 
         Returns
         -------
-        `EmptyResponse`
             The response to the interaction
         """
         if call_after:
@@ -284,54 +279,55 @@ class InteractionResponse:
 
     def send_message(
         self,
-        content: Optional[str] = MISSING,
+        content: str | None = MISSING,
         *,
-        embed: Optional[Embed] = MISSING,
-        embeds: Optional[list[Embed]] = MISSING,
-        file: Optional[File] = MISSING,
-        files: Optional[list[File]] = MISSING,
-        ephemeral: Optional[bool] = False,
-        view: Optional[View] = MISSING,
-        tts: Optional[bool] = False,
-        type: Union[ResponseType, int] = 4,
-        allowed_mentions: Optional[AllowedMentions] = MISSING,
-        poll: Optional[Poll] = MISSING,
-        flags: Optional[MessageFlags] = MISSING,
-        call_after: Optional[Callable] = None
+        embed: Embed | None = MISSING,
+        embeds: list[Embed] | None = MISSING,
+        file: File | None = MISSING,
+        files: list[File] | None = MISSING,
+        ephemeral: bool | None = False,
+        view: View | None = MISSING,
+        tts: bool | None = False,
+        type: ResponseType | int = 4,  # noqa: A002
+        allowed_mentions: AllowedMentions | None = MISSING,
+        poll: Poll | None = MISSING,
+        flags: MessageFlags | None = MISSING,
+        call_after: Callable | None = None
     ) -> MessageResponse:
         """
-        Send a message to the interaction
+        Send a message to the interaction.
 
         Parameters
         ----------
-        content: `Optional[str]`
+        content:
             Content of the message
-        embed: `Optional[Embed]`
+        embed:
             The embed to send
-        embeds: `Optional[list[Embed]]`
+        embeds:
             Multiple embeds to send
-        file: `Optional[File]`
+        file:
             A file to send
-        files: `Optional[Union[list[File], File]]`
+        files:
             Multiple files to send
-        ephemeral: `bool`
+        ephemeral:
             If the message should be ephemeral (show only to the user)
-        view: `Optional[View]`
+        view:
             Components to include in the message
-        tts: `bool`
+        tts:
             Whether the message should be sent using text-to-speech
-        type: `Optional[ResponseType]`
+        type:
             The type of response to send
-        allowed_mentions: `Optional[AllowedMentions]`
+        allowed_mentions:
             Allowed mentions for the message
-        flags: `Optional[int]`
+        flags:
             The flags of the message (overrides ephemeral)
-        call_after: `Optional[Callable]`
+        poll:
+            The poll to be sent
+        call_after:
             A coroutine to run after the response is sent
 
         Returns
         -------
-        `MessageResponse`
             The response to the interaction
 
         Raises
@@ -371,43 +367,42 @@ class InteractionResponse:
     def edit_message(
         self,
         *,
-        content: Optional[str] = MISSING,
-        embed: Optional[Embed] = MISSING,
-        embeds: Optional[list[Embed]] = MISSING,
-        view: Optional[View] = MISSING,
-        attachment: Optional[File] = MISSING,
-        attachments: Optional[list[File]] = MISSING,
-        allowed_mentions: Optional[AllowedMentions] = MISSING,
-        flags: Optional[MessageFlags] = MISSING,
-        call_after: Optional[Callable] = None
+        content: str | None = MISSING,
+        embed: Embed | None = MISSING,
+        embeds: list[Embed] | None = MISSING,
+        view: View | None = MISSING,
+        attachment: File | None = MISSING,
+        attachments: list[File] | None = MISSING,
+        allowed_mentions: AllowedMentions | None = MISSING,
+        flags: MessageFlags | None = MISSING,
+        call_after: Callable | None = None
     ) -> MessageResponse:
         """
-        Edit the original message of the interaction
+        Edit the original message of the interaction.
 
         Parameters
         ----------
-        content: `Optional[str]`
+        content:
             Content of the message
-        embed: `Optional[Embed]`
+        embed:
             Embed to edit the message with
-        embeds: `Optional[list[Embed]]`
+        embeds:
             Multiple embeds to edit the message with
-        view: `Optional[View]`
+        view:
             Components to include in the message
-        attachment: `Optional[File]`
+        attachment:
             New file to edit the message with
-        attachments: `Optional[Union[list[File], File]]`
+        attachments:
             Multiple new files to edit the message with
-        allowed_mentions: `Optional[AllowedMentions]`
+        allowed_mentions:
             Allowed mentions for the message
-        flags: `Optional[int]`
+        flags:
             The flags of the message
-        call_after: `Optional[Callable]`
+        call_after:
             A coroutine to run after the response is sent
 
         Returns
         -------
-        `MessageResponse`
             The response to the interaction
 
         Raises
@@ -446,16 +441,15 @@ class InteractionResponse:
         choices: dict[Any, str]
     ) -> AutocompleteResponse:
         """
-        Send an autocomplete response to the interaction
+        Send an autocomplete response to the interaction.
 
         Parameters
         ----------
-        choices: `dict[Union[str, int, float], str]`
+        choices:
             The choices to send
 
         Returns
         -------
-        `AutocompleteResponse`
             The response to the interaction
 
         Raises
@@ -477,7 +471,7 @@ class InteractionResponse:
                     f"key {k} must be a string, got {type(k)}"
                 )
 
-            if (isinstance(k, int) or isinstance(k, float)) and k >= 2**53:
+            if (isinstance(k, int | float)) and k >= 2**53:
                 _log.warning(
                     f"'{k}: {v}' (int) is too large, "
                     "Discord might ignore it and make autocomplete fail"
@@ -507,10 +501,10 @@ class Context:
         )
 
         # Arguments that gets parsed on runtime
-        self.command: Optional["Command"] = None
+        self.command: "Command | None" = None
 
         self.app_permissions: Permissions = Permissions(int(data.get("app_permissions", 0)))
-        self.custom_id: Optional[str] = data.get("data", {}).get("custom_id", None)
+        self.custom_id: str | None = data.get("data", {}).get("custom_id", None)
 
         self.resolved: ResolvedValues = ResolvedValues.none(self)
         self.select_values: SelectValues = SelectValues.none(self)
@@ -519,7 +513,7 @@ class Context:
         self.options: list[dict] = data.get("data", {}).get("options", [])
         self._followup_token: str = data.get("token", "")
 
-        self._original_response: Optional[WebhookMessage] = None
+        self._original_response: WebhookMessage | None = None
         self._raw_resolved: dict = data.get("data", {}).get("resolved", {})
 
         self.entitlements: list[Entitlements] = [
@@ -536,61 +530,61 @@ class Context:
             for g in data.get("channel", {}).get("recipients", [])
         ]
 
-        self.locale: "LocaleTypes | None" = data.get("locale", None)
-        self.guild_locale: "LocaleTypes | None" = data.get("guild_locale", None)
+        self.locale: "LocaleTypes | None" = data.get("locale")
+        self.guild_locale: "LocaleTypes | None" = data.get("guild_locale")
 
         # Should not be used, but if you *really* want the raw data, here it is
         self._data: dict = data
 
         self._from_data(data)
 
-    def _from_data(self, data: dict):
-        self.channel_id: Optional[int] = None
-        if data.get("channel_id", None):
+    def _from_data(self, data: dict) -> None:
+        self.channel_id: int | None = None
+        if data.get("channel_id"):
             self.channel_id = int(data["channel_id"])
 
-        self._guild: Optional[PartialGuild] = None
-        if data.get("guild_id", None):
+        self._guild: PartialGuild | None = None
+        if data.get("guild_id"):
             self._guild = PartialGuild(
                 state=self.bot.state,
                 id=int(data["guild_id"])
             )
 
-        self._channel: Optional[BaseChannel] = None
-        if data.get("channel", None):
-            _channel_data = data["channel"]
+        self._channel: BaseChannel | None = None
+        if data.get("channel"):
+            channel_data = data["channel"]
             if self._guild:
-                _channel_data["guild_id"] = self._guild.id
+                channel_data["guild_id"] = self._guild.id
 
-            self._channel = channel_types[_channel_data["type"]](
+            self._channel = channel_types[channel_data["type"]](
                 state=self.bot.state,
-                data=_channel_data
+                data=channel_data
             )
 
-        self.message: Optional[Message] = None
-        if data.get("message", None):
+        self.message: Message | None = None
+        if data.get("message"):
             self.message = Message(
                 state=self.bot.state,
                 data=data["message"],
                 guild=self._guild
             )
         elif self._raw_resolved.get("messages", {}):
-            _first_msg = next(iter(self._raw_resolved["messages"].values()), None)
-            if _first_msg:
+            first_msg = next(iter(self._raw_resolved["messages"].values()), None)
+            if first_msg:
                 self.message = Message(
                     state=self.bot.state,
-                    data=_first_msg,
+                    data=first_msg,
                     guild=self._guild
                 )
 
         if self._raw_resolved:
             self.resolved = ResolvedValues(self, data)
 
-        self.author: Optional[Union[Member, User]] = None
+        self.author: Member | User | None = None
         if self.message is not None:
             self.author = self.message.author
 
-        self.user: Union[Member, User] = self._parse_user(data)
+        self.user: Member | User = self._parse_user(data)
 
         match self.type:
             case InteractionType.message_component:
@@ -603,7 +597,7 @@ class Context:
 
     async def _background_task_manager(self, call_after: Callable) -> None:
         try:
-            if isinstance(self.bot.call_after_delay, (int, float)):
+            if isinstance(self.bot.call_after_delay, int | float):
                 await asyncio.sleep(self.bot.call_after_delay)
                 # Somehow, Discord thinks @original messages is HTTP 404
                 # Give them a smaaaall chance to fix it
@@ -620,7 +614,8 @@ class Context:
     @property
     def guild(self) -> Guild | PartialGuild | None:
         """
-        `Guild | PartialGuild | None`: Returns the guild the interaction was made in
+        Returns the guild the interaction was made in.
+
         If you are using gateway cache, it can return full object too
         """
         if not self._guild:
@@ -634,7 +629,7 @@ class Context:
 
     @property
     def channel(self) -> "BaseChannel | PartialChannel | None":
-        """ Returns the channel the interaction was made in """
+        """ Returns the channel the interaction was made in. """
         if not self.channel_id:
             return None
 
@@ -659,91 +654,93 @@ class Context:
 
     @property
     def channel_type(self) -> ChannelType:
-        """ `ChannelType` Returns the type of the channel """
+        """ Returns the type of the channel. """
         if self._channel:
             return self._channel.type
         return ChannelType.unknown
 
     @property
     def created_at(self) -> datetime:
-        """ `datetime` Returns the time the interaction was created """
+        """ Returns the time the interaction was created. """
         return utils.snowflake_time(self.id)
 
     @property
-    def cooldown(self) -> Optional[Cooldown]:
-        """ `Optional[Cooldown]` Returns the context cooldown """
-        _cooldown = self.command.cooldown
+    def cooldown(self) -> Cooldown | None:
+        """ Returns the context cooldown. """
+        cooldown = self.command.cooldown
 
-        if _cooldown is None:
+        if cooldown is None:
             return None
 
-        return _cooldown.get_bucket(
+        return cooldown.get_bucket(
             self, self.created_at.timestamp()
         )
 
     @property
     def expires_at(self) -> datetime:
-        """ `datetime` Returns the time the interaction expires """
+        """ Returns the time the interaction expires. """
         return self.created_at + timedelta(minutes=15)
 
     def is_expired(self) -> bool:
-        """ `bool` Returns whether the interaction is expired """
+        """ Returns whether the interaction is expired. """
         return utils.utcnow() >= self.expires_at
 
     @property
     def response(self) -> InteractionResponse:
-        """ `InteractionResponse` Returns the response to the interaction """
+        """ Returns the response to the interaction. """
         return InteractionResponse(self)
 
     async def send(
         self,
-        content: Optional[str] = MISSING,
+        content: str | None = MISSING,
         *,
-        embed: Optional[Embed] = MISSING,
-        embeds: Optional[list[Embed]] = MISSING,
-        file: Optional[File] = MISSING,
-        files: Optional[list[File]] = MISSING,
-        ephemeral: Optional[bool] = False,
-        view: Optional[View] = MISSING,
-        tts: Optional[bool] = False,
-        type: Union[ResponseType, int] = 4,
-        allowed_mentions: Optional[AllowedMentions] = MISSING,
-        poll: Optional[Poll] = MISSING,
-        flags: Optional[MessageFlags] = MISSING,
-        delete_after: Optional[float] = None
+        embed: Embed | None = MISSING,
+        embeds: list[Embed] | None = MISSING,
+        file: File | None = MISSING,
+        files: list[File] | None = MISSING,
+        ephemeral: bool | None = False,
+        view: View | None = MISSING,
+        tts: bool | None = False,
+        type: ResponseType | int = 4,  # noqa: A002
+        allowed_mentions: AllowedMentions | None = MISSING,
+        poll: Poll | None = MISSING,
+        flags: MessageFlags | None = MISSING,
+        delete_after: float | None = None
     ) -> WebhookMessage:
         """
-        Send a message after responding with an empty response in the initial interaction
+        Send a message after responding with an empty response in the initial interaction.
 
         Parameters
         ----------
-        content: `Optional[str]`
+        content:
             Content of the message
-        embed: `Optional[Embed]`
+        embed:
             Embed of the message
-        embeds: `Optional[list[Embed]]`
+        embeds:
             Embeds of the message
-        file: `Optional[File]`
+        file:
             File of the message
-        files: `Optional[Union[list[File], File]]`
+        files:
             Files of the message
-        ephemeral: `bool`
+        ephemeral:
             Whether the message should be sent as ephemeral
-        view: `Optional[View]`
+        view:
             Components of the message
-        type: `Optional[ResponseType]`
+        type:
             Which type of response should be sent
-        allowed_mentions: `Optional[AllowedMentions]`
+        allowed_mentions:
             Allowed mentions of the message
-        wait: `bool`
+        wait:
             Whether to wait for the message to be sent
-        thread_id: `Optional[int]`
+        thread_id:
             Thread ID to send the message to
-        poll: `Optional[Poll]`
+        poll:
             Poll to send with the message
-        flags: `Optional[MessageFlags]`
+        tts:
+            Whether the message should be sent as TTS
+        flags:
             Flags of the message
-        delete_after: `Optional[float]`
+        delete_after:
             How long to wait before deleting the message
 
         Returns
@@ -779,8 +776,8 @@ class Context:
                     filename=file.filename
                 )
 
-        _modified_payload = payload.to_dict()
-        multidata.attach("payload_json", _modified_payload)
+        modified_payload = payload.to_dict()
+        multidata.attach("payload_json", modified_payload)
 
         r = await self.bot.state.query(
             "POST",
@@ -790,7 +787,7 @@ class Context:
             headers={"Content-Type": multidata.content_type}
         )
 
-        _msg = WebhookMessage(
+        msg = WebhookMessage(
             state=self.bot.state,
             data=r.response["resource"]["message"],
             application_id=self.bot.application_id,  # type: ignore
@@ -798,61 +795,63 @@ class Context:
         )
 
         if delete_after is not None:
-            await _msg.delete(delay=float(delete_after))
-        return _msg
+            await msg.delete(delay=float(delete_after))
+        return msg
 
     async def create_followup_response(
         self,
-        content: Optional[str] = MISSING,
+        content: str | None = MISSING,
         *,
-        embed: Optional[Embed] = MISSING,
-        embeds: Optional[list[Embed]] = MISSING,
-        file: Optional[File] = MISSING,
-        files: Optional[list[File]] = MISSING,
-        ephemeral: Optional[bool] = False,
-        view: Optional[View] = MISSING,
-        tts: Optional[bool] = False,
-        type: Union[ResponseType, int] = 4,
-        allowed_mentions: Optional[AllowedMentions] = MISSING,
-        poll: Optional[Poll] = MISSING,
-        flags: Optional[MessageFlags] = MISSING,
-        delete_after: Optional[float] = None
+        embed: Embed | None = MISSING,
+        embeds: list[Embed] | None = MISSING,
+        file: File | None = MISSING,
+        files: list[File] | None = MISSING,
+        ephemeral: bool | None = False,
+        view: View | None = MISSING,
+        tts: bool | None = False,
+        type: ResponseType | int = 4,  # noqa: A002
+        allowed_mentions: AllowedMentions | None = MISSING,
+        poll: Poll | None = MISSING,
+        flags: MessageFlags | None = MISSING,
+        delete_after: float | None = None
     ) -> WebhookMessage:
         """
-        Creates a new followup response to the interaction
+        Creates a new followup response to the interaction.
 
         Do not use this to create a followup response when defer was called before.
         Use `edit_original_response` instead.
 
         Parameters
         ----------
-        content: `Optional[str]`
+        content:
             Content of the message
-        embed: `Optional[Embed]`
+        embed:
             Embed of the message
-        embeds: `Optional[list[Embed]]`
+        embeds:
             Embeds of the message
-        file: `Optional[File]`
+        file:
             File of the message
-        files: `Optional[Union[list[File], File]]`
+        files:
             Files of the message
-        ephemeral: `bool`
+        ephemeral:
             Whether the message should be sent as ephemeral
-        view: `Optional[View]`
+        view:
             Components of the message
-        type: `Optional[ResponseType]`
+        type:
             Which type of response should be sent
-        allowed_mentions: `Optional[AllowedMentions]`
+        allowed_mentions:
             Allowed mentions of the message
-        wait: `bool`
+        wait:
             Whether to wait for the message to be sent
-        thread_id: `Optional[int]`
+        thread_id:
             Thread ID to send the message to
-        poll: `Optional[Poll]`
+        poll:
             Poll to send with the message
-        flags: `Optional[MessageFlags]`
+        tts:
+            Whether the message should be sent as TTS
+        flags:
             Flags of the message
-        delete_after: `Optional[float]`
+        delete_after:
             How long to wait before deleting the message
 
         Returns
@@ -885,7 +884,7 @@ class Context:
             headers={"Content-Type": payload.content_type}
         )
 
-        _msg = WebhookMessage(
+        msg = WebhookMessage(
             state=self.bot.state,
             data=r.response,
             application_id=self.bot.application_id,  # type: ignore
@@ -893,11 +892,11 @@ class Context:
         )
 
         if delete_after is not None:
-            await _msg.delete(delay=float(delete_after))
-        return _msg
+            await msg.delete(delay=float(delete_after))
+        return msg
 
     async def original_response(self) -> WebhookMessage:
-        """ `Message` Fetch the original response to the interaction """
+        """ Fetch the original response to the interaction. """
         if self._original_response is not None:
             return self._original_response
 
@@ -920,16 +919,16 @@ class Context:
     async def edit_original_response(
         self,
         *,
-        content: Optional[str] = MISSING,
-        embed: Optional[Embed] = MISSING,
-        embeds: Optional[list[Embed]] = MISSING,
-        view: Optional[View] = MISSING,
-        attachment: Optional[File] = MISSING,
-        attachments: Optional[list[File]] = MISSING,
-        allowed_mentions: Optional[AllowedMentions] = MISSING,
-        flags: Optional[MessageFlags] = MISSING,
+        content: str | None = MISSING,
+        embed: Embed | None = MISSING,
+        embeds: list[Embed] | None = MISSING,
+        view: View | None = MISSING,
+        attachment: File | None = MISSING,
+        attachments: list[File] | None = MISSING,
+        allowed_mentions: AllowedMentions | None = MISSING,
+        flags: MessageFlags | None = MISSING,
     ) -> WebhookMessage:
-        """ `Message` Edit the original response to the interaction """
+        """ Edit the original response to the interaction. """
         payload = MessageResponse(
             content=content,
             embeds=embeds,
@@ -963,56 +962,56 @@ class Context:
         return msg
 
     async def delete_original_response(self) -> None:
-        """ Delete the original response to the interaction """
+        """ Delete the original response to the interaction. """
         await self.bot.state.query(
             "DELETE",
             f"/webhooks/{self.bot.application_id}/{self._followup_token}/messages/@original",
             retry_codes=[404]
         )
 
-    async def _create_args(self) -> tuple[list[Union[Member, User, Message, None]], dict]:
+    async def _create_args(self) -> tuple[list[Member | User | Message | None], dict]:
         match self.command_type:
             case ApplicationCommandType.chat_input:
                 return [], await self._create_args_chat_input()
 
             case ApplicationCommandType.user:
                 if self.resolved.members:
-                    _first: Optional[dict] = next(
+                    first: dict | None = next(
                         iter(self._raw_resolved["members"].values()),
                         None
                     )
 
-                    if not _first:
+                    if not first:
                         raise ValueError("User command detected members, but was unable to parse it")
                     if not self.guild:
                         raise ValueError("While parsing members, guild was not available")
 
-                    _first["user"] = next(
+                    first["user"] = next(
                         iter(self._raw_resolved["users"].values()),
                         None
                     )
 
-                    _target = Member(
+                    target = Member(
                         state=self.bot.state,
                         guild=self.guild,
-                        data=_first
+                        data=first
                     )
 
                 elif self._raw_resolved.get("users", {}):
-                    _first: Optional[dict] = next(
+                    first: dict | None = next(
                         iter(self._raw_resolved["users"].values()),
                         None
                     )
 
-                    if not _first:
+                    if not first:
                         raise ValueError("User command detected users, but was unable to parse it")
 
-                    _target = User(state=self.bot.state, data=_first)
+                    target = User(state=self.bot.state, data=first)
 
                 else:
                     raise ValueError("Neither members nor users were detected while parsing user command")
 
-                return [_target], {}
+                return [target], {}
 
             case ApplicationCommandType.message:
                 return [self.message], {}
@@ -1021,7 +1020,7 @@ class Context:
                 raise ValueError("Unknown command type")
 
     async def _create_args_chat_input(self) -> dict:
-        async def _create_args_recursive(data, resolved) -> dict:
+        async def _create_args_recursive(data: dict, resolved: dict) -> dict:
             if not data.get("options"):
                 return {}
 
@@ -1088,16 +1087,16 @@ class Context:
                     case CommandOptionType.string:
                         kwargs[option["name"]] = option["value"]
 
-                        _has_converter = self.command._converters.get(option["name"], None)
-                        if _has_converter:
-                            _conv_class = _has_converter()
-                            if inspect.iscoroutinefunction(_conv_class.convert):
-                                kwargs[option["name"]] = await _conv_class.convert(
+                        has_converter = self.command._converters.get(option["name"], None)
+                        if has_converter:
+                            conv_class = has_converter()
+                            if inspect.iscoroutinefunction(conv_class.convert):
+                                kwargs[option["name"]] = await conv_class.convert(
                                     self,
                                     option["value"]
                                 )
                             else:
-                                kwargs[option["name"]] = _conv_class.convert(
+                                kwargs[option["name"]] = conv_class.convert(
                                     self,
                                     option["value"]
                                 )
@@ -1121,19 +1120,18 @@ class Context:
             self._raw_resolved
         )
 
-    def _parse_user(self, data: dict) -> Union[Member, User]:
-        if data.get("member", None):
+    def _parse_user(self, data: dict) -> Member | User:
+        if data.get("member"):
             return Member(
                 state=self.bot.state,
                 guild=self.guild,  # type: ignore
                 data=data["member"]
             )
-        elif data.get("user", None):
+        if data.get("user"):
             return User(
                 state=self.bot.state,
                 data=data["user"]
             )
-        else:
-            raise ValueError(
-                "Neither member nor user was detected while parsing user"
-            )
+        raise ValueError(
+            "Neither member nor user was detected while parsing user"
+        )

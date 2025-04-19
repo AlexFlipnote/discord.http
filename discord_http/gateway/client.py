@@ -1,9 +1,11 @@
 
 import logging
 import asyncio
+import operator
 
 from datetime import datetime, UTC
-from typing import Coroutine, TYPE_CHECKING
+from typing import TYPE_CHECKING
+from collections.abc import Coroutine
 
 from .shard import Shard
 from .object import PlayingStatus
@@ -57,7 +59,7 @@ class GatewayClient:
 
         Parameters
         ----------
-        shard_id: `int`
+        shard_id:
             The ID of the shard to get.
 
         Returns
@@ -73,25 +75,25 @@ class GatewayClient:
 
         Parameters
         ----------
-        status: `PlayingStatus`
+        status:
             The status to change to.
         """
         for shard in self.__shards.values():
             await shard.change_presence(status)
 
     async def _index_websocket_status(self) -> dict[int, dict]:
-        _now = datetime.now(UTC)
+        now = datetime.now(UTC)
         return {
             shard_id: {
                 "ping": shard.status.ping,
                 "latency": shard.status.latency,
                 "activity": {
                     "last": str(shard._last_activity),
-                    "between": str(_now - shard._last_activity)
+                    "between": str(now - shard._last_activity)
                 }
             }
             for shard_id, shard in sorted(
-                self.__shards.items(), key=lambda x: x[0]
+                self.__shards.items(), key=operator.itemgetter(0)
             )
         }
 
@@ -105,11 +107,11 @@ class GatewayClient:
 
     async def _launch_shard(self, shard_id: int) -> None:
         """
-        Individual shard launching
+        Individual shard launching.
 
         Parameters
         ----------
-        shard_id: `int`
+        shard_id:
             The shard ID to launch
         """
         try:
@@ -133,14 +135,15 @@ class GatewayClient:
             return await self._launch_shard(shard_id)
 
         self.__shards[shard_id] = shard
+        return None
 
     def shard_by_guild_id(self, guild_id: "Snowflake | int") -> int:
         """
-        Returns the shard ID of the shard that the guild is in
+        Returns the shard ID of the shard that the guild is in.
 
         Parameters
         ----------
-        guild_id: `Snowflake | int`
+        guild_id:
             The ID of the guild to get the shard ID of
 
         Returns
@@ -151,7 +154,7 @@ class GatewayClient:
         return (int(guild_id) >> 22) % self.shard_count
 
     async def _launch_all_shards(self) -> None:
-        """ Launches all the shards """
+        """ Launches all the shards. """
         if self.automatic_shards:
             self.shard_count, self.max_concurrency = await self._fetch_gateway()
 
@@ -175,13 +178,13 @@ class GatewayClient:
             ]
 
             for i, shard_chunk in enumerate(chunks, start=1):
-                _booting: list[Coroutine] = [
+                booting: list[Coroutine] = [
                     self._launch_shard(shard_id)
                     for shard_id in shard_chunk
                 ]
 
                 _log.debug(f"Launching bucket {i}/{len(chunks)}")
-                await asyncio.gather(*_booting)
+                await asyncio.gather(*booting)
 
                 if i != len(chunks):
                     _log.debug(f"Bucket {i}/{len(chunks)} shards launched, waiting (5s/bucket)")
@@ -191,27 +194,27 @@ class GatewayClient:
 
             _log.debug(f"All {len(chunks)} bucket(s) have launched a total of {self.shard_count} shard(s)")
 
-        asyncio.create_task(self._delay_full_ready())
+        asyncio.create_task(self._delay_full_ready())  # noqa: RUF006
 
     async def _delay_full_ready(self) -> None:
-        _waiting: list[Coroutine] = [
+        waiting: list[Coroutine] = [
             g.wait_until_ready()
             for g in self.__shards.values()
         ]
 
         # Gather all shards to now wait until they are ready
-        await asyncio.gather(*_waiting)
+        await asyncio.gather(*waiting)
 
         self.bot._shards_ready.set()
         _log.info("discord.http/gateway is now ready")
 
     def start(self) -> None:
-        """ Start the gateway client """
+        """ Start the gateway client. """
         self.bot.loop.create_task(self._launch_all_shards())
 
     async def close(self) -> None:
-        """ Close the gateway client """
-        async def _close():
+        """ Close the gateway client. """
+        async def _close() -> None:
             to_close = [
                 asyncio.ensure_future(shard.close(kill=True))
                 for shard in self.__shards.values()
@@ -220,5 +223,5 @@ class GatewayClient:
             if to_close:
                 await asyncio.wait(to_close)
 
-        _task = asyncio.create_task(_close())
-        await _task
+        task = asyncio.create_task(_close())
+        await task

@@ -1,6 +1,7 @@
 import logging
 
-from typing import TYPE_CHECKING, Any, TypeVar, Type, Callable
+from typing import TYPE_CHECKING, Any, TypeVar, ClassVar
+from collections.abc import Callable
 from datetime import datetime
 
 from . import utils, enums, flags
@@ -20,12 +21,12 @@ if TYPE_CHECKING:
 _log = logging.getLogger(__name__)
 
 __all__ = (
-    "AuditLogEntry",
     "AuditChange",
+    "AuditLogEntry",
 )
 
 
-def _handle_snowflake(entry: "AuditLogEntry", data: int) -> Snowflake:
+def _handle_snowflake(entry: "AuditLogEntry", data: int) -> Snowflake:  # noqa: ARG001
     return Snowflake(id=int(data))
 
 
@@ -35,19 +36,18 @@ def _handle_type(entry: "AuditLogEntry", data: int | str) -> (
 ):
     if entry.action_type.name.startswith("sticker_"):
         return enums.StickerType(data)
-    elif entry.action_type.name.startswith("webhook_"):
+    if entry.action_type.name.startswith("webhook_"):
         return enums.WebhookType(data)
-    elif entry.action_type.name.startswith("integration_"):
+    if entry.action_type.name.startswith("integration_"):
         # Might use enums.IntegrationType in the future, not sure yet
         return data  # type: ignore
-    elif entry.action_type.name.startswith("channel_overwrite_"):
+    if entry.action_type.name.startswith("channel_overwrite_"):
         return enums.PermissionType(data)
-    else:
-        return enums.ChannelType(data)
+    return enums.ChannelType(data)
 
 
 def _handle_overloaded_flags(entry: "AuditLogEntry", data: int) -> flags.BaseFlag | int:
-    _valid_types = (
+    valid_types = (
         enums.AuditLogType.channel_create,
         enums.AuditLogType.channel_update,
         enums.AuditLogType.channel_delete,
@@ -56,12 +56,15 @@ def _handle_overloaded_flags(entry: "AuditLogEntry", data: int) -> flags.BaseFla
         enums.AuditLogType.thread_delete,
     )
 
-    if entry.action_type in _valid_types:
+    if entry.action_type in valid_types:
         return flags.ChannelFlags(data)
     return data
 
 
-def _handle_default_reaction(entry: "AuditLogEntry", data: dict | None) -> EmojiParser | None:
+def _handle_default_reaction(
+    entry: "AuditLogEntry",  # noqa: ARG001
+    data: dict | None
+) -> EmojiParser | None:
     if not data:
         return None
 
@@ -106,20 +109,29 @@ def _handle_guild_id(entry: "AuditLogEntry", data: str | None) -> PartialGuild |
     return entry._convert_target_guild(int(data))
 
 
-def _handle_timestamp(entry: "AuditLogEntry", data: str | None) -> datetime | None:
+def _handle_timestamp(
+    entry: "AuditLogEntry",  # noqa: ARG001
+    data: str | None
+) -> datetime | None:
     if not data:
         return None
     return utils.parse_time(data)
 
 
-def _handle_applied_tags(entry: "AuditLogEntry", data: list[str]) -> list[Snowflake]:
+def _handle_applied_tags(
+    entry: "AuditLogEntry",  # noqa: ARG001
+    data: list[str]
+) -> list[Snowflake]:
     return [
         Snowflake(id=int(g))
         for g in data
     ]
 
 
-def _handle_forum_tags(entry: "AuditLogEntry", data: list[dict]) -> list[ForumTag]:
+def _handle_forum_tags(
+    entry: "AuditLogEntry",  # noqa: ARG001
+    data: list[dict]
+) -> list[ForumTag]:
     return [
         ForumTag.from_data(data=g)
         for g in data
@@ -191,15 +203,24 @@ def _handle_overwrites(entry: "AuditLogEntry", data: dict) -> list[tuple[
     return overwrites
 
 
-def _handle_colour(entry: "AuditLogEntry", data: int) -> Colour:
+def _handle_colour(
+    entry: "AuditLogEntry",  # noqa: ARG001
+    data: int
+) -> Colour:
     return Colour(int(data))
 
 
-def _handle_automod_triggers(entry: "AuditLogEntry", data: dict) -> AutoModRuleTriggers:
+def _handle_automod_triggers(
+    entry: "AuditLogEntry",  # noqa: ARG001
+    data: dict
+) -> AutoModRuleTriggers:
     return AutoModRuleTriggers.from_dict(data)
 
 
-def _handle_automod_actions(entry: "AuditLogEntry", data: list[dict]) -> list[AutoModRuleAction]:
+def _handle_automod_actions(
+    entry: "AuditLogEntry",  # noqa: ARG001
+    data: list[dict]
+) -> list[AutoModRuleAction]:
     return [
         AutoModRuleAction.from_dict(g)
         for g in data
@@ -235,8 +256,11 @@ def _handle_role(entry: "AuditLogEntry", data: str) -> PartialRole:
 E = TypeVar("E", bound=enums.BaseEnum)
 
 
-def _handle_enum(cls: Type[E]) -> Callable[["AuditLogEntry", str | int], E]:
-    def _handler(entry: "AuditLogEntry", data: str | int) -> E:
+def _handle_enum(cls: type[E]) -> Callable[["AuditLogEntry", str | int], E]:
+    def _handler(
+        entry: "AuditLogEntry",  # noqa: ARG001
+        data: str | int
+    ) -> E:
         return cls(int(data))
 
     return _handler
@@ -245,15 +269,18 @@ def _handle_enum(cls: Type[E]) -> Callable[["AuditLogEntry", str | int], E]:
 F = TypeVar("F", bound=flags.BaseFlag)
 
 
-def _handle_flags(cls: Type[F]) -> Callable[["AuditLogEntry", str | int], F]:
-    def _handler(entry: "AuditLogEntry", data: str | int) -> F:
+def _handle_flags(cls: type[F]) -> Callable[["AuditLogEntry", str | int], F]:
+    def _handler(
+        entry: "AuditLogEntry",  # noqa: ARG001
+        data: str | int
+    ) -> F:
         return cls(int(data))
 
     return _handler
 
 
 class AuditChange:
-    _translaters: dict[str, Callable[["AuditLogEntry", Any], Any] | None] = {
+    _translaters: ClassVar[dict[str, Callable[["AuditLogEntry", Any], Any] | None]] = {
         "verification_level": _handle_enum(enums.VerificationLevel),
         "explicit_content_filter": _handle_enum(enums.ContentFilterLevel),
         "allow": _handle_flags(flags.Permissions),
@@ -314,21 +341,21 @@ class AuditChange:
 
         self.key: str = data["key"]
 
-        self.old_value: Any | None = data.get("old_value", None)
-        self.new_value: Any | None = data.get("new_value", None)
+        self.old_value: Any | None = data.get("old_value")
+        self.new_value: Any | None = data.get("new_value")
 
         if self.key in ("$add", "$remove"):
             self.new_value = self._handle_partial_role(data)
             return
 
-        _translator: Callable[["AuditLogEntry", Any], Any] | None = self._translaters.get(self.key, None)
+        translator: Callable[["AuditLogEntry", Any], Any] | None = self._translaters.get(self.key, None)
 
-        if _translator:
+        if translator:
             if self.new_value is not None:
-                self.new_value = _translator(self.entry, self.new_value)
+                self.new_value = translator(self.entry, self.new_value)
 
             if self.old_value is not None:
-                self.old_value = _translator(self.entry, self.old_value)
+                self.old_value = translator(self.entry, self.old_value)
 
     def _handle_partial_role(self, data: dict) -> list[PartialRole]:
         return [
@@ -365,12 +392,12 @@ class AuditLogEntry(Snowflake):
             _log.debug(f"Unknown audit log type detected from guild {self.guild.id}: {data['action_type']}")
             self.action_type = enums.AuditLogType.unknown
 
-        self.reason: str | None = data.get("reason", None)
+        self.reason: str | None = data.get("reason")
 
         self.user_id: int | None = utils.get_int(data, "user_id")
         self.target_id: int | None = utils.get_int(data, "target_id")
 
-        # TODO: Add parsing methods for options
+        # Add parsing methods for options
         self.options: dict = data.get("options", {})
         self.changes: list[AuditChange] = []
 
@@ -391,7 +418,7 @@ class AuditLogEntry(Snowflake):
 
     @property
     def user(self) -> User | PartialUser | None:
-        """ Returns the user object of the audit log if available """
+        """ Returns the user object of the audit log if available. """
         if not self.user_id:
             return None
         return self._convert_target_user(self.user_id)
@@ -399,8 +426,7 @@ class AuditLogEntry(Snowflake):
     @property
     def target(self) -> Snowflake | None:
         """
-        `Snowflake | None`:
-        Returns the target object of the audit log
+        Returns the target object of the audit log.
 
         The Snowflake can be a PartialChannel, User, PartialRole, etc
         """

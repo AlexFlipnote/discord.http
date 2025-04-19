@@ -24,7 +24,7 @@ class PartialRole(PartialBase):
         self,
         *,
         state: "DiscordAPI",
-        id: int,
+        id: int,  # noqa: A002
         guild_id: int
     ):
         super().__init__(id=int(id))
@@ -38,7 +38,7 @@ class PartialRole(PartialBase):
 
     @property
     def guild(self) -> "Guild | PartialGuild":
-        """ Returns the guild this role is in """
+        """ Returns the guild this role is in. """
         cache = self._state.cache.get_guild(self.guild_id)
         if cache:
             return cache
@@ -48,23 +48,23 @@ class PartialRole(PartialBase):
 
     @property
     def mention(self) -> str:
-        """ Returns a string that mentions the role """
+        """ Returns a string that mentions the role. """
         return f"<@&{self.id}>"
 
     async def add_role(
         self,
         user_id: Snowflake | int,
         *,
-        reason: Optional[str] = None
+        reason: str | None = None
     ) -> None:
         """
-        Add the role to someone
+        Add the role to someone.
 
         Parameters
         ----------
-        user_id: `int`
+        user_id:
             The user ID to add the role to
-        reason: `Optional[str]`
+        reason:
             The reason for adding the role
         """
         await self._state.query(
@@ -78,16 +78,16 @@ class PartialRole(PartialBase):
         self,
         user_id: Snowflake | int,
         *,
-        reason: Optional[str] = None
+        reason: str | None = None
     ) -> None:
         """
-        Remove the role from someone
+        Remove the role from someone.
 
         Parameters
         ----------
-        user_id: `int`
+        user_id:
             The user ID to remove the role from
-        reason: `Optional[str]`
+        reason:
             The reason for removing the role
         """
         await self._state.query(
@@ -100,14 +100,14 @@ class PartialRole(PartialBase):
     async def delete(
         self,
         *,
-        reason: Optional[str] = None
+        reason: str | None = None
     ) -> None:
         """
-        Delete the role
+        Delete the role.
 
         Parameters
         ----------
-        reason: `Optional[str]`
+        reason:
             The reason for deleting the role
         """
         await self._state.query(
@@ -120,38 +120,38 @@ class PartialRole(PartialBase):
     async def edit(
         self,
         *,
-        name: Optional[str] = MISSING,
-        colour: Optional[Union[Colour, int]] = MISSING,
-        hoist: Optional[bool] = MISSING,
-        mentionable: Optional[bool] = MISSING,
-        positions: Optional[int] = MISSING,
+        name: str | None = MISSING,
+        colour: Colour | int | None = MISSING,
+        hoist: bool | None = MISSING,
+        mentionable: bool | None = MISSING,
+        positions: int | None = MISSING,
         permissions: Optional["Permissions"] = MISSING,
-        unicode_emoji: Optional[str] = MISSING,
-        icon: Optional[Union[File, bytes]] = MISSING,
-        reason: Optional[str] = None,
+        unicode_emoji: str | None = MISSING,
+        icon: File | bytes | None = MISSING,
+        reason: str | None = None,
     ) -> "Role":
         """
-        Edit the role
+        Edit the role.
 
         Parameters
         ----------
-        name: `Optional[str]`
+        name:
             The new name of the role
-        colour: `Optional[Union[Colour, int]]`
+        colour:
             The new colour of the role
-        hoist: `Optional[bool]`
+        hoist:
             Whether the role should be displayed separately in the sidebar
-        mentionable: `Optional[bool]`
+        mentionable:
             Whether the role should be mentionable
-        unicode_emoji: `Optional[str]`
+        unicode_emoji:
             The new unicode emoji of the role
-        positions: `Optional[int]`
+        positions:
             The new position of the role
-        permissions: `Optional[Permissions]`
+        permissions:
             The new permissions for the role
-        icon: `Optional[File]`
+        icon:
             The new icon of the role
-        reason: `Union[str]`
+        reason:
             The reason for editing the role
 
         Returns
@@ -167,7 +167,7 @@ class PartialRole(PartialBase):
             - If position was changed, but Discord API returned invalid data
         """
         payload = {}
-        _role: Optional["Role"] = None
+        role: "Role | None" = None
 
         if name is not MISSING:
             payload["name"] = name
@@ -209,7 +209,7 @@ class PartialRole(PartialBase):
                 reason=reason
             )
 
-            find_role: Optional[dict] = next((
+            find_role: dict | None = next((
                 r for r in r.response
                 if r["id"] == str(self.id)
             ), None)
@@ -220,7 +220,7 @@ class PartialRole(PartialBase):
                     "(Most likely Discord API bug)"
                 )
 
-            _role = Role(
+            role = Role(
                 state=self._state,
                 guild=self.guild,
                 data=find_role
@@ -234,19 +234,19 @@ class PartialRole(PartialBase):
                 reason=reason
             )
 
-            _role = Role(
+            role = Role(
                 state=self._state,
                 guild=self.guild,
                 data=r.response
             )
 
-        if not _role:
+        if not role:
             raise ValueError(
                 "There were no changes applied to the role. "
                 "No edits were taken"
             )
 
-        return _role
+        return role
 
 
 class Role(PartialRole):
@@ -268,15 +268,15 @@ class Role(PartialRole):
         self.position: int = int(data["position"])
         self.tags: dict = data.get("tags", {})
 
-        self.bot_id: Optional[int] = utils.get_int(data, "bot_id")
-        self.integration_id: Optional[int] = utils.get_int(data, "integration_id")
-        self.subscription_listing_id: Optional[int] = utils.get_int(data, "subscription_listing_id")
-        self.unicode_emoji: str | None = data.get("unicode_emoji", None)
+        self.bot_id: int | None = utils.get_int(data, "bot_id")
+        self.integration_id: int | None = utils.get_int(data, "integration_id")
+        self.subscription_listing_id: int | None = utils.get_int(data, "subscription_listing_id")
+        self.unicode_emoji: str | None = data.get("unicode_emoji")
 
         self._premium_subscriber: bool = "premium_subscriber" in self.tags
         self._available_for_purchase: bool = "available_for_purchase" in self.tags
         self._guild_connections: bool = "guild_connections" in self.tags
-        self._icon: str | None = data.get("icon", None)
+        self._icon: str | None = data.get("icon")
 
     def __str__(self) -> str:
         return self.name
@@ -286,7 +286,7 @@ class Role(PartialRole):
 
     @property
     def icon(self) -> Asset | None:
-        """ Returns the icon of the role if it's custom """
+        """ Returns the icon of the role if it's custom. """
         if self._icon is None:
             return None
 
@@ -299,25 +299,25 @@ class Role(PartialRole):
 
     @property
     def display_icon(self) -> Asset | str | None:
-        """ Returns the display icon of the role """
+        """ Returns the display icon of the role. """
         return self.icon or self.unicode_emoji
 
     def is_bot_managed(self) -> bool:
-        """ Returns whether the role is bot managed """
+        """ Returns whether the role is bot managed. """
         return self.bot_id is not None
 
     def is_integration(self) -> bool:
-        """ Returns whether the role is an integration """
+        """ Returns whether the role is an integration. """
         return self.integration_id is not None
 
     def is_premium_subscriber(self) -> bool:
-        """ Returns whether the role is a premium subscriber """
+        """ Returns whether the role is a premium subscriber. """
         return self._premium_subscriber
 
     def is_available_for_purchase(self) -> bool:
-        """ Returns whether the role is available for purchase """
+        """ Returns whether the role is available for purchase. """
         return self._available_for_purchase
 
     def is_guild_connection(self) -> bool:
-        """ Returns whether the role is a guild connection """
+        """ Returns whether the role is a guild connection. """
         return self._guild_connections

@@ -1,12 +1,13 @@
 """
-This module is used to handle all the gateway events.
+Module is used to handle all the gateway events.
+
 While originally, discord.http was only used for the HTTP requests,
 it was later expanded to also handle the gateway events.
 
 To get it working, you will need to use the `enable_gateway` parameter in the Client().
 """
 
-# flake8: noqa: F401
+# ruff: noqa: F403
 from .activity import *
 from .cache import *
 from .client import *

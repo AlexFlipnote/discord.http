@@ -52,9 +52,9 @@ output-format = "concise"
 
 # Files to include/exclude
 include = [
-  "discord_http/*",
-  "discord_http/types/*",
-  "discord_http/gateway/*",
+  "discord_http/*.py",
+  "discord_http/types/*.py",
+  "discord_http/gateway/*.py",
 ]
 
 exclude = [

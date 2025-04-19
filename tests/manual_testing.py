@@ -22,7 +22,9 @@ from discord_http import (
     TextStyles, User, UserSelect, tasks,
     TextChannel, Attachment, PermissionOverwrite,
     Poll, AutoModRuleEventType, AutoModRuleTriggerType,
-    MentionableSelect, ActionRow
+    MentionableSelect, ActionRow, SectionComponent,
+    DiscordTimestamp, ThumbnailComponent, SeparatorComponent,
+    MessageFlags
 )
 
 with open("./config.json") as f:
@@ -88,6 +90,45 @@ async def test_loop_static_before():
 async def test_cooldown(ctx: Context):
     print(ctx.command.cooldown._cache)
     return ctx.response.send_message("Not on cooldown yet...")
+
+
+@client.command()
+async def test_components_v2(ctx: Context):
+    # Credit to example: souji
+    view = View(
+        SectionComponent(
+            "## User details\n"
+            f"Username: {ctx.user.name}\n"
+            f"ID: {ctx.user.id}\n"
+            f"Created: {DiscordTimestamp(ctx.user.created_at)}",
+            accessory=ThumbnailComponent(
+                ctx.user.global_avatar or
+                ctx.user.default_avatar
+            )
+        )
+    )
+
+    if isinstance(ctx.user, Member):
+        pretty_roles = "".join([g.mention for g in ctx.user.roles])
+        split = SeparatorComponent(divider=True)
+        guild_data = SectionComponent(
+            "## Guild details\n"
+            f"Nickname: {ctx.user.nick or 'None'}\n"
+            f"Joined: {DiscordTimestamp(ctx.user.joined_at)}\n"
+            f"Roles ({len(ctx.user.roles)}): {pretty_roles}\n",
+            accessory=ThumbnailComponent(
+                ctx.user.display_avatar
+            )
+        )
+
+        view.add_item(split)
+        view.add_item(guild_data)
+
+    return ctx.response.send_message(
+        view=view,
+        flags=MessageFlags.is_components_v2,
+        allowed_mentions=AllowedMentions.none()
+    )
 
 
 @client.command()

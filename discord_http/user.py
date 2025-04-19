@@ -1,4 +1,4 @@
-from typing import TYPE_CHECKING, Optional, Union, Any
+from typing import TYPE_CHECKING, Any
 
 from . import utils
 from .asset import Asset
@@ -20,9 +20,9 @@ if TYPE_CHECKING:
 MISSING = utils.MISSING
 
 __all__ = (
-    "UserClient",
     "PartialUser",
     "User",
+    "UserClient",
 )
 
 
@@ -31,7 +31,7 @@ class PartialUser(PartialBase):
         self,
         *,
         state: "DiscordAPI",
-        id: int
+        id: int  # noqa: A002
     ):
         super().__init__(id=int(id))
         self._state = state
@@ -41,58 +41,57 @@ class PartialUser(PartialBase):
 
     @property
     def mention(self) -> str:
-        """ Returns a string that allows you to mention the user """
+        """ Returns a string that allows you to mention the user. """
         return f"<@!{self.id}>"
 
     async def send(
         self,
-        content: Optional[str] = MISSING,
+        content: str | None = MISSING,
         *,
-        channel_id: Optional[int] = MISSING,
-        embed: Optional[Embed] = MISSING,
-        embeds: Optional[list[Embed]] = MISSING,
-        file: Optional[File] = MISSING,
-        files: Optional[list[File]] = MISSING,
-        view: Optional[View] = MISSING,
-        tts: Optional[bool] = False,
-        type: Union[ResponseType, int] = 4,
-        flags: Optional[MessageFlags] = MISSING,
-        allowed_mentions: Optional[AllowedMentions] = MISSING,
-        delete_after: Optional[float] = None
+        channel_id: int | None = MISSING,
+        embed: Embed | None = MISSING,
+        embeds: list[Embed] | None = MISSING,
+        file: File | None = MISSING,
+        files: list[File] | None = MISSING,
+        view: View | None = MISSING,
+        tts: bool | None = False,
+        type: ResponseType | int = 4,  # noqa: A002
+        flags: MessageFlags | None = MISSING,
+        allowed_mentions: AllowedMentions | None = MISSING,
+        delete_after: float | None = None
     ) -> "Message":
         """
-        Send a message to the user
+        Send a message to the user.
 
         Parameters
         ----------
-        content: `Optional[str]`
+        content:
             Content of the message
-        channel_id: `Optional[int]`
+        channel_id:
             Channel ID to send the message to, if not provided, it will create a DM channel
-        embed: `Optional[Embed]`
+        embed:
             Embed of the message
-        embeds: `Optional[list[Embed]]`
+        embeds:
             Embeds of the message
-        file: `Optional[File]`
+        file:
             File of the message
-        files: `Optional[Union[list[File], File]]`
+        files:
             Files of the message
-        view: `Optional[View]`
+        view:
             Components of the message
-        tts: `bool`
+        tts:
             Whether the message should be sent as TTS
-        type: `Optional[ResponseType]`
+        type:
             Which type of response should be sent
-        flags: `Optional[MessageFlags]`
+        flags:
             Flags of the message
-        allowed_mentions: `Optional[AllowedMentions]`
+        allowed_mentions:
             Allowed mentions of the message
-        delete_after: `Optional[float]`
+        delete_after:
             How long to wait before deleting the message
 
         Returns
         -------
-        `Message`
             The message that was sent
         """
         if channel_id is MISSING:
@@ -123,17 +122,17 @@ class PartialUser(PartialBase):
         )
 
         from .message import Message
-        _msg = Message(
+        msg = Message(
             state=self._state,
             data=r.response
         )
 
         if delete_after is not None:
-            await _msg.delete(delay=float(delete_after))
-        return _msg
+            await msg.delete(delay=float(delete_after))
+        return msg
 
     async def create_dm(self) -> "DMChannel":
-        """ Creates a DM channel with the user """
+        """ Creates a DM channel with the user. """
         r = await self._state.query(
             "POST",
             "/users/@me/channels",
@@ -147,7 +146,7 @@ class PartialUser(PartialBase):
         )
 
     async def fetch(self) -> "User":
-        """ Fetches the user """
+        """ Fetches the user. """
         r = await self._state.query(
             "GET",
             f"/users/{self.id}"
@@ -160,7 +159,7 @@ class PartialUser(PartialBase):
 
     @property
     def default_avatar(self) -> Asset:
-        """ Returns the default avatar of the user """
+        """ Returns the default avatar of the user. """
         return Asset._from_default_avatar(
             self._state,
             (self.id >> 22) % len(DefaultAvatarType)
@@ -176,29 +175,29 @@ class User(PartialUser):
     ):
         super().__init__(state=state, id=int(data["id"]))
 
-        self.avatar: Optional[Asset] = None
-        self.banner: Optional[Asset] = None
+        self.avatar: Asset | None = None
+        self.banner: Asset | None = None
 
         self.name: str = data["username"]
         self.bot: bool = data.get("bot", False)
         self.system: bool = data.get("system", False)
 
         # This section is ONLY here because bots still have a discriminator
-        self.discriminator: Optional[str] = data.get("discriminator", None)
+        self.discriminator: str | None = data.get("discriminator")
         if self.discriminator == "0":
             # Instead of showing "0", just make it None....
             self.discriminator = None
 
-        self.accent_colour: Optional[Colour] = None
-        self.banner_colour: Optional[Colour] = None
+        self.accent_colour: Colour | None = None
+        self.banner_colour: Colour | None = None
 
-        self.avatar_decoration: Optional[Asset] = None
-        self.global_name: Optional[str] = data.get("global_name", None)
+        self.avatar_decoration: Asset | None = None
+        self.global_name: str | None = data.get("global_name")
 
         self.public_flags: UserFlags | None = None
 
         # This might change a lot
-        self.clan: Optional[dict] = data.get("clan", None)
+        self.clan: dict | None = data.get("clan")
 
         self._from_data(data)
 
@@ -213,44 +212,44 @@ class User(PartialUser):
             return f"{self.name}#{self.discriminator}"
         return self.name
 
-    def _from_data(self, data: dict):
-        if data.get("avatar", None):
+    def _from_data(self, data: dict) -> None:
+        if data.get("avatar"):
             self.avatar = Asset._from_avatar(
                 self._state, self.id, data["avatar"]
             )
 
-        if data.get("banner", None):
+        if data.get("banner"):
             self.banner = Asset._from_banner(
                 self._state, self.id, data["banner"]
             )
 
-        if data.get("accent_color", None):
+        if data.get("accent_color"):
             self.accent_colour = Colour(data["accent_color"])
 
-        if data.get("banner_color", None):
+        if data.get("banner_color"):
             self.banner_colour = Colour.from_hex(data["banner_color"])
 
-        if data.get("avatar_decoration", None):
+        if data.get("avatar_decoration"):
             self.avatar_decoration = Asset._from_avatar_decoration(
                 self._state, data["avatar_decoration"]
             )
 
-        if data.get("public_flags", None):
+        if data.get("public_flags"):
             self.public_flags = UserFlags(data["public_flags"])
 
     @property
-    def global_avatar(self) -> Optional[Asset]:
-        """ Alias for `User.avatar` """
+    def global_avatar(self) -> Asset | None:
+        """ Alias for `User.avatar`. """
         return self.avatar
 
     @property
     def display_name(self) -> str:
-        """ Returns the user's display name """
+        """ Returns the user's display name. """
         return self.global_name or self.name
 
     @property
     def display_avatar(self) -> Asset:
-        """ Returns the display avatar of the member """
+        """ Returns the display avatar of the member. """
         return self.avatar or self.default_avatar
 
 
@@ -275,6 +274,22 @@ class UserClient(User):
         avatar: bytes | None = MISSING,
         banner: bytes | None = MISSING,
     ) -> "UserClient":
+        """
+        Edit the user.
+
+        Parameters
+        ----------
+        username:
+            The username to change the user to
+        avatar:
+            New avatar for the user
+        banner:
+            New banner for the user
+
+        Returns
+        -------
+            The user that was edited
+        """
         payload: dict[str, Any] = {}
 
         if username is not MISSING:

@@ -1,3 +1,3 @@
-# flake8: noqa: F401
+# ruff: noqa: F403
 from .channels import *
 from .guilds import *

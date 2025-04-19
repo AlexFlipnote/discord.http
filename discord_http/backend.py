@@ -14,6 +14,7 @@ from quart import Response as QuartResponse
 from quart.logging import default_handler
 from quart.utils import MustReloadError, restart
 from typing import Any, TYPE_CHECKING
+from collections.abc import Coroutine
 
 from . import utils
 from .commands import Command, SubGroup
@@ -64,7 +65,8 @@ def _cancel_all_tasks(loop: asyncio.AbstractEventLoop) -> None:
 class DiscordHTTP(Quart):
     def __init__(self, *, client: "Client"):
         """
-        This serves as the fundemental HTTP server for Discord Interactions
+        Serves as the fundemental HTTP server for Discord Interactions.
+
         We recommend to not touch this class, unless you know what you're doing
         """
         self.uptime: datetime = utils.utcnow()
@@ -82,13 +84,14 @@ class DiscordHTTP(Quart):
         self.config["JSON_SORT_KEYS"] = False
 
         # Remove Quart's default logging handler
-        _quart_log = logging.getLogger("quart.app")
-        _quart_log.removeHandler(default_handler)
-        _quart_log.setLevel(logging.CRITICAL)
+        quart_log = logging.getLogger("quart.app")
+        quart_log.removeHandler(default_handler)
+        quart_log.setLevel(logging.CRITICAL)
 
     async def _validate_request(self) -> None:
         """
-        Used to validate requests sent by Discord Webhooks
+        Used to validate requests sent by Discord Webhooks.
+
         This should NOT be modified, unless you know what you're doing
         """
         if not self.bot.public_key:
@@ -115,9 +118,7 @@ class DiscordHTTP(Quart):
         cmd: Command | SubGroup,
         data: dict
     ) -> tuple[Command | None, list[dict]]:
-        """
-        Used to dig through subcommands to execute correct command/autocomplete
-        """
+        """ Used to dig through subcommands to execute correct command/autocomplete. """
         data_options: list[dict] = data["data"].get("options", [])
 
         while isinstance(cmd, SubGroup):
@@ -147,13 +148,13 @@ class DiscordHTTP(Quart):
         ctx: "Context",
         data: dict
     ) -> dict:
-        """ Used to handle ACK ping """
-        _ping = Ping(state=self.bot.state, data=data)
+        """ Used to handle ACK ping. """
+        ping = Ping(state=self.bot.state, data=data)
 
         if self.bot.has_any_dispatch("ping"):
-            self.bot.dispatch("ping", _ping)
+            self.bot.dispatch("ping", ping)
 
-        _log.debug(f"Discord Interactions ACK recieved ({_ping.id})")
+        _log.debug(f"Discord Interactions ACK recieved ({ping.id})")
 
         return ctx.response.pong()
 
@@ -162,7 +163,7 @@ class DiscordHTTP(Quart):
         ctx: "Context",
         data: dict
     ) -> QuartResponse | dict:
-        """ Used to handle application commands """
+        """ Used to handle application commands. """
         _log.debug("Received slash command, processing...")
 
         command_name = data["data"]["name"]
@@ -209,9 +210,9 @@ class DiscordHTTP(Quart):
                     exc_info=e
                 )
 
-            _send_error = self.error_messages(ctx, e)
-            if _send_error and isinstance(_send_error, BaseResponse):
-                return _send_error.to_dict()
+            send_error = self.error_messages(ctx, e)
+            if send_error and isinstance(send_error, BaseResponse):
+                return send_error.to_dict()
 
             return abort(500)
 
@@ -220,9 +221,9 @@ class DiscordHTTP(Quart):
         ctx: "Context",
         data: dict
     ) -> QuartResponse | dict:
-        """ Used to handle interactions """
+        """ Used to handle interactions. """
         _log.debug("Received interaction, processing...")
-        _custom_id = data["data"]["custom_id"]
+        custom_id = data["data"]["custom_id"]
 
         try:
             local_view = None
@@ -255,11 +256,11 @@ class DiscordHTTP(Quart):
                     content_type=payload.content_type
                 )
 
-            intreact = self.bot.find_interaction(_custom_id)
+            intreact = self.bot.find_interaction(custom_id)
             if not intreact:
                 _log.debug(
                     "Unhandled interaction recieved "
-                    f"(custom_id: {_custom_id})"
+                    f"(custom_id: {custom_id})"
                 )
                 return QuartResponse(
                     "interaction not found",
@@ -277,7 +278,7 @@ class DiscordHTTP(Quart):
                 self.bot.dispatch("interaction_error", ctx, e)
             else:
                 _log.error(
-                    f"Error while running interaction {_custom_id}",
+                    f"Error while running interaction {custom_id}",
                     exc_info=e
                 )
 
@@ -288,7 +289,7 @@ class DiscordHTTP(Quart):
         ctx: "Context",
         data: dict
     ) -> QuartResponse | dict:
-        """ Used to handle autocomplete interactions """
+        """ Used to handle autocomplete interactions. """
         _log.debug("Received autocomplete interaction, processing...")
 
         command_name = data.get("data", {}).get("name", None)
@@ -336,7 +337,8 @@ class DiscordHTTP(Quart):
         self
     ) -> QuartResponse | dict:
         """
-        The main function to handle all HTTP requests sent by Discord
+        The main function to handle all HTTP requests sent by Discord.
+
         Please do not touch this function, unless you know what you're doing
         """
         await self._validate_request()
@@ -384,6 +386,7 @@ class DiscordHTTP(Quart):
     ) -> MessageResponse | None:
         """
         Used to return error messages to Discord.
+
         By default, it will only cover CheckFailed errors.
         You can overwrite this function to return your own error messages.
 
@@ -396,7 +399,6 @@ class DiscordHTTP(Quart):
 
         Returns
         -------
-        `Optional[MessageResponse]`
             The message response provided by the library error handler
         """
         if isinstance(e, CheckFailed):
@@ -405,9 +407,12 @@ class DiscordHTTP(Quart):
                 ephemeral=True
             )
 
+        return None
+
     async def index_ping(self) -> tuple[dict, int] | dict:
         """
-        Used to ping the interaction url, to check if it's working
+        Used to ping the interaction url, to check if it's working.
+
         You can overwrite this function to return your own data as well.
         Remember that it must return `dict`
         """
@@ -437,7 +442,7 @@ class DiscordHTTP(Quart):
         indent: int | None = None,
     ) -> QuartResponse:
         """
-        Force Quart to respond with JSON the way you like it
+        Force Quart to respond with JSON the way you like it.
 
         Parameters
         ----------
@@ -467,6 +472,16 @@ class DiscordHTTP(Quart):
         host: str = "127.0.0.1",
         port: int = 8080
     ) -> None:
+        """
+        Start the HTTP server.
+
+        Parameters
+        ----------
+        host:
+            The IP address to bind to, by default 127.0.0.1
+        port:
+            The port to bind to, by default 8080
+        """
         if not self.bot.disable_default_get_path:
             self.add_url_rule(
                 "/",
@@ -494,11 +509,11 @@ class DiscordHTTP(Quart):
         port: int,
         loop: asyncio.AbstractEventLoop
     ) -> None:
-        """ ## Do NOT use this function, use `start` instead """
+        """ ## Do NOT use this function, use `start` instead. """
         loop.set_debug(False)
         shutdown_event = asyncio.Event()
 
-        def _signal_handler(*_: Any) -> None:
+        def _signal_handler(*_: Any) -> None:  # noqa: ANN401
             shutdown_event.set()
 
         for signal_name in {"SIGINT", "SIGTERM", "SIGBREAK"}:
@@ -557,9 +572,9 @@ class DiscordHTTP(Quart):
         self,
         host: str = "127.0.0.1",
         port: int = 8080,
-        shutdown_trigger=None
-    ):
-        """ ## Do NOT use this function, use `start` instead """
+        shutdown_trigger: Any = None  # noqa: ANN401
+    ) -> Coroutine[None, None, None]:
+        """ ## Do NOT use this function, use `start` instead. """
         config = HyperConfig()
         config.access_log_format = "%(h)s %(r)s %(s)s %(b)s %(D)s"
         config.accesslog = None
