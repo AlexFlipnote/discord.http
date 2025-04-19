@@ -53,12 +53,17 @@ Docstrings should be formatted as follows:
         """
         This is a function.
 
+        Here is more information about the function.
+        It is separated from the short summary by a blank line.
+
         Parameters
         ----------
         arg1:
             This is the first argument.
+            We skip the type hint inside the docstring.
         arg2:
             This is the second argument.
+            We skip the type hint inside the docstring.
 
         Returns/Yields
         --------------
