@@ -5,7 +5,7 @@ import logging
 
 from datetime import time as dtime
 from datetime import timedelta, datetime, UTC
-from collections.abc import Callable, Sequence, Coroutine
+from collections.abc import Callable, Sequence
 
 from . import utils
 
@@ -118,7 +118,7 @@ class Loop:
 
         return await self.func(*args, **kwargs)
 
-    def __get__(self, obj: Coroutine, objtype):  # noqa: ANN001
+    def __get__(self, obj: object, objtype: type | None = None):
         if obj is None:
             return self
 

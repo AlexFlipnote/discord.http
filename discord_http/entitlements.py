@@ -43,9 +43,9 @@ class PartialSKU(PartialBase):
 
         Parameters
         ----------
-        owner_id: `Union[Snowflake, int]`
+        owner_id:
             The ID of the owner, can be GuildID or UserID.
-        owner_type: `Union[EntitlementOwnerType, int]`
+        owner_type:
             The type of the owner.
 
         Returns

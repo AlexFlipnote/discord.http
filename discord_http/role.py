@@ -1,4 +1,4 @@
-from typing import TYPE_CHECKING, Union, Optional
+from typing import TYPE_CHECKING
 
 from . import utils
 from .asset import Asset
@@ -125,7 +125,7 @@ class PartialRole(PartialBase):
         hoist: bool | None = MISSING,
         mentionable: bool | None = MISSING,
         positions: int | None = MISSING,
-        permissions: Optional["Permissions"] = MISSING,
+        permissions: "Permissions | None" = MISSING,
         unicode_emoji: str | None = MISSING,
         icon: File | bytes | None = MISSING,
         reason: str | None = None,
@@ -253,7 +253,7 @@ class Role(PartialRole):
         self,
         *,
         state: "DiscordAPI",
-        guild: Union["PartialGuild", "Guild"],
+        guild: "Guild | PartialGuild",
         data: dict
     ):
         super().__init__(state=state, id=int(data["id"]), guild_id=guild.id)

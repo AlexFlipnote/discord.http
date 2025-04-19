@@ -4,7 +4,7 @@ import logging
 import secrets
 import time
 
-from collections.abc import Coroutine, Callable
+from collections.abc import Callable
 from io import BytesIO
 from typing import TYPE_CHECKING
 
@@ -816,7 +816,7 @@ class InteractionStorage:
         self,
         ctx: "Context",
         *,
-        call_after: Coroutine,
+        call_after: Callable | None = None,
         users: list["Snowflake"] | None = None,
         original_response: bool = False,
         custom_id: str | int | None = None,

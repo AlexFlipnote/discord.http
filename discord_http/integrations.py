@@ -62,7 +62,7 @@ class IntegrationApplication(PartialBase):
 
     @property
     def icon(self) -> Asset | None:
-        """Optional[:class:`Asset`]: The icon of the application, if available."""
+        """ The icon of the application, if available."""
         if not self._icon:
             return None
 
@@ -97,7 +97,7 @@ class PartialIntegration(PartialBase):
         The ID of the integration.
     guild_id:
         The guild associated with this integration.
-    application_id: Optional[:class:`int`]
+    application_id:
         The ID of the application associated with this integration.
     """
     def __init__(

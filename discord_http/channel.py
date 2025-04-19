@@ -3,9 +3,7 @@ import asyncio
 import time
 
 from datetime import datetime, timedelta
-from typing import (
-    Union, TYPE_CHECKING, Optional, Self, overload
-)
+from typing import TYPE_CHECKING, Self, overload
 from collections.abc import AsyncIterator, Callable, Generator
 
 from . import utils
@@ -408,7 +406,7 @@ class PartialChannel(PartialBase):
         view: View | None = MISSING,
         tts: bool | None = False,
         type: ResponseType | int = 4,  # noqa: A002
-        poll: Optional["Poll"] = MISSING,
+        poll: "Poll | None" = MISSING,
         flags: MessageFlags | None = MISSING,
         allowed_mentions: AllowedMentions | None = MISSING,
         delete_after: float | None = None
@@ -485,7 +483,7 @@ class PartialChannel(PartialBase):
         self,
         data: dict,
         *,
-        state: Optional["DiscordAPI"] = None,
+        state: "DiscordAPI | None" = None,
         guild_id: int | None = None
     ) -> "BaseChannel":
         match data["type"]:
@@ -589,7 +587,7 @@ class PartialChannel(PartialBase):
         auto_archive_duration: int | None = MISSING,
         locked: bool | None = MISSING,
         invitable: bool | None = MISSING,
-        applied_tags: list[Union["ForumTag", int]] | None = MISSING,
+        applied_tags: list["ForumTag | int"] | None = MISSING,
         reason: str | None = None,
     ) -> Self:
         """
@@ -913,7 +911,7 @@ class PartialChannel(PartialBase):
         view: View | None = None,
         auto_archive_duration: int | None = 4320,
         rate_limit_per_user: int | None = None,
-        applied_tags: list[Union["ForumTag", int]] | None = None
+        applied_tags: list["ForumTag | int"] | None = None
     ) -> "ForumThread":
         """
         Create a forum or media thread in the channel.
@@ -1021,7 +1019,7 @@ class PartialChannel(PartialBase):
         invitable: bool = True,
         rate_limit_per_user: timedelta | int | None = None,
         reason: str | None = None
-    ) -> Union["PublicThread", "PrivateThread", "NewsThread"]:
+    ) -> "PublicThread | PrivateThread | NewsThread":
         """
         Creates a thread in the channel.
 
@@ -1096,9 +1094,9 @@ class PartialChannel(PartialBase):
     async def fetch_history(
         self,
         *,
-        before: Union[datetime, "Message", Snowflake, int] | None = None,
-        after: Union[datetime, "Message", Snowflake, int] | None = None,
-        around: Union[datetime, "Message", Snowflake, int] | None = None,
+        before: "datetime | Message | Snowflake | int | None" = None,
+        after: "datetime | Message | Snowflake | int | None" = None,
+        around: "datetime | Message | Snowflake | int | None" = None,
         limit: int | None = 100,
         oldest_first: bool = False
     ) -> AsyncIterator["Message"]:
@@ -1966,7 +1964,7 @@ class PublicThread(BaseChannel):
         return PartialGuild(state=self._state, id=self.guild_id)
 
     @property
-    def owner(self) -> Optional["PartialUser"]:
+    def owner(self) -> "PartialUser | None":
         """ Returns a partial user object. """
         if not self.owner_id:
             return None
@@ -1975,7 +1973,7 @@ class PublicThread(BaseChannel):
         return PartialUser(state=self._state, id=self.owner_id)
 
     @property
-    def last_message(self) -> Optional["PartialMessage"]:
+    def last_message(self) -> "PartialMessage | None":
         """ Returns a partial message object if the last message ID is available. """
         if not self.last_message_id:
             return None
@@ -2359,12 +2357,12 @@ class StageChannel(VoiceChannel):
 
     @property
     def type(self) -> ChannelType:
-        """`ChannelType`: Returns the channel's type. """
+        """ Returns the channel's type. """
         return ChannelType.guild_stage_voice
 
     @property
     def stage_instance(self) -> StageInstance | None:
-        """`Optional[StageInstance]`: Returns the stage instance for this channel, if available and cached."""
+        """ Returns the stage instance for this channel, if available and cached."""
         return self._stage_instance
 
     async def fetch_stage_instance(self) -> StageInstance:

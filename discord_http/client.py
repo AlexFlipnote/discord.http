@@ -4,10 +4,7 @@ import inspect
 import logging
 
 from datetime import datetime
-from typing import (
-    Optional, Any,
-    TYPE_CHECKING, TypeVar
-)
+from typing import Any, TYPE_CHECKING, TypeVar
 from collections.abc import Callable, AsyncIterator, Coroutine
 
 from . import utils, __version__
@@ -69,8 +66,8 @@ class Client:
         playing_status: "PlayingStatus | None" = None,
         chunk_guilds_on_startup: bool = False,
         guild_ready_timeout: float = 2.0,
-        gateway_cache: Optional["GatewayCacheFlags"] = None,
-        intents: Optional["Intents"] = None,
+        gateway_cache: "GatewayCacheFlags | None" = None,
+        intents: "Intents | None" = None,
         logging_level: int = logging.INFO,
         call_after_delay: float | int = 0.1,
         disable_default_get_path: bool = False,
@@ -565,9 +562,9 @@ class Client:
 
         Parameters
         ----------
-        host: Optional[:class:`str`]
+        host:
             Host to use, if not provided, it will use `127.0.0.1`
-        port: Optional[:class:`int`]
+        port:
             Port to use, if not provided, it will use `8080`
         """
         if not self.application_id or not self.public_key:
@@ -1935,7 +1932,7 @@ class Client:
     def find_interaction(
         self,
         custom_id: str
-    ) -> Optional["Interaction"]:
+    ) -> "Interaction | None":
         """
         Finds an interaction by its Custom ID.
 

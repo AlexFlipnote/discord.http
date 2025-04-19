@@ -456,7 +456,7 @@ class InteractionResponse:
         ------
         `TypeError`
             - If `choices` is not a `dict`
-            - If `choices` is not a `dict[Union[str, int, float], str]`
+            - If `choices` is not a `dict[str | int | float, str]`
         """
         if not isinstance(choices, dict):
             raise TypeError("choices must be a dict")

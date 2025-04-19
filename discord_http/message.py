@@ -2,7 +2,7 @@ import asyncio
 
 from datetime import timedelta, datetime
 from io import BytesIO
-from typing import TYPE_CHECKING, Optional, Self
+from typing import TYPE_CHECKING, Self
 from collections.abc import AsyncIterator, Callable
 
 from . import utils
@@ -155,7 +155,7 @@ class JumpURL:
         return self.url
 
     @property
-    def guild(self) -> Optional["Guild | PartialGuild"]:
+    def guild(self) -> "Guild | PartialGuild | None":
         """ The guild the message was sent in. """
         if not self.guild_id:
             return None
@@ -178,7 +178,7 @@ class JumpURL:
         return await self.guild.fetch()
 
     @property
-    def channel(self) -> Optional["BaseChannel | PartialChannel"]:
+    def channel(self) -> "BaseChannel | PartialChannel | None":
         """
         Returns the channel the message was sent in.
 
@@ -208,7 +208,7 @@ class JumpURL:
         return await self.channel.fetch()
 
     @property
-    def message(self) -> Optional["PartialMessage"]:
+    def message(self) -> "PartialMessage | None":
         """ Returns the message if a message_id is available. """
         if not self.channel_id or not self.message_id:
             return None

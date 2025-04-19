@@ -6,7 +6,7 @@ import re
 from typing import get_args as get_type_args
 from typing import (
     TYPE_CHECKING, Union, Protocol,
-    Generic, TypeVar, Optional, Literal, Any,
+    Generic, TypeVar, Literal, Any,
     runtime_checkable
 )
 from collections.abc import Callable, Coroutine
@@ -230,7 +230,7 @@ class Command:
         guild_install: bool = True,
         user_install: bool = False,
         type: ApplicationCommandType = ApplicationCommandType.chat_input,  # noqa: A002
-        parent: Optional["SubGroup"] = None
+        parent: "SubGroup | None" = None
     ):
         self.id: int | None = None
         self.command = command
@@ -710,7 +710,7 @@ class Command:
 
         return data
 
-    def autocomplete(self, name: str) -> Callable:
+    def autocomplete(self, name: str) -> Callable[[Callable], Callable]:
         """
         Decorator to set an option as an autocomplete.
 
@@ -762,7 +762,7 @@ class SubCommand(Command):
         guild_install: bool = True,
         user_install: bool = False,
         guild_ids: list[Snowflake | int] | None = None,
-        parent: Optional["SubGroup"] = None
+        parent: "SubGroup | None " = None
     ):
         super().__init__(
             func,
@@ -787,7 +787,7 @@ class SubGroup(Command):
         guild_ids: list[Snowflake | int] | None = None,
         guild_install: bool = True,
         user_install: bool = False,
-        parent: Optional["SubGroup"] = None
+        parent: "SubGroup | None" = None
     ):
         self.name = name
         self.description = description or "..."  # Only used to make Discord happy
@@ -811,7 +811,7 @@ class SubGroup(Command):
         guild_ids: list[Snowflake | int] | None = None,
         guild_install: bool = True,
         user_install: bool = False,
-    ) -> Callable:
+    ) -> Callable[[Callable], SubCommand]:
         """
         Decorator to add a subcommand to a subcommand group.
 
@@ -848,7 +848,7 @@ class SubGroup(Command):
         name: str | None = None,
         *,
         description: str | None = None
-    ) -> Callable:
+    ) -> Callable[[Callable], "SubGroup"]:
         """
         Decorator to add a subcommand group to a subcommand group.
 
@@ -859,7 +859,7 @@ class SubGroup(Command):
         description:
             Description of the subcommand group (defaults to the function docstring)
         """
-        def decorator(func: Callable) -> SubGroup:
+        def decorator(func: Callable) -> "SubGroup":
             subgroup = SubGroup(
                 name=name or func.__name__,
                 description=description,
@@ -1137,7 +1137,7 @@ def command(
     guild_ids: list[Snowflake | int] | None = None,
     guild_install: bool = True,
     user_install: bool = False,
-) -> Callable:
+) -> Callable[[Callable], Command]:
     """
     Decorator to register a command.
 
@@ -1173,7 +1173,7 @@ def user_command(
     guild_ids: list[Snowflake | int] | None = None,
     guild_install: bool = True,
     user_install: bool = False,
-) -> Callable:
+) -> Callable[[Callable], Command]:
     """
     Decorator to register a user command.
 
@@ -1214,7 +1214,7 @@ def cooldown(
     per: float,
     *,
     type: BucketType | None = None  # noqa: A002
-) -> Callable:
+) -> Callable[[Callable], Callable]:
     """
     Decorator to set a cooldown for a command.
 
@@ -1257,7 +1257,7 @@ def message_command(
     guild_ids: list[Snowflake | int] | None = None,
     guild_install: bool = True,
     user_install: bool = False,
-) -> Callable:
+) -> Callable[[Callable], Command]:
     """
     Decorator to register a message command.
 
@@ -1301,7 +1301,7 @@ def locales(
             list[str] | tuple[str] | tuple[str, str]
         ]
     ]
-) -> Callable:
+) -> Callable[[Callable], Callable]:
     """
     Decorator to set translations for a command.
 
@@ -1385,7 +1385,7 @@ def group(
     guild_ids: list[Snowflake | int] | None = None,
     guild_install: bool = True,
     user_install: bool = False,
-) -> Callable:
+) -> Callable[[Callable], SubGroup]:
     """
     Decorator to register a command group.
 

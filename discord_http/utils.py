@@ -513,7 +513,7 @@ class DiscordTimestamp:
 
         Parameters
         ----------
-        fmt: `Optional[str]`
+        fmt:
             The format to return the timestamp in
 
         Returns
