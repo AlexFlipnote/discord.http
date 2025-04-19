@@ -54,7 +54,7 @@ class Embed:
         return f"<Embed title={self.title} colour={self.colour}>"
 
     def copy(self) -> Self:
-        """ Returns a copy of the embed """
+        """ Returns a copy of the embed. """
         return self.__class__.from_dict(self.to_dict())
 
     def set_colour(
@@ -62,17 +62,16 @@ class Embed:
         value: Colour | int | None
     ) -> Self:
         """
-        Set the colour of the embed
+        Set the colour of the embed.
 
         Parameters
         ----------
-        value: `Optional[Union[Colour, int]]`
+        value:
             The colour to set the embed to.
             If `None`, the colour will be removed
 
         Returns
         -------
-        `Self`
             Returns the embed you are editing
         """
         if value is None:
@@ -89,18 +88,17 @@ class Embed:
         icon_url: Asset | str | None = None
     ) -> Self:
         """
-        Set the footer of the embed
+        Set the footer of the embed.
 
         Parameters
         ----------
-        text: `Optional[str]`
+        text:
             The text of the footer
-        icon_url: `Optional[str]`
+        icon_url:
             Icon URL of the footer
 
         Returns
         -------
-        `Embed`
             Returns the embed you are editing
         """
         if not any((text, icon_url)):
@@ -115,11 +113,10 @@ class Embed:
 
     def remove_footer(self) -> Self:
         """
-        Remove the footer from the embed
+        Remove the footer from the embed.
 
         Returns
         -------
-        `Embed`
             Returns the embed you are editing
         """
         self.footer = {}
@@ -133,20 +130,19 @@ class Embed:
         icon_url: Asset | str | None = None
     ) -> Self:
         """
-        Set the author of the embed
+        Set the author of the embed.
 
         Parameters
         ----------
-        name: `str`
+        name:
             The name of the author
-        url: `Optional[str]`
+        url:
             The URL which the author name will link to
-        icon_url: `Optional[Union[Asset, str]]`
+        icon_url:
             The icon URL of the author
 
         Returns
         -------
-        `Embed`
             Returns the embed you are editing
         """
         self.author["name"] = str(name)
@@ -160,11 +156,10 @@ class Embed:
 
     def remove_author(self) -> Self:
         """
-        Remove the author from the embed
+        Remove the author from the embed.
 
         Returns
         -------
-        `Embed`
             Returns the embed you are editing
         """
         self.author = {}
@@ -176,16 +171,15 @@ class Embed:
         url: Asset | str | None = None
     ) -> Self:
         """
-        Set the image of the embed
+        Set the image of the embed.
 
         Parameters
         ----------
-        url: `Optional[Union[Asset, str]]`
+        url:
             The URL of the image
 
         Returns
         -------
-        `Embed`
             Returns the embed you are editing
         """
         if url is not None:
@@ -197,11 +191,10 @@ class Embed:
 
     def remove_image(self) -> Self:
         """
-        Remove the image from the embed
+        Remove the image from the embed.
 
         Returns
         -------
-        `Embed`
             Returns the embed you are editing
         """
         self.image = {}
@@ -213,16 +206,15 @@ class Embed:
         url: Asset | str | None = None
     ) -> Self:
         """
-        Set the thumbnail of the embed
+        Set the thumbnail of the embed.
 
         Parameters
         ----------
-        url: `Optional[Union[Asset, str]]`
+        url:
             The URL of the thumbnail
 
         Returns
         -------
-        `Embed`
             Returns the embed you are editing
         """
         if url is not None:
@@ -234,11 +226,10 @@ class Embed:
 
     def remove_thumbnail(self) -> Self:
         """
-        Remove the thumbnail from the embed
+        Remove the thumbnail from the embed.
 
         Returns
         -------
-        `Embed`
             Returns the embed you are editing
         """
         self.thumbnail = {}
@@ -252,20 +243,19 @@ class Embed:
         inline: bool = True
     ) -> Self:
         """
-        Add a field to the embed
+        Add a field to the embed.
 
         Parameters
         ----------
-        name: `str`
+        name:
             Title of the field
-        value: `str`
+        value:
             Description of the field
-        inline: `bool`
+        inline:
             Whether the field is inline or not
 
         Returns
         -------
-        `Embed`
             Returns the embed you are editing
         """
         self.fields.append({
@@ -278,16 +268,15 @@ class Embed:
 
     def remove_field(self, index: int) -> Self:
         """
-        Remove a field from the embed
+        Remove a field from the embed.
 
         Parameters
         ----------
-        index: `int`
+        index:
             The index of the field to remove
 
         Returns
         -------
-        `Embed`
             Returns the embed you are editing
         """
         try:
@@ -300,28 +289,27 @@ class Embed:
     @classmethod
     def from_dict(cls, data: dict) -> Self:
         """
-        Create an embed from a dictionary
+        Create an embed from a dictionary.
 
         Parameters
         ----------
-        data: `dict`
+        data:
             The dictionary to create the embed from
 
         Returns
         -------
-        `Embed`
             The embed created from the dictionary
         """
         self = cls.__new__(cls)
 
         self.colour = None
-        if data.get("color", None) is not None:
+        if data.get("color") is not None:
             self.colour = Colour(data["color"])
 
-        self.title = data.get("title", None)
-        self.description = data.get("description", None)
-        self.timestamp = data.get("timestamp", None)
-        self.url = data.get("url", None)
+        self.title = data.get("title")
+        self.description = data.get("description")
+        self.timestamp = data.get("timestamp")
+        self.url = data.get("url")
         self.type = data.get("type", "rich")
 
         self.footer = data.get("footer", {})
@@ -333,7 +321,7 @@ class Embed:
         return self
 
     def to_dict(self) -> dict:
-        """ The embed as a dictionary """
+        """ The embed as a dictionary. """
         embed = {}
 
         if self.title:
@@ -354,10 +342,9 @@ class Embed:
             embed["thumbnail"] = self.thumbnail
         if self.fields:
             embed["fields"] = self.fields
-        if self.timestamp:
-            if isinstance(self.timestamp, datetime):
-                if self.timestamp.tzinfo is None:
-                    self.timestamp = self.timestamp.astimezone()
-                embed["timestamp"] = self.timestamp.isoformat()
+        if self.timestamp and isinstance(self.timestamp, datetime):
+            if self.timestamp.tzinfo is None:
+                self.timestamp = self.timestamp.astimezone()
+            embed["timestamp"] = self.timestamp.isoformat()
 
         return embed

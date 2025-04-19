@@ -43,7 +43,7 @@ class PartialInvite:
 
     @property
     def _get_guild(self) -> Guild | PartialGuild | None:
-        """ Used to create the guild object for `Invite.guild` """
+        """ Used to create the guild object for `Invite.guild`. """
         if not self.guild_id:
             return None
 
@@ -55,7 +55,7 @@ class PartialInvite:
 
     @property
     def channel(self) -> "PartialChannel | None":
-        """ The channel the invite is in """
+        """ The channel the invite is in. """
         if not self.channel_id:
             return None
 
@@ -67,11 +67,10 @@ class PartialInvite:
 
     async def fetch(self) -> "Invite":
         """
-        Fetches the invite details
+        Fetches the invite details.
 
         Returns
         -------
-        `Invite`
             The invite object
         """
         r = await self._state.query(
@@ -90,7 +89,7 @@ class PartialInvite:
         reason: str | None = None
     ) -> "Invite":
         """
-        Deletes the invite
+        Deletes the invite.
 
         Parameters
         ----------
@@ -99,7 +98,6 @@ class PartialInvite:
 
         Returns
         -------
-        `Invite`
             The invite object
         """
         data = await self._state.query(
@@ -115,7 +113,7 @@ class PartialInvite:
 
     @property
     def url(self) -> str:
-        """ The URL of the invite """
+        """ The URL of the invite. """
         return f"{self.BASE}/{self.code}"
 
 
@@ -150,23 +148,23 @@ class Invite(PartialInvite):
         return f"<Invite code='{self.code}' uses='{self.uses}'>"
 
     def _from_data(self, data: dict) -> None:
-        if data.get("expires_at", None):
+        if data.get("expires_at"):
             self.expires_at = utils.parse_time(data["expires_at"])
 
-        if data.get("created_at", None):
+        if data.get("created_at"):
             self.created_at = utils.parse_time(data["created_at"])
 
-        if data.get("inviter", None):
+        if data.get("inviter"):
             self.inviter = User(state=self._state, data=data["inviter"])
 
-        if data.get("guild", None):
+        if data.get("guild"):
             try:
                 self.guild = Guild(state=self._state, data=data["guild"])
             except KeyError:
                 pass
 
     def is_vanity(self) -> bool:
-        """ Whether the invite is a vanity invite """
+        """ Whether the invite is a vanity invite. """
         if not self.guild:
             return False
         if not isinstance(self.guild, Guild):

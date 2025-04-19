@@ -1,9 +1,9 @@
 from ..flags import BaseFlag
 
 __all__ = (
+    "ActivityFlags",
     "GatewayCacheFlags",
     "Intents",
-    "ActivityFlags",
 )
 
 

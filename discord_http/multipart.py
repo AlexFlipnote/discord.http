@@ -16,7 +16,7 @@ class MultipartData:
 
     @property
     def content_type(self) -> str:
-        """ The content type of the multipart data """
+        """ The content type of the multipart data. """
         return f"multipart/form-data; boundary={self.boundary}"
 
     def attach(
@@ -28,26 +28,26 @@ class MultipartData:
         content_type: str | None = None
     ) -> None:
         """
-        Attach data to the multipart data
+        Attach data to the multipart data.
 
         Parameters
         ----------
-        name: `str`
+        name:
             Name of the file data
-        data: `Union[File, io.BufferedIOBase, dict, str]`
+        data:
             The data to attach
-        filename: `Optional[str]`
+        filename:
             Filename to be sent on Discord
-        content_type: `Optional[str]`
+        content_type:
             The content type of the file data
             (Defaults to 'application/octet-stream' if not provided)
         """
         if not data:
-            return None
+            return
 
-        string = f"\r\n--{self.boundary}\r\nContent-Disposition: form-data; name=\"{name}\""
+        string = f'\r\n--{self.boundary}\r\nContent-Disposition: form-data; name="{name}"'
         if filename:
-            string += f"; filename=\"{filename}\""
+            string += f'; filename="{filename}"'
 
         match data:
             case x if isinstance(x, File):
@@ -79,9 +79,7 @@ class MultipartData:
 
         self.bufs.append(data)  # type: ignore
 
-        return None
-
     def finish(self) -> bytes:
-        """ Return the multipart data to be sent to Discord """
+        """ Return the multipart data to be sent to Discord. """
         self.bufs.append(f"\r\n--{self.boundary}--\r\n".encode())
         return b"".join(self.bufs)

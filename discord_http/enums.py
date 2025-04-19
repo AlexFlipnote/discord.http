@@ -48,22 +48,26 @@ __all__ = (
 
 
 class BaseEnum(_Enum):
-    """ Enum, but with more comparison operators to make life easier """
+    """ Enum, but with more comparison operators to make life easier. """
     @classmethod
     def random(cls) -> Self:
-        """ Return a random enum """
+        """ Return a random enum. """
         return random.choice(list(cls))
 
     def __str__(self) -> str:
-        """ `str` Return the name of the enum """
+        """ Return the name of the enum. """
         return self.name
 
     def __int__(self) -> int:
-        """ `int` Return the value of the enum """
+        """ Return the value of the enum. """
         return self.value
 
-    def __gt__(self, other) -> bool:
-        """ `bool` Greater than """
+    def __hash__(self) -> int:
+        """ Return the hash of the enum. """
+        return hash(self.value)
+
+    def __gt__(self, other: Self) -> bool:
+        """ Greater than. """
         try:
             return self.value > other.value
         except Exception:
@@ -75,8 +79,8 @@ class BaseEnum(_Enum):
             pass
         return NotImplemented
 
-    def __lt__(self, other) -> bool:
-        """ `bool` Less than """
+    def __lt__(self, other: Self) -> bool:
+        """ Less than.  """
         try:
             return self.value < other.value
         except Exception:
@@ -88,8 +92,8 @@ class BaseEnum(_Enum):
             pass
         return NotImplemented
 
-    def __ge__(self, other) -> bool:
-        """ `bool` Greater than or equal to """
+    def __ge__(self, other: Self) -> bool:
+        """ Greater than or equal to. """
         try:
             return self.value >= other.value
         except Exception:
@@ -103,8 +107,8 @@ class BaseEnum(_Enum):
             pass
         return NotImplemented
 
-    def __le__(self, other) -> bool:
-        """ `bool` Less than or equal to """
+    def __le__(self, other: Self) -> bool:
+        """ Less than or equal to. """
         try:
             return self.value <= other.value
         except Exception:
@@ -118,8 +122,8 @@ class BaseEnum(_Enum):
             pass
         return NotImplemented
 
-    def __eq__(self, other) -> bool:
-        """ `bool` Equal to """
+    def __eq__(self, other: Self) -> bool:
+        """ Equal to. """
         if self.__class__ is other.__class__:
             return self.value == other.value
         try:
@@ -306,7 +310,8 @@ class AuditLogType(BaseEnum):
     guild_scheduled_event_exception_delete = 202
 
     @property
-    def target_type(self):
+    def target_type(self) -> str | None:
+        """ The type of the target of the audit log entry. """
         category_map: dict[int, str] = {
             -1: "all",
             73: "channel"

@@ -7,6 +7,18 @@ from importlib.metadata import version
 
 
 def get_package_version(name: str) -> str:
+    """
+    Get the version of a package.
+
+    Parameters
+    ----------
+    name:
+        The name of the package
+
+    Returns
+    -------
+        The version of the package
+    """
     try:
         output = version(name)
         if not output.lower().startswith("v"):
@@ -17,6 +29,7 @@ def get_package_version(name: str) -> str:
 
 
 def show_version() -> None:
+    """ Show the version of the library and relevant packages. """
     pyver = sys.version_info
 
     container = [
@@ -26,10 +39,11 @@ def show_version() -> None:
         f"system_info  {platform.system()} {platform.release()} ({platform.version()})",
     ]
 
-    print("\n".join(container))
+    print("\n".join(container))  # noqa: T201
 
 
 def main() -> None:
+    """ The main function for the command-line tool. """
     parser = argparse.ArgumentParser(
         prog="discord.http",
         description="Command-line tool to debug"

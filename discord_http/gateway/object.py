@@ -1,6 +1,7 @@
 import time
 
-from typing import TYPE_CHECKING, Iterator
+from typing import TYPE_CHECKING
+from collections.abc import Iterator
 from datetime import datetime
 
 from .activity import Activity
@@ -50,7 +51,7 @@ class PlayingStatus:
         *,
         name: str | None = None,
         status: StatusType | str | int | None = None,
-        type: ActivityType | str | int | None = None,
+        type: ActivityType | str | int | None = None,  # noqa: A002
         url: str | None = None,
     ):
         self.since: int | None = None
@@ -82,6 +83,7 @@ class PlayingStatus:
         )
 
     def to_dict(self) -> dict:
+        """ The playing status as a dictionary. """
         payload = {
             "afk": False,
             "since": self.since,
@@ -127,30 +129,31 @@ class GuildJoinRequest:
         self._from_data(data)
 
     def _from_data(self, data: dict) -> None:
-        _request = data.get("request", {})
-        if _request:
-            self.user_id = utils.get_int(_request, "user_id")
+        request = data.get("request", {})
+        if request:
+            self.user_id = utils.get_int(request, "user_id")
 
-            if _request.get("user", None):
+            if request.get("user", None):
                 from ..user import User
                 self.user = User(
                     state=self._state,
-                    data=_request["user"]
+                    data=request["user"]
                 )
 
-            self.rejection_reason = _request.get("rejection_reason", None)
+            self.rejection_reason = request.get("rejection_reason", None)
 
 
-class ChannelPinsUpdate:
-    """Represents a channel pins update event.
+class ChannelPinsUpdate:  # noqa: B903
+    """
+    Represents a channel pins update event.
 
     Attributes
     ----------
-    channel: `BaseChannel` | `PartialChannel`
+    channel:
         The channel the pins were updated in.
-    last_pin_timestamp: `datetime` | `None`
+    last_pin_timestamp:
         The last time a pin was updated in the channel.
-    guild: `PartialGuild` | `Guild` | `None`
+    guild:
         The guild the channel is in. If the channel is a DM channel, this will be `None`.
     """
     def __init__(
@@ -196,29 +199,30 @@ class Presence:
         )
 
     def _from_data(self, data: dict) -> None:
-        _client_status = data.get("client_status", {})
-        if _client_status.get("desktop", None):
-            self.desktop = StatusType[_client_status["desktop"]]
+        client_status = data.get("client_status", {})
+        if client_status.get("desktop", None):
+            self.desktop = StatusType[client_status["desktop"]]
 
-        if _client_status.get("mobile", None):
-            self.mobile = StatusType[_client_status["mobile"]]
+        if client_status.get("mobile", None):
+            self.mobile = StatusType[client_status["mobile"]]
 
-        if _client_status.get("web", None):
-            self.web = StatusType[_client_status["web"]]
+        if client_status.get("web", None):
+            self.web = StatusType[client_status["web"]]
 
 
-class TypingStartEvent:
-    """Represents a typing start event.
+class TypingStartEvent:  # noqa: B903
+    """
+    Represents a typing start event.
 
     Attributes
     ----------
-    guild: `PartialGuild` | `Guild` | `None`
+    guild:
         The guild the typing event was triggered in. If the channel is a DM channel, this will be `None`.
-    channel: `BaseChannel` | `PartialChannel` | `None`
+    channel:
         The channel the typing event was triggered in.
-    user: `PartialUser` | `User` | `Member` | `PartialMember`
+    user:
         The user that started typing.
-    timestamp: `datetime`
+    timestamp:
         The time the user started typing.
     """
     def __init__(
@@ -257,10 +261,10 @@ class AutomodExecution:
 
         self.message_id: int | None = utils.get_int(data, "message_id")
         self.alert_system_message_id: int | None = utils.get_int(data, "alert_system_message_id")
-        self.content: str | None = data.get("content", None)
+        self.content: str | None = data.get("content")
 
-        self.matched_keyword: str | None = data.get("matched_keyword", None)
-        self.matched_content: str | None = data.get("matched_content", None)
+        self.matched_keyword: str | None = data.get("matched_keyword")
+        self.matched_content: str | None = data.get("matched_content")
 
     def __repr__(self) -> str:
         return (
@@ -270,7 +274,7 @@ class AutomodExecution:
 
     @property
     def rule(self) -> PartialAutoModRule:
-        """ Returns a partial object of automod rule """
+        """ Returns a partial object of automod rule. """
         return PartialAutoModRule(
             state=self._state,
             id=self.rule_id,
@@ -286,7 +290,7 @@ class PollVoteEvent:
         user: "Member | PartialMember | PartialUser",
         channel: "PartialChannel",
         guild: "PartialGuild | None",
-        type: PollVoteActionType,
+        type: PollVoteActionType,  # noqa: A002
         data: dict
     ):
         self._state = state
@@ -339,10 +343,10 @@ class Reaction:
         )
 
     def _from_data(self, data: dict) -> None:
-        if data.get("burst_colour", None):
+        if data.get("burst_colour"):
             self.burst_colour = Colour.from_hex(data["burst_colour"])
 
-        if data.get("member", None):
+        if data.get("member"):
             from ..member import Member
             self.member = Member(
                 state=self._state,
@@ -352,7 +356,7 @@ class Reaction:
 
     @property
     def guild(self) -> "Guild | PartialGuild | None":
-        """ The guild the message was sent in """
+        """ The guild the message was sent in. """
         if not self.guild_id:
             return None
 
@@ -366,7 +370,8 @@ class Reaction:
     @property
     def channel(self) -> "PartialChannel | None":
         """
-        `BaseChannel | PartialChannel`: Returns the channel the message was sent in.
+        Returns the channel the message was sent in.
+
         If guild and channel cache is enabled, it can also return full channel object.
         """
         if not self.channel_id:
@@ -390,7 +395,7 @@ class Reaction:
 
     @property
     def message(self) -> "PartialMessage | None":
-        """ Returns the message if a message_id is available """
+        """ Returns the message if a message_id is available. """
         if not self.channel_id or not self.message_id:
             return None
 
@@ -427,13 +432,14 @@ class BulkDeletePayload:
 
 
 class ThreadListSyncPayload:
-    """Represents a thread list sync payload.
+    """
+    Represents a thread list sync payload.
 
     Attributes
     ----------
-    guild_id: `int`
+    guild_id:
         The guild ID the threads are in.
-    channel_ids: `list`[`int`]
+    channel_ids: ]
         The parent channel IDs whose threads are being synced.
         If this is empty, it means all threads in the guild are being synced.
 
@@ -454,11 +460,13 @@ class ThreadListSyncPayload:
 
     @property
     def guild(self) -> "PartialGuild":
+        """ The guild the thread is in. """
         bot = self._state.bot
         return bot.cache.get_guild(self.guild_id) or bot.get_partial_guild(self.guild_id)
 
     @property
     def threads(self) -> list["Thread"]:
+        """ The threads in the thread list. """
         if not self._threads:
             return []
 
@@ -469,6 +477,7 @@ class ThreadListSyncPayload:
 
     @property
     def members(self) -> list["PartialThreadMember"]:
+        """ The members in the thread list. """
         if not self._members:
             return []
 
@@ -487,6 +496,7 @@ class ThreadListSyncPayload:
 
     @property
     def channels(self) -> list["PartialChannel"]:
+        """ The channels in the thread list. """
         if not self.channel_ids:
             return []
 
@@ -501,6 +511,7 @@ class ThreadListSyncPayload:
     def combined(self) -> Iterator[
         tuple["PartialChannel", tuple["Thread", list["PartialThreadMember"]]]
     ]:
+        """ Returns a combined iterator of channels and threads. """
         channels = self.channels
         threads = self.threads
         members = self.members
@@ -525,17 +536,18 @@ class ThreadListSyncPayload:
 
 
 class ThreadMembersUpdatePayload:
-    """Represents a thread members update's payload.
+    """
+    Represents a thread members update's payload.
 
     Attributes
     ----------
-    id: `int`
+    id:
         The ID of the thread.
-    guild_id: `int`
+    guild_id:
         The guild ID the thread is in.
-    member_count: `int`
+    member_count:
         The total number of members in the thread, capped at 50.
-    removed_member_ids: `list[int]`
+    removed_member_ids:
         The IDs of the members that were removed from the thread.
     """
     def __init__(
@@ -555,18 +567,18 @@ class ThreadMembersUpdatePayload:
 
     @property
     def guild(self) -> "PartialGuild":
-        """ The guild the thread is in """
+        """ The guild the thread is in. """
         bot = self._state.bot
         return bot.cache.get_guild(self.guild_id) or bot.get_partial_guild(self.guild_id)
 
     @property
     def thread(self) -> "PartialChannel | Thread":
-        """ The thread the members were updated in """
+        """ The thread the members were updated in. """
         return self.guild.get_channel(self.id) or self.guild.get_partial_channel(self.id)
 
     @property
     def added_members(self) -> list["ThreadMember"]:
-        """ list[PartialThreadMember]: The members that were added to the thread """
+        """ list[PartialThreadMember]: The members that were added to the thread. """
         if not self._added_members:
             return []
 
@@ -586,7 +598,7 @@ class ThreadMembersUpdatePayload:
 
     @property
     def removed_members(self) -> list["PartialMember"]:
-        """ list[PartialMember]: The members that were removed from the thread """
+        """ list[PartialMember]: The members that were removed from the thread. """
         if not self.removed_member_ids:
             return []
 

@@ -2,7 +2,8 @@ import asyncio
 
 from datetime import timedelta, datetime
 from io import BytesIO
-from typing import TYPE_CHECKING, Optional, Union, AsyncIterator, Self, Callable
+from typing import TYPE_CHECKING, Optional, Self
+from collections.abc import AsyncIterator, Callable
 
 from . import utils
 from .colour import Colour
@@ -23,7 +24,7 @@ from .view import View
 if TYPE_CHECKING:
     from .channel import BaseChannel, PartialChannel, PublicThread
     from .guild import Guild, PartialGuild
-    from .http import DiscordAPI
+    from .http import DiscordAPI, HTTPResponse
     from .member import Member
 
 MISSING = utils.MISSING
@@ -51,7 +52,7 @@ class MessageInteraction(PartialBase):
         self._state = state
 
         self.type: InteractionType = InteractionType(data["type"])
-        self.name: str | None = data.get("name", None)
+        self.name: str | None = data.get("name")
         self.user: User = User(
             state=state,
             data=data["user"]
@@ -78,35 +79,33 @@ class MessageReaction:
         ]
 
     async def add(self) -> None:
-        """
-        Make the bot react with this emoji
-        """
-        _parsed = self.emoji.to_reaction()
+        """ Make the bot react with this emoji. """
+        parsed = self.emoji.to_reaction()
         await self._state.query(
             "PUT",
-            f"/channels/{self._message.channel.id}/messages/{self._message.id}/reactions/{_parsed}/@me",
+            f"/channels/{self._message.channel.id}/messages/{self._message.id}/reactions/{parsed}/@me",
             res_method="text"
         )
 
     async def remove(self, *, user_id: int | None = None) -> None:
         """
-        Remove the reaction from the message
+        Remove the reaction from the message.
 
         Parameters
         ----------
-        user_id: `int | None`
+        user_id:
             User ID to remove the reaction from
             If none provided, it will remove the reaction from the bot
         """
-        _parsed = self.emoji.to_reaction()
-        _url = (
-            f"/channels/{self._message.channel.id}/messages/{self._message.id}/reactions/{_parsed}"
+        parsed = self.emoji.to_reaction()
+        url = (
+            f"/channels/{self._message.channel.id}/messages/{self._message.id}/reactions/{parsed}"
             f"/{user_id}" if user_id is not None else "/@me"
         )
 
         await self._state.query(
             "DELETE",
-            _url,
+            url,
             res_method="text"
         )
 
@@ -116,26 +115,26 @@ class JumpURL:
         self,
         *,
         state: "DiscordAPI",
-        url: Optional[str] = None,
-        guild_id: Optional[int] = None,
-        channel_id: Optional[int] = None,
-        message_id: Optional[int] = None
+        url: str | None = None,
+        guild_id: int | None = None,
+        channel_id: int | None = None,
+        message_id: int | None = None
     ):
         self._state = state
 
-        self.guild_id: Optional[int] = int(guild_id) if guild_id else None
-        self.channel_id: Optional[int] = channel_id or None
-        self.message_id: Optional[int] = message_id or None
+        self.guild_id: int | None = int(guild_id) if guild_id else None
+        self.channel_id: int | None = channel_id or None
+        self.message_id: int | None = message_id or None
 
         if url:
             if any([guild_id, channel_id, message_id]):
                 raise ValueError("Cannot provide both a URL and a guild_id, channel_id or message_id")
 
-            _parse_url: Optional[list[tuple[str, str, Optional[str]]]] = utils.re_jump_url.findall(url)
-            if not _parse_url:
+            parse_url: list[tuple[str, str, str | None]] | None = utils.re_jump_url.findall(url)
+            if not parse_url:
                 raise ValueError("Invalid jump URL provided")
 
-            gid, cid, mid = _parse_url[0]
+            gid, cid, mid = parse_url[0]
 
             self.channel_id = int(cid)
             if gid != "@me":
@@ -157,7 +156,7 @@ class JumpURL:
 
     @property
     def guild(self) -> Optional["Guild | PartialGuild"]:
-        """ The guild the message was sent in """
+        """ The guild the message was sent in. """
         if not self.guild_id:
             return None
 
@@ -172,7 +171,7 @@ class JumpURL:
         )
 
     async def fetch_guild(self) -> "Guild":
-        """ Returns the guild the message was sent in """
+        """ Returns the guild the message was sent in. """
         if not self.guild_id:
             raise ValueError("Cannot fetch a guild without a guild_id available")
 
@@ -181,7 +180,8 @@ class JumpURL:
     @property
     def channel(self) -> Optional["BaseChannel | PartialChannel"]:
         """
-        `BaseChannel | PartialChannel`: Returns the channel the message was sent in.
+        Returns the channel the message was sent in.
+
         If guild and channel cache is enabled, it can also return full channel object.
         """
         if not self.channel_id:
@@ -204,12 +204,12 @@ class JumpURL:
         )
 
     async def fetch_channel(self) -> "BaseChannel":
-        """ Returns the channel the message was sent in """
+        """ Returns the channel the message was sent in. """
         return await self.channel.fetch()
 
     @property
     def message(self) -> Optional["PartialMessage"]:
-        """ Returns the message if a message_id is available """
+        """ Returns the message if a message_id is available. """
         if not self.channel_id or not self.message_id:
             return None
 
@@ -221,7 +221,7 @@ class JumpURL:
         )
 
     async def fetch_message(self) -> "Message":
-        """ Returns the message if a message_id is available """
+        """ Returns the message if a message_id is available. """
         if not self.message_id:
             raise ValueError("Cannot fetch a message without a message_id available")
 
@@ -229,7 +229,7 @@ class JumpURL:
 
     @property
     def url(self) -> str:
-        """ Returns the jump URL """
+        """ Returns the jump URL. """
         if self.channel_id and self.message_id:
             return f"https://discord.com/channels/{self.guild_id or '@me'}/{self.channel_id}/{self.message_id}"
         return f"https://discord.com/channels/{self.guild_id or '@me'}/{self.channel_id}"
@@ -239,14 +239,14 @@ class PollAnswer:
     def __init__(
         self,
         *,
-        id: int,
-        text: Optional[str] = None,
-        emoji: Optional[Union[EmojiParser, str]] = None
+        id: int,  # noqa: A002
+        text: str | None = None,
+        emoji: EmojiParser | str | None = None
     ):
         self.id: int = id
-        self.text: Optional[str] = text
+        self.text: str | None = text
 
-        self.emoji: Optional[Union[EmojiParser, str]] = None
+        self.emoji: EmojiParser | str | None = None
         if isinstance(emoji, str):
             self.emoji = EmojiParser(emoji)
 
@@ -298,14 +298,14 @@ class Poll:
         *,
         text: str,
         allow_multiselect: bool = False,
-        duration: Optional[Union[timedelta, int]] = None
+        duration: timedelta | int | None = None
     ):
-        self.text: Optional[str] = text
+        self.text: str | None = text
 
         self.allow_multiselect: bool = allow_multiselect
         self.answers: list[PollAnswer] = []
 
-        self.duration: Optional[int] = None
+        self.duration: int | None = None
 
         if duration is not None:
             if isinstance(duration, timedelta):
@@ -321,7 +321,7 @@ class Poll:
         self.layout_type: int = 1  # This is the only layout type available
 
         # Data only available when fetching message data
-        self.expiry: Optional[datetime] = None
+        self.expiry: datetime | None = None
         self.is_finalized: bool = False
 
     def __repr__(self) -> str:
@@ -336,17 +336,17 @@ class Poll:
     def add_answer(
         self,
         *,
-        text: Optional[str] = None,
-        emoji: Optional[Union[EmojiParser, str]] = None
+        text: str | None = None,
+        emoji: EmojiParser | str | None = None
     ) -> PollAnswer:
         """
-        Add an answer to the poll
+        Add an answer to the poll.
 
         Parameters
         ----------
-        text: `Optional[str]`
+        text:
             The text of the answer
-        emoji: `Optional[Union[EmojiParser, str]]`
+        emoji:
             The emoji of the answer
         """
         if not text and not emoji:
@@ -364,14 +364,14 @@ class Poll:
 
     def remove_answer(
         self,
-        answer_id: Union[PollAnswer, int]
+        answer_id: PollAnswer | int
     ) -> None:
         """
-        Remove an answer from the poll
+        Remove an answer from the poll.
 
         Parameters
         ----------
-        answer: `Union[PollAnswer, int]`
+        answer_id:
             The ID to the answer to remove
 
         Raises
@@ -392,6 +392,7 @@ class Poll:
             a.id = i
 
     def to_dict(self) -> dict:
+        """ The poll as a dictionary. """
         return {
             "question": {"text": self.text},
             "answers": [a.to_dict() for a in self.answers],
@@ -402,6 +403,7 @@ class Poll:
 
     @classmethod
     def from_dict(cls, data: dict) -> Self:
+        """ Create a poll from a dictionary. """
         poll = cls(
             text=data["question"]["text"],
             allow_multiselect=data["allow_multiselect"],
@@ -409,13 +411,13 @@ class Poll:
 
         poll.answers = [PollAnswer.from_dict(a) for a in data["answers"]]
 
-        if data.get("expiry", None):
+        if data.get("expiry"):
             poll.expiry = utils.parse_time(data["expiry"])
 
-        _results = data.get("results", {})
-        poll.is_finalized = _results.get("is_finalized", False)
+        results = data.get("results", {})
+        poll.is_finalized = results.get("is_finalized", False)
 
-        for g in _results.get("answer_counts", []):
+        for g in results.get("answer_counts", []):
             find_answer = next(
                 (a for a in poll.answers if a.id == g["id"]),
                 None
@@ -447,7 +449,7 @@ class MessageReference:
 
     @property
     def jump_url(self) -> JumpURL:
-        """ The jump URL of the message """
+        """ The jump URL of the message. """
         return JumpURL(
             state=self._state,
             url=f"https://discord.com/channels/{self.guild_id or '@me'}/{self.channel_id}/{self.message_id}"
@@ -455,7 +457,7 @@ class MessageReference:
 
     @property
     def guild(self) -> "Guild | PartialGuild | None":
-        """ The guild the message was sent in """
+        """ The guild the message was sent in. """
         if not self.guild_id:
             return None
 
@@ -471,7 +473,7 @@ class MessageReference:
 
     @property
     def channel(self) -> "PartialChannel | None":
-        """ Returns the channel the message was sent in """
+        """ Returns the channel the message was sent in. """
         if not self.channel_id:
             return None
 
@@ -493,7 +495,7 @@ class MessageReference:
 
     @property
     def message(self) -> "PartialMessage | None":
-        """ Returns the message if a message_id and channel_id is available """
+        """ Returns the message if a message_id and channel_id is available. """
         if not self.channel_id or not self.message_id:
             return None
 
@@ -505,7 +507,7 @@ class MessageReference:
         )
 
     def to_dict(self) -> dict:
-        """ Returns the message reference as a dictionary """
+        """ Returns the message reference as a dictionary. """
         payload = {}
 
         if self.guild_id:
@@ -532,16 +534,16 @@ class Attachment:
         self.ephemeral: bool = data.get("ephemeral", False)
         self.flags: AttachmentFlags = AttachmentFlags(data.get("flags", 0))
 
-        self.content_type: Optional[str] = data.get("content_type", None)
-        self.title: Optional[str] = data.get("title", None)
-        self.description: Optional[str] = data.get("description", None)
+        self.content_type: str | None = data.get("content_type")
+        self.title: str | None = data.get("title")
+        self.description: str | None = data.get("description")
 
-        self.height: Optional[int] = data.get("height", None)
-        self.width: Optional[int] = data.get("width", None)
+        self.height: int | None = data.get("height")
+        self.width: int | None = data.get("width")
         self.ephemeral: bool = data.get("ephemeral", False)
 
-        self.duration_secs: Optional[int] = data.get("duration_secs", None)
-        self.waveform: Optional[str] = data.get("waveform", None)
+        self.duration_secs: int | None = data.get("duration_secs")
+        self.waveform: str | None = data.get("waveform")
 
     def __str__(self) -> str:
         return self.filename or ""
@@ -556,7 +558,7 @@ class Attachment:
         )
 
     def is_spoiler(self) -> bool:
-        """ Whether the attachment is a spoiler or not """
+        """ Whether the attachment is a spoiler or not. """
         return self.filename.startswith("SPOILER_")
 
     def is_voice_message(self) -> bool:
@@ -565,16 +567,15 @@ class Attachment:
 
     async def fetch(self, *, use_cached: bool = False) -> bytes:
         """
-        Fetches the file from the attachment URL and returns it as bytes
+        Fetches the file from the attachment URL and returns it as bytes.
 
         Parameters
         ----------
-        use_cached: `bool`
+        use_cached:
             Whether to use the cached URL or not, defaults to `False`
 
         Returns
         -------
-        `bytes`
             The attachment as bytes
 
         Raises
@@ -600,14 +601,14 @@ class Attachment:
         use_cached: bool = False
     ) -> int:
         """
-        Fetches the file from the attachment URL and saves it locally to the path
+        Fetches the file from the attachment URL and saves it locally to the path.
 
         Parameters
         ----------
-        path: `str`
+        path:
             Path to save the file to, which includes the filename and extension.
-            Example: `./path/to/file.png`
-        use_cached: `bool`
+            Example:
+        use_cached:
             Whether to use the cached URL or not, defaults to `False`
 
         Returns
@@ -622,22 +623,21 @@ class Attachment:
     async def to_file(
         self,
         *,
-        filename: Optional[str] = MISSING,
+        filename: str | None = MISSING,
         spoiler: bool = False
     ) -> File:
         """
-        Convert the attachment to a sendable File object for Message.send()
+        Convert the attachment to a sendable File object for Message.send().
 
         Parameters
         ----------
-        filename: `Optional[str]`
+        filename:
             Filename for the file, if empty, the attachment's filename will be used
-        spoiler: `bool`
+        spoiler:
             Weather the file should be marked as a spoiler or not, defaults to `False`
 
         Returns
         -------
-        `File`
             The attachment as a File object
         """
         if filename is MISSING:
@@ -653,7 +653,7 @@ class Attachment:
         )
 
     def to_dict(self) -> dict:
-        """ The attachment as a dictionary """
+        """ The attachment as a dictionary. """
         data = {
             "id": self.id,
             "filename": self.filename,
@@ -687,7 +687,7 @@ class PartialMessage(PartialBase):
         self,
         *,
         state: "DiscordAPI",
-        id: int,
+        id: int,  # noqa: A002
         channel_id: int,
         guild_id: int | None = None
     ):
@@ -702,7 +702,7 @@ class PartialMessage(PartialBase):
 
     @property
     def channel(self) -> "BaseChannel | PartialChannel":
-        """ Returns the channel the message was sent in """
+        """ Returns the channel the message was sent in. """
         if self.guild_id:
             cache = self._state.cache.get_channel_thread(
                 guild_id=self.guild_id,
@@ -721,7 +721,7 @@ class PartialMessage(PartialBase):
 
     @property
     def guild(self) -> "Guild | PartialGuild | None":
-        """ Returns the guild the message was sent in """
+        """ Returns the guild the message was sent in. """
         if not self.guild_id:
             return None
 
@@ -734,14 +734,14 @@ class PartialMessage(PartialBase):
 
     @property
     def jump_url(self) -> JumpURL:
-        """ Returns the jump URL of the message, GuildID will always be @me """
+        """ Returns the jump URL of the message, GuildID will always be @me. """
         return JumpURL(
             state=self._state,
             url=f"https://discord.com/channels/@me/{self.channel_id}/{self.id}"
         )
 
     async def fetch(self) -> "Message":
-        """ Returns the message object """
+        """ Returns the message object. """
         r = await self._state.query(
             "GET",
             f"/channels/{self.channel.id}/messages/{self.id}"
@@ -760,17 +760,17 @@ class PartialMessage(PartialBase):
         reason: str | None = None
     ) -> None:
         """
-        Delete the message
+        Delete the message.
 
         Parameters
         ----------
-        delay: `float` | `None`:
+        delay:
             How many seconds it should wait in background to delete
-        reason: `str` | `None`:
+        reason:
             Reason for deleting the message
             (Only applies when deleting messages not made by yourself)
         """
-        async def _delete():
+        async def _delete() -> None:
             await self._state.query(
                 "DELETE",
                 f"/channels/{self.channel.id}/messages/{self.id}",
@@ -778,7 +778,7 @@ class PartialMessage(PartialBase):
                 res_method="text"
             )
 
-        async def _delete_after(d: float):
+        async def _delete_after(d: float) -> None:
             await asyncio.sleep(d)
             try:
                 await _delete()
@@ -786,18 +786,18 @@ class PartialMessage(PartialBase):
                 pass
 
         if delay is not None:
-            asyncio.create_task(_delete_after(delay))
+            asyncio.create_task(_delete_after(delay))  # noqa: RUF006
         else:
             await _delete()
 
     async def expire_poll(self) -> "Message":
         """
         Immediately end the poll, then returns new Message object.
+
         This can only be done if you created it
 
         Returns
         -------
-        `Message`
             The message object of the poll
         """
         r = await self._state.query(
@@ -812,25 +812,25 @@ class PartialMessage(PartialBase):
 
     async def fetch_poll_voters(
         self,
-        answer: Union[PollAnswer, int],
-        after: Optional[Union[Snowflake, int]] = None,
-        limit: Optional[int] = 100,
+        answer: PollAnswer | int,
+        after: Snowflake | int | None = None,
+        limit: int | None = 100,
     ) -> AsyncIterator["User"]:
         """
-        Fetch the users who voted for this answer
+        Fetch the users who voted for this answer.
 
         Parameters
         ----------
-        answer: `Union[PollAnswer, int]`
+        answer:
             The answer to fetch the voters from
-        after: `Optional[Union[Snowflake, int]]`
+        after:
             The user ID to start fetching from
-        limit: `Optional[int]`
+        limit:
             The amount of users to fetch, defaults to 100.
             `None` will fetch all users.
 
         Yields
-        -------
+        ------
         `User`
             User object of people who voted
         """
@@ -838,7 +838,7 @@ class PartialMessage(PartialBase):
         if isinstance(answer, PollAnswer):
             answer_id = answer.id
 
-        async def _get_history(limit: int, **kwargs):
+        async def _get_history(limit: int, **kwargs) -> "HTTPResponse[dict]":
             params = {"limit": min(limit, 100)}
             for key, value in kwargs.items():
                 if value is None:
@@ -852,7 +852,11 @@ class PartialMessage(PartialBase):
                 params=params
             )
 
-        async def _after_http(http_limit: int, after_id: Optional[int], limit: Optional[int]):
+        async def _after_http(
+            http_limit: int,
+            after_id: int | None,
+            limit: int | None
+        ) -> tuple[dict, int | None, int | None]:
             r = await _get_history(http_limit, after=after_id)
             if r.response:
                 if limit is not None:
@@ -876,6 +880,7 @@ class PartialMessage(PartialBase):
             i = 0
             for i, u in enumerate(users["users"], start=1):
                 yield User(state=self._state, data=u)
+                i += 1
 
             if i < 100:
                 break
@@ -883,35 +888,35 @@ class PartialMessage(PartialBase):
     async def edit(
         self,
         *,
-        content: Optional[str] = MISSING,
-        embed: Optional[Embed] = MISSING,
-        embeds: Optional[list[Embed]] = MISSING,
-        view: Optional[View] = MISSING,
-        attachment: Optional[File] = MISSING,
-        attachments: Optional[list[File]] = MISSING,
-        allowed_mentions: Optional[AllowedMentions] = MISSING,
-        flags: Optional[MessageFlags] = MISSING
+        content: str | None = MISSING,
+        embed: Embed | None = MISSING,
+        embeds: list[Embed] | None = MISSING,
+        view: View | None = MISSING,
+        attachment: File | None = MISSING,
+        attachments: list[File] | None = MISSING,
+        allowed_mentions: AllowedMentions | None = MISSING,
+        flags: MessageFlags | None = MISSING
     ) -> "Message":
         """
-        Edit the message
+        Edit the message.
 
         Parameters
         ----------
-        content: `Optional[str]`
+        content:
             Content of the message
-        embed: `Optional[Embed]`
+        embed:
             Embed of the message
-        embeds: `Optional[list[Embed]]`
+        embeds:
             Embeds of the message
-        view: `Optional[View]`
+        view:
             Components of the message
-        attachment: `Optional[File]`
+        attachment:
             New attachment of the message
-        attachments: `Optional[list[File]]`
+        attachments:
             New attachments of the message
-        allowed_mentions: `Optional[AllowedMentions]`
+        allowed_mentions:
             Allowed mentions of the message
-        flags: `Optional[MessageFlags]`
+        flags:
             Flags of the message
 
         Returns
@@ -947,9 +952,7 @@ class PartialMessage(PartialBase):
         )
 
     async def publish(self) -> "Message":
-        """
-        Crosspost the message to another channel.
-        """
+        """ Crosspost the message to another channel. """
         r = await self._state.query(
             "POST",
             f"/channels/{self.channel.id}/messages/{self.id}/crosspost",
@@ -964,38 +967,38 @@ class PartialMessage(PartialBase):
 
     async def reply(
         self,
-        content: Optional[str] = MISSING,
+        content: str | None = MISSING,
         *,
-        embed: Optional[Embed] = MISSING,
-        embeds: Optional[list[Embed]] = MISSING,
-        file: Optional[File] = MISSING,
-        files: Optional[list[File]] = MISSING,
-        view: Optional[View] = MISSING,
-        tts: Optional[bool] = False,
-        allowed_mentions: Optional[AllowedMentions] = MISSING,
+        embed: Embed | None = MISSING,
+        embeds: list[Embed] | None = MISSING,
+        file: File | None = MISSING,
+        files: list[File] | None = MISSING,
+        view: View | None = MISSING,
+        tts: bool | None = False,
+        allowed_mentions: AllowedMentions | None = MISSING,
     ) -> "Message":
         """
         Sends a reply to a message in a channel.
 
         Parameters
         ----------
-        content: `Optional[str]`
+        content:
             Cotnent of the message
-        embed: `Optional[Embed]`
+        embed:
             Includes an embed object
-        embeds: `Optional[list[Embed]]`
+        embeds:
             List of embed objects
-        file: `Optional[File]`
+        file:
             A file object
-        files: `Union[list[File], File]`
+        files:
             A list of file objects
-        view: `View`
+        view:
             Send components to the message
-        tts: `bool`
+        tts:
             If the message should be sent as a TTS message
-        type: `Optional[ResponseType]`
+        type:
             The type of response to the message
-        allowed_mentions: `Optional[AllowedMentions]`
+        allowed_mentions:
             The allowed mentions for the message
 
         Returns
@@ -1037,13 +1040,13 @@ class PartialMessage(PartialBase):
             data=r.response
         )
 
-    async def pin(self, *, reason: Optional[str] = None) -> None:
+    async def pin(self, *, reason: str | None = None) -> None:
         """
-        Pin the message
+        Pin the message.
 
         Parameters
         ----------
-        reason: `Optional[str]`
+        reason:
             Reason for pinning the message
         """
         await self._state.query(
@@ -1053,13 +1056,13 @@ class PartialMessage(PartialBase):
             reason=reason
         )
 
-    async def unpin(self, *, reason: Optional[str] = None) -> None:
+    async def unpin(self, *, reason: str | None = None) -> None:
         """
-        Unpin the message
+        Unpin the message.
 
         Parameters
         ----------
-        reason: `Optional[str]`
+        reason:
             Reason for unpinning the message
         """
         await self._state.query(
@@ -1071,17 +1074,17 @@ class PartialMessage(PartialBase):
 
     async def add_reaction(self, emoji: str) -> None:
         """
-        Add a reaction to the message
+        Add a reaction to the message.
 
         Parameters
         ----------
-        emoji: `str`
+        emoji:
             Emoji to add to the message
         """
-        _parsed = EmojiParser(emoji).to_reaction()
+        parsed = EmojiParser(emoji).to_reaction()
         await self._state.query(
             "PUT",
-            f"/channels/{self.channel.id}/messages/{self.id}/reactions/{_parsed}/@me",
+            f"/channels/{self.channel.id}/messages/{self.id}/reactions/{parsed}/@me",
             res_method="text"
         )
 
@@ -1089,32 +1092,32 @@ class PartialMessage(PartialBase):
         self,
         emoji: str,
         *,
-        user_id: Optional[int] = None
+        user_id: int | None = None
     ) -> None:
         """
-        Remove a reaction from the message
+        Remove a reaction from the message.
 
         Parameters
         ----------
-        emoji: `str`
+        emoji:
             Emoji to remove from the message
-        user_id: `Optional[int]`
+        user_id:
             User ID to remove the reaction from
         """
-        _parsed = EmojiParser(emoji).to_reaction()
-        _url = (
-            f"/channels/{self.channel.id}/messages/{self.id}/reactions/{_parsed}"
+        parsed = EmojiParser(emoji).to_reaction()
+        url = (
+            f"/channels/{self.channel.id}/messages/{self.id}/reactions/{parsed}"
             f"/{user_id}" if user_id is not None else "/@me"
         )
 
         await self._state.query(
             "DELETE",
-            _url,
+            url,
             res_method="text"
         )
 
     async def remove_all_reactions(self) -> None:
-        """ Remove all reactions from the message """
+        """ Remove all reactions from the message. """
         await self._state.query(
             "DELETE",
             f"/channels/{self.channel.id}/messages/{self.id}/reactions",
@@ -1125,22 +1128,22 @@ class PartialMessage(PartialBase):
         self,
         name: str,
         *,
-        auto_archive_duration: Optional[int] = 60,
-        rate_limit_per_user: Optional[Union[timedelta, int]] = None,
-        reason: Optional[str] = None
+        auto_archive_duration: int | None = 60,
+        rate_limit_per_user: timedelta | int | None = None,
+        reason: str | None = None
     ) -> "PublicThread":
         """
-        Create a public thread from the message
+        Create a public thread from the message.
 
         Parameters
         ----------
-        name: `str`
+        name:
             Name of the thread
-        auto_archive_duration: `Optional[int]`
+        auto_archive_duration:
             Duration in minutes to automatically archive the thread after recent activity,
-        rate_limit_per_user: `Optional[Union[timedelta, int]]`
+        rate_limit_per_user:
             A per-user rate limit for this thread (0-21600 seconds, default 0)
-        reason: `Optional[str]`
+        reason:
             Reason for creating the thread
 
         Returns
@@ -1166,7 +1169,7 @@ class PartialMessage(PartialBase):
             if isinstance(rate_limit_per_user, timedelta):
                 rate_limit_per_user = int(rate_limit_per_user.total_seconds())
 
-            if rate_limit_per_user not in range(0, 21601):
+            if rate_limit_per_user not in range(21601):
                 raise ValueError("rate_limit_per_user must be between 0 and 21600 seconds")
 
             payload["rate_limit_per_user"] = rate_limit_per_user
@@ -1213,7 +1216,7 @@ class MessageSnapshot:
 
         self._from_data(data)
 
-    def _from_data(self, data: dict) -> None:
+    def _from_data(self, data: dict) -> None:  # noqa: ARG002
         if self._message.get("edited_timestamp", None):
             self.edited_timestamp = utils.parse_time(
                 self._message["edited_timestamp"]
@@ -1242,11 +1245,11 @@ class Message(PartialMessage):
 
         self.type: MessageType = MessageType(data["type"])
         self.content: str = data.get("content", "")
-        self.author: Union[User, "Member"] = User(state=state, data=data["author"])
+        self.author: "User | Member" = User(state=state, data=data["author"])
         self.pinned: bool = data.get("pinned", False)
         self.mention_everyone: bool = data.get("mention_everyone", False)
         self.tts: bool = data.get("tts", False)
-        self.poll: Optional[Poll] = None
+        self.poll: Poll | None = None
 
         self.embeds: list[Embed] = [
             Embed.from_dict(embed)
@@ -1288,27 +1291,27 @@ class Message(PartialMessage):
     def __str__(self) -> str:
         return self.content or ""
 
-    def _from_data(self, data: dict):
-        if data.get("components", None):
+    def _from_data(self, data: dict) -> None:
+        if data.get("components"):
             self.view = View.from_dict(
                 state=self._state,
                 data=data
             )
 
-        if data.get("message_reference", None):
+        if data.get("message_reference"):
             self.reference = MessageReference(
                 state=self._state,
                 data=data["message_reference"]
             )
 
-        if data.get("referenced_message", None):
+        if data.get("referenced_message"):
             self.resolved_reply = Message(
                 state=self._state,
                 data=data["referenced_message"],
                 guild=self.guild
             )
 
-        if data.get("interaction_metadata", None):
+        if data.get("interaction_metadata"):
             self.interaction = MessageInteraction(
                 state=self._state,
                 data=data["interaction_metadata"]
@@ -1322,13 +1325,13 @@ class Message(PartialMessage):
                 )
             )
 
-        if data.get("poll", None):
+        if data.get("poll"):
             self.poll = Poll.from_dict(data["poll"])
 
-        if data.get("edited_timestamp", None):
+        if data.get("edited_timestamp"):
             self.edited_timestamp = utils.parse_time(data["edited_timestamp"])
 
-        if data.get("member", None):
+        if data.get("member"):
             from .member import Member
 
             # Append author data to member data
@@ -1340,19 +1343,19 @@ class Message(PartialMessage):
                 data=data["member"]
             )
 
-        if data.get("mentions", None):
+        if data.get("mentions"):
             from .member import Member
 
             for m in data["mentions"]:
                 if m.get("member", None) and self.guild_id:
                     # This is only done through the gateway
-                    _fake_member = m["member"]
-                    _fake_member["user"] = m
+                    fake_member = m["member"]
+                    fake_member["user"] = m
                     self.mentions.append(
                         Member(
                             state=self._state,
                             guild=self.guild,  # type: ignore
-                            data=_fake_member
+                            data=fake_member
                         )
                     )
 
@@ -1362,7 +1365,7 @@ class Message(PartialMessage):
                     )
 
     def is_system(self) -> bool:
-        """ Returns whether the message is a system message """
+        """ Returns whether the message is a system message. """
         return self.type not in (
             MessageType.default,
             MessageType.reply,
@@ -1373,7 +1376,7 @@ class Message(PartialMessage):
 
     @property
     def emojis(self) -> list[EmojiParser]:
-        """ Returns the emojis in the message """
+        """ Returns the emojis in the message. """
         return [
             EmojiParser(f"<{e[0]}:{e[1]}:{e[2]}>")
             for e in utils.re_emoji.findall(self.content)
@@ -1381,7 +1384,7 @@ class Message(PartialMessage):
 
     @property
     def jump_url(self) -> JumpURL:
-        """ Returns the jump URL of the message """
+        """ Returns the jump URL of the message. """
         return JumpURL(
             state=self._state,
             url=f"https://discord.com/channels/{self.guild_id or '@me'}/{self.channel_id}/{self.id}"
@@ -1390,7 +1393,8 @@ class Message(PartialMessage):
     @property
     def role_mentions(self) -> list[Role | PartialRole]:
         """
-        `list[PartialRole]`: Returns the role mentions in the message.
+        Returns the role mentions in the message.
+
         Can return full role object if guild and role cache is enabled
         """
         if not self.guild_id:
@@ -1409,7 +1413,8 @@ class Message(PartialMessage):
     @property
     def channel_mentions(self) -> list["BaseChannel | PartialChannel"]:
         """
-        `list[PartialChannel]`: Returns the channel mentions in the message
+        Returns the channel mentions in the message.
+
         Can return full role object if guild and channel cache is enabled
         """
         from .channel import PartialChannel
@@ -1422,7 +1427,7 @@ class Message(PartialMessage):
 
     @property
     def jump_urls(self) -> list[JumpURL]:
-        """ Returns the jump URLs in the message """
+        """ Returns the jump URLs in the message. """
         return [
             JumpURL(
                 state=self._state,
@@ -1443,35 +1448,35 @@ class WebhookMessage(Message):
     async def edit(
         self,
         *,
-        content: Optional[str] = MISSING,
-        embed: Optional[Embed] = MISSING,
-        embeds: Optional[list[Embed]] = MISSING,
-        attachment: Optional[File] = MISSING,
-        attachments: Optional[list[File]] = MISSING,
-        view: Optional[View] = MISSING,
-        flags: Optional[MessageFlags] = MISSING,
-        allowed_mentions: Optional[AllowedMentions] = MISSING
+        content: str | None = MISSING,
+        embed: Embed | None = MISSING,
+        embeds: list[Embed] | None = MISSING,
+        attachment: File | None = MISSING,
+        attachments: list[File] | None = MISSING,
+        view: View | None = MISSING,
+        flags: MessageFlags | None = MISSING,
+        allowed_mentions: AllowedMentions | None = MISSING
     ) -> "WebhookMessage":
         """
-        Edit the webhook message
+        Edit the webhook message.
 
         Parameters
         ----------
-        content: `Optional[str]`
+        content:
             Content of the message
-        embed: `Optional[Embed]`
+        embed:
             Embed of the message
-        embeds: `Optional[list[Embed]]`
+        embeds:
             Embeds of the message
-        attachment: `Optional[File]`
+        attachment:
             Attachment of the message
-        attachments: `Optional[list[File]]`
+        attachments:
             Attachments of the message
-        view: `Optional[View]`
+        view:
             Components of the message
-        allowed_mentions: `Optional[AllowedMentions]`
+        allowed_mentions:
             Allowed mentions of the message
-        flags: `Optional[MessageFlags]`
+        flags:
             Flags of the message
 
         Returns
@@ -1511,25 +1516,29 @@ class WebhookMessage(Message):
     async def delete(
         self,
         *,
-        delay: float | None = None
+        delay: float | None = None,
+        reason: str | None = None
     ) -> None:
         """
-        Delete the webhook message
+        Delete the webhook message.
 
         Parameters
         ----------
-        reason: `Optional[str]`
-            Reason for deleting the message
+        delay:
+            How many seconds it should wait in background to delete.
+        reason:
+            Reason for deleting the message.
         """
-        async def _delete():
+        async def _delete() -> None:
             await self._state.query(
                 "DELETE",
                 f"/webhooks/{self.application_id}/{self.token}/messages/{self.id}",
+                reason=reason,
                 webhook=True,
                 res_method="text"
             )
 
-        async def _delete_after(d: float):
+        async def _delete_after(d: float) -> None:
             await asyncio.sleep(d)
             try:
                 await _delete()
@@ -1537,6 +1546,6 @@ class WebhookMessage(Message):
                 pass
 
         if delay is not None:
-            asyncio.create_task(_delete_after(delay))
+            asyncio.create_task(_delete_after(delay))  # noqa: RUF006
         else:
             await _delete()

@@ -4,8 +4,8 @@ import inspect
 import logging
 
 from datetime import time as dtime
-from datetime import timedelta, datetime, timezone
-from typing import Callable, Sequence
+from datetime import timedelta, datetime, UTC
+from collections.abc import Callable, Sequence, Coroutine
 
 from . import utils
 
@@ -23,6 +23,14 @@ class Sleeper:
         )
 
     def recalculate(self, dt: datetime) -> None:
+        """
+        Recalculate the timer.
+
+        Parameters
+        ----------
+        dt:
+            The new time to wait until
+        """
         self.handle.cancel()
         self.handle: asyncio.TimerHandle = self.loop.call_later(
             max((dt - utils.utcnow()).total_seconds(), 0),
@@ -31,12 +39,27 @@ class Sleeper:
         )
 
     def wait(self) -> asyncio.Future:
+        """
+        Wait for the timer to finish.
+
+        Returns
+        -------
+            The future that is waiting for the timer to finish
+        """
         return self.future
 
     def done(self) -> bool:
+        """
+        Returns whether the timer is done or not.
+
+        Returns
+        -------
+            Whether the timer is done or not
+        """
         return self.future.done()
 
     def cancel(self) -> None:
+        """ Cancels the timer. """
         self.future.cancel()
         self.handle.cancel()
 
@@ -88,13 +111,14 @@ class Loop:
         self._next_loop: datetime | None = None
         self._loop_count: int = 0
 
-    async def __call__(self, *args, **kwargs) -> Callable:
+    async def __call__(self, *args, **kwargs) -> Callable:  # noqa: ANN002
+        """ Calls the loop. """
         if self._injected is not None:
             args = (self._injected, *args)
 
         return await self.func(*args, **kwargs)
 
-    def __get__(self, obj, objtype):
+    def __get__(self, obj: Coroutine, objtype):  # noqa: ANN001
         if obj is None:
             return self
 
@@ -116,27 +140,25 @@ class Loop:
         return copy
 
     async def _try_sleep_until(self, dt: datetime) -> None:
-        """ Attempt to sleeps until a specified datetime depending on the loop configuration """
+        """ Attempt to sleeps until a specified datetime depending on the loop configuration. """
         self._handle = Sleeper(dt, loop=asyncio.get_event_loop())
         return await self._handle.wait()
 
     async def _default_error(self, e: Exception) -> None:
-        """ The default error handler for the loop """
+        """ The default error handler for the loop. """
         _log.error(
             f"Unhandled exception in background loop {self.func.__name__}",
             exc_info=e
         )
 
     async def _default_before_loop(self) -> None:
-        """ The default before_loop handler for the loop """
-        pass
+        """ The default before_loop handler for the loop. """
 
     async def _default_after_loop(self) -> None:
-        """ The default after_loop handler for the loop """
-        pass
+        """ The default after_loop handler for the loop. """
 
-    async def _looper(self, *args, **kwargs) -> None:
-        """ Internal looper that handles the behaviour of the loop """
+    async def _looper(self, *args, **kwargs) -> None:  # noqa: ANN002
+        """ Internal looper that handles the behaviour of the loop. """
         await self._before_loop()
         self._last_loop_failed = False
 
@@ -148,7 +170,8 @@ class Loop:
 
         try:
             if self._should_stop:
-                return None
+                return
+
             while True:
                 if self._is_explicit_time():
                     await self._try_sleep_until(self._next_loop)
@@ -204,8 +227,8 @@ class Loop:
             self._loop_count = 0
             self._should_stop = False
 
-    def start(self, *args, **kwargs) -> asyncio.Task:
-        """ Starts the loop """
+    def start(self, *args, **kwargs) -> asyncio.Task:  # noqa: ANN002
+        """ Starts the loop. """
         if self._task and not self._task.done():
             raise RuntimeError("The loop is already running")
 
@@ -217,7 +240,7 @@ class Loop:
         return self._task
 
     def stop(self) -> None:
-        """ Stops the loop """
+        """ Stops the loop. """
         if self._task and not self._task.done():
             self._should_stop = True
 
@@ -229,12 +252,12 @@ class Loop:
         )
 
     def cancel(self) -> None:
-        """ Cancels the loop if possible """
+        """ Cancels the loop if possible. """
         if self._can_be_cancelled():
             self._task.cancel()
 
     def on_error(self) -> Callable:
-        """ Decorator that registers a custom error handler for the loop """
+        """ Decorator that registers a custom error handler for the loop. """
         def decorator(func: Loop) -> Loop:
             if not inspect.iscoroutinefunction(func):
                 raise TypeError("The error handler must be a coroutine function")
@@ -245,7 +268,7 @@ class Loop:
         return decorator
 
     def before_loop(self) -> Callable:
-        """ Decorator that registers a custom before_loop handler for the loop """
+        """ Decorator that registers a custom before_loop handler for the loop. """
         def decorator(func: Loop) -> Loop:
             if not inspect.iscoroutinefunction(func):
                 raise TypeError("The before_loop must be a coroutine function")
@@ -256,7 +279,7 @@ class Loop:
         return decorator
 
     def after_loop(self) -> Callable:
-        """ Decorator that registers a custom after_loop handler for the loop """
+        """ Decorator that registers a custom after_loop handler for the loop. """
         def decorator(func: Loop) -> Loop:
             if not inspect.iscoroutinefunction(func):
                 raise TypeError("The after_loop must be a coroutine function")
@@ -267,17 +290,17 @@ class Loop:
         return decorator
 
     def is_running(self) -> bool:
-        """ Returns whether the loop is running or not """
+        """ Returns whether the loop is running or not. """
         return not bool(self._task.done()) if self._task else False
 
     @property
     def loop_count(self) -> int:
-        """ Returns the number of times the loop has been run """
+        """ Returns the number of times the loop has been run. """
         return self._loop_count
 
     @property
     def failed(self) -> bool:
-        """ Returns whether the loop has failed or not """
+        """ Returns whether the loop has failed or not. """
         return self._has_faild
 
     def _is_relative_time(self) -> bool:
@@ -287,15 +310,15 @@ class Loop:
         return self._time is not None
 
     def is_being_cancelled(self) -> bool:
-        """ Returns whether the loop is being cancelled or not """
+        """ Returns whether the loop is being cancelled or not. """
         return self._will_cancel
 
     def fetch_task(self) -> asyncio.Task | None:
-        """ Returns the task that is running the loop """
+        """ Returns the task that is running the loop. """
         return self._task
 
     def add_exception(self, *exceptions: Exception) -> None:
-        """ Adds exceptions to the whitelist of exceptions that are ignored """
+        """ Adds exceptions to the whitelist of exceptions that are ignored. """
         for e in exceptions:
             if not inspect.isclass(e):
                 _log.error(
@@ -314,14 +337,14 @@ class Loop:
             self._whitelist_exceptions += (e,)  # type: ignore
 
     def remove_exception(self, *exceptions: Exception) -> None:
-        """ Removes exceptions from the whitelist of exceptions that are ignored """
+        """ Removes exceptions from the whitelist of exceptions that are ignored. """
         self._whitelist_exceptions = tuple(
             x for x in self._whitelist_exceptions
             if x not in exceptions
         )
 
     def reset_exceptions(self) -> None:
-        """ Resets the whitelist of exceptions that are ignored back to the default """
+        """ Resets the whitelist of exceptions that are ignored back to the default. """
         self._whitelist_exceptions = (
             OSError,
             asyncio.TimeoutError,
@@ -336,7 +359,7 @@ class Loop:
             return [
                 times
                 if times.tzinfo is not None
-                else times.replace(tzinfo=timezone.utc)
+                else times.replace(tzinfo=UTC)
             ]
 
         if not isinstance(times, Sequence):
@@ -352,7 +375,7 @@ class Loop:
             output.append(
                 ts
                 if ts.tzinfo is not None
-                else ts.replace(tzinfo=timezone.utc)
+                else ts.replace(tzinfo=UTC)
             )
 
         return sorted(set(output))
@@ -370,13 +393,13 @@ class Loop:
 
         Parameters
         ----------
-        seconds: `float`
+        seconds:
             Amount of seconds between each iteration of the loop
-        minutes: `float`
+        minutes:
             Amount of minutes between each iteration of the loop
-        hours: `float`
+        hours:
             Amount of hours between each iteration of the loop
-        time: `dtime`
+        time:
             The time of day to run the loop at
 
         Raises
@@ -415,16 +438,15 @@ class Loop:
 
     def _find_time_index(self, now: datetime) -> int | None:
         """
-        Finds the index of the next time in the list of times
+        Finds the index of the next time in the list of times.
 
         Parameters
         ----------
-        now: `datetime`
+        now:
             The current time
 
         Returns
         -------
-        `Optional[int]`
             The index of the next time in the list of times
         """
         if not self._time:
@@ -434,11 +456,11 @@ class Loop:
             start = now.astimezone(ts.tzinfo)
             if ts >= start.timetz():
                 return i
-        else:
-            return None
+
+        return None
 
     def _next_sleep_time(self, now: datetime | None = None) -> datetime:
-        """ Calculates the next time the loop should run """
+        """ Calculates the next time the loop should run. """
         if self._sleep is not None:
             return self._last_loop + timedelta(seconds=self._sleep)
 
@@ -456,7 +478,7 @@ class Loop:
             date = now.astimezone(time.tzinfo).date()
 
         dt = datetime.combine(date, time, tzinfo=time.tzinfo)
-        return dt.astimezone(timezone.utc)
+        return dt.astimezone(UTC)
 
 
 def loop(
@@ -473,20 +495,20 @@ def loop(
 
     Parameters
     ----------
-    seconds: `float`
+    seconds:
         The number of seconds between each iteration of the loop.
-    minutes: `float`
+    minutes:
         The number of minutes between each iteration of the loop.
-    hours: `float`
+    hours:
         The number of hours between each iteration of the loop.
-    time: `datetime.time`
+    time:
         The time of day to run the loop at. (UTC only)
-    count: `int`
+    count:
         The number of times to run the loop. If ``None``, the loop will run forever.
-    reconnect: `bool`
+    reconnect:
         Whether the loop should reconnect if it fails or not.
     """
-    def decorator(func) -> Loop:
+    def decorator(func: Callable) -> Loop:
         return Loop(
             func=func,
             seconds=seconds,

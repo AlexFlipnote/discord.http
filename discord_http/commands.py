@@ -5,10 +5,11 @@ import re
 
 from typing import get_args as get_type_args
 from typing import (
-    Callable, TYPE_CHECKING, Union, Type, Protocol,
-    Generic, TypeVar, Optional, Coroutine, Literal, Any,
+    TYPE_CHECKING, Union, Protocol,
+    Generic, TypeVar, Optional, Literal, Any,
     runtime_checkable
 )
+from collections.abc import Callable, Coroutine
 
 from . import utils
 from .channel import (
@@ -31,6 +32,7 @@ from .object import PartialBase, Snowflake
 from .response import BaseResponse, AutocompleteResponse
 from .role import Role
 from .user import User
+import builtins
 
 if TYPE_CHECKING:
     from .client import Client
@@ -89,11 +91,8 @@ __all__ = (
 
 
 class Cog:
-    _cog_commands = dict()
-    _cog_interactions = dict()
-    _cog_listeners = dict()
-
-    def __new__(cls, *args, **kwargs):
+    def __new__(cls, *args, **kwargs):  # noqa: ANN002, ARG004
+        """ Create a new cog. """
         commands = {}
         listeners = {}
         interactions = {}
@@ -122,7 +121,7 @@ class Cog:
 
         return super().__new__(cls)
 
-    async def _inject(self, bot: "Client"):
+    async def _inject(self, bot: "Client") -> None:
         await self.cog_load()
 
         module_name = self.__class__.__module__
@@ -147,7 +146,7 @@ class Cog:
             interaction.cog = self
             bot.add_interaction(interaction)
 
-    async def _eject(self, bot: "Client"):
+    async def _eject(self, bot: "Client") -> None:
         await self.cog_unload()
 
         module_name = self.__class__.__module__
@@ -164,19 +163,17 @@ class Cog:
             bot.remove_interaction(interaction)
 
     async def cog_load(self) -> None:
-        """ Called before the cog is loaded """
-        pass
+        """ Called before the cog is loaded. """
 
     async def cog_unload(self) -> None:
-        """ Called before the cog is unloaded """
-        pass
+        """ Called before the cog is unloaded. """
 
 
 class PartialCommand(PartialBase):
     def __init__(self, data: dict):
         super().__init__(id=int(data["id"]))
         self.name: str = data["name"]
-        self.guild_id: Optional[int] = utils.get_int(data, "guild_id")
+        self.guild_id: int | None = utils.get_int(data, "guild_id")
 
     def __str__(self) -> str:
         return self.name
@@ -190,7 +187,7 @@ class LocaleContainer:
         self,
         key: str,
         name: str,
-        description: Optional[str] = None
+        description: str | None = None
     ):
         self.key = key
         self.name = name
@@ -200,26 +197,24 @@ class LocaleContainer:
 @runtime_checkable
 class Converter(Protocol[ConverterT]):
     """
-    This is the base class of converting strings to whatever you desire.
+    The base class of converting strings to whatever you desire.
 
     Instead of needing to implement checks inside the command, you can
     use this to convert the value on runtime, both in sync and async mode.
     """
     async def convert(self, ctx: "Context", value: str) -> ConverterT:
         """
-        The function where you implement the logic of converting
-        the value into whatever you need to be outputted in command.
+        The function where you implement the logic of converting the value into whatever you need to be outputted in command.
 
         Parameters
         ----------
-        ctx: `Context`
+        ctx:
             Context of the bot
-        value: `str`
+        value:
             The value returned by the argument in command
 
         Returns
         -------
-        `ConverterT`
             Your converted value
         """
         raise NotImplementedError("convert not implemented")
@@ -230,16 +225,16 @@ class Command:
         self,
         command: Callable,
         name: str,
-        description: Optional[str] = None,
-        guild_ids: Optional[list[Union[Snowflake, int]]] = None,
+        description: str | None = None,
+        guild_ids: list[Snowflake | int] | None = None,
         guild_install: bool = True,
         user_install: bool = False,
-        type: ApplicationCommandType = ApplicationCommandType.chat_input,
+        type: ApplicationCommandType = ApplicationCommandType.chat_input,  # noqa: A002
         parent: Optional["SubGroup"] = None
     ):
-        self.id: Optional[int] = None
+        self.id: int | None = None
         self.command = command
-        self.cog: Optional["Cog"] = None
+        self.cog: "Cog | None" = None
         self.type: int = int(type)
         self.name = name
         self.description = description
@@ -250,12 +245,12 @@ class Command:
         self.user_install = user_install
 
         self.list_autocompletes: dict[str, Callable] = {}
-        self.guild_ids: list[Union[Snowflake, int]] = guild_ids or []
+        self.guild_ids: list[Snowflake | int] = guild_ids or []
 
-        self._converters: dict[str, Type[Converter]] = {}
+        self._converters: dict[str, builtins.type[Converter]] = {}
 
         self.__list_choices: list[str] = []
-        self.__user_objects: dict[str, Type[Member | User]] = {}
+        self.__user_objects: dict[str, builtins.type[Member | User]] = {}
 
         if self.type == ApplicationCommandType.chat_input:
             if self.description is None:
@@ -285,15 +280,15 @@ class Command:
                 )
 
                 option: dict[str, Any] = {}
-                _channel_options: list[ChannelType] = []
+                channel_options: list[ChannelType] = []
 
                 # Check if there are multiple types, looking for:
-                # - Union[Any, ...] / Optional[Any] / type | None
+                # - Union[Any, ...] / Optional[Any] / type | None  # noqa: ERA001
                 # - type | type | ...
 
                 if (
                     getattr(parameter.annotation, "__args__", None) or
-                    origin in [Union]
+                    origin == Union
                 ):
 
                     if (
@@ -318,7 +313,7 @@ class Command:
                         # And make sure origin triggers channel types
                         origin = parameter.annotation.__args__[0]
                         for i in parameter.annotation.__args__:
-                            _channel_options.extend(channel_types[i])
+                            channel_options.extend(channel_types[i])
 
                 if origin is User or origin is Member:
                     ptype = CommandOptionType.user
@@ -327,10 +322,10 @@ class Command:
                 elif origin in channel_types:
                     ptype = CommandOptionType.channel
 
-                    if _channel_options:
+                    if channel_options:
                         # Union[] was used for channels
                         option.update({
-                            "channel_types": [int(i) for i in _channel_options]
+                            "channel_types": [int(i) for i in channel_options]
                         })
                     else:
                         # Just a regular channel type
@@ -340,10 +335,10 @@ class Command:
                             ]
                         })
 
-                elif origin in [Attachment]:
+                elif origin == Attachment:
                     ptype = CommandOptionType.attachment
 
-                elif origin in [Role]:
+                elif origin == Role:
                     ptype = CommandOptionType.role
 
                 elif isinstance(origin, Choice):
@@ -352,7 +347,6 @@ class Command:
 
                 # If literal, replicate Choice
                 elif origin is Literal:
-                    # self.__list_choices.append(parameter.name)
                     ptype = CommandOptionType.string
 
                     if not getattr(self.command, "__choices_params__", {}):
@@ -377,16 +371,16 @@ class Command:
                             "max_value": origin.max  # type: ignore[arg-type]
                         })
 
-                elif origin == int:
+                elif origin is int:
                     ptype = CommandOptionType.integer
 
-                elif origin == bool:
+                elif origin is bool:
                     ptype = CommandOptionType.boolean
 
-                elif origin == float:
+                elif origin is float:
                     ptype = CommandOptionType.number
 
-                elif origin == str:
+                elif origin is str:
                     ptype = CommandOptionType.string
 
                 elif isinstance(origin, Converter):
@@ -413,14 +407,14 @@ class Command:
 
     @property
     def mention(self) -> str:
-        """ Returns a mentionable string for the command """
+        """ Returns a mentionable string for the command. """
         if self.id:
             return f"</{self.name}:{self.id}>"
         return f"`/{self.name}`"
 
     @property
-    def cooldown(self) -> Optional[CooldownCache]:
-        """ Returns the cooldown rule of the command if available """
+    def cooldown(self) -> CooldownCache | None:
+        """ Returns the cooldown rule of the command if available. """
         return getattr(self.command, "__cooldown__", None)
 
     def mention_sub(self, suffix: str) -> str:
@@ -429,7 +423,7 @@ class Command:
 
         Parameters
         ----------
-        suffix: `str`
+        suffix:
             The subcommand name.
 
         Returns
@@ -484,53 +478,49 @@ class Command:
         return result
 
     def _has_permissions(self, ctx: "Context") -> Permissions:
-        _perms: Optional[Permissions] = getattr(
+        perms: Permissions | None = getattr(
             self.command, "__has_permissions__", None
         )
 
-        if _perms is None:
+        if perms is None:
             return Permissions(0)
 
-        _resolved_perms: Permissions | None = getattr(
+        resolved_perms: Permissions | None = getattr(
             ctx.user, "resolved_permissions", None
         )
 
-        if _resolved_perms is None:
+        if resolved_perms is None:
             return Permissions(0)
 
-        if Permissions.administrator in _resolved_perms:
+        if Permissions.administrator in resolved_perms:
             return Permissions(0)
 
-        missing = Permissions(sum([
-            flag.value for flag in _perms
-            if flag not in _resolved_perms
+        return Permissions(sum([
+            flag.value for flag in perms
+            if flag not in resolved_perms
         ]))
 
-        return missing
-
     def _bot_has_permissions(self, ctx: "Context") -> Permissions:
-        _perms: Optional[Permissions] = getattr(
+        perms: Permissions | None = getattr(
             self.command, "__bot_has_permissions__", None
         )
 
-        if _perms is None:
+        if perms is None:
             return Permissions(0)
         if Permissions.administrator in ctx.app_permissions:
             return Permissions(0)
 
-        missing = Permissions(sum([
-            flag.value for flag in _perms
+        return Permissions(sum([
+            flag.value for flag in perms
             if flag not in ctx.app_permissions
         ]))
 
-        return missing
-
     async def _command_checks(self, ctx: "Context") -> bool:
-        _checks: list[Callable] = getattr(
+        checks: list[Callable] = getattr(
             self.command, "__checks__", []
         )
 
-        for g in _checks:
+        for g in checks:
             if inspect.iscoroutinefunction(g):
                 result = await g(ctx)
             else:
@@ -543,20 +533,20 @@ class Command:
 
     def _cooldown_checker(self, ctx: "Context") -> None:
         if self.cooldown is None:
-            return None
+            return
 
         current = ctx.created_at.timestamp()
         bucket = self.cooldown.get_bucket(ctx, current)
         retry_after = bucket.update_rate_limit(current)
 
         if not retry_after:
-            return None  # Not rate limited, good to go
+            return  # Not rate limited, good to go
         raise CommandOnCooldown(bucket, retry_after)
 
     async def run(
         self,
         context: "Context",
-        *args,
+        *args,  # noqa: ANN002
         **kwargs
     ) -> BaseResponse:
         """
@@ -564,12 +554,15 @@ class Command:
 
         Parameters
         ----------
-        context: `Context`
+        context:
             The context of the command.
+        *args:
+            The arguments of the command.
+        **kwargs:
+            The keyword arguments of the command.
 
         Returns
         -------
-        `BaseResponse`
             The return type of the command, used by backend.py (Quart)
 
         Raises
@@ -597,8 +590,7 @@ class Command:
 
         if self.cog is not None:
             return await self.command(self.cog, context, *args, **kwargs)
-        else:
-            return await self.command(context, *args, **kwargs)
+        return await self.command(context, *args, **kwargs)
 
     async def run_autocomplete(
         self,
@@ -607,20 +599,19 @@ class Command:
         current: str
     ) -> dict:
         """
-        Runs the autocomplete
+        Runs the autocomplete.
 
         Parameters
         ----------
-        context: `Context`
+        context:
             Context object for the command
-        name: `str`
+        name:
             Name of the option
-        current: `str`
+        current:
             Current value of the option
 
         Returns
         -------
-        `dict`
             The return type of the command, used by backend.py (Quart)
 
         Raises
@@ -637,7 +628,7 @@ class Command:
             return result.to_dict()
         raise TypeError("Autocomplete must return an AutocompleteResponse object.")
 
-    def _find_option(self, name: str) -> Optional[dict]:
+    def _find_option(self, name: str) -> dict | None:
         return next((g for g in self.options if g["name"] == name), None)
 
     def to_dict(self) -> dict:
@@ -649,23 +640,23 @@ class Command:
         `dict`
             The dict of the command.
         """
-        _extra_locale = getattr(self.command, "__locales__", {})
-        _extra_params = getattr(self.command, "__describe_params__", {})
-        _extra_choices = getattr(self.command, "__choices_params__", {})
-        _default_permissions: Optional[Permissions] = getattr(
+        extra_locale = getattr(self.command, "__locales__", {})
+        extra_params = getattr(self.command, "__describe_params__", {})
+        extra_choices = getattr(self.command, "__choices_params__", {})
+        default_permissions_: Permissions | None = getattr(
             self.command, "__default_permissions__", None
         )
 
-        _integration_types = []
+        integration_types = []
         if self.guild_install:
-            _integration_types.append(0)
+            integration_types.append(0)
         if self.user_install:
-            _integration_types.append(1)
+            integration_types.append(1)
 
-        _integration_contexts = getattr(self.command, "__integration_contexts__", [0, 1, 2])
+        integration_contexts = getattr(self.command, "__integration_contexts__", [0, 1, 2])
 
         # Types
-        _extra_locale: dict[LocaleTypes, list[LocaleContainer]]
+        extra_locale: dict[LocaleTypes, list[LocaleContainer]]
 
         data = {
             "type": self.type,
@@ -675,13 +666,13 @@ class Command:
             "nsfw": getattr(self.command, "__nsfw__", False),
             "name_localizations": {},
             "description_localizations": {},
-            "contexts": _integration_contexts
+            "contexts": integration_contexts
         }
 
-        if _integration_types:
-            data["integration_types"] = _integration_types
+        if integration_types:
+            data["integration_types"] = integration_types
 
-        for key, value in _extra_locale.items():
+        for key, value in extra_locale.items():
             for loc in value:
                 if loc.key == "_":
                     data["name_localizations"][key] = loc.name
@@ -699,17 +690,17 @@ class Command:
                 opt["name_localizations"][key] = loc.name
                 opt["description_localizations"][key] = loc.description
 
-        if _default_permissions:
-            data["default_member_permissions"] = str(_default_permissions.value)
+        if default_permissions_:
+            data["default_member_permissions"] = str(default_permissions_.value)
 
-        for key, value in _extra_params.items():
+        for key, value in extra_params.items():
             opt = self._find_option(key)
             if not opt:
                 continue
 
             opt["description"] = value
 
-        for key, value in _extra_choices.items():
+        for key, value in extra_choices.items():
             opt = self._find_option(key)
             if not opt:
                 continue
@@ -721,7 +712,7 @@ class Command:
 
         return data
 
-    def autocomplete(self, name: str):
+    def autocomplete(self, name: str) -> Callable:
         """
         Decorator to set an option as an autocomplete.
 
@@ -744,10 +735,10 @@ class Command:
 
         Parameters
         ----------
-        name: `str`
+        name:
             Name of the option to set as an autocomplete.
         """
-        def wrapper(func):
+        def wrapper(func: Callable) -> Callable:
             find_option = next((
                 option for option in self.options
                 if option["name"] == name
@@ -769,10 +760,10 @@ class SubCommand(Command):
         func: Callable,
         *,
         name: str,
-        description: Optional[str] = None,
+        description: str | None = None,
         guild_install: bool = True,
         user_install: bool = False,
-        guild_ids: Optional[list[Union[Snowflake, int]]] = None,
+        guild_ids: list[Snowflake | int] | None = None,
         parent: Optional["SubGroup"] = None
     ):
         super().__init__(
@@ -794,52 +785,52 @@ class SubGroup(Command):
         self,
         *,
         name: str,
-        description: Optional[str] = None,
-        guild_ids: Optional[list[Union[Snowflake, int]]] = None,
+        description: str | None = None,
+        guild_ids: list[Snowflake | int] | None = None,
         guild_install: bool = True,
         user_install: bool = False,
         parent: Optional["SubGroup"] = None
     ):
         self.name = name
         self.description = description or "..."  # Only used to make Discord happy
-        self.guild_ids: list[Union[Snowflake, int]] = guild_ids or []
+        self.guild_ids: list[Snowflake | int] = guild_ids or []
         self.type = int(ApplicationCommandType.chat_input)
-        self.cog: Optional["Cog"] = None
-        self.subcommands: dict[str, Union[SubCommand, SubGroup]] = {}
+        self.cog: "Cog | None" = None
+        self.subcommands: dict[str, SubCommand | SubGroup] = {}
         self.guild_install = guild_install
         self.user_install = user_install
-        self.parent: Optional["SubGroup"] = parent
+        self.parent: "SubGroup | None" = parent
 
     def __repr__(self) -> str:
-        _subs = [g for g in self.subcommands.values()]
-        return f"<SubGroup name='{self.name}', subcommands={_subs}>"
+        subs = [g for g in self.subcommands.values()]
+        return f"<SubGroup name='{self.name}', subcommands={subs}>"
 
     def command(
         self,
-        name: Optional[str] = None,
+        name: str | None = None,
         *,
-        description: Optional[str] = None,
-        guild_ids: Optional[list[Union[Snowflake, int]]] = None,
+        description: str | None = None,
+        guild_ids: list[Snowflake | int] | None = None,
         guild_install: bool = True,
         user_install: bool = False,
-    ):
+    ) -> Callable:
         """
-        Decorator to add a subcommand to a subcommand group
+        Decorator to add a subcommand to a subcommand group.
 
         Parameters
         ----------
-        name: `Optional[str]`
+        name:
             Name of the command (defaults to the function name)
-        description: `Optional[str]`
+        description:
             Description of the command (defaults to the function docstring)
-        guild_ids: `Optional[list[Union[Snowflake, int]]]`
+        guild_ids:
             List of guild IDs to register the command in
-        user_install: `bool`
+        user_install:
             Whether the command can be installed by users or not
-        guild_install: `bool`
+        guild_install:
             Whether the command can be installed by guilds or not
         """
-        def decorator(func):
+        def decorator(func: Callable) -> SubCommand:
             subcommand = SubCommand(
                 func,
                 name=name or func.__name__,
@@ -856,19 +847,21 @@ class SubGroup(Command):
 
     def group(
         self,
-        name: Optional[str] = None,
+        name: str | None = None,
         *,
-        description: Optional[str] = None
-    ):
+        description: str | None = None
+    ) -> Callable:
         """
-        Decorator to add a subcommand group to a subcommand group
+        Decorator to add a subcommand group to a subcommand group.
 
         Parameters
         ----------
-        name: `Optional[str]`
+        name:
             Name of the subcommand group (defaults to the function name)
+        description:
+            Description of the subcommand group (defaults to the function docstring)
         """
-        def decorator(func):
+        def decorator(func: Callable) -> SubGroup:
             subgroup = SubGroup(
                 name=name or func.__name__,
                 description=description,
@@ -881,16 +874,15 @@ class SubGroup(Command):
 
     def add_group(self, name: str) -> "SubGroup":
         """
-        Adds a subcommand group to a subcommand group
+        Adds a subcommand group to a subcommand group.
 
         Parameters
         ----------
-        name: `str`
+        name:
             Name of the subcommand group
 
         Returns
         -------
-        `SubGroup`
             The subcommand group
         """
         subgroup = SubGroup(name=name)
@@ -899,7 +891,7 @@ class SubGroup(Command):
 
     @property
     def options(self) -> list[dict]:
-        """ Returns the options of the subcommand group """
+        """ Returns the options of the subcommand group. """
         def build_options(subcommands: dict) -> list[dict]:
             options = []
             for cmd in subcommands.values():
@@ -929,9 +921,9 @@ class Interaction:
         self.custom_id: str = custom_id
         self.regex: bool = regex
 
-        self.cog: Optional["Cog"] = None
+        self.cog: "Cog | None" = None
 
-        self._pattern: Optional[re.Pattern] = (
+        self._pattern: re.Pattern | None = (
             re.compile(custom_id)
             if self.regex else None
         )
@@ -945,11 +937,12 @@ class Interaction:
     def match(self, custom_id: str) -> bool:
         """
         Matches the custom ID with the interaction.
+
         Will always return False if the interaction is not a regex.
 
         Parameters
         ----------
-        custom_id: `str`
+        custom_id:
             The custom ID to match.
 
         Returns
@@ -967,12 +960,11 @@ class Interaction:
 
         Parameters
         ----------
-        context: `Context`
+        context:
             The context of the interaction.
 
         Returns
         -------
-        `BaseResponse`
             The return type of the interaction, used by backend.py (Quart)
 
         Raises
@@ -1000,13 +992,13 @@ class Listener:
     ):
         self.name = name
         self.coro = coro
-        self.cog: Optional["Cog"] = None
+        self.cog: "Cog | None" = None
 
     def __repr__(self) -> str:
         return f"<Listener name='{self.name}'>"
 
-    async def run(self, *args, **kwargs):
-        """ Runs the listener """
+    async def run(self, *args, **kwargs) -> None:  # noqa: ANN002
+        """ Runs the listener. """
         if self.cog is not None:
             await self.coro(self.cog, *args, **kwargs)
         else:
@@ -1021,9 +1013,9 @@ class Choice(Generic[ChoiceT]):
 
     Paramaters
     ----------
-    key: `str`
+    key:
         The key of the choice from your dict.
-    value: `Union[int, str, float]`
+    value:
         The value of your choice (the one that is shown to public)
     """
     def __init__(self, key: ChoiceT, value: ChoiceT):
@@ -1034,7 +1026,7 @@ class Choice(Generic[ChoiceT]):
     def __str__(self) -> str:
         return str(self.key)
 
-    def __class_getitem__(cls, obj):
+    def __class_getitem__(cls, obj: ChoiceT):
         if isinstance(obj, tuple):
             raise TypeError("Choice can only take one type")
 
@@ -1066,7 +1058,7 @@ if TYPE_CHECKING:
 else:
     class Range:
         """
-        Makes it possible to create a range rule for command arguments
+        Makes it possible to create a range rule for command arguments.
 
         When used in a command, it will only return the value if it's within the range.
 
@@ -1080,24 +1072,24 @@ else:
 
         Parameters
         ----------
-        opt_type: `CommandOptionType`
+        opt_type:
             The type of the range
-        min: `Union[int, float, str]`
+        min:
             The minimum value of the range
-        max: `Union[int, float, str]`
+        max:
             The maximum value of the range
         """
         def __init__(
             self,
             opt_type: CommandOptionType,
-            min: Optional[Union[int, float, str]],
-            max: Optional[Union[int, float, str]]
+            min: int | float | str | None,  # noqa: A002
+            max: int | float | str | None  # noqa: A002
         ):
             self.type = opt_type
             self.min = min
             self.max = max
 
-        def __class_getitem__(cls, obj):
+        def __class_getitem__(cls, obj):  # noqa: ANN001
             if not isinstance(obj, tuple):
                 raise TypeError("Range must be a tuple")
 
@@ -1106,14 +1098,13 @@ else:
             elif len(obj) != 3:
                 raise TypeError("Range must be a tuple of length 2 or 3")
 
-            obj_type, min, max = obj
+            obj_type, min, max = obj  # noqa: A001
 
             if min is None and max is None:
                 raise TypeError("Range must have a minimum or maximum value")
 
-            if min is not None and max is not None:
-                if type(min) is not type(max):
-                    raise TypeError("Range minimum and maximum must be the same type")
+            if min is not None and max is not None and type(min) is not type(max):
+                raise TypeError("Range minimum and maximum must be the same type")
 
             match obj_type:
                 case x if x is str:
@@ -1143,30 +1134,30 @@ else:
 
 
 def command(
-    name: Optional[str] = None,
+    name: str | None = None,
     *,
-    description: Optional[str] = None,
-    guild_ids: Optional[list[Union[Snowflake, int]]] = None,
+    description: str | None = None,
+    guild_ids: list[Snowflake | int] | None = None,
     guild_install: bool = True,
     user_install: bool = False,
-):
+) -> Callable:
     """
     Decorator to register a command.
 
     Parameters
     ----------
-    name: `Optional[str]`
+    name:
         Name of the command (defaults to the function name)
-    description: `Optional[str]`
+    description:
         Description of the command (defaults to the function docstring)
-    guild_ids: `Optional[list[Union[Snowflake, int]]]`
+    guild_ids:
         List of guild IDs to register the command in
-    user_install: `bool`
+    user_install:
         Whether the command can be installed by users or not
-    guild_install: `bool`
+    guild_install:
         Whether the command can be installed by guilds or not
     """
-    def decorator(func):
+    def decorator(func: Callable) -> Command:
         return Command(
             func,
             name=name or func.__name__,
@@ -1180,12 +1171,12 @@ def command(
 
 
 def user_command(
-    name: Optional[str] = None,
+    name: str | None = None,
     *,
-    guild_ids: Optional[list[Union[Snowflake, int]]] = None,
+    guild_ids: list[Snowflake | int] | None = None,
     guild_install: bool = True,
     user_install: bool = False,
-):
+) -> Callable:
     """
     Decorator to register a user command.
 
@@ -1199,16 +1190,16 @@ def user_command(
 
     Parameters
     ----------
-    name: `Optional[str]`
+    name:
         Name of the command (defaults to the function name)
-    guild_ids: `Optional[list[Union[Snowflake, int]]]`
+    guild_ids:
         List of guild IDs to register the command in
-    user_install: `bool`
+    user_install:
         Whether the command can be installed by users or not
-    guild_install: `bool`
+    guild_install:
         Whether the command can be installed by guilds or not
     """
-    def decorator(func):
+    def decorator(func: Callable) -> Command:
         return Command(
             func,
             name=name or func.__name__,
@@ -1225,8 +1216,8 @@ def cooldown(
     rate: int,
     per: float,
     *,
-    type: Optional[BucketType] = None
-):
+    type: BucketType | None = None  # noqa: A002
+) -> Callable:
     """
     Decorator to set a cooldown for a command.
 
@@ -1241,20 +1232,20 @@ def cooldown(
 
     Parameters
     ----------
-    rate: `int`
+    rate:
         The number of times the command can be used within the cooldown period
-    per: `float`
+    per:
         The cooldown period in seconds
-    key: `Optional[BucketType]`
+    type:
         The bucket type to use for the cooldown
         If not set, it will be using default, which is a global cooldown
     """
     if type is None:
-        type = BucketType.default
+        type = BucketType.default  # noqa: A001
     if not isinstance(type, BucketType):
         raise TypeError("Key must be a BucketType")
 
-    def decorator(func):
+    def decorator(func: Callable) -> Callable:
         func.__cooldown__ = CooldownCache(
             Cooldown(rate, per), type
         )
@@ -1264,12 +1255,12 @@ def cooldown(
 
 
 def message_command(
-    name: Optional[str] = None,
+    name: str | None = None,
     *,
-    guild_ids: Optional[list[Union[Snowflake, int]]] = None,
+    guild_ids: list[Snowflake | int] | None = None,
     guild_install: bool = True,
     user_install: bool = False,
-):
+) -> Callable:
     """
     Decorator to register a message command.
 
@@ -1283,16 +1274,16 @@ def message_command(
 
     Parameters
     ----------
-    name: `Optional[str]`
+    name:
         Name of the command (defaults to the function name)
-    guild_ids: `Optional[list[Union[Snowflake, int]]]`
+    guild_ids:
         List of guild IDs to register the command in
-    user_install: `bool`
+    user_install:
         Whether the command can be installed by users or not
-    guild_install: `bool`
+    guild_install:
         Whether the command can be installed by guilds or not
     """
-    def decorator(func):
+    def decorator(func: Callable) -> Command:
         return Command(
             func,
             name=name or func.__name__,
@@ -1310,10 +1301,10 @@ def locales(
         LocaleTypes,
         dict[
             str,
-            Union[list[str], tuple[str], tuple[str, str]]
+            list[str] | tuple[str] | tuple[str, str]
         ]
     ]
-):
+) -> Callable:
     """
     Decorator to set translations for a command.
 
@@ -1336,10 +1327,10 @@ def locales(
 
     Parameters
     ----------
-    translations: `Dict[LocaleTypes, Dict[str, Union[tuple[str], tuple[str, str]]]]`
+    translations:
         The translations for the command name, description, and options.
     """
-    def decorator(func):
+    def decorator(func: Callable) -> Callable:
         name = func.__name__
         container = {}
 
@@ -1363,7 +1354,7 @@ def locales(
                     _log.error(f"{name} -> {key}: Translation option must be a string, not a {type(tname)}")
                     continue
 
-                if not isinstance(tvalues, (list, tuple)):
+                if not isinstance(tvalues, list | tuple):
                     _log.error(f"{name} -> {key} -> {tname}: Translation values must be a list or tuple, not a {type(tvalues)}")
                     continue
 
@@ -1391,30 +1382,30 @@ def locales(
 
 
 def group(
-    name: Optional[str] = None,
+    name: str | None = None,
     *,
-    description: Optional[str] = None,
-    guild_ids: Optional[list[Union[Snowflake, int]]] = None,
+    description: str | None = None,
+    guild_ids: list[Snowflake | int] | None = None,
     guild_install: bool = True,
     user_install: bool = False,
-):
+) -> Callable:
     """
     Decorator to register a command group.
 
     Parameters
     ----------
-    name: `Optional[str]`
+    name:
         Name of the command group (defaults to the function name)
-    description: `Optional[str]`
+    description:
         Description of the command group (defaults to the function docstring)
-    guild_ids: `Optional[list[Union[Snowflake, int]]]`
+    guild_ids:
         List of guild IDs to register the command group in
-    user_install: `bool`
+    user_install:
         Whether the command group can be installed by users or not
-    guild_install: `bool`
+    guild_install:
         Whether the command group can be installed by guilds or not
     """
-    def decorator(func):
+    def decorator(func: Callable) -> SubGroup:
         return SubGroup(
             name=name or func.__name__,
             description=description,
@@ -1426,7 +1417,7 @@ def group(
     return decorator
 
 
-def describe(**kwargs):
+def describe(**kwargs: str) -> Callable:
     """
     Decorator to set descriptions for a command.
 
@@ -1439,7 +1430,7 @@ def describe(**kwargs):
         async def ping(ctx, user: Member):
             await ctx.send(f"Pinged {user.mention}")
     """
-    def decorator(func):
+    def decorator(func: Callable) -> Callable:
         func.__describe_params__ = kwargs
         return func
 
@@ -1451,21 +1442,22 @@ def allow_contexts(
     guild: bool = True,
     bot_dm: bool = True,
     private_dm: bool = True
-):
+) -> Callable:
     """
     Decorator to set the places you are allowed to use the command.
+
     Can only be used if the Command has user_install set to True.
 
     Parameters
     ----------
-    guild: `bool`
+    guild:
         Weather the command can be used in guilds.
-    bot_dm: `bool`
+    bot_dm:
         Weather the command can be used in bot DMs.
-    private_dm: `bool`
+    private_dm:
         Weather the command can be used in private DMs.
     """
-    def decorator(func):
+    def decorator(func: Callable) -> Callable:
         func.__integration_contexts__ = []
 
         if guild:
@@ -1484,7 +1476,7 @@ def choices(
         str | int | float,
         str | int | float
     ]
-):
+) -> Callable:
     """
     Decorator to set choices for a command.
 
@@ -1503,7 +1495,7 @@ def choices(
         async def ping(ctx, options: Choice[str]):
             await ctx.send(f"You chose {choice.value}")
     """
-    def decorator(func):
+    def decorator(func: Callable) -> Callable:
         for k, v in kwargs.items():
             if not isinstance(v, dict):
                 raise TypeError(
@@ -1516,7 +1508,7 @@ def choices(
     return decorator
 
 
-def guild_only():
+def guild_only() -> Callable:
     """
     Decorator to set a command as guild only.
 
@@ -1529,28 +1521,28 @@ def guild_only():
             raise CheckFailed("Command can only be used in servers")
         return True
 
-    def decorator(func):
-        _check_list = getattr(func, "__checks__", [])
-        _check_list.append(_guild_only_check)
-        func.__checks__ = _check_list
+    def decorator(func: Callable) -> Callable:
+        check_list = getattr(func, "__checks__", [])
+        check_list.append(_guild_only_check)
+        func.__checks__ = check_list
         func.__integration_contexts__ = [0]
         return func
 
     return decorator
 
 
-def is_nsfw():
+def is_nsfw() -> Callable:
     """ Decorator to set a command as NSFW. """
-    def decorator(func):
+    def decorator(func: Callable) -> Callable:
         func.__nsfw__ = True
         return func
 
     return decorator
 
 
-def default_permissions(*args: Union[Permissions, str]):
+def default_permissions(*args: Permissions | str) -> Callable:
     """ Decorator to set default permissions for a command. """
-    def decorator(func):
+    def decorator(func: Callable) -> Callable:
         if not args:
             return func
 
@@ -1572,7 +1564,7 @@ def default_permissions(*args: Union[Permissions, str]):
     return decorator
 
 
-def has_permissions(*args: Union[Permissions, str]):
+def has_permissions(*args: Permissions | str) -> Callable:
     """
     Decorator to set permissions for a command.
 
@@ -1585,7 +1577,7 @@ def has_permissions(*args: Union[Permissions, str]):
         async def ban(ctx, user: Member):
             ...
     """
-    def decorator(func):
+    def decorator(func: Callable) -> Callable:
         if not args:
             return func
 
@@ -1607,7 +1599,7 @@ def has_permissions(*args: Union[Permissions, str]):
     return decorator
 
 
-def bot_has_permissions(*args: Union[Permissions, str]):
+def bot_has_permissions(*args: Permissions | str) -> Callable:
     """
     Decorator to set permissions for a command.
 
@@ -1620,7 +1612,7 @@ def bot_has_permissions(*args: Union[Permissions, str]):
         async def cat(ctx):
             ...
     """
-    def decorator(func):
+    def decorator(func: Callable) -> Callable:
         if not args:
             return func
 
@@ -1642,7 +1634,7 @@ def bot_has_permissions(*args: Union[Permissions, str]):
     return decorator
 
 
-def check(predicate: Union[Callable, Coroutine]):
+def check(predicate: Callable | Coroutine) -> Callable:
     """
     Decorator to set a check for a command.
 
@@ -1658,10 +1650,10 @@ def check(predicate: Union[Callable, Coroutine]):
         async def foo(ctx):
             ...
     """
-    def decorator(func):
-        _check_list = getattr(func, "__checks__", [])
-        _check_list.append(predicate)
-        func.__checks__ = _check_list
+    def decorator(func: Callable) -> Callable:
+        check_list = getattr(func, "__checks__", [])
+        check_list.append(predicate)
+        func.__checks__ = check_list
         return func
 
     return decorator
@@ -1671,7 +1663,7 @@ def interaction(
     custom_id: str,
     *,
     regex: bool = False
-):
+) -> Callable:
     """
     Decorator to register an interaction.
 
@@ -1679,12 +1671,12 @@ def interaction(
 
     Parameters
     ----------
-    custom_id: `str`
+    custom_id:
         The custom ID of the interaction. (can be partial, aka. regex)
-    regex: `bool`
+    regex:
         Whether the custom_id is a regex or not
     """
-    def decorator(func):
+    def decorator(func: Callable) -> Interaction:
         return Interaction(
             func,
             custom_id=custom_id,
@@ -1694,13 +1686,13 @@ def interaction(
     return decorator
 
 
-def listener(name: Optional[str] = None):
+def listener(name: str | None = None) -> Callable:
     """
     Decorator to register a listener.
 
     Parameters
     ----------
-    name: `Optional[str]`
+    name:
         Name of the listener (defaults to the function name)
 
     Raises
@@ -1712,7 +1704,7 @@ def listener(name: Optional[str] = None):
     if name is not None and not isinstance(name, str):
         raise TypeError(f"Listener name must be a string, not {type(name)}")
 
-    def decorator(func):
+    def decorator(func: Callable) -> Listener:
         actual = func
         if isinstance(actual, staticmethod):
             actual = actual.__func__

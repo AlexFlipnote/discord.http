@@ -36,8 +36,8 @@ if TYPE_CHECKING:
     from ..client import Client
 
 __all__ = (
-    "Parser",
     "GuildMembersChunk",
+    "Parser",
 )
 
 
@@ -68,7 +68,7 @@ class GuildMembersChunk:
 
     @property
     def guild(self) -> "Guild | PartialGuild":
-        """ The guild the chunk belongs to """
+        """ The guild the chunk belongs to. """
         return self._state.cache.get_guild(self.guild_id) or PartialGuild(
             state=self._state,
             id=self.guild_id
@@ -79,44 +79,45 @@ class GuildMembersChunk:
         return self._state.bot._gateway_cache
 
     def add_not_found(self, user_ids: list[int]) -> None:
-        """ For any members not found in the chunk search """
+        """ For any members not found in the chunk search. """
         self.not_found.extend(user_ids)
 
     def add_members(self, members: list[Member]) -> None:
         """
         Add member to the chunk.
+
         However if cache is enabled, try to add them to the cache
         """
         self.members.extend(members)
 
         if self.cache:
             if not self._cache_level:
-                return None
+                return
 
-            _guild = self._state.cache.get_guild(self.guild_id)
-            if not _guild:
-                return None
+            guild = self._state.cache.get_guild(self.guild_id)
+            if not guild:
+                return
 
             if (
                 GatewayCacheFlags.members not in self._cache_level and
                 GatewayCacheFlags.partial_members not in self._cache_level
             ):
-                return None
+                return
 
             if GatewayCacheFlags.members in self._cache_level:
                 for m in members:
-                    _guild._cache_members[m.id] = m
+                    guild._cache_members[m.id] = m
 
             elif GatewayCacheFlags.partial_members in self._cache_level:
                 for m in members:
-                    _guild._cache_members[m.id] = PartialMember(
+                    guild._cache_members[m.id] = PartialMember(
                         state=self._state,
                         id=m.id,
                         guild_id=self.guild_id
                     )
 
     async def wait(self) -> list["Member"]:
-        """ Waits for the chunk to be ready """
+        """ Waits for the chunk to be ready. """
         future = self._state.bot.loop.create_future()
         self._waiters.append(future)
         try:
@@ -125,13 +126,13 @@ class GuildMembersChunk:
             self._waiters.remove(future)
 
     def get_future(self) -> asyncio.Future[list[Member]]:
-        """ Returns the future for the chunk """
+        """ Returns the future for the chunk. """
         future = self._state.bot.loop.create_future()
         self._waiters.append(future)
         return future
 
     def done(self) -> None:
-        """ Mark the chunk as done """
+        """ Mark the chunk as done. """
         for future in self._waiters:
             if not future.done():
                 future.set_result(self.members)
@@ -166,7 +167,7 @@ class Parser:
         nonce: str | None,
         members: list[Member],
         completed: bool
-    ):
+    ) -> None:
         to_remove = []
 
         for k, req in self._chunk_requests.items():
@@ -252,28 +253,76 @@ class Parser:
         )
 
     def guild_create(self, data: dict) -> tuple[Guild | PartialGuild]:
+        """
+        Create a guild.
+
+        Parameters
+        ----------
+        data:
+            The data to create the guild from
+
+        Returns
+        -------
+            The created guild
+        """
         guild = self._guild(data)
         cache_guild = self.bot.cache.add_guild(guild.id, guild, data)
 
         return (cache_guild or guild,)
 
     def guild_update(self, data: dict) -> tuple[Guild]:
+        """
+        Update a guild.
+
+        Parameters
+        ----------
+        data:
+            The data to update the guild from
+
+        Returns
+        -------
+            The updated guild
+        """
         guild = self._guild(data)
         self.bot.cache.update_guild(guild.id, data)
         return (guild,)
 
     def guild_delete(self, data: dict) -> tuple[Guild | PartialGuild]:
+        """
+        Delete a guild.
+
+        Parameters
+        ----------
+        data:
+            The data to delete the guild from
+
+        Returns
+        -------
+            The deleted guild
+        """
         guild = self._get_guild_or_partial(int(data["id"]))
         self.bot.cache.remove_guild(guild.id)
         return (guild,)
 
     def guild_members_chunk(self, data: dict) -> tuple[GuildMembersChunk]:
-        _guild = self._get_guild_or_partial(int(data["guild_id"]))
+        """
+        Chunk of guild members.
+
+        Parameters
+        ----------
+        data:
+            The data to chunk the guild members from
+
+        Returns
+        -------
+            The chunk of guild members
+        """
+        guild = self._get_guild_or_partial(int(data["guild_id"]))
 
         members = [
             Member(
                 state=self.bot.state,
-                guild=_guild,
+                guild=guild,
                 data=g
             ) for g in data.get("members", [])
         ]
@@ -281,80 +330,152 @@ class Parser:
         presences = data.get("presences", [])
 
         if presences:
-            _temp_dict: dict[int, Member] = {g.id: g for g in members}
+            temp_dict: dict[int, Member] = {g.id: g for g in members}
             for g in presences:
-                _find_member = _temp_dict.get(int(g["user"]["id"]), None)
-                if not _find_member:
+                find_member = temp_dict.get(int(g["user"]["id"]), None)
+                if not find_member:
                     continue
-                _find_member._update_presence(Presence(
+                find_member._update_presence(Presence(
                     state=self.bot.state,
-                    user=_find_member,
-                    guild=_guild,
+                    user=find_member,
+                    guild=guild,
                     data=g
                 ))
 
         self._process_chunk_request(
-            _guild.id,
-            data.get("nonce", None),
+            guild.id,
+            data.get("nonce"),
             members,
             data.get("chunk_index", 0) + 1 == data.get("chunk_count", 1)
         )
 
-        _dispatch_raw = GuildMembersChunk(
+        dispatch_raw = GuildMembersChunk(
             state=self.bot.state,
-            guild_id=_guild.id,
+            guild_id=guild.id,
         )
 
-        _dispatch_raw.add_members(members)
+        dispatch_raw.add_members(members)
 
-        return (_dispatch_raw,)
+        return (dispatch_raw,)
 
     def guild_available(self, data: dict) -> tuple[Guild | PartialGuild]:
-        _guild = self._get_guild_or_partial(int(data["id"]))
+        """
+        Guild is available.
 
-        return (_guild,)
+        Parameters
+        ----------
+        data:
+            The data to create the guild from
+
+        Returns
+        -------
+            The created guild
+        """
+        guild = self._get_guild_or_partial(int(data["id"]))
+
+        return (guild,)
 
     def guild_unavailable(self, data: dict) -> tuple[Guild | PartialGuild]:
-        _guild = self._get_guild_or_partial(int(data["id"]))
+        """
+        Guild is unavailable.
 
-        return (_guild,)
+        Parameters
+        ----------
+        data:
+            The data given by Discord when the guild is unavailable
+
+        Returns
+        -------
+            The guild that was unavailable
+        """
+        guild = self._get_guild_or_partial(int(data["id"]))
+
+        return (guild,)
 
     def guild_member_add(self, data: dict) -> tuple[Guild | PartialGuild, Member]:
-        _guild = self._get_guild_or_partial(int(data["guild_id"]))
-        _member = Member(state=self.bot.state, guild=_guild, data=data)
+        """
+        Guild member added.
 
-        self.bot.cache.add_member(_member)
+        Parameters
+        ----------
+        data:
+            The member data
 
-        return (_guild, _member)
+        Returns
+        -------
+            The guild and member that was added
+        """
+        guild = self._get_guild_or_partial(int(data["guild_id"]))
+        member = Member(state=self.bot.state, guild=guild, data=data)
+
+        self.bot.cache.add_member(member)
+
+        return (guild, member)
 
     def guild_member_update(self, data: dict) -> tuple[Guild | PartialGuild, Member]:
-        _guild = self._get_guild_or_partial(int(data["guild_id"]))
-        _member = Member(state=self.bot.state, guild=_guild, data=data)
+        """
+        Guild member updated.
 
-        self.bot.cache.update_member(_member)
+        Parameters
+        ----------
+        data:
+            The member data
 
-        return (_guild, _member)
+        Returns
+        -------
+            The guild and member that was updated
+        """
+        guild = self._get_guild_or_partial(int(data["guild_id"]))
+        member = Member(state=self.bot.state, guild=guild, data=data)
+
+        self.bot.cache.update_member(member)
+
+        return (guild, member)
 
     def guild_member_remove(self, data: dict) -> tuple[
         Guild | PartialGuild,
         Member | PartialMember | User
     ]:
-        _guild = self._get_guild_or_partial(int(data["guild_id"]))
-        _member = self.bot.cache.remove_member(_guild.id, int(data["user"]["id"]))
+        """
+        Guild member removed.
+
+        Parameters
+        ----------
+        data:
+            Data about member removed
+
+        Returns
+        -------
+            The guild and member that was removed
+        """
+        guild = self._get_guild_or_partial(int(data["guild_id"]))
+        member = self.bot.cache.remove_member(guild.id, int(data["user"]["id"]))
 
         return (
-            _guild,
-            _member or User(
+            guild,
+            member or User(
                 state=self.bot.state,
                 data=data["user"]
             )
         )
 
     def guild_ban_add(self, data: dict) -> tuple[Guild | PartialGuild, User]:
-        _guild = self._get_guild_or_partial(int(data["guild_id"]))
+        """
+        Guild ban added.
+
+        Parameters
+        ----------
+        data:
+            The data of banned user
+
+        Returns
+        -------
+            The guild and user that was banned
+        """
+        guild = self._get_guild_or_partial(int(data["guild_id"]))
 
         return (
-            _guild,
+            guild,
             User(
                 state=self.bot.state,
                 data=data["user"]
@@ -362,10 +483,22 @@ class Parser:
         )
 
     def guild_ban_remove(self, data: dict) -> tuple[Guild | PartialGuild, User]:
-        _guild = self._get_guild_or_partial(int(data["guild_id"]))
+        """
+        Guild ban removed.
+
+        Parameters
+        ----------
+        data:
+            Data about the user that was unbanned
+
+        Returns
+        -------
+            The guild and user that was unbanned
+        """
+        guild = self._get_guild_or_partial(int(data["guild_id"]))
 
         return (
-            _guild,
+            guild,
             User(
                 state=self.bot.state,
                 data=data["user"]
@@ -373,18 +506,30 @@ class Parser:
         )
 
     def guild_emojis_update(self, data: dict) -> tuple[Guild | PartialGuild, list[Emoji], list[Emoji]]:
-        _guild = self._get_guild_or_partial(int(data["guild_id"]))
+        """
+        Emojis updated.
 
-        _emojis_after = [
+        Parameters
+        ----------
+        data:
+            The data of the emojis
+
+        Returns
+        -------
+            The guild and the emojis that were updated
+        """
+        guild = self._get_guild_or_partial(int(data["guild_id"]))
+
+        emojis_after = [
             Emoji(
                 state=self.bot.state,
-                guild=_guild,
+                guild=guild,
                 data=e
             )
             for e in data["emojis"]
         ]
 
-        _emojis_before = _emojis_after
+        emojis_before = emojis_after
 
         if (
             self.bot.cache.cache_flags and
@@ -394,14 +539,14 @@ class Parser:
             ) and
             GatewayCacheFlags.emojis in self.bot.cache.cache_flags
         ):
-            _emojis_before = self.bot.cache.get_guild(_guild.id).emojis
+            emojis_before = self.bot.cache.get_guild(guild.id).emojis
 
-        self.bot.cache.update_emojis(guild_id=_guild.id, emojis=_emojis_after)
+        self.bot.cache.update_emojis(guild_id=guild.id, emojis=emojis_after)
 
         return (
-            _guild,
-            _emojis_before,  # type: ignore
-            _emojis_after
+            guild,
+            emojis_before,  # type: ignore
+            emojis_after
         )
 
     def guild_stickers_update(self, data: dict) -> tuple[Guild | PartialGuild, list[Sticker], list[Sticker]]:
@@ -526,9 +671,9 @@ class Parser:
             data=data,
         )
 
-        if data.get("parent_id", None):
+        if data.get("parent_id"):
             channel.parent_id = int(data["parent_id"])
-        if data.get("type", None):
+        if data.get("type"):
             channel._raw_type = ChannelType(int(data["type"]))
 
         return channel
@@ -553,7 +698,7 @@ class Parser:
         channel_id: int = int(data["channel_id"])
         last_pin_timestamp: datetime | None = (
             utils.parse_time(_last_pin_timestamp)
-            if (_last_pin_timestamp := data.get("last_pin_timestamp", None)) else None
+            if (_last_pin_timestamp := data.get("last_pin_timestamp")) else None
         )
 
         return (
@@ -749,13 +894,13 @@ class Parser:
         _channel = None
         _guild = None
 
-        if data.get("channel_id", None) is not None:
+        if data.get("channel_id") is not None:
             _channel = self._get_channel_or_partial(
                 int(data["channel_id"]),
                 guild_id=utils.get_int(data, "guild_id")
             )
 
-        if data.get("guild_id", None) is not None:
+        if data.get("guild_id") is not None:
             _guild = self._get_guild_or_partial(int(data["guild_id"]))
 
         before_vs = _guild.get_member_voice_state(int(data["user_id"]))
@@ -805,14 +950,13 @@ class Parser:
         if guild and (channel := guild.get_channel(int(data["channel_id"]))):
             channel._stage_instance._from_data(data)  # type: ignore # should be fine?
             return (channel._stage_instance,)  # type: ignore # should be fine?
-        else:
-            return (
-                StageInstance(
-                    state=self.bot.state,
-                    data=data,
-                    guild=guild
-                ),
-            )
+        return (
+            StageInstance(
+                state=self.bot.state,
+                data=data,
+                guild=guild
+            ),
+        )
 
     def stage_instance_delete(self, data: "channels.StageInstance") -> tuple[StageInstance]:
         guild = self.bot.cache.get_guild(int(data["guild_id"]))
@@ -984,7 +1128,7 @@ class Parser:
             int(data["guild_id"])
         )
 
-        if data.get("channel_id", None) is not None:
+        if data.get("channel_id") is not None:
             _channel = self._get_channel_or_partial(
                 int(data["channel_id"]),
                 int(data["guild_id"])
@@ -1006,7 +1150,7 @@ class Parser:
             id=int(data["user_id"])
         )
 
-        if data.get("guild_id", None) is not None:
+        if data.get("guild_id") is not None:
             _guild = self._get_guild_or_partial(
                 int(data["guild_id"])
             )

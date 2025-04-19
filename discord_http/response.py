@@ -45,13 +45,13 @@ class Ping(Snowflake):
 
     @property
     def application(self) -> "PartialUser":
-        """ Returns the user object of the bot """
+        """ Returns the user object of the bot. """
         from .user import PartialUser
         return PartialUser(state=self._state, id=self.application_id)
 
     @property
     def user(self) -> "User":
-        """ Returns the user object of the bot """
+        """ Returns the user object of the bot. """
         from .user import User
         return User(state=self._state, data=self._raw_user)
 
@@ -62,16 +62,16 @@ class BaseResponse:
 
     @property
     def content_type(self) -> str:
-        """ Returns the content type of the response """
+        """ Returns the content type of the response. """
         multidata = MultipartData()
         return multidata.content_type
 
     def to_dict(self) -> dict:
-        """ Default method to convert the response to a `dict` """
+        """ Default method to convert the response to a `dict`. """
         raise NotImplementedError
 
     def to_multipart(self) -> bytes:
-        """ Default method to convert the response to a `bytes` """
+        """ Default method to convert the response to a `bytes`. """
         raise NotImplementedError
 
 
@@ -91,7 +91,7 @@ class DeferResponse(BaseResponse):
             self.flags |= MessageFlags.ephemeral
 
     def to_dict(self) -> dict:
-        """ Returns the response as a `dict` """
+        """ Returns the response as a `dict`. """
         return {
             "type": (
                 int(ResponseType.deferred_channel_message_with_source)
@@ -103,7 +103,7 @@ class DeferResponse(BaseResponse):
         }
 
     def to_multipart(self) -> bytes:
-        """ Returns the response as a `bytes` """
+        """ Returns the response as a `bytes`. """
         multidata = MultipartData()
         multidata.attach("payload_json", self.to_dict())
 
@@ -118,7 +118,7 @@ class AutocompleteResponse(BaseResponse):
         self.choices = choices
 
     def to_dict(self) -> dict:
-        """ Returns the response as a `dict` """
+        """ Returns the response as a `dict`. """
         return {
             "type": int(ResponseType.application_command_autocomplete_result),
             "data": {
@@ -130,7 +130,7 @@ class AutocompleteResponse(BaseResponse):
         }
 
     def to_multipart(self) -> bytes:
-        """ Returns the response as a `bytes` """
+        """ Returns the response as a `bytes`. """
         multidata = MultipartData()
         multidata.attach("payload_json", self.to_dict())
 
@@ -142,14 +142,14 @@ class ModalResponse(BaseResponse):
         self.modal = modal
 
     def to_dict(self) -> dict:
-        """ Returns the response as a `dict` """
+        """ Returns the response as a `dict`. """
         return {
             "type": int(ResponseType.modal),
             "data": self.modal.to_dict()
         }
 
     def to_multipart(self) -> bytes:
-        """ Returns the response as a `bytes` """
+        """ Returns the response as a `bytes`. """
         multidata = MultipartData()
         multidata.attach("payload_json", self.to_dict())
 
@@ -161,11 +161,11 @@ class EmptyResponse(BaseResponse):
         pass
 
     def to_dict(self) -> dict:
-        """ Returns the response as a `dict` """
+        """ Returns the response as a `dict`. """
         return {}
 
     def to_multipart(self) -> bytes:
-        """ Returns the response as a `bytes` """
+        """ Returns the response as a `bytes`. """
         return b""
 
 
@@ -185,7 +185,7 @@ class MessageResponse(BaseResponse):
         allowed_mentions: AllowedMentions | None = MISSING,
         message_reference: "MessageReference | None" = MISSING,
         poll: "Poll | None" = MISSING,
-        type: ResponseType | int = 4,
+        type: ResponseType | int = 4,  # noqa: A002
         ephemeral: bool | None = False,
         flags: MessageFlags | None = MISSING,
     ):
@@ -242,12 +242,11 @@ class MessageResponse(BaseResponse):
 
         Parameters
         ----------
-        is_request: `bool`
+        is_request:
             Whether the data is being sent to Discord or not.
 
         Returns
         -------
-        `dict`
             The JSON data that can either be sent
             to Discord or forwarded to a new parser
         """
@@ -291,14 +290,14 @@ class MessageResponse(BaseResponse):
             if self.attachments is None:
                 output["attachments"] = []
             else:
-                _index = 0
-                _file_payload = []
+                index = 0
+                file_payload = []
                 for a in self.attachments:
                     if not isinstance(a, File):
                         continue
-                    _file_payload.append(a.to_dict(_index))
-                    _index += 1
-                output["attachments"] = _file_payload
+                    file_payload.append(a.to_dict(index))
+                    index += 1
+                output["attachments"] = file_payload
 
         if is_request:
             return output
@@ -310,12 +309,11 @@ class MessageResponse(BaseResponse):
 
         Parameters
         ----------
-        is_request: `bool`
+        is_request:
             Whether the data is being sent to Discord or not.
 
         Returns
         -------
-        `bytes`
             The multipart data that can either be sent
         """
         multidata = MultipartData()

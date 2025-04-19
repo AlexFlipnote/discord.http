@@ -113,7 +113,7 @@ class Status:
     def update_ready_data(self, data: dict | None) -> None:
         if data is None:
             # This should never really happen
-            return None
+            return
 
         self.session_id = data["session_id"]
         self.gateway = yarl.URL(data["resume_gateway_url"])
@@ -302,7 +302,7 @@ class Shard:
             self._buffer.extend(raw_msg)
 
             if len(raw_msg) < 4 or raw_msg[-4:] != b"\x00\x00\xff\xff":
-                return None
+                return
 
             raw_msg = self._zlib.decompress(self._buffer)
             raw_msg = raw_msg.decode("utf-8")
@@ -310,14 +310,14 @@ class Shard:
 
         msg: dict = json.loads(raw_msg)
 
-        event = msg.get("t", None)
+        event = msg.get("t")
 
         if event:
             await self.on_event(event, msg)
 
-        op = msg.get("op", None)
-        data = msg.get("d", None)
-        seq = msg.get("s", None)
+        op = msg.get("op")
+        data = msg.get("d")
+        seq = msg.get("s")
 
         if seq is not None:
             self.status.update_sequence(seq)
@@ -370,7 +370,7 @@ class Shard:
                 case _:
                     pass  # Not handled, pass for now
 
-            return None  # In the end, we don't need to process anymore
+            return  # In the end, we don't need to process anymore
 
         match event:
             case "READY":
@@ -430,7 +430,7 @@ class Shard:
         presences: bool = False,
         user_ids: list[Snowflake | int] | None = None
     ) -> list["Member"]:
-        """ test """
+        """ Test """
         chunker = GuildMembersChunk(state=self.bot.state, guild_id=int(guild_id))
         self.parser._chunk_requests[chunker.nonce] = chunker
 
@@ -445,7 +445,7 @@ class Shard:
 
         try:
             return await asyncio.wait_for(chunker.wait(), timeout=30.0)
-        except asyncio.TimeoutError:
+        except TimeoutError:
             _log.warning(
                 "Timed out while waiting for guild members chunk "
                 f"(guild_id={guild_id}, query={query}, limit={limit})"
@@ -530,7 +530,7 @@ class Shard:
                                 timeout=self._heartbeat_interval
                             )
 
-                        except asyncio.TimeoutError:
+                        except TimeoutError:
                             # No event received, send in case..
                             _log.debug(f"Shard {self.shard_id} heartbeat from except-case")
                             await self.send_message(PayloadType.heartbeat)
@@ -546,7 +546,7 @@ class Shard:
 
                     if self._should_kill is True:
                         # Custom close code, only used when shutting down
-                        return None
+                        return
 
                     _log.debug(f"Shard {self.shard_id} error", exc_info=e)
 
@@ -602,7 +602,7 @@ class Shard:
                         self._guild_create_queue.get(),
                         timeout=self._guild_ready_timeout
                     )
-                except asyncio.TimeoutError:
+                except TimeoutError:
                     break  # It's supposed to timeout
                 else:
                     # Start adding guilds to cache if it's enabled
@@ -618,7 +618,7 @@ class Shard:
                 if not future.done():
                     try:
                         await asyncio.wait_for(future, timeout=timeout)
-                    except asyncio.TimeoutError:
+                    except TimeoutError:
                         _log.warning(
                             f"Timed out while waiting for guild members chunk "
                             f"(guild_id={guild.id}, timeout={timeout})"
@@ -646,14 +646,14 @@ class Shard:
         data: dict = event.get("d", {})
 
         if not data:
-            return None
+            return
 
         if self.debug_events:
             self.bot.dispatch("raw_socket_received", event)
 
         _parse_event = getattr(self.parser, new_name, None)
         if not _parse_event:
-            return None
+            return
 
         match name:
             case "GUILD_CREATE":
@@ -675,9 +675,9 @@ class Shard:
             _log.error(f"Error while parsing event {name}", exc_info=e)
 
     async def _parse_guild_create(self, data: dict) -> None:
-        unavailable = data.get("unavailable", None)
+        unavailable = data.get("unavailable")
         if unavailable is True:
-            return None
+            return
 
         if unavailable is False:
             (guild,) = self.parser.guild_available(data)
@@ -692,12 +692,12 @@ class Shard:
             # We still want to parse GUILD_CREATE
             # But we do not want to dispatch event just yet
             self._guild_create_queue.put_nowait(data)
-            return None
+            return
 
         self._send_dispatch(_event_name, guild)
 
     def _parse_guild_delete(self, data: dict) -> None:
-        if data.get("unavailable", False):
+        if data.get("unavailable"):
             (guild,) = self.parser.guild_unavailable(data)
             guild.unavailable = True
             _event_name = "guild_unavailable"

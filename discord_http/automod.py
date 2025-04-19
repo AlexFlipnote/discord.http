@@ -17,10 +17,10 @@ if TYPE_CHECKING:
 MISSING = utils.MISSING
 
 __all__ = (
-    "AutoModRuleTriggers",
-    "AutoModRuleAction",
-    "PartialAutoModRule",
     "AutoModRule",
+    "AutoModRuleAction",
+    "AutoModRuleTriggers",
+    "PartialAutoModRule",
 )
 
 
@@ -61,6 +61,7 @@ class AutoModRuleTriggers:
         return f"{output}>"
 
     def to_dict(self) -> dict:
+        """ The auto moderation rule as a dictionary. """
         payload = {}
 
         if self.keyword_filter is not None:
@@ -80,12 +81,24 @@ class AutoModRuleTriggers:
 
     @classmethod
     def from_dict(cls, data: dict) -> Self:
+        """
+        Create an auto moderation rule from a dictionary.
+
+        Parameters
+        ----------
+        data:
+            The dictionary to create the auto moderation rule from
+
+        Returns
+        -------
+            The auto moderation rule
+        """
         return cls(
-            keyword_filter=data.get("keyword_filter", None),
-            regex_patterns=data.get("regex_patterns", None),
-            presets=data.get("presets", None),
-            allow_list=data.get("allow_list", None),
-            mention_total_limit=data.get("mention_total_limit", None),
+            keyword_filter=data.get("keyword_filter"),
+            regex_patterns=data.get("regex_patterns"),
+            presets=data.get("presets"),
+            allow_list=data.get("allow_list"),
+            mention_total_limit=data.get("mention_total_limit"),
             mention_raid_protection_enabled=data.get("mention_raid_protection_enabled", False)
         )
 
@@ -94,7 +107,7 @@ class AutoModRuleAction:
     def __init__(
         self,
         *,
-        type: AutoModRuleActionType,
+        type: AutoModRuleActionType,  # noqa: A002
         channel_id: Snowflake | int | None = None,
         duration_seconds: int | None = None,
         custom_message: str | None = None,
@@ -120,6 +133,7 @@ class AutoModRuleAction:
         return f"{output}>"
 
     def to_dict(self) -> dict:
+        """ The auto moderation rule action as a dictionary. """
         payload = {
             "type": int(self.type),
             "metadata": {}
@@ -138,16 +152,40 @@ class AutoModRuleAction:
 
     @classmethod
     def from_dict(cls, data: dict) -> Self:
-        _metadata = data.get("metadata", {})
+        """
+        Create an auto moderation rule action from a dictionary.
+
+        Parameters
+        ----------
+        data:
+            The dictionary to create the auto moderation rule action from
+
+        Returns
+        -------
+            The auto moderation rule action
+        """
+        metadata = data.get("metadata", {})
         return cls(
             type=AutoModRuleActionType(data["type"]),
-            channel_id=utils.get_int(_metadata, "channel_id"),
-            duration_seconds=_metadata.get("duration_seconds", None),
-            custom_message=_metadata.get("custom_message", None)
+            channel_id=utils.get_int(metadata, "channel_id"),
+            duration_seconds=metadata.get("duration_seconds", None),
+            custom_message=metadata.get("custom_message", None)
         )
 
     @classmethod
     def create_message(cls, message: str) -> Self:
+        """
+        Create an auto moderation rule action to block a message.
+
+        Parameters
+        ----------
+        message:
+            The message to block
+
+        Returns
+        -------
+            The auto moderation rule action
+        """
         return cls(
             type=AutoModRuleActionType.block_message,
             custom_message=str(message)
@@ -155,6 +193,18 @@ class AutoModRuleAction:
 
     @classmethod
     def create_alert_location(cls, channel: Snowflake | int) -> Self:
+        """
+        Create an auto moderation rule action to send an alert message.
+
+        Parameters
+        ----------
+        channel:
+            The channel to send the alert message to
+
+        Returns
+        -------
+            The auto moderation rule action
+        """
         return cls(
             type=AutoModRuleActionType.send_alert_message,
             channel_id=int(channel)
@@ -162,6 +212,18 @@ class AutoModRuleAction:
 
     @classmethod
     def create_timeout(cls, seconds: int) -> Self:
+        """
+        Create an auto moderation rule action to timeout a user.
+
+        Parameters
+        ----------
+        seconds:
+            The number of seconds to timeout the user for
+
+        Returns
+        -------
+            The auto moderation rule action
+        """
         return cls(
             type=AutoModRuleActionType.timeout,
             duration_seconds=int(seconds)
@@ -173,7 +235,7 @@ class PartialAutoModRule(PartialBase):
         self,
         *,
         state: "DiscordAPI",
-        id: int,
+        id: int,  # noqa: A002
         guild_id: int
     ):
         super().__init__(id=int(id))
@@ -186,7 +248,7 @@ class PartialAutoModRule(PartialBase):
 
     @property
     def guild(self) -> "Guild | PartialGuild | None":
-        """ The guild object this event is in """
+        """ The guild object this event is in. """
         if not self.guild_id:
             return None
 
@@ -198,7 +260,7 @@ class PartialAutoModRule(PartialBase):
         return PartialGuild(state=self._state, id=self.guild_id)
 
     async def fetch(self) -> "AutoModRule":
-        """ Fetches more information about the automod rule """
+        """ Fetches more information about the automod rule. """
         r = await self._state.query(
             "GET",
             f"/guilds/{self.guild_id}/auto-moderation/rules/{self.id}"
@@ -211,11 +273,11 @@ class PartialAutoModRule(PartialBase):
 
     async def delete(self, *, reason: str | None = None) -> None:
         """
-        Delete the automod rule
+        Delete the automod rule.
 
         Parameters
         ----------
-        reason: `str | None`
+        reason:
             Reason for deleting the automod
         """
         await self._state.query(
@@ -245,39 +307,39 @@ class PartialAutoModRule(PartialBase):
         reason: str | None = None
     ) -> "AutoModRule":
         """
-        Create an automod rule
+        Create an automod rule.
 
         Parameters
         ----------
-        name: `str`
+        name:
             Name of the automod
-        event_type: `AutoModRuleEventType | int`
+        event_type:
             What type of event
-        keyword_filter: `list[str] | None`
+        keyword_filter:
             Keywords to filter
-        regex_patterns: `list[str] | None`
+        regex_patterns:
             Keywords in regex pattern to filter
-        presets: `list[AutoModRulePresetType] | None`
+        presets:
             Automod presets to include
-        allow_list: `list[str] | None`
+        allow_list:
             List of keywords that are allowed
-        mention_total_limit: `int | None`
+        mention_total_limit:
             How many unique mentions allowed before trigger
-        mention_raid_protection_enabled: `bool`
+        mention_raid_protection_enabled:
             If this should apply for raids
-        alert_channel: `Snowflake | int | None`
+        alert_channel:
             Where the action should be logged
-        timeout_seconds: `int | None`
+        timeout_seconds:
             How many seconds the user in question should be timed out
-        message: `str | None`
+        message:
             What message the user gets when action is taken
-        enabled: `bool`
+        enabled:
             If the automod should be enabled or not
-        exempt_roles: `list[Snowflake  |  int] | None`
+        exempt_roles:
             Which roles are allowed to bypass
-        exempt_channels: `list[Snowflake  |  int] | None`
+        exempt_channels:
             Which channels are allowed to bypass
-        reason: `str | None`
+        reason:
             Reason for editing the automod
 
         Returns
@@ -328,7 +390,7 @@ class PartialAutoModRule(PartialBase):
         if isinstance(exempt_channels, list):
             payload["exempt_channels"] = [str(int(g)) for g in exempt_channels]
 
-        _trigger_payload: dict[str, Any] = {
+        trigger_payload: dict[str, Any] = {
             k: v for k, v in {
                 "keyword_filter": keyword_filter,
                 "regex_patterns": regex_patterns,
@@ -340,9 +402,9 @@ class PartialAutoModRule(PartialBase):
             if v is not MISSING
         }
 
-        if _trigger_payload:
+        if trigger_payload:
             payload["trigger_metadata"] = AutoModRuleTriggers(
-                **_trigger_payload
+                **trigger_payload
             ).to_dict()
 
         r = await self._state.query(
@@ -404,14 +466,14 @@ class AutoModRule(PartialAutoModRule):
         return self.name
 
     def _from_data(self, data: dict) -> None:
-        if data.get("trigger_metadata", None):
+        if data.get("trigger_metadata"):
             self.trigger_metadata = AutoModRuleTriggers.from_dict(
                 data["trigger_metadata"]
             )
 
     @property
     def creator(self) -> PartialUser:
-        """ The user that created the automod rule in User object form """
+        """ The user that created the automod rule in User object form. """
         return PartialUser(
             state=self._state,
             id=self.creator_id

@@ -36,9 +36,10 @@ class File:
         else:
             if not self._filename:
                 self._filename = data
-            self.data = open(data, "rb")
-            self._original_pos = 0
-            self._owner = True
+            with open(data, "rb") as f:
+                self.data = f
+                self._original_pos = 0
+                self._owner = True
 
         self._closer = self.data.close
         self.data.close = lambda: None
@@ -51,22 +52,33 @@ class File:
 
     @property
     def filename(self) -> str:
-        """ The filename of the file """
+        """ The filename of the file. """
         return f"{'SPOILER_' if self.spoiler else ''}{self._filename}"
 
     def reset(self, *, seek: int | bool = True) -> None:
-        """ Reset the file buffer to the original position """
+        """ Reset the file buffer to the original position. """
         if seek:
             self.data.seek(self._original_pos)
 
     def close(self) -> None:
-        """ Close the file buffer """
+        """ Close the file buffer. """
         self.data.close = self._closer
         if self._owner:
             self.data.close()
 
     def to_dict(self, index: int) -> dict:
-        """ The file as a dictionary """
+        """
+        The file as a dictionary.
+
+        Parameters
+        ----------
+        index:
+            The index of the file
+
+        Returns
+        -------
+            The file as a dictionary
+        """
         payload = {
             "id": index,
             "filename": self.filename

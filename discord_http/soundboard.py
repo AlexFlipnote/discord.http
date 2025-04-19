@@ -21,7 +21,7 @@ class PartialSoundboardSound(PartialBase):
         self,
         *,
         state: "DiscordAPI",
-        id: int,
+        id: int,  # noqa: A002
         guild_id: int | None = None
     ):
         super().__init__(id=int(id))
@@ -35,11 +35,10 @@ class PartialSoundboardSound(PartialBase):
     @property
     def guild(self) -> "Guild | PartialGuild | None":
         """
-        Returns the guild this soundboard sound is in
+        Returns the guild this soundboard sound is in.
 
         Returns
         -------
-        `PartialGuild`
             The guild this soundboard sound is in
 
         Raises
@@ -59,11 +58,10 @@ class PartialSoundboardSound(PartialBase):
 
     async def fetch(self) -> "SoundboardSound":
         """
-        Returns the soundboard sound data
+        Returns the soundboard sound data.
 
         Returns
         -------
-        `SoundboardSound`
             The soundboard sound data
 
         Raises
@@ -71,7 +69,6 @@ class PartialSoundboardSound(PartialBase):
         `ValueError`
             Soundboard sound does not belong to a guild
         """
-
         if self.guild is None:
             raise ValueError("Soundboard sound does not belong to a guild")
 
@@ -92,11 +89,11 @@ class PartialSoundboardSound(PartialBase):
         reason: str | None = None
     ) -> None:
         """
-        Delete the soundboard sound
+        Delete the soundboard sound.
 
         Parameters
         ----------
-        reason: `str | None`
+        reason:
             The reason for deleting the soundboard sound
 
         Raises
@@ -104,7 +101,6 @@ class PartialSoundboardSound(PartialBase):
         `ValueError`
             Soundboard sound does not belong to a guild
         """
-
         if self.guild_id is None:
             raise ValueError("Soundboard sound does not belong to a guild")
 
@@ -124,26 +120,27 @@ class PartialSoundboardSound(PartialBase):
         emoji_id: "str | MISSING" = MISSING,
         icon: "File | bytes | MISSING" = MISSING,
         reason: str | None = None,
-    ) -> "SoundboardSound":
+    ) -> "SoundboardSound | PartialSoundboardSound":
         """
-        Edit the soundboard sound
+        Edit the soundboard sound.
 
         Parameters
         ----------
-        name: `Optional[str]`
+        name:
             The new name of the soundboard sound
-        volume: `Optional[int]`
+        volume:
             The new volume of the soundboard sound
-        emoji_name: `Optional[str]`
+        emoji_name:
             The new unicode emoji of the soundboard sound
-        emoji_id: `Optional[str]`
+        emoji_id:
             The ID of the new custom emoji of the soundboard sound
-        reason: `Union[str]`
+        icon:
+            The new icon of the soundboard sound
+        reason:
             The reason for editing the soundboard sound
 
         Returns
         -------
-        `Union[SoundboardSound, PartialSoundboardSound]`
             The edited soundboard sound and its data
 
         Raises
@@ -154,7 +151,7 @@ class PartialSoundboardSound(PartialBase):
             - Soundboard sound does not belong to a guild
         """
         payload = {}
-        _sound: "SoundboardSound | None" = None
+        sound: "SoundboardSound | None" = None
 
         if self.guild is None:
             raise ValueError("Soundboard sound does not belong to a guild")
@@ -184,19 +181,19 @@ class PartialSoundboardSound(PartialBase):
                 reason=reason
             )
 
-            _sound = SoundboardSound(
+            sound = SoundboardSound(
                 state=self._state,
                 guild=self.guild,
                 data=r.response
             )
 
-        if not _sound:
+        if not sound:
             raise ValueError(
                 "There were no changes applied to the soundboard sound. "
                 "No edits were taken"
             )
 
-        return _sound
+        return sound
 
 
 class SoundboardSound(PartialSoundboardSound):

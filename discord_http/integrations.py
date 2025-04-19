@@ -39,18 +39,7 @@ class IntegrationAccount:
 
 
 class IntegrationApplication(PartialBase):
-    """Represents a bot/OAuth2 application
-    for integrations
-
-    Attributes
-    ----------
-    id: :class:`int`
-        The ID of the application.
-    name: :class:`str`
-        The name of the application.
-    description: :class:`str`
-        The description of the application.
-    """
+    """ Represents a bot/OAuth2 application for integrations. """
     def __init__(
         self,
         *,
@@ -86,9 +75,7 @@ class IntegrationApplication(PartialBase):
 
     @property
     def bot(self) -> User | None:
-        """Optional[:class:`User`]: The bot associated with this
-        application, if available.
-        """
+        """ The bot associated with this application, if available. """
         if not self._bot:
             return None
 
@@ -99,7 +86,8 @@ class IntegrationApplication(PartialBase):
 
 
 class PartialIntegration(PartialBase):
-    """Represents a partial integration object.
+    """
+    Represents a partial integration object.
 
     This is mosly used to get the ids of objects if not in cache.
 
@@ -107,7 +95,7 @@ class PartialIntegration(PartialBase):
     ----------
     id: :class:`int`
         The ID of the integration.
-    guild_id: `int`
+    guild_id:
         The guild associated with this integration.
     application_id: Optional[:class:`int`]
         The ID of the application associated with this integration.
@@ -116,7 +104,7 @@ class PartialIntegration(PartialBase):
         self,
         *,
         state: "DiscordAPI",
-        id: int,
+        id: int,  # noqa: A002
         guild_id: int,
         application_id: int | None = None,
     ) -> None:
@@ -139,7 +127,8 @@ class PartialIntegration(PartialBase):
         return PartialGuild(state=self._state, id=self.guild_id)
 
     async def delete(self) -> None:
-        """Delete this integration for the guild.
+        """
+        Delete this integration for the guild.
 
         This deletes any associated webhooks and
         kicks the associated bot if there is one.
@@ -154,53 +143,47 @@ class PartialIntegration(PartialBase):
 
 
 class Integration(PartialIntegration):
-    """Represents a guild integration.
+    """
+    Represents a guild integration.
 
     Attributes
     ----------
-    id: :class:`int`
+    id:
         The ID of the integration.
-    name: :class:`str`
+    name:
         The name of the integration.
-    guild: class:`PartialGuild` | :class:`Guild`
+    guild:
         The guild associated with this integration.
-    type: :class:`str`
+    type:
         The type of the integration.
         (e.g. "twitch", "youtube" or "discord")
-    enabled: :class:`bool`
+    enabled:
         Whether the integration is enabled.
-    syncing: :class:`bool`
+    syncing:
         Whether the integration is syncing.
-
         This is not applicable to bot integrations.
-    role_id: Optional[:class:`int`]
+    role_id:
         ID of the role that the integration uses for "subscribers".
-
         TThis is not applicable to bot integrations.
-    enable_emoticons: :class:`bool`
+    enable_emoticons:
         Whether emoticons should be synced for this
         integration (twitch only currently)
-
         This is not applicable to bot integrations.
-    expire_behavior: Optional[:class:`ExpireBehaviour`]
+    expire_behavior:
         The behavior of expiring subscribers.
-
         This is not applicable to bot integrations.
-    expire_grace_period: Optional[:class:`int`]
+    expire_grace_period:
         The grace period before expiring subscribers.
-
         This is not applicable to bot integrations.
-    synced_at: Optional[:class:`datetime`]
+    synced_at:
         The time the integration was last synced.
-
         This is not applicable to bot integrations.
-    subscriber_count: :class:`int`
+    subscriber_count:
         The number of subscribers for the integration.
-
         This is not applicable to bot integrations.
-    revoked: :class:`bool`
+    revoked:
         Whether the integration has been revoked.
-    scopes: List[:class:`str`]
+    scopes:
         The scopes of the application has been granted.
     """
     def __init__(
@@ -217,17 +200,17 @@ class Integration(PartialIntegration):
             application_id=utils.get_int(data.get("application", {}), "id")
         )
 
-        self._application: dict | None = data.get("application", None)
+        self._application: dict | None = data.get("application")
         self._state: "DiscordAPI" = state
-        self._user: dict | None = data.get("user", None)
-        self._account: dict | None = data.get("account", None)
+        self._user: dict | None = data.get("user")
+        self._account: dict | None = data.get("account")
 
         self.name: str = data["name"]
         self.type: str = data["type"]
 
         self.enabled: bool = data["enabled"]
         self.syncing: bool = data.get("syncing", False)
-        self.role_id: int | None = data.get("role_id", None)
+        self.role_id: int | None = data.get("role_id")
         self.enable_emoticons: bool = data.get("enable_emoticons", False)
         self.expire_behavior: ExpireBehaviour | None = (
             ExpireBehaviour(expire_behavior)
@@ -246,7 +229,7 @@ class Integration(PartialIntegration):
 
     @property
     def user(self) -> User | None:
-        """Optional[:class:`User`]: The user associated with this integration, if available."""
+        """ The user associated with this integration, if available."""
         if not self._user:
             return None
 
@@ -257,7 +240,7 @@ class Integration(PartialIntegration):
 
     @property
     def account(self) -> IntegrationAccount | dict | None:
-        """Optional[:class:`IntegrationAccount`]: The account associated with this integration, if available."""
+        """ The account associated with this integration, if available."""
         if not self._account:
             return None
 
@@ -268,7 +251,7 @@ class Integration(PartialIntegration):
 
     @property
     def application(self) -> IntegrationApplication | None:
-        """Optional[:class:`IntegrationApplication`]: The bot/OAuth2 application for discord integrations, if available."""
+        """ The bot/OAuth2 application for discord integrations, if available."""
         if not self._application:
             return None
 

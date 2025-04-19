@@ -1,5 +1,3 @@
-import sys
-
 from enum import Flag, CONFORM
 from typing import Self
 
@@ -15,18 +13,14 @@ __all__ = (
     "MessageFlags",
     "PermissionOverwrite",
     "Permissions",
-    "UserFlags",
     "SKUFlags",
     "SystemChannelFlags",
+    "UserFlags",
 )
 
 
-if sys.version_info >= (3, 11, 0):
-    class _FlagPyMeta(Flag, boundary=CONFORM):
-        pass
-else:
-    class _FlagPyMeta(Flag):
-        pass
+class _FlagPyMeta(Flag, boundary=CONFORM):
+    pass
 
 
 class BaseFlag(_FlagPyMeta):
@@ -38,27 +32,26 @@ class BaseFlag(_FlagPyMeta):
 
     @classmethod
     def all(cls) -> Self:
-        """ Returns a flag with all the flags """
+        """ Returns a flag with all the flags. """
         return cls(sum([int(g) for g in cls.__members__.values()]))
 
     @classmethod
     def none(cls) -> Self:
-        """ Returns a flag with no flags """
+        """ Returns a flag with no flags. """
         return cls(0)
 
     @classmethod
     def from_names(cls, *args: str) -> Self:
         """
-        Create a flag from names
+        Create a flag from names.
 
         Parameters
         ----------
-        *args: `str`
+        *args:
             The names of the flags to create
 
         Returns
         -------
-        `BaseFlag`
             The flag with the added flags
 
         Raises
@@ -66,19 +59,19 @@ class BaseFlag(_FlagPyMeta):
         `ValueError`
             The flag name is not a valid flag
         """
-        _value = cls.none()
-        return _value.add_flags(*args)
+        value = cls.none()
+        return value.add_flags(*args)
 
     @property
     def list_names(self) -> list[str]:
-        """ Returns a list of all the names of the flag """
+        """ Returns a list of all the names of the flag. """
         return [
             g.name or "UNKNOWN"
             for g in self
         ]
 
     def to_names(self) -> list[str]:
-        """ Returns the current names of the flag """
+        """ Returns the current names of the flag. """
         return [
             name for name, member in self.__class__.__members__.items()
             if member in self
@@ -89,16 +82,15 @@ class BaseFlag(_FlagPyMeta):
         *flag_name: Self | str
     ) -> Self:
         """
-        Add a flag by name
+        Add a flag by name.
 
         Parameters
         ----------
-        name: `Union[Self, str]`
+        *flag_name:
             The flag to add
 
         Returns
         -------
-        `BaseFlag`
             The flag with the added flag
 
         Raises
@@ -129,16 +121,15 @@ class BaseFlag(_FlagPyMeta):
         *flag_name: Self | str
     ) -> Self:
         """
-        Remove a flag by name
+        Remove a flag by name.
 
         Parameters
         ----------
-        flag_name: `Union[Self, str]`
+        flag_name:
             The flag to remove
 
         Returns
         -------
-        `BaseFlag`
             The flag with the removed flag
 
         Raises
@@ -165,7 +156,7 @@ class BaseFlag(_FlagPyMeta):
         return self
 
     def copy(self) -> Self:
-        """ Returns a copy of the flag """
+        """ Returns a copy of the flag. """
         return self.__class__(self.value)
 
 
@@ -300,14 +291,28 @@ class Permissions(BaseFlag):
     moderate_members = 1 << 40
     view_creator_monetization_analytics = 1 << 41
     use_soundboard = 1 << 42
-    # create_guild_expressions = 1 << 43
-    # create_events = 1 << 44
+    create_guild_expressions = 1 << 43
+    create_events = 1 << 44
     use_external_sounds = 1 << 45
     send_voice_messages = 1 << 46
     send_polls = 1 << 49
     use_external_apps = 1 << 50
 
     def handle_overwrite(self, allow: int, deny: int) -> "Permissions":
+        """
+        Handles the overwrite of permissions.
+
+        Parameters
+        ----------
+        allow:
+            The permission flag integer to allow
+        deny:
+            The permission flag integer to deny
+
+        Returns
+        -------
+            The permissions with the overwrite applied
+        """
         new_value: int = (self.value & ~deny) | allow
         return Permissions(new_value)
 
@@ -360,15 +365,27 @@ class PermissionOverwrite:
         )
 
     def is_role(self) -> bool:
-        """ Returns whether the overwrite is a role overwrite """
+        """ Returns whether the overwrite is a role overwrite. """
         return self.target_type == PermissionType.role
 
     def is_member(self) -> bool:
-        """ Returns whether the overwrite is a member overwrite """
+        """ Returns whether the overwrite is a member overwrite. """
         return self.target_type == PermissionType.member
 
     @classmethod
     def from_dict(cls, data: dict) -> Self:
+        """
+        Create a permission overwrite from a dictionary.
+
+        Parameters
+        ----------
+        data:
+            The dictionary to create the permission overwrite from
+
+        Returns
+        -------
+            The permission overwrite
+        """
         return cls(
             target=int(data["id"]),
             allow=Permissions(int(data["allow"])),
@@ -377,6 +394,7 @@ class PermissionOverwrite:
         )
 
     def to_dict(self) -> dict:
+        """ Returns the permission overwrite as a dictionary. """
         return {
             "id": str(int(self.target)),
             "allow": int(self.allow),
@@ -385,7 +403,7 @@ class PermissionOverwrite:
         }
 
     def copy(self) -> Self:
-        """ Returns a copy of the flag """
+        """ Returns a copy of the flag. """
         return self.__class__(
             target=self.target,
             allow=self.allow,

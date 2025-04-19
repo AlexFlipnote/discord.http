@@ -12,11 +12,11 @@ if TYPE_CHECKING:
     from ..http import DiscordAPI
 
 __all__ = (
-    "ActivityTimestamps",
-    "ActivityParty",
-    "ActivityAssets",
-    "ActivitySecrets",
     "Activity",
+    "ActivityAssets",
+    "ActivityParty",
+    "ActivitySecrets",
+    "ActivityTimestamps",
 )
 
 
@@ -39,14 +39,14 @@ class ActivityAssets:
         self._from_data(data)
 
     def _from_data(self, data: dict) -> None:
-        if data.get("large_image", None):
+        if data.get("large_image"):
             self.large_image = Asset._from_activity_asset(
                 state=self._state,
                 activity_id=self.application_id,
                 image=data["large_image"]
             )
 
-        if data.get("small_image", None):
+        if data.get("small_image"):
             self.small_image = Asset._from_activity_asset(
                 state=self._state,
                 activity_id=self.application_id,
@@ -65,18 +65,18 @@ class ActivityTimestamps:
         return f"<ActivityTimestamps start={self.start} end={self.end}>"
 
     def _from_data(self, data: dict) -> None:
-        if data.get("start", None):
+        if data.get("start"):
             self.start = utils.parse_time(data["start"])
 
-        if data.get("end", None):
+        if data.get("end"):
             self.end = utils.parse_time(data["end"])
 
 
 class ActivitySecrets:
     def __init__(self, *, data: dict):
-        self.join: str | None = data.get("join", None)
-        self.spectate: str | None = data.get("spectate", None)
-        self.match: str | None = data.get("match", None)
+        self.join: str | None = data.get("join")
+        self.spectate: str | None = data.get("spectate")
+        self.match: str | None = data.get("match")
 
     def __repr__(self) -> str:
         return (
@@ -87,11 +87,11 @@ class ActivitySecrets:
 
 class ActivityParty:
     def __init__(self, *, data: dict):
-        self.id: str | None = data.get("id", None)
+        self.id: str | None = data.get("id")
         self.current_size: int | None = None
         self.max_size: int | None = None
 
-        if data.get("size", None):
+        if data.get("size"):
             self.current_size = data["size"][0]
             self.max_size = data["size"][1]
 
@@ -107,14 +107,14 @@ class Activity:
 
         self.name: str = data["name"]
         self.type: ActivityType = ActivityType(data["type"])
-        self.url: str | None = data.get("url", None)
+        self.url: str | None = data.get("url")
         self.created_at: datetime = utils.parse_time(data["created_at"])
         self.timestamps: ActivityTimestamps | None = None
         self.application_id: int | None = utils.get_int(data, "application_id")
-        self.state: str | None = data.get("state", None)
-        self.details: str | None = data.get("details", None)
-        self.sync_id: str | None = data.get("sync_id", None)
-        self.session_id: str | None = data.get("session_id", None)
+        self.state: str | None = data.get("state")
+        self.details: str | None = data.get("details")
+        self.sync_id: str | None = data.get("sync_id")
+        self.session_id: str | None = data.get("session_id")
         self.emoji: EmojiParser | None = None
         self.party: ActivityParty | None = None
         self.assets: ActivityAssets | None = None
@@ -132,20 +132,20 @@ class Activity:
         return f"<Activity name={self.name} type={self.type}>"
 
     def _from_data(self, data: dict) -> None:
-        if data.get("timestamps", None):
+        if data.get("timestamps"):
             self.timestamps = ActivityTimestamps(data=data["timestamps"])
 
-        if data.get("secrets", None):
+        if data.get("secrets"):
             self.secrets = ActivitySecrets(data=data["secrets"])
 
-        if data.get("party", None):
+        if data.get("party"):
             self.party = ActivityParty(data=data["party"])
 
-        if data.get("emoji", None):
+        if data.get("emoji"):
             self.emoji = EmojiParser.from_dict(data["emoji"])
 
         if (
-            data.get("assets", None) and
+            data.get("assets") and
             self.application_id is not None
         ):
             self.assets = ActivityAssets(
