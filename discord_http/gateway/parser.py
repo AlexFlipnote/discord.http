@@ -362,6 +362,9 @@ class Parser:
         """
         Guild is available.
 
+        Also attempt to create the guild if cache enabled and
+        it was not previously there.
+
         Parameters
         ----------
         data:
@@ -371,6 +374,10 @@ class Parser:
         -------
             The created guild
         """
+        # In case it came available after boot
+        self.guild_create(data)
+
+        # Now just get the guild from cache if it exists
         guild = self._get_guild_or_partial(int(data["id"]))
 
         return (guild,)

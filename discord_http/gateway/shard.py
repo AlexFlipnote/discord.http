@@ -642,6 +642,25 @@ class Shard:
     def _chunk_timeout(self, guild: "Guild | PartialGuild") -> float:
         return max(5.0, (guild.member_count or 0) / 10_000)
 
+    async def _chunk_and_dispatch(
+        self,
+        guild_data: dict,
+        event_name: str
+    ) -> None:
+        (parsed_guild,) = self.parser.guild_create(guild_data)
+
+        timeout = self._chunk_timeout(parsed_guild)
+
+        try:
+            await asyncio.wait_for(self.chunk_guild(parsed_guild.id), timeout=timeout)
+        except TimeoutError:
+            _log.warning(
+                f"Timed out while waiting for guild members chunk "
+                f"(guild_id={parsed_guild.id}, timeout={timeout})"
+            )
+
+        self._send_dispatch(event_name, parsed_guild)
+
     async def _delay_ready(self) -> None:
         """
         Purposfully delays the ready event.
@@ -754,6 +773,12 @@ class Shard:
             # We still want to parse GUILD_CREATE
             # But we do not want to dispatch event just yet
             self._guild_create_queue.put_nowait(data)
+            return
+
+        if self._guild_needs_chunking(guild):
+            asyncio.create_task(  # noqa: RUF006
+                self._chunk_and_dispatch(data, event_name)
+            )
             return
 
         self._send_dispatch(event_name, guild)
