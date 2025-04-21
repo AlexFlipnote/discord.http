@@ -956,12 +956,12 @@ class SectionComponent(Item):
         # This might change later if SectionComponent starts
         # accepting more than just TextDisplayComponent
         *components: TextDisplayComponent | str,
-        accessory: Button | ThumbnailComponent | AttachmentComponent
+        accessory: Button | ThumbnailComponent | AttachmentComponent | Asset | File
     ):
         super().__init__(type=ComponentType.section)
 
         self.components: list[TextDisplayComponent | str] = list(components)
-        self.accessory: Button | ThumbnailComponent | AttachmentComponent = accessory
+        self.accessory: Button | ThumbnailComponent | AttachmentComponent | Asset | File = accessory
 
     def __repr__(self) -> str:
         return f"<SectionComponent components={self.components} accessory={self.accessory}>"
@@ -982,11 +982,19 @@ class SectionComponent(Item):
             "components": [g.to_dict() for g in comps]
         }
 
-        if isinstance(self.accessory, AttachmentComponent):
+        if isinstance(self.accessory, AttachmentComponent | Asset):
             payload["accessory"] = {
                 "type": int(ComponentType.thumbnail),
                 "media": {
                     "url": str(self.accessory.url)
+                }
+            }
+
+        elif isinstance(self.accessory, File):
+            payload["accessory"] = {
+                "type": int(ComponentType.thumbnail),
+                "media": {
+                    "url": f"attachment://{self.accessory.filename}"
                 }
             }
 
@@ -1145,12 +1153,12 @@ class ActionRow(Item):
 class MediaGalleryItem:
     def __init__(
         self,
-        url: Asset | AttachmentComponent | str,
+        url: File | Asset | AttachmentComponent | str,
         *,
         description: str | None = None,
         spoiler: bool = False
     ):
-        self.url: Asset | AttachmentComponent | str = str(url)
+        self.url: File | Asset | AttachmentComponent | str = str(url)
         self.description: str | None = description
         self.spoiler: bool = spoiler
 
@@ -1159,9 +1167,13 @@ class MediaGalleryItem:
 
     def to_dict(self) -> dict:
         """ Returns a dict representation of the media gallery item. """
+        url = str(self.url)
+        if isinstance(self.url, File):
+            url = f"attachment://{self.url.filename}"
+
         return {
             "media": {
-                "url": str(self.url)
+                "url": url
             },
             "description": self.description,
             "spoiler": self.spoiler
@@ -1171,17 +1183,17 @@ class MediaGalleryItem:
 class MediaGalleryComponent(Item):
     def __init__(
         self,
-        *items: MediaGalleryItem
+        *items: MediaGalleryItem | File | Asset
     ):
         super().__init__(type=ComponentType.media_gallery)
-        self.items: list[MediaGalleryItem] = list(items)
+        self.items: list[MediaGalleryItem | File | Asset] = list(items)
 
     def __repr__(self) -> str:
         return f"<MediaGalleryComponent items={self.items}>"
 
     def add_item(
         self,
-        item: MediaGalleryItem
+        item: MediaGalleryItem | File | Asset
     ) -> None:
         """
         Add items to the media gallery.
@@ -1195,9 +1207,17 @@ class MediaGalleryComponent(Item):
 
     def to_dict(self) -> dict:
         """ Returns a dict representation of the media gallery component. """
+        payload: list[MediaGalleryItem] = []
+
+        for g in self.items:
+            if isinstance(g, File | Asset):
+                payload.append(MediaGalleryItem(g))
+            else:
+                payload.append(g)
+
         return {
             "type": int(self.type),
-            "items": [g.to_dict() for g in self.items]
+            "items": [g.to_dict() for g in payload]
         }
 
 
