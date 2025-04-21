@@ -3,11 +3,11 @@ import itertools
 import logging
 import re
 
-from typing import get_args as get_type_args
+from types import UnionType
 from typing import (
     TYPE_CHECKING, Union, Protocol,
     Generic, TypeVar, Literal, Any,
-    runtime_checkable
+    runtime_checkable, get_origin, get_args
 )
 from collections.abc import Callable, Coroutine
 
@@ -47,7 +47,7 @@ LocaleTypes = Literal[
     "ro", "fi", "sv-SE", "vi", "tr", "cs", "el", "bg",
     "ru", "uk", "hi", "th", "zh-CN", "ja", "zh-TW", "ko"
 ]
-ValidLocalesList = get_type_args(LocaleTypes)
+ValidLocalesList = get_args(LocaleTypes)
 
 channel_types = {
     BaseChannel: [g for g in ChannelType],
@@ -88,6 +88,17 @@ __all__ = (
     "Range",
     "SubGroup",
 )
+
+
+def unwrap_optional(annotation: type) -> type:
+    """ Unwraps Optional[T] to T. """
+    origin = get_origin(annotation)
+    if origin is Union or origin is UnionType:
+        args = get_args(annotation)
+        non_none_args = [a for a in args if a is not type(None)]
+        if len(non_none_args) == 1:
+            return non_none_args[0]
+    return annotation
 
 
 class Cog:
@@ -229,13 +240,13 @@ class Command:
         guild_ids: list[Snowflake | int] | None = None,
         guild_install: bool = True,
         user_install: bool = False,
-        type: ApplicationCommandType = ApplicationCommandType.chat_input,  # noqa: A002
+        cmd_type: ApplicationCommandType = ApplicationCommandType.chat_input,
         parent: "SubGroup | None" = None
     ):
         self.id: int | None = None
         self.command = command
         self.cog: "Cog | None" = None
-        self.type: int = int(type)
+        self.type: int = int(cmd_type)
         self.name = name
         self.description = description
         self.options = []
@@ -274,10 +285,12 @@ class Command:
                 slicer = 2
 
             for parameter in itertools.islice(sig.parameters.values(), slicer, None):
-                origin = getattr(
-                    parameter.annotation, "__origin__",
-                    parameter.annotation
-                )
+                # I am not proud of this, but it works...
+
+                raw_annotation = parameter.annotation
+                annotation = unwrap_optional(parameter.annotation)
+                origin = get_origin(annotation) or annotation
+                args = get_args(annotation)
 
                 option: dict[str, Any] = {}
                 channel_options: list[ChannelType] = []
@@ -286,34 +299,25 @@ class Command:
                 # - Union[Any, ...] / Optional[Any] / type | None  # noqa: ERA001
                 # - type | type | ...
 
-                if (
-                    getattr(parameter.annotation, "__args__", None) or
-                    origin == Union
+                if get_origin(annotation) is Union:
+                    # Example: Optional[int] -> Union[int, NoneType]
+                    # or Union[TextChannel, VoiceChannel]
+                    non_none_args = [a for a in args if a is not type(None)]
+
+                    # If it's Optional[T], unwrap to T
+                    if len(non_none_args) == 1:
+                        annotation = non_none_args[0]
+                        origin = get_origin(annotation) or annotation
+                        args = get_args(annotation)
+
+                # If it's a union of channel types, handle accordingly
+                if get_origin(raw_annotation) in (Union, UnionType) and all(
+                    isinstance(a, type) and
+                    a in channel_types for a in get_args(raw_annotation)
                 ):
-
-                    if (
-                        len(parameter.annotation.__args__) >= 2 and
-                        parameter.annotation.__args__[-1] is _NoneType
-                    ):
-                        # First one is the type we're looking for
-                        # Others except last usually is for typing purposes
-                        origin = parameter.annotation.__args__[0]
-
-                        # Recreate GenericAlias if it's something like Choice[str]
-                        if getattr(origin, "__origin__", None):
-                            parameter.annotation.__args__ = origin.__args__
-                            origin = origin.__origin__
-
-                    # If you're using Union[TextChannel, VoiceChannel, ...]
-                    # And also check if all the types are valid channel types
-                    elif all([
-                        g in channel_types
-                        for g in parameter.annotation.__args__
-                    ]):
-                        # And make sure origin triggers channel types
-                        origin = parameter.annotation.__args__[0]
-                        for i in parameter.annotation.__args__:
-                            channel_options.extend(channel_types[i])
+                    origin = get_args(raw_annotation)[0]  # Just pick the first one, does not matter
+                    for a in get_args(raw_annotation):
+                        channel_options.extend(channel_types[a])
 
                 if origin is User or origin is Member:
                     ptype = CommandOptionType.user
@@ -341,12 +345,20 @@ class Command:
                 elif origin == Role:
                     ptype = CommandOptionType.role
 
-                elif isinstance(origin, Choice):
+                elif isinstance(annotation, type) and issubclass(annotation, Choice):
                     self.__list_choices.append(parameter.name)
-                    ptype = origin.type
+
+                    ptype = {
+                        str: CommandOptionType.string,
+                        int: CommandOptionType.integer,
+                        float: CommandOptionType.number
+                    }.get(
+                        getattr(annotation, "__choice_type__", str),
+                        CommandOptionType.string
+                    )
 
                 # If literal, replicate Choice
-                elif origin is Literal:
+                elif get_origin(annotation) is Literal:
                     ptype = CommandOptionType.string
 
                     if not getattr(self.command, "__choices_params__", {}):
@@ -358,18 +370,29 @@ class Command:
 
                 # PyRight may not recognize 'Range' due to dynamic typing.
                 # Assuming 'origin' is a Range object.
-                elif isinstance(origin, Range):  # type: ignore[arg-type]
-                    ptype = origin.type  # type: ignore[arg-type]
-                    if origin.type == CommandOptionType.string:  # type: ignore[arg-type]
+                elif isinstance(annotation, type) and issubclass(annotation, Range):  # type: ignore[arg-type]
+                    typ = getattr(annotation, "__range_type__", str)
+                    min_val = getattr(annotation, "__range_min__", None)
+                    max_val = getattr(annotation, "__range_max__", None)
+
+                    if typ is str:
+                        ptype = CommandOptionType.string
                         option.update({
-                            "min_length": origin.min,  # type: ignore[arg-type]
-                            "max_length": origin.max  # type: ignore[arg-type]
+                            "min_length": min_val,
+                            "max_length": max_val
                         })
+
+                    elif typ is int or typ is float:
+                        ptype = CommandOptionType.integer if typ is int else CommandOptionType.number
+                        option.update({
+                            "min_value": min_val,
+                            "max_value": max_val
+                        })
+
                     else:
-                        option.update({
-                            "min_value": origin.min,  # type: ignore[arg-type]
-                            "max_value": origin.max  # type: ignore[arg-type]
-                        })
+                        raise TypeError(
+                            f"Range type must be str, int, or float, not {typ}"
+                        )
 
                 elif origin is int:
                     ptype = CommandOptionType.integer
@@ -1002,7 +1025,23 @@ class Listener:
             await self.coro(*args, **kwargs)
 
 
-class Choice(Generic[ChoiceT]):
+class ChoiceMeta(type):
+    def __getitem__(cls, item_type: type):
+        if item_type not in (str, int, float):
+            raise TypeError("Choice type must be str, int, or float")
+
+        class _Choice(cls, metaclass=ChoiceMeta):
+            __choice_type__ = item_type
+            __origin__ = Choice
+
+            def __init__(self, key: ChoiceT, value: ChoiceT):
+                super().__init__(key, value)
+
+        _Choice.__name__ = f"Choice[{item_type.__name__}]"
+        return _Choice
+
+
+class Choice(Generic[ChoiceT], metaclass=ChoiceMeta):
     """
     Makes it possible to access both the name and value of a choice.
 
@@ -1020,32 +1059,17 @@ class Choice(Generic[ChoiceT]):
         self.value: ChoiceT = value
         self.type: CommandOptionType = CommandOptionType.string
 
+        if isinstance(key, str):
+            self.type = CommandOptionType.string
+        elif isinstance(key, int):
+            self.type = CommandOptionType.integer
+        elif isinstance(key, float):
+            self.type = CommandOptionType.number
+        else:
+            raise TypeError(f"Invalid key type: {type(key)}")
+
     def __str__(self) -> str:
         return str(self.key)
-
-    def __class_getitem__(cls, obj: ChoiceT):
-        if isinstance(obj, tuple):
-            raise TypeError("Choice can only take one type")
-
-        match obj:
-            case x if x is str:
-                opt = CommandOptionType.string
-
-            case x if x is int:
-                opt = CommandOptionType.integer
-
-            case x if x is float:
-                opt = CommandOptionType.number
-
-            case _:
-                raise TypeError(
-                    "Range type must be str, int, "
-                    f"or float, not a {obj}"
-                )
-
-        output = cls(obj, obj)
-        output.type = opt
-        return output
 
 
 # Making it so pyright understands that the range type is a normal type
@@ -1053,81 +1077,37 @@ if TYPE_CHECKING:
     from typing import Annotated as Range
 
 else:
-    class Range:
-        """
-        Makes it possible to create a range rule for command arguments.
+    class RangeMeta(type):
+        def __getitem__(cls, item: tuple[str | int | float, ...]):
+            if not isinstance(item, tuple):
+                raise TypeError("Range[...] must be a tuple of (type, min, max)")
 
-        When used in a command, it will only return the value if it's within the range.
-
-        Example usage:
-
-        .. code-block:: python
-
-            Range[str, 1, 10]        # (min and max length of the string)
-            Range[int, 1, 10]        # (min and max value of the integer)
-            Range[float, 1.0, 10.0]  # (min and max value of the float)
-
-        Parameters
-        ----------
-        opt_type:
-            The type of the range
-        min:
-            The minimum value of the range
-        max:
-            The maximum value of the range
-        """
-        def __init__(
-            self,
-            opt_type: CommandOptionType,
-            min: int | float | str | None,  # noqa: A002
-            max: int | float | str | None  # noqa: A002
-        ):
-            self.type = opt_type
-            self.min = min
-            self.max = max
-
-        def __class_getitem__(cls, obj):  # noqa: ANN001
-            if not isinstance(obj, tuple):
-                raise TypeError("Range must be a tuple")
-
-            if len(obj) == 2:
-                obj = (*obj, None)
-            elif len(obj) != 3:
+            if len(item) == 2:
+                item = (*item, None)
+            elif len(item) != 3:
                 raise TypeError("Range must be a tuple of length 2 or 3")
 
-            obj_type, min, max = obj  # noqa: A001
+            obj_type, min_val, max_val = item
 
-            if min is None and max is None:
+            if min_val is None and max_val is None:
                 raise TypeError("Range must have a minimum or maximum value")
 
-            if min is not None and max is not None and type(min) is not type(max):
-                raise TypeError("Range minimum and maximum must be the same type")
+            if min_val is not None and max_val is not None and type(min_val) is not type(max_val):
+                raise TypeError("Range min and max must be the same type")
 
-            match obj_type:
-                case x if x is str:
-                    opt = CommandOptionType.string
+            if obj_type not in (str, int, float):
+                raise TypeError("Range type must be str, int, or float")
 
-                case x if x is int:
-                    opt = CommandOptionType.integer
+            class _Range(cls, metaclass=RangeMeta):
+                __range_type__ = obj_type
+                __range_min__ = min_val
+                __range_max__ = max_val
+                __origin__ = Range
 
-                case x if x is float:
-                    opt = CommandOptionType.number
+            return _Range
 
-                case _:
-                    raise TypeError(
-                        "Range type must be str, int, "
-                        f"or float, not a {obj_type}"
-                    )
-
-            cast = float
-            if obj_type in (str, int):
-                cast = int
-
-            return cls(
-                opt,
-                cast(min) if min is not None else None,
-                cast(max) if max is not None else None
-            )
+    class Range(metaclass=RangeMeta):
+        pass
 
 
 def command(
@@ -1200,7 +1180,7 @@ def user_command(
         return Command(
             func,
             name=name or func.__name__,
-            type=ApplicationCommandType.user,
+            cmd_type=ApplicationCommandType.user,
             guild_ids=guild_ids,
             guild_install=guild_install,
             user_install=user_install
@@ -1284,7 +1264,7 @@ def message_command(
         return Command(
             func,
             name=name or func.__name__,
-            type=ApplicationCommandType.message,
+            cmd_type=ApplicationCommandType.message,
             guild_ids=guild_ids,
             guild_install=guild_install,
             user_install=user_install

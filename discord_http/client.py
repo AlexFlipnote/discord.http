@@ -786,7 +786,7 @@ class Client:
             command = Command(
                 func,
                 name=name or func.__name__,
-                type=ApplicationCommandType.user,
+                cmd_type=ApplicationCommandType.user,
                 guild_ids=guild_ids,
                 guild_install=guild_install,
                 user_install=user_install
@@ -830,7 +830,7 @@ class Client:
             command = Command(
                 func,
                 name=name or func.__name__,
-                type=ApplicationCommandType.message,
+                cmd_type=ApplicationCommandType.message,
                 guild_ids=guild_ids,
                 guild_install=guild_install,
                 user_install=user_install
