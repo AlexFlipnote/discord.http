@@ -94,6 +94,7 @@ async def test_cooldown(ctx: Context):
 
 @client.command()
 async def test_components_v2(ctx: Context):
+    """ Simple profile command. """
     # Credit to example: souji
     view = View(
         SectionComponent(
@@ -101,12 +102,14 @@ async def test_components_v2(ctx: Context):
             f"Username: {ctx.user.name}\n"
             f"ID: {ctx.user.id}\n"
             f"Created: {DiscordTimestamp(ctx.user.created_at)}",
-            accessory=ThumbnailComponent(
+            accessory=(
                 ctx.user.global_avatar or
                 ctx.user.default_avatar
             )
         )
     )
+
+    test_file = File("./images/boomer.png", filename="test.png")
 
     if isinstance(ctx.user, Member):
         pretty_roles = "".join([g.mention for g in ctx.user.roles])
@@ -116,9 +119,7 @@ async def test_components_v2(ctx: Context):
             f"Nickname: {ctx.user.nick or 'None'}\n"
             f"Joined: {DiscordTimestamp(ctx.user.joined_at)}\n"
             f"Roles ({len(ctx.user.roles)}): {pretty_roles}\n",
-            accessory=ThumbnailComponent(
-                ctx.user.display_avatar
-            )
+            accessory=test_file
         )
 
         view.add_item(split)
@@ -127,6 +128,7 @@ async def test_components_v2(ctx: Context):
     return ctx.response.send_message(
         view=view,
         flags=MessageFlags.is_components_v2,
+        file=test_file,
         allowed_mentions=AllowedMentions.none()
     )
 
@@ -499,7 +501,10 @@ async def test_list_str(ctx: Context, choice: commands.Choice[str]):
         55: "meme"
     }
 )
-async def test_list_int(ctx: Context, choice: commands.Choice[int]):
+async def test_list_int(ctx: Context, choice: commands.Choice[int] | None = None):
+    if choice is None:
+        return ctx.response.send_message("You chose nothing")
+
     return ctx.response.send_message(
         f"You chose **{choice.value}** ({type(choice.value)}) "
         f"which has key value: **{choice.key}** ({type(choice.key)})"
