@@ -229,9 +229,9 @@ class User(PartialUser):
         if data.get("banner_color"):
             self.banner_colour = Colour.from_hex(data["banner_color"])
 
-        if data.get("avatar_decoration"):
+        if data.get("avatar_decoration_data") and data["avatar_decoration_data"].get("asset"):
             self.avatar_decoration = Asset._from_avatar_decoration(
-                self._state, data["avatar_decoration"]
+                self._state, data["avatar_decoration_data"]["asset"]
             )
 
         if data.get("public_flags"):
