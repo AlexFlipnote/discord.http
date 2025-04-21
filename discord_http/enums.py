@@ -563,6 +563,7 @@ class ComponentType(BaseEnum):
     media_gallery = 12
     file = 13
     separator = 14
+    content_inventory_entry = 16  # Can't be used by bots
     container = 17
 
 

@@ -1246,6 +1246,32 @@ class FileComponent(Item):
         }
 
 
+class ContentInventoryEntry(Item):
+    """
+    Discord API says that this is a valid component type, but does not work for bots.
+
+    Simply put, I only added this in, so the code doesn't break.
+    All the components creators will refuse to accept it as a valid option,
+    since they are not listed in the valid v1/v2 component types.
+    """
+    def __init__(self, *_: dict, **kwargs: dict):
+        super().__init__(type=ComponentType.content_inventory_entry)
+        self._data: dict = kwargs
+
+    def __repr__(self) -> str:
+        return f"<ContentInventoryEntry data={self._data}>"
+
+    def to_dict(self) -> dict:
+        """ Returns a dict representation of the content inventory entry. """
+        return {
+            "type": int(self.type),
+            "data": {
+                k: v
+                for k, v in self._data.items()
+            }
+        }
+
+
 class ContainerComponent(Item):
     def __init__(
         self,
@@ -1467,6 +1493,7 @@ class View(InteractionStorage):
             12: MediaGalleryComponent,
             13: FileComponent,
             14: SeparatorComponent,
+            16: ContentInventoryEntry,
             17: ContainerComponent,
         }
 
