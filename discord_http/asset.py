@@ -100,11 +100,18 @@ class Asset:
         """
         url = yarl.URL(self.url)
         path, _ = os.path.splitext(url.path)
+        prev_size = url.query.get("size")
 
         if format is not MISSING:
             url = url.with_path(f"{path}.{format}")
 
-        url = url.with_query(size=size) if size is not MISSING else url.with_query(url.raw_query_string)
+            # If we have a size, we need to keep it.
+            # URL.with_path removes it from the query.
+            if prev_size is not None:
+                url = url.with_query(size=prev_size)
+
+        if size is not MISSING:
+            url = url.with_query(size=size)
 
         url = str(url)
         return self.__class__(
