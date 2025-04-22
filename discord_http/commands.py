@@ -70,12 +70,6 @@ channel_types = {
 }
 
 _log = logging.getLogger(__name__)
-_NoneType = type(None)
-_type_table: dict[type, CommandOptionType] = {
-    str: CommandOptionType.string,
-    int: CommandOptionType.integer,
-    float: CommandOptionType.number
-}
 
 __all__ = (
     "Choice",
@@ -88,17 +82,6 @@ __all__ = (
     "Range",
     "SubGroup",
 )
-
-
-def unwrap_optional(annotation: type) -> type:
-    """ Unwraps Optional[T] to T. """
-    origin = get_origin(annotation)
-    if origin is Union or origin is UnionType:
-        args = get_args(annotation)
-        non_none_args = [a for a in args if a is not type(None)]
-        if len(non_none_args) == 1:
-            return non_none_args[0]
-    return annotation
 
 
 class Cog:
@@ -288,7 +271,7 @@ class Command:
                 # I am not proud of this, but it works...
 
                 raw_annotation = parameter.annotation
-                annotation = unwrap_optional(parameter.annotation)
+                annotation = utils.unwrap_optional(parameter.annotation)
                 origin = get_origin(annotation) or annotation
                 args = get_args(annotation)
 
@@ -297,7 +280,6 @@ class Command:
 
                 # Check if there are multiple types, looking for:
                 # - Union[Any, ...] / Optional[Any] / type | None  # noqa: ERA001
-                # - type | type | ...
 
                 if get_origin(annotation) is Union:
                     # Example: Optional[int] -> Union[int, NoneType]

@@ -5,9 +5,10 @@ import traceback
 import unicodedata
 
 from base64 import b64encode
-from datetime import datetime, timedelta, UTC
-from typing import Any, TYPE_CHECKING
 from collections.abc import Iterator
+from datetime import datetime, timedelta, UTC
+from types import UnionType
+from typing import Any, TYPE_CHECKING, get_origin, get_args, Union
 
 from .file import File
 
@@ -50,6 +51,28 @@ def traceback_maker(
     traceback_ = "".join(traceback.format_tb(err.__traceback__))
     error = f"{traceback_}{type(err).__name__}: {err}"
     return error if advance else f"{type(err).__name__}: {err}"
+
+
+def unwrap_optional(annotation: type) -> type:
+    """
+    Unwraps Optional[T] to T.
+
+    Parameters
+    ----------
+    annotation:
+        The annotation to unwrap, usually a type hint.
+
+    Returns
+    -------
+        The unwrapped annotation
+    """
+    origin = get_origin(annotation)
+    if origin is Union or origin is UnionType:
+        args = get_args(annotation)
+        non_none_args = [a for a in args if a is not type(None)]
+        if len(non_none_args) == 1:
+            return non_none_args[0]
+    return annotation
 
 
 def snowflake_time(
