@@ -574,11 +574,6 @@ class Member(PartialMember):
         return self._user.avatar_decoration_data
 
     @property
-    def collectibles(self) -> dict | None:
-        """ Returns the collectibles of the member. """
-        return self._user.collectibles
-
-    @property
     def global_name(self) -> str | None:
         """ Gives the global display name of a member if available. """
         return self._user.global_name
