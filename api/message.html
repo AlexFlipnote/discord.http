@@ -762,6 +762,24 @@ Example:</p></li>
 </dl>
 </dd></dl>
 
+<dl class="py method">
+<dt class="sig sig-object py" id="discord_http.message.PartialMessage.forward">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">forward</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">channel_id</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#discord_http.message.Message" title="discord_http.message.Message"><span class="pre">Message</span></a></span></span><a class="headerlink" href="#discord_http.message.PartialMessage.forward" title="Link to this definition">¶</a></dt>
+<dd><p>Forwards the message to another channel.</p>
+<p>This does not accept any normal message parameters, only channel ID.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>channel_id</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference internal" href="object.html#discord_http.object.Snowflake" title="discord_http.object.Snowflake"><code class="xref py py-class docutils literal notranslate"><span class="pre">Snowflake</span></code></a> | <a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a></span>) – Channel ID to forward the message to</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><a class="reference internal" href="#discord_http.message.Message" title="discord_http.message.Message"><code class="xref py py-class docutils literal notranslate"><span class="pre">Message</span></code></a></span></p>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The message object</p>
+</dd>
+</dl>
+</dd></dl>
+
 <dl class="py property">
 <dt class="sig sig-object py" id="discord_http.message.PartialMessage.guild">
 <em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">guild</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="guild.html#discord_http.guild.Guild" title="discord_http.guild.Guild"><span class="pre">Guild</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="guild.html#discord_http.guild.PartialGuild" title="discord_http.guild.PartialGuild"><span class="pre">PartialGuild</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></em><a class="headerlink" href="#discord_http.message.PartialMessage.guild" title="Link to this definition">¶</a></dt>
@@ -1113,6 +1131,7 @@ Example:</p></li>
 <li><a class="reference internal" href="#discord_http.message.PartialMessage.expire_poll"><code class="docutils literal notranslate"><span class="pre">PartialMessage.expire_poll()</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.message.PartialMessage.fetch"><code class="docutils literal notranslate"><span class="pre">PartialMessage.fetch()</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.message.PartialMessage.fetch_poll_voters"><code class="docutils literal notranslate"><span class="pre">PartialMessage.fetch_poll_voters()</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.message.PartialMessage.forward"><code class="docutils literal notranslate"><span class="pre">PartialMessage.forward()</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.message.PartialMessage.guild"><code class="docutils literal notranslate"><span class="pre">PartialMessage.guild</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.message.PartialMessage.jump_url"><code class="docutils literal notranslate"><span class="pre">PartialMessage.jump_url</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.message.PartialMessage.pin"><code class="docutils literal notranslate"><span class="pre">PartialMessage.pin()</span></code></a></li>
