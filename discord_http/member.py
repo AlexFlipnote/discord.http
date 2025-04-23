@@ -427,6 +427,11 @@ class Member(PartialMember):
 
         return self._roles
 
+    @property
+    def collectibles(self) -> dict | None:
+        """ Returns the collectibles of the User if available. """
+        return self._user.collectibles
+
     def get_role(
         self,
         role: Snowflake | int
