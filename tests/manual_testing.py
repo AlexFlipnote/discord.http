@@ -93,6 +93,22 @@ async def test_cooldown(ctx: Context):
 
 
 @client.command()
+async def test_forward(ctx: Context):
+    msg = client.get_partial_message(
+        channel_id=1152952309874167859,
+        message_id=1363496914552750313
+    )
+
+    async def call_after():
+        await msg.forward(channel_id=ctx.channel.id)
+
+    return ctx.response.send_message(
+        "Forwarding...",
+        call_after=call_after
+    )
+
+
+@client.command()
 async def test_components_v2(ctx: Context):
     """ Simple profile command. """
     # Credit to example: souji

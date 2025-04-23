@@ -963,6 +963,48 @@ class PartialMessage(PartialBase):
             guild=self.channel.guild
         )
 
+    async def forward(
+        self,
+        *,
+        channel_id: Snowflake | int
+    ) -> "Message":
+        """
+        Forwards the message to another channel.
+
+        This does not accept any normal message parameters, only channel ID.
+
+        Parameters
+        ----------
+        channel_id:
+            Channel ID to forward the message to
+
+        Returns
+        -------
+            The message object
+        """
+        payload = MessageResponse(
+            message_reference=MessageReference(
+                state=self._state,
+                data={
+                    "type": int(MessageReferenceType.forward),
+                    "channel_id": self.channel_id,
+                    "message_id": self.id,
+                }
+            )
+        )
+
+        r = await self._state.query(
+            "POST",
+            f"/channels/{int(channel_id)}/messages",
+            data=payload.to_multipart(is_request=True),
+            headers={"Content-Type": payload.content_type}
+        )
+
+        return Message(
+            state=self._state,
+            data=r.response
+        )
+
     async def reply(
         self,
         content: str | None = MISSING,
