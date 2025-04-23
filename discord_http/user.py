@@ -199,6 +199,7 @@ class User(PartialUser):
         # This might change a lot
         self.clan: dict | None = data.get("clan")
         self.collectibles: dict | None = data.get("collectibles")
+        self.avatar_decoration_data: dict | None = data.get("avatar_decoration_data")
 
         self._from_data(data)
 
