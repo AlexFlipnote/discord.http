@@ -254,6 +254,16 @@ class User(PartialUser):
         """ Returns the display avatar of the member. """
         return self.avatar or self.default_avatar
 
+    @property
+    def global_avatar_decoration(self) -> Asset | None:
+        """ Alias for `User.avatar_decoration`. """
+        return self.avatar_decoration
+
+    @property
+    def global_avatar_decoration_data(self) -> dict | None:
+        """ Alias for `User.avatar_decoration_data`. """
+        return self.avatar_decoration_data
+
 
 class UserClient(User):
     def __init__(
