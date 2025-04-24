@@ -14,6 +14,13 @@ If `pip` does not work, there are other ways to install as well, most commonly:
 - `python3 -m pip install discord.http`
 - `pip3 install discord.http`
 
+### Installing beta
+Do you live on the edge and want to test before the next version is released?
+You can install it by using `git+https://github.com/AlexFlipnote/discord.http@master` instead of `discord.http` when running `pip install`.
+
+> [!NOTE]
+> It can be unstable and unreliable, so use it at your own risk.
+
 ## Quick example
 ```py <!-- DOCS: quick_example -->
 from discord_http import Context, Client
