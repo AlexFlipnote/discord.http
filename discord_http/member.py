@@ -381,6 +381,8 @@ class Member(PartialMember):
             PartialRole(state=state, id=int(r), guild_id=self.guild.id)
             for r in data["roles"]
         ]
+        self.avatar_decoration: Asset | None = None
+        self.avatar_decoration_data: dict | None = data.get("avatar_decoration_data")
 
         self._from_data(data)
 
@@ -402,6 +404,11 @@ class Member(PartialMember):
         if data.get("banner"):
             self.banner = Asset._from_guild_banner(
                 self._state, self.guild.id, self.id, data["banner"]
+            )
+
+        if data.get("avatar_decoration_data") and data["avatar_decoration_data"].get("asset"):
+            self.avatar_decoration = Asset._from_avatar_decoration(
+                self._state, data["avatar_decoration_data"]["asset"]
             )
 
         if data.get("communication_disabled_until"):
@@ -564,13 +571,23 @@ class Member(PartialMember):
         return self._user.public_flags or UserFlags(0)
 
     @property
-    def avatar_decoration(self) -> Asset | None:
-        """ Returns the avatar decoration of the member. """
+    def display_avatar_decoration(self) -> Asset | None:
+        """ Returns the display avatar decoration of the member. """
+        return self.avatar_decoration or self._user.avatar_decoration
+
+    @property
+    def display_avatar_decoration_data(self) -> dict | None:
+        """ Returns the display avatar decoration data of the member. """
+        return self.avatar_decoration_data or self._user.avatar_decoration_data
+
+    @property
+    def global_avatar_decoration(self) -> Asset | None:
+        """ Shortcut for `User.avatar_decoration`. """
         return self._user.avatar_decoration
 
     @property
-    def avatar_decoration_data(self) -> dict | None:
-        """ Returns the avatar decoration of the member. """
+    def global_avatar_decoration_data(self) -> dict | None:
+        """ Shortcut for `User.avatar_decoration_data`. """
         return self._user.avatar_decoration_data
 
     @property
