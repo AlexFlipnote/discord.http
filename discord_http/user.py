@@ -245,6 +245,11 @@ class User(PartialUser):
         return self.avatar
 
     @property
+    def global_banner(self) -> Asset | None:
+        """ Alias for `User.banner`. """
+        return self.banner
+
+    @property
     def display_name(self) -> str:
         """ Returns the user's display name. """
         return self.global_name or self.name
@@ -255,6 +260,11 @@ class User(PartialUser):
         return self.avatar or self.default_avatar
 
     @property
+    def display_banner(self) -> Asset | None:
+        """ An alias to merge with `Member.display_banner`. """
+        return self.banner
+
+    @property
     def global_avatar_decoration(self) -> Asset | None:
         """ Alias for `User.avatar_decoration`. """
         return self.avatar_decoration
@@ -262,6 +272,16 @@ class User(PartialUser):
     @property
     def global_avatar_decoration_data(self) -> dict | None:
         """ Alias for `User.avatar_decoration_data`. """
+        return self.avatar_decoration_data
+
+    @property
+    def display_avatar_decoration(self) -> Asset | None:
+        """ An alias to merge with `Member.display_avatar_decoration`. """
+        return self.avatar_decoration
+
+    @property
+    def display_avatar_decoration_data(self) -> dict | None:
+        """ An alias to merge with `Member.display_avatar_decoration_data`. """
         return self.avatar_decoration_data
 
 
