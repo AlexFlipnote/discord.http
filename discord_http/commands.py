@@ -245,6 +245,7 @@ class Command:
 
         self.__list_choices: list[str] = []
         self.__user_objects: dict[str, builtins.type[Member | User]] = {}
+        self.__user_member_objects: list[str] = []
 
         if self.type == ApplicationCommandType.chat_input:
             if self.description is None:
@@ -300,6 +301,26 @@ class Command:
                     origin = get_args(raw_annotation)[0]  # Just pick the first one, does not matter
                     for a in get_args(raw_annotation):
                         channel_options.extend(channel_types[a])
+
+                # If it's a union, and first arg is User, then second is Member
+                if (
+                    get_origin(raw_annotation) in (Union, UnionType) and
+                    2 <= len(get_args(raw_annotation)) <= 3 and  # No more than 3 args, no less than 2
+                    (
+                        # Allow "Member | User" and "User | Member"
+                        # But strictly only these two ways
+                        (
+                            get_args(raw_annotation)[0] is User and
+                            get_args(raw_annotation)[1] is Member
+                        ) or
+                        (
+                            get_args(raw_annotation)[1] is User and
+                            get_args(raw_annotation)[0] is Member
+                        )
+                    )
+                ):
+                    origin = get_args(raw_annotation)[0]
+                    self.__user_member_objects.append(parameter.name)
 
                 if origin is User or origin is Member:
                     ptype = CommandOptionType.user
@@ -456,6 +477,11 @@ class Command:
 
         for name, value in self.__user_objects.items():
             if name not in kwargs:
+                continue
+
+            if name in self.__user_member_objects:
+                # Take whatever was first, go for it
+                # Can be either Member or User
                 continue
 
             if (
