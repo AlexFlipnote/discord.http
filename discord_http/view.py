@@ -1291,8 +1291,8 @@ class ContainerComponent(Item):
         self.colour: Colour | int | None = colour
         self.spoiler: bool | None = spoiler
 
-        if len(items) > 10:
-            raise ValueError("Cannot have more than 10 items in container")
+        if len(items) > 40:
+            raise ValueError("Cannot have more than 40 items in container")
 
     def __repr__(self) -> str:
         return f"<ContainerComponent items={self.items}>"
@@ -1467,8 +1467,8 @@ class View(InteractionStorage):
 
     def to_dict(self) -> list[dict]:
         """ Returns a dict representation of the view. """
-        if len(self.items) > 10:
-            raise ValueError("Cannot have a view with more than 10 items")
+        if len(self.items) > 40:
+            raise ValueError("Cannot have a view with more than 40 items")
 
         return [g.to_dict() for g in self.items]
 

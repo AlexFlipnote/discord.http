@@ -171,6 +171,8 @@ class PartialWebhook(PartialBase):
             params["thread_id"] = str(thread_id)
         if wait is True:
             params["wait"] = "true"
+        if view is not MISSING:
+            params["with_components"] = "true"
 
         payload = MessageResponse(
             content=content,
