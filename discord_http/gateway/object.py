@@ -53,11 +53,13 @@ class PlayingStatus:
         status: StatusType | str | int | None = None,
         type: ActivityType | str | int | None = None,  # noqa: A002
         url: str | None = None,
+        state: str | None = None,
     ):
         self.since: int | None = None
         self.name = name
         self.status: StatusType | str | int | None = status
         self.type: ActivityType | str | int | None = type
+        self.state = state
 
         if isinstance(self.status, str):
             self.status = StatusType[self.status]
@@ -103,6 +105,14 @@ class PlayingStatus:
             if self.type is None:
                 # Fallback to playing if no type is provided but name is
                 payload["activities"][0]["type"] = int(ActivityType.playing)
+
+        if self.type == ActivityType.custom:
+            payload["activities"][0]["name"] = "Custom Status"
+
+            if self.state is not None:
+                payload["activities"][0]["state"] = self.state
+            elif self.name is not None:
+                payload["activities"][0]["state"] = self.name
 
         return payload
 
