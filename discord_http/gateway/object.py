@@ -100,7 +100,10 @@ class PlayingStatus:
         if self.name is not None:
             payload["activities"][0]["name"] = self.name
 
-            if self.type is None:
+            if self.type is ActivityType.custom:
+                payload["activities"][0]["state"] = self.name
+
+            elif self.type is None:
                 # Fallback to playing if no type is provided but name is
                 payload["activities"][0]["type"] = int(ActivityType.playing)
 
