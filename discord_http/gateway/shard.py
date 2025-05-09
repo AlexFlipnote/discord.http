@@ -47,7 +47,7 @@ class ShardEventPayload:
         self.type: ShardCloseType | None = close_type
 
     def __repr__(self) -> str:
-        return f"<ShardEventPayload shard={self.shard.shard_id} reason={self.reason} type={self.type}>"
+        return f"<ShardEventPayload shard={self.shard.shard_id} reason={self.reason}>"
 
     def is_dead(self) -> bool:
         """ Whether the shard is crashed or not. """
