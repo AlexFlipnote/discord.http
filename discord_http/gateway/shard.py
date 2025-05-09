@@ -44,14 +44,14 @@ class ShardEventPayload:
         self.shard: "Shard" = shard
         self.reason: str | None = reason
         self.exception: Exception | None = exception
-        self.type: ShardCloseType | None = close_type
+        self.close_type: ShardCloseType | None = close_type
 
     def __repr__(self) -> str:
         return f"<ShardEventPayload shard={self.shard.shard_id} reason={self.reason}>"
 
     def is_dead(self) -> bool:
         """ Whether the shard is crashed or not. """
-        return self.type == ShardCloseType.hard_crash
+        return self.close_type == ShardCloseType.hard_crash
 
     def reconnect(self) -> None:
         """ Attempt to reconnect the shard. """
