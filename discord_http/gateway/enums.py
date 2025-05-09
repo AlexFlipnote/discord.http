@@ -29,6 +29,8 @@ class ShardCloseType(BaseEnum):
     resume = 0
     reconnect = 1
     invalid_session = 2
+    normal_crash = 100
+    hard_crash = 101
 
 
 class StatusType(BaseEnum):

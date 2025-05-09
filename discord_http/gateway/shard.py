@@ -28,7 +28,47 @@ _log = logging.getLogger("discord_http")
 
 __all__ = (
     "Shard",
+    "ShardClosePayload",
 )
+
+
+class ShardClosePayload:
+    def __init__(
+        self,
+        *,
+        shard: "Shard",
+        reason: str,
+        exception: Exception | None,
+        close_type: ShardCloseType,
+    ):
+        self.shard: "Shard" = shard
+        self.reason: str = reason
+        self.exception: Exception | None = exception
+        self.type: ShardCloseType = close_type
+
+    def __repr__(self) -> str:
+        return f"<ShardClosePayload shard={self.shard.shard_id} reason={self.reason} type={self.type}>"
+
+    @property
+    def id(self) -> int:
+        """ Shortcut to get the Shard ID that closed. """
+        return self.shard.shard_id
+
+    def is_dead(self) -> bool:
+        """ Whether the shard is crashed or not. """
+        return self.type == ShardCloseType.hard_crash
+
+    def reconnect(self) -> None:
+        """ Attempt to reconnect the shard. """
+        try:
+            self.shard._connection.cancel()
+        except AttributeError:
+            pass
+        except asyncio.CancelledError:
+            pass
+        else:
+            _log.debug(f"Shard {self.shard.shard_id} reconnecting")
+            self.shard.connect()
 
 
 class GatewayRatelimiter:
@@ -546,9 +586,21 @@ class Shard:
             return await chunker.wait()
         return chunker.get_future()
 
-    def _dispatch_close_reason(self, reason: str, enum: ShardCloseType) -> None:
+    def _dispatch_close_reason(
+        self,
+        reason: str,
+        close_type: ShardCloseType,
+        *,
+        exception: Exception | None = None,
+    ) -> None:
         if self.bot.has_any_dispatch("shard_closed"):
-            self.bot.dispatch("shard_closed", self.shard_id, enum)
+            payload = ShardClosePayload(
+                shard=self,
+                reason=reason,
+                exception=exception,
+                close_type=close_type
+            )
+            self.bot.dispatch("shard_closed", payload)
         else:
             _log.warning(reason)
 
@@ -608,7 +660,8 @@ class Shard:
 
                         self._dispatch_close_reason(
                             f"Shard {self.shard_id} closed, attempting reconnect",
-                            ShardCloseType.resume
+                            ShardCloseType.resume,
+                            exception=e
                         )
 
                     else:  # Something went wrong, reset the instance
@@ -617,17 +670,27 @@ class Shard:
                             # Possibly Discord closed the connection due to load balancing
                             self._dispatch_close_reason(
                                 f"Shard {self.shard_id} closed, attempting new connection",
-                                ShardCloseType.reconnect
+                                ShardCloseType.reconnect,
+                                exception=e
                             )
 
                         else:
-                            _log.error(f"Shard {self.shard_id} crashed", exc_info=e)
+                            self._dispatch_close_reason(
+                                f"Shard {self.shard_id} crashed, attempting new connection",
+                                ShardCloseType.normal_crash,
+                                exception=e
+                            )
 
                     self.connect()
 
         except Exception as e:
             self._reset_instance()
             _log.error(f"Shard {self.shard_id} crashed completly", exc_info=e)
+            self._dispatch_close_reason(
+                f"Shard {self.shard_id} crashed completly: {e}",
+                ShardCloseType.hard_crash,
+                exception=e
+            )
 
     def _guild_needs_chunking(self, guild: "Guild | PartialGuild") -> bool:
         return (

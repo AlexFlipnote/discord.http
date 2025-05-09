@@ -114,12 +114,11 @@ Shard events
   :param shard: :class:`Shard` object with information about the shard.
 
 
-.. function:: async def on_shard_closed(shard, close_type):
+.. function:: async def on_shard_closed(shard_close_payload):
 
   Called whenever a shard is closed
 
-  :param shard: :class:`Shard` object with information about the shard.
-  :param close_type: :class:`ShardCloseType` object with information about the shard close type.
+  :param payload: :class:`ShardClosePayload` object with information about the shard that crashed and more information.
 
 
 Intents.guilds
