@@ -28,31 +28,26 @@ _log = logging.getLogger("discord_http")
 
 __all__ = (
     "Shard",
-    "ShardClosePayload",
+    "ShardEventPayload",
 )
 
 
-class ShardClosePayload:
+class ShardEventPayload:
     def __init__(
         self,
-        *,
         shard: "Shard",
-        reason: str,
-        exception: Exception | None,
-        close_type: ShardCloseType,
+        *,
+        reason: str | None = None,
+        exception: Exception | None = None,
+        close_type: ShardCloseType | None = None,
     ):
         self.shard: "Shard" = shard
-        self.reason: str = reason
+        self.reason: str | None = reason
         self.exception: Exception | None = exception
-        self.type: ShardCloseType = close_type
+        self.type: ShardCloseType | None = close_type
 
     def __repr__(self) -> str:
-        return f"<ShardClosePayload shard={self.shard.shard_id} reason={self.reason} type={self.type}>"
-
-    @property
-    def id(self) -> int:
-        """ Shortcut to get the Shard ID that closed. """
-        return self.shard.shard_id
+        return f"<ShardEventPayload shard={self.shard.shard_id} reason={self.reason} type={self.type}>"
 
     def is_dead(self) -> bool:
         """ Whether the shard is crashed or not. """
@@ -422,7 +417,13 @@ class Shard:
 
             case "RESUMED":
                 if self.bot.has_any_dispatch("shard_resumed"):
-                    self.bot.dispatch("shard_resumed", self)
+                    self.bot.dispatch(
+                        "shard_resumed",
+                        ShardEventPayload(
+                            shard=self,
+                            reason=f"Shard {self.shard_id} resumed from gateway."
+                        )
+                    )
                 else:
                     _log.info(f"Shard {self.shard_id} resumed")
 
@@ -594,7 +595,7 @@ class Shard:
         exception: Exception | None = None,
     ) -> None:
         if self.bot.has_any_dispatch("shard_closed"):
-            payload = ShardClosePayload(
+            payload = ShardEventPayload(
                 shard=self,
                 reason=reason,
                 exception=exception,
@@ -659,7 +660,7 @@ class Shard:
                         self._reset_buffer()
 
                         self._dispatch_close_reason(
-                            f"Shard {self.shard_id} closed, attempting reconnect",
+                            f"Shard {self.shard_id} closed, attempting reconnect due to resume event.",
                             ShardCloseType.resume,
                             exception=e
                         )
@@ -669,14 +670,14 @@ class Shard:
                         if self._was_normal_close():
                             # Possibly Discord closed the connection due to load balancing
                             self._dispatch_close_reason(
-                                f"Shard {self.shard_id} closed, attempting new connection",
+                                f"Shard {self.shard_id} closed, attempting new connection due to normal close.",
                                 ShardCloseType.reconnect,
                                 exception=e
                             )
 
                         else:
                             self._dispatch_close_reason(
-                                f"Shard {self.shard_id} crashed, attempting new connection",
+                                f"Shard {self.shard_id} crashed, attempting new connection.",
                                 ShardCloseType.normal_crash,
                                 exception=e
                             )
@@ -767,7 +768,13 @@ class Shard:
         self.parser._chunk_requests.clear()
 
         if self.bot.has_any_dispatch("shard_ready"):
-            self.bot.dispatch("shard_ready", self)
+            self.bot.dispatch(
+                "shard_ready",
+                ShardEventPayload(
+                    shard=self,
+                    reason=f"Shard {self.shard_id} is now ready."
+                )
+            )
         else:
             _log.info(f"Shard {self.shard_id} ready")
 
