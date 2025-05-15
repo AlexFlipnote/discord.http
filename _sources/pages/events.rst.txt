@@ -104,22 +104,21 @@ Shard events
 
   Called whenever a shard is now ready
 
-  :param shard: :class:`Shard` object with information about the shard.
+  :param shard: :class:`ShardEventPayload` object with information about the shard that is ready.
 
 
 .. function:: async def on_shard_resumed(shard):
 
   Called whenever a shard is resumed
 
-  :param shard: :class:`Shard` object with information about the shard.
+  :param shard: :class:`ShardEventPayload` object with information about the shard that was resumed.
 
 
-.. function:: async def on_shard_closed(shard, close_type):
+.. function:: async def on_shard_closed(shard_close_payload):
 
   Called whenever a shard is closed
 
-  :param shard: :class:`Shard` object with information about the shard.
-  :param close_type: :class:`ShardCloseType` object with information about the shard close type.
+  :param payload: :class:`ShardEventPayload` object with information about the shard that crashed and more information.
 
 
 Intents.guilds
