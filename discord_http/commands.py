@@ -653,7 +653,8 @@ class Command:
 
         if self.cog is not None:
             response = await self.command(self.cog, context, *args, **kwargs)
-        response = await self.command(context, *args, **kwargs)
+        else:
+            response = await self.command(context, *args, **kwargs)
 
         # Execute after invoke
         if getattr(self.command, "__after_invoke__", None):
