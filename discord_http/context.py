@@ -690,6 +690,13 @@ class Context:
         """ Returns the response to the interaction. """
         return InteractionResponse(self)
 
+    def is_bot_dm(self) -> bool:
+        """ Returns a boolean of whether the interaction was in the bot's DM channel. """
+        return (
+            len(self.recipients) == 1 and
+            self.bot.user.id in self.recipients
+        )
+
     async def send(
         self,
         content: str | None = MISSING,
