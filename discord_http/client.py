@@ -170,6 +170,10 @@ class Client:
 
         self._cogs: dict[str, list[Cog]] = {}
 
+        self._before_invoke: Callable | None = None
+        self._after_invoke: Callable | None = None
+        self._waiting_listeners: dict[str, list[tuple[asyncio.Future, Callable]]] = {}
+
         utils.setup_logger(level=self.logging_level)
 
     async def _run_global_checks(self, ctx: Context) -> bool:
@@ -615,8 +619,10 @@ class Client:
         **kwargs:
             The keyword arguments to pass to the event.
         """
+        method = f"on_{event_name.lower()}"
+
         for listener in self.listeners:
-            if listener.name != f"on_{event_name}":
+            if listener.name != method:
                 continue
 
             self._schedule_event(
@@ -624,6 +630,38 @@ class Client:
                 event_name,
                 *args, **kwargs
             )
+
+        # Now check if there are any listeners waiting for this event
+        listeners = self._waiting_listeners.get(method, None)
+        if not listeners:
+            return
+
+        removed = []
+        for i, (future, check) in enumerate(listeners):
+            if future.cancelled():
+                removed.append(i)
+                continue
+
+            try:
+                result = check(*args)
+            except Exception as e:
+                future.set_exception(e)
+                removed.append(i)
+            else:
+                if result:
+                    if len(args) == 0:
+                        future.set_result(None)
+                    elif len(args) == 1:
+                        future.set_result(args[0])
+                    else:
+                        future.set_result(args)
+                    removed.append(i)
+
+        if len(removed) == len(listeners):
+            self._waiting_listeners.pop(method)
+        else:
+            for i in reversed(removed):
+                del listeners[i]
 
     def has_any_dispatch(
         self,
@@ -712,6 +750,56 @@ class Client:
             The cog to remove from the bot.
         """
         await cog._eject(self)
+
+    def wait_for(
+        self,
+        event_name: str,
+        *,
+        check: Callable[..., bool] | None = None,
+        timeout: float | None = None
+    ) -> Coroutine[Any, Any, Any]:
+        """
+        Waits for an event to be dispatched.
+
+        This requires gateway to be enabled.
+        Otherwise it will log a warning and return `None`.
+
+        Parameters
+        ----------
+        event_name:
+            The name of the event to wait for.
+        check:
+            The check to use, by default None.
+        timeout:
+            The timeout to use, by default None.
+
+        Raises
+        ------
+        `TimeoutError`
+            If the event was not dispatched within the timeout
+
+        Returns
+        -------
+            The event parameters
+        """
+        if not self.enable_gateway:
+            _log.warning("Gateway is not enabled, skipped due to no events to wait for...")
+            return asyncio.sleep(0.01)
+
+        future = self.loop.create_future()
+
+        if check is None:
+            def _check(*_) -> bool:  # noqa: ANN002
+                return True
+            check = _check
+
+        ev = f"on_{event_name.lower()}"
+
+        if not self._waiting_listeners.get(ev, None):
+            self._waiting_listeners[ev] = []
+
+        self._waiting_listeners[ev].append((future, check))
+        return asyncio.wait_for(future, timeout=timeout)
 
     def command(
         self,
@@ -837,6 +925,41 @@ class Client:
             )
             self.add_command(command)
             return command
+
+        return decorator
+
+    def before_invoke(self) -> Callable:
+        """
+        Decorator to register a function to be called before a command is ran globally.
+
+        If it returns anything other than `True`, the command will not be invoked.
+        However if you raise a `CheckFailure` exception, it will fail and you can add a message to it.
+
+        Parameters
+        ----------
+        func: Callable
+            The function to be called before the command is invoked.
+        """
+        def decorator(func: Callable) -> Callable:
+            self._before_invoke = func
+            return func
+
+        return decorator
+
+    def after_invoke(self) -> Callable:
+        """
+        Decorator to register a function to be called after a command is ran globally.
+
+        This acts like before_invoke, however it only runs after the command has been invoked successfully.
+
+        Parameters
+        ----------
+        func: Callable
+            The function to be called after the command is invoked.
+        """
+        def decorator(func: Callable) -> Callable:
+            self._after_invoke = func
+            return func
 
         return decorator
 

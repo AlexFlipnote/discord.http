@@ -23,7 +23,7 @@ from discord_http import (
     TextChannel, Attachment, PermissionOverwrite,
     Poll, AutoModRuleEventType, AutoModRuleTriggerType,
     MentionableSelect, ActionRow, SectionComponent,
-    DiscordTimestamp, ThumbnailComponent, SeparatorComponent,
+    DiscordTimestamp, SeparatorComponent,
     MessageFlags
 )
 
@@ -47,6 +47,17 @@ client = Client(
 test_group = client.add_group(name="test_group")
 test_group_command2 = test_group.add_group(name="test2")
 now = utils.utcnow()
+
+
+@client.before_invoke()
+async def before_invoke_global(ctx: Context) -> bool:
+    print("Global before invoke")
+    return True
+
+
+async def before_invoke_local(ctx: Context) -> bool:
+    print("Local before invoke")
+    return True
 
 
 @tasks.loop(seconds=5)
@@ -88,6 +99,7 @@ async def test_loop_static_before():
 @client.command()
 @commands.cooldown(2, 10.0, type=commands.BucketType.user)
 async def test_cooldown(ctx: Context):
+    await client.wait_for("message_create", check=lambda m: m.author.id == ctx.user.id, timeout=10)
     print(ctx.command.cooldown._cache)
     return ctx.response.send_message("Not on cooldown yet...")
 
@@ -928,6 +940,7 @@ async def test_user_select(ctx: Context):
 @client.command()
 @commands.default_permissions("manage_messages")
 @commands.bot_has_permissions("manage_messages")
+@commands.before_invoke(before_invoke_local)
 async def test_bool(ctx: Context, prompt: bool):
     return ctx.response.send_message(f"Prompt is {prompt}")
 

@@ -48,6 +48,15 @@ async def on_guild_create(guild: Guild):
 async def on_message_create(msg: Message):
     print(f"Message: {msg.content}")
 
+    if msg.content == "test:wait_for":
+        msg2 = await client.wait_for(
+            "message_create",
+            check=lambda m: m.author.id == msg.author.id and m.content == "a",
+            timeout=10
+        )
+
+        print(f"Successful wait: {msg2}")
+
 
 @client.listener()
 async def on_message_delete(msg: PartialMessage):

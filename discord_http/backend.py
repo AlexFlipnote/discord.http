@@ -1,6 +1,7 @@
 import asyncio
 import copy
 import logging
+import inspect
 import signal
 import json
 
@@ -158,12 +159,42 @@ class DiscordHTTP(Quart):
 
         return ctx.response.pong()
 
+    async def _run_before_invoke(self, ctx: "Context") -> bool:
+        if self.bot._before_invoke is None:
+            return True
+
+        if inspect.iscoroutinefunction(self.bot._before_invoke):
+            result = await self.bot._before_invoke(ctx)
+        else:
+            result = self.bot._before_invoke(ctx)
+
+        if result is not True:
+            raise CheckFailed("Global before invoke failed.")
+
+        return True
+
+    async def _run_after_invoke(self, ctx: "Context") -> None:
+        if self.bot._after_invoke is None:
+            return
+
+        async def _run_background() -> None:
+            if inspect.iscoroutinefunction(self.bot._after_invoke):
+                await self.bot._after_invoke(ctx)
+            else:
+                self.bot._after_invoke(ctx)  # type: ignore
+
+        self.bot.loop.create_task(
+            _run_background()
+        )
+
     async def _handle_application_command(
         self,
         ctx: "Context",
         data: dict
     ) -> QuartResponse | dict:
         """ Used to handle application commands. """
+        await self._run_before_invoke(ctx)
+
         _log.debug("Received slash command, processing...")
 
         command_name = data["data"]["name"]
@@ -192,6 +223,8 @@ class DiscordHTTP(Quart):
             payload = await cmd._make_context_and_run(
                 context=ctx
             )
+
+            await self._run_after_invoke(ctx)
 
             if isinstance(payload, EmptyResponse):
                 return QuartResponse("", status=202)
@@ -222,6 +255,8 @@ class DiscordHTTP(Quart):
         data: dict
     ) -> QuartResponse | dict:
         """ Used to handle interactions. """
+        await self._run_before_invoke(ctx)
+
         _log.debug("Received interaction, processing...")
         custom_id = data["data"]["custom_id"]
 
@@ -268,6 +303,9 @@ class DiscordHTTP(Quart):
                 )
 
             payload = await intreact.run(ctx)
+
+            await self._run_after_invoke(ctx)
+
             return QuartResponse(
                 payload.to_multipart(),
                 content_type=payload.content_type

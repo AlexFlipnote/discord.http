@@ -561,6 +561,36 @@ class Command:
 
         return True
 
+    async def _before_invoke(self, ctx: "Context") -> bool:
+        before = getattr(self.command, "__before_invoke__", None)
+        if before is None:
+            return True
+
+        if inspect.iscoroutinefunction(before):
+            result = await before(ctx)
+        else:
+            result = before(ctx)
+
+        if result is not True:
+            raise CheckFailed("Before invoke failed.")
+
+        return True
+
+    async def _after_invoke(self, ctx: "Context") -> None:
+        after = getattr(self.command, "__after_invoke__", None)
+        if after is None:
+            return
+
+        async def _run_background() -> None:
+            if inspect.iscoroutinefunction(after):
+                await after(ctx)
+            else:
+                after(ctx)
+
+        ctx.bot.loop.create_task(
+            _run_background()
+        )
+
     def _cooldown_checker(self, ctx: "Context") -> None:
         if self.cooldown is None:
             return
@@ -602,6 +632,9 @@ class Command:
         `BotMissingPermissions`
             Bot is missing permissions.
         """
+        # Check before invoke
+        await self._before_invoke(context)
+
         # Check custom checks
         await self._command_checks(context)
 
@@ -619,8 +652,16 @@ class Command:
         self._cooldown_checker(context)
 
         if self.cog is not None:
-            return await self.command(self.cog, context, *args, **kwargs)
-        return await self.command(context, *args, **kwargs)
+            response = await self.command(self.cog, context, *args, **kwargs)
+        response = await self.command(context, *args, **kwargs)
+
+        # Execute after invoke
+        if getattr(self.command, "__after_invoke__", None):
+            context.bot.loop.create_task(
+                self._after_invoke(context)
+            )
+
+        return response
 
     async def run_autocomplete(
         self,
@@ -1277,6 +1318,43 @@ def message_command(
             guild_install=guild_install,
             user_install=user_install
         )
+
+    return decorator
+
+
+def before_invoke(invoke: Callable) -> Callable:
+    """
+    Decorator to register a function to be called before the command is invoked.
+
+    If it returns anything other than `True`, the command will not be invoked.
+    However if you raise a `CheckFailure` exception, it will fail and you can add a message to it.
+
+    Parameters
+    ----------
+    invoke: Callable
+        The function to be called before the command is invoked.
+    """
+    def decorator(func: Callable) -> Callable:
+        func.__before_invoke__ = invoke
+        return func
+
+    return decorator
+
+
+def after_invoke(invoke: Callable) -> Callable:
+    """
+    Decorator to register a function to be called after the command is invoked.
+
+    This acts like before_invoke, however it only runs after the command has been invoked successfully.
+
+    Parameters
+    ----------
+    invoke: Callable
+        The function to be called after the command is invoked.
+    """
+    def decorator(func: Callable) -> Callable:
+        func.__after_invoke__ = invoke
+        return func
 
     return decorator
 
