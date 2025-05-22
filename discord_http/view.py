@@ -956,12 +956,12 @@ class SectionComponent(Item):
         # This might change later if SectionComponent starts
         # accepting more than just TextDisplayComponent
         *components: TextDisplayComponent | str,
-        accessory: Button | ThumbnailComponent | AttachmentComponent | Asset | File
+        accessory: Button | ThumbnailComponent | AttachmentComponent | Asset | File | str
     ):
         super().__init__(type=ComponentType.section)
 
         self.components: list[TextDisplayComponent | str] = list(components)
-        self.accessory: Button | ThumbnailComponent | AttachmentComponent | Asset | File = accessory
+        self.accessory: Button | ThumbnailComponent | AttachmentComponent | Asset | File | str = accessory
 
     def __repr__(self) -> str:
         return f"<SectionComponent components={self.components} accessory={self.accessory}>"
@@ -987,6 +987,14 @@ class SectionComponent(Item):
                 "type": int(ComponentType.thumbnail),
                 "media": {
                     "url": str(self.accessory.url)
+                }
+            }
+
+        elif isinstance(self.accessory, str):
+            payload["accessory"] = {
+                "type": int(ComponentType.thumbnail),
+                "media": {
+                    "url": str(self.accessory)
                 }
             }
 
@@ -1183,17 +1191,17 @@ class MediaGalleryItem:
 class MediaGalleryComponent(Item):
     def __init__(
         self,
-        *items: MediaGalleryItem | File | Asset
+        *items: MediaGalleryItem | File | Asset | str
     ):
         super().__init__(type=ComponentType.media_gallery)
-        self.items: list[MediaGalleryItem | File | Asset] = list(items)
+        self.items: list[MediaGalleryItem | File | Asset | str] = list(items)
 
     def __repr__(self) -> str:
         return f"<MediaGalleryComponent items={self.items}>"
 
     def add_item(
         self,
-        item: MediaGalleryItem | File | Asset
+        item: MediaGalleryItem | File | Asset | str
     ) -> None:
         """
         Add items to the media gallery.
@@ -1212,6 +1220,8 @@ class MediaGalleryComponent(Item):
         for g in self.items:
             if isinstance(g, File | Asset):
                 payload.append(MediaGalleryItem(g))
+            elif isinstance(g, str):
+                payload.append(MediaGalleryItem(url=g))
             else:
                 payload.append(g)
 
