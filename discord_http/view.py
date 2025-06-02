@@ -963,6 +963,16 @@ class SectionComponent(Item):
         self.components: list[TextDisplayComponent | str] = list(components)
         self.accessory: Button | ThumbnailComponent | AttachmentComponent | Asset | File | str = accessory
 
+        if not self.components:
+            raise ValueError("SectionComponent must have at least one component")
+
+        for i, g in enumerate(self.components):
+            if isinstance(g, str | TextDisplayComponent):
+                continue
+            raise ValueError(
+                f"Component {i} in SectionComponent must be a TextDisplayComponent or str, not {type(g)}"
+            )
+
     def __repr__(self) -> str:
         return f"<SectionComponent components={self.components} accessory={self.accessory}>"
 

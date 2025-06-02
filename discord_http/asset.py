@@ -99,8 +99,8 @@ class Asset:
             The new asset object
         """
         url = yarl.URL(self.url)
-        path, _ = os.path.splitext(url.path)
-        prev_size = url.query.get("size")
+        path, _ = os.path.splitext(url.path)  # type: ignore
+        prev_size = url.query.get("size")  # type: ignore
 
         if format is not MISSING:
             url = url.with_path(f"{path}.{format}")

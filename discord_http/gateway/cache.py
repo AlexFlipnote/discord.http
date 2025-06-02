@@ -80,7 +80,7 @@ class Cache:
         # When GUILD_CREATE is received, the cache is already created
         # Make sure we respect what the cache flags are
         if GatewayCacheFlags.channels in self.cache_flags:
-            guild_._cache_channels = {  # type: ignore
+            guild_._cache_channels = {
                 int(g["id"]): BaseChannel.from_dict(
                     state=self.bot.state,
                     data=g,
@@ -101,7 +101,7 @@ class Cache:
 
         if GatewayCacheFlags.members in self.cache_flags:
             from ..member import Member
-            guild_._cache_members = {  # type: ignore
+            guild_._cache_members = {
                 int(g["user"]["id"]): Member(
                     state=self.bot.state,
                     guild=guild_,
@@ -119,7 +119,7 @@ class Cache:
         else:
             # Still cache the only member which is the bot
             from ..member import Member
-            guild_._cache_members = {  # type: ignore
+            guild_._cache_members = {
                 int(g["user"]["id"]): Member(
                     state=self.bot.state,
                     guild=guild_,
@@ -166,7 +166,7 @@ class Cache:
             guild_._cache_stickers = {}
 
         if GatewayCacheFlags.threads in self.cache_flags:
-            guild_._cache_threads = {  # type: ignore
+            guild_._cache_threads = {
                 int(g["id"]): BaseChannel.from_dict(
                     state=self.bot.state,
                     data=g,
@@ -187,7 +187,7 @@ class Cache:
 
         # Do voice states in the end
         if GatewayCacheFlags.voice_states in self.cache_flags:
-            guild_._cache_voice_states = {  # type: ignore
+            guild_._cache_voice_states = {
                 int(g["user_id"]): VoiceState(
                     state=self.bot.state,
                     data=g,
@@ -597,7 +597,7 @@ class Cache:
             return
 
         if GatewayCacheFlags.emojis in self.cache_flags:
-            guild._cache_emojis = {  # type: ignore
+            guild._cache_emojis = {
                 int(g.id): g
                 for g in emojis
             }
@@ -628,7 +628,7 @@ class Cache:
             return
 
         if GatewayCacheFlags.stickers in self.cache_flags:
-            guild._cache_stickers = {  # type: ignore
+            guild._cache_stickers = {
                 int(g.id): g
                 for g in stickers
             }

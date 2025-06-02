@@ -1,6 +1,6 @@
 import aiohttp
 import asyncio
-import json
+import orjson
 import logging
 import random
 import sys
@@ -171,8 +171,8 @@ class HTTPClient:
             except ContentTypeError:
                 if res_method == "json":
                     try:
-                        r = json.loads(await res.text())
-                    except json.JSONDecodeError:
+                        r = orjson.loads(await res.text())
+                    except orjson.JSONDecodeError:
                         # Give up trying, something is really wrong...
                         r = await res.text()
                         res_method = "text"
@@ -456,8 +456,8 @@ class DiscordAPI:
             response = data
             if isinstance(data, str):
                 try:
-                    response = json.loads(data)
-                except json.JSONDecodeError:
+                    response = orjson.loads(data)
+                except orjson.JSONDecodeError:
                     pass
             return response
 

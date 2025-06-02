@@ -1,6 +1,6 @@
 import aiohttp
 import asyncio
-import json
+import orjson
 import logging
 import sys
 import time
@@ -345,7 +345,7 @@ class Shard:
             raw_msg = raw_msg.decode("utf-8")
             self._buffer = bytearray()
 
-        msg: dict = json.loads(raw_msg)
+        msg: dict = orjson.loads(raw_msg)
 
         event = msg.get("t")
 

@@ -1,4 +1,4 @@
-import json
+import orjson
 
 from io import BufferedIOBase
 
@@ -59,7 +59,7 @@ class MultipartData:
 
             case x if isinstance(x, dict):
                 string += "\r\nContent-Type: application/json\r\n\r\n"
-                data = json.dumps(data)
+                data = orjson.dumps(data).decode("utf-8")
 
             case _:
                 string += "\r\n\r\n"

@@ -3,7 +3,7 @@ import copy
 import logging
 import inspect
 import signal
-import json
+import orjson
 
 from datetime import datetime
 from hypercorn.asyncio import serve
@@ -475,9 +475,7 @@ class DiscordHTTP(Quart):
         self,
         data: dict,
         *,
-        status: int = 200,
-        sort_keys: bool = False,
-        indent: int | None = None,
+        status: int = 200
     ) -> QuartResponse:
         """
         Force Quart to respond with JSON the way you like it.
@@ -488,17 +486,13 @@ class DiscordHTTP(Quart):
             The data to respond with
         status: `int`
             The status code to respond with
-        sort_keys: `bool`
-            Whether to sort the keys or not
-        indent: `int | None`
-            If the JSON should be indented on response
 
         Returns
         -------
             The response object
         """
         return QuartResponse(
-            json.dumps(data, sort_keys=sort_keys, indent=indent),
+            orjson.dumps(data),
             headers={"Content-Type": "application/json"},
             status=status,
         )

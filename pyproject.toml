@@ -18,10 +18,11 @@ keywords = ["discord", "http", "api", "interaction", "quart", "webhook", "slash"
 authors = [{name = "AlexFlipnote", email = "root@alexflipnote.dev"}]
 
 dependencies = [
-  "quart>=0.18.4,<1",
   "PyNaCl>=1.5.0,<2",
-  "aiohttp>=3.10.10,<4",
-  "yarl>=1.15.2,<2",
+  "aiohttp>=3.12.7,<4",
+  "orjson>=3.10.18,<4",
+  "quart>=0.20.0,<1",
+  "yarl>=1.20.0,<2",
 ]
 
 [project.urls]
