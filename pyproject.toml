@@ -10,7 +10,7 @@ url = "https://github.com/AlexFlipnote/discord.http"
 name = "discord.http"
 description = "Python library that handles interactions from Discord POST requests."
 requires-python = ">=3.11.0"
-license = {text = "MIT"}
+license = "MIT"
 
 dynamic = ["version"]
 readme = "README.md"
@@ -30,9 +30,17 @@ Homepage = "https://discordhttp.alexflipnote.dev"
 Repository = "https://github.com/AlexFlipnote/discord.http"
 
 [project.optional-dependencies]
-dev = ["pyright", "ruff", "toml"]
-docs = ["sphinx", "furo", "myst-parser", "sphinx-autodoc-typehints"]
-maintainer = ["twine", "wheel", "build"]
+dev = [
+    "pyright>=1.1.401",
+    "ruff>=0.11.13",
+    "toml>=0.10.2",
+]
+docs = [
+    "furo>=2024.8.6",
+    "myst-parser>=4.0.1",
+    "sphinx>=8.2.3",
+    "sphinx-autodoc-typehints>=3.2.0",
+]
 
 [tool.setuptools]
 packages = [

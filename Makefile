@@ -44,11 +44,11 @@ lint:  ## Run ruff linter
 
 clean:  ## Clean the project
 	@rm -rf build dist *.egg-info .venv docs/_build
+	@rm uv.lock
 
 # Maintainer-only commands
 upload_pypi:  ## Maintainer only - Upload latest version to PyPi
 	@echo Uploading to PyPi...
-	pip install .
-	python -m build
-	twine upload dist/*
+	uv build
+	uvx uv-publish
 	@echo Done!
