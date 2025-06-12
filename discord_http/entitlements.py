@@ -150,7 +150,7 @@ class Entitlements(PartialEntitlements):
 
         self.user: PartialUser | None = None
         self.guild_id: int | None = utils.get_int(data, "guild_id")
-        self.subscription_id: int = int(data["subscription_id"])
+        self.subscription_id: int | None = utils.get_int(data, "subscription_id")
 
         self.application: PartialUser = PartialUser(
             state=self._state,

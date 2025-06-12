@@ -483,6 +483,11 @@ class EntitlementType(BaseEnum):
     user_gift = 6
     premium_purchase = 7
     application_subscription = 8
+    free_staff_purchase = 9
+    quest_reward = 10
+    fractional_redemption = 11
+    virtual_currency_redemption = 12
+    guild_powerup = 13
 
 
 class AutoModRuleTriggerType(BaseEnum):
