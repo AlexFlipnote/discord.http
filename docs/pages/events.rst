@@ -92,6 +92,23 @@ Gateway events
     )
 
 
+Global events
+~~~~~~~~~~~~~
+
+.. function:: async def on_entitlement_create(entitlement):
+
+  Called whenever an entitlement is created
+
+  :param entitlement: :class:`Entitlements` object with information about the entitlement.
+
+
+.. function:: async def on_entitlement_update(entitlement):
+
+  Called whenever an entitlement is updated
+
+  :param entitlement: :class:`Entitlements` object with information about the entitlement.
+
+
 Shard events
 ~~~~~~~~~~~~
 

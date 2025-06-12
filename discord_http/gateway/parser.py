@@ -19,6 +19,7 @@ from ..automod import AutoModRule
 from ..channel import BaseChannel, PartialChannel, StageInstance, PartialThread
 from ..emoji import Emoji, EmojiParser
 from ..enums import ChannelType
+from ..entitlements import Entitlements
 from ..guild import Guild, PartialGuild, ScheduledEvent, PartialScheduledEvent
 from ..invite import Invite, PartialInvite
 from ..member import Member, PartialMember, PartialThreadMember
@@ -303,6 +304,44 @@ class Parser:
         guild = self._get_guild_or_partial(int(data["id"]))
         self.bot.cache.remove_guild(guild.id)
         return (guild,)
+
+    def entitlement_create(self, data: dict) -> tuple[Entitlements]:
+        """
+        Create a new entitlement.
+
+        Parameters
+        ----------
+        data:
+            The data to create the entitlement from
+
+        Returns
+        -------
+            The created entitlement
+        """
+        ent = Entitlements(
+            state=self.bot.state,
+            data=data,
+        )
+        return (ent,)
+
+    def entitlement_update(self, data: dict) -> tuple[Entitlements]:
+        """
+        Update an entitlement.
+
+        Parameters
+        ----------
+        data:
+            The data to update the entitlement from
+
+        Returns
+        -------
+            The updated entitlement
+        """
+        ent = Entitlements(
+            state=self.bot.state,
+            data=data,
+        )
+        return (ent,)
 
     def guild_members_chunk(self, data: dict) -> tuple[GuildMembersChunk]:
         """
