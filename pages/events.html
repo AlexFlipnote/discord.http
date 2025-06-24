@@ -412,6 +412,31 @@ In order to use this event, you must have <cite>Client.debug_events</cite> set t
 </pre></div>
 </div>
 </div>
+<section id="global-events">
+<h3>Global events<a class="headerlink" href="#global-events" title="Link to this heading">¶</a></h3>
+<dl class="py function">
+<dt class="sig sig-object py">
+<span class="sig-name descname"><span class="pre">async</span> <span class="pre">def</span> <span class="pre">on_entitlement_create(entitlement):</span></span></dt>
+<dd><p>Called whenever an entitlement is created</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>entitlement</strong> – <code class="xref py py-class docutils literal notranslate"><span class="pre">Entitlements</span></code> object with information about the entitlement.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py">
+<span class="sig-name descname"><span class="pre">async</span> <span class="pre">def</span> <span class="pre">on_entitlement_update(entitlement):</span></span></dt>
+<dd><p>Called whenever an entitlement is updated</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>entitlement</strong> – <code class="xref py py-class docutils literal notranslate"><span class="pre">Entitlements</span></code> object with information about the entitlement.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
 <section id="shard-events">
 <h3>Shard events<a class="headerlink" href="#shard-events" title="Link to this heading">¶</a></h3>
 <div class="admonition note">
@@ -1461,6 +1486,7 @@ You can in theory listen to the events and simply do nothing to disable the logs
 <li><a class="reference internal" href="#webhook">Webhook</a></li>
 <li><a class="reference internal" href="#errors">Errors</a></li>
 <li><a class="reference internal" href="#gateway-events">Gateway events</a><ul>
+<li><a class="reference internal" href="#global-events">Global events</a></li>
 <li><a class="reference internal" href="#shard-events">Shard events</a></li>
 <li><a class="reference internal" href="#intents-guilds">Intents.guilds</a></li>
 <li><a class="reference internal" href="#intents-guild-members">Intents.guild_members</a></li>
