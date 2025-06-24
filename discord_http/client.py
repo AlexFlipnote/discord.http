@@ -555,6 +555,48 @@ class Client:
                 self.pool = SQLite.Database()
         """
 
+    async def _background_task_without_http(
+        self,
+        func: Callable[[], Coroutine[Any, Any, None]],
+    ) -> None:
+        await self.state.http._create_session()
+
+        try:
+            await self._prepare_me()
+        except RuntimeError as e:
+            # Make sure the error is readable and stop HTTP server here
+            _log.error(e)
+            await self.__cleanup()
+            return
+
+        await func()
+        await self.__cleanup()
+
+    def offline_run(
+        self,
+        func: Callable[[], Coroutine[Any, Any, None]],
+    ) -> None:
+        """
+        Used to run Discord API instructions without booting the bot.
+
+        The function will be ran only once and then the script ends.
+        Useful for when you just want to run simple things without needing to run a full bot.
+
+        Parameters
+        ----------
+        func:
+            The async function to run.
+        """
+        if not inspect.iscoroutinefunction(func):
+            raise TypeError("func must be a coroutine function")
+
+        if not self.application_id:
+            _log.warning("Application ID is not set, some calls might not work.")
+
+        self.loop.run_until_complete(
+            self._background_task_without_http(func)
+        )
+
     def start(
         self,
         *,
