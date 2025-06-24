@@ -912,8 +912,8 @@ class PartialGuild(PartialBase):
         name: str,
         *,
         permissions: Permissions | None = None,
-        color: Colour | Color | int | None = None,
-        colour: Colour | Color | int | None = None,
+        color: tuple[Colour | int, ...] | Colour | Color | int | None = None,
+        colour: tuple[Colour | int, ...] | Colour | Color | int | None = None,
         unicode_emoji: str | None = None,
         icon: File | bytes | None = None,
         hoist: bool = False,
@@ -954,10 +954,25 @@ class PartialGuild(PartialBase):
             "mentionable": mentionable
         }
 
+        colour = color or colour
         if colour is not None:
-            payload["color"] = int(colour)
-        if color is not None:
-            payload["color"] = int(color)
+            if isinstance(colour, tuple):
+                payload["colors"] = {}
+                names = ["primary_color", "secondary_color", "tertiary_color"]
+                for i, c in enumerate(colour[:3]):
+                    payload["colors"][names[i]] = int(c)
+
+                # Just to make sure Discord API does not break
+                # And making default get value the valid one to not change if not provided
+                if payload["colors"].get("tertiary_color", 16761760) not in (11127295, 16759788, 16761760):
+                    # Discord does not allow anything else, might change later
+                    payload["colors"]["tertiary_color"] = 16761760
+
+            elif isinstance(colour, int | Colour):
+                payload["color"] = int(colour)
+
+            else:
+                raise TypeError(f"colour must be an int or Colour, not {type(colour)}")
 
         if unicode_emoji is not None:
             payload["unicode_emoji"] = unicode_emoji

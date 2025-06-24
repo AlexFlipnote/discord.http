@@ -121,7 +121,8 @@ class PartialRole(PartialBase):
         self,
         *,
         name: str | None = MISSING,
-        colour: Colour | int | None = MISSING,
+        color: tuple[Colour | int, ...] | Colour | int | None = MISSING,
+        colour: tuple[Colour | int, ...] | Colour | int | None = MISSING,
         hoist: bool | None = MISSING,
         mentionable: bool | None = MISSING,
         positions: int | None = MISSING,
@@ -137,8 +138,15 @@ class PartialRole(PartialBase):
         ----------
         name:
             The new name of the role
+        color:
+            Alias for colour
         colour:
-            The new colour of the role
+            The new colour of the role.
+            If tuple is provided, it switches to the new gradient role colours.
+            The third value must be one of the following:
+                - 16761760
+                - 11127295
+                - 16759788
         hoist:
             Whether the role should be displayed separately in the sidebar
         mentionable:
@@ -170,11 +178,27 @@ class PartialRole(PartialBase):
 
         if name is not MISSING:
             payload["name"] = name
+
+        colour = color or colour
         if colour is not MISSING:
-            if isinstance(colour, Colour):
-                payload["color"] = colour.value
+            if isinstance(colour, tuple):
+                payload["colors"] = {}
+                names = ["primary_color", "secondary_color", "tertiary_color"]
+                for i, c in enumerate(colour[:3]):
+                    payload["colors"][names[i]] = int(c)
+
+                # Just to make sure Discord API does not break
+                # And making default get value the valid one to not change if not provided
+                if payload["colors"].get("tertiary_color", 16761760) not in (11127295, 16759788, 16761760):
+                    # Discord does not allow anything else, might change later
+                    payload["colors"]["tertiary_color"] = 16761760
+
+            elif isinstance(colour, int | Colour):
+                payload["color"] = int(colour)
+
             else:
-                payload["color"] = colour
+                raise TypeError(f"colour must be an int or Colour, not {type(colour)}")
+
         if permissions is not MISSING:
             payload["permissions"] = permissions.value
         if hoist is not MISSING:
