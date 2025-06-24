@@ -73,6 +73,8 @@ exclude = [
   "build",
   "docs",
   "dist",
+  "examples",
+  "tests",
 ]
 
 [tool.ruff.lint]
@@ -175,6 +177,13 @@ include = [
 ]
 
 exclude = [
-  "**/__pycache__", "**/*.pyc", "*.egg-info",
-  ".venv", "build", "docs", "dist",
+  "**/__pycache__",
+  "**/*.pyc",
+  "*.egg-info",
+  ".venv",
+  "build",
+  "docs",
+  "dist",
+  "examples",
+  "tests",
 ]
