@@ -144,9 +144,9 @@ class PartialRole(PartialBase):
             The new colour of the role.
             If tuple is provided, it switches to the new gradient role colours.
             The third value must be one of the following:
-                - 16761760
-                - 11127295
-                - 16759788
+            - 16761760
+            - 11127295
+            - 16759788
         hoist:
             Whether the role should be displayed separately in the sidebar
         mentionable:
