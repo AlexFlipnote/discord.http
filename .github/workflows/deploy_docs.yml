@@ -3,6 +3,7 @@ name: Fetch, build and deploy docs
 on:
   release:
     types: [published]
+  workflow_dispatch:
 
 jobs:
   deploy:
