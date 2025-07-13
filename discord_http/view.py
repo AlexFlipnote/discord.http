@@ -91,6 +91,34 @@ def _garbage_id() -> str:
 
 
 class AttachmentComponent:
+    """
+    Represents an attachment component.
+
+    Attributes
+    ----------
+    url: str
+        The URL of the attachment
+    description: str | None
+        The description of the attachment, if any
+    spoiler: bool
+        Whether the attachment is a spoiler or not
+    filename: str | None
+        The filename of the attachment, if any
+    size: int
+        The size of the attachment in bytes
+    height: int | None
+        The height of the attachment, if any
+    width: int | None
+        The width of the attachment, if any
+    placeholder: str | None
+        The placeholder of the attachment, if any
+    placeholder_version: int | None
+        The placeholder version of the attachment, if any
+    content_type: str | None
+        The content type of the attachment, if any
+    flags: int
+        The flags of the attachment, if any
+    """
     def __init__(
         self,
         *,
@@ -231,6 +259,7 @@ class AttachmentComponent:
 
 
 class Item:
+    """ Base class for all components in discord.http API. """
     def __init__(
         self,
         *,

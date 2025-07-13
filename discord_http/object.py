@@ -9,7 +9,14 @@ __all__ = (
 
 
 class Snowflake:
-    """ A class to represent a Discord Snowflake. """
+    """
+    A class to represent a Discord Snowflake.
+
+    Attributes
+    ----------
+    id: int
+        The ID of the snowflake.
+    """
     def __init__(
         self,
         id: int | str  # noqa: A002

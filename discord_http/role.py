@@ -20,6 +20,14 @@ __all__ = (
 
 
 class PartialRole(PartialBase):
+    """
+    Represents a partial role object.
+
+    Attributes
+    ----------
+    guild_id: int
+        The ID of the guild this role is in
+    """
     def __init__(
         self,
         *,
@@ -273,6 +281,37 @@ class PartialRole(PartialBase):
 
 
 class Role(PartialRole):
+    """
+    Represents a role object.
+
+    Attributes
+    ----------
+    name: str
+        The name of the role
+    hoist: bool
+        Whether the role is displayed separately in the sidebar
+    managed: bool
+        Whether the role is managed by an integration
+    mentionable: bool
+        Whether the role is mentionable
+    permissions: Permissions
+        The permissions of the role
+    colour: Colour
+        The colour of the role
+    position: int
+        The position of the role in the role hierarchy
+    tags: dict
+        The tags of the role, such as `premium_subscriber`, `available_for_purchase`,
+        `guild_connections`, etc.
+    bot_id: int | None
+        The ID of the bot that manages the role, if any
+    integration_id: int | None
+        The ID of the integration that manages the role, if any
+    subscription_listing_id: int | None
+        The ID of the subscription listing for the role, if any
+    unicode_emoji: str | None
+        The unicode emoji associated with the role, if any
+    """
     def __init__(
         self,
         *,

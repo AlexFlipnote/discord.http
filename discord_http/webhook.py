@@ -27,6 +27,14 @@ MISSING = utils.MISSING
 
 
 class PartialWebhook(PartialBase):
+    """
+    Represents a partial webhook object.
+
+    Attributes
+    ----------
+    token: str | None
+        The token of the webhook, if any
+    """
     def __init__(
         self,
         *,
@@ -314,6 +322,24 @@ class PartialWebhook(PartialBase):
 
 
 class Webhook(PartialWebhook):
+    """
+    Represents a webhook object.
+
+    Attributes
+    ----------
+    application_id: int | None
+        The ID of the application that created the webhook, if any
+    name: str | None
+        The name of the webhook, if any
+    avatar: str | None
+        The avatar of the webhook, if any
+    url: str | None
+        The URL of the webhook, if any
+    channel_id: int | None
+        The ID of the channel this webhook is in, if any
+    guild_id: int | None
+        The ID of the guild this webhook is in, if any
+    """
     def __init__(self, *, state: "DiscordAPI", data: dict):
         self.application_id: int | None = utils.get_int(data, "application_id")
 

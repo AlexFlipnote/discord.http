@@ -10,6 +10,16 @@ __all__ = (
 
 
 class MultipartData:
+    """
+    Represents multipart data for HTTP requests.
+
+    Attributes
+    ----------
+    boundary: str
+        The boundary string used to separate parts in the multipart data.
+    bufs: list[bytes]
+        A list of byte strings that make up the multipart data.
+    """
     def __init__(self):
         self.boundary = "---------------discord.http"
         self.bufs: list[bytes] = []

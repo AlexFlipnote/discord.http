@@ -11,6 +11,7 @@ __all__ = (
 
 
 class Colour:
+    """ Represents a colour object, used in multiple places in the API. """
     def __init__(self, value: int):
         if not isinstance(value, int):
             raise TypeError(f"value must be an integer, not {type(value)}")

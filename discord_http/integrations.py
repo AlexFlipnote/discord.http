@@ -13,6 +13,16 @@ if TYPE_CHECKING:
 
 
 class IntegrationAccount:
+    """
+    Represents an account associated with an integration.
+
+    Attributes
+    ----------
+    id: str | int
+        The ID of the account.
+    name: str
+        The name of the account.
+    """
     def __init__(
         self,
         *,
@@ -39,7 +49,24 @@ class IntegrationAccount:
 
 
 class IntegrationApplication(PartialBase):
-    """ Represents a bot/OAuth2 application for integrations. """
+    """
+    Represents a bot/OAuth2 application for integrations.
+
+    Attributes
+    ----------
+    name: str
+        The name of the application.
+    description: str
+        The description of the application.
+    summary: str
+        The summary of the application.
+    is_monetized: bool
+        Whether the application is monetized.
+    is_verified: bool
+        Whether the application is verified.
+    is_discoverable: bool
+        Whether the application is discoverable.
+    """
     def __init__(
         self,
         *,
@@ -93,11 +120,9 @@ class PartialIntegration(PartialBase):
 
     Attributes
     ----------
-    id: :class:`int`
-        The ID of the integration.
-    guild_id:
+    guild_id: int
         The guild associated with this integration.
-    application_id:
+    application_id: int | None
         The ID of the application associated with this integration.
     """
     def __init__(
@@ -148,42 +173,42 @@ class Integration(PartialIntegration):
 
     Attributes
     ----------
-    id:
+    id: int
         The ID of the integration.
-    name:
+    name: str
         The name of the integration.
-    guild:
+    guild: PartialGuild | Guild
         The guild associated with this integration.
-    type:
+    type: str
         The type of the integration.
         (e.g. "twitch", "youtube" or "discord")
-    enabled:
+    enabled: bool
         Whether the integration is enabled.
-    syncing:
+    syncing: bool
         Whether the integration is syncing.
         This is not applicable to bot integrations.
-    role_id:
+    role_id: int | None
         ID of the role that the integration uses for "subscribers".
         TThis is not applicable to bot integrations.
-    enable_emoticons:
+    enable_emoticons: bool
         Whether emoticons should be synced for this
         integration (twitch only currently)
         This is not applicable to bot integrations.
-    expire_behavior:
+    expire_behavior: ExpireBehaviour | None
         The behavior of expiring subscribers.
         This is not applicable to bot integrations.
-    expire_grace_period:
+    expire_grace_period: int | None
         The grace period before expiring subscribers.
         This is not applicable to bot integrations.
-    synced_at:
+    synced_at: datetime | None
         The time the integration was last synced.
         This is not applicable to bot integrations.
-    subscriber_count:
+    subscriber_count: int
         The number of subscribers for the integration.
         This is not applicable to bot integrations.
-    revoked:
+    revoked: bool
         Whether the integration has been revoked.
-    scopes:
+    scopes: list[str]
         The scopes of the application has been granted.
     """
     def __init__(

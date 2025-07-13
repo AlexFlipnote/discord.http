@@ -17,6 +17,20 @@ __all__ = (
 
 
 class PartialInvite:
+    """
+    Represents a partial invite object.
+
+    Attributes
+    ----------
+    code: str
+        The invite code.
+    channel_id: int | None
+        The ID of the channel the invite is in, if applicable.
+    guild_id: int | None
+        The ID of the guild the invite is in, if applicable.
+    guild: Guild | PartialGuild | None
+        The guild associated with the invite, if applicable.
+    """
     BASE = "https://discord.gg"
 
     def __init__(
@@ -118,6 +132,32 @@ class PartialInvite:
 
 
 class Invite(PartialInvite):
+    """
+    Represents an invite object.
+
+    Attributes
+    ----------
+    code: str
+        The invite code.
+    uses: int
+        The number of times the invite has been used.
+    max_uses: int
+        The maximum number of times the invite can be used.
+    temporary: bool
+        Whether the invite grants temporary membership.
+    created_at: datetime | None
+        The time the invite was created.
+    expires_at: datetime | None
+        The time the invite expires, if applicable.
+    inviter: User | None
+        The user who created the invite, if applicable.
+    guild_id: int | None
+        The ID of the guild the invite is in, if applicable.
+    channel_id: int | None
+        The ID of the channel the invite is in, if applicable.
+    type: InviteType
+        The type of the invite.
+    """
     def __init__(self, *, state: "DiscordAPI", data: dict):
         super().__init__(state=state, code=data["code"])
 

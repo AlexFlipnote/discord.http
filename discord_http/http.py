@@ -44,6 +44,22 @@ class HTTPSession(aiohttp.ClientSession):
 
 
 class HTTPResponse(Generic[ResponseT]):
+    """
+    Represents a response from the HTTP request.
+
+    Attributes
+    ----------
+    status: int
+        The HTTP status code of the response.
+    response: ResponseT
+        The response data, which can be of type str, bytes, or dict depending on the request.
+    res_method: ResMethodTypes
+        The method used to retrieve the response data.
+    reason: str | None
+        The reason phrase returned by the server, if any.
+    headers: CIMultiDictProxy[str]
+        The headers of the response, as a CIMultiDictProxy.
+    """
     def __init__(
         self,
         *,
@@ -71,6 +87,11 @@ class HTTPClient:
     Used to make HTTP requests, but with a session.
 
     Can be used to make requests outside of the usual Discord API
+
+    Attributes
+    ----------
+    session: HTTPSession | None
+        The aiohttp session used for making requests.
     """
     def __init__(self):
         self.session: HTTPSession | None = None

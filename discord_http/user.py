@@ -167,6 +167,30 @@ class PartialUser(PartialBase):
 
 
 class User(PartialUser):
+    """
+    Represents a user object.
+
+    Attributes
+    ----------
+    avatar: Asset | None
+        The avatar of the user, if any
+    banner: Asset | None
+        The banner of the user, if any
+    name: str
+        The name of the user
+    bot: bool
+        Whether the user is a bot
+    system: bool
+        Whether the user is a system user
+    discriminator: str | None
+        The discriminator of the user, if any
+    accent_colour: Colour | None
+        The accent colour of the user, if any
+    banner_colour: Colour | None
+        The banner colour of the user, if any
+    avatar_decoration: Asset | None
+        The avatar decoration of the user, if any
+    """
     def __init__(
         self,
         *,
@@ -286,6 +310,14 @@ class User(PartialUser):
 
 
 class UserClient(User):
+    """
+    Represents a user client object.
+
+    Attributes
+    ----------
+    verified: bool
+        Whether the user is verified
+    """
     def __init__(
         self,
         *,

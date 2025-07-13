@@ -20,6 +20,18 @@ __all__ = (
 
 
 class PartialVoiceState(PartialBase):
+    """
+    Represents a partial voice state object.
+
+    Attributes
+    ----------
+    id: int
+        The ID of the user this voice state belongs to
+    channel_id: int | None
+        The ID of the voice channel this user is in, if any
+    guild_id: int | None
+        The ID of the guild this voice state is in, if any
+    """
     def __init__(
         self,
         *,
@@ -100,6 +112,38 @@ class PartialVoiceState(PartialBase):
 
 
 class VoiceState(PartialVoiceState):
+    """
+    Represents a voice state object.
+
+    Attributes
+    ----------
+    session_id: str
+        The session ID of the voice state
+    user: PartialUser
+        The user this voice state belongs to
+    member: Member | None
+        The member this voice state belongs to, if any
+    channel: BaseChannel | PartialChannel | None
+        The voice channel this user is in, if any
+    guild: PartialGuild | None
+        The guild this voice state is in, if any
+    deaf: bool
+        Whether the user is deafened by the server
+    mute: bool
+        Whether the user is muted by the server
+    self_deaf: bool
+        Whether the user is deafened by themselves
+    self_mute: bool
+        Whether the user is muted by themselves
+    self_stream: bool
+        Whether the user is streaming
+    self_video: bool
+        Whether the user is using video
+    suppress: bool
+        Whether the user is suppressed by the server
+    request_to_speak_timestamp: datetime | None
+        The timestamp when the user requested to speak, if any
+    """
     def __init__(
         self,
         *,

@@ -34,6 +34,16 @@ __all__ = (
 
 
 class PartialMember(PartialBase):
+    """
+    Represents a partial member object.
+
+    Attributes
+    ----------
+    guild_id: int
+        The ID of the guild the member belongs to.
+    presence: Presence | None
+        The presence of the member, if available.
+    """
     def __init__(
         self,
         *,
@@ -352,6 +362,32 @@ class PartialMember(PartialBase):
 
 
 class Member(PartialMember):
+    """
+    Represents a member of a guild.
+
+    Attributes
+    ----------
+    avatar: Asset | None
+        The avatar of the member, if available.
+    banner: Asset | None
+        The banner of the member, if available.
+    flags: GuildMemberFlags
+        The flags of the member.
+    pending: bool
+        Whether the member is pending or not.
+    nick: str | None
+        The nickname of the member, if available.
+    joined_at: datetime
+        The time the member joined the guild.
+    communication_disabled_until: datetime | None
+        The time until the member is communication disabled (timeout).
+    premium_since: datetime | None
+        The time the member started boosting the guild, if available.
+    avatar_decoration: Asset | None
+        The avatar decoration of the member, if available.
+    avatar_decoration_data: dict | None
+        The avatar decoration data of the member, if available.
+    """
     def __init__(
         self,
         *,
@@ -640,6 +676,18 @@ class Member(PartialMember):
 
 
 class PartialThreadMember(PartialMember):
+    """
+    Represents a partial thread member object.
+
+    Attributes
+    ----------
+    thread_id: int
+        The ID of the thread the member is in.
+    join_timestamp: datetime
+        The time the member joined the thread.
+    flags: int
+        The flags of the member in the thread.
+    """
     def __init__(
         self,
         *,
@@ -666,6 +714,18 @@ class PartialThreadMember(PartialMember):
 
 
 class ThreadMember(Member):
+    """
+    Represents a member of a thread.
+
+    Attributes
+    ----------
+    thread_id: int
+        The ID of the thread the member is in.
+    join_timestamp: datetime
+        The time the member joined the thread.
+    flags: int
+        The flags of the member in the thread.
+    """
     def __init__(
         self,
         *,

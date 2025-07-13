@@ -17,6 +17,16 @@ __all__ = (
 
 
 class PartialSticker(PartialBase):
+    """
+    Represents a partial sticker object.
+
+    Attributes
+    ----------
+    name: str | None
+        The name of the sticker, if any
+    guild_id: int | None
+        The ID of the guild this sticker is in, if any
+    """
     def __init__(
         self,
         *,
@@ -177,6 +187,26 @@ class PartialSticker(PartialBase):
 
 
 class Sticker(PartialSticker):
+    """
+    Represents a sticker object.
+
+    Attributes
+    ----------
+    available: bool
+        Whether the sticker is available
+    description: str
+        The description of the sticker
+    format_type: StickerFormatType
+        The format type of the sticker
+    pack_id: int | None
+        The ID of the sticker pack this sticker belongs to, if any
+    sort_value: int | None
+        The sort value of the sticker, if any
+    tags: str
+        The tags of the sticker
+    type: StickerType
+        The type of the sticker
+    """
     def __init__(
         self,
         *,

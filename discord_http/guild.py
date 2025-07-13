@@ -2519,6 +2519,68 @@ class PartialGuild(PartialBase):
 
 
 class Guild(PartialGuild):
+    """
+    Represents a guild (server) in Discord.
+
+    Attributes
+    ----------
+    afk_channel_id: int | None
+        The ID of the AFK channel, if any
+    afk_timeout: int
+        The AFK timeout in seconds
+    default_message_notifications: int
+        The default message notification level of the guild
+    description: str | None
+        The description of the guild
+    explicit_content_filter: int
+        The explicit content filter level of the guild
+    features: list[str]
+        The features of the guild
+    latest_onboarding_question_id: int | None
+        The ID of the latest onboarding question, if any
+    max_members: int
+        The maximum number of members in the guild
+    max_stage_video_channel_users: int
+        The maximum number of users in a stage video channel
+    max_video_channel_users: int
+        The maximum number of users in a video channel
+    mfa_level: int | None
+        The MFA level of the guild
+    name: str
+        The name of the guild
+    nsfw: bool
+        Whether the guild is marked as NSFW
+    nsfw_level: int
+        The NSFW level of the guild
+    owner_id: int | None
+        The ID of the owner of the guild, if any
+    preferred_locale: str | None
+        The preferred locale of the guild
+    premium_progress_bar_enabled: bool
+        Whether the premium progress bar is enabled
+    premium_subscription_count: int
+        The number of premium subscriptions in the guild
+    premium_tier: int
+        The premium tier of the guild
+    public_updates_channel_id: int | None
+        The ID of the public updates channel, if any
+    region: str | None
+        The voice region of the guild, if any
+    safety_alerts_channel_id: int | None
+        The ID of the safety alerts channel, if any
+    system_channel_flags: int
+        The system channel flags of the guild
+    system_channel_id: int | None
+        The ID of the system channel, if any
+    vanity_url_code: str | None
+        The vanity URL code of the guild, if any
+    verification_level: VerificationLevel
+        The verification level of the guild
+    widget_channel_id: int | None
+        The ID of the widget channel, if any
+    widget_enabled: bool
+        Whether the widget is enabled for the guild
+    """
     _GUILD_LIMITS: ClassVar[dict[int, _GuildLimits]] = {
         0: _GuildLimits(emojis=50, stickers=5, bitrate=96_000, filesize=26_214_400, soundboards=8),
         1: _GuildLimits(emojis=100, stickers=15, bitrate=128_000, filesize=26_214_400, soundboards=24),

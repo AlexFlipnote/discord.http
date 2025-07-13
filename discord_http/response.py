@@ -26,6 +26,18 @@ __all__ = (
 
 
 class Ping(Snowflake):
+    """
+    Represents a ping response from the Discord API.
+
+    Usually reserved for internal use.
+
+    Attributes
+    ----------
+    application_id: int
+        The ID of the application that created the ping.
+    version: int
+        The version of the ping.
+    """
     def __init__(
         self,
         *,
@@ -76,6 +88,18 @@ class BaseResponse:
 
 
 class DeferResponse(BaseResponse):
+    """
+    Represents a response that defers the interaction.
+
+    Parameters
+    ----------
+    ephemeral: bool
+        Whether the response is ephemeral or not.
+    thinking: bool
+        Whether the response is thinking or not.
+    flags: MessageFlags
+        The flags for the response.
+    """
     def __init__(
         self,
         *,
@@ -111,6 +135,15 @@ class DeferResponse(BaseResponse):
 
 
 class AutocompleteResponse(BaseResponse):
+    """
+    Represents an autocomplete response.
+
+    Parameters
+    ----------
+    choices: dict[Any, str]
+        A dictionary of choices for the autocomplete response.
+        The keys are the values to be sent to Discord, and the values are the names to be displayed to the user.
+    """
     def __init__(
         self,
         choices: dict[Any, str]
@@ -138,6 +171,14 @@ class AutocompleteResponse(BaseResponse):
 
 
 class ModalResponse(BaseResponse):
+    """
+    Represents a modal response.
+
+    Parameters
+    ----------
+    modal: Modal
+        The modal to be displayed to the user.
+    """
     def __init__(self, modal: Modal):
         self.modal = modal
 
@@ -157,6 +198,12 @@ class ModalResponse(BaseResponse):
 
 
 class EmptyResponse(BaseResponse):
+    """
+    Represents an empty response.
+
+    This is used when no data is needed to be sent back to Discord.
+    Instead, you respond later with a normal message.
+    """
     def __init__(self):
         pass
 
@@ -170,6 +217,42 @@ class EmptyResponse(BaseResponse):
 
 
 class MessageResponse(BaseResponse):
+    """
+    Represents a message response.
+
+    Parameters
+    ----------
+    content:
+        The content of the message.
+    file:
+        A single file to be sent with the message.
+    files:
+        A list of files to be sent with the message.
+    embed:
+        A single embed to be sent with the message.
+    embeds:
+        A list of embeds to be sent with the message.
+    attachment:
+        A single attachment to be sent with the message.
+    attachments:
+        A list of attachments to be sent with the message.
+    view:
+        A view to be sent with the message.
+    tts:
+        Whether the message should be sent as a TTS message.
+    allowed_mentions:
+        Allowed mentions for the message.
+    message_reference:
+        A reference to another message, if applicable.
+    poll:
+        A poll to be sent with the message.
+    type:
+        The type of the response. Defaults to `ResponseType.message`.
+    ephemeral:
+        Whether the message should be ephemeral or not.
+    flags:
+        Flags for the message response.
+    """
     def __init__(
         self,
         content: str | None = MISSING,

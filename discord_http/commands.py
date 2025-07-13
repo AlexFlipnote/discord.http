@@ -250,10 +250,14 @@ class Command:
         if self.type == ApplicationCommandType.chat_input:
             if self.description is None:
                 self.description = command.__doc__ or "No description provided."
+                self.description = self.description.strip()  # Strip whitespace mainly due to docstrings
+
             if self.name != self.name.lower():
                 raise ValueError("Command names must be lowercase.")
+
             if not 1 <= len(self.description) <= 100:
                 raise ValueError("Command descriptions must be between 1 and 100 characters.")
+
         else:
             self.description = None
 

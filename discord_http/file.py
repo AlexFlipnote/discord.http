@@ -6,6 +6,24 @@ __all__ = (
 
 
 class File:
+    """
+    Represents a file to be uploaded to Discord.
+
+    Attributes
+    ----------
+    data: io.BufferedIOBase
+        The file data as a file-like object.
+    spoiler: bool
+        Whether the file is a spoiler.
+    title: str | None
+        The title of the file, if any.
+    description: str | None
+        The description of the file, if any.
+    duration_secs: int | None
+        The duration of the file in seconds, if applicable.
+    waveform: str | None
+        The waveform data for the file, if applicable.
+    """
     def __init__(
         self,
         data: io.BufferedIOBase | str,

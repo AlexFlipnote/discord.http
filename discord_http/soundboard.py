@@ -17,6 +17,16 @@ __all__ = (
 
 
 class PartialSoundboardSound(PartialBase):
+    """
+    Represents a partial soundboard sound object.
+
+    Attributes
+    ----------
+    sound_id: int
+        The ID of the soundboard sound
+    guild_id: int | None
+        The ID of the guild this soundboard sound is in, if any
+    """
     def __init__(
         self,
         *,
@@ -197,6 +207,22 @@ class PartialSoundboardSound(PartialBase):
 
 
 class SoundboardSound(PartialSoundboardSound):
+    """
+    Represents a soundboard sound object.
+
+    Attributes
+    ----------
+    name: str
+        The name of the soundboard sound
+    volume: int
+        The volume of the soundboard sound
+    emoji_id: int | None
+        The ID of the custom emoji used for the soundboard sound, if any
+    emoji_name: str | None
+        The unicode emoji used for the soundboard sound, if any
+    available: bool
+        Whether the soundboard sound is available for use
+    """
     def __init__(
         self,
         *,

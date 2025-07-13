@@ -98,6 +98,16 @@ class Typing:
 
 
 class PartialChannel(PartialBase):
+    """
+    Represents a partial channel object.
+
+    Attributes
+    ----------
+    guild_id: `int | None`
+        The ID of the guild the channel belongs to, if any
+    parent_id: `int | None`
+        The ID of the parent channel or category, if any
+    """
     def __init__(
         self,
         *,
@@ -1463,6 +1473,28 @@ class PartialChannel(PartialBase):
 
 
 class BaseChannel(PartialChannel):
+    """
+    Represents a base channel object.
+
+    Attributes
+    ----------
+    name: str | None
+        The name of the channel
+    nsfw: bool
+        Whether the channel is NSFW
+    topic: str | None
+        The topic of the channel
+    position: int | None
+        The position of the channel in the guild
+    last_message_id: int | None
+        The ID of the last message in the channel
+    parent_id: int | None
+        The ID of the parent channel (if any)
+    rate_limit_per_user: int
+        The rate limit per user in seconds
+    permission_overwrites: list[PermissionOverwrite]
+        The permission overwrites for the channel
+    """
     def __init__(
         self,
         *,
@@ -1633,6 +1665,18 @@ class TextChannel(BaseChannel):
 
 
 class DMChannel(BaseChannel):
+    """
+    Represents a Direct Message channel.
+
+    Attributes
+    ----------
+    name: str | None
+        The name of the channel (usually the user's name)
+    user: User | None
+        The user in the DM channel
+    last_message: PartialMessage | None
+        The last message in the DM channel
+    """
     def __init__(self, *, state: "DiscordAPI", data: dict):
         super().__init__(state=state, data=data)
 
@@ -1897,6 +1941,14 @@ class NewsChannel(BaseChannel):
 
 # Thread channels
 class PartialThread(PartialChannel):
+    """
+    Represents a partial thread channel object.
+
+    Attributes
+    ----------
+    parent_id: int
+        The ID of the parent channel
+    """
     def __init__(
         self,
         *,
@@ -1920,6 +1972,36 @@ class PartialThread(PartialChannel):
 
 
 class PublicThread(BaseChannel):
+    """
+    Represents a public thread channel object.
+
+    Attributes
+    ----------
+    name: str
+        The name of the thread
+    message_count: int
+        The number of messages in the thread
+    member_count: int
+        The number of members in the thread
+    rate_limit_per_user: int
+        The rate limit per user in seconds
+    locked: bool
+        Whether the thread is locked
+    archived: bool
+        Whether the thread is archived
+    auto_archive_duration: int
+        The duration in minutes to automatically archive the thread after recent activity
+    channel_id: int
+        The ID of the channel
+    newly_created: bool
+        Whether the thread was newly created
+    guild_id: int | None
+        The ID of the guild the thread belongs to
+    owner_id: int | None
+        The ID of the user who owns the thread
+    last_message_id: int | None
+        The ID of the last message in the thread
+    """
     def __init__(self, *, state: "DiscordAPI", data: dict):
         super().__init__(state=state, data=data)
 
@@ -1988,6 +2070,22 @@ class PublicThread(BaseChannel):
 
 
 class ForumTag:
+    """
+    Represents a forum tag object.
+
+    Attributes
+    ----------
+    id: int | None
+        The ID of the tag
+    name: str
+        The name of the tag
+    moderated: bool
+        Whether the tag is moderated
+    emoji_id: int | None
+        The emoji ID of the tag
+    emoji_name: str | None
+        The emoji name of the tag
+    """
     def __init__(self, *, data: dict):
         self.id: int | None = utils.get_int(data, "id")
 
@@ -2088,6 +2186,16 @@ class ForumTag:
 
 
 class ForumChannel(PublicThread):
+    """
+    Represents a forum channel object.
+
+    Attributes
+    ----------
+    default_reaction_emoji: EmojiParser | None
+        The default reaction emoji for the forum channel
+    tags: list[ForumTag]
+        The available tags for the forum channel
+    """
     def __init__(self, state: "DiscordAPI", data: dict):
         super().__init__(state=state, data=data)
         self.default_reaction_emoji: EmojiParser | None = None
@@ -2182,6 +2290,22 @@ class Thread(PublicThread):
 # Voice channels
 
 class VoiceRegion:
+    """
+    Represents a voice region object.
+
+    Attributes
+    ----------
+    id: str
+        The ID of the voice region
+    name: str
+        The name of the voice region
+    custom: bool
+        Whether the voice region is custom
+    deprecated: bool
+        Whether the voice region is deprecated
+    optimal: bool
+        Whether the voice region is optimal for the current user
+    """
     def __init__(self, *, data: dict):
         self.id: str = data["id"]
         self.name: str = data["name"]
@@ -2197,6 +2321,22 @@ class VoiceRegion:
 
 
 class VoiceChannel(BaseChannel):
+    """
+    Represents a voice channel object.
+
+    Attributes
+    ----------
+    id: int
+        The ID of the voice channel
+    name: str | None
+        The name of the voice channel
+    bitrate: int
+        The bitrate of the voice channel in bits per second
+    user_limit: int
+        The user limit of the voice channel
+    rtc_region: str | None
+        The RTC region of the voice channel, if set
+    """
     def __init__(self, *, state: "DiscordAPI", data: dict):
         super().__init__(state=state, data=data)
         self.bitrate: int = int(data["bitrate"])
@@ -2220,17 +2360,17 @@ class StageInstance(PartialBase):
 
     Attributes
     ----------
-    id:
+    id: int
         The ID of the stage instance
-    channel_id:
+    channel_id: int
         The ID of the stage channel
-    guild_id:
+    guild_id: int
         The associated guild ID of the stage channel
-    topic:
+    topic: str
         The topic of the stage instance
-    privacy_level:
+    privacy_level: PrivacyLevelType
         The privacy level of the stage instance
-    guild_scheduled_event_id:
+    guild_scheduled_event_id: int | None
         The guild scheduled event ID associated with this stage instance
     """
     def __init__(

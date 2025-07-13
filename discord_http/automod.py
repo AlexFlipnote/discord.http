@@ -420,6 +420,30 @@ class PartialAutoModRule(PartialBase):
 
 
 class AutoModRule(PartialAutoModRule):
+    """
+    Represents an auto moderation rule in a guild.
+
+    Attributes
+    ----------
+    name: str
+        The name of the automod rule
+    creator_id: int
+        The ID of the user that created the automod rule
+    event_type: AutoModRuleEventType
+        The type of event that triggers the automod rule
+    trigger_type: AutoModRuleTriggerType
+        The type of trigger for the automod rule
+    actions: list[AutoModRuleAction]
+        The actions that the automod rule takes when triggered
+    trigger_metadata: AutoModRuleTriggers | None
+        The metadata for the trigger of the automod rule
+    enabled: bool
+        Whether the automod rule is enabled or not
+    exempt_roles: list[PartialRole]
+        The roles that are exempt from the automod rule
+    exempt_channels: list[PartialChannel]
+        The channels that are exempt from the automod rule
+    """
     def __init__(
         self,
         *,

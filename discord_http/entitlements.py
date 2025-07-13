@@ -69,6 +69,22 @@ class PartialSKU(PartialBase):
 
 
 class SKU(PartialSKU):
+    """
+    Represents a SKU (Stock Keeping Unit) object.
+
+    Attributes
+    ----------
+    name: str
+        The name of the SKU.
+    slug: str
+        The slug of the SKU.
+    type: SKUType
+        The type of the SKU.
+    flags: SKUFlags
+        The flags of the SKU.
+    application: PartialUser
+        The application that owns the SKU.
+    """
     def __init__(
         self,
         *,

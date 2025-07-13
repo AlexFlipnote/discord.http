@@ -42,6 +42,18 @@ __all__ = (
 
 
 class MessageInteraction(PartialBase):
+    """
+    Represents a message interaction.
+
+    Attributes
+    ----------
+    type: InteractionType
+        The type of the interaction.
+    name: str | None
+        The name of the interaction, if available.
+    user: User
+        The user who triggered the interaction.
+    """
     def __init__(
         self,
         *,
@@ -60,6 +72,28 @@ class MessageInteraction(PartialBase):
 
 
 class MessageReaction:
+    """
+    Represents a reaction to a message.
+
+    Attributes
+    ----------
+    count: int
+        The number of users that reacted with this emoji.
+    burst_count: int
+        The number of users that reacted with this emoji in burst mode.
+    me: bool
+        Whether the bot has reacted with this emoji.
+    emoji: EmojiParser
+        The emoji that was used for the reaction.
+    me_burst: bool
+        Whether the bot has reacted with this emoji in burst mode.
+    burst_me: bool
+        Whether the bot has reacted with this emoji in burst mode.
+    burst_count: int
+        The number of users that reacted with this emoji in burst mode.
+    burst_colors: list[Colour]
+        The colors of the burst reaction.
+    """
     def __init__(self, *, state: "DiscordAPI", message: "Message", data: dict):
         self._state = state
         self._message = message
@@ -111,6 +145,18 @@ class MessageReaction:
 
 
 class JumpURL:
+    """
+    Represents a jump URL to a message.
+
+    Attributes
+    ----------
+    guild_id: int | None
+        The ID of the guild the message was sent in, if applicable.
+    channel_id: int | None
+        The ID of the channel the message was sent in.
+    message_id: int | None
+        The ID of the message, if applicable.
+    """
     def __init__(
         self,
         *,
@@ -236,6 +282,22 @@ class JumpURL:
 
 
 class PollAnswer:
+    """
+    Represents an answer in a poll.
+
+    Attributes
+    ----------
+    id: int
+        The ID of the answer.
+    text: str | None
+        The text of the answer, if available.
+    emoji: EmojiParser | str | None
+        The emoji of the answer, if available.
+    count: int
+        The number of votes for this answer.
+    me_voted: bool
+        Whether the bot has voted for this answer.
+    """
     def __init__(
         self,
         *,
@@ -293,6 +355,26 @@ class PollAnswer:
 
 
 class Poll:
+    """
+    Represents a poll in a message.
+
+    Attributes
+    ----------
+    text: str | None
+        The question text of the poll.
+    allow_multiselect: bool
+        Whether the poll allows multiple answers to be selected.
+    answers: list[PollAnswer]
+        The list of answers in the poll.
+    duration: int | None
+        The duration of the poll in hours, if applicable.
+    layout_type: int
+        The layout type of the poll, currently only 1 is available.
+    expiry: datetime | None
+        The expiry time of the poll, if applicable.
+    is_finalized: bool
+        Whether the poll is finalized or not.
+    """
     def __init__(
         self,
         *,
@@ -433,6 +515,20 @@ class Poll:
 
 
 class MessageReference:
+    """
+    Represents a reference to a message.
+
+    Attributes
+    ----------
+    type: MessageReferenceType
+        The type of the message reference.
+    guild_id: int | None
+        The ID of the guild the message was sent in, if applicable.
+    channel_id: int | None
+        The ID of the channel the message was sent in.
+    message_id: int | None
+        The ID of the message, if applicable.
+    """
     def __init__(self, *, state: "DiscordAPI", data: dict):
         self._state = state
 
@@ -523,6 +619,40 @@ class MessageReference:
 
 
 class Attachment:
+    """
+    Represents an attachment in a message.
+
+    Attributes
+    ----------
+    id: int
+        The ID of the attachment.
+    filename: str
+        The name of the file.
+    size: int
+        The size of the file in bytes.
+    url: str
+        The URL to the attachment.
+    proxy_url: str
+        The proxied URL to the attachment.
+    ephemeral: bool
+        Whether the attachment is ephemeral or not.
+    flags: AttachmentFlags
+        The flags of the attachment.
+    content_type: str | None
+        The content type of the attachment, if available.
+    title: str | None
+        The title of the attachment, if available.
+    description: str | None
+        The description of the attachment, if available.
+    height: int | None
+        The height of the attachment, if applicable.
+    width: int | None
+        The width of the attachment, if applicable.
+    duration_secs: int | None
+        The duration of the attachment in seconds, if applicable.
+    waveform: str | None
+        The waveform of the attachment, if applicable.
+    """
     def __init__(self, *, state: "DiscordAPI", data: dict):
         self._state = state
 
@@ -682,6 +812,16 @@ class Attachment:
 
 
 class PartialMessage(PartialBase):
+    """
+    Represents a partial message object.
+
+    Attributes
+    ----------
+    channel_id: int
+        The ID of the channel the message was sent in.
+    guild_id: int | None
+        The ID of the guild the message was sent in, if applicable.
+    """
     def __init__(
         self,
         *,
@@ -1227,6 +1367,24 @@ class PartialMessage(PartialBase):
 
 
 class MessageSnapshot:
+    """
+    Represents a snapshot of a message, used for message forwarding.
+
+    Attributes
+    ----------
+    type: MessageType
+        The type of the message.
+    content: str
+        The content of the message.
+    timestamp: datetime | None
+        The timestamp of the message, if available.
+    edited_timestamp: datetime | None
+        The timestamp of when the message was last edited, if available.
+    embeds: list[Embed]
+        The embeds of the message.
+    attachments: list[Attachment]
+        The attachments of the message.
+    """
     def __init__(
         self,
         *,
@@ -1267,6 +1425,48 @@ class MessageSnapshot:
 
 
 class Message(PartialMessage):
+    """
+    Represents a message object.
+
+    Attributes
+    ----------
+    type: MessageType
+        The type of the message.
+    content: str
+        The content of the message.
+    author: User | Member
+        The author of the message.
+    pinned: bool
+        Whether the message is pinned or not.
+    mention_everyone: bool
+        Whether the message mentions everyone or not.
+    tts: bool
+        Whether the message is a TTS message or not.
+    poll: Poll | None
+        The poll associated with the message, if any.
+    embeds: list[Embed]
+        The embeds of the message.
+    attachments: list[Attachment]
+        The attachments of the message.
+    stickers: list[PartialSticker]
+        The stickers of the message.
+    reactions: list[MessageReaction]
+        The reactions to the message.
+    mentions: list[Member | User]
+        The mentions in the message.
+    view: View | None
+        The components of the message, if any.
+    edited_timestamp: datetime | None
+        The timestamp of when the message was last edited, if available.
+    reference: MessageReference | None
+        The reference to another message, if any.
+    resolved_reply: Message | None
+        The resolved reply to the message, if any.
+    resolved_forward: list[MessageSnapshot]
+        The resolved forward messages, if any.
+    interaction: MessageInteraction | None
+        The interaction associated with the message, if any.
+    """
     def __init__(
         self,
         *,
@@ -1478,6 +1678,16 @@ class Message(PartialMessage):
 
 
 class WebhookMessage(Message):
+    """
+    Represents a message sent by a webhook.
+
+    Attributes
+    ----------
+    application_id: int
+        The ID of the application that created the webhook.
+    token: str
+        The token of the webhook, used for editing and deleting the message.
+    """
     def __init__(self, *, state: "DiscordAPI", data: dict, application_id: int, token: str):
         super().__init__(state=state, data=data)
         self.application_id = int(application_id)

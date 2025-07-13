@@ -280,6 +280,20 @@ def _handle_flags(cls: type[F]) -> Callable[["AuditLogEntry", str | int], F]:
 
 
 class AuditChange:
+    """
+    Represents a change in an audit log entry.
+
+    Attributes
+    ----------
+    entry: `AuditLogEntry`
+        The audit log entry this change belongs to.
+    key: `str`
+        The key of the change.
+    old_value: `Any | None`
+        The old value of the change, if applicable.
+    new_value: `Any | None`
+        The new value of the change, if applicable.
+    """
     _translaters: ClassVar[dict[str, Callable[["AuditLogEntry", Any], Any] | None]] = {
         "verification_level": _handle_enum(enums.VerificationLevel),
         "explicit_content_filter": _handle_enum(enums.ContentFilterLevel),
@@ -369,6 +383,26 @@ class AuditChange:
 
 
 class AuditLogEntry(Snowflake):
+    """
+    Represents an entry in an audit log.
+
+    Attributes
+    ----------
+    guild: `PartialGuild`
+        The guild this audit log entry belongs to.
+    action_type: `enums.AuditLogType`
+        The type of action that was performed.
+    reason: `str | None`
+        The reason for the action, if provided.
+    user_id: `int | None`
+        The ID of the user who performed the action, if available.
+    target_id: `int | None`
+        The ID of the target of the action, if available.
+    options: `dict`
+        Additional options related to the action, if any.
+    changes: `list[AuditChange]`
+        A list of changes made in this audit log entry.
+    """
     def __init__(
         self,
         *,

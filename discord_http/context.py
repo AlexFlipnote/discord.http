@@ -486,6 +486,40 @@ class InteractionResponse:
 
 
 class Context:
+    """
+    Represents the context of an interaction.
+
+    Attributes
+    ----------
+    id: int
+        The ID of the interaction
+    type: InteractionType
+        The type of the interaction
+    command_type: ApplicationCommandType
+        The type of the command, if any
+    app_permissions: Permissions
+        The permissions of the application in the guild
+    custom_id: str | None
+        The custom ID of the interaction, if any
+    resolved: ResolvedValues
+        The resolved values of the interaction
+    select_values: SelectValues
+        The selected values of the interaction, if any
+    modal_values: dict[str, str]
+        The values of the modal, if any
+    options: list[dict]
+        The options of the interaction, if any
+    command: Command | None
+        The command that was executed, if any
+    last_message_id: int | None
+        The ID of the last message in the channel, if any
+    recipients: list[User]
+        The recipients of the interaction, if any
+    locale: LocaleTypes | None
+        The locale of the interaction, if any
+    guild_locale: LocaleTypes | None
+        The locale of the guild, if any
+    """
     def __init__(
         self,
         bot: "Client",
