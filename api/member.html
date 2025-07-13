@@ -307,6 +307,7 @@
 <dt class="sig sig-object py" id="discord_http.member.Member">
 <em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">discord_http.member.</span></span><span class="sig-name descname"><span class="pre">Member</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">state</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">guild</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#discord_http.member.Member" title="Link to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#discord_http.member.PartialMember" title="discord_http.member.PartialMember"><code class="xref py py-class docutils literal notranslate"><span class="pre">PartialMember</span></code></a></p>
+<p>Represents a member of a guild.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
@@ -316,6 +317,116 @@
 </ul>
 </dd>
 </dl>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.member.Member.avatar">
+<span class="sig-name descname"><span class="pre">avatar</span></span><a class="headerlink" href="#discord_http.member.Member.avatar" title="Link to this definition">¶</a></dt>
+<dd><p>The avatar of the member, if available.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="asset.html#discord_http.asset.Asset" title="discord_http.asset.Asset">Asset</a> | None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.member.Member.banner">
+<span class="sig-name descname"><span class="pre">banner</span></span><a class="headerlink" href="#discord_http.member.Member.banner" title="Link to this definition">¶</a></dt>
+<dd><p>The banner of the member, if available.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="asset.html#discord_http.asset.Asset" title="discord_http.asset.Asset">Asset</a> | None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.member.Member.flags">
+<span class="sig-name descname"><span class="pre">flags</span></span><a class="headerlink" href="#discord_http.member.Member.flags" title="Link to this definition">¶</a></dt>
+<dd><p>The flags of the member.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="flags.html#discord_http.flags.GuildMemberFlags" title="discord_http.flags.GuildMemberFlags">GuildMemberFlags</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.member.Member.pending">
+<span class="sig-name descname"><span class="pre">pending</span></span><a class="headerlink" href="#discord_http.member.Member.pending" title="Link to this definition">¶</a></dt>
+<dd><p>Whether the member is pending or not.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)">bool</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.member.Member.nick">
+<span class="sig-name descname"><span class="pre">nick</span></span><a class="headerlink" href="#discord_http.member.Member.nick" title="Link to this definition">¶</a></dt>
+<dd><p>The nickname of the member, if available.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)">str</a> | None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.member.Member.joined_at">
+<span class="sig-name descname"><span class="pre">joined_at</span></span><a class="headerlink" href="#discord_http.member.Member.joined_at" title="Link to this definition">¶</a></dt>
+<dd><p>The time the member joined the guild.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>datetime</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.member.Member.communication_disabled_until">
+<span class="sig-name descname"><span class="pre">communication_disabled_until</span></span><a class="headerlink" href="#discord_http.member.Member.communication_disabled_until" title="Link to this definition">¶</a></dt>
+<dd><p>The time until the member is communication disabled (timeout).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>datetime | None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.member.Member.premium_since">
+<span class="sig-name descname"><span class="pre">premium_since</span></span><a class="headerlink" href="#discord_http.member.Member.premium_since" title="Link to this definition">¶</a></dt>
+<dd><p>The time the member started boosting the guild, if available.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>datetime | None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.member.Member.avatar_decoration">
+<span class="sig-name descname"><span class="pre">avatar_decoration</span></span><a class="headerlink" href="#discord_http.member.Member.avatar_decoration" title="Link to this definition">¶</a></dt>
+<dd><p>The avatar decoration of the member, if available.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="asset.html#discord_http.asset.Asset" title="discord_http.asset.Asset">Asset</a> | None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.member.Member.avatar_decoration_data">
+<span class="sig-name descname"><span class="pre">avatar_decoration_data</span></span><a class="headerlink" href="#discord_http.member.Member.avatar_decoration_data" title="Link to this definition">¶</a></dt>
+<dd><p>The avatar decoration data of the member, if available.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.13)">dict</a> | None</p>
+</dd>
+</dl>
+</dd></dl>
+
 <dl class="py property">
 <dt class="sig sig-object py" id="discord_http.member.Member.bot">
 <em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">bot</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><span class="pre">bool</span></a></em><a class="headerlink" href="#discord_http.member.Member.bot" title="Link to this definition">¶</a></dt>
@@ -500,6 +611,7 @@
 <dt class="sig sig-object py" id="discord_http.member.PartialMember">
 <em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">discord_http.member.</span></span><span class="sig-name descname"><span class="pre">PartialMember</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">state</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">guild_id</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#discord_http.member.PartialMember" title="Link to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="object.html#discord_http.object.PartialBase" title="discord_http.object.PartialBase"><code class="xref py py-class docutils literal notranslate"><span class="pre">PartialBase</span></code></a></p>
+<p>Represents a partial member object.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
@@ -509,6 +621,28 @@
 </ul>
 </dd>
 </dl>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.member.PartialMember.guild_id">
+<span class="sig-name descname"><span class="pre">guild_id</span></span><a class="headerlink" href="#discord_http.member.PartialMember.guild_id" title="Link to this definition">¶</a></dt>
+<dd><p>The ID of the guild the member belongs to.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)">int</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.member.PartialMember.presence">
+<span class="sig-name descname"><span class="pre">presence</span></span><a class="headerlink" href="#discord_http.member.PartialMember.presence" title="Link to this definition">¶</a></dt>
+<dd><p>The presence of the member, if available.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="../gateway/object.html#discord_http.gateway.object.Presence" title="discord_http.gateway.object.Presence">Presence</a> | None</p>
+</dd>
+</dl>
+</dd></dl>
+
 <dl class="py method">
 <dt class="sig sig-object py" id="discord_http.member.PartialMember.add_roles">
 <em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">add_roles</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">roles</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">reason</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></span></span><a class="headerlink" href="#discord_http.member.PartialMember.add_roles" title="Link to this definition">¶</a></dt>
@@ -705,6 +839,7 @@
 <dt class="sig sig-object py" id="discord_http.member.ThreadMember">
 <em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">discord_http.member.</span></span><span class="sig-name descname"><span class="pre">ThreadMember</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">state</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">guild</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></span></span><a class="headerlink" href="#discord_http.member.ThreadMember" title="Link to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#discord_http.member.Member" title="discord_http.member.Member"><code class="xref py py-class docutils literal notranslate"><span class="pre">Member</span></code></a></p>
+<p>Represents a member of a thread.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
@@ -714,6 +849,39 @@
 </ul>
 </dd>
 </dl>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.member.ThreadMember.thread_id">
+<span class="sig-name descname"><span class="pre">thread_id</span></span><a class="headerlink" href="#discord_http.member.ThreadMember.thread_id" title="Link to this definition">¶</a></dt>
+<dd><p>The ID of the thread the member is in.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)">int</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.member.ThreadMember.join_timestamp">
+<span class="sig-name descname"><span class="pre">join_timestamp</span></span><a class="headerlink" href="#discord_http.member.ThreadMember.join_timestamp" title="Link to this definition">¶</a></dt>
+<dd><p>The time the member joined the thread.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>datetime</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.member.ThreadMember.flags">
+<span class="sig-name descname"><span class="pre">flags</span></span><a class="headerlink" href="#discord_http.member.ThreadMember.flags" title="Link to this definition">¶</a></dt>
+<dd><p>The flags of the member in the thread.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)">int</a></p>
+</dd>
+</dl>
+</dd></dl>
+
 <dl class="py property">
 <dt class="sig sig-object py" id="discord_http.member.ThreadMember.thread">
 <em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">thread</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="channel.html#discord_http.channel.PartialChannel" title="discord_http.channel.PartialChannel"><span class="pre">PartialChannel</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="channel.html#discord_http.channel.Thread" title="discord_http.channel.Thread"><span class="pre">Thread</span></a></em><a class="headerlink" href="#discord_http.member.ThreadMember.thread" title="Link to this definition">¶</a></dt>
@@ -783,6 +951,16 @@
 <li><a class="reference internal" href="#">Member</a><ul>
 <li><a class="reference internal" href="#module-discord_http.member">discord_http.member module</a><ul>
 <li><a class="reference internal" href="#discord_http.member.Member"><code class="docutils literal notranslate"><span class="pre">Member</span></code></a><ul>
+<li><a class="reference internal" href="#discord_http.member.Member.avatar"><code class="docutils literal notranslate"><span class="pre">Member.avatar</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.member.Member.banner"><code class="docutils literal notranslate"><span class="pre">Member.banner</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.member.Member.flags"><code class="docutils literal notranslate"><span class="pre">Member.flags</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.member.Member.pending"><code class="docutils literal notranslate"><span class="pre">Member.pending</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.member.Member.nick"><code class="docutils literal notranslate"><span class="pre">Member.nick</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.member.Member.joined_at"><code class="docutils literal notranslate"><span class="pre">Member.joined_at</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.member.Member.communication_disabled_until"><code class="docutils literal notranslate"><span class="pre">Member.communication_disabled_until</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.member.Member.premium_since"><code class="docutils literal notranslate"><span class="pre">Member.premium_since</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.member.Member.avatar_decoration"><code class="docutils literal notranslate"><span class="pre">Member.avatar_decoration</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.member.Member.avatar_decoration_data"><code class="docutils literal notranslate"><span class="pre">Member.avatar_decoration_data</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.member.Member.bot"><code class="docutils literal notranslate"><span class="pre">Member.bot</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.member.Member.collectibles"><code class="docutils literal notranslate"><span class="pre">Member.collectibles</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.member.Member.discriminator"><code class="docutils literal notranslate"><span class="pre">Member.discriminator</span></code></a></li>
@@ -809,6 +987,8 @@
 </ul>
 </li>
 <li><a class="reference internal" href="#discord_http.member.PartialMember"><code class="docutils literal notranslate"><span class="pre">PartialMember</span></code></a><ul>
+<li><a class="reference internal" href="#discord_http.member.PartialMember.guild_id"><code class="docutils literal notranslate"><span class="pre">PartialMember.guild_id</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.member.PartialMember.presence"><code class="docutils literal notranslate"><span class="pre">PartialMember.presence</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.member.PartialMember.add_roles"><code class="docutils literal notranslate"><span class="pre">PartialMember.add_roles()</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.member.PartialMember.ban"><code class="docutils literal notranslate"><span class="pre">PartialMember.ban()</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.member.PartialMember.create_dm"><code class="docutils literal notranslate"><span class="pre">PartialMember.create_dm()</span></code></a></li>
@@ -824,6 +1004,9 @@
 </ul>
 </li>
 <li><a class="reference internal" href="#discord_http.member.ThreadMember"><code class="docutils literal notranslate"><span class="pre">ThreadMember</span></code></a><ul>
+<li><a class="reference internal" href="#discord_http.member.ThreadMember.thread_id"><code class="docutils literal notranslate"><span class="pre">ThreadMember.thread_id</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.member.ThreadMember.join_timestamp"><code class="docutils literal notranslate"><span class="pre">ThreadMember.join_timestamp</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.member.ThreadMember.flags"><code class="docutils literal notranslate"><span class="pre">ThreadMember.flags</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.member.ThreadMember.thread"><code class="docutils literal notranslate"><span class="pre">ThreadMember.thread</span></code></a></li>
 </ul>
 </li>

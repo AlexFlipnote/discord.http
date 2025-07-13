@@ -307,6 +307,7 @@
 <dt class="sig sig-object py" id="discord_http.role.PartialRole">
 <em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">discord_http.role.</span></span><span class="sig-name descname"><span class="pre">PartialRole</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">state</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">guild_id</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#discord_http.role.PartialRole" title="Link to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="object.html#discord_http.object.PartialBase" title="discord_http.object.PartialBase"><code class="xref py py-class docutils literal notranslate"><span class="pre">PartialBase</span></code></a></p>
+<p>Represents a partial role object.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
@@ -316,6 +317,17 @@
 </ul>
 </dd>
 </dl>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.role.PartialRole.guild_id">
+<span class="sig-name descname"><span class="pre">guild_id</span></span><a class="headerlink" href="#discord_http.role.PartialRole.guild_id" title="Link to this definition">¶</a></dt>
+<dd><p>The ID of the guild this role is in</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)">int</a></p>
+</dd>
+</dl>
+</dd></dl>
+
 <dl class="py method">
 <dt class="sig sig-object py" id="discord_http.role.PartialRole.add_role">
 <em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">add_role</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">user_id</span></span></em>, <em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">reason</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></span></span><a class="headerlink" href="#discord_http.role.PartialRole.add_role" title="Link to this definition">¶</a></dt>
@@ -423,6 +435,7 @@ The third value must be one of the following:
 <dt class="sig sig-object py" id="discord_http.role.Role">
 <em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">discord_http.role.</span></span><span class="sig-name descname"><span class="pre">Role</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">state</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">guild</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#discord_http.role.Role" title="Link to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#discord_http.role.PartialRole" title="discord_http.role.PartialRole"><code class="xref py py-class docutils literal notranslate"><span class="pre">PartialRole</span></code></a></p>
+<p>Represents a role object.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
@@ -432,6 +445,139 @@ The third value must be one of the following:
 </ul>
 </dd>
 </dl>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.role.Role.name">
+<span class="sig-name descname"><span class="pre">name</span></span><a class="headerlink" href="#discord_http.role.Role.name" title="Link to this definition">¶</a></dt>
+<dd><p>The name of the role</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)">str</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.role.Role.hoist">
+<span class="sig-name descname"><span class="pre">hoist</span></span><a class="headerlink" href="#discord_http.role.Role.hoist" title="Link to this definition">¶</a></dt>
+<dd><p>Whether the role is displayed separately in the sidebar</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)">bool</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.role.Role.managed">
+<span class="sig-name descname"><span class="pre">managed</span></span><a class="headerlink" href="#discord_http.role.Role.managed" title="Link to this definition">¶</a></dt>
+<dd><p>Whether the role is managed by an integration</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)">bool</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.role.Role.mentionable">
+<span class="sig-name descname"><span class="pre">mentionable</span></span><a class="headerlink" href="#discord_http.role.Role.mentionable" title="Link to this definition">¶</a></dt>
+<dd><p>Whether the role is mentionable</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)">bool</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.role.Role.permissions">
+<span class="sig-name descname"><span class="pre">permissions</span></span><a class="headerlink" href="#discord_http.role.Role.permissions" title="Link to this definition">¶</a></dt>
+<dd><p>The permissions of the role</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="flags.html#discord_http.flags.Permissions" title="discord_http.flags.Permissions">Permissions</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.role.Role.colour">
+<span class="sig-name descname"><span class="pre">colour</span></span><a class="headerlink" href="#discord_http.role.Role.colour" title="Link to this definition">¶</a></dt>
+<dd><p>The colour of the role</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="colour.html#discord_http.colour.Colour" title="discord_http.colour.Colour">Colour</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.role.Role.position">
+<span class="sig-name descname"><span class="pre">position</span></span><a class="headerlink" href="#discord_http.role.Role.position" title="Link to this definition">¶</a></dt>
+<dd><p>The position of the role in the role hierarchy</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)">int</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.role.Role.tags">
+<span class="sig-name descname"><span class="pre">tags</span></span><a class="headerlink" href="#discord_http.role.Role.tags" title="Link to this definition">¶</a></dt>
+<dd><p>The tags of the role, such as <cite>premium_subscriber</cite>, <cite>available_for_purchase</cite>,
+<cite>guild_connections</cite>, etc.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.13)">dict</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.role.Role.bot_id">
+<span class="sig-name descname"><span class="pre">bot_id</span></span><a class="headerlink" href="#discord_http.role.Role.bot_id" title="Link to this definition">¶</a></dt>
+<dd><p>The ID of the bot that manages the role, if any</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)">int</a> | None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.role.Role.integration_id">
+<span class="sig-name descname"><span class="pre">integration_id</span></span><a class="headerlink" href="#discord_http.role.Role.integration_id" title="Link to this definition">¶</a></dt>
+<dd><p>The ID of the integration that manages the role, if any</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)">int</a> | None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.role.Role.subscription_listing_id">
+<span class="sig-name descname"><span class="pre">subscription_listing_id</span></span><a class="headerlink" href="#discord_http.role.Role.subscription_listing_id" title="Link to this definition">¶</a></dt>
+<dd><p>The ID of the subscription listing for the role, if any</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)">int</a> | None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.role.Role.unicode_emoji">
+<span class="sig-name descname"><span class="pre">unicode_emoji</span></span><a class="headerlink" href="#discord_http.role.Role.unicode_emoji" title="Link to this definition">¶</a></dt>
+<dd><p>The unicode emoji associated with the role, if any</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)">str</a> | None</p>
+</dd>
+</dl>
+</dd></dl>
+
 <dl class="py property">
 <dt class="sig sig-object py" id="discord_http.role.Role.display_icon">
 <em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">display_icon</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="asset.html#discord_http.asset.Asset" title="discord_http.asset.Asset"><span class="pre">Asset</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></em><a class="headerlink" href="#discord_http.role.Role.display_icon" title="Link to this definition">¶</a></dt>
@@ -562,6 +708,7 @@ The third value must be one of the following:
 <li><a class="reference internal" href="#">Role</a><ul>
 <li><a class="reference internal" href="#module-discord_http.role">discord_http.role module</a><ul>
 <li><a class="reference internal" href="#discord_http.role.PartialRole"><code class="docutils literal notranslate"><span class="pre">PartialRole</span></code></a><ul>
+<li><a class="reference internal" href="#discord_http.role.PartialRole.guild_id"><code class="docutils literal notranslate"><span class="pre">PartialRole.guild_id</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.role.PartialRole.add_role"><code class="docutils literal notranslate"><span class="pre">PartialRole.add_role()</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.role.PartialRole.delete"><code class="docutils literal notranslate"><span class="pre">PartialRole.delete()</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.role.PartialRole.edit"><code class="docutils literal notranslate"><span class="pre">PartialRole.edit()</span></code></a></li>
@@ -571,6 +718,18 @@ The third value must be one of the following:
 </ul>
 </li>
 <li><a class="reference internal" href="#discord_http.role.Role"><code class="docutils literal notranslate"><span class="pre">Role</span></code></a><ul>
+<li><a class="reference internal" href="#discord_http.role.Role.name"><code class="docutils literal notranslate"><span class="pre">Role.name</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.role.Role.hoist"><code class="docutils literal notranslate"><span class="pre">Role.hoist</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.role.Role.managed"><code class="docutils literal notranslate"><span class="pre">Role.managed</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.role.Role.mentionable"><code class="docutils literal notranslate"><span class="pre">Role.mentionable</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.role.Role.permissions"><code class="docutils literal notranslate"><span class="pre">Role.permissions</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.role.Role.colour"><code class="docutils literal notranslate"><span class="pre">Role.colour</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.role.Role.position"><code class="docutils literal notranslate"><span class="pre">Role.position</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.role.Role.tags"><code class="docutils literal notranslate"><span class="pre">Role.tags</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.role.Role.bot_id"><code class="docutils literal notranslate"><span class="pre">Role.bot_id</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.role.Role.integration_id"><code class="docutils literal notranslate"><span class="pre">Role.integration_id</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.role.Role.subscription_listing_id"><code class="docutils literal notranslate"><span class="pre">Role.subscription_listing_id</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.role.Role.unicode_emoji"><code class="docutils literal notranslate"><span class="pre">Role.unicode_emoji</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.role.Role.display_icon"><code class="docutils literal notranslate"><span class="pre">Role.display_icon</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.role.Role.icon"><code class="docutils literal notranslate"><span class="pre">Role.icon</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.role.Role.is_available_for_purchase"><code class="docutils literal notranslate"><span class="pre">Role.is_available_for_purchase()</span></code></a></li>

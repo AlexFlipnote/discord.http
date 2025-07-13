@@ -307,6 +307,7 @@
 <dt class="sig sig-object py" id="discord_http.webhook.PartialWebhook">
 <em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">discord_http.webhook.</span></span><span class="sig-name descname"><span class="pre">PartialWebhook</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">state</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">token</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#discord_http.webhook.PartialWebhook" title="Link to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="object.html#discord_http.object.PartialBase" title="discord_http.object.PartialBase"><code class="xref py py-class docutils literal notranslate"><span class="pre">PartialBase</span></code></a></p>
+<p>Represents a partial webhook object.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
@@ -316,6 +317,17 @@
 </ul>
 </dd>
 </dl>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.webhook.PartialWebhook.token">
+<span class="sig-name descname"><span class="pre">token</span></span><a class="headerlink" href="#discord_http.webhook.PartialWebhook.token" title="Link to this definition">¶</a></dt>
+<dd><p>The token of the webhook, if any</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)">str</a> | None</p>
+</dd>
+</dl>
+</dd></dl>
+
 <dl class="py method">
 <dt class="sig sig-object py" id="discord_http.webhook.PartialWebhook.delete">
 <em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">delete</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">reason</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></span></span><a class="headerlink" href="#discord_http.webhook.PartialWebhook.delete" title="Link to this definition">¶</a></dt>
@@ -409,6 +421,7 @@
 <dt class="sig sig-object py" id="discord_http.webhook.Webhook">
 <em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">discord_http.webhook.</span></span><span class="sig-name descname"><span class="pre">Webhook</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">state</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#discord_http.webhook.Webhook" title="Link to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#discord_http.webhook.PartialWebhook" title="discord_http.webhook.PartialWebhook"><code class="xref py py-class docutils literal notranslate"><span class="pre">PartialWebhook</span></code></a></p>
+<p>Represents a webhook object.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
@@ -417,6 +430,72 @@
 </ul>
 </dd>
 </dl>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.webhook.Webhook.application_id">
+<span class="sig-name descname"><span class="pre">application_id</span></span><a class="headerlink" href="#discord_http.webhook.Webhook.application_id" title="Link to this definition">¶</a></dt>
+<dd><p>The ID of the application that created the webhook, if any</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)">int</a> | None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.webhook.Webhook.name">
+<span class="sig-name descname"><span class="pre">name</span></span><a class="headerlink" href="#discord_http.webhook.Webhook.name" title="Link to this definition">¶</a></dt>
+<dd><p>The name of the webhook, if any</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)">str</a> | None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.webhook.Webhook.avatar">
+<span class="sig-name descname"><span class="pre">avatar</span></span><a class="headerlink" href="#discord_http.webhook.Webhook.avatar" title="Link to this definition">¶</a></dt>
+<dd><p>The avatar of the webhook, if any</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)">str</a> | None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.webhook.Webhook.url">
+<span class="sig-name descname"><span class="pre">url</span></span><a class="headerlink" href="#discord_http.webhook.Webhook.url" title="Link to this definition">¶</a></dt>
+<dd><p>The URL of the webhook, if any</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)">str</a> | None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.webhook.Webhook.channel_id">
+<span class="sig-name descname"><span class="pre">channel_id</span></span><a class="headerlink" href="#discord_http.webhook.Webhook.channel_id" title="Link to this definition">¶</a></dt>
+<dd><p>The ID of the channel this webhook is in, if any</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)">int</a> | None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.webhook.Webhook.guild_id">
+<span class="sig-name descname"><span class="pre">guild_id</span></span><a class="headerlink" href="#discord_http.webhook.Webhook.guild_id" title="Link to this definition">¶</a></dt>
+<dd><p>The ID of the guild this webhook is in, if any</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)">int</a> | None</p>
+</dd>
+</dl>
+</dd></dl>
+
 <dl class="py property">
 <dt class="sig sig-object py" id="discord_http.webhook.Webhook.channel">
 <em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">channel</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="channel.html#discord_http.channel.PartialChannel" title="discord_http.channel.PartialChannel"><span class="pre">PartialChannel</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></em><a class="headerlink" href="#discord_http.webhook.Webhook.channel" title="Link to this definition">¶</a></dt>
@@ -512,6 +591,7 @@
 <li><a class="reference internal" href="#">Webhook</a><ul>
 <li><a class="reference internal" href="#module-discord_http.webhook">discord_http.webhook module</a><ul>
 <li><a class="reference internal" href="#discord_http.webhook.PartialWebhook"><code class="docutils literal notranslate"><span class="pre">PartialWebhook</span></code></a><ul>
+<li><a class="reference internal" href="#discord_http.webhook.PartialWebhook.token"><code class="docutils literal notranslate"><span class="pre">PartialWebhook.token</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.webhook.PartialWebhook.delete"><code class="docutils literal notranslate"><span class="pre">PartialWebhook.delete()</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.webhook.PartialWebhook.edit"><code class="docutils literal notranslate"><span class="pre">PartialWebhook.edit()</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.webhook.PartialWebhook.fetch"><code class="docutils literal notranslate"><span class="pre">PartialWebhook.fetch()</span></code></a></li>
@@ -519,6 +599,12 @@
 </ul>
 </li>
 <li><a class="reference internal" href="#discord_http.webhook.Webhook"><code class="docutils literal notranslate"><span class="pre">Webhook</span></code></a><ul>
+<li><a class="reference internal" href="#discord_http.webhook.Webhook.application_id"><code class="docutils literal notranslate"><span class="pre">Webhook.application_id</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.webhook.Webhook.name"><code class="docutils literal notranslate"><span class="pre">Webhook.name</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.webhook.Webhook.avatar"><code class="docutils literal notranslate"><span class="pre">Webhook.avatar</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.webhook.Webhook.url"><code class="docutils literal notranslate"><span class="pre">Webhook.url</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.webhook.Webhook.channel_id"><code class="docutils literal notranslate"><span class="pre">Webhook.channel_id</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.webhook.Webhook.guild_id"><code class="docutils literal notranslate"><span class="pre">Webhook.guild_id</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.webhook.Webhook.channel"><code class="docutils literal notranslate"><span class="pre">Webhook.channel</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.webhook.Webhook.from_state"><code class="docutils literal notranslate"><span class="pre">Webhook.from_state()</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.webhook.Webhook.guild"><code class="docutils literal notranslate"><span class="pre">Webhook.guild</span></code></a></li>

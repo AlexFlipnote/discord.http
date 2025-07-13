@@ -333,6 +333,7 @@
 <dt class="sig sig-object py" id="discord_http.guild.Guild">
 <em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">discord_http.guild.</span></span><span class="sig-name descname"><span class="pre">Guild</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">state</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#discord_http.guild.Guild" title="Link to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#discord_http.guild.PartialGuild" title="discord_http.guild.PartialGuild"><code class="xref py py-class docutils literal notranslate"><span class="pre">PartialGuild</span></code></a></p>
+<p>Represents a guild (server) in Discord.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
@@ -341,6 +342,314 @@
 </ul>
 </dd>
 </dl>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.guild.Guild.afk_channel_id">
+<span class="sig-name descname"><span class="pre">afk_channel_id</span></span><a class="headerlink" href="#discord_http.guild.Guild.afk_channel_id" title="Link to this definition">¶</a></dt>
+<dd><p>The ID of the AFK channel, if any</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)">int</a> | None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.guild.Guild.afk_timeout">
+<span class="sig-name descname"><span class="pre">afk_timeout</span></span><a class="headerlink" href="#discord_http.guild.Guild.afk_timeout" title="Link to this definition">¶</a></dt>
+<dd><p>The AFK timeout in seconds</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)">int</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.guild.Guild.default_message_notifications">
+<span class="sig-name descname"><span class="pre">default_message_notifications</span></span><a class="headerlink" href="#discord_http.guild.Guild.default_message_notifications" title="Link to this definition">¶</a></dt>
+<dd><p>The default message notification level of the guild</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)">int</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.guild.Guild.description">
+<span class="sig-name descname"><span class="pre">description</span></span><a class="headerlink" href="#discord_http.guild.Guild.description" title="Link to this definition">¶</a></dt>
+<dd><p>The description of the guild</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)">str</a> | None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.guild.Guild.explicit_content_filter">
+<span class="sig-name descname"><span class="pre">explicit_content_filter</span></span><a class="headerlink" href="#discord_http.guild.Guild.explicit_content_filter" title="Link to this definition">¶</a></dt>
+<dd><p>The explicit content filter level of the guild</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)">int</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.guild.Guild.features">
+<span class="sig-name descname"><span class="pre">features</span></span><a class="headerlink" href="#discord_http.guild.Guild.features" title="Link to this definition">¶</a></dt>
+<dd><p>The features of the guild</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.13)">list</a>[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)">str</a>]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.guild.Guild.latest_onboarding_question_id">
+<span class="sig-name descname"><span class="pre">latest_onboarding_question_id</span></span><a class="headerlink" href="#discord_http.guild.Guild.latest_onboarding_question_id" title="Link to this definition">¶</a></dt>
+<dd><p>The ID of the latest onboarding question, if any</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)">int</a> | None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.guild.Guild.max_members">
+<span class="sig-name descname"><span class="pre">max_members</span></span><a class="headerlink" href="#discord_http.guild.Guild.max_members" title="Link to this definition">¶</a></dt>
+<dd><p>The maximum number of members in the guild</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)">int</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.guild.Guild.max_stage_video_channel_users">
+<span class="sig-name descname"><span class="pre">max_stage_video_channel_users</span></span><a class="headerlink" href="#discord_http.guild.Guild.max_stage_video_channel_users" title="Link to this definition">¶</a></dt>
+<dd><p>The maximum number of users in a stage video channel</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)">int</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.guild.Guild.max_video_channel_users">
+<span class="sig-name descname"><span class="pre">max_video_channel_users</span></span><a class="headerlink" href="#discord_http.guild.Guild.max_video_channel_users" title="Link to this definition">¶</a></dt>
+<dd><p>The maximum number of users in a video channel</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)">int</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.guild.Guild.mfa_level">
+<span class="sig-name descname"><span class="pre">mfa_level</span></span><a class="headerlink" href="#discord_http.guild.Guild.mfa_level" title="Link to this definition">¶</a></dt>
+<dd><p>The MFA level of the guild</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)">int</a> | None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.guild.Guild.name">
+<span class="sig-name descname"><span class="pre">name</span></span><a class="headerlink" href="#discord_http.guild.Guild.name" title="Link to this definition">¶</a></dt>
+<dd><p>The name of the guild</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)">str</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.guild.Guild.nsfw">
+<span class="sig-name descname"><span class="pre">nsfw</span></span><a class="headerlink" href="#discord_http.guild.Guild.nsfw" title="Link to this definition">¶</a></dt>
+<dd><p>Whether the guild is marked as NSFW</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)">bool</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.guild.Guild.nsfw_level">
+<span class="sig-name descname"><span class="pre">nsfw_level</span></span><a class="headerlink" href="#discord_http.guild.Guild.nsfw_level" title="Link to this definition">¶</a></dt>
+<dd><p>The NSFW level of the guild</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)">int</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.guild.Guild.owner_id">
+<span class="sig-name descname"><span class="pre">owner_id</span></span><a class="headerlink" href="#discord_http.guild.Guild.owner_id" title="Link to this definition">¶</a></dt>
+<dd><p>The ID of the owner of the guild, if any</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)">int</a> | None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.guild.Guild.preferred_locale">
+<span class="sig-name descname"><span class="pre">preferred_locale</span></span><a class="headerlink" href="#discord_http.guild.Guild.preferred_locale" title="Link to this definition">¶</a></dt>
+<dd><p>The preferred locale of the guild</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)">str</a> | None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.guild.Guild.premium_progress_bar_enabled">
+<span class="sig-name descname"><span class="pre">premium_progress_bar_enabled</span></span><a class="headerlink" href="#discord_http.guild.Guild.premium_progress_bar_enabled" title="Link to this definition">¶</a></dt>
+<dd><p>Whether the premium progress bar is enabled</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)">bool</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.guild.Guild.premium_subscription_count">
+<span class="sig-name descname"><span class="pre">premium_subscription_count</span></span><a class="headerlink" href="#discord_http.guild.Guild.premium_subscription_count" title="Link to this definition">¶</a></dt>
+<dd><p>The number of premium subscriptions in the guild</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)">int</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.guild.Guild.premium_tier">
+<span class="sig-name descname"><span class="pre">premium_tier</span></span><a class="headerlink" href="#discord_http.guild.Guild.premium_tier" title="Link to this definition">¶</a></dt>
+<dd><p>The premium tier of the guild</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)">int</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.guild.Guild.public_updates_channel_id">
+<span class="sig-name descname"><span class="pre">public_updates_channel_id</span></span><a class="headerlink" href="#discord_http.guild.Guild.public_updates_channel_id" title="Link to this definition">¶</a></dt>
+<dd><p>The ID of the public updates channel, if any</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)">int</a> | None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.guild.Guild.region">
+<span class="sig-name descname"><span class="pre">region</span></span><a class="headerlink" href="#discord_http.guild.Guild.region" title="Link to this definition">¶</a></dt>
+<dd><p>The voice region of the guild, if any</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)">str</a> | None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.guild.Guild.safety_alerts_channel_id">
+<span class="sig-name descname"><span class="pre">safety_alerts_channel_id</span></span><a class="headerlink" href="#discord_http.guild.Guild.safety_alerts_channel_id" title="Link to this definition">¶</a></dt>
+<dd><p>The ID of the safety alerts channel, if any</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)">int</a> | None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.guild.Guild.system_channel_flags">
+<span class="sig-name descname"><span class="pre">system_channel_flags</span></span><a class="headerlink" href="#discord_http.guild.Guild.system_channel_flags" title="Link to this definition">¶</a></dt>
+<dd><p>The system channel flags of the guild</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)">int</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.guild.Guild.system_channel_id">
+<span class="sig-name descname"><span class="pre">system_channel_id</span></span><a class="headerlink" href="#discord_http.guild.Guild.system_channel_id" title="Link to this definition">¶</a></dt>
+<dd><p>The ID of the system channel, if any</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)">int</a> | None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.guild.Guild.vanity_url_code">
+<span class="sig-name descname"><span class="pre">vanity_url_code</span></span><a class="headerlink" href="#discord_http.guild.Guild.vanity_url_code" title="Link to this definition">¶</a></dt>
+<dd><p>The vanity URL code of the guild, if any</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)">str</a> | None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.guild.Guild.verification_level">
+<span class="sig-name descname"><span class="pre">verification_level</span></span><a class="headerlink" href="#discord_http.guild.Guild.verification_level" title="Link to this definition">¶</a></dt>
+<dd><p>The verification level of the guild</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="enums.html#discord_http.enums.VerificationLevel" title="discord_http.enums.VerificationLevel">VerificationLevel</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.guild.Guild.widget_channel_id">
+<span class="sig-name descname"><span class="pre">widget_channel_id</span></span><a class="headerlink" href="#discord_http.guild.Guild.widget_channel_id" title="Link to this definition">¶</a></dt>
+<dd><p>The ID of the widget channel, if any</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)">int</a> | None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.guild.Guild.widget_enabled">
+<span class="sig-name descname"><span class="pre">widget_enabled</span></span><a class="headerlink" href="#discord_http.guild.Guild.widget_enabled" title="Link to this definition">¶</a></dt>
+<dd><p>Whether the widget is enabled for the guild</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)">bool</a></p>
+</dd>
+</dl>
+</dd></dl>
+
 <dl class="py property">
 <dt class="sig sig-object py" id="discord_http.guild.Guild.banner">
 <em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">banner</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="asset.html#discord_http.asset.Asset" title="discord_http.asset.Asset"><span class="pre">Asset</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></em><a class="headerlink" href="#discord_http.guild.Guild.banner" title="Link to this definition">¶</a></dt>
@@ -1774,6 +2083,34 @@ The third value must be one of the following:
 </ul>
 </li>
 <li><a class="reference internal" href="#discord_http.guild.Guild"><code class="docutils literal notranslate"><span class="pre">Guild</span></code></a><ul>
+<li><a class="reference internal" href="#discord_http.guild.Guild.afk_channel_id"><code class="docutils literal notranslate"><span class="pre">Guild.afk_channel_id</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.guild.Guild.afk_timeout"><code class="docutils literal notranslate"><span class="pre">Guild.afk_timeout</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.guild.Guild.default_message_notifications"><code class="docutils literal notranslate"><span class="pre">Guild.default_message_notifications</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.guild.Guild.description"><code class="docutils literal notranslate"><span class="pre">Guild.description</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.guild.Guild.explicit_content_filter"><code class="docutils literal notranslate"><span class="pre">Guild.explicit_content_filter</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.guild.Guild.features"><code class="docutils literal notranslate"><span class="pre">Guild.features</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.guild.Guild.latest_onboarding_question_id"><code class="docutils literal notranslate"><span class="pre">Guild.latest_onboarding_question_id</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.guild.Guild.max_members"><code class="docutils literal notranslate"><span class="pre">Guild.max_members</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.guild.Guild.max_stage_video_channel_users"><code class="docutils literal notranslate"><span class="pre">Guild.max_stage_video_channel_users</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.guild.Guild.max_video_channel_users"><code class="docutils literal notranslate"><span class="pre">Guild.max_video_channel_users</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.guild.Guild.mfa_level"><code class="docutils literal notranslate"><span class="pre">Guild.mfa_level</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.guild.Guild.name"><code class="docutils literal notranslate"><span class="pre">Guild.name</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.guild.Guild.nsfw"><code class="docutils literal notranslate"><span class="pre">Guild.nsfw</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.guild.Guild.nsfw_level"><code class="docutils literal notranslate"><span class="pre">Guild.nsfw_level</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.guild.Guild.owner_id"><code class="docutils literal notranslate"><span class="pre">Guild.owner_id</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.guild.Guild.preferred_locale"><code class="docutils literal notranslate"><span class="pre">Guild.preferred_locale</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.guild.Guild.premium_progress_bar_enabled"><code class="docutils literal notranslate"><span class="pre">Guild.premium_progress_bar_enabled</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.guild.Guild.premium_subscription_count"><code class="docutils literal notranslate"><span class="pre">Guild.premium_subscription_count</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.guild.Guild.premium_tier"><code class="docutils literal notranslate"><span class="pre">Guild.premium_tier</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.guild.Guild.public_updates_channel_id"><code class="docutils literal notranslate"><span class="pre">Guild.public_updates_channel_id</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.guild.Guild.region"><code class="docutils literal notranslate"><span class="pre">Guild.region</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.guild.Guild.safety_alerts_channel_id"><code class="docutils literal notranslate"><span class="pre">Guild.safety_alerts_channel_id</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.guild.Guild.system_channel_flags"><code class="docutils literal notranslate"><span class="pre">Guild.system_channel_flags</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.guild.Guild.system_channel_id"><code class="docutils literal notranslate"><span class="pre">Guild.system_channel_id</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.guild.Guild.vanity_url_code"><code class="docutils literal notranslate"><span class="pre">Guild.vanity_url_code</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.guild.Guild.verification_level"><code class="docutils literal notranslate"><span class="pre">Guild.verification_level</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.guild.Guild.widget_channel_id"><code class="docutils literal notranslate"><span class="pre">Guild.widget_channel_id</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.guild.Guild.widget_enabled"><code class="docutils literal notranslate"><span class="pre">Guild.widget_enabled</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.guild.Guild.banner"><code class="docutils literal notranslate"><span class="pre">Guild.banner</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.guild.Guild.bitrate_limit"><code class="docutils literal notranslate"><span class="pre">Guild.bitrate_limit</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.guild.Guild.default_role"><code class="docutils literal notranslate"><span class="pre">Guild.default_role</span></code></a></li>

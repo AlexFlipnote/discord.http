@@ -419,6 +419,7 @@
 <dt class="sig sig-object py" id="discord_http.entitlements.SKU">
 <em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">discord_http.entitlements.</span></span><span class="sig-name descname"><span class="pre">SKU</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">state</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#discord_http.entitlements.SKU" title="Link to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#discord_http.entitlements.PartialSKU" title="discord_http.entitlements.PartialSKU"><code class="xref py py-class docutils literal notranslate"><span class="pre">PartialSKU</span></code></a></p>
+<p>Represents a SKU (Stock Keeping Unit) object.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
@@ -427,6 +428,61 @@
 </ul>
 </dd>
 </dl>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.entitlements.SKU.name">
+<span class="sig-name descname"><span class="pre">name</span></span><a class="headerlink" href="#discord_http.entitlements.SKU.name" title="Link to this definition">¶</a></dt>
+<dd><p>The name of the SKU.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)">str</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.entitlements.SKU.slug">
+<span class="sig-name descname"><span class="pre">slug</span></span><a class="headerlink" href="#discord_http.entitlements.SKU.slug" title="Link to this definition">¶</a></dt>
+<dd><p>The slug of the SKU.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)">str</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.entitlements.SKU.type">
+<span class="sig-name descname"><span class="pre">type</span></span><a class="headerlink" href="#discord_http.entitlements.SKU.type" title="Link to this definition">¶</a></dt>
+<dd><p>The type of the SKU.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="enums.html#discord_http.enums.SKUType" title="discord_http.enums.SKUType">SKUType</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.entitlements.SKU.flags">
+<span class="sig-name descname"><span class="pre">flags</span></span><a class="headerlink" href="#discord_http.entitlements.SKU.flags" title="Link to this definition">¶</a></dt>
+<dd><p>The flags of the SKU.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="flags.html#discord_http.flags.SKUFlags" title="discord_http.flags.SKUFlags">SKUFlags</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.entitlements.SKU.application">
+<span class="sig-name descname"><span class="pre">application</span></span><a class="headerlink" href="#discord_http.entitlements.SKU.application" title="Link to this definition">¶</a></dt>
+<dd><p>The application that owns the SKU.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="user.html#discord_http.user.PartialUser" title="discord_http.user.PartialUser">PartialUser</a></p>
+</dd>
+</dl>
+</dd></dl>
+
 </dd></dl>
 
 </section>
@@ -504,7 +560,14 @@
 <li><a class="reference internal" href="#discord_http.entitlements.PartialSKU.create_test_entitlement"><code class="docutils literal notranslate"><span class="pre">PartialSKU.create_test_entitlement()</span></code></a></li>
 </ul>
 </li>
-<li><a class="reference internal" href="#discord_http.entitlements.SKU"><code class="docutils literal notranslate"><span class="pre">SKU</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.entitlements.SKU"><code class="docutils literal notranslate"><span class="pre">SKU</span></code></a><ul>
+<li><a class="reference internal" href="#discord_http.entitlements.SKU.name"><code class="docutils literal notranslate"><span class="pre">SKU.name</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.entitlements.SKU.slug"><code class="docutils literal notranslate"><span class="pre">SKU.slug</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.entitlements.SKU.type"><code class="docutils literal notranslate"><span class="pre">SKU.type</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.entitlements.SKU.flags"><code class="docutils literal notranslate"><span class="pre">SKU.flags</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.entitlements.SKU.application"><code class="docutils literal notranslate"><span class="pre">SKU.application</span></code></a></li>
+</ul>
+</li>
 </ul>
 </li>
 </ul>

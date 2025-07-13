@@ -307,6 +307,7 @@
 <dt class="sig sig-object py" id="discord_http.message.Attachment">
 <em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">discord_http.message.</span></span><span class="sig-name descname"><span class="pre">Attachment</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">state</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#discord_http.message.Attachment" title="Link to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<p>Represents an attachment in a message.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
@@ -315,6 +316,160 @@
 </ul>
 </dd>
 </dl>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.message.Attachment.id">
+<span class="sig-name descname"><span class="pre">id</span></span><a class="headerlink" href="#discord_http.message.Attachment.id" title="Link to this definition">¶</a></dt>
+<dd><p>The ID of the attachment.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)">int</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.message.Attachment.filename">
+<span class="sig-name descname"><span class="pre">filename</span></span><a class="headerlink" href="#discord_http.message.Attachment.filename" title="Link to this definition">¶</a></dt>
+<dd><p>The name of the file.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)">str</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.message.Attachment.size">
+<span class="sig-name descname"><span class="pre">size</span></span><a class="headerlink" href="#discord_http.message.Attachment.size" title="Link to this definition">¶</a></dt>
+<dd><p>The size of the file in bytes.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)">int</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.message.Attachment.url">
+<span class="sig-name descname"><span class="pre">url</span></span><a class="headerlink" href="#discord_http.message.Attachment.url" title="Link to this definition">¶</a></dt>
+<dd><p>The URL to the attachment.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)">str</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.message.Attachment.proxy_url">
+<span class="sig-name descname"><span class="pre">proxy_url</span></span><a class="headerlink" href="#discord_http.message.Attachment.proxy_url" title="Link to this definition">¶</a></dt>
+<dd><p>The proxied URL to the attachment.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)">str</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.message.Attachment.ephemeral">
+<span class="sig-name descname"><span class="pre">ephemeral</span></span><a class="headerlink" href="#discord_http.message.Attachment.ephemeral" title="Link to this definition">¶</a></dt>
+<dd><p>Whether the attachment is ephemeral or not.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)">bool</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.message.Attachment.flags">
+<span class="sig-name descname"><span class="pre">flags</span></span><a class="headerlink" href="#discord_http.message.Attachment.flags" title="Link to this definition">¶</a></dt>
+<dd><p>The flags of the attachment.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="flags.html#discord_http.flags.AttachmentFlags" title="discord_http.flags.AttachmentFlags">AttachmentFlags</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.message.Attachment.content_type">
+<span class="sig-name descname"><span class="pre">content_type</span></span><a class="headerlink" href="#discord_http.message.Attachment.content_type" title="Link to this definition">¶</a></dt>
+<dd><p>The content type of the attachment, if available.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)">str</a> | None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.message.Attachment.title">
+<span class="sig-name descname"><span class="pre">title</span></span><a class="headerlink" href="#discord_http.message.Attachment.title" title="Link to this definition">¶</a></dt>
+<dd><p>The title of the attachment, if available.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)">str</a> | None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.message.Attachment.description">
+<span class="sig-name descname"><span class="pre">description</span></span><a class="headerlink" href="#discord_http.message.Attachment.description" title="Link to this definition">¶</a></dt>
+<dd><p>The description of the attachment, if available.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)">str</a> | None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.message.Attachment.height">
+<span class="sig-name descname"><span class="pre">height</span></span><a class="headerlink" href="#discord_http.message.Attachment.height" title="Link to this definition">¶</a></dt>
+<dd><p>The height of the attachment, if applicable.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)">int</a> | None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.message.Attachment.width">
+<span class="sig-name descname"><span class="pre">width</span></span><a class="headerlink" href="#discord_http.message.Attachment.width" title="Link to this definition">¶</a></dt>
+<dd><p>The width of the attachment, if applicable.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)">int</a> | None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.message.Attachment.duration_secs">
+<span class="sig-name descname"><span class="pre">duration_secs</span></span><a class="headerlink" href="#discord_http.message.Attachment.duration_secs" title="Link to this definition">¶</a></dt>
+<dd><p>The duration of the attachment in seconds, if applicable.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)">int</a> | None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.message.Attachment.waveform">
+<span class="sig-name descname"><span class="pre">waveform</span></span><a class="headerlink" href="#discord_http.message.Attachment.waveform" title="Link to this definition">¶</a></dt>
+<dd><p>The waveform of the attachment, if applicable.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)">str</a> | None</p>
+</dd>
+</dl>
+</dd></dl>
+
 <dl class="py method">
 <dt class="sig sig-object py" id="discord_http.message.Attachment.fetch">
 <em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">fetch</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">use_cached</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#bytes" title="(in Python v3.13)"><span class="pre">bytes</span></a></span></span><a class="headerlink" href="#discord_http.message.Attachment.fetch" title="Link to this definition">¶</a></dt>
@@ -415,6 +570,7 @@ Example:</p></li>
 <dt class="sig sig-object py" id="discord_http.message.JumpURL">
 <em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">discord_http.message.</span></span><span class="sig-name descname"><span class="pre">JumpURL</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">state</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">url</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">guild_id</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">channel_id</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">message_id</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#discord_http.message.JumpURL" title="Link to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<p>Represents a jump URL to a message.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
@@ -426,6 +582,39 @@ Example:</p></li>
 </ul>
 </dd>
 </dl>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.message.JumpURL.guild_id">
+<span class="sig-name descname"><span class="pre">guild_id</span></span><a class="headerlink" href="#discord_http.message.JumpURL.guild_id" title="Link to this definition">¶</a></dt>
+<dd><p>The ID of the guild the message was sent in, if applicable.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)">int</a> | None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.message.JumpURL.channel_id">
+<span class="sig-name descname"><span class="pre">channel_id</span></span><a class="headerlink" href="#discord_http.message.JumpURL.channel_id" title="Link to this definition">¶</a></dt>
+<dd><p>The ID of the channel the message was sent in.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)">int</a> | None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.message.JumpURL.message_id">
+<span class="sig-name descname"><span class="pre">message_id</span></span><a class="headerlink" href="#discord_http.message.JumpURL.message_id" title="Link to this definition">¶</a></dt>
+<dd><p>The ID of the message, if applicable.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)">int</a> | None</p>
+</dd>
+</dl>
+</dd></dl>
+
 <dl class="py property">
 <dt class="sig sig-object py" id="discord_http.message.JumpURL.channel">
 <em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">channel</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="channel.html#discord_http.channel.BaseChannel" title="discord_http.channel.BaseChannel"><span class="pre">BaseChannel</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="channel.html#discord_http.channel.PartialChannel" title="discord_http.channel.PartialChannel"><span class="pre">PartialChannel</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></em><a class="headerlink" href="#discord_http.message.JumpURL.channel" title="Link to this definition">¶</a></dt>
@@ -490,6 +679,7 @@ Example:</p></li>
 <dt class="sig sig-object py" id="discord_http.message.Message">
 <em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">discord_http.message.</span></span><span class="sig-name descname"><span class="pre">Message</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">state</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">guild</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#discord_http.message.Message" title="Link to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#discord_http.message.PartialMessage" title="discord_http.message.PartialMessage"><code class="xref py py-class docutils literal notranslate"><span class="pre">PartialMessage</span></code></a></p>
+<p>Represents a message object.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
@@ -499,6 +689,204 @@ Example:</p></li>
 </ul>
 </dd>
 </dl>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.message.Message.type">
+<span class="sig-name descname"><span class="pre">type</span></span><a class="headerlink" href="#discord_http.message.Message.type" title="Link to this definition">¶</a></dt>
+<dd><p>The type of the message.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="enums.html#discord_http.enums.MessageType" title="discord_http.enums.MessageType">MessageType</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.message.Message.content">
+<span class="sig-name descname"><span class="pre">content</span></span><a class="headerlink" href="#discord_http.message.Message.content" title="Link to this definition">¶</a></dt>
+<dd><p>The content of the message.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)">str</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.message.Message.author">
+<span class="sig-name descname"><span class="pre">author</span></span><a class="headerlink" href="#discord_http.message.Message.author" title="Link to this definition">¶</a></dt>
+<dd><p>The author of the message.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="user.html#discord_http.user.User" title="discord_http.user.User">User</a> | <a class="reference internal" href="member.html#discord_http.member.Member" title="discord_http.member.Member">Member</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.message.Message.pinned">
+<span class="sig-name descname"><span class="pre">pinned</span></span><a class="headerlink" href="#discord_http.message.Message.pinned" title="Link to this definition">¶</a></dt>
+<dd><p>Whether the message is pinned or not.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)">bool</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.message.Message.mention_everyone">
+<span class="sig-name descname"><span class="pre">mention_everyone</span></span><a class="headerlink" href="#discord_http.message.Message.mention_everyone" title="Link to this definition">¶</a></dt>
+<dd><p>Whether the message mentions everyone or not.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)">bool</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.message.Message.tts">
+<span class="sig-name descname"><span class="pre">tts</span></span><a class="headerlink" href="#discord_http.message.Message.tts" title="Link to this definition">¶</a></dt>
+<dd><p>Whether the message is a TTS message or not.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)">bool</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.message.Message.poll">
+<span class="sig-name descname"><span class="pre">poll</span></span><a class="headerlink" href="#discord_http.message.Message.poll" title="Link to this definition">¶</a></dt>
+<dd><p>The poll associated with the message, if any.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="#discord_http.message.Poll" title="discord_http.message.Poll">Poll</a> | None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.message.Message.embeds">
+<span class="sig-name descname"><span class="pre">embeds</span></span><a class="headerlink" href="#discord_http.message.Message.embeds" title="Link to this definition">¶</a></dt>
+<dd><p>The embeds of the message.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.13)">list</a>[<a class="reference internal" href="embeds.html#discord_http.embeds.Embed" title="discord_http.embeds.Embed">Embed</a>]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.message.Message.attachments">
+<span class="sig-name descname"><span class="pre">attachments</span></span><a class="headerlink" href="#discord_http.message.Message.attachments" title="Link to this definition">¶</a></dt>
+<dd><p>The attachments of the message.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.13)">list</a>[<a class="reference internal" href="#discord_http.message.Attachment" title="discord_http.message.Attachment">Attachment</a>]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.message.Message.stickers">
+<span class="sig-name descname"><span class="pre">stickers</span></span><a class="headerlink" href="#discord_http.message.Message.stickers" title="Link to this definition">¶</a></dt>
+<dd><p>The stickers of the message.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.13)">list</a>[<a class="reference internal" href="sticker.html#discord_http.sticker.PartialSticker" title="discord_http.sticker.PartialSticker">PartialSticker</a>]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.message.Message.reactions">
+<span class="sig-name descname"><span class="pre">reactions</span></span><a class="headerlink" href="#discord_http.message.Message.reactions" title="Link to this definition">¶</a></dt>
+<dd><p>The reactions to the message.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.13)">list</a>[MessageReaction]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.message.Message.mentions">
+<span class="sig-name descname"><span class="pre">mentions</span></span><a class="headerlink" href="#discord_http.message.Message.mentions" title="Link to this definition">¶</a></dt>
+<dd><p>The mentions in the message.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.13)">list</a>[<a class="reference internal" href="member.html#discord_http.member.Member" title="discord_http.member.Member">Member</a> | <a class="reference internal" href="user.html#discord_http.user.User" title="discord_http.user.User">User</a>]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.message.Message.view">
+<span class="sig-name descname"><span class="pre">view</span></span><a class="headerlink" href="#discord_http.message.Message.view" title="Link to this definition">¶</a></dt>
+<dd><p>The components of the message, if any.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="view.html#discord_http.view.View" title="discord_http.view.View">View</a> | None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.message.Message.edited_timestamp">
+<span class="sig-name descname"><span class="pre">edited_timestamp</span></span><a class="headerlink" href="#discord_http.message.Message.edited_timestamp" title="Link to this definition">¶</a></dt>
+<dd><p>The timestamp of when the message was last edited, if available.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>datetime | None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.message.Message.reference">
+<span class="sig-name descname"><span class="pre">reference</span></span><a class="headerlink" href="#discord_http.message.Message.reference" title="Link to this definition">¶</a></dt>
+<dd><p>The reference to another message, if any.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="#discord_http.message.MessageReference" title="discord_http.message.MessageReference">MessageReference</a> | None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.message.Message.resolved_reply">
+<span class="sig-name descname"><span class="pre">resolved_reply</span></span><a class="headerlink" href="#discord_http.message.Message.resolved_reply" title="Link to this definition">¶</a></dt>
+<dd><p>The resolved reply to the message, if any.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="#discord_http.message.Message" title="discord_http.message.Message">Message</a> | None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.message.Message.resolved_forward">
+<span class="sig-name descname"><span class="pre">resolved_forward</span></span><a class="headerlink" href="#discord_http.message.Message.resolved_forward" title="Link to this definition">¶</a></dt>
+<dd><p>The resolved forward messages, if any.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.13)">list</a>[MessageSnapshot]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.message.Message.interaction">
+<span class="sig-name descname"><span class="pre">interaction</span></span><a class="headerlink" href="#discord_http.message.Message.interaction" title="Link to this definition">¶</a></dt>
+<dd><p>The interaction associated with the message, if any.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="#discord_http.message.MessageInteraction" title="discord_http.message.MessageInteraction">MessageInteraction</a> | None</p>
+</dd>
+</dl>
+</dd></dl>
+
 <dl class="py property">
 <dt class="sig sig-object py" id="discord_http.message.Message.channel_mentions">
 <em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">channel_mentions</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.13)"><span class="pre">list</span></a><span class="p"><span class="pre">[</span></span><a class="reference internal" href="channel.html#discord_http.channel.BaseChannel" title="discord_http.channel.BaseChannel"><span class="pre">BaseChannel</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="channel.html#discord_http.channel.PartialChannel" title="discord_http.channel.PartialChannel"><span class="pre">PartialChannel</span></a><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#discord_http.message.Message.channel_mentions" title="Link to this definition">¶</a></dt>
@@ -548,6 +936,7 @@ Example:</p></li>
 <dt class="sig sig-object py" id="discord_http.message.MessageInteraction">
 <em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">discord_http.message.</span></span><span class="sig-name descname"><span class="pre">MessageInteraction</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">state</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#discord_http.message.MessageInteraction" title="Link to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="object.html#discord_http.object.PartialBase" title="discord_http.object.PartialBase"><code class="xref py py-class docutils literal notranslate"><span class="pre">PartialBase</span></code></a></p>
+<p>Represents a message interaction.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
@@ -556,12 +945,46 @@ Example:</p></li>
 </ul>
 </dd>
 </dl>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.message.MessageInteraction.type">
+<span class="sig-name descname"><span class="pre">type</span></span><a class="headerlink" href="#discord_http.message.MessageInteraction.type" title="Link to this definition">¶</a></dt>
+<dd><p>The type of the interaction.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="enums.html#discord_http.enums.InteractionType" title="discord_http.enums.InteractionType">InteractionType</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.message.MessageInteraction.name">
+<span class="sig-name descname"><span class="pre">name</span></span><a class="headerlink" href="#discord_http.message.MessageInteraction.name" title="Link to this definition">¶</a></dt>
+<dd><p>The name of the interaction, if available.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)">str</a> | None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.message.MessageInteraction.user">
+<span class="sig-name descname"><span class="pre">user</span></span><a class="headerlink" href="#discord_http.message.MessageInteraction.user" title="Link to this definition">¶</a></dt>
+<dd><p>The user who triggered the interaction.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="user.html#discord_http.user.User" title="discord_http.user.User">User</a></p>
+</dd>
+</dl>
+</dd></dl>
+
 </dd></dl>
 
 <dl class="py class">
 <dt class="sig sig-object py" id="discord_http.message.MessageReference">
 <em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">discord_http.message.</span></span><span class="sig-name descname"><span class="pre">MessageReference</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">state</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#discord_http.message.MessageReference" title="Link to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<p>Represents a reference to a message.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
@@ -570,6 +993,50 @@ Example:</p></li>
 </ul>
 </dd>
 </dl>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.message.MessageReference.type">
+<span class="sig-name descname"><span class="pre">type</span></span><a class="headerlink" href="#discord_http.message.MessageReference.type" title="Link to this definition">¶</a></dt>
+<dd><p>The type of the message reference.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="enums.html#discord_http.enums.MessageReferenceType" title="discord_http.enums.MessageReferenceType">MessageReferenceType</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.message.MessageReference.guild_id">
+<span class="sig-name descname"><span class="pre">guild_id</span></span><a class="headerlink" href="#discord_http.message.MessageReference.guild_id" title="Link to this definition">¶</a></dt>
+<dd><p>The ID of the guild the message was sent in, if applicable.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)">int</a> | None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.message.MessageReference.channel_id">
+<span class="sig-name descname"><span class="pre">channel_id</span></span><a class="headerlink" href="#discord_http.message.MessageReference.channel_id" title="Link to this definition">¶</a></dt>
+<dd><p>The ID of the channel the message was sent in.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)">int</a> | None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.message.MessageReference.message_id">
+<span class="sig-name descname"><span class="pre">message_id</span></span><a class="headerlink" href="#discord_http.message.MessageReference.message_id" title="Link to this definition">¶</a></dt>
+<dd><p>The ID of the message, if applicable.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)">int</a> | None</p>
+</dd>
+</dl>
+</dd></dl>
+
 <dl class="py property">
 <dt class="sig sig-object py" id="discord_http.message.MessageReference.channel">
 <em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">channel</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="channel.html#discord_http.channel.PartialChannel" title="discord_http.channel.PartialChannel"><span class="pre">PartialChannel</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></em><a class="headerlink" href="#discord_http.message.MessageReference.channel" title="Link to this definition">¶</a></dt>
@@ -611,6 +1078,7 @@ Example:</p></li>
 <dt class="sig sig-object py" id="discord_http.message.PartialMessage">
 <em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">discord_http.message.</span></span><span class="sig-name descname"><span class="pre">PartialMessage</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">state</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">channel_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">guild_id</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#discord_http.message.PartialMessage" title="Link to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="object.html#discord_http.object.PartialBase" title="discord_http.object.PartialBase"><code class="xref py py-class docutils literal notranslate"><span class="pre">PartialBase</span></code></a></p>
+<p>Represents a partial message object.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
@@ -621,6 +1089,28 @@ Example:</p></li>
 </ul>
 </dd>
 </dl>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.message.PartialMessage.channel_id">
+<span class="sig-name descname"><span class="pre">channel_id</span></span><a class="headerlink" href="#discord_http.message.PartialMessage.channel_id" title="Link to this definition">¶</a></dt>
+<dd><p>The ID of the channel the message was sent in.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)">int</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.message.PartialMessage.guild_id">
+<span class="sig-name descname"><span class="pre">guild_id</span></span><a class="headerlink" href="#discord_http.message.PartialMessage.guild_id" title="Link to this definition">¶</a></dt>
+<dd><p>The ID of the guild the message was sent in, if applicable.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)">int</a> | None</p>
+</dd>
+</dl>
+</dd></dl>
+
 <dl class="py method">
 <dt class="sig sig-object py" id="discord_http.message.PartialMessage.add_reaction">
 <em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">add_reaction</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">emoji</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></span></span><a class="headerlink" href="#discord_http.message.PartialMessage.add_reaction" title="Link to this definition">¶</a></dt>
@@ -892,6 +1382,7 @@ Example:</p></li>
 <dt class="sig sig-object py" id="discord_http.message.Poll">
 <em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">discord_http.message.</span></span><span class="sig-name descname"><span class="pre">Poll</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">text</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">allow_multiselect</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">duration</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#discord_http.message.Poll" title="Link to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<p>Represents a poll in a message.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
@@ -901,6 +1392,83 @@ Example:</p></li>
 </ul>
 </dd>
 </dl>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.message.Poll.text">
+<span class="sig-name descname"><span class="pre">text</span></span><a class="headerlink" href="#discord_http.message.Poll.text" title="Link to this definition">¶</a></dt>
+<dd><p>The question text of the poll.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)">str</a> | None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.message.Poll.allow_multiselect">
+<span class="sig-name descname"><span class="pre">allow_multiselect</span></span><a class="headerlink" href="#discord_http.message.Poll.allow_multiselect" title="Link to this definition">¶</a></dt>
+<dd><p>Whether the poll allows multiple answers to be selected.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)">bool</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.message.Poll.answers">
+<span class="sig-name descname"><span class="pre">answers</span></span><a class="headerlink" href="#discord_http.message.Poll.answers" title="Link to this definition">¶</a></dt>
+<dd><p>The list of answers in the poll.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.13)">list</a>[PollAnswer]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.message.Poll.duration">
+<span class="sig-name descname"><span class="pre">duration</span></span><a class="headerlink" href="#discord_http.message.Poll.duration" title="Link to this definition">¶</a></dt>
+<dd><p>The duration of the poll in hours, if applicable.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)">int</a> | None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.message.Poll.layout_type">
+<span class="sig-name descname"><span class="pre">layout_type</span></span><a class="headerlink" href="#discord_http.message.Poll.layout_type" title="Link to this definition">¶</a></dt>
+<dd><p>The layout type of the poll, currently only 1 is available.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)">int</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.message.Poll.expiry">
+<span class="sig-name descname"><span class="pre">expiry</span></span><a class="headerlink" href="#discord_http.message.Poll.expiry" title="Link to this definition">¶</a></dt>
+<dd><p>The expiry time of the poll, if applicable.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>datetime | None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.message.Poll.is_finalized">
+<span class="sig-name descname"><span class="pre">is_finalized</span></span><a class="headerlink" href="#discord_http.message.Poll.is_finalized" title="Link to this definition">¶</a></dt>
+<dd><p>Whether the poll is finalized or not.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)">bool</a></p>
+</dd>
+</dl>
+</dd></dl>
+
 <dl class="py method">
 <dt class="sig sig-object py" id="discord_http.message.Poll.add_answer">
 <span class="sig-name descname"><span class="pre">add_answer</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">text</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">emoji</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">PollAnswer</span></span></span><a class="headerlink" href="#discord_http.message.Poll.add_answer" title="Link to this definition">¶</a></dt>
@@ -970,6 +1538,7 @@ Example:</p></li>
 <dt class="sig sig-object py" id="discord_http.message.WebhookMessage">
 <em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">discord_http.message.</span></span><span class="sig-name descname"><span class="pre">WebhookMessage</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">state</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">application_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">token</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#discord_http.message.WebhookMessage" title="Link to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#discord_http.message.Message" title="discord_http.message.Message"><code class="xref py py-class docutils literal notranslate"><span class="pre">Message</span></code></a></p>
+<p>Represents a message sent by a webhook.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
@@ -980,6 +1549,28 @@ Example:</p></li>
 </ul>
 </dd>
 </dl>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.message.WebhookMessage.application_id">
+<span class="sig-name descname"><span class="pre">application_id</span></span><a class="headerlink" href="#discord_http.message.WebhookMessage.application_id" title="Link to this definition">¶</a></dt>
+<dd><p>The ID of the application that created the webhook.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)">int</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.message.WebhookMessage.token">
+<span class="sig-name descname"><span class="pre">token</span></span><a class="headerlink" href="#discord_http.message.WebhookMessage.token" title="Link to this definition">¶</a></dt>
+<dd><p>The token of the webhook, used for editing and deleting the message.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)">str</a></p>
+</dd>
+</dl>
+</dd></dl>
+
 <dl class="py method">
 <dt class="sig sig-object py" id="discord_http.message.WebhookMessage.delete">
 <em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">delete</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">delay</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">reason</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></span></span><a class="headerlink" href="#discord_http.message.WebhookMessage.delete" title="Link to this definition">¶</a></dt>
@@ -1086,6 +1677,20 @@ Example:</p></li>
 <li><a class="reference internal" href="#">Message</a><ul>
 <li><a class="reference internal" href="#module-discord_http.message">discord_http.message module</a><ul>
 <li><a class="reference internal" href="#discord_http.message.Attachment"><code class="docutils literal notranslate"><span class="pre">Attachment</span></code></a><ul>
+<li><a class="reference internal" href="#discord_http.message.Attachment.id"><code class="docutils literal notranslate"><span class="pre">Attachment.id</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.message.Attachment.filename"><code class="docutils literal notranslate"><span class="pre">Attachment.filename</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.message.Attachment.size"><code class="docutils literal notranslate"><span class="pre">Attachment.size</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.message.Attachment.url"><code class="docutils literal notranslate"><span class="pre">Attachment.url</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.message.Attachment.proxy_url"><code class="docutils literal notranslate"><span class="pre">Attachment.proxy_url</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.message.Attachment.ephemeral"><code class="docutils literal notranslate"><span class="pre">Attachment.ephemeral</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.message.Attachment.flags"><code class="docutils literal notranslate"><span class="pre">Attachment.flags</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.message.Attachment.content_type"><code class="docutils literal notranslate"><span class="pre">Attachment.content_type</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.message.Attachment.title"><code class="docutils literal notranslate"><span class="pre">Attachment.title</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.message.Attachment.description"><code class="docutils literal notranslate"><span class="pre">Attachment.description</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.message.Attachment.height"><code class="docutils literal notranslate"><span class="pre">Attachment.height</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.message.Attachment.width"><code class="docutils literal notranslate"><span class="pre">Attachment.width</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.message.Attachment.duration_secs"><code class="docutils literal notranslate"><span class="pre">Attachment.duration_secs</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.message.Attachment.waveform"><code class="docutils literal notranslate"><span class="pre">Attachment.waveform</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.message.Attachment.fetch"><code class="docutils literal notranslate"><span class="pre">Attachment.fetch()</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.message.Attachment.is_spoiler"><code class="docutils literal notranslate"><span class="pre">Attachment.is_spoiler()</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.message.Attachment.is_voice_message"><code class="docutils literal notranslate"><span class="pre">Attachment.is_voice_message()</span></code></a></li>
@@ -1095,6 +1700,9 @@ Example:</p></li>
 </ul>
 </li>
 <li><a class="reference internal" href="#discord_http.message.JumpURL"><code class="docutils literal notranslate"><span class="pre">JumpURL</span></code></a><ul>
+<li><a class="reference internal" href="#discord_http.message.JumpURL.guild_id"><code class="docutils literal notranslate"><span class="pre">JumpURL.guild_id</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.message.JumpURL.channel_id"><code class="docutils literal notranslate"><span class="pre">JumpURL.channel_id</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.message.JumpURL.message_id"><code class="docutils literal notranslate"><span class="pre">JumpURL.message_id</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.message.JumpURL.channel"><code class="docutils literal notranslate"><span class="pre">JumpURL.channel</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.message.JumpURL.fetch_channel"><code class="docutils literal notranslate"><span class="pre">JumpURL.fetch_channel()</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.message.JumpURL.fetch_guild"><code class="docutils literal notranslate"><span class="pre">JumpURL.fetch_guild()</span></code></a></li>
@@ -1105,6 +1713,24 @@ Example:</p></li>
 </ul>
 </li>
 <li><a class="reference internal" href="#discord_http.message.Message"><code class="docutils literal notranslate"><span class="pre">Message</span></code></a><ul>
+<li><a class="reference internal" href="#discord_http.message.Message.type"><code class="docutils literal notranslate"><span class="pre">Message.type</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.message.Message.content"><code class="docutils literal notranslate"><span class="pre">Message.content</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.message.Message.author"><code class="docutils literal notranslate"><span class="pre">Message.author</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.message.Message.pinned"><code class="docutils literal notranslate"><span class="pre">Message.pinned</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.message.Message.mention_everyone"><code class="docutils literal notranslate"><span class="pre">Message.mention_everyone</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.message.Message.tts"><code class="docutils literal notranslate"><span class="pre">Message.tts</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.message.Message.poll"><code class="docutils literal notranslate"><span class="pre">Message.poll</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.message.Message.embeds"><code class="docutils literal notranslate"><span class="pre">Message.embeds</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.message.Message.attachments"><code class="docutils literal notranslate"><span class="pre">Message.attachments</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.message.Message.stickers"><code class="docutils literal notranslate"><span class="pre">Message.stickers</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.message.Message.reactions"><code class="docutils literal notranslate"><span class="pre">Message.reactions</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.message.Message.mentions"><code class="docutils literal notranslate"><span class="pre">Message.mentions</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.message.Message.view"><code class="docutils literal notranslate"><span class="pre">Message.view</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.message.Message.edited_timestamp"><code class="docutils literal notranslate"><span class="pre">Message.edited_timestamp</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.message.Message.reference"><code class="docutils literal notranslate"><span class="pre">Message.reference</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.message.Message.resolved_reply"><code class="docutils literal notranslate"><span class="pre">Message.resolved_reply</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.message.Message.resolved_forward"><code class="docutils literal notranslate"><span class="pre">Message.resolved_forward</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.message.Message.interaction"><code class="docutils literal notranslate"><span class="pre">Message.interaction</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.message.Message.channel_mentions"><code class="docutils literal notranslate"><span class="pre">Message.channel_mentions</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.message.Message.emojis"><code class="docutils literal notranslate"><span class="pre">Message.emojis</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.message.Message.is_system"><code class="docutils literal notranslate"><span class="pre">Message.is_system()</span></code></a></li>
@@ -1113,8 +1739,17 @@ Example:</p></li>
 <li><a class="reference internal" href="#discord_http.message.Message.role_mentions"><code class="docutils literal notranslate"><span class="pre">Message.role_mentions</span></code></a></li>
 </ul>
 </li>
-<li><a class="reference internal" href="#discord_http.message.MessageInteraction"><code class="docutils literal notranslate"><span class="pre">MessageInteraction</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.message.MessageInteraction"><code class="docutils literal notranslate"><span class="pre">MessageInteraction</span></code></a><ul>
+<li><a class="reference internal" href="#discord_http.message.MessageInteraction.type"><code class="docutils literal notranslate"><span class="pre">MessageInteraction.type</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.message.MessageInteraction.name"><code class="docutils literal notranslate"><span class="pre">MessageInteraction.name</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.message.MessageInteraction.user"><code class="docutils literal notranslate"><span class="pre">MessageInteraction.user</span></code></a></li>
+</ul>
+</li>
 <li><a class="reference internal" href="#discord_http.message.MessageReference"><code class="docutils literal notranslate"><span class="pre">MessageReference</span></code></a><ul>
+<li><a class="reference internal" href="#discord_http.message.MessageReference.type"><code class="docutils literal notranslate"><span class="pre">MessageReference.type</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.message.MessageReference.guild_id"><code class="docutils literal notranslate"><span class="pre">MessageReference.guild_id</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.message.MessageReference.channel_id"><code class="docutils literal notranslate"><span class="pre">MessageReference.channel_id</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.message.MessageReference.message_id"><code class="docutils literal notranslate"><span class="pre">MessageReference.message_id</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.message.MessageReference.channel"><code class="docutils literal notranslate"><span class="pre">MessageReference.channel</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.message.MessageReference.guild"><code class="docutils literal notranslate"><span class="pre">MessageReference.guild</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.message.MessageReference.jump_url"><code class="docutils literal notranslate"><span class="pre">MessageReference.jump_url</span></code></a></li>
@@ -1123,6 +1758,8 @@ Example:</p></li>
 </ul>
 </li>
 <li><a class="reference internal" href="#discord_http.message.PartialMessage"><code class="docutils literal notranslate"><span class="pre">PartialMessage</span></code></a><ul>
+<li><a class="reference internal" href="#discord_http.message.PartialMessage.channel_id"><code class="docutils literal notranslate"><span class="pre">PartialMessage.channel_id</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.message.PartialMessage.guild_id"><code class="docutils literal notranslate"><span class="pre">PartialMessage.guild_id</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.message.PartialMessage.add_reaction"><code class="docutils literal notranslate"><span class="pre">PartialMessage.add_reaction()</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.message.PartialMessage.channel"><code class="docutils literal notranslate"><span class="pre">PartialMessage.channel</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.message.PartialMessage.create_public_thread"><code class="docutils literal notranslate"><span class="pre">PartialMessage.create_public_thread()</span></code></a></li>
@@ -1143,6 +1780,13 @@ Example:</p></li>
 </ul>
 </li>
 <li><a class="reference internal" href="#discord_http.message.Poll"><code class="docutils literal notranslate"><span class="pre">Poll</span></code></a><ul>
+<li><a class="reference internal" href="#discord_http.message.Poll.text"><code class="docutils literal notranslate"><span class="pre">Poll.text</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.message.Poll.allow_multiselect"><code class="docutils literal notranslate"><span class="pre">Poll.allow_multiselect</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.message.Poll.answers"><code class="docutils literal notranslate"><span class="pre">Poll.answers</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.message.Poll.duration"><code class="docutils literal notranslate"><span class="pre">Poll.duration</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.message.Poll.layout_type"><code class="docutils literal notranslate"><span class="pre">Poll.layout_type</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.message.Poll.expiry"><code class="docutils literal notranslate"><span class="pre">Poll.expiry</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.message.Poll.is_finalized"><code class="docutils literal notranslate"><span class="pre">Poll.is_finalized</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.message.Poll.add_answer"><code class="docutils literal notranslate"><span class="pre">Poll.add_answer()</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.message.Poll.from_dict"><code class="docutils literal notranslate"><span class="pre">Poll.from_dict()</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.message.Poll.remove_answer"><code class="docutils literal notranslate"><span class="pre">Poll.remove_answer()</span></code></a></li>
@@ -1150,6 +1794,8 @@ Example:</p></li>
 </ul>
 </li>
 <li><a class="reference internal" href="#discord_http.message.WebhookMessage"><code class="docutils literal notranslate"><span class="pre">WebhookMessage</span></code></a><ul>
+<li><a class="reference internal" href="#discord_http.message.WebhookMessage.application_id"><code class="docutils literal notranslate"><span class="pre">WebhookMessage.application_id</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.message.WebhookMessage.token"><code class="docutils literal notranslate"><span class="pre">WebhookMessage.token</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.message.WebhookMessage.delete"><code class="docutils literal notranslate"><span class="pre">WebhookMessage.delete()</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.message.WebhookMessage.edit"><code class="docutils literal notranslate"><span class="pre">WebhookMessage.edit()</span></code></a></li>
 </ul>

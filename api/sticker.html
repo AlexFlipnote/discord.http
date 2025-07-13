@@ -307,6 +307,7 @@
 <dt class="sig sig-object py" id="discord_http.sticker.PartialSticker">
 <em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">discord_http.sticker.</span></span><span class="sig-name descname"><span class="pre">PartialSticker</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">state</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">guild_id</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#discord_http.sticker.PartialSticker" title="Link to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="object.html#discord_http.object.PartialBase" title="discord_http.object.PartialBase"><code class="xref py py-class docutils literal notranslate"><span class="pre">PartialBase</span></code></a></p>
+<p>Represents a partial sticker object.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
@@ -317,6 +318,28 @@
 </ul>
 </dd>
 </dl>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.sticker.PartialSticker.name">
+<span class="sig-name descname"><span class="pre">name</span></span><a class="headerlink" href="#discord_http.sticker.PartialSticker.name" title="Link to this definition">¶</a></dt>
+<dd><p>The name of the sticker, if any</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)">str</a> | None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.sticker.PartialSticker.guild_id">
+<span class="sig-name descname"><span class="pre">guild_id</span></span><a class="headerlink" href="#discord_http.sticker.PartialSticker.guild_id" title="Link to this definition">¶</a></dt>
+<dd><p>The ID of the guild this sticker is in, if any</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)">int</a> | None</p>
+</dd>
+</dl>
+</dd></dl>
+
 <dl class="py method">
 <dt class="sig sig-object py" id="discord_http.sticker.PartialSticker.delete">
 <em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">delete</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">guild_id</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">reason</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></span></span><a class="headerlink" href="#discord_http.sticker.PartialSticker.delete" title="Link to this definition">¶</a></dt>
@@ -400,6 +423,7 @@
 <dt class="sig sig-object py" id="discord_http.sticker.Sticker">
 <em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">discord_http.sticker.</span></span><span class="sig-name descname"><span class="pre">Sticker</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">state</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">guild</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#discord_http.sticker.Sticker" title="Link to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#discord_http.sticker.PartialSticker" title="discord_http.sticker.PartialSticker"><code class="xref py py-class docutils literal notranslate"><span class="pre">PartialSticker</span></code></a></p>
+<p>Represents a sticker object.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
@@ -409,6 +433,83 @@
 </ul>
 </dd>
 </dl>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.sticker.Sticker.available">
+<span class="sig-name descname"><span class="pre">available</span></span><a class="headerlink" href="#discord_http.sticker.Sticker.available" title="Link to this definition">¶</a></dt>
+<dd><p>Whether the sticker is available</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)">bool</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.sticker.Sticker.description">
+<span class="sig-name descname"><span class="pre">description</span></span><a class="headerlink" href="#discord_http.sticker.Sticker.description" title="Link to this definition">¶</a></dt>
+<dd><p>The description of the sticker</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)">str</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.sticker.Sticker.format_type">
+<span class="sig-name descname"><span class="pre">format_type</span></span><a class="headerlink" href="#discord_http.sticker.Sticker.format_type" title="Link to this definition">¶</a></dt>
+<dd><p>The format type of the sticker</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="enums.html#discord_http.enums.StickerFormatType" title="discord_http.enums.StickerFormatType">StickerFormatType</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.sticker.Sticker.pack_id">
+<span class="sig-name descname"><span class="pre">pack_id</span></span><a class="headerlink" href="#discord_http.sticker.Sticker.pack_id" title="Link to this definition">¶</a></dt>
+<dd><p>The ID of the sticker pack this sticker belongs to, if any</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)">int</a> | None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.sticker.Sticker.sort_value">
+<span class="sig-name descname"><span class="pre">sort_value</span></span><a class="headerlink" href="#discord_http.sticker.Sticker.sort_value" title="Link to this definition">¶</a></dt>
+<dd><p>The sort value of the sticker, if any</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)">int</a> | None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.sticker.Sticker.tags">
+<span class="sig-name descname"><span class="pre">tags</span></span><a class="headerlink" href="#discord_http.sticker.Sticker.tags" title="Link to this definition">¶</a></dt>
+<dd><p>The tags of the sticker</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)">str</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.sticker.Sticker.type">
+<span class="sig-name descname"><span class="pre">type</span></span><a class="headerlink" href="#discord_http.sticker.Sticker.type" title="Link to this definition">¶</a></dt>
+<dd><p>The type of the sticker</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="enums.html#discord_http.enums.StickerType" title="discord_http.enums.StickerType">StickerType</a></p>
+</dd>
+</dl>
+</dd></dl>
+
 <dl class="py method">
 <dt class="sig sig-object py" id="discord_http.sticker.Sticker.delete">
 <em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">delete</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">reason</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></span></span><a class="headerlink" href="#discord_http.sticker.Sticker.delete" title="Link to this definition">¶</a></dt>
@@ -517,6 +618,8 @@
 <li><a class="reference internal" href="#">Sticker</a><ul>
 <li><a class="reference internal" href="#module-discord_http.sticker">discord_http.sticker module</a><ul>
 <li><a class="reference internal" href="#discord_http.sticker.PartialSticker"><code class="docutils literal notranslate"><span class="pre">PartialSticker</span></code></a><ul>
+<li><a class="reference internal" href="#discord_http.sticker.PartialSticker.name"><code class="docutils literal notranslate"><span class="pre">PartialSticker.name</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.sticker.PartialSticker.guild_id"><code class="docutils literal notranslate"><span class="pre">PartialSticker.guild_id</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.sticker.PartialSticker.delete"><code class="docutils literal notranslate"><span class="pre">PartialSticker.delete()</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.sticker.PartialSticker.edit"><code class="docutils literal notranslate"><span class="pre">PartialSticker.edit()</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.sticker.PartialSticker.fetch"><code class="docutils literal notranslate"><span class="pre">PartialSticker.fetch()</span></code></a></li>
@@ -525,6 +628,13 @@
 </ul>
 </li>
 <li><a class="reference internal" href="#discord_http.sticker.Sticker"><code class="docutils literal notranslate"><span class="pre">Sticker</span></code></a><ul>
+<li><a class="reference internal" href="#discord_http.sticker.Sticker.available"><code class="docutils literal notranslate"><span class="pre">Sticker.available</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.sticker.Sticker.description"><code class="docutils literal notranslate"><span class="pre">Sticker.description</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.sticker.Sticker.format_type"><code class="docutils literal notranslate"><span class="pre">Sticker.format_type</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.sticker.Sticker.pack_id"><code class="docutils literal notranslate"><span class="pre">Sticker.pack_id</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.sticker.Sticker.sort_value"><code class="docutils literal notranslate"><span class="pre">Sticker.sort_value</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.sticker.Sticker.tags"><code class="docutils literal notranslate"><span class="pre">Sticker.tags</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.sticker.Sticker.type"><code class="docutils literal notranslate"><span class="pre">Sticker.type</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.sticker.Sticker.delete"><code class="docutils literal notranslate"><span class="pre">Sticker.delete()</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.sticker.Sticker.edit"><code class="docutils literal notranslate"><span class="pre">Sticker.edit()</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.sticker.Sticker.url"><code class="docutils literal notranslate"><span class="pre">Sticker.url</span></code></a></li>

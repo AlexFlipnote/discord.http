@@ -377,6 +377,7 @@
 <dt class="sig sig-object py" id="discord_http.view.AttachmentComponent">
 <em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">discord_http.view.</span></span><span class="sig-name descname"><span class="pre">AttachmentComponent</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">state</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#discord_http.view.AttachmentComponent" title="Link to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<p>Represents an attachment component.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
@@ -385,6 +386,127 @@
 </ul>
 </dd>
 </dl>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.view.AttachmentComponent.url">
+<span class="sig-name descname"><span class="pre">url</span></span><a class="headerlink" href="#discord_http.view.AttachmentComponent.url" title="Link to this definition">¶</a></dt>
+<dd><p>The URL of the attachment</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)">str</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.view.AttachmentComponent.description">
+<span class="sig-name descname"><span class="pre">description</span></span><a class="headerlink" href="#discord_http.view.AttachmentComponent.description" title="Link to this definition">¶</a></dt>
+<dd><p>The description of the attachment, if any</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)">str</a> | None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.view.AttachmentComponent.spoiler">
+<span class="sig-name descname"><span class="pre">spoiler</span></span><a class="headerlink" href="#discord_http.view.AttachmentComponent.spoiler" title="Link to this definition">¶</a></dt>
+<dd><p>Whether the attachment is a spoiler or not</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)">bool</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.view.AttachmentComponent.filename">
+<span class="sig-name descname"><span class="pre">filename</span></span><a class="headerlink" href="#discord_http.view.AttachmentComponent.filename" title="Link to this definition">¶</a></dt>
+<dd><p>The filename of the attachment, if any</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)">str</a> | None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.view.AttachmentComponent.size">
+<span class="sig-name descname"><span class="pre">size</span></span><a class="headerlink" href="#discord_http.view.AttachmentComponent.size" title="Link to this definition">¶</a></dt>
+<dd><p>The size of the attachment in bytes</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)">int</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.view.AttachmentComponent.height">
+<span class="sig-name descname"><span class="pre">height</span></span><a class="headerlink" href="#discord_http.view.AttachmentComponent.height" title="Link to this definition">¶</a></dt>
+<dd><p>The height of the attachment, if any</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)">int</a> | None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.view.AttachmentComponent.width">
+<span class="sig-name descname"><span class="pre">width</span></span><a class="headerlink" href="#discord_http.view.AttachmentComponent.width" title="Link to this definition">¶</a></dt>
+<dd><p>The width of the attachment, if any</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)">int</a> | None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.view.AttachmentComponent.placeholder">
+<span class="sig-name descname"><span class="pre">placeholder</span></span><a class="headerlink" href="#discord_http.view.AttachmentComponent.placeholder" title="Link to this definition">¶</a></dt>
+<dd><p>The placeholder of the attachment, if any</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)">str</a> | None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.view.AttachmentComponent.placeholder_version">
+<span class="sig-name descname"><span class="pre">placeholder_version</span></span><a class="headerlink" href="#discord_http.view.AttachmentComponent.placeholder_version" title="Link to this definition">¶</a></dt>
+<dd><p>The placeholder version of the attachment, if any</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)">int</a> | None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.view.AttachmentComponent.content_type">
+<span class="sig-name descname"><span class="pre">content_type</span></span><a class="headerlink" href="#discord_http.view.AttachmentComponent.content_type" title="Link to this definition">¶</a></dt>
+<dd><p>The content type of the attachment, if any</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)">str</a> | None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.view.AttachmentComponent.flags">
+<span class="sig-name descname"><span class="pre">flags</span></span><a class="headerlink" href="#discord_http.view.AttachmentComponent.flags" title="Link to this definition">¶</a></dt>
+<dd><p>The flags of the attachment, if any</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)">int</a></p>
+</dd>
+</dl>
+</dd></dl>
+
 <dl class="py method">
 <dt class="sig sig-object py" id="discord_http.view.AttachmentComponent.fetch">
 <em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">fetch</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">use_cached</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#bytes" title="(in Python v3.13)"><span class="pre">bytes</span></a></span></span><a class="headerlink" href="#discord_http.view.AttachmentComponent.fetch" title="Link to this definition">¶</a></dt>
@@ -608,6 +730,7 @@ Example: <cite>./path/to/file.png</cite></p></li>
 <dt class="sig sig-object py" id="discord_http.view.Item">
 <em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">discord_http.view.</span></span><span class="sig-name descname"><span class="pre">Item</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">type</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#discord_http.view.Item" title="Link to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<p>Base class for all components in discord.http API.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>type</strong> (<a class="reference internal" href="enums.html#discord_http.enums.ComponentType" title="discord_http.enums.ComponentType"><em>ComponentType</em></a>)</p>
@@ -1166,6 +1289,17 @@ Example: <cite>./path/to/file.png</cite></p></li>
 </ul>
 </li>
 <li><a class="reference internal" href="#discord_http.view.AttachmentComponent"><code class="docutils literal notranslate"><span class="pre">AttachmentComponent</span></code></a><ul>
+<li><a class="reference internal" href="#discord_http.view.AttachmentComponent.url"><code class="docutils literal notranslate"><span class="pre">AttachmentComponent.url</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.view.AttachmentComponent.description"><code class="docutils literal notranslate"><span class="pre">AttachmentComponent.description</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.view.AttachmentComponent.spoiler"><code class="docutils literal notranslate"><span class="pre">AttachmentComponent.spoiler</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.view.AttachmentComponent.filename"><code class="docutils literal notranslate"><span class="pre">AttachmentComponent.filename</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.view.AttachmentComponent.size"><code class="docutils literal notranslate"><span class="pre">AttachmentComponent.size</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.view.AttachmentComponent.height"><code class="docutils literal notranslate"><span class="pre">AttachmentComponent.height</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.view.AttachmentComponent.width"><code class="docutils literal notranslate"><span class="pre">AttachmentComponent.width</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.view.AttachmentComponent.placeholder"><code class="docutils literal notranslate"><span class="pre">AttachmentComponent.placeholder</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.view.AttachmentComponent.placeholder_version"><code class="docutils literal notranslate"><span class="pre">AttachmentComponent.placeholder_version</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.view.AttachmentComponent.content_type"><code class="docutils literal notranslate"><span class="pre">AttachmentComponent.content_type</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.view.AttachmentComponent.flags"><code class="docutils literal notranslate"><span class="pre">AttachmentComponent.flags</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.view.AttachmentComponent.fetch"><code class="docutils literal notranslate"><span class="pre">AttachmentComponent.fetch()</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.view.AttachmentComponent.save"><code class="docutils literal notranslate"><span class="pre">AttachmentComponent.save()</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.view.AttachmentComponent.to_dict"><code class="docutils literal notranslate"><span class="pre">AttachmentComponent.to_dict()</span></code></a></li>

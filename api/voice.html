@@ -307,6 +307,7 @@
 <dt class="sig sig-object py" id="discord_http.voice.PartialVoiceState">
 <em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">discord_http.voice.</span></span><span class="sig-name descname"><span class="pre">PartialVoiceState</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">state</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">channel_id</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">guild_id</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#discord_http.voice.PartialVoiceState" title="Link to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="object.html#discord_http.object.PartialBase" title="discord_http.object.PartialBase"><code class="xref py py-class docutils literal notranslate"><span class="pre">PartialBase</span></code></a></p>
+<p>Represents a partial voice state object.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
@@ -317,6 +318,39 @@
 </ul>
 </dd>
 </dl>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.voice.PartialVoiceState.id">
+<span class="sig-name descname"><span class="pre">id</span></span><a class="headerlink" href="#discord_http.voice.PartialVoiceState.id" title="Link to this definition">¶</a></dt>
+<dd><p>The ID of the user this voice state belongs to</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)">int</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.voice.PartialVoiceState.channel_id">
+<span class="sig-name descname"><span class="pre">channel_id</span></span><a class="headerlink" href="#discord_http.voice.PartialVoiceState.channel_id" title="Link to this definition">¶</a></dt>
+<dd><p>The ID of the voice channel this user is in, if any</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)">int</a> | None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.voice.PartialVoiceState.guild_id">
+<span class="sig-name descname"><span class="pre">guild_id</span></span><a class="headerlink" href="#discord_http.voice.PartialVoiceState.guild_id" title="Link to this definition">¶</a></dt>
+<dd><p>The ID of the guild this voice state is in, if any</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)">int</a> | None</p>
+</dd>
+</dl>
+</dd></dl>
+
 <dl class="py method">
 <dt class="sig sig-object py" id="discord_http.voice.PartialVoiceState.edit">
 <em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">edit</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">suppress=&lt;MISSING&gt;</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></span></span><a class="headerlink" href="#discord_http.voice.PartialVoiceState.edit" title="Link to this definition">¶</a></dt>
@@ -358,6 +392,7 @@
 <dt class="sig sig-object py" id="discord_http.voice.VoiceState">
 <em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">discord_http.voice.</span></span><span class="sig-name descname"><span class="pre">VoiceState</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">state</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">guild</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">channel</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#discord_http.voice.VoiceState" title="Link to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#discord_http.voice.PartialVoiceState" title="discord_http.voice.PartialVoiceState"><code class="xref py py-class docutils literal notranslate"><span class="pre">PartialVoiceState</span></code></a></p>
+<p>Represents a voice state object.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
@@ -368,6 +403,149 @@
 </ul>
 </dd>
 </dl>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.voice.VoiceState.session_id">
+<span class="sig-name descname"><span class="pre">session_id</span></span><a class="headerlink" href="#discord_http.voice.VoiceState.session_id" title="Link to this definition">¶</a></dt>
+<dd><p>The session ID of the voice state</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)">str</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.voice.VoiceState.user">
+<span class="sig-name descname"><span class="pre">user</span></span><a class="headerlink" href="#discord_http.voice.VoiceState.user" title="Link to this definition">¶</a></dt>
+<dd><p>The user this voice state belongs to</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="user.html#discord_http.user.PartialUser" title="discord_http.user.PartialUser">PartialUser</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.voice.VoiceState.member">
+<span class="sig-name descname"><span class="pre">member</span></span><a class="headerlink" href="#discord_http.voice.VoiceState.member" title="Link to this definition">¶</a></dt>
+<dd><p>The member this voice state belongs to, if any</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="member.html#discord_http.member.Member" title="discord_http.member.Member">Member</a> | None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.voice.VoiceState.channel">
+<span class="sig-name descname"><span class="pre">channel</span></span><a class="headerlink" href="#discord_http.voice.VoiceState.channel" title="Link to this definition">¶</a></dt>
+<dd><p>The voice channel this user is in, if any</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="channel.html#discord_http.channel.BaseChannel" title="discord_http.channel.BaseChannel">BaseChannel</a> | <a class="reference internal" href="channel.html#discord_http.channel.PartialChannel" title="discord_http.channel.PartialChannel">PartialChannel</a> | None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.voice.VoiceState.guild">
+<span class="sig-name descname"><span class="pre">guild</span></span><a class="headerlink" href="#discord_http.voice.VoiceState.guild" title="Link to this definition">¶</a></dt>
+<dd><p>The guild this voice state is in, if any</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="guild.html#discord_http.guild.PartialGuild" title="discord_http.guild.PartialGuild">PartialGuild</a> | None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.voice.VoiceState.deaf">
+<span class="sig-name descname"><span class="pre">deaf</span></span><a class="headerlink" href="#discord_http.voice.VoiceState.deaf" title="Link to this definition">¶</a></dt>
+<dd><p>Whether the user is deafened by the server</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)">bool</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.voice.VoiceState.mute">
+<span class="sig-name descname"><span class="pre">mute</span></span><a class="headerlink" href="#discord_http.voice.VoiceState.mute" title="Link to this definition">¶</a></dt>
+<dd><p>Whether the user is muted by the server</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)">bool</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.voice.VoiceState.self_deaf">
+<span class="sig-name descname"><span class="pre">self_deaf</span></span><a class="headerlink" href="#discord_http.voice.VoiceState.self_deaf" title="Link to this definition">¶</a></dt>
+<dd><p>Whether the user is deafened by themselves</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)">bool</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.voice.VoiceState.self_mute">
+<span class="sig-name descname"><span class="pre">self_mute</span></span><a class="headerlink" href="#discord_http.voice.VoiceState.self_mute" title="Link to this definition">¶</a></dt>
+<dd><p>Whether the user is muted by themselves</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)">bool</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.voice.VoiceState.self_stream">
+<span class="sig-name descname"><span class="pre">self_stream</span></span><a class="headerlink" href="#discord_http.voice.VoiceState.self_stream" title="Link to this definition">¶</a></dt>
+<dd><p>Whether the user is streaming</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)">bool</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.voice.VoiceState.self_video">
+<span class="sig-name descname"><span class="pre">self_video</span></span><a class="headerlink" href="#discord_http.voice.VoiceState.self_video" title="Link to this definition">¶</a></dt>
+<dd><p>Whether the user is using video</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)">bool</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.voice.VoiceState.suppress">
+<span class="sig-name descname"><span class="pre">suppress</span></span><a class="headerlink" href="#discord_http.voice.VoiceState.suppress" title="Link to this definition">¶</a></dt>
+<dd><p>Whether the user is suppressed by the server</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)">bool</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.voice.VoiceState.request_to_speak_timestamp">
+<span class="sig-name descname"><span class="pre">request_to_speak_timestamp</span></span><a class="headerlink" href="#discord_http.voice.VoiceState.request_to_speak_timestamp" title="Link to this definition">¶</a></dt>
+<dd><p>The timestamp when the user requested to speak, if any</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>datetime | None</p>
+</dd>
+</dl>
+</dd></dl>
+
 </dd></dl>
 
 </section>
@@ -431,11 +609,29 @@
 <li><a class="reference internal" href="#">Voice</a><ul>
 <li><a class="reference internal" href="#module-discord_http.voice">discord_http.voice module</a><ul>
 <li><a class="reference internal" href="#discord_http.voice.PartialVoiceState"><code class="docutils literal notranslate"><span class="pre">PartialVoiceState</span></code></a><ul>
+<li><a class="reference internal" href="#discord_http.voice.PartialVoiceState.id"><code class="docutils literal notranslate"><span class="pre">PartialVoiceState.id</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.voice.PartialVoiceState.channel_id"><code class="docutils literal notranslate"><span class="pre">PartialVoiceState.channel_id</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.voice.PartialVoiceState.guild_id"><code class="docutils literal notranslate"><span class="pre">PartialVoiceState.guild_id</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.voice.PartialVoiceState.edit"><code class="docutils literal notranslate"><span class="pre">PartialVoiceState.edit()</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.voice.PartialVoiceState.fetch"><code class="docutils literal notranslate"><span class="pre">PartialVoiceState.fetch()</span></code></a></li>
 </ul>
 </li>
-<li><a class="reference internal" href="#discord_http.voice.VoiceState"><code class="docutils literal notranslate"><span class="pre">VoiceState</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.voice.VoiceState"><code class="docutils literal notranslate"><span class="pre">VoiceState</span></code></a><ul>
+<li><a class="reference internal" href="#discord_http.voice.VoiceState.session_id"><code class="docutils literal notranslate"><span class="pre">VoiceState.session_id</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.voice.VoiceState.user"><code class="docutils literal notranslate"><span class="pre">VoiceState.user</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.voice.VoiceState.member"><code class="docutils literal notranslate"><span class="pre">VoiceState.member</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.voice.VoiceState.channel"><code class="docutils literal notranslate"><span class="pre">VoiceState.channel</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.voice.VoiceState.guild"><code class="docutils literal notranslate"><span class="pre">VoiceState.guild</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.voice.VoiceState.deaf"><code class="docutils literal notranslate"><span class="pre">VoiceState.deaf</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.voice.VoiceState.mute"><code class="docutils literal notranslate"><span class="pre">VoiceState.mute</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.voice.VoiceState.self_deaf"><code class="docutils literal notranslate"><span class="pre">VoiceState.self_deaf</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.voice.VoiceState.self_mute"><code class="docutils literal notranslate"><span class="pre">VoiceState.self_mute</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.voice.VoiceState.self_stream"><code class="docutils literal notranslate"><span class="pre">VoiceState.self_stream</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.voice.VoiceState.self_video"><code class="docutils literal notranslate"><span class="pre">VoiceState.self_video</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.voice.VoiceState.suppress"><code class="docutils literal notranslate"><span class="pre">VoiceState.suppress</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.voice.VoiceState.request_to_speak_timestamp"><code class="docutils literal notranslate"><span class="pre">VoiceState.request_to_speak_timestamp</span></code></a></li>
+</ul>
+</li>
 </ul>
 </li>
 </ul>

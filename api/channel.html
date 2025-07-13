@@ -307,6 +307,7 @@
 <dt class="sig sig-object py" id="discord_http.channel.BaseChannel">
 <em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">discord_http.channel.</span></span><span class="sig-name descname"><span class="pre">BaseChannel</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">state</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">guild_id</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#discord_http.channel.BaseChannel" title="Link to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#discord_http.channel.PartialChannel" title="discord_http.channel.PartialChannel"><code class="xref py py-class docutils literal notranslate"><span class="pre">PartialChannel</span></code></a></p>
+<p>Represents a base channel object.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
@@ -316,6 +317,94 @@
 </ul>
 </dd>
 </dl>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.channel.BaseChannel.name">
+<span class="sig-name descname"><span class="pre">name</span></span><a class="headerlink" href="#discord_http.channel.BaseChannel.name" title="Link to this definition">¶</a></dt>
+<dd><p>The name of the channel</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)">str</a> | None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.channel.BaseChannel.nsfw">
+<span class="sig-name descname"><span class="pre">nsfw</span></span><a class="headerlink" href="#discord_http.channel.BaseChannel.nsfw" title="Link to this definition">¶</a></dt>
+<dd><p>Whether the channel is NSFW</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)">bool</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.channel.BaseChannel.topic">
+<span class="sig-name descname"><span class="pre">topic</span></span><a class="headerlink" href="#discord_http.channel.BaseChannel.topic" title="Link to this definition">¶</a></dt>
+<dd><p>The topic of the channel</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)">str</a> | None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.channel.BaseChannel.position">
+<span class="sig-name descname"><span class="pre">position</span></span><a class="headerlink" href="#discord_http.channel.BaseChannel.position" title="Link to this definition">¶</a></dt>
+<dd><p>The position of the channel in the guild</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)">int</a> | None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.channel.BaseChannel.last_message_id">
+<span class="sig-name descname"><span class="pre">last_message_id</span></span><a class="headerlink" href="#discord_http.channel.BaseChannel.last_message_id" title="Link to this definition">¶</a></dt>
+<dd><p>The ID of the last message in the channel</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)">int</a> | None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.channel.BaseChannel.parent_id">
+<span class="sig-name descname"><span class="pre">parent_id</span></span><a class="headerlink" href="#discord_http.channel.BaseChannel.parent_id" title="Link to this definition">¶</a></dt>
+<dd><p>The ID of the parent channel (if any)</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)">int</a> | None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.channel.BaseChannel.rate_limit_per_user">
+<span class="sig-name descname"><span class="pre">rate_limit_per_user</span></span><a class="headerlink" href="#discord_http.channel.BaseChannel.rate_limit_per_user" title="Link to this definition">¶</a></dt>
+<dd><p>The rate limit per user in seconds</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)">int</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.channel.BaseChannel.permission_overwrites">
+<span class="sig-name descname"><span class="pre">permission_overwrites</span></span><a class="headerlink" href="#discord_http.channel.BaseChannel.permission_overwrites" title="Link to this definition">¶</a></dt>
+<dd><p>The permission overwrites for the channel</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.13)">list</a>[<a class="reference internal" href="flags.html#discord_http.flags.PermissionOverwrite" title="discord_http.flags.PermissionOverwrite">PermissionOverwrite</a>]</p>
+</dd>
+</dl>
+</dd></dl>
+
 <dl class="py method">
 <dt class="sig sig-object py" id="discord_http.channel.BaseChannel.from_dict">
 <em class="property"><span class="k"><span class="pre">classmethod</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">from_dict</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">state</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">guild_id</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#discord_http.channel.BaseChannel" title="discord_http.channel.BaseChannel"><span class="pre">BaseChannel</span></a></span></span><a class="headerlink" href="#discord_http.channel.BaseChannel.from_dict" title="Link to this definition">¶</a></dt>
@@ -482,6 +571,7 @@
 <dt class="sig sig-object py" id="discord_http.channel.DMChannel">
 <em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">discord_http.channel.</span></span><span class="sig-name descname"><span class="pre">DMChannel</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">state</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#discord_http.channel.DMChannel" title="Link to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#discord_http.channel.BaseChannel" title="discord_http.channel.BaseChannel"><code class="xref py py-class docutils literal notranslate"><span class="pre">BaseChannel</span></code></a></p>
+<p>Represents a Direct Message channel.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
@@ -490,6 +580,39 @@
 </ul>
 </dd>
 </dl>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.channel.DMChannel.name">
+<span class="sig-name descname"><span class="pre">name</span></span><a class="headerlink" href="#discord_http.channel.DMChannel.name" title="Link to this definition">¶</a></dt>
+<dd><p>The name of the channel (usually the user’s name)</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)">str</a> | None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.channel.DMChannel.user">
+<span class="sig-name descname"><span class="pre">user</span></span><a class="headerlink" href="#discord_http.channel.DMChannel.user" title="Link to this definition">¶</a></dt>
+<dd><p>The user in the DM channel</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="user.html#discord_http.user.User" title="discord_http.user.User">User</a> | None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.channel.DMChannel.last_message">
+<span class="sig-name descname"><span class="pre">last_message</span></span><a class="headerlink" href="#discord_http.channel.DMChannel.last_message" title="Link to this definition">¶</a></dt>
+<dd><p>The last message in the DM channel</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="message.html#discord_http.message.PartialMessage" title="discord_http.message.PartialMessage">PartialMessage</a> | None</p>
+</dd>
+</dl>
+</dd></dl>
+
 <dl class="py method">
 <dt class="sig sig-object py" id="discord_http.channel.DMChannel.edit">
 <em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">edit</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></span></span><a class="headerlink" href="#discord_http.channel.DMChannel.edit" title="Link to this definition">¶</a></dt>
@@ -542,6 +665,7 @@
 <dt class="sig sig-object py" id="discord_http.channel.ForumChannel">
 <em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">discord_http.channel.</span></span><span class="sig-name descname"><span class="pre">ForumChannel</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">state</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#discord_http.channel.ForumChannel" title="Link to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#discord_http.channel.PublicThread" title="discord_http.channel.PublicThread"><code class="xref py py-class docutils literal notranslate"><span class="pre">PublicThread</span></code></a></p>
+<p>Represents a forum channel object.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
@@ -550,6 +674,28 @@
 </ul>
 </dd>
 </dl>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.channel.ForumChannel.default_reaction_emoji">
+<span class="sig-name descname"><span class="pre">default_reaction_emoji</span></span><a class="headerlink" href="#discord_http.channel.ForumChannel.default_reaction_emoji" title="Link to this definition">¶</a></dt>
+<dd><p>The default reaction emoji for the forum channel</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="emoji.html#discord_http.emoji.EmojiParser" title="discord_http.emoji.EmojiParser">EmojiParser</a> | None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.channel.ForumChannel.tags">
+<span class="sig-name descname"><span class="pre">tags</span></span><a class="headerlink" href="#discord_http.channel.ForumChannel.tags" title="Link to this definition">¶</a></dt>
+<dd><p>The available tags for the forum channel</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.13)">list</a>[<a class="reference internal" href="#discord_http.channel.ForumTag" title="discord_http.channel.ForumTag">ForumTag</a>]</p>
+</dd>
+</dl>
+</dd></dl>
+
 <dl class="py property">
 <dt class="sig sig-object py" id="discord_http.channel.ForumChannel.type">
 <em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">type</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="enums.html#discord_http.enums.ChannelType" title="discord_http.enums.ChannelType"><span class="pre">ChannelType</span></a></em><a class="headerlink" href="#discord_http.channel.ForumChannel.type" title="Link to this definition">¶</a></dt>
@@ -562,11 +708,67 @@
 <dt class="sig sig-object py" id="discord_http.channel.ForumTag">
 <em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">discord_http.channel.</span></span><span class="sig-name descname"><span class="pre">ForumTag</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">data</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#discord_http.channel.ForumTag" title="Link to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<p>Represents a forum tag object.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>data</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.13)"><em>dict</em></a>)</p>
 </dd>
 </dl>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.channel.ForumTag.id">
+<span class="sig-name descname"><span class="pre">id</span></span><a class="headerlink" href="#discord_http.channel.ForumTag.id" title="Link to this definition">¶</a></dt>
+<dd><p>The ID of the tag</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)">int</a> | None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.channel.ForumTag.name">
+<span class="sig-name descname"><span class="pre">name</span></span><a class="headerlink" href="#discord_http.channel.ForumTag.name" title="Link to this definition">¶</a></dt>
+<dd><p>The name of the tag</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)">str</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.channel.ForumTag.moderated">
+<span class="sig-name descname"><span class="pre">moderated</span></span><a class="headerlink" href="#discord_http.channel.ForumTag.moderated" title="Link to this definition">¶</a></dt>
+<dd><p>Whether the tag is moderated</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)">bool</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.channel.ForumTag.emoji_id">
+<span class="sig-name descname"><span class="pre">emoji_id</span></span><a class="headerlink" href="#discord_http.channel.ForumTag.emoji_id" title="Link to this definition">¶</a></dt>
+<dd><p>The emoji ID of the tag</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)">int</a> | None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.channel.ForumTag.emoji_name">
+<span class="sig-name descname"><span class="pre">emoji_name</span></span><a class="headerlink" href="#discord_http.channel.ForumTag.emoji_name" title="Link to this definition">¶</a></dt>
+<dd><p>The emoji name of the tag</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)">str</a> | None</p>
+</dd>
+</dl>
+</dd></dl>
+
 <dl class="py method">
 <dt class="sig sig-object py" id="discord_http.channel.ForumTag.create">
 <em class="property"><span class="k"><span class="pre">classmethod</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">create</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">emoji_id</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">emoji_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">moderated</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#discord_http.channel.ForumTag" title="discord_http.channel.ForumTag"><span class="pre">ForumTag</span></a></span></span><a class="headerlink" href="#discord_http.channel.ForumTag.create" title="Link to this definition">¶</a></dt>
@@ -703,6 +905,7 @@
 <dt class="sig sig-object py" id="discord_http.channel.PartialChannel">
 <em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">discord_http.channel.</span></span><span class="sig-name descname"><span class="pre">PartialChannel</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">state</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">guild_id</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#discord_http.channel.PartialChannel" title="Link to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="object.html#discord_http.object.PartialBase" title="discord_http.object.PartialBase"><code class="xref py py-class docutils literal notranslate"><span class="pre">PartialBase</span></code></a></p>
+<p>Represents a partial channel object.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
@@ -712,6 +915,28 @@
 </ul>
 </dd>
 </dl>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.channel.PartialChannel.guild_id">
+<span class="sig-name descname"><span class="pre">guild_id</span></span><a class="headerlink" href="#discord_http.channel.PartialChannel.guild_id" title="Link to this definition">¶</a></dt>
+<dd><p>The ID of the guild the channel belongs to, if any</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><cite>int | None</cite></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.channel.PartialChannel.parent_id">
+<span class="sig-name descname"><span class="pre">parent_id</span></span><a class="headerlink" href="#discord_http.channel.PartialChannel.parent_id" title="Link to this definition">¶</a></dt>
+<dd><p>The ID of the parent channel or category, if any</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><cite>int | None</cite></p>
+</dd>
+</dl>
+</dd></dl>
+
 <dl class="py method">
 <dt class="sig sig-object py" id="discord_http.channel.PartialChannel.add_thread_member">
 <em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">add_thread_member</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">user_id</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></span></span><a class="headerlink" href="#discord_http.channel.PartialChannel.add_thread_member" title="Link to this definition">¶</a></dt>
@@ -1273,6 +1498,7 @@ So be sure to use the correct parameters for the channel.</p>
 <dt class="sig sig-object py" id="discord_http.channel.PartialThread">
 <em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">discord_http.channel.</span></span><span class="sig-name descname"><span class="pre">PartialThread</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">state</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">guild_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">parent_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">type</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#discord_http.channel.PartialThread" title="Link to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#discord_http.channel.PartialChannel" title="discord_http.channel.PartialChannel"><code class="xref py py-class docutils literal notranslate"><span class="pre">PartialChannel</span></code></a></p>
+<p>Represents a partial thread channel object.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
@@ -1284,6 +1510,17 @@ So be sure to use the correct parameters for the channel.</p>
 </ul>
 </dd>
 </dl>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.channel.PartialThread.parent_id">
+<span class="sig-name descname"><span class="pre">parent_id</span></span><a class="headerlink" href="#discord_http.channel.PartialThread.parent_id" title="Link to this definition">¶</a></dt>
+<dd><p>The ID of the parent channel</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)">int</a></p>
+</dd>
+</dl>
+</dd></dl>
+
 <dl class="py property">
 <dt class="sig sig-object py" id="discord_http.channel.PartialThread.type">
 <em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">type</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="enums.html#discord_http.enums.ChannelType" title="discord_http.enums.ChannelType"><span class="pre">ChannelType</span></a></em><a class="headerlink" href="#discord_http.channel.PartialThread.type" title="Link to this definition">¶</a></dt>
@@ -1316,6 +1553,7 @@ So be sure to use the correct parameters for the channel.</p>
 <dt class="sig sig-object py" id="discord_http.channel.PublicThread">
 <em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">discord_http.channel.</span></span><span class="sig-name descname"><span class="pre">PublicThread</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">state</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#discord_http.channel.PublicThread" title="Link to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#discord_http.channel.BaseChannel" title="discord_http.channel.BaseChannel"><code class="xref py py-class docutils literal notranslate"><span class="pre">BaseChannel</span></code></a></p>
+<p>Represents a public thread channel object.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
@@ -1324,6 +1562,138 @@ So be sure to use the correct parameters for the channel.</p>
 </ul>
 </dd>
 </dl>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.channel.PublicThread.name">
+<span class="sig-name descname"><span class="pre">name</span></span><a class="headerlink" href="#discord_http.channel.PublicThread.name" title="Link to this definition">¶</a></dt>
+<dd><p>The name of the thread</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)">str</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.channel.PublicThread.message_count">
+<span class="sig-name descname"><span class="pre">message_count</span></span><a class="headerlink" href="#discord_http.channel.PublicThread.message_count" title="Link to this definition">¶</a></dt>
+<dd><p>The number of messages in the thread</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)">int</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.channel.PublicThread.member_count">
+<span class="sig-name descname"><span class="pre">member_count</span></span><a class="headerlink" href="#discord_http.channel.PublicThread.member_count" title="Link to this definition">¶</a></dt>
+<dd><p>The number of members in the thread</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)">int</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.channel.PublicThread.rate_limit_per_user">
+<span class="sig-name descname"><span class="pre">rate_limit_per_user</span></span><a class="headerlink" href="#discord_http.channel.PublicThread.rate_limit_per_user" title="Link to this definition">¶</a></dt>
+<dd><p>The rate limit per user in seconds</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)">int</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.channel.PublicThread.locked">
+<span class="sig-name descname"><span class="pre">locked</span></span><a class="headerlink" href="#discord_http.channel.PublicThread.locked" title="Link to this definition">¶</a></dt>
+<dd><p>Whether the thread is locked</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)">bool</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.channel.PublicThread.archived">
+<span class="sig-name descname"><span class="pre">archived</span></span><a class="headerlink" href="#discord_http.channel.PublicThread.archived" title="Link to this definition">¶</a></dt>
+<dd><p>Whether the thread is archived</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)">bool</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.channel.PublicThread.auto_archive_duration">
+<span class="sig-name descname"><span class="pre">auto_archive_duration</span></span><a class="headerlink" href="#discord_http.channel.PublicThread.auto_archive_duration" title="Link to this definition">¶</a></dt>
+<dd><p>The duration in minutes to automatically archive the thread after recent activity</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)">int</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.channel.PublicThread.channel_id">
+<span class="sig-name descname"><span class="pre">channel_id</span></span><a class="headerlink" href="#discord_http.channel.PublicThread.channel_id" title="Link to this definition">¶</a></dt>
+<dd><p>The ID of the channel</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)">int</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.channel.PublicThread.newly_created">
+<span class="sig-name descname"><span class="pre">newly_created</span></span><a class="headerlink" href="#discord_http.channel.PublicThread.newly_created" title="Link to this definition">¶</a></dt>
+<dd><p>Whether the thread was newly created</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)">bool</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.channel.PublicThread.guild_id">
+<span class="sig-name descname"><span class="pre">guild_id</span></span><a class="headerlink" href="#discord_http.channel.PublicThread.guild_id" title="Link to this definition">¶</a></dt>
+<dd><p>The ID of the guild the thread belongs to</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)">int</a> | None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.channel.PublicThread.owner_id">
+<span class="sig-name descname"><span class="pre">owner_id</span></span><a class="headerlink" href="#discord_http.channel.PublicThread.owner_id" title="Link to this definition">¶</a></dt>
+<dd><p>The ID of the user who owns the thread</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)">int</a> | None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.channel.PublicThread.last_message_id">
+<span class="sig-name descname"><span class="pre">last_message_id</span></span><a class="headerlink" href="#discord_http.channel.PublicThread.last_message_id" title="Link to this definition">¶</a></dt>
+<dd><p>The ID of the last message in the thread</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)">int</a> | None</p>
+</dd>
+</dl>
+</dd></dl>
+
 <dl class="py property">
 <dt class="sig sig-object py" id="discord_http.channel.PublicThread.guild">
 <em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">guild</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="guild.html#discord_http.guild.Guild" title="discord_http.guild.Guild"><span class="pre">Guild</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="guild.html#discord_http.guild.PartialGuild" title="discord_http.guild.PartialGuild"><span class="pre">PartialGuild</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></em><a class="headerlink" href="#discord_http.channel.PublicThread.guild" title="Link to this definition">¶</a></dt>
@@ -1478,6 +1848,7 @@ Defaults to <cite>PrivacyLevelType.guild_only</cite></p></li>
 <dt class="sig sig-object py" id="discord_http.channel.VoiceChannel">
 <em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">discord_http.channel.</span></span><span class="sig-name descname"><span class="pre">VoiceChannel</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">state</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#discord_http.channel.VoiceChannel" title="Link to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#discord_http.channel.BaseChannel" title="discord_http.channel.BaseChannel"><code class="xref py py-class docutils literal notranslate"><span class="pre">BaseChannel</span></code></a></p>
+<p>Represents a voice channel object.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
@@ -1486,6 +1857,61 @@ Defaults to <cite>PrivacyLevelType.guild_only</cite></p></li>
 </ul>
 </dd>
 </dl>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.channel.VoiceChannel.id">
+<span class="sig-name descname"><span class="pre">id</span></span><a class="headerlink" href="#discord_http.channel.VoiceChannel.id" title="Link to this definition">¶</a></dt>
+<dd><p>The ID of the voice channel</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)">int</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.channel.VoiceChannel.name">
+<span class="sig-name descname"><span class="pre">name</span></span><a class="headerlink" href="#discord_http.channel.VoiceChannel.name" title="Link to this definition">¶</a></dt>
+<dd><p>The name of the voice channel</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)">str</a> | None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.channel.VoiceChannel.bitrate">
+<span class="sig-name descname"><span class="pre">bitrate</span></span><a class="headerlink" href="#discord_http.channel.VoiceChannel.bitrate" title="Link to this definition">¶</a></dt>
+<dd><p>The bitrate of the voice channel in bits per second</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)">int</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.channel.VoiceChannel.user_limit">
+<span class="sig-name descname"><span class="pre">user_limit</span></span><a class="headerlink" href="#discord_http.channel.VoiceChannel.user_limit" title="Link to this definition">¶</a></dt>
+<dd><p>The user limit of the voice channel</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)">int</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.channel.VoiceChannel.rtc_region">
+<span class="sig-name descname"><span class="pre">rtc_region</span></span><a class="headerlink" href="#discord_http.channel.VoiceChannel.rtc_region" title="Link to this definition">¶</a></dt>
+<dd><p>The RTC region of the voice channel, if set</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)">str</a> | None</p>
+</dd>
+</dl>
+</dd></dl>
+
 <dl class="py property">
 <dt class="sig sig-object py" id="discord_http.channel.VoiceChannel.type">
 <em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">type</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="enums.html#discord_http.enums.ChannelType" title="discord_http.enums.ChannelType"><span class="pre">ChannelType</span></a></em><a class="headerlink" href="#discord_http.channel.VoiceChannel.type" title="Link to this definition">¶</a></dt>
@@ -1498,11 +1924,67 @@ Defaults to <cite>PrivacyLevelType.guild_only</cite></p></li>
 <dt class="sig sig-object py" id="discord_http.channel.VoiceRegion">
 <em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">discord_http.channel.</span></span><span class="sig-name descname"><span class="pre">VoiceRegion</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">data</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#discord_http.channel.VoiceRegion" title="Link to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<p>Represents a voice region object.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>data</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.13)"><em>dict</em></a>)</p>
 </dd>
 </dl>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.channel.VoiceRegion.id">
+<span class="sig-name descname"><span class="pre">id</span></span><a class="headerlink" href="#discord_http.channel.VoiceRegion.id" title="Link to this definition">¶</a></dt>
+<dd><p>The ID of the voice region</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)">str</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.channel.VoiceRegion.name">
+<span class="sig-name descname"><span class="pre">name</span></span><a class="headerlink" href="#discord_http.channel.VoiceRegion.name" title="Link to this definition">¶</a></dt>
+<dd><p>The name of the voice region</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)">str</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.channel.VoiceRegion.custom">
+<span class="sig-name descname"><span class="pre">custom</span></span><a class="headerlink" href="#discord_http.channel.VoiceRegion.custom" title="Link to this definition">¶</a></dt>
+<dd><p>Whether the voice region is custom</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)">bool</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.channel.VoiceRegion.deprecated">
+<span class="sig-name descname"><span class="pre">deprecated</span></span><a class="headerlink" href="#discord_http.channel.VoiceRegion.deprecated" title="Link to this definition">¶</a></dt>
+<dd><p>Whether the voice region is deprecated</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)">bool</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.channel.VoiceRegion.optimal">
+<span class="sig-name descname"><span class="pre">optimal</span></span><a class="headerlink" href="#discord_http.channel.VoiceRegion.optimal" title="Link to this definition">¶</a></dt>
+<dd><p>Whether the voice region is optimal for the current user</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)">bool</a></p>
+</dd>
+</dl>
+</dd></dl>
+
 </dd></dl>
 
 </section>
@@ -1566,6 +2048,14 @@ Defaults to <cite>PrivacyLevelType.guild_only</cite></p></li>
 <li><a class="reference internal" href="#">Channel</a><ul>
 <li><a class="reference internal" href="#module-discord_http.channel">discord_http.channel module</a><ul>
 <li><a class="reference internal" href="#discord_http.channel.BaseChannel"><code class="docutils literal notranslate"><span class="pre">BaseChannel</span></code></a><ul>
+<li><a class="reference internal" href="#discord_http.channel.BaseChannel.name"><code class="docutils literal notranslate"><span class="pre">BaseChannel.name</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.channel.BaseChannel.nsfw"><code class="docutils literal notranslate"><span class="pre">BaseChannel.nsfw</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.channel.BaseChannel.topic"><code class="docutils literal notranslate"><span class="pre">BaseChannel.topic</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.channel.BaseChannel.position"><code class="docutils literal notranslate"><span class="pre">BaseChannel.position</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.channel.BaseChannel.last_message_id"><code class="docutils literal notranslate"><span class="pre">BaseChannel.last_message_id</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.channel.BaseChannel.parent_id"><code class="docutils literal notranslate"><span class="pre">BaseChannel.parent_id</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.channel.BaseChannel.rate_limit_per_user"><code class="docutils literal notranslate"><span class="pre">BaseChannel.rate_limit_per_user</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.channel.BaseChannel.permission_overwrites"><code class="docutils literal notranslate"><span class="pre">BaseChannel.permission_overwrites</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.channel.BaseChannel.from_dict"><code class="docutils literal notranslate"><span class="pre">BaseChannel.from_dict()</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.channel.BaseChannel.mention"><code class="docutils literal notranslate"><span class="pre">BaseChannel.mention</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.channel.BaseChannel.permissions_for"><code class="docutils literal notranslate"><span class="pre">BaseChannel.permissions_for()</span></code></a></li>
@@ -1581,6 +2071,9 @@ Defaults to <cite>PrivacyLevelType.guild_only</cite></p></li>
 </ul>
 </li>
 <li><a class="reference internal" href="#discord_http.channel.DMChannel"><code class="docutils literal notranslate"><span class="pre">DMChannel</span></code></a><ul>
+<li><a class="reference internal" href="#discord_http.channel.DMChannel.name"><code class="docutils literal notranslate"><span class="pre">DMChannel.name</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.channel.DMChannel.user"><code class="docutils literal notranslate"><span class="pre">DMChannel.user</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.channel.DMChannel.last_message"><code class="docutils literal notranslate"><span class="pre">DMChannel.last_message</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.channel.DMChannel.edit"><code class="docutils literal notranslate"><span class="pre">DMChannel.edit()</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.channel.DMChannel.mention"><code class="docutils literal notranslate"><span class="pre">DMChannel.mention</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.channel.DMChannel.type"><code class="docutils literal notranslate"><span class="pre">DMChannel.type</span></code></a></li>
@@ -1591,10 +2084,17 @@ Defaults to <cite>PrivacyLevelType.guild_only</cite></p></li>
 </ul>
 </li>
 <li><a class="reference internal" href="#discord_http.channel.ForumChannel"><code class="docutils literal notranslate"><span class="pre">ForumChannel</span></code></a><ul>
+<li><a class="reference internal" href="#discord_http.channel.ForumChannel.default_reaction_emoji"><code class="docutils literal notranslate"><span class="pre">ForumChannel.default_reaction_emoji</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.channel.ForumChannel.tags"><code class="docutils literal notranslate"><span class="pre">ForumChannel.tags</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.channel.ForumChannel.type"><code class="docutils literal notranslate"><span class="pre">ForumChannel.type</span></code></a></li>
 </ul>
 </li>
 <li><a class="reference internal" href="#discord_http.channel.ForumTag"><code class="docutils literal notranslate"><span class="pre">ForumTag</span></code></a><ul>
+<li><a class="reference internal" href="#discord_http.channel.ForumTag.id"><code class="docutils literal notranslate"><span class="pre">ForumTag.id</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.channel.ForumTag.name"><code class="docutils literal notranslate"><span class="pre">ForumTag.name</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.channel.ForumTag.moderated"><code class="docutils literal notranslate"><span class="pre">ForumTag.moderated</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.channel.ForumTag.emoji_id"><code class="docutils literal notranslate"><span class="pre">ForumTag.emoji_id</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.channel.ForumTag.emoji_name"><code class="docutils literal notranslate"><span class="pre">ForumTag.emoji_name</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.channel.ForumTag.create"><code class="docutils literal notranslate"><span class="pre">ForumTag.create()</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.channel.ForumTag.from_data"><code class="docutils literal notranslate"><span class="pre">ForumTag.from_data()</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.channel.ForumTag.to_dict"><code class="docutils literal notranslate"><span class="pre">ForumTag.to_dict()</span></code></a></li>
@@ -1617,6 +2117,8 @@ Defaults to <cite>PrivacyLevelType.guild_only</cite></p></li>
 </ul>
 </li>
 <li><a class="reference internal" href="#discord_http.channel.PartialChannel"><code class="docutils literal notranslate"><span class="pre">PartialChannel</span></code></a><ul>
+<li><a class="reference internal" href="#discord_http.channel.PartialChannel.guild_id"><code class="docutils literal notranslate"><span class="pre">PartialChannel.guild_id</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.channel.PartialChannel.parent_id"><code class="docutils literal notranslate"><span class="pre">PartialChannel.parent_id</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.channel.PartialChannel.add_thread_member"><code class="docutils literal notranslate"><span class="pre">PartialChannel.add_thread_member()</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.channel.PartialChannel.bulk_delete_messages"><code class="docutils literal notranslate"><span class="pre">PartialChannel.bulk_delete_messages()</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.channel.PartialChannel.channel"><code class="docutils literal notranslate"><span class="pre">PartialChannel.channel</span></code></a></li>
@@ -1652,6 +2154,7 @@ Defaults to <cite>PrivacyLevelType.guild_only</cite></p></li>
 </ul>
 </li>
 <li><a class="reference internal" href="#discord_http.channel.PartialThread"><code class="docutils literal notranslate"><span class="pre">PartialThread</span></code></a><ul>
+<li><a class="reference internal" href="#discord_http.channel.PartialThread.parent_id"><code class="docutils literal notranslate"><span class="pre">PartialThread.parent_id</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.channel.PartialThread.type"><code class="docutils literal notranslate"><span class="pre">PartialThread.type</span></code></a></li>
 </ul>
 </li>
@@ -1660,6 +2163,18 @@ Defaults to <cite>PrivacyLevelType.guild_only</cite></p></li>
 </ul>
 </li>
 <li><a class="reference internal" href="#discord_http.channel.PublicThread"><code class="docutils literal notranslate"><span class="pre">PublicThread</span></code></a><ul>
+<li><a class="reference internal" href="#discord_http.channel.PublicThread.name"><code class="docutils literal notranslate"><span class="pre">PublicThread.name</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.channel.PublicThread.message_count"><code class="docutils literal notranslate"><span class="pre">PublicThread.message_count</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.channel.PublicThread.member_count"><code class="docutils literal notranslate"><span class="pre">PublicThread.member_count</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.channel.PublicThread.rate_limit_per_user"><code class="docutils literal notranslate"><span class="pre">PublicThread.rate_limit_per_user</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.channel.PublicThread.locked"><code class="docutils literal notranslate"><span class="pre">PublicThread.locked</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.channel.PublicThread.archived"><code class="docutils literal notranslate"><span class="pre">PublicThread.archived</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.channel.PublicThread.auto_archive_duration"><code class="docutils literal notranslate"><span class="pre">PublicThread.auto_archive_duration</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.channel.PublicThread.channel_id"><code class="docutils literal notranslate"><span class="pre">PublicThread.channel_id</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.channel.PublicThread.newly_created"><code class="docutils literal notranslate"><span class="pre">PublicThread.newly_created</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.channel.PublicThread.guild_id"><code class="docutils literal notranslate"><span class="pre">PublicThread.guild_id</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.channel.PublicThread.owner_id"><code class="docutils literal notranslate"><span class="pre">PublicThread.owner_id</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.channel.PublicThread.last_message_id"><code class="docutils literal notranslate"><span class="pre">PublicThread.last_message_id</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.channel.PublicThread.guild"><code class="docutils literal notranslate"><span class="pre">PublicThread.guild</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.channel.PublicThread.last_message"><code class="docutils literal notranslate"><span class="pre">PublicThread.last_message</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.channel.PublicThread.owner"><code class="docutils literal notranslate"><span class="pre">PublicThread.owner</span></code></a></li>
@@ -1686,10 +2201,22 @@ Defaults to <cite>PrivacyLevelType.guild_only</cite></p></li>
 </ul>
 </li>
 <li><a class="reference internal" href="#discord_http.channel.VoiceChannel"><code class="docutils literal notranslate"><span class="pre">VoiceChannel</span></code></a><ul>
+<li><a class="reference internal" href="#discord_http.channel.VoiceChannel.id"><code class="docutils literal notranslate"><span class="pre">VoiceChannel.id</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.channel.VoiceChannel.name"><code class="docutils literal notranslate"><span class="pre">VoiceChannel.name</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.channel.VoiceChannel.bitrate"><code class="docutils literal notranslate"><span class="pre">VoiceChannel.bitrate</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.channel.VoiceChannel.user_limit"><code class="docutils literal notranslate"><span class="pre">VoiceChannel.user_limit</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.channel.VoiceChannel.rtc_region"><code class="docutils literal notranslate"><span class="pre">VoiceChannel.rtc_region</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.channel.VoiceChannel.type"><code class="docutils literal notranslate"><span class="pre">VoiceChannel.type</span></code></a></li>
 </ul>
 </li>
-<li><a class="reference internal" href="#discord_http.channel.VoiceRegion"><code class="docutils literal notranslate"><span class="pre">VoiceRegion</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.channel.VoiceRegion"><code class="docutils literal notranslate"><span class="pre">VoiceRegion</span></code></a><ul>
+<li><a class="reference internal" href="#discord_http.channel.VoiceRegion.id"><code class="docutils literal notranslate"><span class="pre">VoiceRegion.id</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.channel.VoiceRegion.name"><code class="docutils literal notranslate"><span class="pre">VoiceRegion.name</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.channel.VoiceRegion.custom"><code class="docutils literal notranslate"><span class="pre">VoiceRegion.custom</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.channel.VoiceRegion.deprecated"><code class="docutils literal notranslate"><span class="pre">VoiceRegion.deprecated</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.channel.VoiceRegion.optimal"><code class="docutils literal notranslate"><span class="pre">VoiceRegion.optimal</span></code></a></li>
+</ul>
+</li>
 </ul>
 </li>
 </ul>
