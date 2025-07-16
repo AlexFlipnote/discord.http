@@ -127,6 +127,35 @@ This what the ``[ INFO ]`` messages mean:
 3. Showing that the bot is now ready to receive interactions from Discord API.
 4. Confirming that the URL you provided in the bot's application page is correct, working and Discord API can reach it.
 
+Python logging
+--------------
+The library uses Python's built-in logging module to log messages.
+If you want to use it to have the same output as the library, you can do so by using the following code:
+
+.. code-block:: python
+
+  import logging
+
+  _log = logging.getLogger("discord_http")
+  _log.info("Hello World!")
+
+By default, the library runs in the ``INFO`` logging level, which means you can use all the default logging levels except ``DEBUG``.
+However if you do want to use ``DEBUG``, you can do so by setting the logging level directly in the Client:
+
+.. code-block:: python
+
+  import logging
+
+  client = Client(
+      ...
+      logging_level=logging.DEBUG
+  )
+
+.. note::
+  Be aware that enabling ``DEBUG`` logging level will produce a lot of output since discord.http uses it extensively for debugging purposes.
+  It is recommended to only use it for debugging purposes and not in production.
+
+
 discord.http/gateway
 --------------------
 
@@ -147,8 +176,15 @@ If you want to use the gateway, you can do so by using the ``enable_gateway`` pa
 
 Intents
 ~~~~~~~
-By default, there are 0 intents enabled, which means you would have a gateway, but it would essentially do nothing.
+By default, there are no intents enabled, which means you would have a gateway, but it would essentially do nothing.
 You can use the :class:`Intents` flag to enable certain events that you desire to listen to.
+
+
+.. warning::
+  Some intents does require extra permissions if you are using a verified bot, such as ``message_content``, ``guild_members`` and ``guild_presences``.
+  If you do not have the required permissions, the library will raise an exception when you try to start the bot.
+
+  You can check `Privileged Intents <https://discord.com/developers/docs/events/gateway#privileged-intents>`_ for more information.
 
 .. code-block:: python
 
@@ -156,7 +192,11 @@ You can use the :class:`Intents` flag to enable certain events that you desire t
 
   client = Client(
       ...
-      intents=Intents()
+      intents=(
+        Intents.guilds |
+        Intents.guild_members |
+        ...
+    )
   )
 
 Cache
@@ -165,13 +205,20 @@ By default, cache is completly disabled, this is an opt-in feature.
 You can use the :class:`GatewayCacheFlags` flag to enable certain cache flags as you desire.
 Mostly this is useful if you wish to reduce the amount of data needing to be requested from Discord API.
 
+Goal of this is to make sure that you are in full control of what you want to cache and what not.
+Not to mention that this will also reduce the amount of RAM usage, as the library will not cache everything by default.
+
 .. code-block:: python
 
   from discord_http.gateway import GatewayCacheFlags
 
   client = Client(
       ...
-      cache_flags=GatewayCacheFlags()
+      cache_flags=(
+        GatewayCacheFlags.guilds |
+        GatewayCacheFlags.channels |
+        ...
+    )
   )
 
 

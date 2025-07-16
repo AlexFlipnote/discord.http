@@ -429,6 +429,32 @@ telling what has happened. This simply means that you did it all correctly and c
 <li><p>Confirming that the URL you provided in the bot’s application page is correct, working and Discord API can reach it.</p></li>
 </ol>
 </section>
+<section id="python-logging">
+<h2>Python logging<a class="headerlink" href="#python-logging" title="Link to this heading">¶</a></h2>
+<p>The library uses Python’s built-in logging module to log messages.
+If you want to use it to have the same output as the library, you can do so by using the following code:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">logging</span>
+
+<span class="n">_log</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="s2">&quot;discord_http&quot;</span><span class="p">)</span>
+<span class="n">_log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Hello World!&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>By default, the library runs in the <code class="docutils literal notranslate"><span class="pre">INFO</span></code> logging level, which means you can use all the default logging levels except <code class="docutils literal notranslate"><span class="pre">DEBUG</span></code>.
+However if you do want to use <code class="docutils literal notranslate"><span class="pre">DEBUG</span></code>, you can do so by setting the logging level directly in the Client:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">logging</span>
+
+<span class="n">client</span> <span class="o">=</span> <span class="n">Client</span><span class="p">(</span>
+    <span class="o">...</span>
+    <span class="n">logging_level</span><span class="o">=</span><span class="n">logging</span><span class="o">.</span><span class="n">DEBUG</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Be aware that enabling <code class="docutils literal notranslate"><span class="pre">DEBUG</span></code> logging level will produce a lot of output since discord.http uses it extensively for debugging purposes.
+It is recommended to only use it for debugging purposes and not in production.</p>
+</div>
+</section>
 <section id="discord-http-gateway">
 <h2>discord.http/gateway<a class="headerlink" href="#discord-http-gateway" title="Link to this heading">¶</a></h2>
 <p>If you want to use the gateway, you can do so by using the <code class="docutils literal notranslate"><span class="pre">enable_gateway</span></code> parameter in the Client</p>
@@ -445,13 +471,23 @@ It also uses <code class="docutils literal notranslate"><span class="pre">max_co
 </div>
 <section id="intents">
 <h3>Intents<a class="headerlink" href="#intents" title="Link to this heading">¶</a></h3>
-<p>By default, there are 0 intents enabled, which means you would have a gateway, but it would essentially do nothing.
+<p>By default, there are no intents enabled, which means you would have a gateway, but it would essentially do nothing.
 You can use the <code class="xref py py-class docutils literal notranslate"><span class="pre">Intents</span></code> flag to enable certain events that you desire to listen to.</p>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>Some intents does require extra permissions if you are using a verified bot, such as <code class="docutils literal notranslate"><span class="pre">message_content</span></code>, <code class="docutils literal notranslate"><span class="pre">guild_members</span></code> and <code class="docutils literal notranslate"><span class="pre">guild_presences</span></code>.
+If you do not have the required permissions, the library will raise an exception when you try to start the bot.</p>
+<p>You can check <a class="reference external" href="https://discord.com/developers/docs/events/gateway#privileged-intents">Privileged Intents</a> for more information.</p>
+</div>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">discord_http.gateway</span><span class="w"> </span><span class="kn">import</span> <span class="n">Intents</span>
 
 <span class="n">client</span> <span class="o">=</span> <span class="n">Client</span><span class="p">(</span>
     <span class="o">...</span>
-    <span class="n">intents</span><span class="o">=</span><span class="n">Intents</span><span class="p">()</span>
+    <span class="n">intents</span><span class="o">=</span><span class="p">(</span>
+      <span class="n">Intents</span><span class="o">.</span><span class="n">guilds</span> <span class="o">|</span>
+      <span class="n">Intents</span><span class="o">.</span><span class="n">guild_members</span> <span class="o">|</span>
+      <span class="o">...</span>
+  <span class="p">)</span>
 <span class="p">)</span>
 </pre></div>
 </div>
@@ -461,11 +497,17 @@ You can use the <code class="xref py py-class docutils literal notranslate"><spa
 <p>By default, cache is completly disabled, this is an opt-in feature.
 You can use the <code class="xref py py-class docutils literal notranslate"><span class="pre">GatewayCacheFlags</span></code> flag to enable certain cache flags as you desire.
 Mostly this is useful if you wish to reduce the amount of data needing to be requested from Discord API.</p>
+<p>Goal of this is to make sure that you are in full control of what you want to cache and what not.
+Not to mention that this will also reduce the amount of RAM usage, as the library will not cache everything by default.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">discord_http.gateway</span><span class="w"> </span><span class="kn">import</span> <span class="n">GatewayCacheFlags</span>
 
 <span class="n">client</span> <span class="o">=</span> <span class="n">Client</span><span class="p">(</span>
     <span class="o">...</span>
-    <span class="n">cache_flags</span><span class="o">=</span><span class="n">GatewayCacheFlags</span><span class="p">()</span>
+    <span class="n">cache_flags</span><span class="o">=</span><span class="p">(</span>
+      <span class="n">GatewayCacheFlags</span><span class="o">.</span><span class="n">guilds</span> <span class="o">|</span>
+      <span class="n">GatewayCacheFlags</span><span class="o">.</span><span class="n">channels</span> <span class="o">|</span>
+      <span class="o">...</span>
+  <span class="p">)</span>
 <span class="p">)</span>
 </pre></div>
 </div>
@@ -668,6 +710,7 @@ the port in the command mentioned earlier.</p>
 </ul>
 </li>
 <li><a class="reference internal" href="#quick-example">Quick example</a></li>
+<li><a class="reference internal" href="#python-logging">Python logging</a></li>
 <li><a class="reference internal" href="#discord-http-gateway">discord.http/gateway</a><ul>
 <li><a class="reference internal" href="#intents">Intents</a></li>
 <li><a class="reference internal" href="#cache">Cache</a></li>
