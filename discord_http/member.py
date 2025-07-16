@@ -387,6 +387,8 @@ class Member(PartialMember):
         The avatar decoration of the member, if available.
     nameplate: Nameplate | None
         The nameplate of the member, if available.
+    primary_guild: PrimaryGuild | None
+        The primary guild of the member, if available.
     """
     def __init__(
         self,
@@ -420,6 +422,7 @@ class Member(PartialMember):
 
         self.avatar_decoration: AvatarDecoration | None = None
         self.nameplate: Nameplate | None = self._user.nameplate
+        self.primary_guild: PrimaryGuild | None = self._user.primary_guild
 
         self._from_data(data)
 
@@ -470,15 +473,6 @@ class Member(PartialMember):
             ]
 
         return self._roles
-
-    @property
-    def primary_guild(self) -> PrimaryGuild | None:
-        """
-        Returns the primary guild of the member.
-
-        This is commonly known as 'clan'.
-        """
-        return self._user.primary_guild
 
     def get_role(
         self,

@@ -32,15 +32,15 @@ class Asset:
         animated: bool = False
     ):
         self._state = state
-        self._url: str = url
-        self._animated: bool = animated
-        self._key: str = key
+        self.url: str = url
+        self.animated: bool = animated
+        self.key: str = key
 
     def __str__(self) -> str:
-        return self._url
+        return self.url
 
     def __repr__(self) -> str:
-        shorten = self._url.replace(self.BASE, "")
+        shorten = self.url.replace(self.BASE, "")
         return f"<Asset url={shorten}>"
 
     async def fetch(self) -> bytes:
@@ -117,8 +117,8 @@ class Asset:
         return self.__class__(
             state=self._state,
             url=url,
-            key=self._key,
-            animated=self._animated
+            key=self.key,
+            animated=self.animated
         )
 
     def with_static_format(
@@ -137,41 +137,9 @@ class Asset:
         -------
             The new asset object, if animated, it will return no changes
         """
-        if self._animated:
+        if self.animated:
             return self
         return self.replace(format=format)
-
-    @property
-    def url(self) -> str:
-        """
-        The URL of the asset.
-
-        Returns
-        -------
-            The URL of the asset
-        """
-        return self._url
-
-    @property
-    def key(self) -> str:
-        """
-        The key of the asset.
-
-        Returns
-        -------
-            The key of the asset
-        """
-        return self._key
-
-    def is_animated(self) -> bool:
-        """
-        Whether the asset is animated or not.
-
-        Returns
-        -------
-            Whether the asset is animated or not
-        """
-        return self._animated
 
     @classmethod
     def _from_avatar(
