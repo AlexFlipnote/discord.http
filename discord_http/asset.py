@@ -202,6 +202,18 @@ class Asset:
         )
 
     @classmethod
+    def _from_collectibles(
+        cls,
+        state: "DiscordAPI",
+        image: str
+    ) -> Self:
+        return cls(
+            state=state,
+            url=f"{cls.BASE}/assets/collectibles/{image}img.png",
+            key=image
+        )
+
+    @classmethod
     def _from_guild_avatar(
         cls,
         state: "DiscordAPI",
@@ -215,6 +227,22 @@ class Asset:
             state=state,
             url=f"{cls.BASE}/guilds/{guild_id}/users/{member_id}/avatars/{avatar}.{format_}?size=1024",
             key=avatar,
+            animated=animated
+        )
+
+    @classmethod
+    def _from_guild_clan_badge(
+        cls,
+        state: "DiscordAPI",
+        guild_id: int,
+        badge: str
+    ) -> Self:
+        animated = badge.startswith("a_")
+        format_ = "gif" if animated else "png"
+        return cls(
+            state=state,
+            url=f"{cls.BASE}/clan-badges/{guild_id}/{badge}.{format_}?size=1024",
+            key=badge,
             animated=animated
         )
 

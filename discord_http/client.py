@@ -50,6 +50,76 @@ __all__ = (
 
 
 class Client:
+    """
+    The main client class for discord.http.
+
+    Attributes
+    ----------
+    gateway: GatewayClient | None
+        The gateway client, if enabled
+    commands: dict[str, Command]
+        The commands registered to the client
+    listeners: list[Listener]
+        The listeners registered to the client
+    interactions: dict[str, Interaction]
+        The interactions registered to the client
+    interactions_regex: dict[str, Interaction]
+        The interactions registered to the client with regex
+    cache: Cache
+        The cache for the client, used for caching guilds, users, etc.
+    state: DiscordAPI
+        The state for the client, used for making HTTP requests
+    backend: DiscordHTTP
+        The backend for the client, used for serving HTTP requests
+
+    Parameters
+    ----------
+    token: str
+        Discord bot token
+    application_id: int | None
+        Application ID of the bot, not the User ID
+    public_key: str | None
+        Public key of the bot, used for validating interactions
+    guild_id: int | None
+        Guild ID to sync commands to, if not provided, it will sync to global
+    sync: bool
+        Whether to sync commands on boot or not
+    api_version: int
+        API version to use for both HTTP and WS, if not provided, it will use the default (10)
+    loop: asyncio.AbstractEventLoop | None
+        Event loop to use, if not provided, it will use `asyncio.get_running_loop()`
+    allowed_mentions: AllowedMentions | None
+        Allowed mentions to use, if not provided, it will use `AllowedMentions.all()`
+    enable_gateway: bool
+        Whether to enable the gateway or not, which runs in the background
+    automatic_shards: bool
+        Whether to automatically shard the bot or not
+    playing_status: PlayingStatus | None
+        The playing status to use, if not provided, it will use `None`.
+        This is only used if `enable_gateway` is `True`.
+    chunk_guilds_on_startup: bool
+        Whether to chunk guilds or not when booting, which will reduce the amount of requests
+    guild_ready_timeout: float
+        **Gateway**: How long to wait for last GUILD_CREATE to be recieved
+        before triggering shard ready
+    gateway_cache: GatewayCacheFlags | None
+        How the gateway should cache, only used if `enable_gateway` is `True`.
+        Leave empty to use no cache.
+    intents: Intents | None
+        Intents to use, only used if `enable_gateway` is `True`
+    logging_level: int
+        Logging level to use, if not provided, it will use `logging.INFO`
+    call_after_delay: float | int
+        How long to wait before calling the `call_after` coroutine
+    debug_events: bool
+        Whether to log events or not, if not provided, `on_raw_*` events will not be useable
+    interaction_path: str | None
+        Path to the interaction endpoint, if not provided, it will use the default path which is just `/` (aka. root).
+    disable_default_get_path: bool
+        Whether to disable the default GET path or not, if not provided, it will use `False`.
+        The default GET path only provides information about the bot and when it was last rebooted.
+        Usually a great tool to just validate that your bot is online.
+    """
     def __init__(
         self,
         *,
@@ -67,61 +137,13 @@ class Client:
         chunk_guilds_on_startup: bool = False,
         guild_ready_timeout: float = 2.0,
         gateway_cache: "GatewayCacheFlags | None" = None,
+        interaction_path: str | None = None,
         intents: "Intents | None" = None,
         logging_level: int = logging.INFO,
         call_after_delay: float | int = 0.1,
         disable_default_get_path: bool = False,
         debug_events: bool = False
     ):
-        """
-        The main client class for discord.http.
-
-        Parameters
-        ----------
-        token:
-            Discord bot token
-        application_id:
-            Application ID of the bot, not the User ID
-        public_key:
-            Public key of the bot, used for validating interactions
-        guild_id:
-            Guild ID to sync commands to, if not provided, it will sync to global
-        sync:
-            Whether to sync commands on boot or not
-        api_version:
-            API version to use for both HTTP and WS, if not provided, it will use the default (10)
-        loop:
-            Event loop to use, if not provided, it will use `asyncio.get_running_loop()`
-        allowed_mentions:
-            Allowed mentions to use, if not provided, it will use `AllowedMentions.all()`
-        enable_gateway:
-            Whether to enable the gateway or not, which runs in the background
-        automatic_shards:
-            Whether to automatically shard the bot or not
-        playing_status:
-            The playing status to use, if not provided, it will use `None`.
-            This is only used if `enable_gateway` is `True`.
-        chunk_guilds_on_startup:
-            Whether to chunk guilds or not when booting, which will reduce the amount of requests
-        guild_ready_timeout:
-            **Gateway**: How long to wait for last GUILD_CREATE to be recieved
-            before triggering shard ready
-        gateway_cache:
-            How the gateway should cache, only used if `enable_gateway` is `True`.
-            Leave empty to use no cache.
-        intents:
-            Intents to use, only used if `enable_gateway` is `True`
-        logging_level:
-            Logging level to use, if not provided, it will use `logging.INFO`
-        call_after_delay:
-            How long to wait before calling the `call_after` coroutine
-        debug_events:
-            Whether to log events or not, if not provided, `on_raw_*` events will not be useable
-        disable_default_get_path:
-            Whether to disable the default GET path or not, if not provided, it will use `False`.
-            The default GET path only provides information about the bot and when it was last rebooted.
-            Usually a great tool to just validate that your bot is online.
-        """
         self.application_id: int | None = application_id
         self.api_version: int = int(api_version)
         self.public_key: str | None = public_key
@@ -137,6 +159,7 @@ class Client:
         self.chunk_guilds_on_startup: bool = chunk_guilds_on_startup
         self.call_after_delay: float | int = call_after_delay
         self.intents: Intents | None = intents
+        self.interaction_path: str | None = interaction_path or "/"
 
         self.gateway: "GatewayClient | None" = None
         self.disable_default_get_path: bool = disable_default_get_path

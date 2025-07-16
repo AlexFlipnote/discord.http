@@ -8,22 +8,140 @@ from .enums import DefaultAvatarType
 from .file import File
 from .flags import UserFlags, MessageFlags
 from .mentions import AllowedMentions
-from .object import PartialBase
+from .object import PartialBase, Snowflake
 from .response import ResponseType, MessageResponse
 from .view import View
 
 if TYPE_CHECKING:
     from .channel import DMChannel
     from .http import DiscordAPI
+    from .guild import Guild, PartialGuild
     from .message import Message
 
 MISSING = utils.MISSING
 
 __all__ = (
+    "AvatarDecoration",
+    "Nameplate",
     "PartialUser",
+    "PrimaryGuild",
     "User",
     "UserClient",
 )
+
+
+class Nameplate:
+    """
+    Represents a nameplate collectible of a user.
+
+    Attributes
+    ----------
+    sku_id: int
+        The ID of the SKU associated with the nameplate
+    label: str
+        The label of the nameplate
+    palette: str
+        The palette of the nameplate
+    asset: Asset
+        The asset of the nameplate
+    """
+    def __init__(self, state: "DiscordAPI", data: dict):
+        self._state = state
+
+        self.sku_id: int = int(data["sku_id"])
+        self.label: str = data["label"]
+        self.palette: str = data["palette"]
+        self.asset: Asset = Asset._from_collectibles(state, data["asset"])
+
+    def __repr__(self) -> str:
+        return f"<Nameplate sku_id={self.sku_id} label='{self.label}' palette='{self.palette}'>"
+
+    def __str__(self) -> str:
+        return self.asset.url
+
+    @property
+    def shop_url(self) -> str:
+        """ The URL of the avatar decoration asset. """
+        return f"https://discord.com/shop#itemSkuId={self.sku_id}"
+
+
+class PrimaryGuild:
+    """
+    Represents a primary guild of a user.
+
+    This is commonly known as 'clan'.
+
+    Attributes
+    ----------
+    guild_id: int
+        The ID of the guild
+    tag: str | None
+        The tag of the guild, if any
+    badge: Asset | None
+        The badge of the guild, if any
+    """
+    def __init__(self, state: "DiscordAPI", data: dict):
+        self._state = state
+
+        self.guild_id: int | None = utils.get_int(data, "identity_guild_id")
+        self.tag: str | None = data.get("tag")
+        self.badge: Asset | None = None
+
+        self._from_data(data)
+
+    def __repr__(self) -> str:
+        return f"<PrimaryGuild guild_id={self.guild_id} tag='{self.tag}'>"
+
+    def _from_data(self, data: dict) -> None:
+        if self.guild_id and data.get("badge"):
+            self.badge = Asset._from_guild_clan_badge(
+                self._state, self.guild_id, data["badge"]
+            )
+
+    def guild(self) -> "Guild | PartialGuild | None":
+        """ Returns the guild object. """
+        if not self.guild_id:
+            return None
+
+        cache = self._state.cache.get_guild(self.guild_id)
+        if cache:
+            return cache
+
+        return self._state.bot.get_partial_guild(
+            self.guild_id
+        )
+
+
+class AvatarDecoration(Snowflake):
+    """
+    Represents an avatar decoration of a user.
+
+    Attributes
+    ----------
+    sku_id: int
+        The ID of the SKU associated with the avatar decoration
+    asset: Asset
+        The asset of the avatar decoration
+    """
+    def __init__(self, state: "DiscordAPI", data: dict):
+        super().__init__(id=int(data["sku_id"]))
+        self._state = state
+
+        self.sku_id: int = int(data["sku_id"])
+        self.asset = Asset._from_avatar_decoration(
+            self._state, data["asset"]
+        )
+
+    def __repr__(self) -> str:
+        return f"<AvatarDecoration sku_id={self.sku_id} asset='{self.asset}'>"
+
+    def __str__(self) -> str:
+        return self.asset.url
+
+    @property
+    def shop_url(self) -> str:
+        """ The URL of the avatar decoration asset. """
+        return f"https://discord.com/shop#itemSkuId={self.sku_id}"
 
 
 class PartialUser(PartialBase):
@@ -188,8 +306,10 @@ class User(PartialUser):
         The accent colour of the user, if any
     banner_colour: Colour | None
         The banner colour of the user, if any
-    avatar_decoration: Asset | None
-        The avatar decoration of the user, if any
+    avatar_decoration: AvatarDecoration | None
+        The avatar decoration of the member, if available.
+    nameplate: Nameplate | None
+        The nameplate of the member, if available.
     """
     def __init__(
         self,
@@ -215,15 +335,12 @@ class User(PartialUser):
         self.accent_colour: Colour | None = None
         self.banner_colour: Colour | None = None
 
-        self.avatar_decoration: Asset | None = None
         self.global_name: str | None = data.get("global_name")
 
         self.public_flags: UserFlags | None = None
-
-        # This might change a lot
-        self.clan: dict | None = data.get("clan")
-        self.collectibles: dict | None = data.get("collectibles")
-        self.avatar_decoration_data: dict | None = data.get("avatar_decoration_data")
+        self.primary_guild: PrimaryGuild | None = None
+        self.avatar_decoration: AvatarDecoration | None = None
+        self.nameplate: Nameplate | None = None
 
         self._from_data(data)
 
@@ -239,9 +356,17 @@ class User(PartialUser):
         return self.name
 
     def _from_data(self, data: dict) -> None:
+        collectibles = data.get("collectibles", {}) or {}  # Fallback if None
+
         if data.get("avatar"):
             self.avatar = Asset._from_avatar(
                 self._state, self.id, data["avatar"]
+            )
+
+        if data.get("primary_guild"):
+            self.primary_guild = PrimaryGuild(
+                state=self._state,
+                data=data["primary_guild"]
             )
 
         if data.get("banner"):
@@ -255,9 +380,15 @@ class User(PartialUser):
         if data.get("banner_color"):
             self.banner_colour = Colour.from_hex(data["banner_color"])
 
-        if data.get("avatar_decoration_data") and data["avatar_decoration_data"].get("asset"):
-            self.avatar_decoration = Asset._from_avatar_decoration(
-                self._state, data["avatar_decoration_data"]["asset"]
+        if data.get("avatar_decoration_data"):
+            self.avatar_decoration = AvatarDecoration(
+                self._state, data["avatar_decoration_data"]
+            )
+
+        if collectibles.get("nameplate"):
+            self.nameplate = Nameplate(
+                state=self._state,
+                data=collectibles["nameplate"]
             )
 
         if data.get("public_flags"):
@@ -289,24 +420,14 @@ class User(PartialUser):
         return self.banner
 
     @property
-    def global_avatar_decoration(self) -> Asset | None:
-        """ Alias for `User.avatar_decoration`. """
-        return self.avatar_decoration
-
-    @property
-    def global_avatar_decoration_data(self) -> dict | None:
-        """ Alias for `User.avatar_decoration_data`. """
-        return self.avatar_decoration_data
-
-    @property
-    def display_avatar_decoration(self) -> Asset | None:
+    def display_avatar_decoration(self) -> AvatarDecoration | None:
         """ An alias to merge with `Member.display_avatar_decoration`. """
         return self.avatar_decoration
 
     @property
-    def display_avatar_decoration_data(self) -> dict | None:
-        """ An alias to merge with `Member.display_avatar_decoration_data`. """
-        return self.avatar_decoration_data
+    def global_avatar_decoration(self) -> AvatarDecoration | None:
+        """ Alias for `User.avatar_decoration`. """
+        return self.avatar_decoration
 
 
 class UserClient(User):

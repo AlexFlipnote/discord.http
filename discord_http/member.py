@@ -11,7 +11,7 @@ from .mentions import AllowedMentions
 from .object import PartialBase, Snowflake
 from .response import ResponseType
 from .role import PartialRole, Role
-from .user import User, PartialUser
+from .user import User, PartialUser, PrimaryGuild, AvatarDecoration, Nameplate
 from .view import View
 
 
@@ -383,10 +383,10 @@ class Member(PartialMember):
         The time until the member is communication disabled (timeout).
     premium_since: datetime | None
         The time the member started boosting the guild, if available.
-    avatar_decoration: Asset | None
+    avatar_decoration: AvatarDecoration | None
         The avatar decoration of the member, if available.
-    avatar_decoration_data: dict | None
-        The avatar decoration data of the member, if available.
+    nameplate: Nameplate | None
+        The nameplate of the member, if available.
     """
     def __init__(
         self,
@@ -417,8 +417,9 @@ class Member(PartialMember):
             PartialRole(state=state, id=int(r), guild_id=self.guild.id)
             for r in data["roles"]
         ]
-        self.avatar_decoration: Asset | None = None
-        self.avatar_decoration_data: dict | None = data.get("avatar_decoration_data")
+
+        self.avatar_decoration: AvatarDecoration | None = None
+        self.nameplate: Nameplate | None = self._user.nameplate
 
         self._from_data(data)
 
@@ -442,9 +443,9 @@ class Member(PartialMember):
                 self._state, self.guild.id, self.id, data["banner"]
             )
 
-        if data.get("avatar_decoration_data") and data["avatar_decoration_data"].get("asset"):
-            self.avatar_decoration = Asset._from_avatar_decoration(
-                self._state, data["avatar_decoration_data"]["asset"]
+        if data.get("avatar_decoration_data"):
+            self.avatar_decoration = AvatarDecoration(
+                self._state, data["avatar_decoration_data"]
             )
 
         if data.get("communication_disabled_until"):
@@ -471,9 +472,13 @@ class Member(PartialMember):
         return self._roles
 
     @property
-    def collectibles(self) -> dict | None:
-        """ Returns the collectibles of the User if available. """
-        return self._user.collectibles
+    def primary_guild(self) -> PrimaryGuild | None:
+        """
+        Returns the primary guild of the member.
+
+        This is commonly known as 'clan'.
+        """
+        return self._user.primary_guild
 
     def get_role(
         self,
@@ -607,24 +612,14 @@ class Member(PartialMember):
         return self._user.public_flags or UserFlags(0)
 
     @property
-    def display_avatar_decoration(self) -> Asset | None:
+    def display_avatar_decoration(self) -> AvatarDecoration | None:
         """ Returns the display avatar decoration of the member. """
         return self.avatar_decoration or self._user.avatar_decoration
 
     @property
-    def display_avatar_decoration_data(self) -> dict | None:
-        """ Returns the display avatar decoration data of the member. """
-        return self.avatar_decoration_data or self._user.avatar_decoration_data
-
-    @property
-    def global_avatar_decoration(self) -> Asset | None:
+    def global_avatar_decoration(self) -> AvatarDecoration | None:
         """ Shortcut for `User.avatar_decoration`. """
         return self._user.avatar_decoration
-
-    @property
-    def global_avatar_decoration_data(self) -> dict | None:
-        """ Shortcut for `User.avatar_decoration_data`. """
-        return self._user.avatar_decoration_data
 
     @property
     def global_name(self) -> str | None:

@@ -1,9 +1,9 @@
 import asyncio
 import copy
-import logging
 import inspect
-import signal
+import logging
 import orjson
+import signal
 
 from datetime import datetime
 from hypercorn.asyncio import serve
@@ -513,16 +513,24 @@ class DiscordHTTP(Quart):
         port:
             The port to bind to, by default 8080
         """
+        int_path = str(self.bot.interaction_path)
+        if not int_path.startswith("/"):
+            _log.warning(
+                "Interaction path should start with a slash ( / ), "
+                f'adding it automatically for you, your path is now "/{int_path}"'
+            )
+            int_path = f"/{int_path}"
+
         if not self.bot.disable_default_get_path:
             self.add_url_rule(
-                "/",
+                int_path,
                 "ping",
                 self.index_ping,
                 methods=["GET"]
             )
 
         self.add_url_rule(
-            "/",
+            int_path,
             "index",
             self._index_interactions_endpoint,
             methods=["POST"]
