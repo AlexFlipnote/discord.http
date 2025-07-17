@@ -302,14 +302,20 @@ class User(PartialUser):
         Whether the user is a system user
     discriminator: str | None
         The discriminator of the user, if any
+    global_name: str | None
+        The global name of the user, if any
     accent_colour: Colour | None
         The accent colour of the user, if any
     banner_colour: Colour | None
         The banner colour of the user, if any
+    public_flags: UserFlags | None
+        The public flags of the user, if any
     avatar_decoration: AvatarDecoration | None
         The avatar decoration of the member, if available.
     nameplate: Nameplate | None
         The nameplate of the member, if available.
+    primary_guild: PrimaryGuild | None
+        The primary guild of the user (aka. clan), if any
     """
     def __init__(
         self,
