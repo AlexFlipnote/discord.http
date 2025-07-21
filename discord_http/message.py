@@ -9,7 +9,7 @@ from . import utils
 from .colour import Colour
 from .embeds import Embed
 from .emoji import EmojiParser
-from .enums import MessageReferenceType, MessageType, InteractionType
+from .enums import MessageReferenceType, MessageType, InteractionType, ReactionType
 from .errors import HTTPException
 from .file import File
 from .flags import AttachmentFlags, MessageFlags
@@ -34,6 +34,7 @@ __all__ = (
     "JumpURL",
     "Message",
     "MessageInteraction",
+    "MessageReaction",
     "MessageReference",
     "PartialMessage",
     "Poll",
@@ -112,6 +113,11 @@ class MessageReaction:
             for g in data.get("burst_colors", [])
         ]
 
+    def __repr__(self) -> str:
+        return (
+            f"<MessageReaction emoji={self.emoji} count={self.count}>"
+        )
+
     async def add(self) -> None:
         """ Make the bot react with this emoji. """
         parsed = self.emoji.to_reaction()
@@ -142,6 +148,86 @@ class MessageReaction:
             url,
             res_method="text"
         )
+
+    async def fetch_users(
+        self,
+        *,
+        type: ReactionType | int = ReactionType.normal,  # noqa: A002
+        after: Snowflake | int | None = None,
+        limit: int | None = 100
+    ) -> AsyncIterator[User]:
+        """
+        Fetch users who reacted with this emoji.
+
+        Parameters
+        ----------
+        type:
+            The type of reaction to fetch, by default ReactionType.normal
+        after:
+            The ID of the last user to fetch, by default None
+        limit:
+            The maximum number of users to fetch, by default 100
+
+        Returns
+        -------
+            An async iterator of users who reacted with this emoji.
+
+        Yields
+        ------
+            Users who reacted with this emoji.
+        """
+        async def _get_history(
+            limit: int,
+            **kwargs
+        ) -> "HTTPResponse[dict]":
+            params = {"limit": min(limit, 100), "type": int(type)}
+            for key, value in kwargs.items():
+                if value is None:
+                    continue
+                params[key] = int(value)
+
+            return await self._state.query(
+                "GET",
+                f"/channels/{self._message.channel.id}/messages/"
+                f"{self._message.id}/reactions/{self.emoji.to_reaction()}",
+                params=params
+            )
+
+        async def _after_http(
+            http_limit: int,
+            after_id: int | None,
+            limit: int | None
+        ) -> tuple[dict, int | None, int | None]:
+            r = await _get_history(http_limit, after=after_id, type=type)
+            if r.response:
+                if limit is not None:
+                    limit -= len(r.response)
+                after_id = r.response[-1]["id"]
+            return r.response, after_id, limit
+
+        if after:
+            strategy, state = _after_http, utils.normalize_entity_id(after)
+        else:
+            strategy, state = _after_http, None
+
+        while True:
+            http_limit: int = 100 if limit is None else min(limit, 100)
+            if http_limit <= 0:
+                break
+
+            strategy: Callable
+            users, state, limit = await strategy(http_limit, state, limit)
+
+            i = 0
+            for i, u in enumerate(users, start=1):
+                yield User(
+                    state=self._state,
+                    data=u
+                )
+                i += 1
+
+            if i < 100:
+                break
 
 
 class JumpURL:

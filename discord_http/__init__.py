@@ -1,5 +1,5 @@
 # ruff: noqa: F403, F401
-__version__ = "2.3.0"
+__version__ = "2.3.1"
 
 from .asset import *
 from .audit import *
