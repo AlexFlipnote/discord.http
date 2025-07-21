@@ -27,6 +27,19 @@ class EmojiParser:
 
     It is used for things like reactions, forum, components, etc
 
+    Attributes
+    ----------
+    raw: str
+        The raw emoji string that was passed to the constructor.
+    id: int | None
+        The ID of the emoji if it's a Discord emoji, otherwise None.
+    animated: bool
+        Whether the emoji is animated or not.
+    discord_emoji: bool
+        Whether the emoji is a Discord emoji or not.
+    name: str
+        The name of the emoji. If it's a Discord emoji, it will be the name of the emoji.
+
     Examples
     --------
     - `EmojiParser("👍")`
@@ -34,7 +47,7 @@ class EmojiParser:
     - `EmojiParser("1234567890")`
     """
     def __init__(self, emoji: str):
-        self._original_name: str = emoji
+        self.raw: str = emoji
 
         self.id: int | None = None
         self.animated: bool = False
@@ -63,7 +76,7 @@ class EmojiParser:
         return f"<EmojiParser name='{self.name}'>"
 
     def __str__(self) -> str:
-        return self._original_name
+        return self.raw
 
     def __int__(self) -> int | None:
         if self.discord_emoji:
