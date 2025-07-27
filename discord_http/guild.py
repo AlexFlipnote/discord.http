@@ -2595,8 +2595,8 @@ class Guild(PartialGuild):
         self.default_message_notifications: int = data.get("default_message_notifications", 0)
         self.description: str | None = data.get("description")
 
-        self._icon = data.get("icon")
-        self._banner = data.get("banner")
+        self._icon: str | None = data.get("icon")
+        self._banner: str | None = data.get("banner")
 
         self.explicit_content_filter: int = data.get("explicit_content_filter", 0)
         self.features: list[str] = data.get("features", [])
@@ -2664,6 +2664,9 @@ class Guild(PartialGuild):
 
     def _update(self, data: dict) -> None:
         """ Update the guild from the data. """
+        self._icon = data.get("icon")
+        self._banner = data.get("banner")
+
         self.afk_channel_id: int | None = utils.get_int(data, "afk_channel_id")
         self.afk_timeout: int = data.get("afk_timeout", 0)
         self.default_message_notifications: int = data.get("default_message_notifications", 0)
