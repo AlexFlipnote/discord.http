@@ -19,7 +19,7 @@ class File:
         The title of the file, if any.
     description: str | None
         The description of the file, if any.
-    duration_secs: int | None
+    duration_secs: float | int | None
         The duration of the file in seconds, if applicable.
     waveform: str | None
         The waveform data for the file, if applicable.
@@ -32,7 +32,7 @@ class File:
         spoiler: bool = False,
         title: str | None = None,
         description: str | None = None,
-        duration_secs: int | None = None,
+        duration_secs: float | int | None = None,
         waveform: str | None = None
     ):
         self.spoiler = spoiler
