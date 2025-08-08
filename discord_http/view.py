@@ -59,6 +59,11 @@ _components_root = (
     ComponentType.container,
 )
 
+_components_label = (
+    ComponentType.text_input,
+    ComponentType.label,
+)
+
 __all__ = (
     "ActionRow",
     "AttachmentComponent",
@@ -72,13 +77,13 @@ __all__ = (
     "MediaGalleryItem",
     "MentionableSelect",
     "Modal",
-    "ModalItem",
     "Premium",
     "RoleSelect",
     "SectionComponent",
     "Select",
     "SeparatorComponent",
     "TextDisplayComponent",
+    "TextInputComponent",
     "ThumbnailComponent",
     "UserSelect",
     "View",
@@ -275,11 +280,36 @@ class Item:
         raise NotImplementedError("to_dict not implemented")
 
 
-class ModalItem:
+class TextInputComponent(Item):
+    """
+    Represents a text input component in a modal.
+
+    Attributes
+    ----------
+    label: str | None
+        The label of the text input
+    description: str | None
+        The description of the text input
+    custom_id: str | None
+        The custom ID of the text input
+    style: TextStyles | None
+        The style of the text input
+    placeholder: str | None
+        The placeholder text of the text input
+    min_length: int | None
+        The minimum length of the text input
+    max_length: int | None
+        The maximum length of the text input
+    default: str | None
+        The default value of the text input
+    required: bool
+        Whether the text input is required or not
+    """
     def __init__(
         self,
         *,
-        label: str,
+        label: str | None = None,
+        description: str | None = None,
         custom_id: str | None = None,
         style: TextStyles | None = None,
         placeholder: str | None = None,
@@ -288,11 +318,14 @@ class ModalItem:
         default: str | None = None,
         required: bool = True,
     ):
-        self.label: str = label
+        super().__init__(type=ComponentType.text_input)
+
         self.custom_id: str = (
             str(custom_id)
             if custom_id else _garbage_id()
         )
+        self.label: str | None = label
+        self.description: str | None = description
         self.style: int = int(style or TextStyles.short)
 
         self.placeholder: str | None = placeholder
@@ -316,8 +349,7 @@ class ModalItem:
     def to_dict(self) -> dict:
         """ Returns a dict representation of the modal item. """
         payload = {
-            "type": 4,
-            "label": self.label,
+            "type": int(self.type),
             "custom_id": self.custom_id,
             "style": self.style,
             "required": self.required,
@@ -336,6 +368,26 @@ class ModalItem:
 
 
 class Button(Item):
+    """
+    Represents a button component in a message.
+
+    Attributes
+    ----------
+    label: str | None
+        The label of the button
+    style: ButtonStyles | str | int
+        The style of the button
+    disabled: bool
+        Whether the button is disabled or not
+    custom_id: str | None
+        The custom ID of the button
+    sku_id: "Snowflake | int | None"
+        The SKU ID of the button, only required for premium buttons
+    emoji: str | dict | None
+        The emoji associated with the button
+    url: str | None
+        The URL of the button, only required for link buttons
+    """
     def __init__(
         self,
         *,
@@ -415,18 +467,18 @@ class Button(Item):
 
 
 class Premium(Button):
+    """
+    Button alias for the premium SKU style.
+
+    Attributes
+    ----------
+    sku_id:
+        SKU ID of the premium button
+    """
     def __init__(
         self,
         sku_id: "Snowflake | int"
     ):
-        """
-        Button alias for the premium SKU style.
-
-        Parameters
-        ----------
-        sku_id:
-            SKU ID of the premium button
-        """
         super().__init__(
             sku_id=sku_id,
             style=ButtonStyles.premium
@@ -437,6 +489,20 @@ class Premium(Button):
 
 
 class Link(Button):
+    """
+    Button alias for the link style.
+
+    Attributes
+    ----------
+    url:
+        URL to open when the button is clicked
+    label:
+        Label of the button
+    emoji:
+        Emoji shown on the left side of the button
+    disabled:
+        Whether the button is disabled or not
+    """
     def __init__(
         self,
         *,
@@ -445,20 +511,6 @@ class Link(Button):
         emoji: str | None = None,
         disabled: bool = False
     ):
-        """
-        Button alias for the link style.
-
-        Parameters
-        ----------
-        url:
-            URL to open when the button is clicked
-        label:
-            Label of the button
-        emoji:
-            Emoji shown on the left side of the button
-        disabled:
-            Whether the button is disabled or not
-        """
         super().__init__(
             url=url,
             label=label,
@@ -475,25 +527,55 @@ class Link(Button):
 
 
 class Select(Item):
+    """
+    Represents a select menu component in a message.
+
+    Attributes
+    ----------
+    label: str | None
+        The label of the select menu (only works for modals)
+    description: str | None
+        The description of the select menu (only works for modals)
+    placeholder: str | None
+        The placeholder text for the select menu
+    custom_id: str | None
+        The custom ID of the select menu
+    min_values: int | None
+        The minimum number of values that can be selected
+    max_values: int | None
+        The maximum number of values that can be selected
+    disabled: bool
+        Whether the select menu is disabled or not
+    options: list[dict] | None
+        The options for the select menu
+    required: bool | None
+        Whether the select menu is required or not (only works for modals)
+    """
     def __init__(
         self,
         *,
+        label: str | None = None,
+        description: str | None = None,
         placeholder: str | None = None,
         custom_id: str | None = None,
         min_values: int | None = 1,
         max_values: int | None = 1,
         disabled: bool = False,
         options: list[dict] | None = None,
+        required: bool | None = None,
         _type: ComponentType | None = None
     ):
         super().__init__(
             type=_type or ComponentType.string_select
         )
 
+        self.label: str | None = label
+        self.description: str | None = description
         self.placeholder: str | None = placeholder
         self.min_values: int | None = min_values
         self.max_values: int | None = max_values
         self.disabled: bool = disabled
+        self.required: bool | None = required
         self.custom_id: str = (
             str(custom_id)
             if custom_id else _garbage_id()
@@ -567,11 +649,31 @@ class Select(Item):
             payload["default_values"] = self._default_values
         if self._options:
             payload["options"] = self._options
+        if self.required is not None:
+            payload["required"] = self.required
 
         return payload
 
 
 class UserSelect(Select):
+    """
+    Represents a user select menu component in a message.
+
+    Attributes
+    ----------
+    placeholder: str | None
+        The placeholder text for the user select menu
+    custom_id: str | None
+        The custom ID of the user select menu
+    min_values: int | None
+        The minimum number of values that can be selected
+    max_values: int | None
+        The maximum number of values that can be selected
+    default_values: list["Member | int"] | None
+        The default selected values for the user select menu
+    disabled: bool
+        Whether the user select menu is disabled or not
+    """
     def __init__(
         self,
         *,
@@ -602,6 +704,24 @@ class UserSelect(Select):
 
 
 class RoleSelect(Select):
+    """
+    Represents a role select menu component in a message.
+
+    Attributes
+    ----------
+    placeholder: str | None
+        The placeholder text for the role select menu
+    custom_id: str | None
+        The custom ID of the role select menu
+    min_values: int | None
+        The minimum number of values that can be selected
+    max_values: int | None
+        The maximum number of values that can be selected
+    default_values: list["Role | int"] | None
+        The default selected values for the role select menu
+    disabled: bool
+        Whether the role select menu is disabled or not
+    """
     def __init__(
         self,
         *,
@@ -632,6 +752,24 @@ class RoleSelect(Select):
 
 
 class MentionableSelect(Select):
+    """
+    Represents a mentionable select menu component in a message.
+
+    Attributes
+    ----------
+    placeholder: str | None
+        The placeholder text for the mentionable select menu
+    custom_id: str | None
+        The custom ID of the mentionable select menu
+    min_values: int | None
+        The minimum number of values that can be selected
+    max_values: int | None
+        The maximum number of values that can be selected
+    default_values: list["Member | Role | int"] | None
+        The default selected values for the mentionable select menu
+    disabled: bool
+        Whether the mentionable select menu is disabled or not
+    """
     def __init__(
         self,
         *,
@@ -663,6 +801,24 @@ class MentionableSelect(Select):
 
 
 class ChannelSelect(Select):
+    """
+    Represents a channel select menu component in a message.
+
+    Attributes
+    ----------
+    placeholder: str | None
+        The placeholder text for the channel select menu
+    custom_id: str | None
+        The custom ID of the channel select menu
+    min_values: int | None
+        The minimum number of values that can be selected
+    max_values: int | None
+        The maximum number of values that can be selected
+    default_values: list["BaseChannel | int"] | None
+        The default selected values for the channel select menu
+    disabled: bool
+        Whether the channel select menu is disabled or not
+    """
     def __init__(
         self,
         *channels: "ChannelType | BaseChannel",
@@ -707,6 +863,14 @@ class ChannelSelect(Select):
 
 
 class TextDisplayComponent(Item):
+    """
+    Represents a text display component in a message.
+
+    Attributes
+    ----------
+    content: str
+        The content of the text display component
+    """
     def __init__(
         self,
         content: str
@@ -726,6 +890,16 @@ class TextDisplayComponent(Item):
 
 
 class SeparatorComponent(Item):
+    """
+    Represents a separator component in a message.
+
+    Attributes
+    ----------
+    spacing: SeparatorSpacingType | None
+        The spacing type of the separator
+    divider: bool | None
+        Whether the separator is a divider or not
+    """
     def __init__(
         self,
         *,
@@ -946,6 +1120,16 @@ class InteractionStorage:
 
 
 class ThumbnailComponent(Item):
+    """
+    Represents a thumbnail component in a message.
+
+    Attributes
+    ----------
+    url: Asset | AttachmentComponent | str
+        The URL of the thumbnail image
+    description: str | None
+        The description of the thumbnail
+    """
     def __init__(
         self,
         url: Asset | AttachmentComponent | str,
@@ -980,6 +1164,16 @@ class ThumbnailComponent(Item):
 
 
 class SectionComponent(Item):
+    """
+    Represents a section component in a message.
+
+    Attributes
+    ----------
+    components: TextDisplayComponent | str
+        The components contained within the section
+    accessory: Button | ThumbnailComponent | AttachmentComponent | Asset | File | str
+        The accessory component for the section
+    """
     def __init__(
         self,
         # This might change later if SectionComponent starts
@@ -1052,6 +1246,14 @@ class SectionComponent(Item):
 
 
 class ActionRow(Item):
+    """
+    Represents an action row component in a message, containing buttons, selects, and links.
+
+    Attributes
+    ----------
+    components: Button | Select | Link
+        The components contained within the action row
+    """
     def __init__(
         self,
         *components: Button | Select | Link
@@ -1198,6 +1400,18 @@ class ActionRow(Item):
 
 
 class MediaGalleryItem:
+    """
+    Represents an item in a media gallery.
+
+    Attributes
+    ----------
+    url: File | Asset | AttachmentComponent | str
+        The URL of the media item, can be a file, asset, attachment component, or a string URL
+    description: str | None
+        The description of the media item
+    spoiler: bool
+        Whether the media item is marked as a spoiler
+    """
     def __init__(
         self,
         url: File | Asset | AttachmentComponent | str,
@@ -1228,6 +1442,14 @@ class MediaGalleryItem:
 
 
 class MediaGalleryComponent(Item):
+    """
+    Represents a media gallery component in a message.
+
+    Attributes
+    ----------
+    items: MediaGalleryItem | File | Asset | str
+        The items contained within the media gallery
+    """
     def __init__(
         self,
         *items: MediaGalleryItem | File | Asset | str
@@ -1271,6 +1493,16 @@ class MediaGalleryComponent(Item):
 
 
 class FileComponent(Item):
+    """
+    Represents a file component in a message.
+
+    Attributes
+    ----------
+    file: Asset | AttachmentComponent | str
+        The file to be sent
+    spoiler: bool
+        Whether the file is a spoiler
+    """
     def __init__(
         self,
         file: Asset | AttachmentComponent | str,
@@ -1322,6 +1554,18 @@ class ContentInventoryEntry(Item):
 
 
 class ContainerComponent(Item):
+    """
+    Represents a container component in a message.
+
+    Attributes
+    ----------
+    items: Item
+        The items contained within the container
+    colour: Colour | int | None
+        The colour of the container, can be a Colour object or an integer
+    spoiler: bool | None
+        Whether the container is marked as a spoiler
+    """
     def __init__(
         self,
         *items: Item,
@@ -1402,6 +1646,14 @@ class ContainerComponent(Item):
 
 
 class View(InteractionStorage):
+    """
+    Represents a view component in a message.
+
+    Attributes
+    ----------
+    items: Item
+        The items contained within the view, can be buttons, selects, links, etc.
+    """
     def __init__(self, *items: Item):
         super().__init__()
 
@@ -1544,6 +1796,7 @@ class View(InteractionStorage):
             14: SeparatorComponent,
             16: ContentInventoryEntry,
             17: ContainerComponent,
+            18: LabelComponent,
         }
 
         def _v2_resolver(c: dict) -> Item:
@@ -1630,7 +1883,58 @@ class View(InteractionStorage):
         return View(*items)
 
 
+class LabelComponent(Item):
+    def __init__(
+        self,
+        *,
+        label: str | None,
+        description: str | None = None,
+        component: TextInputComponent | Select
+    ):
+        super().__init__(type=ComponentType.label)
+
+        if component.type not in _components_label:
+            raise ValueError(
+                f"Component type {component.type} is not supported as a label component. "
+                "Only TextInputComponent and Select are allowed"
+            )
+
+        self.component: TextInputComponent | Select = component
+
+        self.label: str | None = self.component.label or label
+        if not isinstance(self.label, str):
+            raise TypeError(f"Label for {type(self.component)} must be provided and be a string")
+
+        self.description: str | None = self.component.description or description
+
+    def __repr__(self) -> str:
+        return f"<LabelComponent label='{self.label}' component={self.component}>"
+
+    def to_dict(self) -> dict:
+        """ Returns a dict representation of the label component. """
+        payload = {
+            "type": int(self.type),
+            "label": self.label,
+            "component": self.component.to_dict()
+        }
+
+        if self.description is not None:
+            payload["description"] = self.description
+
+        return payload
+
+
 class Modal(InteractionStorage):
+    """
+    Represents a modal component in a message.
+
+    Attributes
+    ----------
+    title: str
+        The title of the modal
+    custom_id: str | None
+        The custom ID of the modal
+    """
     def __init__(
         self,
         *,
@@ -1645,55 +1949,40 @@ class Modal(InteractionStorage):
             if custom_id else _garbage_id()
         )
 
-        self.items: list[ModalItem] = []
+        self.items: list[LabelComponent] = []
 
     def add_item(
         self,
+        component: TextInputComponent | Select,
         *,
-        label: str,
-        custom_id: str | None = None,
-        style: TextStyles | None = None,
-        placeholder: str | None = None,
-        min_length: int | None = None,
-        max_length: int | None = None,
-        default: str | None = None,
-        required: bool = True,
-    ) -> ModalItem:
+        label: str | None = None,
+        description: str | None = None,
+    ) -> LabelComponent:
         """
         Add an item to the modal.
 
         Parameters
         ----------
+        component:
+            The component to add to the modal
         label:
-            Label of the item
-        custom_id:
-            Custom ID of the item
-        style:
-            Style of the item
-        placeholder:
-            Placeholder of the item
-        min_length:
-            Minimum length of the item
-        max_length:
-            Maximum length of the item
-        default:
-            Default value of the item
-        required:
-            Whether the item is required
+            The label of the component, overwrites component.label
+        description:
+            The description of the component, overwrites component.description, by default None
 
         Returns
         -------
-            Returns the created modal item from the items list
+            The created label component
+
+        Raises
+        ------
+        TypeError
+            If the component is not a TextInputComponent or Select
         """
-        item = ModalItem(
+        item = LabelComponent(
+            component=component,
             label=label,
-            custom_id=custom_id,
-            style=style,
-            placeholder=placeholder,
-            min_length=min_length,
-            max_length=max_length,
-            default=default,
-            required=required
+            description=description,
         )
 
         self.items.append(item)
@@ -1704,8 +1993,5 @@ class Modal(InteractionStorage):
         return {
             "title": self.title,
             "custom_id": self.custom_id,
-            "components": [
-                {"type": 1, "components": [g.to_dict()]}
-                for g in self.items
-            ]
+            "components": [g.to_dict() for g in self.items]
         }
