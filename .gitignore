@@ -1,5 +1,6 @@
 # Custom ignore
 *.config.json
+v2_testing.py
 config.json
 tests/*.json
 uv.lock

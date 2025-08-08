@@ -542,7 +542,7 @@ class Context:
 
         self.resolved: ResolvedValues = ResolvedValues.none(self)
         self.select_values: SelectValues = SelectValues.none(self)
-        self.modal_values: dict[str, str] = {}
+        self.modal_values: dict[str, list[str] | str | None] = {}
 
         self.options: list[dict] = data.get("data", {}).get("options", [])
         self._followup_token: str = data.get("token", "")
@@ -626,8 +626,12 @@ class Context:
 
             case InteractionType.modal_submit:
                 for comp in data["data"]["components"]:
-                    ans = comp["components"][0]
-                    self.modal_values[ans["custom_id"]] = ans["value"]
+                    ans = comp["component"]
+                    self.modal_values[ans["custom_id"]] = (
+                        ans.get("values", None) or  # If it was select
+                        ans.get("value", None) or  # If it was text input
+                        None  # It should never reach here...
+                    )
 
     async def _background_task_manager(self, call_after: Callable) -> None:
         try:
