@@ -61,7 +61,7 @@ _components_root = (
 
 _components_label = (
     ComponentType.text_input,
-    ComponentType.label,
+    ComponentType.string_select,
 )
 
 __all__ = (
