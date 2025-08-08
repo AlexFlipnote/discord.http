@@ -90,8 +90,6 @@ class MessageReaction:
         Whether the bot has reacted with this emoji in burst mode.
     burst_me: bool
         Whether the bot has reacted with this emoji in burst mode.
-    burst_count: int
-        The number of users that reacted with this emoji in burst mode.
     burst_colors: list[Colour]
         The colors of the burst reaction.
     """
