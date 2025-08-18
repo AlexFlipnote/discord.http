@@ -295,6 +295,7 @@ class Permissions(BaseFlag):
     create_events = 1 << 44
     use_external_sounds = 1 << 45
     send_voice_messages = 1 << 46
+    set_voice_channel_status = 1 << 48
     send_polls = 1 << 49
     use_external_apps = 1 << 50
 
