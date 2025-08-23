@@ -62,6 +62,10 @@ _components_root = (
 _components_label = (
     ComponentType.text_input,
     ComponentType.string_select,
+    ComponentType.role_select,
+    ComponentType.user_select,
+    ComponentType.mentionable_select,
+    ComponentType.channel_select,
 )
 
 __all__ = (
@@ -673,6 +677,12 @@ class UserSelect(Select):
         The default selected values for the user select menu
     disabled: bool
         Whether the user select menu is disabled or not
+    label: str | None
+        The label of the select menu (only works for modals)
+    description: str | None
+        The description of the select menu (only works for modals)
+    required: bool | None
+        Whether the select menu is required or not (only works for modals)
     """
     def __init__(
         self,
@@ -682,7 +692,10 @@ class UserSelect(Select):
         min_values: int | None = 1,
         max_values: int | None = 1,
         default_values: list["Member | int"] | None = None,
-        disabled: bool = False
+        disabled: bool = False,
+        label: str | None = None,
+        description: str | None = None,
+        required: bool = False
     ):
         super().__init__(
             _type=ComponentType.user_select,
@@ -690,7 +703,10 @@ class UserSelect(Select):
             custom_id=custom_id,
             min_values=min_values,
             max_values=max_values,
-            disabled=disabled
+            disabled=disabled,
+            label=label,
+            description=description,
+            required=required
         )
 
         if isinstance(default_values, list):
@@ -721,6 +737,12 @@ class RoleSelect(Select):
         The default selected values for the role select menu
     disabled: bool
         Whether the role select menu is disabled or not
+    label: str | None
+        The label of the select menu (only works for modals)
+    description: str | None
+        The description of the select menu (only works for modals)
+    required: bool | None
+        Whether the select menu is required or not (only works for modals)
     """
     def __init__(
         self,
@@ -730,7 +752,10 @@ class RoleSelect(Select):
         min_values: int | None = 1,
         max_values: int | None = 1,
         default_values: list["Role | int"] | None = None,
-        disabled: bool = False
+        disabled: bool = False,
+        label: str | None = None,
+        description: str | None = None,
+        required: bool = False
     ):
         super().__init__(
             _type=ComponentType.role_select,
@@ -738,7 +763,10 @@ class RoleSelect(Select):
             custom_id=custom_id,
             min_values=min_values,
             max_values=max_values,
-            disabled=disabled
+            disabled=disabled,
+            label=label,
+            description=description,
+            required=required
         )
 
         if isinstance(default_values, list):
@@ -769,6 +797,12 @@ class MentionableSelect(Select):
         The default selected values for the mentionable select menu
     disabled: bool
         Whether the mentionable select menu is disabled or not
+    label: str | None
+        The label of the select menu (only works for modals)
+    description: str | None
+        The description of the select menu (only works for modals)
+    required: bool | None
+        Whether the select menu is required or not (only works for modals)
     """
     def __init__(
         self,
@@ -778,7 +812,10 @@ class MentionableSelect(Select):
         min_values: int | None = 1,
         max_values: int | None = 1,
         default_values: list["Member | Role | int"] | None = None,
-        disabled: bool = False
+        disabled: bool = False,
+        label: str | None = None,
+        description: str | None = None,
+        required: bool = False
     ):
         super().__init__(
             _type=ComponentType.mentionable_select,
@@ -786,7 +823,10 @@ class MentionableSelect(Select):
             custom_id=custom_id,
             min_values=min_values,
             max_values=max_values,
-            disabled=disabled
+            disabled=disabled,
+            label=label,
+            description=description,
+            required=required
         )
 
         # NOTE: Will be changed to accept roles too
@@ -818,6 +858,12 @@ class ChannelSelect(Select):
         The default selected values for the channel select menu
     disabled: bool
         Whether the channel select menu is disabled or not
+    label: str | None
+        The label of the select menu (only works for modals)
+    description: str | None
+        The description of the select menu (only works for modals)
+    required: bool | None
+        Whether the select menu is required or not (only works for modals)
     """
     def __init__(
         self,
@@ -827,7 +873,10 @@ class ChannelSelect(Select):
         min_values: int | None = 1,
         max_values: int | None = 1,
         default_values: list["BaseChannel | int"] | None = None,
-        disabled: bool = False
+        disabled: bool = False,
+        label: str | None = None,
+        description: str | None = None,
+        required: bool = False
     ):
         super().__init__(
             _type=ComponentType.channel_select,
@@ -835,7 +884,10 @@ class ChannelSelect(Select):
             custom_id=custom_id,
             min_values=min_values,
             max_values=max_values,
-            disabled=disabled
+            disabled=disabled,
+            label=label,
+            description=description,
+            required=required
         )
 
         self._channel_types = []
@@ -1949,15 +2001,15 @@ class Modal(InteractionStorage):
             if custom_id else _garbage_id()
         )
 
-        self.items: list[LabelComponent] = []
+        self.items: list[TextDisplayComponent | LabelComponent] = []
 
     def add_item(
         self,
-        component: TextInputComponent | Select,
+        component: TextDisplayComponent | TextInputComponent | Select,
         *,
         label: str | None = None,
         description: str | None = None,
-    ) -> LabelComponent:
+    ) -> LabelComponent | TextDisplayComponent:
         """
         Add an item to the modal.
 
@@ -1979,6 +2031,14 @@ class Modal(InteractionStorage):
         TypeError
             If the component is not a TextInputComponent or Select
         """
+        if len(self.items) >= 5:
+            raise ValueError("Modal can only have 5 items at most")
+
+        if isinstance(component, TextDisplayComponent):
+            # This one is allowed as top-level
+            self.items.append(component)
+            return component
+
         item = LabelComponent(
             component=component,
             label=label,
