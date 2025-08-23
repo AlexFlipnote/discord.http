@@ -1052,7 +1052,10 @@ class Interaction:
             result = await self.func(context)
 
         if not isinstance(result, BaseResponse):
-            raise TypeError("Interaction must be a Response object")
+            raise TypeError(
+                f"Interaction {self.custom_id} must return a "
+                f"Response object, not {type(result)}."
+            )
 
         return result
 
