@@ -24,7 +24,7 @@ from discord_http import (
     Poll, AutoModRuleEventType, AutoModRuleTriggerType,
     MentionableSelect, ActionRow, SectionComponent,
     DiscordTimestamp, SeparatorComponent,
-    MessageFlags
+    MessageFlags, TextInputComponent
 )
 
 with open("./config.json") as f:
@@ -980,12 +980,12 @@ async def test_reaction(ctx: Context):
 async def test_modal(ctx: Context):
     modal = Modal(title="Testing...", custom_id="test_modal_test")
     for g in range(5):
-        modal.add_item(
+        modal.add_item(TextInputComponent(
             label=f"Test {g}",
             custom_id=f"test_modal:{g}",
             default=secrets.token_hex(6),
             style=TextStyles.random(),
-        )
+        ))
 
     return ctx.response.send_modal(modal)
 
@@ -1106,12 +1106,12 @@ async def test_interaction_user_select(ctx: Context):
 async def test_interaction_modal2(ctx: Context):
     modal = Modal(title="Testing...", custom_id="test_modal_test2")
     for g in range(5):
-        modal.add_item(
+        modal.add_item(TextInputComponent(
             label=f"Test {g}",
             custom_id=f"test_modal:{g}",
             default=secrets.token_hex(6),
             style=TextStyles.random(),
-        )
+        ))
 
     return ctx.response.send_modal(modal)
 
@@ -1120,12 +1120,12 @@ async def test_interaction_modal2(ctx: Context):
 async def test_interaction_modal_local(ctx: Context):
     modal = Modal(title="Testing...", custom_id="iusdhfiosuhjdf")
     for g in range(5):
-        modal.add_item(
+        modal.add_item(TextInputComponent(
             label=f"Test {g}",
             custom_id=f"test_modal:{g}",
             default=secrets.token_hex(6),
             style=TextStyles.random(),
-        )
+        ))
 
     async def call_after():
         test = await modal.wait(ctx, call_after=call_success, timeout=10)
