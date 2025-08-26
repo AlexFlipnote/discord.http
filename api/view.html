@@ -306,11 +306,23 @@
 <dt class="sig sig-object py" id="discord_http.view.ActionRow">
 <em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">discord_http.view.</span></span><span class="sig-name descname"><span class="pre">ActionRow</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">components</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#discord_http.view.ActionRow" title="Link to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#discord_http.view.Item" title="discord_http.view.Item"><code class="xref py py-class docutils literal notranslate"><span class="pre">Item</span></code></a></p>
+<p>Represents an action row component in a message, containing buttons, selects, and links.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>components</strong> (<a class="reference internal" href="#discord_http.view.Button" title="discord_http.view.Button"><em>Button</em></a><em> | </em><a class="reference internal" href="#discord_http.view.Select" title="discord_http.view.Select"><em>Select</em></a><em> | </em><a class="reference internal" href="#discord_http.view.Link" title="discord_http.view.Link"><em>Link</em></a>)</p>
 </dd>
 </dl>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.view.ActionRow.components">
+<span class="sig-name descname"><span class="pre">components</span></span><a class="headerlink" href="#discord_http.view.ActionRow.components" title="Link to this definition">¶</a></dt>
+<dd><p>The components contained within the action row</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="#discord_http.view.Button" title="discord_http.view.Button">Button</a> | <a class="reference internal" href="#discord_http.view.Select" title="discord_http.view.Select">Select</a> | <a class="reference internal" href="#discord_http.view.Link" title="discord_http.view.Link">Link</a></p>
+</dd>
+</dl>
+</dd></dl>
+
 <dl class="py method">
 <dt class="sig sig-object py" id="discord_http.view.ActionRow.add_item">
 <span class="sig-name descname"><span class="pre">add_item</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">item</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></span></span><a class="headerlink" href="#discord_http.view.ActionRow.add_item" title="Link to this definition">¶</a></dt>
@@ -584,6 +596,7 @@ Example: <cite>./path/to/file.png</cite></p></li>
 <dt class="sig sig-object py" id="discord_http.view.Button">
 <em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">discord_http.view.</span></span><span class="sig-name descname"><span class="pre">Button</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">label</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">style</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">ButtonStyles.primary</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">disabled</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">custom_id</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sku_id</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">emoji</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">url</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#discord_http.view.Button" title="Link to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#discord_http.view.Item" title="discord_http.view.Item"><code class="xref py py-class docutils literal notranslate"><span class="pre">Item</span></code></a></p>
+<p>Represents a button component in a message.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
@@ -597,6 +610,83 @@ Example: <cite>./path/to/file.png</cite></p></li>
 </ul>
 </dd>
 </dl>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.view.Button.label">
+<span class="sig-name descname"><span class="pre">label</span></span><a class="headerlink" href="#discord_http.view.Button.label" title="Link to this definition">¶</a></dt>
+<dd><p>The label of the button</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)">str</a> | None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.view.Button.style">
+<span class="sig-name descname"><span class="pre">style</span></span><a class="headerlink" href="#discord_http.view.Button.style" title="Link to this definition">¶</a></dt>
+<dd><p>The style of the button</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="enums.html#discord_http.enums.ButtonStyles" title="discord_http.enums.ButtonStyles">ButtonStyles</a> | <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)">str</a> | <a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)">int</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.view.Button.disabled">
+<span class="sig-name descname"><span class="pre">disabled</span></span><a class="headerlink" href="#discord_http.view.Button.disabled" title="Link to this definition">¶</a></dt>
+<dd><p>Whether the button is disabled or not</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)">bool</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.view.Button.custom_id">
+<span class="sig-name descname"><span class="pre">custom_id</span></span><a class="headerlink" href="#discord_http.view.Button.custom_id" title="Link to this definition">¶</a></dt>
+<dd><p>The custom ID of the button</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)">str</a> | None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.view.Button.sku_id">
+<span class="sig-name descname"><span class="pre">sku_id</span></span><a class="headerlink" href="#discord_http.view.Button.sku_id" title="Link to this definition">¶</a></dt>
+<dd><p>The SKU ID of the button, only required for premium buttons</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>“Snowflake | <a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)">int</a> | None”</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.view.Button.emoji">
+<span class="sig-name descname"><span class="pre">emoji</span></span><a class="headerlink" href="#discord_http.view.Button.emoji" title="Link to this definition">¶</a></dt>
+<dd><p>The emoji associated with the button</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)">str</a> | <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.13)">dict</a> | None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.view.Button.url">
+<span class="sig-name descname"><span class="pre">url</span></span><a class="headerlink" href="#discord_http.view.Button.url" title="Link to this definition">¶</a></dt>
+<dd><p>The URL of the button, only required for link buttons</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)">str</a> | None</p>
+</dd>
+</dl>
+</dd></dl>
+
 <dl class="py method">
 <dt class="sig sig-object py" id="discord_http.view.Button.to_dict">
 <span class="sig-name descname"><span class="pre">to_dict</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.13)"><span class="pre">dict</span></a></span></span><a class="headerlink" href="#discord_http.view.Button.to_dict" title="Link to this definition">¶</a></dt>
@@ -614,6 +704,7 @@ Example: <cite>./path/to/file.png</cite></p></li>
 <dt class="sig sig-object py" id="discord_http.view.ChannelSelect">
 <em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">discord_http.view.</span></span><span class="sig-name descname"><span class="pre">ChannelSelect</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">channels</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">placeholder</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">custom_id</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">min_values</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_values</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">default_values</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">disabled</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#discord_http.view.ChannelSelect" title="Link to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#discord_http.view.Select" title="discord_http.view.Select"><code class="xref py py-class docutils literal notranslate"><span class="pre">Select</span></code></a></p>
+<p>Represents a channel select menu component in a message.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
@@ -627,6 +718,72 @@ Example: <cite>./path/to/file.png</cite></p></li>
 </ul>
 </dd>
 </dl>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.view.ChannelSelect.placeholder">
+<span class="sig-name descname"><span class="pre">placeholder</span></span><a class="headerlink" href="#discord_http.view.ChannelSelect.placeholder" title="Link to this definition">¶</a></dt>
+<dd><p>The placeholder text for the channel select menu</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)">str</a> | None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.view.ChannelSelect.custom_id">
+<span class="sig-name descname"><span class="pre">custom_id</span></span><a class="headerlink" href="#discord_http.view.ChannelSelect.custom_id" title="Link to this definition">¶</a></dt>
+<dd><p>The custom ID of the channel select menu</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)">str</a> | None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.view.ChannelSelect.min_values">
+<span class="sig-name descname"><span class="pre">min_values</span></span><a class="headerlink" href="#discord_http.view.ChannelSelect.min_values" title="Link to this definition">¶</a></dt>
+<dd><p>The minimum number of values that can be selected</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)">int</a> | None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.view.ChannelSelect.max_values">
+<span class="sig-name descname"><span class="pre">max_values</span></span><a class="headerlink" href="#discord_http.view.ChannelSelect.max_values" title="Link to this definition">¶</a></dt>
+<dd><p>The maximum number of values that can be selected</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)">int</a> | None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.view.ChannelSelect.default_values">
+<span class="sig-name descname"><span class="pre">default_values</span></span><a class="headerlink" href="#discord_http.view.ChannelSelect.default_values" title="Link to this definition">¶</a></dt>
+<dd><p>The default selected values for the channel select menu</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.13)">list</a>[“BaseChannel | int”] | None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.view.ChannelSelect.disabled">
+<span class="sig-name descname"><span class="pre">disabled</span></span><a class="headerlink" href="#discord_http.view.ChannelSelect.disabled" title="Link to this definition">¶</a></dt>
+<dd><p>Whether the channel select menu is disabled or not</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)">bool</a></p>
+</dd>
+</dl>
+</dd></dl>
+
 <dl class="py method">
 <dt class="sig sig-object py" id="discord_http.view.ChannelSelect.to_dict">
 <span class="sig-name descname"><span class="pre">to_dict</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.13)"><span class="pre">dict</span></a></span></span><a class="headerlink" href="#discord_http.view.ChannelSelect.to_dict" title="Link to this definition">¶</a></dt>
@@ -644,6 +801,7 @@ Example: <cite>./path/to/file.png</cite></p></li>
 <dt class="sig sig-object py" id="discord_http.view.ContainerComponent">
 <em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">discord_http.view.</span></span><span class="sig-name descname"><span class="pre">ContainerComponent</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">items</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">colour</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">spoiler</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#discord_http.view.ContainerComponent" title="Link to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#discord_http.view.Item" title="discord_http.view.Item"><code class="xref py py-class docutils literal notranslate"><span class="pre">Item</span></code></a></p>
+<p>Represents a container component in a message.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
@@ -653,6 +811,39 @@ Example: <cite>./path/to/file.png</cite></p></li>
 </ul>
 </dd>
 </dl>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.view.ContainerComponent.items">
+<span class="sig-name descname"><span class="pre">items</span></span><a class="headerlink" href="#discord_http.view.ContainerComponent.items" title="Link to this definition">¶</a></dt>
+<dd><p>The items contained within the container</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="#discord_http.view.Item" title="discord_http.view.Item">Item</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.view.ContainerComponent.colour">
+<span class="sig-name descname"><span class="pre">colour</span></span><a class="headerlink" href="#discord_http.view.ContainerComponent.colour" title="Link to this definition">¶</a></dt>
+<dd><p>The colour of the container, can be a Colour object or an integer</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="colour.html#discord_http.colour.Colour" title="discord_http.colour.Colour">Colour</a> | <a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)">int</a> | None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.view.ContainerComponent.spoiler">
+<span class="sig-name descname"><span class="pre">spoiler</span></span><a class="headerlink" href="#discord_http.view.ContainerComponent.spoiler" title="Link to this definition">¶</a></dt>
+<dd><p>Whether the container is marked as a spoiler</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)">bool</a> | None</p>
+</dd>
+</dl>
+</dd></dl>
+
 <dl class="py method">
 <dt class="sig sig-object py" id="discord_http.view.ContainerComponent.add_item">
 <span class="sig-name descname"><span class="pre">add_item</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">item</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#discord_http.view.Item" title="discord_http.view.Item"><span class="pre">Item</span></a></span></span><a class="headerlink" href="#discord_http.view.ContainerComponent.add_item" title="Link to this definition">¶</a></dt>
@@ -704,6 +895,7 @@ Example: <cite>./path/to/file.png</cite></p></li>
 <dt class="sig sig-object py" id="discord_http.view.FileComponent">
 <em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">discord_http.view.</span></span><span class="sig-name descname"><span class="pre">FileComponent</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">file</span></span></em>, <em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">spoiler</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#discord_http.view.FileComponent" title="Link to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#discord_http.view.Item" title="discord_http.view.Item"><code class="xref py py-class docutils literal notranslate"><span class="pre">Item</span></code></a></p>
+<p>Represents a file component in a message.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
@@ -712,6 +904,28 @@ Example: <cite>./path/to/file.png</cite></p></li>
 </ul>
 </dd>
 </dl>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.view.FileComponent.file">
+<span class="sig-name descname"><span class="pre">file</span></span><a class="headerlink" href="#discord_http.view.FileComponent.file" title="Link to this definition">¶</a></dt>
+<dd><p>The file to be sent</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="asset.html#discord_http.asset.Asset" title="discord_http.asset.Asset">Asset</a> | <a class="reference internal" href="#discord_http.view.AttachmentComponent" title="discord_http.view.AttachmentComponent">AttachmentComponent</a> | <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)">str</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.view.FileComponent.spoiler">
+<span class="sig-name descname"><span class="pre">spoiler</span></span><a class="headerlink" href="#discord_http.view.FileComponent.spoiler" title="Link to this definition">¶</a></dt>
+<dd><p>Whether the file is a spoiler</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)">bool</a></p>
+</dd>
+</dl>
+</dd></dl>
+
 <dl class="py method">
 <dt class="sig sig-object py" id="discord_http.view.FileComponent.to_dict">
 <span class="sig-name descname"><span class="pre">to_dict</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.13)"><span class="pre">dict</span></a></span></span><a class="headerlink" href="#discord_http.view.FileComponent.to_dict" title="Link to this definition">¶</a></dt>
@@ -752,6 +966,7 @@ Example: <cite>./path/to/file.png</cite></p></li>
 <dt class="sig sig-object py" id="discord_http.view.Link">
 <em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">discord_http.view.</span></span><span class="sig-name descname"><span class="pre">Link</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">url</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">label</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">emoji</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">disabled</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#discord_http.view.Link" title="Link to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#discord_http.view.Button" title="discord_http.view.Button"><code class="xref py py-class docutils literal notranslate"><span class="pre">Button</span></code></a></p>
+<p>Button alias for the link style.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
@@ -762,17 +977,53 @@ Example: <cite>./path/to/file.png</cite></p></li>
 </ul>
 </dd>
 </dl>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.view.Link.url">
+<span class="sig-name descname"><span class="pre">url</span></span><a class="headerlink" href="#discord_http.view.Link.url" title="Link to this definition">¶</a></dt>
+<dd><p>URL to open when the button is clicked</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.view.Link.label">
+<span class="sig-name descname"><span class="pre">label</span></span><a class="headerlink" href="#discord_http.view.Link.label" title="Link to this definition">¶</a></dt>
+<dd><p>Label of the button</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.view.Link.emoji">
+<span class="sig-name descname"><span class="pre">emoji</span></span><a class="headerlink" href="#discord_http.view.Link.emoji" title="Link to this definition">¶</a></dt>
+<dd><p>Emoji shown on the left side of the button</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.view.Link.disabled">
+<span class="sig-name descname"><span class="pre">disabled</span></span><a class="headerlink" href="#discord_http.view.Link.disabled" title="Link to this definition">¶</a></dt>
+<dd><p>Whether the button is disabled or not</p>
+</dd></dl>
+
 </dd></dl>
 
 <dl class="py class">
 <dt class="sig sig-object py" id="discord_http.view.MediaGalleryComponent">
 <em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">discord_http.view.</span></span><span class="sig-name descname"><span class="pre">MediaGalleryComponent</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">items</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#discord_http.view.MediaGalleryComponent" title="Link to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#discord_http.view.Item" title="discord_http.view.Item"><code class="xref py py-class docutils literal notranslate"><span class="pre">Item</span></code></a></p>
+<p>Represents a media gallery component in a message.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>items</strong> (<a class="reference internal" href="#discord_http.view.MediaGalleryItem" title="discord_http.view.MediaGalleryItem"><em>MediaGalleryItem</em></a><em> | </em><a class="reference internal" href="file.html#discord_http.file.File" title="discord_http.file.File"><em>File</em></a><em> | </em><a class="reference internal" href="asset.html#discord_http.asset.Asset" title="discord_http.asset.Asset"><em>Asset</em></a><em> | </em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><em>str</em></a>)</p>
 </dd>
 </dl>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.view.MediaGalleryComponent.items">
+<span class="sig-name descname"><span class="pre">items</span></span><a class="headerlink" href="#discord_http.view.MediaGalleryComponent.items" title="Link to this definition">¶</a></dt>
+<dd><p>The items contained within the media gallery</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="#discord_http.view.MediaGalleryItem" title="discord_http.view.MediaGalleryItem">MediaGalleryItem</a> | <a class="reference internal" href="file.html#discord_http.file.File" title="discord_http.file.File">File</a> | <a class="reference internal" href="asset.html#discord_http.asset.Asset" title="discord_http.asset.Asset">Asset</a> | <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)">str</a></p>
+</dd>
+</dl>
+</dd></dl>
+
 <dl class="py method">
 <dt class="sig sig-object py" id="discord_http.view.MediaGalleryComponent.add_item">
 <span class="sig-name descname"><span class="pre">add_item</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">item</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></span></span><a class="headerlink" href="#discord_http.view.MediaGalleryComponent.add_item" title="Link to this definition">¶</a></dt>
@@ -804,6 +1055,7 @@ Example: <cite>./path/to/file.png</cite></p></li>
 <dt class="sig sig-object py" id="discord_http.view.MediaGalleryItem">
 <em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">discord_http.view.</span></span><span class="sig-name descname"><span class="pre">MediaGalleryItem</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">url</span></span></em>, <em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">description</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">spoiler</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#discord_http.view.MediaGalleryItem" title="Link to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<p>Represents an item in a media gallery.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
@@ -813,6 +1065,39 @@ Example: <cite>./path/to/file.png</cite></p></li>
 </ul>
 </dd>
 </dl>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.view.MediaGalleryItem.url">
+<span class="sig-name descname"><span class="pre">url</span></span><a class="headerlink" href="#discord_http.view.MediaGalleryItem.url" title="Link to this definition">¶</a></dt>
+<dd><p>The URL of the media item, can be a file, asset, attachment component, or a string URL</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="file.html#discord_http.file.File" title="discord_http.file.File">File</a> | <a class="reference internal" href="asset.html#discord_http.asset.Asset" title="discord_http.asset.Asset">Asset</a> | <a class="reference internal" href="#discord_http.view.AttachmentComponent" title="discord_http.view.AttachmentComponent">AttachmentComponent</a> | <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)">str</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.view.MediaGalleryItem.description">
+<span class="sig-name descname"><span class="pre">description</span></span><a class="headerlink" href="#discord_http.view.MediaGalleryItem.description" title="Link to this definition">¶</a></dt>
+<dd><p>The description of the media item</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)">str</a> | None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.view.MediaGalleryItem.spoiler">
+<span class="sig-name descname"><span class="pre">spoiler</span></span><a class="headerlink" href="#discord_http.view.MediaGalleryItem.spoiler" title="Link to this definition">¶</a></dt>
+<dd><p>Whether the media item is marked as a spoiler</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)">bool</a></p>
+</dd>
+</dl>
+</dd></dl>
+
 <dl class="py method">
 <dt class="sig sig-object py" id="discord_http.view.MediaGalleryItem.to_dict">
 <span class="sig-name descname"><span class="pre">to_dict</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.13)"><span class="pre">dict</span></a></span></span><a class="headerlink" href="#discord_http.view.MediaGalleryItem.to_dict" title="Link to this definition">¶</a></dt>
@@ -830,6 +1115,7 @@ Example: <cite>./path/to/file.png</cite></p></li>
 <dt class="sig sig-object py" id="discord_http.view.MentionableSelect">
 <em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">discord_http.view.</span></span><span class="sig-name descname"><span class="pre">MentionableSelect</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">placeholder</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">custom_id</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">min_values</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_values</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">default_values</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">disabled</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#discord_http.view.MentionableSelect" title="Link to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#discord_http.view.Select" title="discord_http.view.Select"><code class="xref py py-class docutils literal notranslate"><span class="pre">Select</span></code></a></p>
+<p>Represents a mentionable select menu component in a message.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
@@ -842,12 +1128,79 @@ Example: <cite>./path/to/file.png</cite></p></li>
 </ul>
 </dd>
 </dl>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.view.MentionableSelect.placeholder">
+<span class="sig-name descname"><span class="pre">placeholder</span></span><a class="headerlink" href="#discord_http.view.MentionableSelect.placeholder" title="Link to this definition">¶</a></dt>
+<dd><p>The placeholder text for the mentionable select menu</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)">str</a> | None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.view.MentionableSelect.custom_id">
+<span class="sig-name descname"><span class="pre">custom_id</span></span><a class="headerlink" href="#discord_http.view.MentionableSelect.custom_id" title="Link to this definition">¶</a></dt>
+<dd><p>The custom ID of the mentionable select menu</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)">str</a> | None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.view.MentionableSelect.min_values">
+<span class="sig-name descname"><span class="pre">min_values</span></span><a class="headerlink" href="#discord_http.view.MentionableSelect.min_values" title="Link to this definition">¶</a></dt>
+<dd><p>The minimum number of values that can be selected</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)">int</a> | None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.view.MentionableSelect.max_values">
+<span class="sig-name descname"><span class="pre">max_values</span></span><a class="headerlink" href="#discord_http.view.MentionableSelect.max_values" title="Link to this definition">¶</a></dt>
+<dd><p>The maximum number of values that can be selected</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)">int</a> | None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.view.MentionableSelect.default_values">
+<span class="sig-name descname"><span class="pre">default_values</span></span><a class="headerlink" href="#discord_http.view.MentionableSelect.default_values" title="Link to this definition">¶</a></dt>
+<dd><p>The default selected values for the mentionable select menu</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.13)">list</a>[“Member | <a class="reference internal" href="role.html#discord_http.role.Role" title="discord_http.role.Role">Role</a> | int”] | None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.view.MentionableSelect.disabled">
+<span class="sig-name descname"><span class="pre">disabled</span></span><a class="headerlink" href="#discord_http.view.MentionableSelect.disabled" title="Link to this definition">¶</a></dt>
+<dd><p>Whether the mentionable select menu is disabled or not</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)">bool</a></p>
+</dd>
+</dl>
+</dd></dl>
+
 </dd></dl>
 
 <dl class="py class">
 <dt class="sig sig-object py" id="discord_http.view.Modal">
 <em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">discord_http.view.</span></span><span class="sig-name descname"><span class="pre">Modal</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">title</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">custom_id</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#discord_http.view.Modal" title="Link to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">InteractionStorage</span></code></p>
+<p>Represents a modal component in a message.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
@@ -856,28 +1209,48 @@ Example: <cite>./path/to/file.png</cite></p></li>
 </ul>
 </dd>
 </dl>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.view.Modal.title">
+<span class="sig-name descname"><span class="pre">title</span></span><a class="headerlink" href="#discord_http.view.Modal.title" title="Link to this definition">¶</a></dt>
+<dd><p>The title of the modal</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)">str</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.view.Modal.custom_id">
+<span class="sig-name descname"><span class="pre">custom_id</span></span><a class="headerlink" href="#discord_http.view.Modal.custom_id" title="Link to this definition">¶</a></dt>
+<dd><p>The custom ID of the modal</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)">str</a> | None</p>
+</dd>
+</dl>
+</dd></dl>
+
 <dl class="py method">
 <dt class="sig sig-object py" id="discord_http.view.Modal.add_item">
-<span class="sig-name descname"><span class="pre">add_item</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">label</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">custom_id</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">style</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">placeholder</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">min_length</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_length</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">default</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">required</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#discord_http.view.ModalItem" title="discord_http.view.ModalItem"><span class="pre">ModalItem</span></a></span></span><a class="headerlink" href="#discord_http.view.Modal.add_item" title="Link to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">add_item</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">component</span></span></em>, <em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">label</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">description</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">LabelComponent</span></span></span><a class="headerlink" href="#discord_http.view.Modal.add_item" title="Link to this definition">¶</a></dt>
 <dd><p>Add an item to the modal.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>label</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></span>) – Label of the item</p></li>
-<li><p><strong>custom_id</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a> | <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></span>) – Custom ID of the item</p></li>
-<li><p><strong>style</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference internal" href="enums.html#discord_http.enums.TextStyles" title="discord_http.enums.TextStyles"><code class="xref py py-class docutils literal notranslate"><span class="pre">TextStyles</span></code></a> | <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></span>) – Style of the item</p></li>
-<li><p><strong>placeholder</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a> | <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></span>) – Placeholder of the item</p></li>
-<li><p><strong>min_length</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a> | <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></span>) – Minimum length of the item</p></li>
-<li><p><strong>max_length</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a> | <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></span>) – Maximum length of the item</p></li>
-<li><p><strong>default</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a> | <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></span>) – Default value of the item</p></li>
-<li><p><strong>required</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></a></span>) – Whether the item is required</p></li>
+<li><p><strong>component</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference internal" href="#discord_http.view.TextInputComponent" title="discord_http.view.TextInputComponent"><code class="xref py py-class docutils literal notranslate"><span class="pre">TextInputComponent</span></code></a> | <a class="reference internal" href="#discord_http.view.Select" title="discord_http.view.Select"><code class="xref py py-class docutils literal notranslate"><span class="pre">Select</span></code></a></span>) – The component to add to the modal</p></li>
+<li><p><strong>label</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a> | <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></span>) – The label of the component, overwrites component.label</p></li>
+<li><p><strong>description</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a> | <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></span>) – The description of the component, overwrites component.description, by default None</p></li>
 </ul>
 </dd>
 <dt class="field-even">Return type<span class="colon">:</span></dt>
-<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><a class="reference internal" href="#discord_http.view.ModalItem" title="discord_http.view.ModalItem"><code class="xref py py-class docutils literal notranslate"><span class="pre">ModalItem</span></code></a></span></p>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">LabelComponent</span></code></span></p>
 </dd>
 <dt class="field-odd">Returns<span class="colon">:</span></dt>
-<dd class="field-odd"><p>Returns the created modal item from the items list</p>
+<dd class="field-odd"><p>The created label component</p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#TypeError" title="(in Python v3.13)"><strong>TypeError</strong></a> – If the component is not a TextInputComponent or Select</p>
 </dd>
 </dl>
 </dd></dl>
@@ -896,51 +1269,28 @@ Example: <cite>./path/to/file.png</cite></p></li>
 </dd></dl>
 
 <dl class="py class">
-<dt class="sig sig-object py" id="discord_http.view.ModalItem">
-<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">discord_http.view.</span></span><span class="sig-name descname"><span class="pre">ModalItem</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">label</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">custom_id</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">style</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">placeholder</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">min_length</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_length</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">default</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">required</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#discord_http.view.ModalItem" title="Link to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>label</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><em>str</em></a>)</p></li>
-<li><p><strong>custom_id</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><em>str</em></a><em> | </em><em>None</em>)</p></li>
-<li><p><strong>style</strong> (<a class="reference internal" href="enums.html#discord_http.enums.TextStyles" title="discord_http.enums.TextStyles"><em>TextStyles</em></a><em> | </em><em>None</em>)</p></li>
-<li><p><strong>placeholder</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><em>str</em></a><em> | </em><em>None</em>)</p></li>
-<li><p><strong>min_length</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><em>int</em></a><em> | </em><em>None</em>)</p></li>
-<li><p><strong>max_length</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><em>int</em></a><em> | </em><em>None</em>)</p></li>
-<li><p><strong>default</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><em>str</em></a><em> | </em><em>None</em>)</p></li>
-<li><p><strong>required</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><em>bool</em></a>)</p></li>
-</ul>
-</dd>
-</dl>
-<dl class="py method">
-<dt class="sig sig-object py" id="discord_http.view.ModalItem.to_dict">
-<span class="sig-name descname"><span class="pre">to_dict</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.13)"><span class="pre">dict</span></a></span></span><a class="headerlink" href="#discord_http.view.ModalItem.to_dict" title="Link to this definition">¶</a></dt>
-<dd><p>Returns a dict representation of the modal item.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">dict</span></code></a></span></p>
-</dd>
-</dl>
-</dd></dl>
-
-</dd></dl>
-
-<dl class="py class">
 <dt class="sig sig-object py" id="discord_http.view.Premium">
 <em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">discord_http.view.</span></span><span class="sig-name descname"><span class="pre">Premium</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sku_id</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#discord_http.view.Premium" title="Link to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#discord_http.view.Button" title="discord_http.view.Button"><code class="xref py py-class docutils literal notranslate"><span class="pre">Button</span></code></a></p>
+<p>Button alias for the premium SKU style.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>sku_id</strong> (<a class="reference internal" href="object.html#discord_http.object.Snowflake" title="discord_http.object.Snowflake"><em>Snowflake</em></a><em> | </em><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><em>int</em></a>)</p>
 </dd>
 </dl>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.view.Premium.sku_id">
+<span class="sig-name descname"><span class="pre">sku_id</span></span><a class="headerlink" href="#discord_http.view.Premium.sku_id" title="Link to this definition">¶</a></dt>
+<dd><p>SKU ID of the premium button</p>
+</dd></dl>
+
 </dd></dl>
 
 <dl class="py class">
 <dt class="sig sig-object py" id="discord_http.view.RoleSelect">
 <em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">discord_http.view.</span></span><span class="sig-name descname"><span class="pre">RoleSelect</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">placeholder</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">custom_id</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">min_values</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_values</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">default_values</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">disabled</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#discord_http.view.RoleSelect" title="Link to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#discord_http.view.Select" title="discord_http.view.Select"><code class="xref py py-class docutils literal notranslate"><span class="pre">Select</span></code></a></p>
+<p>Represents a role select menu component in a message.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
@@ -953,12 +1303,79 @@ Example: <cite>./path/to/file.png</cite></p></li>
 </ul>
 </dd>
 </dl>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.view.RoleSelect.placeholder">
+<span class="sig-name descname"><span class="pre">placeholder</span></span><a class="headerlink" href="#discord_http.view.RoleSelect.placeholder" title="Link to this definition">¶</a></dt>
+<dd><p>The placeholder text for the role select menu</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)">str</a> | None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.view.RoleSelect.custom_id">
+<span class="sig-name descname"><span class="pre">custom_id</span></span><a class="headerlink" href="#discord_http.view.RoleSelect.custom_id" title="Link to this definition">¶</a></dt>
+<dd><p>The custom ID of the role select menu</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)">str</a> | None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.view.RoleSelect.min_values">
+<span class="sig-name descname"><span class="pre">min_values</span></span><a class="headerlink" href="#discord_http.view.RoleSelect.min_values" title="Link to this definition">¶</a></dt>
+<dd><p>The minimum number of values that can be selected</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)">int</a> | None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.view.RoleSelect.max_values">
+<span class="sig-name descname"><span class="pre">max_values</span></span><a class="headerlink" href="#discord_http.view.RoleSelect.max_values" title="Link to this definition">¶</a></dt>
+<dd><p>The maximum number of values that can be selected</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)">int</a> | None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.view.RoleSelect.default_values">
+<span class="sig-name descname"><span class="pre">default_values</span></span><a class="headerlink" href="#discord_http.view.RoleSelect.default_values" title="Link to this definition">¶</a></dt>
+<dd><p>The default selected values for the role select menu</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.13)">list</a>[“Role | int”] | None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.view.RoleSelect.disabled">
+<span class="sig-name descname"><span class="pre">disabled</span></span><a class="headerlink" href="#discord_http.view.RoleSelect.disabled" title="Link to this definition">¶</a></dt>
+<dd><p>Whether the role select menu is disabled or not</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)">bool</a></p>
+</dd>
+</dl>
+</dd></dl>
+
 </dd></dl>
 
 <dl class="py class">
 <dt class="sig sig-object py" id="discord_http.view.SectionComponent">
 <em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">discord_http.view.</span></span><span class="sig-name descname"><span class="pre">SectionComponent</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">components</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">accessory</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#discord_http.view.SectionComponent" title="Link to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#discord_http.view.Item" title="discord_http.view.Item"><code class="xref py py-class docutils literal notranslate"><span class="pre">Item</span></code></a></p>
+<p>Represents a section component in a message.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
@@ -967,6 +1384,28 @@ Example: <cite>./path/to/file.png</cite></p></li>
 </ul>
 </dd>
 </dl>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.view.SectionComponent.components">
+<span class="sig-name descname"><span class="pre">components</span></span><a class="headerlink" href="#discord_http.view.SectionComponent.components" title="Link to this definition">¶</a></dt>
+<dd><p>The components contained within the section</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="#discord_http.view.TextDisplayComponent" title="discord_http.view.TextDisplayComponent">TextDisplayComponent</a> | <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)">str</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.view.SectionComponent.accessory">
+<span class="sig-name descname"><span class="pre">accessory</span></span><a class="headerlink" href="#discord_http.view.SectionComponent.accessory" title="Link to this definition">¶</a></dt>
+<dd><p>The accessory component for the section</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="#discord_http.view.Button" title="discord_http.view.Button">Button</a> | <a class="reference internal" href="#discord_http.view.ThumbnailComponent" title="discord_http.view.ThumbnailComponent">ThumbnailComponent</a> | <a class="reference internal" href="#discord_http.view.AttachmentComponent" title="discord_http.view.AttachmentComponent">AttachmentComponent</a> | <a class="reference internal" href="asset.html#discord_http.asset.Asset" title="discord_http.asset.Asset">Asset</a> | <a class="reference internal" href="file.html#discord_http.file.File" title="discord_http.file.File">File</a> | <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)">str</a></p>
+</dd>
+</dl>
+</dd></dl>
+
 <dl class="py method">
 <dt class="sig sig-object py" id="discord_http.view.SectionComponent.to_dict">
 <span class="sig-name descname"><span class="pre">to_dict</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.13)"><span class="pre">dict</span></a></span></span><a class="headerlink" href="#discord_http.view.SectionComponent.to_dict" title="Link to this definition">¶</a></dt>
@@ -982,21 +1421,124 @@ Example: <cite>./path/to/file.png</cite></p></li>
 
 <dl class="py class">
 <dt class="sig sig-object py" id="discord_http.view.Select">
-<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">discord_http.view.</span></span><span class="sig-name descname"><span class="pre">Select</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">placeholder</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">custom_id</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">min_values</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_values</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">disabled</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">options</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">_type</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#discord_http.view.Select" title="Link to this definition">¶</a></dt>
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">discord_http.view.</span></span><span class="sig-name descname"><span class="pre">Select</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">label</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">description</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">placeholder</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">custom_id</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">min_values</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_values</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">disabled</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">options</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">required</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">_type</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#discord_http.view.Select" title="Link to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#discord_http.view.Item" title="discord_http.view.Item"><code class="xref py py-class docutils literal notranslate"><span class="pre">Item</span></code></a></p>
+<p>Represents a select menu component in a message.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
+<li><p><strong>label</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><em>str</em></a><em> | </em><em>None</em>)</p></li>
+<li><p><strong>description</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><em>str</em></a><em> | </em><em>None</em>)</p></li>
 <li><p><strong>placeholder</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><em>str</em></a><em> | </em><em>None</em>)</p></li>
 <li><p><strong>custom_id</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><em>str</em></a><em> | </em><em>None</em>)</p></li>
 <li><p><strong>min_values</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><em>int</em></a><em> | </em><em>None</em>)</p></li>
 <li><p><strong>max_values</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><em>int</em></a><em> | </em><em>None</em>)</p></li>
 <li><p><strong>disabled</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><em>bool</em></a>)</p></li>
 <li><p><strong>options</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.13)"><em>list</em></a><em>[</em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.13)"><em>dict</em></a><em>] </em><em>| </em><em>None</em>)</p></li>
+<li><p><strong>required</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><em>bool</em></a><em> | </em><em>None</em>)</p></li>
 <li><p><strong>_type</strong> (<a class="reference internal" href="enums.html#discord_http.enums.ComponentType" title="discord_http.enums.ComponentType"><em>ComponentType</em></a><em> | </em><em>None</em>)</p></li>
 </ul>
 </dd>
 </dl>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.view.Select.label">
+<span class="sig-name descname"><span class="pre">label</span></span><a class="headerlink" href="#discord_http.view.Select.label" title="Link to this definition">¶</a></dt>
+<dd><p>The label of the select menu (only works for modals)</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)">str</a> | None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.view.Select.description">
+<span class="sig-name descname"><span class="pre">description</span></span><a class="headerlink" href="#discord_http.view.Select.description" title="Link to this definition">¶</a></dt>
+<dd><p>The description of the select menu (only works for modals)</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)">str</a> | None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.view.Select.placeholder">
+<span class="sig-name descname"><span class="pre">placeholder</span></span><a class="headerlink" href="#discord_http.view.Select.placeholder" title="Link to this definition">¶</a></dt>
+<dd><p>The placeholder text for the select menu</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)">str</a> | None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.view.Select.custom_id">
+<span class="sig-name descname"><span class="pre">custom_id</span></span><a class="headerlink" href="#discord_http.view.Select.custom_id" title="Link to this definition">¶</a></dt>
+<dd><p>The custom ID of the select menu</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)">str</a> | None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.view.Select.min_values">
+<span class="sig-name descname"><span class="pre">min_values</span></span><a class="headerlink" href="#discord_http.view.Select.min_values" title="Link to this definition">¶</a></dt>
+<dd><p>The minimum number of values that can be selected</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)">int</a> | None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.view.Select.max_values">
+<span class="sig-name descname"><span class="pre">max_values</span></span><a class="headerlink" href="#discord_http.view.Select.max_values" title="Link to this definition">¶</a></dt>
+<dd><p>The maximum number of values that can be selected</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)">int</a> | None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.view.Select.disabled">
+<span class="sig-name descname"><span class="pre">disabled</span></span><a class="headerlink" href="#discord_http.view.Select.disabled" title="Link to this definition">¶</a></dt>
+<dd><p>Whether the select menu is disabled or not</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)">bool</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.view.Select.options">
+<span class="sig-name descname"><span class="pre">options</span></span><a class="headerlink" href="#discord_http.view.Select.options" title="Link to this definition">¶</a></dt>
+<dd><p>The options for the select menu</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.13)">list</a>[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.13)">dict</a>] | None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.view.Select.required">
+<span class="sig-name descname"><span class="pre">required</span></span><a class="headerlink" href="#discord_http.view.Select.required" title="Link to this definition">¶</a></dt>
+<dd><p>Whether the select menu is required or not (only works for modals)</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)">bool</a> | None</p>
+</dd>
+</dl>
+</dd></dl>
+
 <dl class="py method">
 <dt class="sig sig-object py" id="discord_http.view.Select.add_item">
 <span class="sig-name descname"><span class="pre">add_item</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">label</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">value</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">description</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">emoji</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">default</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></span></span><a class="headerlink" href="#discord_http.view.Select.add_item" title="Link to this definition">¶</a></dt>
@@ -1037,6 +1579,7 @@ Example: <cite>./path/to/file.png</cite></p></li>
 <dt class="sig sig-object py" id="discord_http.view.SeparatorComponent">
 <em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">discord_http.view.</span></span><span class="sig-name descname"><span class="pre">SeparatorComponent</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">spacing</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">divider</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#discord_http.view.SeparatorComponent" title="Link to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#discord_http.view.Item" title="discord_http.view.Item"><code class="xref py py-class docutils literal notranslate"><span class="pre">Item</span></code></a></p>
+<p>Represents a separator component in a message.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
@@ -1045,6 +1588,28 @@ Example: <cite>./path/to/file.png</cite></p></li>
 </ul>
 </dd>
 </dl>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.view.SeparatorComponent.spacing">
+<span class="sig-name descname"><span class="pre">spacing</span></span><a class="headerlink" href="#discord_http.view.SeparatorComponent.spacing" title="Link to this definition">¶</a></dt>
+<dd><p>The spacing type of the separator</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="enums.html#discord_http.enums.SeparatorSpacingType" title="discord_http.enums.SeparatorSpacingType">SeparatorSpacingType</a> | None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.view.SeparatorComponent.divider">
+<span class="sig-name descname"><span class="pre">divider</span></span><a class="headerlink" href="#discord_http.view.SeparatorComponent.divider" title="Link to this definition">¶</a></dt>
+<dd><p>Whether the separator is a divider or not</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)">bool</a> | None</p>
+</dd>
+</dl>
+</dd></dl>
+
 <dl class="py method">
 <dt class="sig sig-object py" id="discord_http.view.SeparatorComponent.to_dict">
 <span class="sig-name descname"><span class="pre">to_dict</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.13)"><span class="pre">dict</span></a></span></span><a class="headerlink" href="#discord_http.view.SeparatorComponent.to_dict" title="Link to this definition">¶</a></dt>
@@ -1062,11 +1627,23 @@ Example: <cite>./path/to/file.png</cite></p></li>
 <dt class="sig sig-object py" id="discord_http.view.TextDisplayComponent">
 <em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">discord_http.view.</span></span><span class="sig-name descname"><span class="pre">TextDisplayComponent</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">content</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#discord_http.view.TextDisplayComponent" title="Link to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#discord_http.view.Item" title="discord_http.view.Item"><code class="xref py py-class docutils literal notranslate"><span class="pre">Item</span></code></a></p>
+<p>Represents a text display component in a message.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>content</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><em>str</em></a>)</p>
 </dd>
 </dl>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.view.TextDisplayComponent.content">
+<span class="sig-name descname"><span class="pre">content</span></span><a class="headerlink" href="#discord_http.view.TextDisplayComponent.content" title="Link to this definition">¶</a></dt>
+<dd><p>The content of the text display component</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)">str</a></p>
+</dd>
+</dl>
+</dd></dl>
+
 <dl class="py method">
 <dt class="sig sig-object py" id="discord_http.view.TextDisplayComponent.to_dict">
 <span class="sig-name descname"><span class="pre">to_dict</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.13)"><span class="pre">dict</span></a></span></span><a class="headerlink" href="#discord_http.view.TextDisplayComponent.to_dict" title="Link to this definition">¶</a></dt>
@@ -1081,9 +1658,142 @@ Example: <cite>./path/to/file.png</cite></p></li>
 </dd></dl>
 
 <dl class="py class">
+<dt class="sig sig-object py" id="discord_http.view.TextInputComponent">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">discord_http.view.</span></span><span class="sig-name descname"><span class="pre">TextInputComponent</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">label</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">description</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">custom_id</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">style</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">placeholder</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">min_length</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_length</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">default</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">required</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#discord_http.view.TextInputComponent" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#discord_http.view.Item" title="discord_http.view.Item"><code class="xref py py-class docutils literal notranslate"><span class="pre">Item</span></code></a></p>
+<p>Represents a text input component in a modal.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>label</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><em>str</em></a><em> | </em><em>None</em>)</p></li>
+<li><p><strong>description</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><em>str</em></a><em> | </em><em>None</em>)</p></li>
+<li><p><strong>custom_id</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><em>str</em></a><em> | </em><em>None</em>)</p></li>
+<li><p><strong>style</strong> (<a class="reference internal" href="enums.html#discord_http.enums.TextStyles" title="discord_http.enums.TextStyles"><em>TextStyles</em></a><em> | </em><em>None</em>)</p></li>
+<li><p><strong>placeholder</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><em>str</em></a><em> | </em><em>None</em>)</p></li>
+<li><p><strong>min_length</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><em>int</em></a><em> | </em><em>None</em>)</p></li>
+<li><p><strong>max_length</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><em>int</em></a><em> | </em><em>None</em>)</p></li>
+<li><p><strong>default</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><em>str</em></a><em> | </em><em>None</em>)</p></li>
+<li><p><strong>required</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><em>bool</em></a>)</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.view.TextInputComponent.label">
+<span class="sig-name descname"><span class="pre">label</span></span><a class="headerlink" href="#discord_http.view.TextInputComponent.label" title="Link to this definition">¶</a></dt>
+<dd><p>The label of the text input</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)">str</a> | None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.view.TextInputComponent.description">
+<span class="sig-name descname"><span class="pre">description</span></span><a class="headerlink" href="#discord_http.view.TextInputComponent.description" title="Link to this definition">¶</a></dt>
+<dd><p>The description of the text input</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)">str</a> | None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.view.TextInputComponent.custom_id">
+<span class="sig-name descname"><span class="pre">custom_id</span></span><a class="headerlink" href="#discord_http.view.TextInputComponent.custom_id" title="Link to this definition">¶</a></dt>
+<dd><p>The custom ID of the text input</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)">str</a> | None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.view.TextInputComponent.style">
+<span class="sig-name descname"><span class="pre">style</span></span><a class="headerlink" href="#discord_http.view.TextInputComponent.style" title="Link to this definition">¶</a></dt>
+<dd><p>The style of the text input</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="enums.html#discord_http.enums.TextStyles" title="discord_http.enums.TextStyles">TextStyles</a> | None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.view.TextInputComponent.placeholder">
+<span class="sig-name descname"><span class="pre">placeholder</span></span><a class="headerlink" href="#discord_http.view.TextInputComponent.placeholder" title="Link to this definition">¶</a></dt>
+<dd><p>The placeholder text of the text input</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)">str</a> | None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.view.TextInputComponent.min_length">
+<span class="sig-name descname"><span class="pre">min_length</span></span><a class="headerlink" href="#discord_http.view.TextInputComponent.min_length" title="Link to this definition">¶</a></dt>
+<dd><p>The minimum length of the text input</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)">int</a> | None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.view.TextInputComponent.max_length">
+<span class="sig-name descname"><span class="pre">max_length</span></span><a class="headerlink" href="#discord_http.view.TextInputComponent.max_length" title="Link to this definition">¶</a></dt>
+<dd><p>The maximum length of the text input</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)">int</a> | None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.view.TextInputComponent.default">
+<span class="sig-name descname"><span class="pre">default</span></span><a class="headerlink" href="#discord_http.view.TextInputComponent.default" title="Link to this definition">¶</a></dt>
+<dd><p>The default value of the text input</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)">str</a> | None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.view.TextInputComponent.required">
+<span class="sig-name descname"><span class="pre">required</span></span><a class="headerlink" href="#discord_http.view.TextInputComponent.required" title="Link to this definition">¶</a></dt>
+<dd><p>Whether the text input is required or not</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)">bool</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="discord_http.view.TextInputComponent.to_dict">
+<span class="sig-name descname"><span class="pre">to_dict</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.13)"><span class="pre">dict</span></a></span></span><a class="headerlink" href="#discord_http.view.TextInputComponent.to_dict" title="Link to this definition">¶</a></dt>
+<dd><p>Returns a dict representation of the modal item.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">dict</span></code></a></span></p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
 <dt class="sig sig-object py" id="discord_http.view.ThumbnailComponent">
 <em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">discord_http.view.</span></span><span class="sig-name descname"><span class="pre">ThumbnailComponent</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">url</span></span></em>, <em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">description</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">spoiler</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#discord_http.view.ThumbnailComponent" title="Link to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#discord_http.view.Item" title="discord_http.view.Item"><code class="xref py py-class docutils literal notranslate"><span class="pre">Item</span></code></a></p>
+<p>Represents a thumbnail component in a message.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
@@ -1093,6 +1803,28 @@ Example: <cite>./path/to/file.png</cite></p></li>
 </ul>
 </dd>
 </dl>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.view.ThumbnailComponent.url">
+<span class="sig-name descname"><span class="pre">url</span></span><a class="headerlink" href="#discord_http.view.ThumbnailComponent.url" title="Link to this definition">¶</a></dt>
+<dd><p>The URL of the thumbnail image</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="asset.html#discord_http.asset.Asset" title="discord_http.asset.Asset">Asset</a> | <a class="reference internal" href="#discord_http.view.AttachmentComponent" title="discord_http.view.AttachmentComponent">AttachmentComponent</a> | <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)">str</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.view.ThumbnailComponent.description">
+<span class="sig-name descname"><span class="pre">description</span></span><a class="headerlink" href="#discord_http.view.ThumbnailComponent.description" title="Link to this definition">¶</a></dt>
+<dd><p>The description of the thumbnail</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)">str</a> | None</p>
+</dd>
+</dl>
+</dd></dl>
+
 <dl class="py method">
 <dt class="sig sig-object py" id="discord_http.view.ThumbnailComponent.to_dict">
 <span class="sig-name descname"><span class="pre">to_dict</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.13)"><span class="pre">dict</span></a></span></span><a class="headerlink" href="#discord_http.view.ThumbnailComponent.to_dict" title="Link to this definition">¶</a></dt>
@@ -1110,6 +1842,7 @@ Example: <cite>./path/to/file.png</cite></p></li>
 <dt class="sig sig-object py" id="discord_http.view.UserSelect">
 <em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">discord_http.view.</span></span><span class="sig-name descname"><span class="pre">UserSelect</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">placeholder</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">custom_id</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">min_values</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_values</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">default_values</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">disabled</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#discord_http.view.UserSelect" title="Link to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#discord_http.view.Select" title="discord_http.view.Select"><code class="xref py py-class docutils literal notranslate"><span class="pre">Select</span></code></a></p>
+<p>Represents a user select menu component in a message.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
@@ -1122,17 +1855,95 @@ Example: <cite>./path/to/file.png</cite></p></li>
 </ul>
 </dd>
 </dl>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.view.UserSelect.placeholder">
+<span class="sig-name descname"><span class="pre">placeholder</span></span><a class="headerlink" href="#discord_http.view.UserSelect.placeholder" title="Link to this definition">¶</a></dt>
+<dd><p>The placeholder text for the user select menu</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)">str</a> | None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.view.UserSelect.custom_id">
+<span class="sig-name descname"><span class="pre">custom_id</span></span><a class="headerlink" href="#discord_http.view.UserSelect.custom_id" title="Link to this definition">¶</a></dt>
+<dd><p>The custom ID of the user select menu</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)">str</a> | None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.view.UserSelect.min_values">
+<span class="sig-name descname"><span class="pre">min_values</span></span><a class="headerlink" href="#discord_http.view.UserSelect.min_values" title="Link to this definition">¶</a></dt>
+<dd><p>The minimum number of values that can be selected</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)">int</a> | None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.view.UserSelect.max_values">
+<span class="sig-name descname"><span class="pre">max_values</span></span><a class="headerlink" href="#discord_http.view.UserSelect.max_values" title="Link to this definition">¶</a></dt>
+<dd><p>The maximum number of values that can be selected</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)">int</a> | None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.view.UserSelect.default_values">
+<span class="sig-name descname"><span class="pre">default_values</span></span><a class="headerlink" href="#discord_http.view.UserSelect.default_values" title="Link to this definition">¶</a></dt>
+<dd><p>The default selected values for the user select menu</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.13)">list</a>[“Member | int”] | None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.view.UserSelect.disabled">
+<span class="sig-name descname"><span class="pre">disabled</span></span><a class="headerlink" href="#discord_http.view.UserSelect.disabled" title="Link to this definition">¶</a></dt>
+<dd><p>Whether the user select menu is disabled or not</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)">bool</a></p>
+</dd>
+</dl>
+</dd></dl>
+
 </dd></dl>
 
 <dl class="py class">
 <dt class="sig sig-object py" id="discord_http.view.View">
 <em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">discord_http.view.</span></span><span class="sig-name descname"><span class="pre">View</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">items</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#discord_http.view.View" title="Link to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">InteractionStorage</span></code></p>
+<p>Represents a view component in a message.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>items</strong> (<a class="reference internal" href="#discord_http.view.Item" title="discord_http.view.Item"><em>Item</em></a>)</p>
 </dd>
 </dl>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.view.View.items">
+<span class="sig-name descname"><span class="pre">items</span></span><a class="headerlink" href="#discord_http.view.View.items" title="Link to this definition">¶</a></dt>
+<dd><p>The items contained within the view, can be buttons, selects, links, etc.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="#discord_http.view.Item" title="discord_http.view.Item">Item</a></p>
+</dd>
+</dl>
+</dd></dl>
+
 <dl class="py method">
 <dt class="sig sig-object py" id="discord_http.view.View.add_item">
 <span class="sig-name descname"><span class="pre">add_item</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">item</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#discord_http.view.Item" title="discord_http.view.Item"><span class="pre">Item</span></a></span></span><a class="headerlink" href="#discord_http.view.View.add_item" title="Link to this definition">¶</a></dt>
@@ -1281,6 +2092,7 @@ Example: <cite>./path/to/file.png</cite></p></li>
 <li><a class="reference internal" href="#">View</a><ul>
 <li><a class="reference internal" href="#module-discord_http.view">discord_http.view module</a><ul>
 <li><a class="reference internal" href="#discord_http.view.ActionRow"><code class="docutils literal notranslate"><span class="pre">ActionRow</span></code></a><ul>
+<li><a class="reference internal" href="#discord_http.view.ActionRow.components"><code class="docutils literal notranslate"><span class="pre">ActionRow.components</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.view.ActionRow.add_item"><code class="docutils literal notranslate"><span class="pre">ActionRow.add_item()</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.view.ActionRow.from_dict"><code class="docutils literal notranslate"><span class="pre">ActionRow.from_dict()</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.view.ActionRow.remove_items"><code class="docutils literal notranslate"><span class="pre">ActionRow.remove_items()</span></code></a></li>
@@ -1306,20 +2118,38 @@ Example: <cite>./path/to/file.png</cite></p></li>
 </ul>
 </li>
 <li><a class="reference internal" href="#discord_http.view.Button"><code class="docutils literal notranslate"><span class="pre">Button</span></code></a><ul>
+<li><a class="reference internal" href="#discord_http.view.Button.label"><code class="docutils literal notranslate"><span class="pre">Button.label</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.view.Button.style"><code class="docutils literal notranslate"><span class="pre">Button.style</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.view.Button.disabled"><code class="docutils literal notranslate"><span class="pre">Button.disabled</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.view.Button.custom_id"><code class="docutils literal notranslate"><span class="pre">Button.custom_id</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.view.Button.sku_id"><code class="docutils literal notranslate"><span class="pre">Button.sku_id</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.view.Button.emoji"><code class="docutils literal notranslate"><span class="pre">Button.emoji</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.view.Button.url"><code class="docutils literal notranslate"><span class="pre">Button.url</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.view.Button.to_dict"><code class="docutils literal notranslate"><span class="pre">Button.to_dict()</span></code></a></li>
 </ul>
 </li>
 <li><a class="reference internal" href="#discord_http.view.ChannelSelect"><code class="docutils literal notranslate"><span class="pre">ChannelSelect</span></code></a><ul>
+<li><a class="reference internal" href="#discord_http.view.ChannelSelect.placeholder"><code class="docutils literal notranslate"><span class="pre">ChannelSelect.placeholder</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.view.ChannelSelect.custom_id"><code class="docutils literal notranslate"><span class="pre">ChannelSelect.custom_id</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.view.ChannelSelect.min_values"><code class="docutils literal notranslate"><span class="pre">ChannelSelect.min_values</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.view.ChannelSelect.max_values"><code class="docutils literal notranslate"><span class="pre">ChannelSelect.max_values</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.view.ChannelSelect.default_values"><code class="docutils literal notranslate"><span class="pre">ChannelSelect.default_values</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.view.ChannelSelect.disabled"><code class="docutils literal notranslate"><span class="pre">ChannelSelect.disabled</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.view.ChannelSelect.to_dict"><code class="docutils literal notranslate"><span class="pre">ChannelSelect.to_dict()</span></code></a></li>
 </ul>
 </li>
 <li><a class="reference internal" href="#discord_http.view.ContainerComponent"><code class="docutils literal notranslate"><span class="pre">ContainerComponent</span></code></a><ul>
+<li><a class="reference internal" href="#discord_http.view.ContainerComponent.items"><code class="docutils literal notranslate"><span class="pre">ContainerComponent.items</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.view.ContainerComponent.colour"><code class="docutils literal notranslate"><span class="pre">ContainerComponent.colour</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.view.ContainerComponent.spoiler"><code class="docutils literal notranslate"><span class="pre">ContainerComponent.spoiler</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.view.ContainerComponent.add_item"><code class="docutils literal notranslate"><span class="pre">ContainerComponent.add_item()</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.view.ContainerComponent.remove_index"><code class="docutils literal notranslate"><span class="pre">ContainerComponent.remove_index()</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.view.ContainerComponent.to_dict"><code class="docutils literal notranslate"><span class="pre">ContainerComponent.to_dict()</span></code></a></li>
 </ul>
 </li>
 <li><a class="reference internal" href="#discord_http.view.FileComponent"><code class="docutils literal notranslate"><span class="pre">FileComponent</span></code></a><ul>
+<li><a class="reference internal" href="#discord_http.view.FileComponent.file"><code class="docutils literal notranslate"><span class="pre">FileComponent.file</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.view.FileComponent.spoiler"><code class="docutils literal notranslate"><span class="pre">FileComponent.spoiler</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.view.FileComponent.to_dict"><code class="docutils literal notranslate"><span class="pre">FileComponent.to_dict()</span></code></a></li>
 </ul>
 </li>
@@ -1327,51 +2157,116 @@ Example: <cite>./path/to/file.png</cite></p></li>
 <li><a class="reference internal" href="#discord_http.view.Item.to_dict"><code class="docutils literal notranslate"><span class="pre">Item.to_dict()</span></code></a></li>
 </ul>
 </li>
-<li><a class="reference internal" href="#discord_http.view.Link"><code class="docutils literal notranslate"><span class="pre">Link</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.view.Link"><code class="docutils literal notranslate"><span class="pre">Link</span></code></a><ul>
+<li><a class="reference internal" href="#discord_http.view.Link.url"><code class="docutils literal notranslate"><span class="pre">Link.url</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.view.Link.label"><code class="docutils literal notranslate"><span class="pre">Link.label</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.view.Link.emoji"><code class="docutils literal notranslate"><span class="pre">Link.emoji</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.view.Link.disabled"><code class="docutils literal notranslate"><span class="pre">Link.disabled</span></code></a></li>
+</ul>
+</li>
 <li><a class="reference internal" href="#discord_http.view.MediaGalleryComponent"><code class="docutils literal notranslate"><span class="pre">MediaGalleryComponent</span></code></a><ul>
+<li><a class="reference internal" href="#discord_http.view.MediaGalleryComponent.items"><code class="docutils literal notranslate"><span class="pre">MediaGalleryComponent.items</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.view.MediaGalleryComponent.add_item"><code class="docutils literal notranslate"><span class="pre">MediaGalleryComponent.add_item()</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.view.MediaGalleryComponent.to_dict"><code class="docutils literal notranslate"><span class="pre">MediaGalleryComponent.to_dict()</span></code></a></li>
 </ul>
 </li>
 <li><a class="reference internal" href="#discord_http.view.MediaGalleryItem"><code class="docutils literal notranslate"><span class="pre">MediaGalleryItem</span></code></a><ul>
+<li><a class="reference internal" href="#discord_http.view.MediaGalleryItem.url"><code class="docutils literal notranslate"><span class="pre">MediaGalleryItem.url</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.view.MediaGalleryItem.description"><code class="docutils literal notranslate"><span class="pre">MediaGalleryItem.description</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.view.MediaGalleryItem.spoiler"><code class="docutils literal notranslate"><span class="pre">MediaGalleryItem.spoiler</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.view.MediaGalleryItem.to_dict"><code class="docutils literal notranslate"><span class="pre">MediaGalleryItem.to_dict()</span></code></a></li>
 </ul>
 </li>
-<li><a class="reference internal" href="#discord_http.view.MentionableSelect"><code class="docutils literal notranslate"><span class="pre">MentionableSelect</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.view.MentionableSelect"><code class="docutils literal notranslate"><span class="pre">MentionableSelect</span></code></a><ul>
+<li><a class="reference internal" href="#discord_http.view.MentionableSelect.placeholder"><code class="docutils literal notranslate"><span class="pre">MentionableSelect.placeholder</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.view.MentionableSelect.custom_id"><code class="docutils literal notranslate"><span class="pre">MentionableSelect.custom_id</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.view.MentionableSelect.min_values"><code class="docutils literal notranslate"><span class="pre">MentionableSelect.min_values</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.view.MentionableSelect.max_values"><code class="docutils literal notranslate"><span class="pre">MentionableSelect.max_values</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.view.MentionableSelect.default_values"><code class="docutils literal notranslate"><span class="pre">MentionableSelect.default_values</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.view.MentionableSelect.disabled"><code class="docutils literal notranslate"><span class="pre">MentionableSelect.disabled</span></code></a></li>
+</ul>
+</li>
 <li><a class="reference internal" href="#discord_http.view.Modal"><code class="docutils literal notranslate"><span class="pre">Modal</span></code></a><ul>
+<li><a class="reference internal" href="#discord_http.view.Modal.title"><code class="docutils literal notranslate"><span class="pre">Modal.title</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.view.Modal.custom_id"><code class="docutils literal notranslate"><span class="pre">Modal.custom_id</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.view.Modal.add_item"><code class="docutils literal notranslate"><span class="pre">Modal.add_item()</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.view.Modal.to_dict"><code class="docutils literal notranslate"><span class="pre">Modal.to_dict()</span></code></a></li>
 </ul>
 </li>
-<li><a class="reference internal" href="#discord_http.view.ModalItem"><code class="docutils literal notranslate"><span class="pre">ModalItem</span></code></a><ul>
-<li><a class="reference internal" href="#discord_http.view.ModalItem.to_dict"><code class="docutils literal notranslate"><span class="pre">ModalItem.to_dict()</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.view.Premium"><code class="docutils literal notranslate"><span class="pre">Premium</span></code></a><ul>
+<li><a class="reference internal" href="#discord_http.view.Premium.sku_id"><code class="docutils literal notranslate"><span class="pre">Premium.sku_id</span></code></a></li>
 </ul>
 </li>
-<li><a class="reference internal" href="#discord_http.view.Premium"><code class="docutils literal notranslate"><span class="pre">Premium</span></code></a></li>
-<li><a class="reference internal" href="#discord_http.view.RoleSelect"><code class="docutils literal notranslate"><span class="pre">RoleSelect</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.view.RoleSelect"><code class="docutils literal notranslate"><span class="pre">RoleSelect</span></code></a><ul>
+<li><a class="reference internal" href="#discord_http.view.RoleSelect.placeholder"><code class="docutils literal notranslate"><span class="pre">RoleSelect.placeholder</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.view.RoleSelect.custom_id"><code class="docutils literal notranslate"><span class="pre">RoleSelect.custom_id</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.view.RoleSelect.min_values"><code class="docutils literal notranslate"><span class="pre">RoleSelect.min_values</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.view.RoleSelect.max_values"><code class="docutils literal notranslate"><span class="pre">RoleSelect.max_values</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.view.RoleSelect.default_values"><code class="docutils literal notranslate"><span class="pre">RoleSelect.default_values</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.view.RoleSelect.disabled"><code class="docutils literal notranslate"><span class="pre">RoleSelect.disabled</span></code></a></li>
+</ul>
+</li>
 <li><a class="reference internal" href="#discord_http.view.SectionComponent"><code class="docutils literal notranslate"><span class="pre">SectionComponent</span></code></a><ul>
+<li><a class="reference internal" href="#discord_http.view.SectionComponent.components"><code class="docutils literal notranslate"><span class="pre">SectionComponent.components</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.view.SectionComponent.accessory"><code class="docutils literal notranslate"><span class="pre">SectionComponent.accessory</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.view.SectionComponent.to_dict"><code class="docutils literal notranslate"><span class="pre">SectionComponent.to_dict()</span></code></a></li>
 </ul>
 </li>
 <li><a class="reference internal" href="#discord_http.view.Select"><code class="docutils literal notranslate"><span class="pre">Select</span></code></a><ul>
+<li><a class="reference internal" href="#discord_http.view.Select.label"><code class="docutils literal notranslate"><span class="pre">Select.label</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.view.Select.description"><code class="docutils literal notranslate"><span class="pre">Select.description</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.view.Select.placeholder"><code class="docutils literal notranslate"><span class="pre">Select.placeholder</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.view.Select.custom_id"><code class="docutils literal notranslate"><span class="pre">Select.custom_id</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.view.Select.min_values"><code class="docutils literal notranslate"><span class="pre">Select.min_values</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.view.Select.max_values"><code class="docutils literal notranslate"><span class="pre">Select.max_values</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.view.Select.disabled"><code class="docutils literal notranslate"><span class="pre">Select.disabled</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.view.Select.options"><code class="docutils literal notranslate"><span class="pre">Select.options</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.view.Select.required"><code class="docutils literal notranslate"><span class="pre">Select.required</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.view.Select.add_item"><code class="docutils literal notranslate"><span class="pre">Select.add_item()</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.view.Select.to_dict"><code class="docutils literal notranslate"><span class="pre">Select.to_dict()</span></code></a></li>
 </ul>
 </li>
 <li><a class="reference internal" href="#discord_http.view.SeparatorComponent"><code class="docutils literal notranslate"><span class="pre">SeparatorComponent</span></code></a><ul>
+<li><a class="reference internal" href="#discord_http.view.SeparatorComponent.spacing"><code class="docutils literal notranslate"><span class="pre">SeparatorComponent.spacing</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.view.SeparatorComponent.divider"><code class="docutils literal notranslate"><span class="pre">SeparatorComponent.divider</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.view.SeparatorComponent.to_dict"><code class="docutils literal notranslate"><span class="pre">SeparatorComponent.to_dict()</span></code></a></li>
 </ul>
 </li>
 <li><a class="reference internal" href="#discord_http.view.TextDisplayComponent"><code class="docutils literal notranslate"><span class="pre">TextDisplayComponent</span></code></a><ul>
+<li><a class="reference internal" href="#discord_http.view.TextDisplayComponent.content"><code class="docutils literal notranslate"><span class="pre">TextDisplayComponent.content</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.view.TextDisplayComponent.to_dict"><code class="docutils literal notranslate"><span class="pre">TextDisplayComponent.to_dict()</span></code></a></li>
 </ul>
 </li>
+<li><a class="reference internal" href="#discord_http.view.TextInputComponent"><code class="docutils literal notranslate"><span class="pre">TextInputComponent</span></code></a><ul>
+<li><a class="reference internal" href="#discord_http.view.TextInputComponent.label"><code class="docutils literal notranslate"><span class="pre">TextInputComponent.label</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.view.TextInputComponent.description"><code class="docutils literal notranslate"><span class="pre">TextInputComponent.description</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.view.TextInputComponent.custom_id"><code class="docutils literal notranslate"><span class="pre">TextInputComponent.custom_id</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.view.TextInputComponent.style"><code class="docutils literal notranslate"><span class="pre">TextInputComponent.style</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.view.TextInputComponent.placeholder"><code class="docutils literal notranslate"><span class="pre">TextInputComponent.placeholder</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.view.TextInputComponent.min_length"><code class="docutils literal notranslate"><span class="pre">TextInputComponent.min_length</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.view.TextInputComponent.max_length"><code class="docutils literal notranslate"><span class="pre">TextInputComponent.max_length</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.view.TextInputComponent.default"><code class="docutils literal notranslate"><span class="pre">TextInputComponent.default</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.view.TextInputComponent.required"><code class="docutils literal notranslate"><span class="pre">TextInputComponent.required</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.view.TextInputComponent.to_dict"><code class="docutils literal notranslate"><span class="pre">TextInputComponent.to_dict()</span></code></a></li>
+</ul>
+</li>
 <li><a class="reference internal" href="#discord_http.view.ThumbnailComponent"><code class="docutils literal notranslate"><span class="pre">ThumbnailComponent</span></code></a><ul>
+<li><a class="reference internal" href="#discord_http.view.ThumbnailComponent.url"><code class="docutils literal notranslate"><span class="pre">ThumbnailComponent.url</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.view.ThumbnailComponent.description"><code class="docutils literal notranslate"><span class="pre">ThumbnailComponent.description</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.view.ThumbnailComponent.to_dict"><code class="docutils literal notranslate"><span class="pre">ThumbnailComponent.to_dict()</span></code></a></li>
 </ul>
 </li>
-<li><a class="reference internal" href="#discord_http.view.UserSelect"><code class="docutils literal notranslate"><span class="pre">UserSelect</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.view.UserSelect"><code class="docutils literal notranslate"><span class="pre">UserSelect</span></code></a><ul>
+<li><a class="reference internal" href="#discord_http.view.UserSelect.placeholder"><code class="docutils literal notranslate"><span class="pre">UserSelect.placeholder</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.view.UserSelect.custom_id"><code class="docutils literal notranslate"><span class="pre">UserSelect.custom_id</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.view.UserSelect.min_values"><code class="docutils literal notranslate"><span class="pre">UserSelect.min_values</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.view.UserSelect.max_values"><code class="docutils literal notranslate"><span class="pre">UserSelect.max_values</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.view.UserSelect.default_values"><code class="docutils literal notranslate"><span class="pre">UserSelect.default_values</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.view.UserSelect.disabled"><code class="docutils literal notranslate"><span class="pre">UserSelect.disabled</span></code></a></li>
+</ul>
+</li>
 <li><a class="reference internal" href="#discord_http.view.View"><code class="docutils literal notranslate"><span class="pre">View</span></code></a><ul>
+<li><a class="reference internal" href="#discord_http.view.View.items"><code class="docutils literal notranslate"><span class="pre">View.items</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.view.View.add_item"><code class="docutils literal notranslate"><span class="pre">View.add_item()</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.view.View.from_dict"><code class="docutils literal notranslate"><span class="pre">View.from_dict()</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.view.View.get_item"><code class="docutils literal notranslate"><span class="pre">View.get_item()</span></code></a></li>
