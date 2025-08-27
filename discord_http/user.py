@@ -22,6 +22,7 @@ MISSING = utils.MISSING
 
 __all__ = (
     "AvatarDecoration",
+    "DisplayNameStyle",
     "Nameplate",
     "PartialUser",
     "PrimaryGuild",
