@@ -215,12 +215,31 @@ class MessageType(BaseEnum):
     stage_speaker = 29
     stage_topic = 31
     guild_application_premium_subscription = 32
+    premium_referal = 35
     guild_incident_alert_mode_enabled = 36
     guild_incident_alert_mode_disabled = 37
     guild_incident_report_raid = 38
     guild_incident_report_false_alarm = 39
+    guild_deadchat_revive_prompt = 40
+    custom_gift = 41
+    guild_gaming_stats_prompt = 42
     purchase_notification = 44
     poll_result = 46
+    changelog = 47
+    nitro_notification = 48
+    channel_linked_to_lobby = 49
+    gifting_prompt = 50
+    in_game_message_nux = 51
+    guild_join_request_accept_notification = 52
+    guild_join_request_reject_notification = 53
+    guild_join_request_withdrawn_notification = 54
+    hd_streaming_upgraded = 55
+    report_to_mod_deleted_message = 58
+    report_to_mod_timeout_user = 59
+    report_to_mod_kick_user = 60
+    report_to_mod_ban_user = 61
+    report_to_mod_closed_report = 62
+    emoji_added = 63
 
 
 class MessageReferenceType(BaseEnum):
