@@ -1873,7 +1873,14 @@ class View(InteractionStorage):
                         if c["accessory"].get("id", None):
                             del c["accessory"]["id"]
 
-                        acc_obj = Button(**c["accessory"])
+                        match c["accessory"].get("style", ButtonStyles.primary):
+                            case ButtonStyles.link:
+                                acc_obj = Link(**c["accessory"])
+                            case ButtonStyles.premium:
+                                acc_obj = Premium(**c["accessory"])
+                            case _:
+                                acc_obj = Button(**c["accessory"])
+
                     else:
                         acc_obj = AttachmentComponent(state=state, data=c["accessory"])
 
