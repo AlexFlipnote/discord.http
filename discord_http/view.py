@@ -404,6 +404,7 @@ class Button(Item):
         url: str | None = None
     ):
         super().__init__(type=ComponentType.button)
+        special_buttons = (ButtonStyles.link, ButtonStyles.premium)
 
         self.label: str | None = label
         self.disabled: bool = disabled
@@ -411,7 +412,7 @@ class Button(Item):
         self.emoji: str | dict | None = emoji
         self.sku_id: "Snowflake | int | None" = sku_id
         self.style: ButtonStyles | str | int = style
-        self.custom_id: str = (
+        self.custom_id: str | None = (
             str(custom_id)
             if custom_id else _garbage_id()
         )
@@ -431,6 +432,15 @@ class Button(Item):
 
             case _:
                 self.style = ButtonStyles.primary
+
+        if self.style in special_buttons:
+            self.custom_id = None  # Force none for special buttons
+
+        if self.style == ButtonStyles.link and not self.url:
+            raise ValueError("url is required for link buttons")
+
+        if self.style == ButtonStyles.premium and not self.sku_id:
+            raise ValueError("sku_id is required for premium buttons")
 
     def to_dict(self) -> dict:
         """ Returns a dict representation of the button. """
@@ -1873,14 +1883,7 @@ class View(InteractionStorage):
                         if c["accessory"].get("id", None):
                             del c["accessory"]["id"]
 
-                        match c["accessory"].get("style", ButtonStyles.primary):
-                            case ButtonStyles.link:
-                                acc_obj = Link(**c["accessory"])
-                            case ButtonStyles.premium:
-                                acc_obj = Premium(**c["accessory"])
-                            case _:
-                                acc_obj = Button(**c["accessory"])
-
+                        acc_obj = Button(**c["accessory"])
                     else:
                         acc_obj = AttachmentComponent(state=state, data=c["accessory"])
 
