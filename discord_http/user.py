@@ -22,7 +22,7 @@ MISSING = utils.MISSING
 
 __all__ = (
     "AvatarDecoration",
-    "DisplayNameStyle",
+    "DisplayNameStyles",
     "Nameplate",
     "PartialUser",
     "PrimaryGuild",
@@ -31,7 +31,7 @@ __all__ = (
 )
 
 
-class DisplayNameStyle:
+class DisplayNameStyles:
     """
     Represents the display name style of a user.
 
@@ -46,12 +46,16 @@ class DisplayNameStyle:
     """
     def __init__(self, data: dict):
         self.colours: list[Colour] = [Colour(g) for g in data.get("colors", [])]
-        self.font: DisplayNameFontType = DisplayNameFontType(data.get("font", 11))
-        self.effect: DisplayNameEffectType = DisplayNameEffectType(data.get("effect", 0))
+        self.font: DisplayNameFontType = DisplayNameFontType(
+            data.get("font", int(DisplayNameFontType.default))
+        )
+        self.effect: DisplayNameEffectType = DisplayNameEffectType(
+            data.get("effect", int(DisplayNameEffectType.solid))
+        )
 
     def __repr__(self) -> str:
         return (
-            f"<DisplayNameStyle colours={self.colours} font={self.font} "
+            f"<DisplayNameStyles colours={self.colours} font={self.font} "
             f"effect={self.effect}>"
         )
 
@@ -342,7 +346,7 @@ class User(PartialUser):
         The nameplate of the member, if available.
     primary_guild: PrimaryGuild | None
         The primary guild of the user (aka. clan), if any
-    display_name_style: DisplayNameStyle | None
+    display_name_styles: DisplayNameStyles | None
         The display name style of the user, if any
     """
     def __init__(
@@ -375,7 +379,7 @@ class User(PartialUser):
         self.primary_guild: PrimaryGuild | None = None
         self.avatar_decoration: AvatarDecoration | None = None
         self.nameplate: Nameplate | None = None
-        self.display_name_style: DisplayNameStyle | None = None
+        self.display_name_styles: DisplayNameStyles | None = None
 
         self._from_data(data)
 
@@ -405,7 +409,7 @@ class User(PartialUser):
             )
 
         if data.get("display_name_styles"):
-            self.display_name_style = DisplayNameStyle(
+            self.display_name_styles = DisplayNameStyles(
                 data=data["display_name_styles"]
             )
 
