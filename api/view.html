@@ -702,7 +702,7 @@ Example: <cite>./path/to/file.png</cite></p></li>
 
 <dl class="py class">
 <dt class="sig sig-object py" id="discord_http.view.ChannelSelect">
-<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">discord_http.view.</span></span><span class="sig-name descname"><span class="pre">ChannelSelect</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">channels</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">placeholder</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">custom_id</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">min_values</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_values</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">default_values</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">disabled</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#discord_http.view.ChannelSelect" title="Link to this definition">¶</a></dt>
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">discord_http.view.</span></span><span class="sig-name descname"><span class="pre">ChannelSelect</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">channels</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">placeholder</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">custom_id</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">min_values</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_values</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">default_values</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">disabled</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">label</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">description</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">required</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#discord_http.view.ChannelSelect" title="Link to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#discord_http.view.Select" title="discord_http.view.Select"><code class="xref py py-class docutils literal notranslate"><span class="pre">Select</span></code></a></p>
 <p>Represents a channel select menu component in a message.</p>
 <dl class="field-list simple">
@@ -715,6 +715,9 @@ Example: <cite>./path/to/file.png</cite></p></li>
 <li><p><strong>max_values</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><em>int</em></a><em> | </em><em>None</em>)</p></li>
 <li><p><strong>default_values</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.13)"><em>list</em></a><em>[</em><a class="reference internal" href="channel.html#discord_http.channel.BaseChannel" title="discord_http.channel.BaseChannel"><em>BaseChannel</em></a><em> | </em><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><em>int</em></a><em>] </em><em>| </em><em>None</em>)</p></li>
 <li><p><strong>disabled</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><em>bool</em></a>)</p></li>
+<li><p><strong>label</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><em>str</em></a><em> | </em><em>None</em>)</p></li>
+<li><p><strong>description</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><em>str</em></a><em> | </em><em>None</em>)</p></li>
+<li><p><strong>required</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><em>bool</em></a>)</p></li>
 </ul>
 </dd>
 </dl>
@@ -780,6 +783,39 @@ Example: <cite>./path/to/file.png</cite></p></li>
 <dl class="field-list simple">
 <dt class="field-odd">Type<span class="colon">:</span></dt>
 <dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)">bool</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.view.ChannelSelect.label">
+<span class="sig-name descname"><span class="pre">label</span></span><a class="headerlink" href="#discord_http.view.ChannelSelect.label" title="Link to this definition">¶</a></dt>
+<dd><p>The label of the select menu (only works for modals)</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)">str</a> | None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.view.ChannelSelect.description">
+<span class="sig-name descname"><span class="pre">description</span></span><a class="headerlink" href="#discord_http.view.ChannelSelect.description" title="Link to this definition">¶</a></dt>
+<dd><p>The description of the select menu (only works for modals)</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)">str</a> | None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.view.ChannelSelect.required">
+<span class="sig-name descname"><span class="pre">required</span></span><a class="headerlink" href="#discord_http.view.ChannelSelect.required" title="Link to this definition">¶</a></dt>
+<dd><p>Whether the select menu is required or not (only works for modals)</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)">bool</a> | None</p>
 </dd>
 </dl>
 </dd></dl>
@@ -1113,7 +1149,7 @@ Example: <cite>./path/to/file.png</cite></p></li>
 
 <dl class="py class">
 <dt class="sig sig-object py" id="discord_http.view.MentionableSelect">
-<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">discord_http.view.</span></span><span class="sig-name descname"><span class="pre">MentionableSelect</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">placeholder</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">custom_id</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">min_values</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_values</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">default_values</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">disabled</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#discord_http.view.MentionableSelect" title="Link to this definition">¶</a></dt>
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">discord_http.view.</span></span><span class="sig-name descname"><span class="pre">MentionableSelect</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">placeholder</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">custom_id</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">min_values</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_values</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">default_values</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">disabled</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">label</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">description</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">required</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#discord_http.view.MentionableSelect" title="Link to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#discord_http.view.Select" title="discord_http.view.Select"><code class="xref py py-class docutils literal notranslate"><span class="pre">Select</span></code></a></p>
 <p>Represents a mentionable select menu component in a message.</p>
 <dl class="field-list simple">
@@ -1125,6 +1161,9 @@ Example: <cite>./path/to/file.png</cite></p></li>
 <li><p><strong>max_values</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><em>int</em></a><em> | </em><em>None</em>)</p></li>
 <li><p><strong>default_values</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.13)"><em>list</em></a><em>[</em><a class="reference internal" href="member.html#discord_http.member.Member" title="discord_http.member.Member"><em>Member</em></a><em> | </em><a class="reference internal" href="role.html#discord_http.role.Role" title="discord_http.role.Role"><em>Role</em></a><em> | </em><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><em>int</em></a><em>] </em><em>| </em><em>None</em>)</p></li>
 <li><p><strong>disabled</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><em>bool</em></a>)</p></li>
+<li><p><strong>label</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><em>str</em></a><em> | </em><em>None</em>)</p></li>
+<li><p><strong>description</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><em>str</em></a><em> | </em><em>None</em>)</p></li>
+<li><p><strong>required</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><em>bool</em></a>)</p></li>
 </ul>
 </dd>
 </dl>
@@ -1194,6 +1233,39 @@ Example: <cite>./path/to/file.png</cite></p></li>
 </dl>
 </dd></dl>
 
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.view.MentionableSelect.label">
+<span class="sig-name descname"><span class="pre">label</span></span><a class="headerlink" href="#discord_http.view.MentionableSelect.label" title="Link to this definition">¶</a></dt>
+<dd><p>The label of the select menu (only works for modals)</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)">str</a> | None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.view.MentionableSelect.description">
+<span class="sig-name descname"><span class="pre">description</span></span><a class="headerlink" href="#discord_http.view.MentionableSelect.description" title="Link to this definition">¶</a></dt>
+<dd><p>The description of the select menu (only works for modals)</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)">str</a> | None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.view.MentionableSelect.required">
+<span class="sig-name descname"><span class="pre">required</span></span><a class="headerlink" href="#discord_http.view.MentionableSelect.required" title="Link to this definition">¶</a></dt>
+<dd><p>Whether the select menu is required or not (only works for modals)</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)">bool</a> | None</p>
+</dd>
+</dl>
+</dd></dl>
+
 </dd></dl>
 
 <dl class="py class">
@@ -1233,18 +1305,18 @@ Example: <cite>./path/to/file.png</cite></p></li>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="discord_http.view.Modal.add_item">
-<span class="sig-name descname"><span class="pre">add_item</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">component</span></span></em>, <em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">label</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">description</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">LabelComponent</span></span></span><a class="headerlink" href="#discord_http.view.Modal.add_item" title="Link to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">add_item</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">component</span></span></em>, <em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">label</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">description</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">LabelComponent</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="#discord_http.view.TextDisplayComponent" title="discord_http.view.TextDisplayComponent"><span class="pre">TextDisplayComponent</span></a></span></span><a class="headerlink" href="#discord_http.view.Modal.add_item" title="Link to this definition">¶</a></dt>
 <dd><p>Add an item to the modal.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>component</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference internal" href="#discord_http.view.TextInputComponent" title="discord_http.view.TextInputComponent"><code class="xref py py-class docutils literal notranslate"><span class="pre">TextInputComponent</span></code></a> | <a class="reference internal" href="#discord_http.view.Select" title="discord_http.view.Select"><code class="xref py py-class docutils literal notranslate"><span class="pre">Select</span></code></a></span>) – The component to add to the modal</p></li>
+<li><p><strong>component</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference internal" href="#discord_http.view.TextDisplayComponent" title="discord_http.view.TextDisplayComponent"><code class="xref py py-class docutils literal notranslate"><span class="pre">TextDisplayComponent</span></code></a> | <a class="reference internal" href="#discord_http.view.TextInputComponent" title="discord_http.view.TextInputComponent"><code class="xref py py-class docutils literal notranslate"><span class="pre">TextInputComponent</span></code></a> | <a class="reference internal" href="#discord_http.view.Select" title="discord_http.view.Select"><code class="xref py py-class docutils literal notranslate"><span class="pre">Select</span></code></a></span>) – The component to add to the modal</p></li>
 <li><p><strong>label</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a> | <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></span>) – The label of the component, overwrites component.label</p></li>
 <li><p><strong>description</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a> | <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></span>) – The description of the component, overwrites component.description, by default None</p></li>
 </ul>
 </dd>
 <dt class="field-even">Return type<span class="colon">:</span></dt>
-<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">LabelComponent</span></code></span></p>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">LabelComponent</span></code> | <a class="reference internal" href="#discord_http.view.TextDisplayComponent" title="discord_http.view.TextDisplayComponent"><code class="xref py py-class docutils literal notranslate"><span class="pre">TextDisplayComponent</span></code></a></span></p>
 </dd>
 <dt class="field-odd">Returns<span class="colon">:</span></dt>
 <dd class="field-odd"><p>The created label component</p>
@@ -1288,7 +1360,7 @@ Example: <cite>./path/to/file.png</cite></p></li>
 
 <dl class="py class">
 <dt class="sig sig-object py" id="discord_http.view.RoleSelect">
-<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">discord_http.view.</span></span><span class="sig-name descname"><span class="pre">RoleSelect</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">placeholder</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">custom_id</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">min_values</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_values</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">default_values</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">disabled</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#discord_http.view.RoleSelect" title="Link to this definition">¶</a></dt>
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">discord_http.view.</span></span><span class="sig-name descname"><span class="pre">RoleSelect</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">placeholder</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">custom_id</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">min_values</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_values</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">default_values</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">disabled</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">label</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">description</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">required</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#discord_http.view.RoleSelect" title="Link to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#discord_http.view.Select" title="discord_http.view.Select"><code class="xref py py-class docutils literal notranslate"><span class="pre">Select</span></code></a></p>
 <p>Represents a role select menu component in a message.</p>
 <dl class="field-list simple">
@@ -1300,6 +1372,9 @@ Example: <cite>./path/to/file.png</cite></p></li>
 <li><p><strong>max_values</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><em>int</em></a><em> | </em><em>None</em>)</p></li>
 <li><p><strong>default_values</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.13)"><em>list</em></a><em>[</em><a class="reference internal" href="role.html#discord_http.role.Role" title="discord_http.role.Role"><em>Role</em></a><em> | </em><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><em>int</em></a><em>] </em><em>| </em><em>None</em>)</p></li>
 <li><p><strong>disabled</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><em>bool</em></a>)</p></li>
+<li><p><strong>label</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><em>str</em></a><em> | </em><em>None</em>)</p></li>
+<li><p><strong>description</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><em>str</em></a><em> | </em><em>None</em>)</p></li>
+<li><p><strong>required</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><em>bool</em></a>)</p></li>
 </ul>
 </dd>
 </dl>
@@ -1365,6 +1440,39 @@ Example: <cite>./path/to/file.png</cite></p></li>
 <dl class="field-list simple">
 <dt class="field-odd">Type<span class="colon">:</span></dt>
 <dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)">bool</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.view.RoleSelect.label">
+<span class="sig-name descname"><span class="pre">label</span></span><a class="headerlink" href="#discord_http.view.RoleSelect.label" title="Link to this definition">¶</a></dt>
+<dd><p>The label of the select menu (only works for modals)</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)">str</a> | None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.view.RoleSelect.description">
+<span class="sig-name descname"><span class="pre">description</span></span><a class="headerlink" href="#discord_http.view.RoleSelect.description" title="Link to this definition">¶</a></dt>
+<dd><p>The description of the select menu (only works for modals)</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)">str</a> | None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.view.RoleSelect.required">
+<span class="sig-name descname"><span class="pre">required</span></span><a class="headerlink" href="#discord_http.view.RoleSelect.required" title="Link to this definition">¶</a></dt>
+<dd><p>Whether the select menu is required or not (only works for modals)</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)">bool</a> | None</p>
 </dd>
 </dl>
 </dd></dl>
@@ -1840,7 +1948,7 @@ Example: <cite>./path/to/file.png</cite></p></li>
 
 <dl class="py class">
 <dt class="sig sig-object py" id="discord_http.view.UserSelect">
-<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">discord_http.view.</span></span><span class="sig-name descname"><span class="pre">UserSelect</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">placeholder</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">custom_id</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">min_values</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_values</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">default_values</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">disabled</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#discord_http.view.UserSelect" title="Link to this definition">¶</a></dt>
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">discord_http.view.</span></span><span class="sig-name descname"><span class="pre">UserSelect</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">placeholder</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">custom_id</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">min_values</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_values</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">default_values</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">disabled</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">label</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">description</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">required</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#discord_http.view.UserSelect" title="Link to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#discord_http.view.Select" title="discord_http.view.Select"><code class="xref py py-class docutils literal notranslate"><span class="pre">Select</span></code></a></p>
 <p>Represents a user select menu component in a message.</p>
 <dl class="field-list simple">
@@ -1852,6 +1960,9 @@ Example: <cite>./path/to/file.png</cite></p></li>
 <li><p><strong>max_values</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><em>int</em></a><em> | </em><em>None</em>)</p></li>
 <li><p><strong>default_values</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.13)"><em>list</em></a><em>[</em><a class="reference internal" href="member.html#discord_http.member.Member" title="discord_http.member.Member"><em>Member</em></a><em> | </em><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><em>int</em></a><em>] </em><em>| </em><em>None</em>)</p></li>
 <li><p><strong>disabled</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><em>bool</em></a>)</p></li>
+<li><p><strong>label</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><em>str</em></a><em> | </em><em>None</em>)</p></li>
+<li><p><strong>description</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><em>str</em></a><em> | </em><em>None</em>)</p></li>
+<li><p><strong>required</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><em>bool</em></a>)</p></li>
 </ul>
 </dd>
 </dl>
@@ -1917,6 +2028,39 @@ Example: <cite>./path/to/file.png</cite></p></li>
 <dl class="field-list simple">
 <dt class="field-odd">Type<span class="colon">:</span></dt>
 <dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)">bool</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.view.UserSelect.label">
+<span class="sig-name descname"><span class="pre">label</span></span><a class="headerlink" href="#discord_http.view.UserSelect.label" title="Link to this definition">¶</a></dt>
+<dd><p>The label of the select menu (only works for modals)</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)">str</a> | None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.view.UserSelect.description">
+<span class="sig-name descname"><span class="pre">description</span></span><a class="headerlink" href="#discord_http.view.UserSelect.description" title="Link to this definition">¶</a></dt>
+<dd><p>The description of the select menu (only works for modals)</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)">str</a> | None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.view.UserSelect.required">
+<span class="sig-name descname"><span class="pre">required</span></span><a class="headerlink" href="#discord_http.view.UserSelect.required" title="Link to this definition">¶</a></dt>
+<dd><p>Whether the select menu is required or not (only works for modals)</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)">bool</a> | None</p>
 </dd>
 </dl>
 </dd></dl>
@@ -2135,6 +2279,9 @@ Example: <cite>./path/to/file.png</cite></p></li>
 <li><a class="reference internal" href="#discord_http.view.ChannelSelect.max_values"><code class="docutils literal notranslate"><span class="pre">ChannelSelect.max_values</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.view.ChannelSelect.default_values"><code class="docutils literal notranslate"><span class="pre">ChannelSelect.default_values</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.view.ChannelSelect.disabled"><code class="docutils literal notranslate"><span class="pre">ChannelSelect.disabled</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.view.ChannelSelect.label"><code class="docutils literal notranslate"><span class="pre">ChannelSelect.label</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.view.ChannelSelect.description"><code class="docutils literal notranslate"><span class="pre">ChannelSelect.description</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.view.ChannelSelect.required"><code class="docutils literal notranslate"><span class="pre">ChannelSelect.required</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.view.ChannelSelect.to_dict"><code class="docutils literal notranslate"><span class="pre">ChannelSelect.to_dict()</span></code></a></li>
 </ul>
 </li>
@@ -2184,6 +2331,9 @@ Example: <cite>./path/to/file.png</cite></p></li>
 <li><a class="reference internal" href="#discord_http.view.MentionableSelect.max_values"><code class="docutils literal notranslate"><span class="pre">MentionableSelect.max_values</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.view.MentionableSelect.default_values"><code class="docutils literal notranslate"><span class="pre">MentionableSelect.default_values</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.view.MentionableSelect.disabled"><code class="docutils literal notranslate"><span class="pre">MentionableSelect.disabled</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.view.MentionableSelect.label"><code class="docutils literal notranslate"><span class="pre">MentionableSelect.label</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.view.MentionableSelect.description"><code class="docutils literal notranslate"><span class="pre">MentionableSelect.description</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.view.MentionableSelect.required"><code class="docutils literal notranslate"><span class="pre">MentionableSelect.required</span></code></a></li>
 </ul>
 </li>
 <li><a class="reference internal" href="#discord_http.view.Modal"><code class="docutils literal notranslate"><span class="pre">Modal</span></code></a><ul>
@@ -2204,6 +2354,9 @@ Example: <cite>./path/to/file.png</cite></p></li>
 <li><a class="reference internal" href="#discord_http.view.RoleSelect.max_values"><code class="docutils literal notranslate"><span class="pre">RoleSelect.max_values</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.view.RoleSelect.default_values"><code class="docutils literal notranslate"><span class="pre">RoleSelect.default_values</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.view.RoleSelect.disabled"><code class="docutils literal notranslate"><span class="pre">RoleSelect.disabled</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.view.RoleSelect.label"><code class="docutils literal notranslate"><span class="pre">RoleSelect.label</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.view.RoleSelect.description"><code class="docutils literal notranslate"><span class="pre">RoleSelect.description</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.view.RoleSelect.required"><code class="docutils literal notranslate"><span class="pre">RoleSelect.required</span></code></a></li>
 </ul>
 </li>
 <li><a class="reference internal" href="#discord_http.view.SectionComponent"><code class="docutils literal notranslate"><span class="pre">SectionComponent</span></code></a><ul>
@@ -2263,6 +2416,9 @@ Example: <cite>./path/to/file.png</cite></p></li>
 <li><a class="reference internal" href="#discord_http.view.UserSelect.max_values"><code class="docutils literal notranslate"><span class="pre">UserSelect.max_values</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.view.UserSelect.default_values"><code class="docutils literal notranslate"><span class="pre">UserSelect.default_values</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.view.UserSelect.disabled"><code class="docutils literal notranslate"><span class="pre">UserSelect.disabled</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.view.UserSelect.label"><code class="docutils literal notranslate"><span class="pre">UserSelect.label</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.view.UserSelect.description"><code class="docutils literal notranslate"><span class="pre">UserSelect.description</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.view.UserSelect.required"><code class="docutils literal notranslate"><span class="pre">UserSelect.required</span></code></a></li>
 </ul>
 </li>
 <li><a class="reference internal" href="#discord_http.view.View"><code class="docutils literal notranslate"><span class="pre">View</span></code></a><ul>
