@@ -19,6 +19,8 @@ __all__ = (
     "ContentFilterLevel",
     "DefaultAvatarType",
     "DefaultNotificationLevel",
+    "DisplayNameEffectType",
+    "DisplayNameFontType",
     "EntitlementOwnerType",
     "EntitlementType",
     "ExpireBehaviour",
@@ -412,6 +414,29 @@ class ScheduledEventStatusType(BaseEnum):
     active = 2
     completed = 3
     canceled = 4
+
+
+class DisplayNameFontType(BaseEnum):
+    default = 11  # Why is this 11? We'll never know...
+    bangers = 1
+    bio_rhyme = 2
+    cherry_bomb = 3
+    chicle = 4
+    compagnon = 5
+    museo_moderno = 6
+    neo_castel = 7
+    pixelify = 8
+    ribes = 9
+    sinistre = 10
+    zilla_slab = 12
+
+
+class DisplayNameEffectType(BaseEnum):
+    solid = 1
+    gradient = 2
+    neon = 3
+    toon = 4
+    pop = 5
 
 
 class VerificationLevel(BaseEnum):

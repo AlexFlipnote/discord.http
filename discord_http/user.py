@@ -4,7 +4,7 @@ from . import utils
 from .asset import Asset
 from .colour import Colour
 from .embeds import Embed
-from .enums import DefaultAvatarType
+from .enums import DefaultAvatarType, DisplayNameEffectType, DisplayNameFontType
 from .file import File
 from .flags import UserFlags, MessageFlags
 from .mentions import AllowedMentions
@@ -22,12 +22,38 @@ MISSING = utils.MISSING
 
 __all__ = (
     "AvatarDecoration",
+    "DisplayNameStyle",
     "Nameplate",
     "PartialUser",
     "PrimaryGuild",
     "User",
     "UserClient",
 )
+
+
+class DisplayNameStyle:
+    """
+    Represents the display name style of a user.
+
+    Attributes
+    ----------
+    colours: list[Colour] | None
+        The colors of the display name, if any
+    font: DisplayNameFontType | None
+        The font of the display name, if any
+    effect: DisplayNameEffectType | None
+        The effect of the display name, if any
+    """
+    def __init__(self, data: dict):
+        self.colours: list[Colour] = [Colour(g) for g in data.get("colors", [])]
+        self.font: DisplayNameFontType = DisplayNameFontType(data.get("font", 11))
+        self.effect: DisplayNameEffectType = DisplayNameEffectType(data.get("effect", 0))
+
+    def __repr__(self) -> str:
+        return (
+            f"<DisplayNameStyle colours={self.colours} font={self.font} "
+            f"effect={self.effect}>"
+        )
 
 
 class Nameplate:
@@ -316,6 +342,8 @@ class User(PartialUser):
         The nameplate of the member, if available.
     primary_guild: PrimaryGuild | None
         The primary guild of the user (aka. clan), if any
+    display_name_style: DisplayNameStyle | None
+        The display name style of the user, if any
     """
     def __init__(
         self,
@@ -347,6 +375,7 @@ class User(PartialUser):
         self.primary_guild: PrimaryGuild | None = None
         self.avatar_decoration: AvatarDecoration | None = None
         self.nameplate: Nameplate | None = None
+        self.display_name_style: DisplayNameStyle | None = None
 
         self._from_data(data)
 
@@ -373,6 +402,11 @@ class User(PartialUser):
             self.primary_guild = PrimaryGuild(
                 state=self._state,
                 data=data["primary_guild"]
+            )
+
+        if data.get("display_name_styles"):
+            self.display_name_style = DisplayNameStyle(
+                data=data["display_name_styles"]
             )
 
         if data.get("banner"):
