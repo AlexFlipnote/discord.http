@@ -20,7 +20,8 @@ from .errors import CheckFailed
 from .entitlements import Entitlements
 from .enums import (
     ApplicationCommandType, CommandOptionType,
-    ResponseType, ChannelType, InteractionType
+    ResponseType, ChannelType, InteractionType,
+    ComponentType
 )
 from .file import File
 from .multipart import MultipartData
@@ -542,7 +543,7 @@ class Context:
 
         self.resolved: ResolvedValues = ResolvedValues.none(self)
         self.select_values: SelectValues = SelectValues.none(self)
-        self.modal_values: dict[str, list[str] | str | None] = {}
+        self.modal_values: dict[str, str | list[Member | Role | BaseChannel | str]] = {}
 
         self.options: list[dict] = data.get("data", {}).get("options", [])
         self._followup_token: str = data.get("token", "")
@@ -626,12 +627,52 @@ class Context:
 
             case InteractionType.modal_submit:
                 for comp in data["data"]["components"]:
-                    ans = comp["component"]
-                    self.modal_values[ans["custom_id"]] = (
-                        ans.get("values", None) or  # If it was select
-                        ans.get("value", None) or  # If it was text input
-                        None  # It should never reach here...
-                    )
+                    ans = comp.get("component", None)
+                    if not ans:
+                        # This is probably a text component
+                        continue
+                    self.modal_values[ans["custom_id"]] = ans.get("value", None)
+
+                    if ans.get("values", None):
+                        match ComponentType(ans["type"]):
+                            case ComponentType.user_select:
+                                self.modal_values[ans["custom_id"]] = [
+                                    g for g in self.resolved.members
+                                    if str(g.id) in ans.get("values", [])
+                                ]
+
+                            case ComponentType.role_select:
+                                self.modal_values[ans["custom_id"]] = [
+                                    r for r in self.resolved.roles
+                                    if str(r.id) in ans.get("values", [])
+                                ]
+
+                            case ComponentType.channel_select:
+                                self.modal_values[ans["custom_id"]] = [
+                                    c for c in self.resolved.channels
+                                    if str(c.id) in ans.get("values", [])
+                                ]
+
+                            case ComponentType.mentionable_select:
+                                collected_values = []
+                                for m in self.resolved.members:
+                                    if str(m.id) in ans.get("values", []):
+                                        collected_values.append(m)
+                                for r in self.resolved.roles:
+                                    if str(r.id) in ans.get("values", []):
+                                        collected_values.append(r)
+                                for c in self.resolved.channels:
+                                    if str(c.id) in ans.get("values", []):
+                                        collected_values.append(c)
+                                self.modal_values[ans["custom_id"]] = collected_values
+
+                            case _:
+                                # Probably just strings, default to that
+                                self.modal_values[ans["custom_id"]] = (
+                                    ans.get("values", None) or  # If it was text select
+                                    ans.get("value", None) or  # If it was text input
+                                    "discord.http:INVALID"  # It should never reach here...
+                                )
 
     async def _background_task_manager(self, call_after: Callable) -> None:
         try:
