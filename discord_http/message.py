@@ -1239,7 +1239,9 @@ class PartialMessage(PartialBase):
         files: list[File] | None = MISSING,
         view: View | None = MISSING,
         tts: bool | None = False,
+        flags: MessageFlags | None = MISSING,
         allowed_mentions: AllowedMentions | None = MISSING,
+        delete_after: float | None = None
     ) -> "Message":
         """
         Sends a reply to a message in a channel.
@@ -1264,6 +1266,10 @@ class PartialMessage(PartialBase):
             The type of response to the message
         allowed_mentions:
             The allowed mentions for the message
+        delete_after:
+            If provided, the message will be deleted after the given number of seconds
+        flags:
+            Message flags to send with the message
 
         Returns
         -------
@@ -1277,6 +1283,7 @@ class PartialMessage(PartialBase):
             files=files,
             view=view,
             tts=tts,
+            flags=flags,
             allowed_mentions=(
                 allowed_mentions or
                 self._state.bot._default_allowed_mentions
@@ -1298,10 +1305,15 @@ class PartialMessage(PartialBase):
             headers={"Content-Type": payload.content_type}
         )
 
-        return Message(
+        msg = Message(
             state=self._state,
             data=r.response
         )
+
+        if delete_after is not None:
+            await msg.delete(delay=float(delete_after))
+
+        return msg
 
     async def pin(self, *, reason: str | None = None) -> None:
         """

@@ -32,6 +32,8 @@ class PartialWebhook(PartialBase):
 
     Attributes
     ----------
+    id: int
+        The ID of the webhook
     token: str | None
         The token of the webhook, if any
     """
