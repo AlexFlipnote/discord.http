@@ -66,6 +66,7 @@ _components_label = (
     ComponentType.user_select,
     ComponentType.mentionable_select,
     ComponentType.channel_select,
+    ComponentType.file_upload,
 )
 
 __all__ = (
@@ -75,6 +76,7 @@ __all__ = (
     "ChannelSelect",
     "ContainerComponent",
     "FileComponent",
+    "FileUploadComponent",
     "Item",
     "Link",
     "MediaGalleryComponent",
@@ -921,6 +923,63 @@ class ChannelSelect(Select):
         """ Returns a dict representation of the channel select menu. """
         payload = super().to_dict()
         payload["channel_types"] = self._channel_types
+        return payload
+
+
+class FileUploadComponent(Item):
+    """
+    Represents a file upload component in a modal.
+
+    Attributes
+    ----------
+    custom_id: str | None
+        The custom ID of the file upload component
+    min_values: int | None
+        The minimum number of values that can be uploaded
+    max_values: int | None
+        The maximum number of values that can be uploaded
+    required: bool
+        Whether the file upload component is required or not
+    """
+    def __init__(
+        self,
+        *,
+        custom_id: str | None = None,
+        min_values: int | None = None,
+        max_values: int | None = None,
+        label: str | None = None,
+        description: str | None = None,
+        required: bool = True,
+    ):
+        super().__init__(
+            type=ComponentType.file_upload
+        )
+        self.min_values: int | None = min_values
+        self.max_values: int | None = max_values
+        self.required: bool = required
+        self.label: str | None = label
+        self.description: str | None = description
+        self.custom_id: str | None = (
+            str(custom_id)
+            if custom_id else _garbage_id()
+        )
+
+    def __repr__(self) -> str:
+        return f"<FileUploadComponent custom_id='{self.custom_id}'>"
+
+    def to_dict(self) -> dict:
+        """ Returns a dict representation of the file upload component. """
+        payload = {
+            "type": int(self.type),
+            "custom_id": self.custom_id,
+            "required": self.required,
+        }
+
+        if self.min_values is not None:
+            payload["min_values"] = int(self.min_values)
+        if self.max_values is not None:
+            payload["max_values"] = int(self.max_values)
+
         return payload
 
 
@@ -1951,7 +2010,7 @@ class LabelComponent(Item):
         *,
         label: str | None,
         description: str | None = None,
-        component: TextInputComponent | Select
+        component: TextInputComponent | Select | FileUploadComponent
     ):
         super().__init__(type=ComponentType.label)
 
@@ -1961,7 +2020,7 @@ class LabelComponent(Item):
                 "Only TextInputComponent and Select are allowed"
             )
 
-        self.component: TextInputComponent | Select = component
+        self.component: TextInputComponent | Select | FileUploadComponent = component
 
         self.label: str | None = self.component.label or label
         if not isinstance(self.label, str):
@@ -2011,15 +2070,15 @@ class Modal(InteractionStorage):
             if custom_id else _garbage_id()
         )
 
-        self.items: list[TextDisplayComponent | LabelComponent] = []
+        self.items: list[TextDisplayComponent | LabelComponent | FileUploadComponent] = []
 
     def add_item(
         self,
-        component: TextDisplayComponent | TextInputComponent | Select,
+        component: TextDisplayComponent | TextInputComponent | Select | FileUploadComponent,
         *,
         label: str | None = None,
         description: str | None = None,
-    ) -> LabelComponent | TextDisplayComponent:
+    ) -> LabelComponent | TextDisplayComponent | FileUploadComponent:
         """
         Add an item to the modal.
 

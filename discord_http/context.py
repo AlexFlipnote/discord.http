@@ -74,7 +74,7 @@ class _ResolveParser:
         self._parsed_data = {
             "members": [], "users": [],
             "channels": [], "roles": [],
-            "strings": [],
+            "strings": [], "attachments": []
         }
 
         self._from_data(ctx, data)
@@ -83,7 +83,7 @@ class _ResolveParser:
         self._parsed_data["strings"] = data.get("data", {}).get("values", [])
 
         resolved = data.get("data", {}).get("resolved", {})
-        data_to_resolve = ["members", "users", "channels", "roles"]
+        data_to_resolve = ["members", "users", "channels", "roles", "attachments"]
 
         for key in data_to_resolve:
             self._parse_resolved(ctx, key, resolved)
@@ -116,6 +116,9 @@ class _ResolveParser:
 
                 case "users":
                     to_append.append(User(state=ctx.bot.state, data=data_))
+
+                case "attachments":
+                    to_append.append(Attachment(state=ctx.bot.state, data=data_))
 
                 case "channels":
                     to_append.append(channel_types[data_["type"]](state=ctx.bot.state, data=data_))
@@ -152,6 +155,11 @@ class ResolvedValues(_ResolveParser):
     def roles(self) -> list[Role]:
         """ Of roles resolved. """
         return self._parsed_data["roles"]
+
+    @property
+    def attachments(self) -> list[Attachment]:
+        """ Of attachments resolved. """
+        return self._parsed_data["attachments"]
 
 
 class SelectValues(ResolvedValues):
@@ -543,7 +551,7 @@ class Context:
 
         self.resolved: ResolvedValues = ResolvedValues.none(self)
         self.select_values: SelectValues = SelectValues.none(self)
-        self.modal_values: dict[str, str | list[Member | Role | BaseChannel | str]] = {}
+        self.modal_values: dict[str, str | list[Member | Role | BaseChannel | Attachment | str]] = {}
 
         self.options: list[dict] = data.get("data", {}).get("options", [])
         self._followup_token: str = data.get("token", "")
@@ -645,6 +653,12 @@ class Context:
                                 self.modal_values[ans["custom_id"]] = [
                                     r for r in self.resolved.roles
                                     if str(r.id) in ans.get("values", [])
+                                ]
+
+                            case ComponentType.file_upload:
+                                self.modal_values[ans["custom_id"]] = [
+                                    a for a in self.resolved.attachments
+                                    if str(a.id) in ans.get("values", [])
                                 ]
 
                             case ComponentType.channel_select:

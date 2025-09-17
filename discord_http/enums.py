@@ -615,6 +615,7 @@ class ComponentType(BaseEnum):
     content_inventory_entry = 16  # Can't be used by bots
     container = 17
     label = 18
+    file_upload = 19
 
 
 class SeparatorSpacingType(BaseEnum):
