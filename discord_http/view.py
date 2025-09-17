@@ -940,6 +940,10 @@ class FileUploadComponent(Item):
         The maximum number of values that can be uploaded
     required: bool
         Whether the file upload component is required or not
+    label: str | None
+        The label of the file upload component
+    description: str | None
+        The description of the file upload component
     """
     def __init__(
         self,
@@ -2078,14 +2082,14 @@ class Modal(InteractionStorage):
         *,
         label: str | None = None,
         description: str | None = None,
-    ) -> LabelComponent | TextDisplayComponent | FileUploadComponent:
+    ) -> LabelComponent | TextDisplayComponent:
         """
         Add an item to the modal.
 
         Parameters
         ----------
         component:
-            The component to add to the modal
+            The component to add to the modal.
         label:
             The label of the component, overwrites component.label
         description:
