@@ -1475,8 +1475,8 @@ class PartialGuild(PartialBase):
             payload["emoji_id"] = emoji_id
 
         if (
-            emoji_name is not MISSING and
-            emoji_id is not MISSING
+            emoji_name is not None and
+            emoji_id is not None
         ):
             raise ValueError("Cannot set both emoji_name and emoji_id")
 
