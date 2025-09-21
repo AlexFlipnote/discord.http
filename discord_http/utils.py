@@ -1,6 +1,9 @@
 import logging
 import re
 import sys
+import struct
+import zlib
+import binascii
 import traceback
 import unicodedata
 
@@ -26,6 +29,55 @@ re_hex = re.compile(r"^(?:#)?(?:[0-9a-fA-F]{3}){1,2}$")
 re_jump_url: re.Pattern = re.compile(
     r"https:\/\/(?:.*\.)?discord\.com\/channels\/([0-9]{15,20}|@me)\/([0-9]{15,20})(?:\/([0-9]{15,20}))?"
 )
+
+
+def create_missing_texture(*, size: int = 256, tiles: int = 8) -> bytes:
+    """
+    Generate a PNG image of the classic magenta and black checkerboard pattern.
+
+    Parameters
+    ----------
+    size:
+        The width and height of the image, in pixels, defaults to 256
+    tiles:
+        The number of tiles across and down the image, defaults to 8
+
+    Returns
+    -------
+        The PNG image as bytes
+    """
+    # Dear code reviewer;
+    # Yes, I am fully aware that Pillow can do this much easier.
+    # However, I do not want to add a dependency just for this.
+    magenta = (0xFF, 0x00, 0xFF, 0xFF)
+    black = (0x00, 0x00, 0x00, 0xFF)
+
+    def chunk(t: bytes, d: bytes) -> bytes:
+        """ Create a PNG chunk. """
+        return (
+            struct.pack(">I", len(d)) + t + d +
+            struct.pack(">I", binascii.crc32(t + d) & 0xFFFFFFFF)
+        )
+
+    w = h = size
+    tile = max(1, w // tiles)
+
+    raw = bytearray()
+    for y in range(h):
+        raw.append(0)
+        for x in range(w):
+            color = magenta if ((x // tile + y // tile) & 1) == 0 else black
+            raw += bytes(color)
+
+    compressed = zlib.compress(bytes(raw), 9)
+    ihdr = struct.pack(">IIBBBBB", w, h, 8, 6, 0, 0, 0)
+
+    return (
+        b"\x89PNG\r\n\x1a\n" +
+        chunk(b"IHDR", ihdr) +
+        chunk(b"IDAT", compressed) +
+        chunk(b"IEND", b"")
+    )
 
 
 def traceback_maker(

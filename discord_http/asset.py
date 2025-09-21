@@ -44,6 +44,7 @@ class Asset:
         animated: bool = False
     ):
         self._state = state
+
         self.url: str = url
         self.key: str = key
         self.animated: bool = animated
@@ -55,9 +56,15 @@ class Asset:
         shorten = self.url.replace(self.BASE, "")
         return f"<Asset url={shorten}>"
 
-    async def fetch(self) -> bytes:
+    async def fetch(self, *, fallback: bool = False) -> bytes:
         """
         Fetches the asset.
+
+        Parameters
+        ----------
+        fallback: bool
+            Whether to fallback to a missing texture if the asset returns anything but `HTTP 2XX`.
+            Defaults to `False`.
 
         Returns
         -------
@@ -68,6 +75,9 @@ class Asset:
         )
 
         if r.status not in range(200, 300):
+            if fallback:
+                # Return "Missing Texture" meme if the asset is not found and fallback is enabled
+                return utils.create_missing_texture()
             raise HTTPException(r)
 
         return r.response
