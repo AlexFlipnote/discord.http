@@ -275,10 +275,13 @@ class Client:
 
     async def __cleanup(self) -> None:
         """ Called when the bot is shutting down. """
-        await self.state.http._close_session()
+        _log.debug("Shutting down discord.http...")
 
         if self.gateway:
+            _log.debug("Closing discord.http/gateway...")
             await self.gateway.close()
+
+        await self.state.http._close_session()
 
     def _update_ids(self, data: dict) -> None:
         for g in data:
