@@ -1318,7 +1318,7 @@ class SectionComponent(Item):
             if isinstance(g, str | TextDisplayComponent):
                 continue
             raise ValueError(
-                f"SectionComponent can only have TextDisplayComponent or str, not {type(g)}"
+                f"Component {i} in SectionComponent must be a TextDisplayComponent or str, not {type(g)}"
             )
 
     def __repr__(self) -> str:
