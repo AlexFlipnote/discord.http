@@ -371,7 +371,7 @@ class Parser:
         if presences:
             temp_dict: dict[int, Member] = {g.id: g for g in members}
             for g in presences:
-                find_member = temp_dict.get(int(g["user"]["id"]), None)
+                find_member = temp_dict.get(int(g["user"]["id"]))
                 if not find_member:
                     continue
                 find_member._update_presence(Presence(
