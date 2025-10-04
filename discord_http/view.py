@@ -1314,7 +1314,7 @@ class SectionComponent(Item):
         if not self.components:
             raise ValueError("SectionComponent must have at least one component")
 
-        for g in self.components:
+        for i, g in enumerate(self.components):
             if isinstance(g, str | TextDisplayComponent):
                 continue
             raise ValueError(
