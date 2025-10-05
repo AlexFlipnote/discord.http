@@ -25,6 +25,7 @@ re_channel: re.Pattern = re.compile(r"<#([0-9]{15,20})>")
 re_role: re.Pattern = re.compile(r"<@&([0-9]{15,20})>")
 re_mention: re.Pattern = re.compile(r"<@!?([0-9]{15,20})>")
 re_emoji: re.Pattern = re.compile(r"<(a)?:([a-zA-Z0-9_]+):([0-9]{15,20})>")
+re_common_markdown = re.compile(r"([_*~`<>|\[\]()#])")
 re_hex = re.compile(r"^(?:#)?(?:[0-9a-fA-F]{3}){1,2}$")
 re_jump_url: re.Pattern = re.compile(
     r"https:\/\/(?:.*\.)?discord\.com\/channels\/([0-9]{15,20}|@me)\/([0-9]{15,20})(?:\/([0-9]{15,20}))?"
@@ -103,6 +104,59 @@ def traceback_maker(
     traceback_ = "".join(traceback.format_tb(err.__traceback__))
     error = f"{traceback_}{type(err).__name__}: {err}"
     return error if advance else f"{type(err).__name__}: {err}"
+
+
+def escape_markdown(text: str, *, remove: bool = False) -> str:
+    """
+    Escape common markdown characters.
+
+    Parameters
+    ----------
+    text:
+        The text to escape
+    remove:
+        Whether to remove the markdown characters instead of escaping them
+
+    Returns
+    -------
+        The escaped text or markdown characters removed, depending on the `remove` parameter
+    """
+    return re_common_markdown.sub(
+        "" if remove else r"\\\1",
+        text
+    )
+
+
+def plural(word: str, num: int) -> str:
+    """
+    Return the plural of a word.
+
+    Parameters
+    ----------
+    word:
+        The word to pluralize
+    num:
+        The number to determine if the word should be pluralized
+    """
+    return f"{word}{'s'[:num ^ 1]}"
+
+
+def ordinal(num: int) -> str:
+    """
+    Return the ordinal of a number.
+
+    Parameters
+    ----------
+    num:
+        The number to determine the ordinal suffix
+
+    Returns
+    -------
+        The ordinal of the number
+    """
+    suffix_list = {1: "st", 2: "nd", 3: "rd"}
+    suffix = "th" if 10 <= num % 100 <= 20 else suffix_list.get(num % 10, "th")
+    return f"{num}{suffix}"
 
 
 def unwrap_optional(annotation: type) -> type:
