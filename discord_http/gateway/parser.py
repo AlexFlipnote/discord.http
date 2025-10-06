@@ -32,7 +32,6 @@ from ..voice import VoiceState, PartialVoiceState
 from ..integrations import Integration, PartialIntegration
 
 if TYPE_CHECKING:
-    from ..types import channels
     from ..http import DiscordAPI
     from ..client import Client
 
@@ -967,7 +966,7 @@ class Parser:
         self.bot.cache.remove_thread(thread)
         return (thread,)
 
-    def thread_list_sync(self, data: "channels.ThreadListSync") -> tuple[ThreadListSyncPayload]:
+    def thread_list_sync(self, data: dict) -> tuple[ThreadListSyncPayload]:
         """
         Thread list sync event.
 
@@ -982,7 +981,7 @@ class Parser:
         """
         return (ThreadListSyncPayload(state=self.bot.state, data=data),)
 
-    def thread_member_update(self, data: "channels.ThreadMemberUpdate") -> tuple[PartialThreadMember]:
+    def thread_member_update(self, data: dict) -> tuple[PartialThreadMember]:
         """
         Thread member update event.
 
@@ -1003,7 +1002,7 @@ class Parser:
             ),
         )
 
-    def thread_members_update(self, data: "channels.ThreadMembersUpdate") -> tuple[ThreadMembersUpdatePayload]:
+    def thread_members_update(self, data: dict) -> tuple[ThreadMembersUpdatePayload]:
         """
         Thread members update event.
 
@@ -1387,7 +1386,7 @@ class Parser:
             ),
         )
 
-    def stage_instance_create(self, data: "channels.StageInstance") -> tuple[StageInstance]:
+    def stage_instance_create(self, data: dict) -> tuple[StageInstance]:
         """
         Stage instance create event.
 
@@ -1412,7 +1411,7 @@ class Parser:
 
         return (stage_instance,)
 
-    def stage_instance_update(self, data: "channels.StageInstance") -> tuple[StageInstance]:
+    def stage_instance_update(self, data: dict) -> tuple[StageInstance]:
         """
         Stage instance update event.
 
@@ -1439,7 +1438,7 @@ class Parser:
             ),
         )
 
-    def stage_instance_delete(self, data: "channels.StageInstance") -> tuple[StageInstance]:
+    def stage_instance_delete(self, data: dict) -> tuple[StageInstance]:
         """
         Stage instance delete event.
 

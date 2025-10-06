@@ -19,9 +19,6 @@ MISSING = utils.MISSING
 
 if TYPE_CHECKING:
     from .gateway.object import Presence
-    from .types.guilds import (
-        ThreadMember as ThreadMemberPayload
-    )
     from .http import DiscordAPI
     from .message import Message
     from .channel import DMChannel, PartialChannel, Thread
@@ -681,7 +678,7 @@ class PartialThreadMember(PartialMember):
         self,
         *,
         state: "DiscordAPI",
-        data: "ThreadMemberPayload",
+        data: dict,
         guild_id: int,
     ) -> None:
         super().__init__(

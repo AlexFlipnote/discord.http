@@ -15,15 +15,6 @@ from ..enums import ReactionType, AutoModRuleTriggerType
 from ..message import PartialMessage
 
 if TYPE_CHECKING:
-    from ..types.channels import (
-        ThreadListSync,
-        ThreadMembersUpdate
-    )
-    from ..types.guilds import (
-        ThreadMember as ThreadMemberPayload,
-        ThreadMemberWithMember as ThreadMemberWithMember
-    )
-
     from ..guild import Guild, PartialGuild
     from ..http import DiscordAPI
     from ..member import Member, PartialMember, PartialThreadMember, ThreadMember
@@ -452,14 +443,14 @@ class ThreadListSyncPayload:
         self,
         *,
         state: "DiscordAPI",
-        data: "ThreadListSync",
+        data: dict,
     ):
         self._state = state
 
         self.guild_id: int = int(data["guild_id"])
         self.channel_ids: list[int] = [int(c) for c in data.get("channel_ids", [])]
         self._threads: list[dict] = data["threads"]
-        self._members: list[ThreadMemberPayload] = data["members"]
+        self._members: list[dict] = data["members"]
 
     @property
     def guild(self) -> "PartialGuild":
@@ -557,7 +548,7 @@ class ThreadMembersUpdatePayload:
         self,
         *,
         state: "DiscordAPI",
-        data: "ThreadMembersUpdate",
+        data: dict,
     ):
         self._state = state
 
@@ -566,7 +557,7 @@ class ThreadMembersUpdatePayload:
         self.member_count: int = data["member_count"]
         self.removed_member_ids: list[int] = data.get("removed_member_ids", [])
 
-        self._added_members: list[ThreadMemberWithMember] = data.get("added_members", [])
+        self._added_members: list[dict] = data.get("added_members", [])
 
     @property
     def guild(self) -> "PartialGuild":
@@ -594,7 +585,7 @@ class ThreadMembersUpdatePayload:
             ThreadMember(
                 state=state,
                 guild=guild,
-                data=m,  # type: ignore
+                data=m,
             )
             for m in self._added_members
         ]

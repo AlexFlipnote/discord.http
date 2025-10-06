@@ -44,7 +44,6 @@ docs = [
 [tool.setuptools]
 packages = [
   "discord_http",
-  "discord_http.types",
   "discord_http.gateway",
 ]
 
@@ -61,7 +60,6 @@ output-format = "concise"
 # Files to include/exclude
 include = [
   "discord_http/*.py",
-  "discord_http/types/*.py",
   "discord_http/gateway/*.py",
 ]
 
@@ -172,7 +170,6 @@ pythonVersion = "3.11"
 
 include = [
   "discord_http",
-  "discord_http.types",
   "discord_http.gateway",
 ]
 

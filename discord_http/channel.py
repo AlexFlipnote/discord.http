@@ -30,7 +30,6 @@ if TYPE_CHECKING:
     from .member import Member
     from .member import ThreadMember
     from .message import PartialMessage, Message, Poll
-    from .types import channels
     from .user import PartialUser, User
 
 MISSING = utils.MISSING
@@ -2377,7 +2376,7 @@ class StageInstance(PartialBase):
         self,
         *,
         state: "DiscordAPI",
-        data: "channels.StageInstance",
+        data: dict,
         guild: "PartialGuild | None" = None,
     ) -> None:
         super().__init__(id=int(data["id"]))
@@ -2385,12 +2384,12 @@ class StageInstance(PartialBase):
         self._guild: "PartialGuild | None" = guild
         self._from_data(data)
 
-    def _from_data(self, data: "channels.StageInstance") -> None:
+    def _from_data(self, data: dict) -> None:
         self.channel_id: int = int(data["channel_id"])
         self.guild_id: int = int(data["guild_id"])
         self.topic: str = data["topic"]
         self.privacy_level: PrivacyLevelType = PrivacyLevelType(data["privacy_level"])
-        self.guild_scheduled_event_id: int | None = utils.get_int(data, "guild_scheduled_event_id")  # type: ignore
+        self.guild_scheduled_event_id: int | None = utils.get_int(data, "guild_scheduled_event_id")
 
     @property
     def guild(self) -> "Guild | PartialGuild | None":
@@ -2465,7 +2464,7 @@ class StageInstance(PartialBase):
 
         return self.__class__(
             state=self._state,
-            data=r.response,  # type: ignore
+            data=r.response,
             guild=self._guild,
         )
 
@@ -2520,7 +2519,7 @@ class StageChannel(VoiceChannel):
 
         return StageInstance(
             state=self._state,
-            data=r.response,  # type: ignore
+            data=r.response,
             guild=self.guild
         )
 
@@ -2577,7 +2576,7 @@ class StageChannel(VoiceChannel):
 
         self._stage_instance = StageInstance(
             state=self._state,
-            data=r.response,  # type: ignore
+            data=r.response,
             guild=self.guild
         )
         return self._stage_instance
