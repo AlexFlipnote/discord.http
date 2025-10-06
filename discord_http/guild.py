@@ -343,6 +343,19 @@ class PartialGuild(PartialBase):
             return False
         return count == len(self._cache_members)
 
+    @property
+    def me(self) -> "Member | PartialMember | None":
+        """
+        Returns the bot's member object.
+
+        Only useable if you are using gateway and caching
+        """
+        member = self.get_member(self._state.bot.user.id)
+        if member:
+            return member
+
+        return self.get_partial_member(self.id)
+
     def get_member(self, member_id: int) -> "Member | PartialMember | None":
         """
         Returns the member from cache if it exists.
@@ -2807,15 +2820,6 @@ class Guild(PartialGuild):
             if isinstance(r, Role) and
             r.name == role_name
         ), None)
-
-    @property
-    def me(self) -> "Member | PartialMember | None":
-        """
-        Returns the bot's member object.
-
-        Only useable if you are using gateway and caching
-        """
-        return self.get_member(self._state.bot.user.id)
 
     def get_member_top_role(self, member: "Member") -> Role | None:
         """

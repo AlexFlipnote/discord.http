@@ -255,7 +255,7 @@ async def test_reply(ctx: Context):
 
 @client.command()
 async def test_remove_command(ctx: Context):
-    client.remove_command(test_reply)
+    client.remove_command(test_reply)  # type: ignore
     return ctx.response.send_message("Removed command")
 
 

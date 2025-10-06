@@ -1,3 +1,5 @@
+import logging
+
 from datetime import datetime, timedelta
 from typing import TYPE_CHECKING
 
@@ -14,7 +16,7 @@ from .role import PartialRole, Role
 from .user import User, PartialUser, PrimaryGuild, AvatarDecoration, Nameplate
 from .view import View
 
-
+_log = logging.getLogger(__name__)
 MISSING = utils.MISSING
 
 if TYPE_CHECKING:
@@ -237,6 +239,9 @@ class PartialMember(PartialBase):
         deaf: bool | None = MISSING,
         communication_disabled_until: timedelta | datetime | int | None = MISSING,
         channel_id: int | None = MISSING,
+        banner: File | bytes | None = MISSING,
+        avatar: File | bytes | None = MISSING,
+        bio: str | None = MISSING,
         reason: str | None = None
     ) -> "Member":
         """
@@ -258,6 +263,12 @@ class PartialMember(PartialBase):
             The channel ID to move the member to
         reason:
             The reason for editing the member
+        banner:
+            The new guild banner for the bot (Application only).
+        avatar:
+            The new avatar for the bot (Application only).
+        bio:
+            The new bio for the bot (Application only).
 
         Returns
         -------
@@ -269,9 +280,15 @@ class PartialMember(PartialBase):
             - If communication_disabled_until is not timedelta, datetime, or int
         """
         payload = {}
+        self_payload = {}
+        me = self._state.bot.user.id == self.id
 
         if nick is not MISSING:
-            payload["nick"] = nick
+            if me:
+                self_payload["nick"] = nick
+            else:
+                payload["nick"] = nick
+
         if isinstance(roles, list) and roles is not MISSING:
             payload["roles"] = [str(int(role)) for role in roles]
         if mute is not MISSING:
@@ -289,12 +306,41 @@ class PartialMember(PartialBase):
                 )
                 payload["communication_disabled_until"] = parse_ts.isoformat()
 
-        r = await self._state.query(
-            "PATCH",
-            f"/guilds/{self.guild_id}/members/{self.id}",
-            json=payload,
-            reason=reason
-        )
+        if banner is not MISSING:
+            self_payload["banner"] = (
+                utils.bytes_to_base64(banner)
+                if banner else None
+            )
+        if avatar is not MISSING:
+            self_payload["avatar"] = (
+                utils.bytes_to_base64(avatar)
+                if avatar else None
+            )
+        if bio is not MISSING:
+            self_payload["bio"] = bio
+
+        if payload:
+            if self_payload:
+                self_parms_used = ", ".join(self_payload.keys())
+                _log.warning(
+                    f"Self parameters ({self_parms_used}) cannot be used combined "
+                    "with guild parameters, skipping self ones"
+                )
+            r = await self._state.query(
+                "PATCH",
+                f"/guilds/{self.guild_id}/members/{self.id}",
+                json=payload,
+                reason=reason
+            )
+        elif self_payload:
+            r = await self._state.query(
+                "PATCH",
+                f"/guilds/{self.guild_id}/members/@me",
+                json=self_payload,
+                reason=reason
+            )
+        else:
+            raise ValueError("No parameters to edit were provided.")
 
         return Member(
             state=self._state,
