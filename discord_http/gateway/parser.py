@@ -16,7 +16,7 @@ from .object import (
 from .. import utils
 from ..audit import AuditLogEntry
 from ..automod import AutoModRule
-from ..channel import BaseChannel, PartialChannel, StageInstance, PartialThread, StageChannel
+from ..channel import BaseChannel, PartialChannel, StageInstance, PartialThread
 from ..emoji import Emoji, EmojiParser
 from ..enums import ChannelType
 from ..entitlements import Entitlements
