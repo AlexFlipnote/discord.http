@@ -35,7 +35,7 @@ def show_version() -> None:
     container = [
         f"python       v{pyver.major}.{pyver.minor}.{pyver.micro}-{pyver.releaselevel}",
         f"discord.http v{discord_http.__version__}",
-        f"quart        {get_package_version('quart')}",
+        f"aiohttp      {get_package_version('aiohttp')}",
         f"system_info  {platform.system()} {platform.release()} ({platform.version()})",
     ]
 

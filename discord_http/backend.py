@@ -1,21 +1,18 @@
-import asyncio
 import copy
 import inspect
 import logging
 import orjson
-import signal
 
 from datetime import datetime
-from hypercorn.asyncio import serve
-from hypercorn.config import Config as HyperConfig
 from nacl.exceptions import BadSignatureError
 from nacl.signing import VerifyKey
-from quart import Quart, request, abort
-from quart import Response as QuartResponse
-from quart.logging import default_handler
-from quart.utils import MustReloadError, restart
-from typing import Any, TYPE_CHECKING
-from collections.abc import Coroutine
+from typing import TYPE_CHECKING
+
+from aiohttp import web
+from aiohttp.web_exceptions import (
+    HTTPUnauthorized, HTTPBadRequest,
+    HTTPInternalServerError
+)
 
 from . import utils
 from .commands import Command, SubGroup
@@ -34,85 +31,47 @@ __all__ = (
 )
 
 
-def _cancel_all_tasks(loop: asyncio.AbstractEventLoop) -> None:
-    """ Used by Quart to cancel all tasks on shutdown. """
-    tasks = [
-        task for task in asyncio.all_tasks(loop)
-        if not task.done()
-    ]
+class DiscordHTTP(web.Application):
+    """
+    Serves as the fundemental HTTP server for Discord Interactions.
 
-    if not tasks:
-        return
-
-    for task in list(tasks):
-        task.cancel()
-
-        if task.get_coro().__name__ == "_windows_signal_support":  # type: ignore
-            tasks.remove(task)
-
-    loop.run_until_complete(
-        asyncio.gather(*tasks, return_exceptions=True)
-    )
-
-    for task in tasks:
-        if not task.cancelled() and task.exception() is not None:
-            loop.call_exception_handler({
-                "message": "unhandled exception during shutdown",
-                "exception": task.exception(),
-                "task": task
-            })
-
-
-class DiscordHTTP(Quart):
+    We recommend to not touch this class, unless you know what you're doing
+    """
     def __init__(self, *, client: "Client"):
-        """
-        Serves as the fundemental HTTP server for Discord Interactions.
-
-        We recommend to not touch this class, unless you know what you're doing
-        """
         self.uptime: datetime = utils.utcnow()
-
         self.bot: "Client" = client
-
-        # Aliases
-        self.loop = self.bot.loop
         self.debug_events = self.bot.debug_events
 
-        super().__init__(__name__)
+        super().__init__(client_max_size=10 * 1024 * 1024)
 
-        # Change some of the default settings
-        self.config["JSONIFY_PRETTYPRINT_REGULAR"] = False
-        self.config["JSON_SORT_KEYS"] = False
+        # Silence aiohttp access logs
+        logging.getLogger("aiohttp.server").setLevel(logging.ERROR)
+        logging.getLogger("aiohttp.access").setLevel(logging.ERROR)
 
-        # Remove Quart's default logging handler
-        quart_log = logging.getLogger("quart.app")
-        quart_log.removeHandler(default_handler)
-        quart_log.setLevel(logging.CRITICAL)
-
-    async def _validate_request(self) -> None:
+    async def _validate_request(self, request: web.Request) -> None:
         """
         Used to validate requests sent by Discord Webhooks.
 
         This should NOT be modified, unless you know what you're doing
         """
         if not self.bot.public_key:
-            return abort(401, "invalid public key")
+            raise HTTPUnauthorized(text="invalid public key")
 
         verify_key = VerifyKey(bytes.fromhex(self.bot.public_key))
         signature: str = request.headers.get("X-Signature-Ed25519", "")
         timestamp: str = request.headers.get("X-Signature-Timestamp", "")
 
         try:
-            data = await request.data
+            data = await request.read()
             body = data.decode("utf-8")
             verify_key.verify(
                 f"{timestamp}{body}".encode(),
                 bytes.fromhex(signature)
             )
         except BadSignatureError:
-            abort(401, "invalid request signature")
+            raise HTTPUnauthorized(text="invalid request signature")
         except Exception:
-            abort(400, "invalid request body")
+            raise HTTPBadRequest(text="invalid request body")
 
     def _dig_subcommand(
         self,
@@ -129,7 +88,7 @@ class DiscordHTTP(Quart):
             ), None)
 
             if not find_next_step:
-                return abort(400, "invalid command")
+                raise HTTPBadRequest(text="invalid command")
 
             cmd = cmd.subcommands.get(find_next_step["name"], None)  # type: ignore
 
@@ -138,7 +97,7 @@ class DiscordHTTP(Quart):
                     f"Unhandled subcommand: {find_next_step['name']} "
                     "(not found in local command list)"
                 )
-                return abort(404, "command not found")
+                return self.jsonify({"error": "command not found"}, status=404)
 
             data_options = find_next_step.get("options", [])
 
@@ -148,16 +107,15 @@ class DiscordHTTP(Quart):
         self,
         ctx: "Context",
         data: dict
-    ) -> dict:
+    ) -> web.Response:
         """ Used to handle ACK ping. """
         ping = Ping(state=self.bot.state, data=data)
 
         if self.bot.has_any_dispatch("ping"):
             self.bot.dispatch("ping", ping)
 
-        _log.debug(f"Discord Interactions ACK recieved ({ping.id})")
-
-        return ctx.response.pong()
+        _log.debug(f"Discord Interactions ACK received ({ping.id})")
+        return self.jsonify(ctx.response.pong())
 
     async def _run_before_invoke(self, ctx: "Context") -> bool:
         if self.bot._before_invoke is None:
@@ -183,15 +141,13 @@ class DiscordHTTP(Quart):
             else:
                 self.bot._after_invoke(ctx)  # type: ignore
 
-        self.bot.loop.create_task(
-            _run_background()
-        )
+        self.bot.loop.create_task(_run_background())
 
     async def _handle_application_command(
         self,
         ctx: "Context",
         data: dict
-    ) -> QuartResponse | dict:
+    ) -> web.Response:
         """ Used to handle application commands. """
         await self._run_before_invoke(ctx)
 
@@ -201,59 +157,44 @@ class DiscordHTTP(Quart):
         cmd = self.bot.commands.get(command_name, None)
 
         if not cmd:
-            _log.warning(
-                f"Unhandeled command: {command_name} "
-                "(not found in local command list)"
-            )
-            return QuartResponse(
-                "command not found",
-                status=404
-            )
+            _log.warning(f"Unhandled command: {command_name}")
+            return self.jsonify({"error": "command not found"}, status=404)
 
         cmd, _ = self._dig_subcommand(cmd, data)
-
-        # Now that the command is found, let context know about it
         ctx.command = cmd
 
         try:
-            # But first, check global checks
             await self.bot._run_global_checks(ctx)
 
-            # Now run the command itself
-            payload = await cmd._make_context_and_run(
-                context=ctx
-            )
+            payload = await cmd._make_context_and_run(context=ctx)
 
             await self._run_after_invoke(ctx)
 
             if isinstance(payload, EmptyResponse):
-                return QuartResponse("", status=202)
+                return web.Response(status=202)
 
-            return QuartResponse(
-                payload.to_multipart(),
-                content_type=payload.content_type
-            )
+            return self.multipart_response(payload)
 
         except Exception as e:
             if self.bot.has_any_dispatch("interaction_error"):
                 self.bot.dispatch("interaction_error", ctx, e)
             else:
                 _log.error(
-                    f"Error while running command {cmd.name}",
+                    f"Error while running command {getattr(cmd, 'name', None)}",
                     exc_info=e
                 )
 
             send_error = self.error_messages(ctx, e)
             if send_error and isinstance(send_error, BaseResponse):
-                return send_error.to_dict()
+                return self.jsonify(send_error.to_dict())
 
-            return abort(500)
+            raise HTTPInternalServerError()
 
     async def _handle_interaction(
         self,
         ctx: "Context",
         data: dict
-    ) -> QuartResponse | dict:
+    ) -> web.Response:
         """ Used to handle interactions. """
         await self._run_before_invoke(ctx)
 
@@ -263,70 +204,41 @@ class DiscordHTTP(Quart):
         try:
             local_view = None
 
-            if (
-                local_view is None and
-                ctx.custom_id
-            ):
-                local_view = self.bot._view_storage.get(
-                    ctx.custom_id, None
-                )
+            if (local_view is None and ctx.custom_id):
+                local_view = self.bot._view_storage.get(ctx.custom_id, None)
 
-            if (
-                local_view is None and
-                ctx.message
-            ):
-                local_view = self.bot._view_storage.get(
-                    ctx.message.id, None
-                )
+            if (local_view is None and ctx.message):
+                local_view = self.bot._view_storage.get(ctx.message.id, None)
 
                 if not local_view and ctx.message.interaction:
-                    local_view = self.bot._view_storage.get(
-                        ctx.message.interaction.id, None
-                    )
+                    local_view = self.bot._view_storage.get(ctx.message.interaction.id, None)
 
             if local_view:
                 payload = await local_view.callback(ctx)
-                return QuartResponse(
-                    payload.to_multipart(),
-                    content_type=payload.content_type
-                )
+                return self.multipart_response(payload)
 
             intreact = self.bot.find_interaction(custom_id)
             if not intreact:
-                _log.debug(
-                    "Unhandled interaction recieved "
-                    f"(custom_id: {custom_id})"
-                )
-                return QuartResponse(
-                    "interaction not found",
-                    status=404
-                )
+                _log.debug(f"Unhandled interaction received (custom_id: {custom_id})")
+                return self.jsonify({"error": "interaction not found"}, status=404)
 
             payload = await intreact.run(ctx)
-
             await self._run_after_invoke(ctx)
-
-            return QuartResponse(
-                payload.to_multipart(),
-                content_type=payload.content_type
-            )
+            return self.multipart_response(payload)
 
         except Exception as e:
             if self.bot.has_any_dispatch("interaction_error"):
                 self.bot.dispatch("interaction_error", ctx, e)
             else:
-                _log.error(
-                    f"Error while running interaction {custom_id}",
-                    exc_info=e
-                )
+                _log.error(f"Error while running interaction {custom_id}", exc_info=e)
 
-            return abort(500)
+            return self.jsonify({"error": "internal server error"}, status=500)
 
     async def _handle_autocomplete(
         self,
         ctx: "Context",
         data: dict
-    ) -> QuartResponse | dict:
+    ) -> web.Response:
         """ Used to handle autocomplete interactions. """
         _log.debug("Received autocomplete interaction, processing...")
 
@@ -335,58 +247,45 @@ class DiscordHTTP(Quart):
 
         try:
             if not cmd:
-                _log.warning(f"Unhandled autocomplete recieved (name: {command_name})")
-                return QuartResponse(
-                    "command not found",
-                    status=404
-                )
+                _log.warning(f"Unhandled autocomplete received (name: {command_name})")
+                return self.jsonify({"error": "command not found"}, status=404)
 
             cmd, data_options = self._dig_subcommand(cmd, data)
 
-            find_focused = next((
-                x for x in data_options
-                if x.get("focused", False)
-            ), None)
+            find_focused = next((x for x in data_options if x.get("focused", False)), None)
 
             if not find_focused:
-                _log.warning(
-                    "Failed to find focused option in autocomplete "
-                    f"(cmd name: {command_name})"
-                )
-                return QuartResponse(
-                    "focused option not found",
-                    status=400
-                )
+                _log.warning("Failed to find focused option in autocomplete")
+                return self.jsonify({"error": "focused option not found"}, status=400)
 
-            return await cmd.run_autocomplete(
-                ctx, find_focused["name"], find_focused["value"]
-            )
+            result = await cmd.run_autocomplete(ctx, find_focused["name"], find_focused["value"])
+            if isinstance(result, dict):
+                return self.jsonify(result)
+            return result
+
         except Exception as e:
             if self.bot.has_any_dispatch("interaction_error"):
                 self.bot.dispatch("interaction_error", ctx, e)
             else:
-                _log.error(
-                    f"Error while running autocomplete {cmd.name}",
-                    exc_info=e
-                )
-            return abort(500)
+                _log.error(f"Error while running autocomplete {getattr(cmd, 'name', None)}", exc_info=e)
+            raise HTTPInternalServerError()
 
-    async def _index_interactions_endpoint(
-        self
-    ) -> QuartResponse | dict:
+    async def _index_interactions_endpoint(self, request: web.Request) -> web.Response:
         """
         The main function to handle all HTTP requests sent by Discord.
 
         Please do not touch this function, unless you know what you're doing
         """
-        await self._validate_request()
-        data = await request.json
+        # Validate signature
+        await self._validate_request(request)
+
+        try:
+            data = await request.json(loads=orjson.loads)
+        except Exception:
+            return self.jsonify({"error": "invalid json"}, status=400)
 
         if self.debug_events:
-            self.bot.dispatch(
-                "raw_interaction",
-                copy.deepcopy(data)
-            )
+            self.bot.dispatch("raw_interaction", copy.deepcopy(data))
 
         context = self.bot._context(self.bot, data)
         data_type = data.get("type", -1)
@@ -400,10 +299,7 @@ class DiscordHTTP(Quart):
                     context, data
                 )
 
-            case x if x in (
-                InteractionType.message_component,
-                InteractionType.modal_submit
-            ):
+            case InteractionType.message_component | InteractionType.modal_submit:
                 return await self._handle_interaction(
                     context, data
                 )
@@ -415,13 +311,9 @@ class DiscordHTTP(Quart):
 
             case _:  # Unknown
                 _log.debug(f"Unhandled interaction recieved (type: {data_type})")
-                return abort(400, "invalid request body")
+                return self.jsonify({"error": "invalid request body"}, status=400)
 
-    def error_messages(
-        self,
-        ctx: "Context",
-        e: Exception
-    ) -> MessageResponse | None:
+    def error_messages(self, ctx: "Context", e: Exception) -> MessageResponse | None:
         """
         Used to return error messages to Discord.
 
@@ -430,9 +322,9 @@ class DiscordHTTP(Quart):
 
         Parameters
         ----------
-        ctx: `Context`
+        ctx:
             The context of the command
-        e: `Exception`
+        e:
             The exception that was raised
 
         Returns
@@ -440,24 +332,28 @@ class DiscordHTTP(Quart):
             The message response provided by the library error handler
         """
         if isinstance(e, CheckFailed):
-            return ctx.response.send_message(
-                content=str(e),
-                ephemeral=True
-            )
-
+            return ctx.response.send_message(content=str(e), ephemeral=True)
         return None
 
-    async def index_ping(self) -> tuple[dict, int] | dict:
+    async def index_ping(
+        self,
+        request: web.Request  # noqa: ARG002
+    ) -> web.Response:
         """
         Used to ping the interaction url, to check if it's working.
 
         You can overwrite this function to return your own data as well.
         Remember that it must return `dict`
+
+        Parameters
+        ----------
+        request:
+            The incoming request object (not used by default)
         """
         if not self.bot.is_ready():
-            return {"error": "bot is not ready yet"}, 503
+            return self.jsonify({"error": "bot is not ready yet"}, status=503)
 
-        return {
+        return self.jsonify({
             "@me": {
                 "id": self.bot.user.id,
                 "username": self.bot.user.name,
@@ -469,32 +365,63 @@ class DiscordHTTP(Quart):
                 "timedelta": str(utils.utcnow() - self.uptime),
                 "unix": int(self.uptime.timestamp()),
             }
-        }
+        })
 
     def jsonify(
         self,
         data: dict,
         *,
         status: int = 200
-    ) -> QuartResponse:
+    ) -> web.Response:
         """
-        Force Quart to respond with JSON the way you like it.
+        Respond with JSON data in a standardized way using orjson.
+
+        Serves as the replacement for aiohttp's built-in json response.
 
         Parameters
         ----------
-        data: `dict`
+        data:
             The data to respond with
-        status: `int`
+        status:
             The status code to respond with
 
         Returns
         -------
             The response object
         """
-        return QuartResponse(
-            orjson.dumps(data),
+        return web.Response(
+            body=orjson.dumps(data),
             headers={"Content-Type": "application/json"},
-            status=status,
+            status=status
+        )
+
+    def multipart_response(
+        self,
+        body: BaseResponse | None,
+        *,
+        status: int = 200
+    ) -> web.Response:
+        """
+        Respond with multipart data in a standardized way.
+
+        Parameters
+        ----------
+        body:
+            The body to respond with
+        status:
+            The status code to respond with
+
+        Returns
+        -------
+            The response object
+        """
+        if body is None:
+            raise ValueError("body cannot be None")
+
+        return web.Response(
+            body=body.to_multipart(),
+            headers={"Content-Type": body.content_type},
+            status=status
         )
 
     def start(
@@ -509,123 +436,31 @@ class DiscordHTTP(Quart):
         Parameters
         ----------
         host:
-            The IP address to bind to, by default 127.0.0.1
+            Host to use, if not provided, it will use `127.0.0.1`
         port:
-            The port to bind to, by default 8080
+            Port to use, if not provided, it will use `8080`
         """
         int_path = str(self.bot.interaction_path)
         if not int_path.startswith("/"):
             _log.warning(
-                "Interaction path should start with a slash ( / ), "
-                f'adding it automatically for you, your path is now "/{int_path}"'
+                "Interaction path should start with a slash ( / ), adding it automatically"
             )
             int_path = f"/{int_path}"
 
         if not self.bot.disable_default_get_path:
-            self.add_url_rule(
-                int_path,
-                "ping",
-                self.index_ping,
-                methods=["GET"]
-            )
+            self.router.add_get(int_path, self.index_ping)
 
-        self.add_url_rule(
-            int_path,
-            "index",
-            self._index_interactions_endpoint,
-            methods=["POST"]
-        )
+        self.router.add_post(int_path, self._index_interactions_endpoint)
 
         try:
             _log.info(f"Serving on http://{host}:{port}")
-            self.run(host=host, port=port, loop=self.loop)
-        except KeyboardInterrupt:
-            pass  # Just don't bother showing errors...
-
-    def run(
-        self,
-        host: str,
-        port: int,
-        loop: asyncio.AbstractEventLoop
-    ) -> None:
-        """ ## Do NOT use this function, use `start` instead. """
-        loop.set_debug(False)
-        shutdown_event = asyncio.Event()
-
-        def _signal_handler(*_: Any) -> None:  # noqa: ANN401
-            shutdown_event.set()
-
-        for signal_name in {"SIGINT", "SIGTERM", "SIGBREAK"}:
-            if hasattr(signal, signal_name):
-                try:
-                    loop.add_signal_handler(
-                        getattr(signal, signal_name),
-                        _signal_handler
-                    )
-                except NotImplementedError:
-                    # Add signal handler may not be implemented on Windows
-                    signal.signal(
-                        getattr(signal, signal_name),
-                        _signal_handler
-                    )
-
-        server_name = self.config.get("SERVER_NAME")
-        sn_host = None
-        sn_port = None
-        if server_name is not None:
-            sn_host, _, sn_port = server_name.partition(":")
-
-        if host is None:
-            host = sn_host or "127.0.0.1"
-
-        if port is None:
-            port = int(sn_port or "8080")
-
-        task = self.run_task(
-            host=host,
-            port=port,
-            shutdown_trigger=shutdown_event.wait,
-        )
-
-        tasks = [loop.create_task(task)]
-        reload_ = False
-
-        try:
-            loop.run_until_complete(asyncio.gather(*tasks))
-        except MustReloadError:
-            reload_ = True
+            web.run_app(
+                self,
+                host=host,
+                port=port,
+                print=lambda *_, **__: None,
+                loop=self.bot.loop,
+                backlog=self.bot.max_pending_connections
+            )
         except KeyboardInterrupt:
             pass
-        finally:
-            try:
-                _cancel_all_tasks(loop)
-                loop.run_until_complete(loop.shutdown_asyncgens())
-            finally:
-                asyncio.set_event_loop(None)
-                loop.close()
-
-        if reload_:
-            restart()
-
-    def run_task(
-        self,
-        host: str = "127.0.0.1",
-        port: int = 8080,
-        shutdown_trigger: Any = None  # noqa: ANN401
-    ) -> Coroutine[None, None, None]:
-        """ ## Do NOT use this function, use `start` instead. """
-        config = HyperConfig()
-        config.access_log_format = "%(h)s %(r)s %(s)s %(b)s %(D)s"
-        config.accesslog = None
-        config.bind = [f"{host}:{port}"]
-        config.ca_certs = None
-        config.certfile = None
-        config.debug = False
-        config.errorlog = None
-        config.keyfile = None
-
-        return serve(
-            self,
-            config,
-            shutdown_trigger=shutdown_trigger
-        )

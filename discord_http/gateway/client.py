@@ -3,6 +3,7 @@ import logging
 import asyncio
 import operator
 
+from aiohttp import web
 from datetime import datetime, UTC
 from typing import TYPE_CHECKING
 from collections.abc import Coroutine
@@ -46,11 +47,9 @@ class GatewayClient:
 
         self.__shards: dict[int, Shard] = {}
 
-        self.bot.backend.add_url_rule(
+        self.bot.backend.router.add_get(
             "/shards",
-            "shards",
-            self._index_websocket_status,  # type: ignore
-            methods=["GET"]
+            self._index_websocket_status,
         )
 
     def get_shard(self, shard_id: int) -> Shard | None:
@@ -80,10 +79,10 @@ class GatewayClient:
         for shard in self.__shards.values():
             await shard.change_presence(status)
 
-    async def _index_websocket_status(self) -> dict[int, dict]:
+    async def _index_websocket_status(self, _: web.Request) -> web.Response:
         now = datetime.now(UTC)
-        return {
-            shard_id: {
+        payload = {
+            str(shard_id): {
                 "ping": shard.status.ping,
                 "latency": shard.status.latency,
                 "activity": {
@@ -95,6 +94,8 @@ class GatewayClient:
                 self.__shards.items(), key=operator.itemgetter(0)
             )
         }
+
+        return self.bot.backend.jsonify(payload)
 
     async def _fetch_gateway(self) -> tuple[int, int]:
         r = await self.bot.state.query("GET", "/gateway/bot")
