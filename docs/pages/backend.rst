@@ -2,7 +2,7 @@ HTTP backend
 ============
 The HTTP backend is a simple HTTP server that listens for incoming requests and
 manages all the communication received by Discord HTTP POST requests.
-However since this is essentially based on Quart, you are free to intervean and
+However since this is essentially based on aiohttp, you are free to intervean and
 add your own componenets to the server.
 
 .. code-block:: python
@@ -16,8 +16,8 @@ add your own componenets to the server.
       sync=True
   )
 
-With this simple code, you have the ability to interact with Quart API using ``client.backend``.
-If you need help with Quart, please refer to the `Quart documentation <https://pgjones.gitlab.io/quart/>`_.
+With this simple code, you have the ability to interact with aiohttp API using ``client.backend``.
+If you need help with aiohttp, please refer to the `aiohttp documentation <https://docs.aiohttp.org/en/stable/web.html>`_.
 Essentially you are able to add your very own paths to the server.
 
 By default, the library adds a GET and POST listener to ``/`` of the domain` (aka. the root of the domain).
@@ -56,12 +56,13 @@ Code example will be taking the code above as an expantion of the code.
 
 .. code-block:: python
 
-  async def simple_test():
-      return {"hello": "world"}
+  from aiohttp import web
 
-  client.backend.add_url_rule(
-      "/test", "test",
-      simple_test, methods=["GET"]
+  async def simple_test(request: web.Request) -> web.Response:
+      return web.json_response({"hello": "world"})
+
+  client.backend.router.add_get(
+      "/test", simple_test
   )
 
 This code would essentially add a new path to the server called ``/test`` that

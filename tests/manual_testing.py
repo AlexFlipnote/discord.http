@@ -73,12 +73,6 @@ async def test_loop_static_1():
     print("I woke up to give you this lovely ping, cool right?")
 
 
-@client.backend.before_serving
-async def before_serving():
-    # test_loop.start()
-    test_loop_static_1.start()
-
-
 @test_loop.before_loop()
 async def before_test_loop():
     print("Entered before test loop")

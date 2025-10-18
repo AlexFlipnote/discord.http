@@ -3,9 +3,10 @@ import importlib
 import inspect
 import logging
 
+from aiohttp import web
+from collections.abc import Callable, AsyncIterator, Coroutine
 from datetime import datetime
 from typing import Any, TYPE_CHECKING, TypeVar
-from collections.abc import Callable, AsyncIterator, Coroutine
 
 from . import utils, __version__
 from .automod import PartialAutoModRule, AutoModRule
@@ -239,7 +240,7 @@ class Client:
             except asyncio.CancelledError:
                 pass
 
-    async def _prepare_bot(self) -> None:
+    async def _prepare_bot(self, _app: web.Application | None = None) -> None:
         """ Run prepare_setup() before boot to make the user set up needed vars. """
         await self.state.http._create_session()
 
@@ -273,7 +274,7 @@ class Client:
             self.gateway.start()
             _log.info("Starting discord.http/gateway client")
 
-    async def __cleanup(self) -> None:
+    async def __cleanup(self, _: web.Application | None = None) -> None:
         """ Called when the bot is shutting down. """
         _log.debug("Shutting down discord.http...")
 
@@ -303,7 +304,7 @@ class Client:
         )
 
         return self.loop.create_task(
-            wrapped, name=f"discord.quart: {event_name}"
+            wrapped, name=f"discord.http/aiohttp: {event_name}"
         )
 
     async def _prepare_me(self) -> UserClient:
@@ -645,8 +646,8 @@ class Client:
                 "please provide them when initializing the client server."
             )
 
-        self.backend.before_serving(self._prepare_bot)
-        self.backend.after_serving(self.__cleanup)
+        self.backend.on_startup.append(self._prepare_bot)
+        self.backend.on_cleanup.append(self.__cleanup)
         self.backend.start(host=host, port=port)
 
     async def wait_until_ready(self) -> None:

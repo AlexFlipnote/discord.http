@@ -627,7 +627,7 @@ class Command:
 
         Returns
         -------
-            The return type of the command, used by backend.py (Quart)
+            The return type of the command, used by backend.py
 
         Raises
         ------
@@ -688,7 +688,7 @@ class Command:
 
         Returns
         -------
-            The return type of the command, used by backend.py (Quart)
+            The return type of the command, used by backend.py
 
         Raises
         ------
@@ -1039,7 +1039,7 @@ class Interaction:
 
         Returns
         -------
-            The return type of the interaction, used by backend.py (Quart)
+            The return type of the interaction, used by backend.py
 
         Raises
         ------

@@ -222,28 +222,6 @@ Not to mention that this will also reduce the amount of RAM usage, as the librar
   )
 
 
-3rd-party tools
-----------------
-
-hypercorn
-~~~~~~~~~
-If you're aiming to enhance your bot's scalability with asynchronous capabilities, consider employing `hypercorn <https://gitlab.com/pgjones/hypercorn>`_.
-Given that this library aligns with the asynchronous nature of ``Quart``, much like ``Flask``, hypercorn becomes a suitable choice.
-
-.. note::
-  Gunicorn is not recommended for use with this library, as it is not asynchronous and will not work with Quart.
-  Hypercorn is essentially the asynchronous version of Gunicorn, and is the recommended choice for this library.
-
-To apply this to the provided bot code example, initiate the process with the following command:
-
-.. code-block:: bash
-
-  hypercorn filename:client.backend
-
-Ensure to replace ``filename`` with the actual name of your root file, such as ``main.py``, ``bot.py``, or a similar identifier.
-In these cases, you would utilize ``hypercorn main:client.backend`` and ``hypercorn bot:client.backend`` respectively.
-
-
 Hosting examples
 --------------------
 

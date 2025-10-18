@@ -14,14 +14,13 @@ license = "MIT"
 
 dynamic = ["version"]
 readme = "README.md"
-keywords = ["discord", "http", "api", "interaction", "quart", "webhook", "slash"]
+keywords = ["discord", "http", "api", "interaction", "aiohttp", "webhook", "slash"]
 authors = [{name = "AlexFlipnote", email = "root@alexflipnote.dev"}]
 
 dependencies = [
   "PyNaCl>=1.5.0,<2",
   "aiohttp>=3.12.7,<4",
   "orjson>=3.10.18,<4",
-  "quart>=0.20.0,<1",
   "yarl>=1.20.0,<2",
 ]
 
