@@ -11,7 +11,7 @@ from typing import TYPE_CHECKING
 from aiohttp import web
 from aiohttp.web_exceptions import (
     HTTPUnauthorized, HTTPBadRequest,
-    HTTPNotFound, HTTPInternalServerError
+    HTTPInternalServerError
 )
 
 from . import utils
@@ -97,7 +97,7 @@ class DiscordHTTP(web.Application):
                     f"Unhandled subcommand: {find_next_step['name']} "
                     "(not found in local command list)"
                 )
-                raise HTTPNotFound(text="command not found")
+                return self.jsonify({"error": "command not found"}, status=404)
 
             data_options = find_next_step.get("options", [])
 
@@ -158,7 +158,7 @@ class DiscordHTTP(web.Application):
 
         if not cmd:
             _log.warning(f"Unhandled command: {command_name}")
-            raise HTTPNotFound(text="command not found")
+            return self.jsonify({"error": "command not found"}, status=404)
 
         cmd, _ = self._dig_subcommand(cmd, data)
         ctx.command = cmd
@@ -220,7 +220,7 @@ class DiscordHTTP(web.Application):
             intreact = self.bot.find_interaction(custom_id)
             if not intreact:
                 _log.debug(f"Unhandled interaction received (custom_id: {custom_id})")
-                raise HTTPNotFound(text="interaction not found")
+                return self.jsonify({"error": "interaction not found"}, status=404)
 
             payload = await intreact.run(ctx)
             await self._run_after_invoke(ctx)
@@ -232,7 +232,7 @@ class DiscordHTTP(web.Application):
             else:
                 _log.error(f"Error while running interaction {custom_id}", exc_info=e)
 
-            raise HTTPInternalServerError()
+            return self.jsonify({"error": "internal server error"}, status=500)
 
     async def _handle_autocomplete(
         self,
@@ -248,7 +248,7 @@ class DiscordHTTP(web.Application):
         try:
             if not cmd:
                 _log.warning(f"Unhandled autocomplete received (name: {command_name})")
-                raise HTTPNotFound(text="command not found")
+                return self.jsonify({"error": "command not found"}, status=404)
 
             cmd, data_options = self._dig_subcommand(cmd, data)
 
@@ -256,7 +256,7 @@ class DiscordHTTP(web.Application):
 
             if not find_focused:
                 _log.warning("Failed to find focused option in autocomplete")
-                raise HTTPBadRequest(text="focused option not found")
+                return self.jsonify({"error": "focused option not found"}, status=400)
 
             result = await cmd.run_autocomplete(ctx, find_focused["name"], find_focused["value"])
             if isinstance(result, dict):
@@ -282,7 +282,7 @@ class DiscordHTTP(web.Application):
         try:
             data = await request.json(loads=orjson.loads)
         except Exception:
-            raise HTTPBadRequest(text="invalid json")
+            return self.jsonify({"error": "invalid json"}, status=400)
 
         if self.debug_events:
             self.bot.dispatch("raw_interaction", copy.deepcopy(data))
@@ -311,7 +311,7 @@ class DiscordHTTP(web.Application):
 
             case _:  # Unknown
                 _log.debug(f"Unhandled interaction recieved (type: {data_type})")
-                raise HTTPBadRequest(text="invalid request body")
+                return self.jsonify({"error": "invalid request body"}, status=400)
 
     def error_messages(self, ctx: "Context", e: Exception) -> MessageResponse | None:
         """
