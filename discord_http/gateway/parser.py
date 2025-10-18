@@ -16,7 +16,7 @@ from .object import (
 from .. import utils
 from ..audit import AuditLogEntry
 from ..automod import AutoModRule
-from ..channel import BaseChannel, PartialChannel, StageInstance, PartialThread
+from ..channel import BaseChannel, PartialChannel, StageInstance, PartialThread, StageChannel
 from ..emoji import Emoji, EmojiParser
 from ..enums import ChannelType
 from ..entitlements import Entitlements
@@ -1427,9 +1427,13 @@ class Parser:
         guild = self.bot.cache.get_guild(int(data["guild_id"]))
 
         # try updating the existing stage instance from cache if it exists
-        if guild and (channel := guild.get_channel(int(data["channel_id"]))):
-            channel._stage_instance._from_data(data)  # type: ignore # should be fine?
-            return (channel._stage_instance,)  # type: ignore # should be fine?
+        if (
+            guild and
+            (channel := guild.get_channel(int(data["channel_id"]))) and
+            channel._stage_instance is not None  # type: ignore
+        ):
+            channel._stage_instance._from_data(data)  # type: ignore
+
         return (
             StageInstance(
                 state=self.bot.state,
