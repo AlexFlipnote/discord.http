@@ -137,6 +137,7 @@ class Client:
         allowed_mentions: AllowedMentions | None = None,
         enable_gateway: bool = False,
         automatic_shards: bool = True,
+        max_pending_connections: int = 128,
         playing_status: "PlayingStatus | None" = None,
         chunk_guilds_on_startup: bool = False,
         guild_ready_timeout: float = 2.0,
@@ -164,7 +165,7 @@ class Client:
         self.call_after_delay: float | int = call_after_delay
         self.intents: Intents | None = intents
         self.interaction_path: str | None = interaction_path or "/"
-        self.max_pending_connections: int = 128
+        self.max_pending_connections: int = max_pending_connections
 
         self.gateway: "GatewayClient | None" = None
         self.disable_default_get_path: bool = disable_default_get_path
