@@ -428,8 +428,7 @@ class DiscordHTTP(web.Application):
         self,
         *,
         host: str = "127.0.0.1",
-        port: int = 8080,
-        backlog: int = 128
+        port: int = 8080
     ) -> None:
         """
         Start the HTTP server.
@@ -437,12 +436,9 @@ class DiscordHTTP(web.Application):
         Parameters
         ----------
         host:
-            The IP address to bind to, by default 127.0.0.1
+            Host to use, if not provided, it will use `127.0.0.1`
         port:
-            The port to bind to, by default 8080
-        backlog:
-            The maximum number of queued connections passed to the server API, by default 128.
-            If your bot is receiving a lot of traffic, you might want to increase this value.
+            Port to use, if not provided, it will use `8080`
         """
         int_path = str(self.bot.interaction_path)
         if not int_path.startswith("/"):
@@ -464,7 +460,7 @@ class DiscordHTTP(web.Application):
                 port=port,
                 print=lambda *_, **__: None,
                 loop=self.bot.loop,
-                backlog=backlog
+                backlog=self.bot.max_pending_connections
             )
         except KeyboardInterrupt:
             pass

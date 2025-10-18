@@ -85,6 +85,9 @@ class Client:
         Guild ID to sync commands to, if not provided, it will sync to global
     sync: bool
         Whether to sync commands on boot or not
+    max_pending_connections:
+        The maximum number of queued connections passed to the interaction URL, by default 128.
+        If your bot is receiving a lot of traffic, you might want to increase this value.
     api_version: int
         API version to use for both HTTP and WS, if not provided, it will use the default (10)
     loop: asyncio.AbstractEventLoop | None
@@ -161,6 +164,7 @@ class Client:
         self.call_after_delay: float | int = call_after_delay
         self.intents: Intents | None = intents
         self.interaction_path: str | None = interaction_path or "/"
+        self.max_pending_connections: int = 128
 
         self.gateway: "GatewayClient | None" = None
         self.disable_default_get_path: bool = disable_default_get_path
