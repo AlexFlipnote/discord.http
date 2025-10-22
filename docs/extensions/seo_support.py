@@ -59,6 +59,6 @@ def add_seo_tags(
     context["metatags"] += (
         '<meta name="theme-color" content="#14bae4">'
         '<meta property="og:locale" content="en_GB">'
-        '<meta name="keywords" content="discord, http, api, interaction, quart, webhook, slash>'
+        '<meta name="keywords" content="discord, http, api, interaction, aiohttp, webhook, slash>'
         '<meta name="revisit-after" content="2 days">'
     )
