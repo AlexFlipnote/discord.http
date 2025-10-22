@@ -702,11 +702,11 @@ class URL:
 
         Parameters
         ----------
-        path
+        path:
             The path to set or append to the URL
-        append
+        append:
             Whether to append the path to the existing path or replace it
-        ensure_leading_slash
+        ensure_leading_slash:
             Whether to ensure the resulting path starts with a leading slash
 
         Returns
