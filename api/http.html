@@ -1,14 +1,14 @@
 <!doctype html>
 <html class="no-js" lang="en" data-content_root="../">
-  <head><meta charset="utf-8"/>
-    <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <head><meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
     <meta name="color-scheme" content="light dark"><meta name="viewport" content="width=device-width, initial-scale=1" />
-<meta content="Http - discord.http docs" property="og:title"><meta content="This module is not meant to be used directly, it is used internally by discord_http.Client." name="description"><meta content="This module is not meant to be used directly, it is used internally by discord_http.Client." property="og:description"><meta property="og:image" content="/_static/favicon.ico"><meta name="theme-color" content="#14bae4"><meta property="og:locale" content="en_GB"><meta name="keywords" content="discord, http, api, interaction, quart, webhook, slash><meta name="revisit-after" content="2 days"><link rel="index" title="Index" href="../genindex.html" /><link rel="search" title="Search" href="../search.html" /><link rel="next" title="Integrations" href="integrations.html" /><link rel="prev" title="Guild" href="guild.html" />
+<meta content="Http - discord.http docs" property="og:title"><meta content="This module is not meant to be used directly, it is used internally by discord_http.Client." name="description"><meta content="This module is not meant to be used directly, it is used internally by discord_http.Client." property="og:description"><meta property="og:image" content="/_static/favicon.ico"><meta name="theme-color" content="#14bae4"><meta property="og:locale" content="en_GB"><meta name="keywords" content="discord, http, api, interaction, aiohttp, webhook, slash><meta name="revisit-after" content="2 days"><link rel="index" title="Index" href="../genindex.html"><link rel="search" title="Search" href="../search.html"><link rel="next" title="Integrations" href="integrations.html"><link rel="prev" title="Guild" href="guild.html">
 
-    <link rel="shortcut icon" href="../_static/favicon.ico"/><!-- Generated with Sphinx 8.2.3 and Furo 2025.07.19 -->
+    <link rel="shortcut icon" href="../_static/favicon.ico"><!-- Generated with Sphinx 8.2.3 and Furo 2025.09.25 -->
         <title>Http - discord.http docs</title>
       <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=03e43079" />
-    <link rel="stylesheet" type="text/css" href="../_static/styles/furo.css?v=25af2a20" />
+    <link rel="stylesheet" type="text/css" href="../_static/styles/furo.css?v=580074bf" />
     <link rel="stylesheet" type="text/css" href="../_static/styles/furo-extensions.css?v=8dab3a3b" />
     
     
@@ -22,14 +22,14 @@
   }
   @media not print {
     body[data-theme="dark"] {
-      --color-code-background: #2b2b2b;
-  --color-code-foreground: #f8f8f2;
+      --color-code-background: #202020;
+  --color-code-foreground: #d0d0d0;
   
     }
     @media (prefers-color-scheme: dark) {
       body:not([data-theme="light"]) {
-        --color-code-background: #2b2b2b;
-  --color-code-foreground: #f8f8f2;
+        --color-code-background: #202020;
+  --color-code-foreground: #d0d0d0;
   
       }
     }
@@ -144,14 +144,10 @@
   </symbol>
 </svg>
 
-<input type="checkbox" class="sidebar-toggle" name="__navigation" id="__navigation">
-<input type="checkbox" class="sidebar-toggle" name="__toc" id="__toc">
-<label class="overlay sidebar-overlay" for="__navigation">
-  <div class="visually-hidden">Hide navigation sidebar</div>
-</label>
-<label class="overlay toc-overlay" for="__toc">
-  <div class="visually-hidden">Hide table of contents sidebar</div>
-</label>
+<input type="checkbox" class="sidebar-toggle" name="__navigation" id="__navigation" aria-label="Toggle site navigation sidebar">
+<input type="checkbox" class="sidebar-toggle" name="__toc" id="__toc" aria-label="Toggle table of contents sidebar">
+<label class="overlay sidebar-overlay" for="__navigation"></label>
+<label class="overlay toc-overlay" for="__toc"></label>
 
 <a class="skip-to-content muted-link" href="#furo-main-content">Skip to content</a>
 
@@ -161,8 +157,7 @@
   <header class="mobile-header">
     <div class="header-left">
       <label class="nav-overlay-icon" for="__navigation">
-        <div class="visually-hidden">Toggle site navigation sidebar</div>
-        <i class="icon"><svg><use href="#svg-menu"></use></svg></i>
+        <span class="icon"><svg><use href="#svg-menu"></use></svg></span>
       </label>
     </div>
     <div class="header-center">
@@ -170,8 +165,7 @@
     </div>
     <div class="header-right">
       <div class="theme-toggle-container theme-toggle-header">
-        <button class="theme-toggle">
-          <div class="visually-hidden">Toggle Light / Dark / Auto color theme</div>
+        <button class="theme-toggle" aria-label="Toggle Light / Dark / Auto color theme">
           <svg class="theme-icon-when-auto-light"><use href="#svg-sun-with-moon"></use></svg>
           <svg class="theme-icon-when-auto-dark"><use href="#svg-moon-with-sun"></use></svg>
           <svg class="theme-icon-when-dark"><use href="#svg-moon"></use></svg>
@@ -179,8 +173,7 @@
         </button>
       </div>
       <label class="toc-overlay-icon toc-header-icon" for="__toc">
-        <div class="visually-hidden">Toggle table of contents sidebar</div>
-        <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
+        <span class="icon"><svg><use href="#svg-toc"></use></svg></span>
       </label>
     </div>
   </header>
@@ -199,7 +192,7 @@
 <div id="searchbox"></div><div class="sidebar-scroll"><div class="sidebar-tree">
   <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="../pages/getting_started.html">Getting started</a></li>
-<li class="toctree-l1 current has-children"><a class="reference internal" href="../pages/api.html">API components</a><input checked="" class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" role="switch" type="checkbox"/><label for="toctree-checkbox-1"><div class="visually-hidden">Toggle navigation of API components</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul class="current">
+<li class="toctree-l1 current has-children"><a class="reference internal" href="../pages/api.html">API components</a><input aria-label="Toggle navigation of API components" checked="" class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" role="switch" type="checkbox"/><label for="toctree-checkbox-1"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul class="current">
 <li class="toctree-l2"><a class="reference internal" href="asset.html">Asset</a></li>
 <li class="toctree-l2"><a class="reference internal" href="audit.html">Audit</a></li>
 <li class="toctree-l2"><a class="reference internal" href="automod.html">AutoModRule</a></li>
@@ -238,7 +231,7 @@
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../pages/events.html">Event references</a></li>
-<li class="toctree-l1 has-children"><a class="reference internal" href="../pages/gateway.html">Gateway references</a><input class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" role="switch" type="checkbox"/><label for="toctree-checkbox-2"><div class="visually-hidden">Toggle navigation of Gateway references</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../pages/gateway.html">Gateway references</a><input aria-label="Toggle navigation of Gateway references" class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" role="switch" type="checkbox"/><label for="toctree-checkbox-2"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
 <li class="toctree-l2"><a class="reference internal" href="../gateway/activity.html">Activity</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../gateway/client.html">Client</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../gateway/enums.html">Enums</a></li>
@@ -284,8 +277,7 @@
   </a>
 </div>
 <div class="theme-toggle-container theme-toggle-content">
-            <button class="theme-toggle">
-              <div class="visually-hidden">Toggle Light / Dark / Auto color theme</div>
+            <button class="theme-toggle" aria-label="Toggle Light / Dark / Auto color theme">
               <svg class="theme-icon-when-auto-light"><use href="#svg-sun-with-moon"></use></svg>
               <svg class="theme-icon-when-auto-dark"><use href="#svg-moon-with-sun"></use></svg>
               <svg class="theme-icon-when-dark"><use href="#svg-moon"></use></svg>
@@ -293,8 +285,7 @@
             </button>
           </div>
           <label class="toc-overlay-icon toc-content-icon" for="__toc">
-            <div class="visually-hidden">Toggle table of contents sidebar</div>
-            <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
+            <span class="icon"><svg><use href="#svg-toc"></use></svg></span>
           </label>
         </div>
         <article role="main" id="furo-main-content">
@@ -310,7 +301,7 @@ it is used internally by <code class="xref py py-class docutils literal notransl
 <dl class="py class">
 <dt class="sig sig-object py" id="discord_http.http.DiscordAPI">
 <em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">discord_http.http.</span></span><span class="sig-name descname"><span class="pre">DiscordAPI</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">client</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#discord_http.http.DiscordAPI" title="Link to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>client</strong> (<a class="reference internal" href="client.html#discord_http.client.Client" title="discord_http.client.Client"><em>Client</em></a>)</p>
@@ -318,25 +309,25 @@ it is used internally by <code class="xref py py-class docutils literal notransl
 </dl>
 <dl class="py method">
 <dt class="sig sig-object py" id="discord_http.http.DiscordAPI.create_jitter">
-<span class="sig-name descname"><span class="pre">create_jitter</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><span class="pre">float</span></a></span></span><a class="headerlink" href="#discord_http.http.DiscordAPI.create_jitter" title="Link to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">create_jitter</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><span class="pre">float</span></a></span></span><a class="headerlink" href="#discord_http.http.DiscordAPI.create_jitter" title="Link to this definition">¶</a></dt>
 <dd><p>Simply returns a random float between 0 and 1.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></a></span></p>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></a></span></p>
 </dd>
 </dl>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="discord_http.http.DiscordAPI.fetch_commands">
-<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">fetch_commands</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">guild_id</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.13)"><span class="pre">dict</span></a></span></span><a class="headerlink" href="#discord_http.http.DiscordAPI.fetch_commands" title="Link to this definition">¶</a></dt>
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">fetch_commands</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">guild_id</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.14)"><span class="pre">dict</span></a></span></span><a class="headerlink" href="#discord_http.http.DiscordAPI.fetch_commands" title="Link to this definition">¶</a></dt>
 <dd><p>Fetches the commands for the bot.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>guild_id</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a> | <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></span>) – The guild ID to fetch the commands for (if None, commands will be global)</p>
+<dd class="field-odd"><p><strong>guild_id</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a> | <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></span>) – The guild ID to fetch the commands for (if None, commands will be global)</p>
 </dd>
 <dt class="field-even">Return type<span class="colon">:</span></dt>
-<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">dict</span></code></a></span></p>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">dict</span></code></a></span></p>
 </dd>
 <dt class="field-odd">Returns<span class="colon">:</span></dt>
 <dd class="field-odd"><p>The response from the request</p>
@@ -357,7 +348,7 @@ it is used internally by <code class="xref py py-class docutils literal notransl
 <dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">Ratelimit</span></code></span></p>
 </dd>
 <dt class="field-even">Parameters<span class="colon">:</span></dt>
-<dd class="field-even"><p><strong>key</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><em>str</em></a>)</p>
+<dd class="field-even"><p><strong>key</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><em>str</em></a>)</p>
 </dd>
 </dl>
 </dd></dl>
@@ -374,7 +365,7 @@ it is used internally by <code class="xref py py-class docutils literal notransl
 <dd class="field-even"><p>The bot’s user object</p>
 </dd>
 <dt class="field-odd">Raises<span class="colon">:</span></dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#RuntimeError" title="(in Python v3.13)"><strong>RuntimeError</strong></a> – <ul class="simple">
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#RuntimeError" title="(in Python v3.14)"><strong>RuntimeError</strong></a> – <ul class="simple">
 <li><p>If the bot token is not valid
     - If the bot is not allowed to use the some intents</p></li>
 </ul>
@@ -390,10 +381,10 @@ it is used internally by <code class="xref py py-class docutils literal notransl
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>method</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Literal" title="(in Python v3.13)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Literal</span></code></a>[<code class="docutils literal notranslate"><span class="pre">'GET'</span></code>, <code class="docutils literal notranslate"><span class="pre">'POST'</span></code>, <code class="docutils literal notranslate"><span class="pre">'DELETE'</span></code>, <code class="docutils literal notranslate"><span class="pre">'PUT'</span></code>, <code class="docutils literal notranslate"><span class="pre">'HEAD'</span></code>, <code class="docutils literal notranslate"><span class="pre">'PATCH'</span></code>, <code class="docutils literal notranslate"><span class="pre">'OPTIONS'</span></code>]</span>) – Which HTTP method to use</p></li>
-<li><p><strong>path</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></span>) – The path to make the request to</p></li>
-<li><p><strong>res_method</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Literal" title="(in Python v3.13)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Literal</span></code></a>[<code class="docutils literal notranslate"><span class="pre">'text'</span></code>, <code class="docutils literal notranslate"><span class="pre">'read'</span></code>, <code class="docutils literal notranslate"><span class="pre">'json'</span></code>]</span>) – The method to use to get the response</p></li>
-<li><p><strong>retry_codes</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">list</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a>] | <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></span>) – The HTTP codes to retry regardless of the response</p></li>
+<li><p><strong>method</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Literal" title="(in Python v3.14)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Literal</span></code></a>[<code class="docutils literal notranslate"><span class="pre">'GET'</span></code>, <code class="docutils literal notranslate"><span class="pre">'POST'</span></code>, <code class="docutils literal notranslate"><span class="pre">'DELETE'</span></code>, <code class="docutils literal notranslate"><span class="pre">'PUT'</span></code>, <code class="docutils literal notranslate"><span class="pre">'HEAD'</span></code>, <code class="docutils literal notranslate"><span class="pre">'PATCH'</span></code>, <code class="docutils literal notranslate"><span class="pre">'OPTIONS'</span></code>]</span>) – Which HTTP method to use</p></li>
+<li><p><strong>path</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></span>) – The path to make the request to</p></li>
+<li><p><strong>res_method</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Literal" title="(in Python v3.14)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Literal</span></code></a>[<code class="docutils literal notranslate"><span class="pre">'text'</span></code>, <code class="docutils literal notranslate"><span class="pre">'read'</span></code>, <code class="docutils literal notranslate"><span class="pre">'json'</span></code>]</span>) – The method to use to get the response</p></li>
+<li><p><strong>retry_codes</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">list</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a>] | <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></span>) – The HTTP codes to retry regardless of the response</p></li>
 <li><p><strong>**kwargs</strong> – The keyword arguments to pass to the aiohttp.ClientSession.request method</p></li>
 </ul>
 </dd>
@@ -405,12 +396,12 @@ it is used internally by <code class="xref py py-class docutils literal notransl
 </dd>
 <dt class="field-even">Raises<span class="colon">:</span></dt>
 <dd class="field-even"><ul class="simple">
-<li><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#ValueError" title="(in Python v3.13)"><strong>ValueError</strong></a> – Invalid HTTP method</p></li>
+<li><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#ValueError" title="(in Python v3.14)"><strong>ValueError</strong></a> – Invalid HTTP method</p></li>
 <li><p><a class="reference internal" href="errors.html#discord_http.errors.DiscordServerError" title="discord_http.errors.DiscordServerError"><strong>DiscordServerError</strong></a> – Something went wrong on Discord’s end</p></li>
 <li><p><a class="reference internal" href="errors.html#discord_http.errors.Forbidden" title="discord_http.errors.Forbidden"><strong>Forbidden</strong></a> – You are not allowed to do this</p></li>
 <li><p><a class="reference internal" href="errors.html#discord_http.errors.NotFound" title="discord_http.errors.NotFound"><strong>NotFound</strong></a> – The resource was not found</p></li>
 <li><p><a class="reference internal" href="errors.html#discord_http.errors.HTTPException" title="discord_http.errors.HTTPException"><strong>HTTPException</strong></a> – Something went wrong</p></li>
-<li><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#RuntimeError" title="(in Python v3.13)"><strong>RuntimeError</strong></a> – Unreachable code, reached max tries (5)</p></li>
+<li><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#RuntimeError" title="(in Python v3.14)"><strong>RuntimeError</strong></a> – Unreachable code, reached max tries (5)</p></li>
 </ul>
 </dd>
 </dl>
@@ -418,17 +409,17 @@ it is used internally by <code class="xref py py-class docutils literal notransl
 
 <dl class="py method">
 <dt class="sig sig-object py" id="discord_http.http.DiscordAPI.update_commands">
-<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">update_commands</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">guild_id</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.13)"><span class="pre">dict</span></a></span></span><a class="headerlink" href="#discord_http.http.DiscordAPI.update_commands" title="Link to this definition">¶</a></dt>
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">update_commands</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">guild_id</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.14)"><span class="pre">dict</span></a></span></span><a class="headerlink" href="#discord_http.http.DiscordAPI.update_commands" title="Link to this definition">¶</a></dt>
 <dd><p>Updates the commands for the bot.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>data</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">list</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">dict</span></code></a>] | <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">dict</span></code></a></span>) – The JSON data to send to Discord API</p></li>
-<li><p><strong>guild_id</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a> | <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></span>) – The guild ID to update the commands for (if None, commands will be global)</p></li>
+<li><p><strong>data</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">list</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">dict</span></code></a>] | <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">dict</span></code></a></span>) – The JSON data to send to Discord API</p></li>
+<li><p><strong>guild_id</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a> | <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></span>) – The guild ID to update the commands for (if None, commands will be global)</p></li>
 </ul>
 </dd>
 <dt class="field-even">Return type<span class="colon">:</span></dt>
-<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">dict</span></code></a></span></p>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">dict</span></code></a></span></p>
 </dd>
 <dt class="field-odd">Returns<span class="colon">:</span></dt>
 <dd class="field-odd"><p>The response from the request</p>
@@ -441,16 +432,16 @@ it is used internally by <code class="xref py py-class docutils literal notransl
 <dl class="py class">
 <dt class="sig sig-object py" id="discord_http.http.HTTPResponse">
 <em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">discord_http.http.</span></span><span class="sig-name descname"><span class="pre">HTTPResponse</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">status</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">response</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">reason</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">res_method</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">headers</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#discord_http.http.HTTPResponse" title="Link to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Generic" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Generic</span></code></a>[<code class="xref py py-obj docutils literal notranslate"><span class="pre">ResponseT</span></code>]</p>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Generic" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Generic</span></code></a>[<code class="xref py py-obj docutils literal notranslate"><span class="pre">ResponseT</span></code>]</p>
 <p>Represents a response from the HTTP request.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>status</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><em>int</em></a>)</p></li>
+<li><p><strong>status</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><em>int</em></a>)</p></li>
 <li><p><strong>response</strong> (<em>ResponseT</em>)</p></li>
-<li><p><strong>reason</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><em>str</em></a><em> | </em><em>None</em>)</p></li>
-<li><p><strong>res_method</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Literal" title="(in Python v3.13)"><em>Literal</em></a><em>[</em><em>'text'</em><em>, </em><em>'read'</em><em>, </em><em>'json'</em><em>]</em>)</p></li>
-<li><p><strong>headers</strong> (<em>CIMultiDictProxy</em><em>[</em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><em>str</em></a><em>]</em>)</p></li>
+<li><p><strong>reason</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><em>str</em></a><em> | </em><em>None</em>)</p></li>
+<li><p><strong>res_method</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Literal" title="(in Python v3.14)"><em>Literal</em></a><em>[</em><em>'text'</em><em>, </em><em>'read'</em><em>, </em><em>'json'</em><em>]</em>)</p></li>
+<li><p><strong>headers</strong> (<em>CIMultiDictProxy</em><em>[</em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><em>str</em></a><em>]</em>)</p></li>
 </ul>
 </dd>
 </dl>
@@ -460,7 +451,7 @@ it is used internally by <code class="xref py py-class docutils literal notransl
 <dd><p>The HTTP status code of the response.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)">int</a></p>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)">int</a></p>
 </dd>
 </dl>
 </dd></dl>
@@ -493,7 +484,7 @@ it is used internally by <code class="xref py py-class docutils literal notransl
 <dd><p>The reason phrase returned by the server, if any.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)">str</a> | None</p>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)">str</a> | None</p>
 </dd>
 </dl>
 </dd></dl>
@@ -504,7 +495,7 @@ it is used internally by <code class="xref py py-class docutils literal notransl
 <dd><p>The headers of the response, as a CIMultiDictProxy.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type<span class="colon">:</span></dt>
-<dd class="field-odd"><p>CIMultiDictProxy[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)">str</a>]</p>
+<dd class="field-odd"><p>CIMultiDictProxy[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)">str</a>]</p>
 </dd>
 </dl>
 </dd></dl>

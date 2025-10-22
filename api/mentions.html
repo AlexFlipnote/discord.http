@@ -1,14 +1,14 @@
 <!doctype html>
 <html class="no-js" lang="en" data-content_root="../">
-  <head><meta charset="utf-8"/>
-    <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <head><meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
     <meta name="color-scheme" content="light dark"><meta name="viewport" content="width=device-width, initial-scale=1" />
-<meta content="Mentions - discord.http docs" property="og:title"><meta content="Bases: object" name="description"><meta content="Bases: object" property="og:description"><meta property="og:image" content="/_static/favicon.ico"><meta name="theme-color" content="#14bae4"><meta property="og:locale" content="en_GB"><meta name="keywords" content="discord, http, api, interaction, quart, webhook, slash><meta name="revisit-after" content="2 days"><link rel="index" title="Index" href="../genindex.html" /><link rel="search" title="Search" href="../search.html" /><link rel="next" title="Message" href="message.html" /><link rel="prev" title="Member" href="member.html" />
+<meta content="Mentions - discord.http docs" property="og:title"><meta content="Bases: object" name="description"><meta content="Bases: object" property="og:description"><meta property="og:image" content="/_static/favicon.ico"><meta name="theme-color" content="#14bae4"><meta property="og:locale" content="en_GB"><meta name="keywords" content="discord, http, api, interaction, aiohttp, webhook, slash><meta name="revisit-after" content="2 days"><link rel="index" title="Index" href="../genindex.html"><link rel="search" title="Search" href="../search.html"><link rel="next" title="Message" href="message.html"><link rel="prev" title="Member" href="member.html">
 
-    <link rel="shortcut icon" href="../_static/favicon.ico"/><!-- Generated with Sphinx 8.2.3 and Furo 2025.07.19 -->
+    <link rel="shortcut icon" href="../_static/favicon.ico"><!-- Generated with Sphinx 8.2.3 and Furo 2025.09.25 -->
         <title>Mentions - discord.http docs</title>
       <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=03e43079" />
-    <link rel="stylesheet" type="text/css" href="../_static/styles/furo.css?v=25af2a20" />
+    <link rel="stylesheet" type="text/css" href="../_static/styles/furo.css?v=580074bf" />
     <link rel="stylesheet" type="text/css" href="../_static/styles/furo-extensions.css?v=8dab3a3b" />
     
     
@@ -22,14 +22,14 @@
   }
   @media not print {
     body[data-theme="dark"] {
-      --color-code-background: #2b2b2b;
-  --color-code-foreground: #f8f8f2;
+      --color-code-background: #202020;
+  --color-code-foreground: #d0d0d0;
   
     }
     @media (prefers-color-scheme: dark) {
       body:not([data-theme="light"]) {
-        --color-code-background: #2b2b2b;
-  --color-code-foreground: #f8f8f2;
+        --color-code-background: #202020;
+  --color-code-foreground: #d0d0d0;
   
       }
     }
@@ -144,14 +144,10 @@
   </symbol>
 </svg>
 
-<input type="checkbox" class="sidebar-toggle" name="__navigation" id="__navigation">
-<input type="checkbox" class="sidebar-toggle" name="__toc" id="__toc">
-<label class="overlay sidebar-overlay" for="__navigation">
-  <div class="visually-hidden">Hide navigation sidebar</div>
-</label>
-<label class="overlay toc-overlay" for="__toc">
-  <div class="visually-hidden">Hide table of contents sidebar</div>
-</label>
+<input type="checkbox" class="sidebar-toggle" name="__navigation" id="__navigation" aria-label="Toggle site navigation sidebar">
+<input type="checkbox" class="sidebar-toggle" name="__toc" id="__toc" aria-label="Toggle table of contents sidebar">
+<label class="overlay sidebar-overlay" for="__navigation"></label>
+<label class="overlay toc-overlay" for="__toc"></label>
 
 <a class="skip-to-content muted-link" href="#furo-main-content">Skip to content</a>
 
@@ -161,8 +157,7 @@
   <header class="mobile-header">
     <div class="header-left">
       <label class="nav-overlay-icon" for="__navigation">
-        <div class="visually-hidden">Toggle site navigation sidebar</div>
-        <i class="icon"><svg><use href="#svg-menu"></use></svg></i>
+        <span class="icon"><svg><use href="#svg-menu"></use></svg></span>
       </label>
     </div>
     <div class="header-center">
@@ -170,8 +165,7 @@
     </div>
     <div class="header-right">
       <div class="theme-toggle-container theme-toggle-header">
-        <button class="theme-toggle">
-          <div class="visually-hidden">Toggle Light / Dark / Auto color theme</div>
+        <button class="theme-toggle" aria-label="Toggle Light / Dark / Auto color theme">
           <svg class="theme-icon-when-auto-light"><use href="#svg-sun-with-moon"></use></svg>
           <svg class="theme-icon-when-auto-dark"><use href="#svg-moon-with-sun"></use></svg>
           <svg class="theme-icon-when-dark"><use href="#svg-moon"></use></svg>
@@ -179,8 +173,7 @@
         </button>
       </div>
       <label class="toc-overlay-icon toc-header-icon" for="__toc">
-        <div class="visually-hidden">Toggle table of contents sidebar</div>
-        <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
+        <span class="icon"><svg><use href="#svg-toc"></use></svg></span>
       </label>
     </div>
   </header>
@@ -199,7 +192,7 @@
 <div id="searchbox"></div><div class="sidebar-scroll"><div class="sidebar-tree">
   <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="../pages/getting_started.html">Getting started</a></li>
-<li class="toctree-l1 current has-children"><a class="reference internal" href="../pages/api.html">API components</a><input checked="" class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" role="switch" type="checkbox"/><label for="toctree-checkbox-1"><div class="visually-hidden">Toggle navigation of API components</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul class="current">
+<li class="toctree-l1 current has-children"><a class="reference internal" href="../pages/api.html">API components</a><input aria-label="Toggle navigation of API components" checked="" class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" role="switch" type="checkbox"/><label for="toctree-checkbox-1"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul class="current">
 <li class="toctree-l2"><a class="reference internal" href="asset.html">Asset</a></li>
 <li class="toctree-l2"><a class="reference internal" href="audit.html">Audit</a></li>
 <li class="toctree-l2"><a class="reference internal" href="automod.html">AutoModRule</a></li>
@@ -238,7 +231,7 @@
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../pages/events.html">Event references</a></li>
-<li class="toctree-l1 has-children"><a class="reference internal" href="../pages/gateway.html">Gateway references</a><input class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" role="switch" type="checkbox"/><label for="toctree-checkbox-2"><div class="visually-hidden">Toggle navigation of Gateway references</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../pages/gateway.html">Gateway references</a><input aria-label="Toggle navigation of Gateway references" class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" role="switch" type="checkbox"/><label for="toctree-checkbox-2"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
 <li class="toctree-l2"><a class="reference internal" href="../gateway/activity.html">Activity</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../gateway/client.html">Client</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../gateway/enums.html">Enums</a></li>
@@ -284,8 +277,7 @@
   </a>
 </div>
 <div class="theme-toggle-container theme-toggle-content">
-            <button class="theme-toggle">
-              <div class="visually-hidden">Toggle Light / Dark / Auto color theme</div>
+            <button class="theme-toggle" aria-label="Toggle Light / Dark / Auto color theme">
               <svg class="theme-icon-when-auto-light"><use href="#svg-sun-with-moon"></use></svg>
               <svg class="theme-icon-when-auto-dark"><use href="#svg-moon-with-sun"></use></svg>
               <svg class="theme-icon-when-dark"><use href="#svg-moon"></use></svg>
@@ -293,8 +285,7 @@
             </button>
           </div>
           <label class="toc-overlay-icon toc-content-icon" for="__toc">
-            <div class="visually-hidden">Toggle table of contents sidebar</div>
-            <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
+            <span class="icon"><svg><use href="#svg-toc"></use></svg></span>
           </label>
         </div>
         <article role="main" id="furo-main-content">
@@ -305,20 +296,65 @@
 <dl class="py class">
 <dt class="sig sig-object py" id="discord_http.mentions.AllowedMentions">
 <em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">discord_http.mentions.</span></span><span class="sig-name descname"><span class="pre">AllowedMentions</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">everyone</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">users</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">roles</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">replied_user</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#discord_http.mentions.AllowedMentions" title="Link to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<p>Represents the allowed mentions for a message.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>everyone</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><em>bool</em></a>)</p></li>
-<li><p><strong>users</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><em>bool</em></a><em> | </em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.13)"><em>list</em></a><em>[</em><a class="reference internal" href="object.html#discord_http.object.Snowflake" title="discord_http.object.Snowflake"><em>Snowflake</em></a><em> | </em><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><em>int</em></a><em>] </em><em>| </em><em>None</em>)</p></li>
-<li><p><strong>roles</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><em>bool</em></a><em> | </em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.13)"><em>list</em></a><em>[</em><a class="reference internal" href="object.html#discord_http.object.Snowflake" title="discord_http.object.Snowflake"><em>Snowflake</em></a><em> | </em><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><em>int</em></a><em>] </em><em>| </em><em>None</em>)</p></li>
-<li><p><strong>replied_user</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><em>bool</em></a>)</p></li>
+<li><p><strong>everyone</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><em>bool</em></a>)</p></li>
+<li><p><strong>users</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><em>bool</em></a><em> | </em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.14)"><em>list</em></a><em>[</em><a class="reference internal" href="object.html#discord_http.object.Snowflake" title="discord_http.object.Snowflake"><em>Snowflake</em></a><em> | </em><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><em>int</em></a><em>] </em><em>| </em><em>None</em>)</p></li>
+<li><p><strong>roles</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><em>bool</em></a><em> | </em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.14)"><em>list</em></a><em>[</em><a class="reference internal" href="object.html#discord_http.object.Snowflake" title="discord_http.object.Snowflake"><em>Snowflake</em></a><em> | </em><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><em>int</em></a><em>] </em><em>| </em><em>None</em>)</p></li>
+<li><p><strong>replied_user</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><em>bool</em></a>)</p></li>
 </ul>
 </dd>
 </dl>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.mentions.AllowedMentions.everyone">
+<span class="sig-name descname"><span class="pre">everyone</span></span><a class="headerlink" href="#discord_http.mentions.AllowedMentions.everyone" title="Link to this definition">¶</a></dt>
+<dd><p>Whether to allow <cite>&#64;everyone</cite> and <cite>&#64;here</cite> mentions</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)">bool</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.mentions.AllowedMentions.users">
+<span class="sig-name descname"><span class="pre">users</span></span><a class="headerlink" href="#discord_http.mentions.AllowedMentions.users" title="Link to this definition">¶</a></dt>
+<dd><p>Whether to allow user mentions, or a list of user IDs to allow mentions for</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)">bool</a> | <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.14)">list</a>[<a class="reference internal" href="object.html#discord_http.object.Snowflake" title="discord_http.object.Snowflake">Snowflake</a> | <a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)">int</a>] | None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.mentions.AllowedMentions.roles">
+<span class="sig-name descname"><span class="pre">roles</span></span><a class="headerlink" href="#discord_http.mentions.AllowedMentions.roles" title="Link to this definition">¶</a></dt>
+<dd><p>Whether to allow role mentions, or a list of role IDs to allow mentions for</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)">bool</a> | <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.14)">list</a>[<a class="reference internal" href="object.html#discord_http.object.Snowflake" title="discord_http.object.Snowflake">Snowflake</a> | <a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)">int</a>] | None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.mentions.AllowedMentions.reply_user">
+<span class="sig-name descname"><span class="pre">reply_user</span></span><a class="headerlink" href="#discord_http.mentions.AllowedMentions.reply_user" title="Link to this definition">¶</a></dt>
+<dd><p>Whether to mention the author of the message being replied to</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)">bool</a></p>
+</dd>
+</dl>
+</dd></dl>
+
 <dl class="py method">
 <dt class="sig sig-object py" id="discord_http.mentions.AllowedMentions.all">
-<em class="property"><span class="k"><span class="pre">classmethod</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">all</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Self" title="(in Python v3.13)"><span class="pre">Self</span></a></span></span><a class="headerlink" href="#discord_http.mentions.AllowedMentions.all" title="Link to this definition">¶</a></dt>
+<em class="property"><span class="k"><span class="pre">classmethod</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">all</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Self" title="(in Python v3.14)"><span class="pre">Self</span></a></span></span><a class="headerlink" href="#discord_http.mentions.AllowedMentions.all" title="Link to this definition">¶</a></dt>
 <dd><p>Preset to allow all mentions.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
@@ -329,7 +365,7 @@
 
 <dl class="py method">
 <dt class="sig sig-object py" id="discord_http.mentions.AllowedMentions.none">
-<em class="property"><span class="k"><span class="pre">classmethod</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">none</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Self" title="(in Python v3.13)"><span class="pre">Self</span></a></span></span><a class="headerlink" href="#discord_http.mentions.AllowedMentions.none" title="Link to this definition">¶</a></dt>
+<em class="property"><span class="k"><span class="pre">classmethod</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">none</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Self" title="(in Python v3.14)"><span class="pre">Self</span></a></span></span><a class="headerlink" href="#discord_http.mentions.AllowedMentions.none" title="Link to this definition">¶</a></dt>
 <dd><p>Preset to deny any mentions.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
@@ -340,11 +376,11 @@
 
 <dl class="py method">
 <dt class="sig sig-object py" id="discord_http.mentions.AllowedMentions.to_dict">
-<span class="sig-name descname"><span class="pre">to_dict</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.13)"><span class="pre">dict</span></a></span></span><a class="headerlink" href="#discord_http.mentions.AllowedMentions.to_dict" title="Link to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">to_dict</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.14)"><span class="pre">dict</span></a></span></span><a class="headerlink" href="#discord_http.mentions.AllowedMentions.to_dict" title="Link to this definition">¶</a></dt>
 <dd><p>Representation of the <cite>AllowedMentions</cite> that is Discord API friendly.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">dict</span></code></a></span></p>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">dict</span></code></a></span></p>
 </dd>
 </dl>
 </dd></dl>
@@ -412,6 +448,10 @@
 <li><a class="reference internal" href="#">Mentions</a><ul>
 <li><a class="reference internal" href="#module-discord_http.mentions">discord_http.mentions module</a><ul>
 <li><a class="reference internal" href="#discord_http.mentions.AllowedMentions"><code class="docutils literal notranslate"><span class="pre">AllowedMentions</span></code></a><ul>
+<li><a class="reference internal" href="#discord_http.mentions.AllowedMentions.everyone"><code class="docutils literal notranslate"><span class="pre">AllowedMentions.everyone</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.mentions.AllowedMentions.users"><code class="docutils literal notranslate"><span class="pre">AllowedMentions.users</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.mentions.AllowedMentions.roles"><code class="docutils literal notranslate"><span class="pre">AllowedMentions.roles</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.mentions.AllowedMentions.reply_user"><code class="docutils literal notranslate"><span class="pre">AllowedMentions.reply_user</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.mentions.AllowedMentions.all"><code class="docutils literal notranslate"><span class="pre">AllowedMentions.all()</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.mentions.AllowedMentions.none"><code class="docutils literal notranslate"><span class="pre">AllowedMentions.none()</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.mentions.AllowedMentions.to_dict"><code class="docutils literal notranslate"><span class="pre">AllowedMentions.to_dict()</span></code></a></li>

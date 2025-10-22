@@ -1,14 +1,14 @@
 <!doctype html>
 <html class="no-js" lang="en" data-content_root="../">
-  <head><meta charset="utf-8"/>
-    <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <head><meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
     <meta name="color-scheme" content="light dark"><meta name="viewport" content="width=device-width, initial-scale=1" />
-<meta content="Integrations - discord.http docs" property="og:title"><meta content="Bases: PartialIntegration" name="description"><meta content="Bases: PartialIntegration" property="og:description"><meta property="og:image" content="/_static/favicon.ico"><meta name="theme-color" content="#14bae4"><meta property="og:locale" content="en_GB"><meta name="keywords" content="discord, http, api, interaction, quart, webhook, slash><meta name="revisit-after" content="2 days"><link rel="index" title="Index" href="../genindex.html" /><link rel="search" title="Search" href="../search.html" /><link rel="next" title="Invite" href="invite.html" /><link rel="prev" title="Http" href="http.html" />
+<meta content="Integrations - discord.http docs" property="og:title"><meta content="Bases: PartialIntegration" name="description"><meta content="Bases: PartialIntegration" property="og:description"><meta property="og:image" content="/_static/favicon.ico"><meta name="theme-color" content="#14bae4"><meta property="og:locale" content="en_GB"><meta name="keywords" content="discord, http, api, interaction, aiohttp, webhook, slash><meta name="revisit-after" content="2 days"><link rel="index" title="Index" href="../genindex.html"><link rel="search" title="Search" href="../search.html"><link rel="next" title="Invite" href="invite.html"><link rel="prev" title="Http" href="http.html">
 
-    <link rel="shortcut icon" href="../_static/favicon.ico"/><!-- Generated with Sphinx 8.2.3 and Furo 2025.07.19 -->
+    <link rel="shortcut icon" href="../_static/favicon.ico"><!-- Generated with Sphinx 8.2.3 and Furo 2025.09.25 -->
         <title>Integrations - discord.http docs</title>
       <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=03e43079" />
-    <link rel="stylesheet" type="text/css" href="../_static/styles/furo.css?v=25af2a20" />
+    <link rel="stylesheet" type="text/css" href="../_static/styles/furo.css?v=580074bf" />
     <link rel="stylesheet" type="text/css" href="../_static/styles/furo-extensions.css?v=8dab3a3b" />
     
     
@@ -22,14 +22,14 @@
   }
   @media not print {
     body[data-theme="dark"] {
-      --color-code-background: #2b2b2b;
-  --color-code-foreground: #f8f8f2;
+      --color-code-background: #202020;
+  --color-code-foreground: #d0d0d0;
   
     }
     @media (prefers-color-scheme: dark) {
       body:not([data-theme="light"]) {
-        --color-code-background: #2b2b2b;
-  --color-code-foreground: #f8f8f2;
+        --color-code-background: #202020;
+  --color-code-foreground: #d0d0d0;
   
       }
     }
@@ -144,14 +144,10 @@
   </symbol>
 </svg>
 
-<input type="checkbox" class="sidebar-toggle" name="__navigation" id="__navigation">
-<input type="checkbox" class="sidebar-toggle" name="__toc" id="__toc">
-<label class="overlay sidebar-overlay" for="__navigation">
-  <div class="visually-hidden">Hide navigation sidebar</div>
-</label>
-<label class="overlay toc-overlay" for="__toc">
-  <div class="visually-hidden">Hide table of contents sidebar</div>
-</label>
+<input type="checkbox" class="sidebar-toggle" name="__navigation" id="__navigation" aria-label="Toggle site navigation sidebar">
+<input type="checkbox" class="sidebar-toggle" name="__toc" id="__toc" aria-label="Toggle table of contents sidebar">
+<label class="overlay sidebar-overlay" for="__navigation"></label>
+<label class="overlay toc-overlay" for="__toc"></label>
 
 <a class="skip-to-content muted-link" href="#furo-main-content">Skip to content</a>
 
@@ -161,8 +157,7 @@
   <header class="mobile-header">
     <div class="header-left">
       <label class="nav-overlay-icon" for="__navigation">
-        <div class="visually-hidden">Toggle site navigation sidebar</div>
-        <i class="icon"><svg><use href="#svg-menu"></use></svg></i>
+        <span class="icon"><svg><use href="#svg-menu"></use></svg></span>
       </label>
     </div>
     <div class="header-center">
@@ -170,8 +165,7 @@
     </div>
     <div class="header-right">
       <div class="theme-toggle-container theme-toggle-header">
-        <button class="theme-toggle">
-          <div class="visually-hidden">Toggle Light / Dark / Auto color theme</div>
+        <button class="theme-toggle" aria-label="Toggle Light / Dark / Auto color theme">
           <svg class="theme-icon-when-auto-light"><use href="#svg-sun-with-moon"></use></svg>
           <svg class="theme-icon-when-auto-dark"><use href="#svg-moon-with-sun"></use></svg>
           <svg class="theme-icon-when-dark"><use href="#svg-moon"></use></svg>
@@ -179,8 +173,7 @@
         </button>
       </div>
       <label class="toc-overlay-icon toc-header-icon" for="__toc">
-        <div class="visually-hidden">Toggle table of contents sidebar</div>
-        <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
+        <span class="icon"><svg><use href="#svg-toc"></use></svg></span>
       </label>
     </div>
   </header>
@@ -199,7 +192,7 @@
 <div id="searchbox"></div><div class="sidebar-scroll"><div class="sidebar-tree">
   <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="../pages/getting_started.html">Getting started</a></li>
-<li class="toctree-l1 current has-children"><a class="reference internal" href="../pages/api.html">API components</a><input checked="" class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" role="switch" type="checkbox"/><label for="toctree-checkbox-1"><div class="visually-hidden">Toggle navigation of API components</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul class="current">
+<li class="toctree-l1 current has-children"><a class="reference internal" href="../pages/api.html">API components</a><input aria-label="Toggle navigation of API components" checked="" class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" role="switch" type="checkbox"/><label for="toctree-checkbox-1"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul class="current">
 <li class="toctree-l2"><a class="reference internal" href="asset.html">Asset</a></li>
 <li class="toctree-l2"><a class="reference internal" href="audit.html">Audit</a></li>
 <li class="toctree-l2"><a class="reference internal" href="automod.html">AutoModRule</a></li>
@@ -238,7 +231,7 @@
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../pages/events.html">Event references</a></li>
-<li class="toctree-l1 has-children"><a class="reference internal" href="../pages/gateway.html">Gateway references</a><input class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" role="switch" type="checkbox"/><label for="toctree-checkbox-2"><div class="visually-hidden">Toggle navigation of Gateway references</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../pages/gateway.html">Gateway references</a><input aria-label="Toggle navigation of Gateway references" class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" role="switch" type="checkbox"/><label for="toctree-checkbox-2"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
 <li class="toctree-l2"><a class="reference internal" href="../gateway/activity.html">Activity</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../gateway/client.html">Client</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../gateway/enums.html">Enums</a></li>
@@ -284,8 +277,7 @@
   </a>
 </div>
 <div class="theme-toggle-container theme-toggle-content">
-            <button class="theme-toggle">
-              <div class="visually-hidden">Toggle Light / Dark / Auto color theme</div>
+            <button class="theme-toggle" aria-label="Toggle Light / Dark / Auto color theme">
               <svg class="theme-icon-when-auto-light"><use href="#svg-sun-with-moon"></use></svg>
               <svg class="theme-icon-when-auto-dark"><use href="#svg-moon-with-sun"></use></svg>
               <svg class="theme-icon-when-dark"><use href="#svg-moon"></use></svg>
@@ -293,8 +285,7 @@
             </button>
           </div>
           <label class="toc-overlay-icon toc-content-icon" for="__toc">
-            <div class="visually-hidden">Toggle table of contents sidebar</div>
-            <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
+            <span class="icon"><svg><use href="#svg-toc"></use></svg></span>
           </label>
         </div>
         <article role="main" id="furo-main-content">
@@ -304,14 +295,14 @@
 <span id="discord-http-integrations-module"></span><h2>discord_http.integrations module<a class="headerlink" href="#module-discord_http.integrations" title="Link to this heading">¶</a></h2>
 <dl class="py class">
 <dt class="sig sig-object py" id="discord_http.integrations.Integration">
-<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">discord_http.integrations.</span></span><span class="sig-name descname"><span class="pre">Integration</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">state</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">guild</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></span></span><a class="headerlink" href="#discord_http.integrations.Integration" title="Link to this definition">¶</a></dt>
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">discord_http.integrations.</span></span><span class="sig-name descname"><span class="pre">Integration</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">state</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">guild</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span></span><a class="headerlink" href="#discord_http.integrations.Integration" title="Link to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#discord_http.integrations.PartialIntegration" title="discord_http.integrations.PartialIntegration"><code class="xref py py-class docutils literal notranslate"><span class="pre">PartialIntegration</span></code></a></p>
 <p>Represents a guild integration.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>state</strong> (<a class="reference internal" href="http.html#discord_http.http.DiscordAPI" title="discord_http.http.DiscordAPI"><em>DiscordAPI</em></a>)</p></li>
-<li><p><strong>data</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.13)"><em>dict</em></a>)</p></li>
+<li><p><strong>data</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.14)"><em>dict</em></a>)</p></li>
 <li><p><strong>guild</strong> (<a class="reference internal" href="guild.html#discord_http.guild.PartialGuild" title="discord_http.guild.PartialGuild"><em>PartialGuild</em></a><em> | </em><a class="reference internal" href="guild.html#discord_http.guild.Guild" title="discord_http.guild.Guild"><em>Guild</em></a>)</p></li>
 </ul>
 </dd>
@@ -322,7 +313,7 @@
 <dd><p>The ID of the integration.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)">int</a></p>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)">int</a></p>
 </dd>
 </dl>
 </dd></dl>
@@ -333,7 +324,7 @@
 <dd><p>The name of the integration.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)">str</a></p>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)">str</a></p>
 </dd>
 </dl>
 </dd></dl>
@@ -356,7 +347,7 @@
 (e.g. “twitch”, “youtube” or “discord”)</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)">str</a></p>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)">str</a></p>
 </dd>
 </dl>
 </dd></dl>
@@ -367,7 +358,7 @@
 <dd><p>Whether the integration is enabled.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)">bool</a></p>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)">bool</a></p>
 </dd>
 </dl>
 </dd></dl>
@@ -379,7 +370,7 @@
 This is not applicable to bot integrations.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)">bool</a></p>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)">bool</a></p>
 </dd>
 </dl>
 </dd></dl>
@@ -391,7 +382,7 @@ This is not applicable to bot integrations.</p>
 TThis is not applicable to bot integrations.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)">int</a> | None</p>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)">int</a> | None</p>
 </dd>
 </dl>
 </dd></dl>
@@ -404,7 +395,7 @@ integration (twitch only currently)
 This is not applicable to bot integrations.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)">bool</a></p>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)">bool</a></p>
 </dd>
 </dl>
 </dd></dl>
@@ -428,7 +419,7 @@ This is not applicable to bot integrations.</p>
 This is not applicable to bot integrations.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)">int</a> | None</p>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)">int</a> | None</p>
 </dd>
 </dl>
 </dd></dl>
@@ -452,7 +443,7 @@ This is not applicable to bot integrations.</p>
 This is not applicable to bot integrations.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)">int</a></p>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)">int</a></p>
 </dd>
 </dl>
 </dd></dl>
@@ -463,7 +454,7 @@ This is not applicable to bot integrations.</p>
 <dd><p>Whether the integration has been revoked.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)">bool</a></p>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)">bool</a></p>
 </dd>
 </dl>
 </dd></dl>
@@ -474,26 +465,26 @@ This is not applicable to bot integrations.</p>
 <dd><p>The scopes of the application has been granted.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.13)">list</a>[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)">str</a>]</p>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.14)">list</a>[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)">str</a>]</p>
 </dd>
 </dl>
 </dd></dl>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="discord_http.integrations.Integration.account">
-<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">account</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="#discord_http.integrations.IntegrationAccount" title="discord_http.integrations.IntegrationAccount"><span class="pre">IntegrationAccount</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.13)"><span class="pre">dict</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></em><a class="headerlink" href="#discord_http.integrations.Integration.account" title="Link to this definition">¶</a></dt>
+<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">account</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="#discord_http.integrations.IntegrationAccount" title="discord_http.integrations.IntegrationAccount"><span class="pre">IntegrationAccount</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.14)"><span class="pre">dict</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></em><a class="headerlink" href="#discord_http.integrations.Integration.account" title="Link to this definition">¶</a></dt>
 <dd><p>The account associated with this integration, if available.</p>
 </dd></dl>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="discord_http.integrations.Integration.application">
-<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">application</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="#discord_http.integrations.IntegrationApplication" title="discord_http.integrations.IntegrationApplication"><span class="pre">IntegrationApplication</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></em><a class="headerlink" href="#discord_http.integrations.Integration.application" title="Link to this definition">¶</a></dt>
+<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">application</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="#discord_http.integrations.IntegrationApplication" title="discord_http.integrations.IntegrationApplication"><span class="pre">IntegrationApplication</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></em><a class="headerlink" href="#discord_http.integrations.Integration.application" title="Link to this definition">¶</a></dt>
 <dd><p>The bot/OAuth2 application for discord integrations, if available.</p>
 </dd></dl>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="discord_http.integrations.Integration.user">
-<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">user</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="user.html#discord_http.user.User" title="discord_http.user.User"><span class="pre">User</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></em><a class="headerlink" href="#discord_http.integrations.Integration.user" title="Link to this definition">¶</a></dt>
+<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">user</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="user.html#discord_http.user.User" title="discord_http.user.User"><span class="pre">User</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></em><a class="headerlink" href="#discord_http.integrations.Integration.user" title="Link to this definition">¶</a></dt>
 <dd><p>The user associated with this integration, if available.</p>
 </dd></dl>
 
@@ -501,14 +492,14 @@ This is not applicable to bot integrations.</p>
 
 <dl class="py class">
 <dt class="sig sig-object py" id="discord_http.integrations.IntegrationAccount">
-<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">discord_http.integrations.</span></span><span class="sig-name descname"><span class="pre">IntegrationAccount</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">state</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></span></span><a class="headerlink" href="#discord_http.integrations.IntegrationAccount" title="Link to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">discord_http.integrations.</span></span><span class="sig-name descname"><span class="pre">IntegrationAccount</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">state</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span></span><a class="headerlink" href="#discord_http.integrations.IntegrationAccount" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
 <p>Represents an account associated with an integration.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>state</strong> (<a class="reference internal" href="http.html#discord_http.http.DiscordAPI" title="discord_http.http.DiscordAPI"><em>DiscordAPI</em></a>)</p></li>
-<li><p><strong>data</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.13)"><em>dict</em></a>)</p></li>
+<li><p><strong>data</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.14)"><em>dict</em></a>)</p></li>
 </ul>
 </dd>
 </dl>
@@ -518,7 +509,7 @@ This is not applicable to bot integrations.</p>
 <dd><p>The ID of the account.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)">str</a> | <a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)">int</a></p>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)">str</a> | <a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)">int</a></p>
 </dd>
 </dl>
 </dd></dl>
@@ -529,7 +520,7 @@ This is not applicable to bot integrations.</p>
 <dd><p>The name of the account.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)">str</a></p>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)">str</a></p>
 </dd>
 </dl>
 </dd></dl>
@@ -538,14 +529,14 @@ This is not applicable to bot integrations.</p>
 
 <dl class="py class">
 <dt class="sig sig-object py" id="discord_http.integrations.IntegrationApplication">
-<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">discord_http.integrations.</span></span><span class="sig-name descname"><span class="pre">IntegrationApplication</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">state</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></span></span><a class="headerlink" href="#discord_http.integrations.IntegrationApplication" title="Link to this definition">¶</a></dt>
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">discord_http.integrations.</span></span><span class="sig-name descname"><span class="pre">IntegrationApplication</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">state</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span></span><a class="headerlink" href="#discord_http.integrations.IntegrationApplication" title="Link to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="object.html#discord_http.object.PartialBase" title="discord_http.object.PartialBase"><code class="xref py py-class docutils literal notranslate"><span class="pre">PartialBase</span></code></a></p>
 <p>Represents a bot/OAuth2 application for integrations.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>state</strong> (<a class="reference internal" href="http.html#discord_http.http.DiscordAPI" title="discord_http.http.DiscordAPI"><em>DiscordAPI</em></a>)</p></li>
-<li><p><strong>data</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.13)"><em>dict</em></a>)</p></li>
+<li><p><strong>data</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.14)"><em>dict</em></a>)</p></li>
 </ul>
 </dd>
 </dl>
@@ -555,7 +546,7 @@ This is not applicable to bot integrations.</p>
 <dd><p>The name of the application.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)">str</a></p>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)">str</a></p>
 </dd>
 </dl>
 </dd></dl>
@@ -566,7 +557,7 @@ This is not applicable to bot integrations.</p>
 <dd><p>The description of the application.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)">str</a></p>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)">str</a></p>
 </dd>
 </dl>
 </dd></dl>
@@ -577,7 +568,7 @@ This is not applicable to bot integrations.</p>
 <dd><p>The summary of the application.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)">str</a></p>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)">str</a></p>
 </dd>
 </dl>
 </dd></dl>
@@ -588,7 +579,7 @@ This is not applicable to bot integrations.</p>
 <dd><p>Whether the application is monetized.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)">bool</a></p>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)">bool</a></p>
 </dd>
 </dl>
 </dd></dl>
@@ -599,7 +590,7 @@ This is not applicable to bot integrations.</p>
 <dd><p>Whether the application is verified.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)">bool</a></p>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)">bool</a></p>
 </dd>
 </dl>
 </dd></dl>
@@ -610,20 +601,20 @@ This is not applicable to bot integrations.</p>
 <dd><p>Whether the application is discoverable.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)">bool</a></p>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)">bool</a></p>
 </dd>
 </dl>
 </dd></dl>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="discord_http.integrations.IntegrationApplication.bot">
-<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">bot</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="user.html#discord_http.user.User" title="discord_http.user.User"><span class="pre">User</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></em><a class="headerlink" href="#discord_http.integrations.IntegrationApplication.bot" title="Link to this definition">¶</a></dt>
+<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">bot</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="user.html#discord_http.user.User" title="discord_http.user.User"><span class="pre">User</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></em><a class="headerlink" href="#discord_http.integrations.IntegrationApplication.bot" title="Link to this definition">¶</a></dt>
 <dd><p>The bot associated with this application, if available.</p>
 </dd></dl>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="discord_http.integrations.IntegrationApplication.icon">
-<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">icon</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="asset.html#discord_http.asset.Asset" title="discord_http.asset.Asset"><span class="pre">Asset</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></em><a class="headerlink" href="#discord_http.integrations.IntegrationApplication.icon" title="Link to this definition">¶</a></dt>
+<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">icon</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="asset.html#discord_http.asset.Asset" title="discord_http.asset.Asset"><span class="pre">Asset</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></em><a class="headerlink" href="#discord_http.integrations.IntegrationApplication.icon" title="Link to this definition">¶</a></dt>
 <dd><p>The icon of the application, if available.</p>
 </dd></dl>
 
@@ -631,7 +622,7 @@ This is not applicable to bot integrations.</p>
 
 <dl class="py class">
 <dt class="sig sig-object py" id="discord_http.integrations.PartialIntegration">
-<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">discord_http.integrations.</span></span><span class="sig-name descname"><span class="pre">PartialIntegration</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">state</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">guild_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">application_id</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></span></span><a class="headerlink" href="#discord_http.integrations.PartialIntegration" title="Link to this definition">¶</a></dt>
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">discord_http.integrations.</span></span><span class="sig-name descname"><span class="pre">PartialIntegration</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">state</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">guild_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">application_id</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span></span><a class="headerlink" href="#discord_http.integrations.PartialIntegration" title="Link to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="object.html#discord_http.object.PartialBase" title="discord_http.object.PartialBase"><code class="xref py py-class docutils literal notranslate"><span class="pre">PartialBase</span></code></a></p>
 <p>Represents a partial integration object.</p>
 <p>This is mosly used to get the ids of objects if not in cache.</p>
@@ -639,9 +630,9 @@ This is not applicable to bot integrations.</p>
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>state</strong> (<a class="reference internal" href="http.html#discord_http.http.DiscordAPI" title="discord_http.http.DiscordAPI"><em>DiscordAPI</em></a>)</p></li>
-<li><p><strong>id</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><em>int</em></a>)</p></li>
-<li><p><strong>guild_id</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><em>int</em></a>)</p></li>
-<li><p><strong>application_id</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><em>int</em></a><em> | </em><em>None</em>)</p></li>
+<li><p><strong>id</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><em>int</em></a>)</p></li>
+<li><p><strong>guild_id</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><em>int</em></a>)</p></li>
+<li><p><strong>application_id</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><em>int</em></a><em> | </em><em>None</em>)</p></li>
 </ul>
 </dd>
 </dl>
@@ -651,7 +642,7 @@ This is not applicable to bot integrations.</p>
 <dd><p>The guild associated with this integration.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)">int</a></p>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)">int</a></p>
 </dd>
 </dl>
 </dd></dl>
@@ -662,21 +653,21 @@ This is not applicable to bot integrations.</p>
 <dd><p>The ID of the application associated with this integration.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)">int</a> | None</p>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)">int</a> | None</p>
 </dd>
 </dl>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="discord_http.integrations.PartialIntegration.delete">
-<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">delete</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></span></span><a class="headerlink" href="#discord_http.integrations.PartialIntegration.delete" title="Link to this definition">¶</a></dt>
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">delete</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span></span><a class="headerlink" href="#discord_http.integrations.PartialIntegration.delete" title="Link to this definition">¶</a></dt>
 <dd><p>Delete this integration for the guild.</p>
 <p>This deletes any associated webhooks and
 kicks the associated bot if there is one.</p>
 <p>This requires the <cite>MANAGE_GUILD</cite> permission.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></span></p>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></span></p>
 </dd>
 </dl>
 </dd></dl>
