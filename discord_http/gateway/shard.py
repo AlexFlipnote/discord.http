@@ -4,7 +4,6 @@ import orjson
 import logging
 import sys
 import time
-import yarl
 import zlib
 
 from datetime import datetime
@@ -23,7 +22,7 @@ if TYPE_CHECKING:
     from ..client import Client
     from ..guild import Guild, PartialGuild
 
-DEFAULT_GATEWAY = yarl.URL("wss://gateway.discord.gg/")
+DEFAULT_GATEWAY = utils.URL("wss://gateway.discord.gg/")
 _log = logging.getLogger("discord_http")
 
 __all__ = (
@@ -151,7 +150,7 @@ class Status:
             return
 
         self.session_id = data["session_id"]
-        self.gateway = yarl.URL(data["resume_gateway_url"])
+        self.gateway = utils.URL(data["resume_gateway_url"])
 
     def get_payload(self) -> dict:
         return {
@@ -247,11 +246,11 @@ class Shard:
         if not isinstance(self.api_version, int):
             raise TypeError("api_version must be of type int")
 
-        return self.status.gateway.with_query(
+        return str(self.status.gateway.with_query(
             v=self.api_version,
             encoding="json",
             compress="zlib-stream"
-        ).human_repr()
+        ))
 
     def _reset_buffer(self) -> None:
         self._buffer = bytearray()

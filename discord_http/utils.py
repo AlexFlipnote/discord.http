@@ -1,17 +1,19 @@
-import logging
-import re
-import sys
-import struct
-import zlib
 import binascii
+import logging
+import posixpath
+import re
+import struct
+import sys
 import traceback
 import unicodedata
+import zlib
 
 from base64 import b64encode
 from collections.abc import Iterator
 from datetime import datetime, timedelta, UTC
 from types import UnionType
 from typing import Any, TYPE_CHECKING, get_origin, get_args, Union
+from urllib.parse import urlparse, parse_qs, urlencode, urlunparse, ParseResult, unquote
 
 from .file import File
 
@@ -603,6 +605,171 @@ def get_int(
     if not output.isdigit():
         raise ValueError(f"Key {key} returned a non-digit value")
     return int(output)
+
+
+class URL:
+    """
+    A lightweight, immutable URL builder and parser.
+
+    Allows reading, updating, and reconstructing URLs in a convenient way.
+    Similar to yarl.URL, but implemented using Python's standard library instead.
+    """
+    def __init__(
+        self,
+        url: str | ParseResult
+    ):
+        self._parsed: ParseResult = (
+            urlparse(url)
+            if not isinstance(url, ParseResult)
+            else url
+        )
+
+    def __str__(self) -> str:
+        return self.url
+
+    def __repr__(self) -> str:
+        return f"<URL url={self!s}>"
+
+    @property
+    def query(self) -> dict[str, str | list[str]]:
+        """ Returns the query parameters of the URL as a dictionary. """
+        return {
+            k: v[0] if len(v) == 1 else v
+            for k, v in parse_qs(
+                self._parsed.query,
+                keep_blank_values=True
+            ).items()
+        }
+
+    @property
+    def path(self) -> str:
+        """ Returns the path of the URL. """
+        return self._parsed.path
+
+    @property
+    def url(self) -> str:
+        """ Returns the full URL as a string. """
+        return urlunparse(self._parsed)
+
+    @property
+    def scheme(self) -> str:
+        """ Returns the scheme of the URL. """
+        return self._parsed.scheme
+
+    def human_repr(self) -> str:
+        """ Return a more human-readable version of the URL. """
+        return unquote(self.url)
+
+    def with_query(
+        self,
+        **params: Any | list[Any] | None  # noqa: ANN401
+    ) -> "URL":
+        """
+        Adds query parameters to the URL.
+
+        Parameters
+        ----------
+        params:
+            The query parameters to add to the URL
+
+        Returns
+        -------
+            The URL with the query parameters added
+        """
+        q = parse_qs(self._parsed.query, keep_blank_values=True)
+
+        for key, val in params.items():
+            if val is None:
+                q.pop(key, None)
+            elif isinstance(val, (list, tuple)):
+                q[key] = [str(x) for x in val]
+            else:
+                q[key] = [str(val)]
+
+        new_query = urlencode(q, doseq=True)
+        new_parsed = self._parsed._replace(query=new_query)
+        return URL(new_parsed)
+
+    def with_path(
+        self,
+        path: str,
+        *,
+        append: bool = False,
+        ensure_leading_slash: bool = True
+    ) -> "URL":
+        """
+        Replace or append to the path.
+
+        Parameters
+        ----------
+        path
+            The path to set or append to the URL
+        append
+            Whether to append the path to the existing path or replace it
+        ensure_leading_slash
+            Whether to ensure the resulting path starts with a leading slash
+
+        Returns
+        -------
+            The URL with the new path
+        """
+        if append:
+            base = self._parsed.path or "/"
+            # posixpath.join handles slashes sensibly for URL paths
+            new_path = posixpath.join(base, path)
+        else:
+            new_path = path
+
+        if ensure_leading_slash and not new_path.startswith("/"):
+            new_path = "/" + new_path
+
+        new_parsed = self._parsed._replace(path=new_path)
+        return URL(new_parsed)
+
+    def with_fragment(self, fragment: str | None) -> "URL":
+        """
+        Adds a fragment to the URL.
+
+        Parameters
+        ----------
+        fragment:
+            The fragment to add to the URL
+
+        Returns
+        -------
+            The URL with the fragment added
+        """
+        return URL(self._parsed._replace(fragment=(fragment or "")))
+
+    def with_scheme(self, scheme: str) -> "URL":
+        """
+        Adds a scheme to the URL.
+
+        Parameters
+        ----------
+        scheme:
+            The scheme to add to the URL
+
+        Returns
+        -------
+            The URL with the scheme added
+        """
+        return URL(self._parsed._replace(scheme=scheme))
+
+    def with_netloc(self, netloc: str) -> "URL":
+        """
+        Adds a netloc to the URL.
+
+        Parameters
+        ----------
+        netloc:
+            The netloc to add to the URL
+
+        Returns
+        -------
+            The URL with the netloc added
+        """
+        return URL(self._parsed._replace(netloc=netloc))
 
 
 class DiscordTimestamp:

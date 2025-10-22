@@ -1,4 +1,3 @@
-import yarl
 import os
 
 from typing import Self, TYPE_CHECKING, Literal
@@ -120,7 +119,7 @@ class Asset:
         -------
             The new asset object
         """
-        url = yarl.URL(self.url)
+        url = utils.URL(self.url)
         path, _ = os.path.splitext(url.path)
         prev_size = url.query.get("size")
 
