@@ -48,6 +48,7 @@ class ActivityType(BaseEnum):
     watching = 3
     custom = 4
     competing = 5
+    hang = 6
 
 
 class PollVoteActionType(BaseEnum):
