@@ -3,13 +3,13 @@ import itertools
 import logging
 import re
 
+from collections.abc import Callable, Coroutine
 from types import UnionType
 from typing import (
     TYPE_CHECKING, Union, Protocol,
     Generic, TypeVar, Literal, Any,
     runtime_checkable, get_origin, get_args
 )
-from collections.abc import Callable, Coroutine
 
 from . import utils
 from .channel import (

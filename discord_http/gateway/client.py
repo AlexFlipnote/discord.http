@@ -1,19 +1,19 @@
 
-import logging
 import asyncio
+import logging
 import operator
 
 from aiohttp import web
+from collections.abc import Coroutine
 from datetime import datetime, UTC
 from typing import TYPE_CHECKING
-from collections.abc import Coroutine
 
-from .shard import Shard
 from .object import PlayingStatus
+from .shard import Shard
 
 if TYPE_CHECKING:
-    from ..object import Snowflake
     from ..client import GatewayCacheFlags, Client, Intents
+    from ..object import Snowflake
 
 _log = logging.getLogger("discord_http")
 

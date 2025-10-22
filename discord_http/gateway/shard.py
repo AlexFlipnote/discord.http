@@ -1,7 +1,7 @@
 import aiohttp
 import asyncio
-import orjson
 import logging
+import orjson
 import sys
 import time
 import zlib
@@ -18,9 +18,9 @@ from .object import PlayingStatus
 from .parser import Parser, GuildMembersChunk
 
 if TYPE_CHECKING:
-    from ..member import Member
     from ..client import Client
     from ..guild import Guild, PartialGuild
+    from ..member import Member
 
 DEFAULT_GATEWAY = utils.URL("wss://gateway.discord.gg/")
 _log = logging.getLogger("discord_http")

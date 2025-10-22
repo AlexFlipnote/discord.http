@@ -11,12 +11,12 @@ from typing import TYPE_CHECKING
 from .asset import Asset
 from .colour import Colour
 from .emoji import EmojiParser
-from .errors import HTTPException
-from .file import File
 from .enums import (
     ButtonStyles, ComponentType, TextStyles,
     ChannelType, SeparatorSpacingType
 )
+from .errors import HTTPException
+from .file import File
 
 if TYPE_CHECKING:
     from . import Snowflake

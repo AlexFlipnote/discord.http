@@ -1,10 +1,10 @@
+import asyncio
 import inspect
 import logging
-import asyncio
 
-from typing import TYPE_CHECKING, Any, Self
 from collections.abc import Callable
 from datetime import datetime, timedelta
+from typing import TYPE_CHECKING, Any, Self
 
 from . import utils
 from .channel import (

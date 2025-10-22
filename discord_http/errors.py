@@ -2,8 +2,8 @@ import time
 
 from typing import TYPE_CHECKING
 
-from .flags import Permissions
 from .cooldowns import Cooldown
+from .flags import Permissions
 
 if TYPE_CHECKING:
     from .http import HTTPResponse

@@ -8,10 +8,10 @@ from .user import PartialUser
 MISSING = utils.MISSING
 
 if TYPE_CHECKING:
-    from .member import Member
     from .channel import BaseChannel, PartialChannel
     from .guild import PartialGuild
     from .http import DiscordAPI
+    from .member import Member
 
 __all__ = (
     "PartialVoiceState",

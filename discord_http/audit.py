@@ -1,19 +1,19 @@
 import logging
 
-from typing import TYPE_CHECKING, Any, TypeVar, ClassVar
 from collections.abc import Callable
 from datetime import datetime
+from typing import TYPE_CHECKING, Any, TypeVar, ClassVar
 
 from . import utils, enums, flags
 from .asset import Asset
 from .automod import AutoModRuleTriggers, AutoModRuleAction
-from .object import Snowflake
-from .guild import PartialGuild
 from .channel import PartialChannel, ForumTag
 from .colour import Colour
+from .emoji import EmojiParser
+from .guild import PartialGuild
+from .object import Snowflake
 from .role import PartialRole
 from .user import User, PartialUser
-from .emoji import EmojiParser
 
 if TYPE_CHECKING:
     from .http import DiscordAPI

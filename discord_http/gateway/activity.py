@@ -1,12 +1,12 @@
 from typing import TYPE_CHECKING
 from datetime import datetime
 
-from .flags import ActivityFlags
-from .enums import ActivityType
-
 from .. import utils
 from ..asset import Asset
 from ..emoji import EmojiParser
+
+from .flags import ActivityFlags
+from .enums import ActivityType
 
 if TYPE_CHECKING:
     from ..http import DiscordAPI

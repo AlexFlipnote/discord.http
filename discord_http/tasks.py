@@ -3,9 +3,9 @@ import asyncio
 import inspect
 import logging
 
+from collections.abc import Callable, Sequence
 from datetime import time as dtime
 from datetime import timedelta, datetime, UTC
-from collections.abc import Callable, Sequence
 
 from . import utils
 

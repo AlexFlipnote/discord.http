@@ -20,10 +20,10 @@ _log = logging.getLogger(__name__)
 MISSING = utils.MISSING
 
 if TYPE_CHECKING:
+    from .channel import DMChannel, PartialChannel, Thread
     from .gateway.object import Presence
     from .http import DiscordAPI
     from .message import Message
-    from .channel import DMChannel, PartialChannel, Thread
 
 __all__ = (
     "Member",

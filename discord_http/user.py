@@ -14,8 +14,8 @@ from .view import View
 
 if TYPE_CHECKING:
     from .channel import DMChannel
-    from .http import DiscordAPI
     from .guild import Guild, PartialGuild
+    from .http import DiscordAPI
     from .message import Message
 
 MISSING = utils.MISSING

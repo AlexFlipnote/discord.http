@@ -1,11 +1,8 @@
 import time
 
-from typing import TYPE_CHECKING
 from collections.abc import Iterator
 from datetime import datetime
-
-from .activity import Activity
-from .enums import StatusType, PollVoteActionType, ActivityType
+from typing import TYPE_CHECKING
 
 from .. import utils
 from ..automod import AutoModRuleAction, PartialAutoModRule
@@ -14,12 +11,15 @@ from ..emoji import EmojiParser
 from ..enums import ReactionType, AutoModRuleTriggerType
 from ..message import PartialMessage
 
+from .activity import Activity
+from .enums import StatusType, PollVoteActionType, ActivityType
+
 if TYPE_CHECKING:
+    from ..channel import BaseChannel, PartialChannel, Thread
     from ..guild import Guild, PartialGuild
     from ..http import DiscordAPI
     from ..member import Member, PartialMember, PartialThreadMember, ThreadMember
     from ..user import User, PartialUser
-    from ..channel import BaseChannel, PartialChannel, Thread
 
 __all__ = (
     "AutomodExecution",

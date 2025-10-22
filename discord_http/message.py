@@ -1,9 +1,9 @@
 import asyncio
 
+from collections.abc import AsyncIterator, Callable
 from datetime import timedelta, datetime
 from io import BytesIO
 from typing import TYPE_CHECKING, Self
-from collections.abc import AsyncIterator, Callable
 
 from . import utils
 from .colour import Colour

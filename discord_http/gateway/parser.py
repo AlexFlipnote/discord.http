@@ -4,23 +4,15 @@ import os
 from datetime import datetime
 from typing import TYPE_CHECKING, overload
 
-from .enums import PollVoteActionType
-from .flags import GatewayCacheFlags
-from .object import (
-    ChannelPinsUpdate, TypingStartEvent,
-    Reaction, BulkDeletePayload, ThreadListSyncPayload,
-    ThreadMembersUpdatePayload, Presence, AutomodExecution,
-    PollVoteEvent, GuildJoinRequest
-)
-
 from .. import utils
 from ..audit import AuditLogEntry
 from ..automod import AutoModRule
 from ..channel import BaseChannel, PartialChannel, StageInstance, PartialThread
 from ..emoji import Emoji, EmojiParser
-from ..enums import ChannelType
 from ..entitlements import Entitlements
+from ..enums import ChannelType
 from ..guild import Guild, PartialGuild, ScheduledEvent, PartialScheduledEvent
+from ..integrations import Integration, PartialIntegration
 from ..invite import Invite, PartialInvite
 from ..member import Member, PartialMember, PartialThreadMember
 from ..message import Message, PartialMessage
@@ -29,7 +21,15 @@ from ..soundboard import PartialSoundboardSound, SoundboardSound
 from ..sticker import Sticker
 from ..user import User, PartialUser
 from ..voice import VoiceState, PartialVoiceState
-from ..integrations import Integration, PartialIntegration
+
+from .enums import PollVoteActionType
+from .flags import GatewayCacheFlags
+from .object import (
+    ChannelPinsUpdate, TypingStartEvent,
+    Reaction, BulkDeletePayload, ThreadListSyncPayload,
+    ThreadMembersUpdatePayload, Presence, AutomodExecution,
+    PollVoteEvent, GuildJoinRequest
+)
 
 if TYPE_CHECKING:
     from ..http import DiscordAPI

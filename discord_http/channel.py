@@ -2,9 +2,9 @@
 import asyncio
 import time
 
+from collections.abc import AsyncIterator, Callable, Generator
 from datetime import datetime, timedelta
 from typing import TYPE_CHECKING, Self, overload
-from collections.abc import AsyncIterator, Callable, Generator
 
 from . import utils
 from .embeds import Embed

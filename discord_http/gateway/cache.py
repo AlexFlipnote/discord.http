@@ -5,15 +5,17 @@ from ..voice import VoiceState, PartialVoiceState
 
 from .flags import GatewayCacheFlags
 
+
 if TYPE_CHECKING:
-    from .object import Presence
     from ..channel import PartialChannel, PartialThread
     from ..client import Client
-    from ..guild import PartialGuild, Guild
     from ..emoji import Emoji
-    from ..sticker import Sticker
+    from ..guild import PartialGuild, Guild
     from ..member import PartialMember, Member
     from ..role import PartialRole, Role
+    from ..sticker import Sticker
+
+    from .object import Presence
 
 __all__ = (
     "Cache",

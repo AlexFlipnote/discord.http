@@ -1,8 +1,8 @@
 from base64 import b64encode
+from collections.abc import AsyncIterator, Callable
 from dataclasses import dataclass
 from datetime import datetime, timedelta
 from typing import TYPE_CHECKING, NamedTuple, ClassVar
-from collections.abc import AsyncIterator, Callable
 
 from . import utils
 from .asset import Asset
@@ -29,18 +29,18 @@ from .sticker import Sticker, PartialSticker
 from .voice import VoiceState, PartialVoiceState
 
 if TYPE_CHECKING:
+    from .audit import AuditLogEntry
     from .channel import (
         TextChannel, VoiceChannel,
         PartialChannel, BaseChannel,
         CategoryChannel, PublicThread,
         VoiceRegion, StageChannel, PrivateThread
     )
-    from .audit import AuditLogEntry
     from .http import DiscordAPI, HTTPResponse
+    from .integrations import Integration
     from .invite import Invite
     from .member import PartialMember, Member
     from .user import User
-    from .integrations import Integration
 
 MISSING = utils.MISSING
 
