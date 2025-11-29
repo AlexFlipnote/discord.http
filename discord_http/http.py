@@ -233,7 +233,14 @@ class Ratelimit:
         self.reset_after = 0.0
 
     def update(self, response: HTTPResponse) -> None:
-        """ Update the ratelimit with the response headers. """
+        """
+        Update the ratelimit with the response headers.
+
+        Parameters
+        ----------
+        response:
+            The HTTP response to update the ratelimit with
+        """
         self.remaining = int(response.headers.get("x-ratelimit-remaining", 0))
         self.reset_after = float(response.headers.get("x-ratelimit-reset-after", 0))
         self.expires = self._loop.time() + self.reset_after
@@ -269,12 +276,14 @@ class Ratelimit:
         self._wake(self.remaining)
 
     def is_expired(self) -> bool:
+        """ Check if the ratelimit is expired. """
         return (
             self.expires is not None and
             self._loop.time() > self.expires
         )
 
     def is_inactive(self) -> bool:
+        """ Check if the ratelimit is inactive. """
         return (
             (self._loop.time() - self._last_request) >= 300 and
             len(self._pending_requests) == 0
@@ -349,7 +358,18 @@ class DiscordAPI:
                 pass
 
     def get_ratelimit(self, key: str) -> Ratelimit:
-        """ Get a ratelimit object from the bucket. """
+        """
+        Get a ratelimit object from the bucket.
+
+        Parameters
+        ----------
+        key:
+            The key to get the ratelimit for
+
+        Returns
+        -------
+            The ratelimit object for the given key
+        """
         try:
             value = self._buckets[key]
         except KeyError:
