@@ -69,6 +69,11 @@ _components_label = (
     ComponentType.file_upload,
 )
 
+_components_inaccessible = (
+    ComponentType.content_inventory_entry,
+    ComponentType.checkpoint,
+)
+
 __all__ = (
     "ActionRow",
     "AttachmentComponent",
@@ -1789,6 +1794,11 @@ class View(InteractionStorage):
         super().__init__()
 
         for i in items:
+            if i.type in _components_inaccessible:
+                # Don't bother raising for inaccessible components.
+                # They are sent on User side only.
+                continue
+
             if i.type not in _components_root:
                 raise ValueError(
                     f"Component type {i.type} is not supported as a stand-alone component. "
