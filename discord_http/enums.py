@@ -617,6 +617,8 @@ class ComponentType(BaseEnum):
     label = 18
     file_upload = 19
 
+    checkpoint = 20  # Not sure.. very new value
+
 
 class SeparatorSpacingType(BaseEnum):
     small = 1

@@ -286,6 +286,26 @@ class Item:
         raise NotImplementedError("to_dict not implemented")
 
 
+class LockedItem(Item):
+    """ Used for valid components, but cannot be used directly. """
+    def __init__(self, *, type: ComponentType, **kwargs: dict):  # noqa: A002
+        self.type: ComponentType = type
+        self._data: dict = kwargs
+
+    def __repr__(self) -> str:
+        return f"<LockedItem[{self.type.name}] data={self._data}>"
+
+    def to_dict(self) -> dict:
+        """ Returns a dict representation of the content inventory entry. """
+        return {
+            "type": int(self.type),
+            "data": {
+                k: v
+                for k, v in self._data.items()
+            }
+        }
+
+
 class TextInputComponent(Item):
     """
     Represents a text input component in a modal.
@@ -1652,30 +1672,16 @@ class FileComponent(Item):
         }
 
 
-class ContentInventoryEntry(Item):
-    """
-    Discord API says that this is a valid component type, but does not work for bots.
-
-    Simply put, I only added this in, so the code doesn't break.
-    All the components creators will refuse to accept it as a valid option,
-    since they are not listed in the valid v1/v2 component types.
-    """
+class ContentInventoryEntry(LockedItem):
     def __init__(self, *_: dict, **kwargs: dict):
         super().__init__(type=ComponentType.content_inventory_entry)
         self._data: dict = kwargs
 
-    def __repr__(self) -> str:
-        return f"<ContentInventoryEntry data={self._data}>"
 
-    def to_dict(self) -> dict:
-        """ Returns a dict representation of the content inventory entry. """
-        return {
-            "type": int(self.type),
-            "data": {
-                k: v
-                for k, v in self._data.items()
-            }
-        }
+class CheckpointComponent(LockedItem):
+    def __init__(self, *_: dict, **kwargs: dict):
+        super().__init__(type=ComponentType.checkpoint)
+        self._data: dict = kwargs
 
 
 class ContainerComponent(Item):
@@ -1922,6 +1928,7 @@ class View(InteractionStorage):
             16: ContentInventoryEntry,
             17: ContainerComponent,
             18: LabelComponent,
+            20: CheckpointComponent
         }
 
         def _v2_resolver(c: dict) -> Item:
