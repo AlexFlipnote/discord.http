@@ -188,7 +188,7 @@ class Client:
         self._shards_ready: asyncio.Event | None = asyncio.Event()
         self._user_object: UserClient | None = None
 
-        self._context: Callable = Context
+        self._context: Callable[["Client", dict], Context] = Context
 
         self.cache: Cache = Cache(client=self)
         self.state: DiscordAPI = DiscordAPI(client=self)
@@ -207,10 +207,11 @@ class Client:
 
     async def _run_global_checks(self, ctx: Context) -> bool:
         for g in self._global_cmd_checks:
-            if inspect.iscoroutinefunction(g):
-                result = await g(ctx)
-            else:
-                result = g(ctx)
+            with ctx.benchmark.measure(f"global_check:{g.__name__}", internal=True):
+                if inspect.iscoroutinefunction(g):
+                    result = await g(ctx)
+                else:
+                    result = g(ctx)
 
             if result is not True:
                 raise CheckFailed(f"Check {g.__name__} failed.")

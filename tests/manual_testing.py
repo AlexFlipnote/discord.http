@@ -99,6 +99,21 @@ async def test_cooldown(ctx: Context):
 
 
 @client.command()
+async def test_benchmark(ctx: Context):
+    """ Test benchmark feature """
+    async def call_after():
+        benchmark_summary = ctx.benchmark.create_summary()
+        await ctx.edit_original_response(
+            content=f"## Benchmark results:\n{benchmark_summary}"
+        )
+
+    return ctx.response.defer(
+        thinking=True,
+        call_after=call_after
+    )
+
+
+@client.command()
 async def test_forward(ctx: Context):
     msg = client.get_partial_message(
         channel_id=1152952309874167859,

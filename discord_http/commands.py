@@ -555,10 +555,11 @@ class Command:
         )
 
         for g in checks:
-            if inspect.iscoroutinefunction(g):
-                result = await g(ctx)
-            else:
-                result = g(ctx)
+            with ctx.benchmark.measure(f"check:{g.__name__}", internal=True):
+                if inspect.iscoroutinefunction(g):
+                    result = await g(ctx)
+                else:
+                    result = g(ctx)
 
             if result is not True:
                 raise CheckFailed(f"Check {g.__name__} failed.")
@@ -570,10 +571,11 @@ class Command:
         if before is None:
             return True
 
-        if inspect.iscoroutinefunction(before):
-            result = await before(ctx)
-        else:
-            result = before(ctx)
+        with ctx.benchmark.measure("before_invoke", internal=True):
+            if inspect.iscoroutinefunction(before):
+                result = await before(ctx)
+            else:
+                result = before(ctx)
 
         if result is not True:
             raise CheckFailed("Before invoke failed.")
@@ -655,10 +657,11 @@ class Command:
         # Check cooldown
         self._cooldown_checker(context)
 
-        if self.cog is not None:
-            response = await self.command(self.cog, context, *args, **kwargs)
-        else:
-            response = await self.command(context, *args, **kwargs)
+        with context.benchmark.measure("command", internal=True):
+            if self.cog is not None:
+                response = await self.command(self.cog, context, *args, **kwargs)
+            else:
+                response = await self.command(context, *args, **kwargs)
 
         # Execute after invoke
         if getattr(self.command, "__after_invoke__", None):
@@ -1046,10 +1049,11 @@ class Interaction:
         `TypeError`
             Interaction must be a Response object
         """
-        if self.cog is not None:
-            result = await self.func(self.cog, context)
-        else:
-            result = await self.func(context)
+        with context.benchmark.measure("interaction", internal=True):
+            if self.cog is not None:
+                result = await self.func(self.cog, context)
+            else:
+                result = await self.func(context)
 
         if not isinstance(result, BaseResponse):
             raise TypeError(

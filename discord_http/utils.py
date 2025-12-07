@@ -4,6 +4,7 @@ import posixpath
 import re
 import struct
 import sys
+import time
 import traceback
 import unicodedata
 import zlib
@@ -32,6 +33,144 @@ re_hex = re.compile(r"^(?:#)?(?:[0-9a-fA-F]{3}){1,2}$")
 re_jump_url: re.Pattern = re.compile(
     r"https:\/\/(?:.*\.)?discord\.com\/channels\/([0-9]{15,20}|@me)\/([0-9]{15,20})(?:\/([0-9]{15,20}))?"
 )
+
+
+class BenchmarkEntry:
+    """ A simple, high-precision benchmarking class. """
+    def __init__(self, *, internal: bool = False) -> None:
+        self.internal: bool = internal
+
+        self._start_perf: float | None = None
+        self._end_perf: float | None = None
+
+        self.created_at: datetime | None = None
+        self.finished_at: datetime | None = None
+
+    def __enter__(self) -> "BenchmarkEntry":
+        self.start()
+        return self
+
+    def __exit__(self, *args) -> None:  # noqa: ANN002
+        self.stop()
+
+    def __repr__(self) -> str:
+        return f"<BenchmarkEntry internal={self.internal} elapsed={self.format()}>"
+
+    def is_complete(self) -> bool:
+        """ Check if the benchmark has been started and stopped. """
+        return self._start_perf is not None and self._end_perf is not None
+
+    def start(self) -> None:
+        """ Start the benchmark timer. """
+        self._start_perf = time.perf_counter()
+        self.created_at = utcnow()
+
+    def stop(self) -> None:
+        """ Stop the benchmark timer. """
+        self._end_perf = time.perf_counter()
+        self.finished_at = utcnow()
+
+    @property
+    def elapsed(self) -> float:
+        """ Get the elapsed time in seconds. """
+        if self._start_perf is None:
+            return 0.0
+        if self._end_perf is None:
+            return time.perf_counter() - self._start_perf
+        return self._end_perf - self._start_perf
+
+    def format(self) -> str:
+        """ Get the elapsed time as a human-readable string. """
+        return Benchmark.format_time(self.elapsed)
+
+    def to_dict(self) -> dict[str, Any]:
+        """ Converts the data into a dictionary. """
+        return {
+            "elapsed": self.elapsed,
+            "human": self.format(),
+            "start_iso": self.created_at.isoformat() if self.created_at else None,
+            "end_iso": self.finished_at.isoformat() if self.finished_at else None,
+        }
+
+
+class Benchmark:
+    """
+    A simple benchmarking context manager.
+
+    Used to benchmark code execution time.
+    """
+    def __init__(self):
+        self.results: dict[str, BenchmarkEntry] = {}
+
+        self._overall_start = time.perf_counter()
+
+    @staticmethod
+    def format_time(seconds: float) -> str:
+        """ Returns a human-readable string (e.g., '150ms', '2s'). """
+        if seconds == 0:
+            return "0ns"
+        if seconds < 0.000001:  # Nanoseconds
+            return f"{seconds * 1e9:.0f}ns"
+        if seconds < 0.001:  # Microseconds
+            return f"{seconds * 1e6:.0f}µs"  # noqa: RUF001
+        if seconds < 1:  # Milliseconds
+            return f"{seconds * 1e3:.0f}ms"
+        return f"{seconds:.2f}s"
+
+    def measure(self, name: str, *, internal: bool = False) -> BenchmarkEntry:
+        """
+        Creates an entry for 'name' and returns the context manager.
+
+        Parameters
+        ----------
+        name:
+            The name of the benchmark entry
+        internal:
+            Whether this benchmark entry is for internal use (default: False)
+
+        Returns
+        -------
+            A BenchmarkEntry context manager
+        """
+        entry = BenchmarkEntry(internal=internal)
+        self.results[name] = entry
+        return entry
+
+    def create_summary(self, *, prefix: str | None = None) -> str:
+        """
+        Returns a pretty multiline string of all benchmarks.
+
+        Parameters
+        ----------
+        prefix:
+            The prefix to use for each line, defaults to "➜"
+
+        Returns
+        -------
+            The benchmark summary as a string
+        """
+        lines = []
+        total = 0.0
+
+        prefix = prefix or "➜"
+
+        for name, entry in self.results.items():
+            display_name = name
+            if entry.internal:
+                display_name = f"**{name}**"
+                total += entry.elapsed
+
+            lines.append(f"{prefix} {display_name} ` {entry.format()} `")
+
+        lines.append(f"**Total** ` {self.format_time(total)} `")
+        return "\n".join(lines)
+
+    def to_dict(self) -> dict[str, float]:
+        """ Convert the benchmark results to a dictionary. """
+        return {
+            name: entry.elapsed
+            for name, entry in self.results.items()
+        }
 
 
 def create_missing_texture(*, size: int = 256, tiles: int = 8) -> bytes:

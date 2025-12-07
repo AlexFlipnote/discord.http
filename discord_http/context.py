@@ -543,6 +543,9 @@ class Context:
             data.get("data", {}).get("type", ApplicationCommandType.chat_input)
         )
 
+        # Default utilities
+        self.benchmark = utils.Benchmark()
+
         # Arguments that gets parsed on runtime
         self.command: "Command | None" = None
 

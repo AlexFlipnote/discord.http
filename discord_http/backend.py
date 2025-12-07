@@ -214,10 +214,13 @@ class DiscordHTTP(web.Application):
                     local_view = self.bot._view_storage.get(ctx.message.interaction.id, None)
 
             if local_view:
-                payload = await local_view.callback(ctx)
-                return self.multipart_response(payload)
+                with ctx.benchmark.measure("view:callback", internal=True):
+                    payload = await local_view.callback(ctx)
+                    return self.multipart_response(payload)
 
-            intreact = self.bot.find_interaction(custom_id)
+            with ctx.benchmark.measure("backend:find_interaction"):
+                intreact = self.bot.find_interaction(custom_id)
+
             if not intreact:
                 _log.debug(f"Unhandled interaction received (custom_id: {custom_id})")
                 return self.jsonify({"error": "interaction not found"}, status=404)
@@ -295,19 +298,22 @@ class DiscordHTTP(web.Application):
                 return self._handle_ack_ping(context, data)
 
             case InteractionType.application_command:
-                return await self._handle_application_command(
-                    context, data
-                )
+                with context.benchmark.measure("backend:application_command"):
+                    return await self._handle_application_command(
+                        context, data
+                    )
 
             case InteractionType.message_component | InteractionType.modal_submit:
-                return await self._handle_interaction(
-                    context, data
-                )
+                with context.benchmark.measure("backend:interaction"):
+                    return await self._handle_interaction(
+                        context, data
+                    )
 
             case InteractionType.application_command_autocomplete:
-                return await self._handle_autocomplete(
-                    context, data
-                )
+                with context.benchmark.measure("backend:autocomplete"):
+                    return await self._handle_autocomplete(
+                        context, data
+                    )
 
             case _:  # Unknown
                 _log.debug(f"Unhandled interaction recieved (type: {data_type})")
