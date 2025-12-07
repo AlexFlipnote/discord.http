@@ -300,19 +300,19 @@ class DiscordHTTP(web.Application):
                 return self._handle_ack_ping(context, data)
 
             case InteractionType.application_command:
-                with context.benchmark.measure("backend:application_command"):
+                with context.benchmark.measure("start_end:application_command"):
                     return await self._handle_application_command(
                         context, data
                     )
 
             case InteractionType.message_component | InteractionType.modal_submit:
-                with context.benchmark.measure("backend:interaction"):
+                with context.benchmark.measure(f"start_end:{InteractionType(data_type).name}"):
                     return await self._handle_interaction(
                         context, data
                     )
 
             case InteractionType.application_command_autocomplete:
-                with context.benchmark.measure("backend:autocomplete"):
+                with context.benchmark.measure("start_end:autocomplete"):
                     return await self._handle_autocomplete(
                         context, data
                     )

@@ -121,6 +121,8 @@ class Benchmark:
         """
         Creates an entry for 'name' and returns the context manager.
 
+        Internal should only be used by library code, to measure internal benchmarks step-by-step.
+
         Parameters
         ----------
         name:
@@ -141,6 +143,9 @@ class Benchmark:
         """
         Returns a pretty multiline string of all benchmarks.
 
+        Internal are the ones that show everything step-by-step.
+        External are the ones that are more high-level or summary-like.
+
         Parameters
         ----------
         prefix:
@@ -150,23 +155,34 @@ class Benchmark:
         -------
             The benchmark summary as a string
         """
-        lines: list[tuple[str, str]] = []
+        container: dict[str, list[tuple[str, str]]] = {
+            "internal": [],
+            "external": []
+        }
         total = 0.0
-        prefix = prefix or "➜"
 
         for name, entry in self.results.items():
             display_name = name
             if entry.internal:
                 display_name = f"**{name}**"
                 total += entry.elapsed
-            lines.append((display_name, entry.format()))
+            container["internal" if entry.internal else "external"].append((display_name, entry.format()))
 
-        lines.append(("Total internal", self.format_time(total)))
+        prefix = prefix or "➜"
 
-        return "\n".join([
-            f"{prefix} {name} ` {time} `"
-            for name, time in lines
-        ])
+        longest_time = (
+            max(len(time) for _, time in container["internal"] + container["external"])
+            if container["internal"] or container["external"] else 0
+        )
+
+        formatted_lines = [
+            f"{prefix} ` {time.rjust(longest_time)} ` {name}"
+            for name, time in container["external"] + container["internal"]
+        ]
+
+        formatted_lines.append(f"Total internal: ` {self.format_time(total)} `")
+
+        return "\n".join(formatted_lines)
 
     def to_dict(self) -> dict[str, float]:
         """ Convert the benchmark results to a dictionary. """

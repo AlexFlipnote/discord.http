@@ -6,6 +6,7 @@ But honestly, this thing might change a lot, so I wouldn't recommend it
 
 import asyncio
 import json
+import random
 import logging
 import secrets
 
@@ -102,6 +103,9 @@ async def test_cooldown(ctx: Context):
 async def test_benchmark(ctx: Context):
     """ Test benchmark feature """
     async def call_after():
+        with ctx.benchmark.measure("followup:sleep"):
+            await asyncio.sleep(random.uniform(0.5, 1.5))
+
         benchmark_summary = ctx.benchmark.create_summary()
         await ctx.edit_original_response(
             content=f"## Benchmark results:\n{benchmark_summary}"
