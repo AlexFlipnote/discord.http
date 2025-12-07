@@ -136,10 +136,11 @@ class DiscordHTTP(web.Application):
             return
 
         async def _run_background() -> None:
-            if inspect.iscoroutinefunction(self.bot._after_invoke):
-                await self.bot._after_invoke(ctx)
-            else:
-                self.bot._after_invoke(ctx)  # type: ignore
+            with ctx.benchmark.measure("global:after_invoke"):
+                if inspect.iscoroutinefunction(self.bot._after_invoke):
+                    await self.bot._after_invoke(ctx)
+                else:
+                    self.bot._after_invoke(ctx)  # type: ignore
 
         self.bot.loop.create_task(_run_background())
 
@@ -170,10 +171,11 @@ class DiscordHTTP(web.Application):
 
             await self._run_after_invoke(ctx)
 
-            if isinstance(payload, EmptyResponse):
-                return web.Response(status=202)
+            with ctx.benchmark.measure("backend:response", internal=True):
+                if isinstance(payload, EmptyResponse):
+                    return web.Response(status=202)
 
-            return self.multipart_response(payload)
+                return self.multipart_response(payload)
 
         except Exception as e:
             if self.bot.has_any_dispatch("interaction_error"):
@@ -343,7 +345,7 @@ class DiscordHTTP(web.Application):
 
     async def index_ping(
         self,
-        request: web.Request  # noqa: ARG002
+        _request: web.Request
     ) -> web.Response:
         """
         Used to ping the interaction url, to check if it's working.

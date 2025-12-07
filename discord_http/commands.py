@@ -588,10 +588,11 @@ class Command:
             return
 
         async def _run_background() -> None:
-            if inspect.iscoroutinefunction(after):
-                await after(ctx)
-            else:
-                after(ctx)
+            with ctx.benchmark.measure("after_invoke"):
+                if inspect.iscoroutinefunction(after):
+                    await after(ctx)
+                else:
+                    after(ctx)
 
         ctx.bot.loop.create_task(
             _run_background()
@@ -601,9 +602,10 @@ class Command:
         if self.cooldown is None:
             return
 
-        current = ctx.created_at.timestamp()
-        bucket = self.cooldown.get_bucket(ctx, current)
-        retry_after = bucket.update_rate_limit(current)
+        with ctx.benchmark.measure("cooldown_check", internal=True):
+            current = ctx.created_at.timestamp()
+            bucket = self.cooldown.get_bucket(ctx, current)
+            retry_after = bucket.update_rate_limit(current)
 
         if not retry_after:
             return  # Not rate limited, good to go
@@ -698,10 +700,11 @@ class Command:
         `TypeError`
             Autocomplete must return an AutocompleteResponse object
         """
-        if self.cog is not None:
-            result = await self.list_autocompletes[name](self.cog, context, current)
-        else:
-            result = await self.list_autocompletes[name](context, current)
+        with context.benchmark.measure("autocomplete", internal=True):
+            if self.cog is not None:
+                result = await self.list_autocompletes[name](self.cog, context, current)
+            else:
+                result = await self.list_autocompletes[name](context, current)
 
         if isinstance(result, AutocompleteResponse):
             return result.to_dict()

@@ -207,7 +207,7 @@ class Client:
 
     async def _run_global_checks(self, ctx: Context) -> bool:
         for g in self._global_cmd_checks:
-            with ctx.benchmark.measure(f"global_check:{g.__name__}", internal=True):
+            with ctx.benchmark.measure(f"global:check:{g.__name__}", internal=True):
                 if inspect.iscoroutinefunction(g):
                     result = await g(ctx)
                 else:

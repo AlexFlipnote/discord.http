@@ -127,6 +127,7 @@ class Benchmark:
             The name of the benchmark entry
         internal:
             Whether this benchmark entry is for internal use (default: False)
+            Mostly used to differentiate between user and internal benchmarks
 
         Returns
         -------
@@ -149,9 +150,8 @@ class Benchmark:
         -------
             The benchmark summary as a string
         """
-        lines = []
+        lines: list[tuple[str, str]] = []
         total = 0.0
-
         prefix = prefix or "➜"
 
         for name, entry in self.results.items():
@@ -159,11 +159,14 @@ class Benchmark:
             if entry.internal:
                 display_name = f"**{name}**"
                 total += entry.elapsed
+            lines.append((display_name, entry.format()))
 
-            lines.append(f"{prefix} {display_name} ` {entry.format()} `")
+        lines.append(("Total internal", self.format_time(total)))
 
-        lines.append(f"**Total** ` {self.format_time(total)} `")
-        return "\n".join(lines)
+        return "\n".join([
+            f"{prefix} {name} ` {time} `"
+            for name, time in lines
+        ])
 
     def to_dict(self) -> dict[str, float]:
         """ Convert the benchmark results to a dictionary. """
