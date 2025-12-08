@@ -793,6 +793,45 @@ class Context:
             self.bot.user.id in self.recipients
         )
 
+    async def defer(
+        self,
+        *,
+        ephemeral: bool = False,
+        thinking: bool = False,
+    ) -> WebhookMessage:
+        """
+        Defer the interaction after responding with an empty response in the initial interaction.
+
+        Parameters
+        ----------
+        ephemeral:
+            Whether the deferred message should be ephemeral
+        thinking:
+            Whether the deferred message should show the "thinking" status
+
+        Returns
+        -------
+            Returns the deferred message
+        """
+        payload = self.response.defer(
+            ephemeral=ephemeral,
+            thinking=thinking
+        )
+
+        r = await self.bot.state.query(
+            "POST",
+            f"/interactions/{self.id}/{self._followup_token}/callback",
+            params={"with_response": "true"},
+            json=payload.to_dict()
+        )
+
+        return WebhookMessage(
+            state=self.bot.state,
+            data=r.response["resource"]["message"],
+            application_id=self.bot.application_id,  # type: ignore
+            token=self._followup_token
+        )
+
     async def send(
         self,
         content: str | None = MISSING,
