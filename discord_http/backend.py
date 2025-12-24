@@ -154,15 +154,17 @@ class DiscordHTTP(web.Application):
 
         _log.debug("Received slash command, processing...")
 
-        command_name = data["data"]["name"]
-        cmd = self.bot.commands.get(command_name, None)
+        with ctx.benchmark.measure("backend:find_command", internal=True):
+            command_name = data["data"]["name"]
+            cmd = self.bot.commands.get(command_name, None)
 
         if not cmd:
             _log.warning(f"Unhandled command: {command_name}")
             return self.jsonify({"error": "command not found"}, status=404)
 
-        cmd, _ = self._dig_subcommand(cmd, data)
-        ctx.command = cmd
+        with ctx.benchmark.measure("backend:dig_subcommand", internal=True):
+            cmd, _ = self._dig_subcommand(cmd, data)
+            ctx.command = cmd
 
         try:
             await self.bot._run_global_checks(ctx)
