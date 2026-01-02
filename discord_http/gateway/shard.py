@@ -246,7 +246,7 @@ class Shard:
         if not isinstance(self.api_version, int):
             raise TypeError("api_version must be of type int")
 
-        return str(self.status.gateway.with_query(
+        return str(self.status.gateway.update_query(
             v=self.api_version,
             encoding="json",
             compress="zlib-stream"
