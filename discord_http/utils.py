@@ -14,7 +14,10 @@ from collections.abc import Iterator
 from datetime import datetime, timedelta, UTC
 from types import UnionType
 from typing import Any, TYPE_CHECKING, get_origin, get_args, Union
-from urllib.parse import urlparse, parse_qs, urlencode, urlunparse, ParseResult, unquote
+from urllib.parse import (
+    urlparse, parse_qs, urlencode, urlunparse,
+    ParseResult, unquote, urljoin
+)
 
 from .file import File
 
@@ -390,7 +393,7 @@ def time_snowflake(
         raise TypeError(f"dt must be a datetime object, got {type(dt)} instead")
 
     return (
-        int(dt.timestamp() * 1000 - DISCORD_EPOCH) << 22 +
+        (int(dt.timestamp() * 1000 - DISCORD_EPOCH) << 22) +
         (2 ** 22 - 1 if high else 0)
     )
 
@@ -484,13 +487,9 @@ def unicode_name(text: str) -> str:
         The unicode name of the text
     """
     try:
-        output = unicodedata.name(text)
-    except TypeError:
-        pass
-    else:
-        output = output.replace(" ", "_")
-
-    return text
+        return unicodedata.name(text[0]).replace(" ", "_")
+    except (TypeError, ValueError, IndexError):
+        return text
 
 
 def oauth_url(
@@ -518,23 +517,18 @@ def oauth_url(
     -------
         The oauth url of the user
     """
-    output = (
-        "https://discord.com/oauth2/authorize"
-        f"?client_id={int(client_id)}"
-    )
-
-    output += (
-        "&scope=bot+applications.commands"
-        if scope is None else f"&scope={scope}"
+    url = URL("https://discord.com/oauth2/authorize").update_query(
+        client_id=int(client_id),
+        scope=scope or "bot+applications.commands"
     )
 
     if user_install:
-        output += "&interaction_type=1"
+        url = url.update_query(interaction_type=1)
 
-    for key, value in kwargs.items():
-        output += f"&{key}={value}"
+    if kwargs:
+        url = url.update_query(**kwargs)
 
-    return output
+    return str(url)
 
 
 def divide_chunks(
@@ -774,13 +768,14 @@ class URL:
     """
     def __init__(
         self,
-        url: str | ParseResult
+        url: "str | ParseResult | URL"
     ):
-        self._parsed: ParseResult = (
-            urlparse(url)
-            if not isinstance(url, ParseResult)
-            else url
-        )
+        if isinstance(url, URL):
+            self._parsed = url._parsed
+        elif isinstance(url, ParseResult):
+            self._parsed = url
+        else:
+            self._parsed = urlparse(str(url))
 
     def __str__(self) -> str:
         return self.url
@@ -788,22 +783,22 @@ class URL:
     def __repr__(self) -> str:
         return f"<URL url={self!s}>"
 
-    @property
-    def query(self) -> dict[str, str | list[str]]:
-        """ Returns the query parameters of the URL as a dictionary. """
-        return {
-            k: v[0] if len(v) == 1 else v
-            for k, v in parse_qs(
-                self._parsed.query,
-                keep_blank_values=True
-            ).items()
-        }
+    def __eq__(self, other: object) -> bool:
+        if not isinstance(other, (URL, str)):
+            return NotImplemented
+        return str(self) == str(other)
 
-    @property
-    def path(self) -> str:
-        """ Returns the path of the URL. """
-        return self._parsed.path
+    def __hash__(self) -> int:
+        return hash(self.url)
 
+    def __truediv__(self, part: str) -> "URL":
+        return self.update_path(part, append=True)
+
+    def __getitem__(self, key: str) -> str | list[str] | None:
+        """ Access query parameters directly: url['v']. """
+        return self.query.get(key)
+
+    # Properties
     @property
     def url(self) -> str:
         """ Returns the full URL as a string. """
@@ -811,28 +806,162 @@ class URL:
 
     @property
     def scheme(self) -> str:
-        """ Returns the scheme of the URL. """
+        """ Returns the scheme of the URL (e.g., 'https'). """
         return self._parsed.scheme
 
+    @property
+    def netloc(self) -> str:
+        """ Returns the network location part (e.g., 'user:pass@host:port'). """
+        return self._parsed.netloc
+
+    @property
+    def host(self) -> str | None:
+        """ Returns the hostname (netloc without port or auth). """
+        return self._parsed.hostname
+
+    @property
+    def port(self) -> int | None:
+        """ Returns the port if specified. """
+        return self._parsed.port
+
+    @property
+    def path(self) -> str:
+        """ Returns the path of the URL. """
+        return self._parsed.path
+
+    @property
+    def query(self) -> dict[str, str | list[str]]:
+        """ Returns the query parameters as a dictionary. """
+        return {
+            k: v[0] if len(v) == 1 else v
+            for k, v in parse_qs(self._parsed.query, keep_blank_values=True).items()
+        }
+
+    @property
+    def fragment(self) -> str:
+        """ Returns the fragment (the part after #). """
+        return self._parsed.fragment
+
+    @property
+    def user(self) -> str | None:
+        """ Returns the username if specified. """
+        return self._parsed.username
+
+    @property
+    def password(self) -> str | None:
+        """ Returns the password if specified. """
+        return self._parsed.password
+
+    # Path-specific Properties (Pathlib style)
+    @property
+    def name(self) -> str:
+        """ Returns the last part of the path (e.g., 'bar' or 'image.png'). """
+        return posixpath.basename(self.path.rstrip("/"))
+
+    @property
+    def stem(self) -> str:
+        """ Returns the name without the extension (e.g., 'image'). """
+        return posixpath.splitext(self.name)[0]
+
+    @property
+    def suffix(self) -> str:
+        """ Returns the file extension including the dot (e.g., '.png'). """
+        return posixpath.splitext(self.name)[1]
+
+    @property
+    def parent(self) -> "URL":
+        """ Returns the URL with the last segment of the path removed. """
+        new_path = posixpath.dirname(self.path.rstrip("/"))
+        return self.update_path(new_path or "/")
+
+    # Web-specific Properties
+    @property
+    def origin(self) -> str:
+        """ Returns scheme + netloc (e.g., https://example.com). """
+        return f"{self.scheme}://{self.netloc}"
+
+    @property
+    def request_uri(self) -> str:
+        """ Returns the path, query, and fragment (e.g., /test?v=1#hello). """
+        uri = self.path
+        if self._parsed.query:
+            uri += f"?{self._parsed.query}"
+        if self.fragment:
+            uri += f"#{self.fragment}"
+        return uri
+
+    # Methods
     def human_repr(self) -> str:
         """ Return a more human-readable version of the URL. """
         return unquote(self.url)
 
-    def with_query(
+    def join(self, path: str) -> "URL":
+        """
+        Resolves a relative or absolute path against the current URL.
+
+        Parameters
+        ----------
+        path:
+            The path to join to the URL
+
+        Returns
+        -------
+            The URL with the joined path
+        """
+        return URL(urljoin(self.url, path))
+
+    def clear_query(self) -> "URL":
+        """ Returns the URL with all query parameters removed. """
+        return URL(self._parsed._replace(query=""))
+
+    def update_user(
         self,
-        **params: Any | list[Any] | None  # noqa: ANN401
+        username: str | None,
+        password: str | None = None
     ) -> "URL":
         """
-        Adds query parameters to the URL.
+        Returns a new URL with updated credentials.
+
+        Parameters
+        ----------
+        username:
+            The new username, or None to remove credentials
+        password:
+            The new password, or None to omit password
+
+        Returns
+        -------
+            The URL with updated credentials
+        """
+        host = self._parsed.hostname or ""
+        port = f":{self._parsed.port}" if self._parsed.port else ""
+
+        if username is None:
+            new_netloc = f"{host}{port}"
+        else:
+            auth = username
+            if password:
+                auth += f":{password}"
+            new_netloc = f"{auth}@{host}{port}"
+
+        return URL(self._parsed._replace(netloc=new_netloc))
+
+    def update_query(
+        self,
+        **params: Any | list[Any] | tuple[Any, ...] | None  # noqa: ANN401
+    ) -> "URL":
+        """
+        Updates query parameters to the URL.
 
         Parameters
         ----------
         params:
-            The query parameters to add to the URL
+            The query parameters to update in the URL
+            Use `None` to remove a query parameter
 
         Returns
         -------
-            The URL with the query parameters added
+            The URL with the query parameters updated
         """
         q = parse_qs(self._parsed.query, keep_blank_values=True)
 
@@ -845,10 +974,9 @@ class URL:
                 q[key] = [str(val)]
 
         new_query = urlencode(q, doseq=True)
-        new_parsed = self._parsed._replace(query=new_query)
-        return URL(new_parsed)
+        return URL(self._parsed._replace(query=new_query))
 
-    def with_path(
+    def update_path(
         self,
         path: str,
         *,
@@ -873,20 +1001,18 @@ class URL:
         """
         if append:
             base = self._parsed.path or "/"
-            # posixpath.join handles slashes sensibly for URL paths
-            new_path = posixpath.join(base, path)
+            new_path = posixpath.join(base, path.lstrip("/"))
         else:
             new_path = path
 
         if ensure_leading_slash and not new_path.startswith("/"):
             new_path = "/" + new_path
 
-        new_parsed = self._parsed._replace(path=new_path)
-        return URL(new_parsed)
+        return URL(self._parsed._replace(path=new_path))
 
-    def with_fragment(self, fragment: str | None) -> "URL":
+    def update_fragment(self, fragment: str | None) -> "URL":
         """
-        Adds a fragment to the URL.
+        Updates fragment to the URL.
 
         Parameters
         ----------
@@ -899,33 +1025,33 @@ class URL:
         """
         return URL(self._parsed._replace(fragment=(fragment or "")))
 
-    def with_scheme(self, scheme: str) -> "URL":
+    def update_scheme(self, scheme: str) -> "URL":
         """
-        Adds a scheme to the URL.
+        Updates scheme to the URL.
 
         Parameters
         ----------
         scheme:
-            The scheme to add to the URL
+            The scheme to update in the URL
 
         Returns
         -------
-            The URL with the scheme added
+            The URL with the scheme updated
         """
         return URL(self._parsed._replace(scheme=scheme))
 
-    def with_netloc(self, netloc: str) -> "URL":
+    def update_netloc(self, netloc: str) -> "URL":
         """
-        Adds a netloc to the URL.
+        Updates netloc to the URL.
 
         Parameters
         ----------
         netloc:
-            The netloc to add to the URL
+            The netloc to update in the URL
 
         Returns
         -------
-            The URL with the netloc added
+            The URL with the netloc updated
         """
         return URL(self._parsed._replace(netloc=netloc))
 
