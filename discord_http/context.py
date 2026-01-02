@@ -528,6 +528,8 @@ class Context:
         The locale of the interaction, if any
     guild_locale: LocaleTypes | None
         The locale of the guild, if any
+    entitlements: list[Entitlements]
+        The entitlements associated with the interaction
     """
     def __init__(
         self,
