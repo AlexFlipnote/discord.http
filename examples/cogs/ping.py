@@ -1,17 +1,24 @@
 from discord_http import commands, Client, Context
 
+# This is only for type hinting without causing circular imports
+# Again, this is optional, remove it if you don't want it
+from typing import TYPE_CHECKING
+if TYPE_CHECKING:
+    from ..cog_example import CustomClient
 
 class Ping(commands.Cog):
     pong = commands.SubGroup(name="pong")
 
     def __init__(self, bot):
-        self.bot: Client = bot
+        self.bot: "CustomClient" = bot
 
     @commands.command()
     async def ping(self, ctx: Context):
         """ Ping command """
         return ctx.response.send_message(
-            "pong"
+            # Accessing the hello_world attribute from the bot/client
+            # If you kept the example as-is, this will work
+            self.bot.hello_world
         )
 
     @pong.command(name="ping")
@@ -23,7 +30,7 @@ class Ping(commands.Cog):
 
     @pong.command(name="autocomplete")
     async def ping3(self, ctx: Context, test: str):
-        """ Ping command, but subcommand """
+        """ Ping command, but subcommand of subcommand with autocomplete """
         return ctx.response.send_message(str(test))
 
     @ping3.autocomplete(name="test")
