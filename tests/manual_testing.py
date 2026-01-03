@@ -24,8 +24,8 @@ from discord_http import (
     TextChannel, Attachment, PermissionOverwrite,
     Poll, AutoModRuleEventType, AutoModRuleTriggerType,
     MentionableSelect, ActionRow, SectionComponent,
-    DiscordTimestamp, SeparatorComponent,
-    MessageFlags, TextInputComponent
+    DiscordTimestamp, SeparatorComponent, ChannelType,
+    MessageFlags, TextInputComponent, ChannelSelect
 )
 
 with open("./config.json") as f:
@@ -860,6 +860,11 @@ async def test_ping(ctx: Context):
 
 @client.command()
 async def test_button(ctx: Context):
+    channel_menu = ChannelSelect(
+        channel_types=[ChannelType.guild_text, ChannelType.guild_voice],
+        placeholder="Select a channel...",
+    )
+
     select_menu = Select(
         placeholder="testing...",
         custom_id="test_select::3",
@@ -882,6 +887,7 @@ async def test_button(ctx: Context):
     view = View(
         ActionRow(select_menu),
         ActionRow(multi_select),
+        ActionRow(channel_menu),
         ActionRow(
             Button(label="funny", custom_id="funny:1337"),
             Button(label="modal test", custom_id="test_send_modal_local"),

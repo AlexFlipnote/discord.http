@@ -883,6 +883,8 @@ class ChannelSelect(Select):
 
     Attributes
     ----------
+    channel_types: list[ChannelType]
+        The channel types that can be selected
     placeholder: str | None
         The placeholder text for the channel select menu
     custom_id: str | None
@@ -904,7 +906,7 @@ class ChannelSelect(Select):
     """
     def __init__(
         self,
-        *channels: "ChannelType | BaseChannel",
+        channel_types: ChannelType | int | list[ChannelType | int],
         placeholder: str | None = None,
         custom_id: str | None = None,
         min_values: int | None = 1,
@@ -913,7 +915,7 @@ class ChannelSelect(Select):
         disabled: bool = False,
         label: str | None = None,
         description: str | None = None,
-        required: bool = False
+        required: bool = False,
     ):
         super().__init__(
             _type=ComponentType.channel_select,
@@ -927,13 +929,14 @@ class ChannelSelect(Select):
             required=required
         )
 
-        self._channel_types = []
+        if not isinstance(channel_types, list):
+            channel_types = [channel_types]
 
-        for c in channels:
-            if isinstance(c, ChannelType):
-                self._channel_types.append(int(c))
-            else:
-                self._channel_types.append(int(c.type))
+        # Reason for types is to make sure the ints are valid ChannelTypes
+        self.channel_types = [
+            ChannelType(int(c)) for c in channel_types
+            if isinstance(c, (ChannelType, int))
+        ]
 
         if isinstance(default_values, list):
             self._default_values = [
@@ -942,12 +945,12 @@ class ChannelSelect(Select):
             ]
 
     def __repr__(self) -> str:
-        return f"<ChannelSelect custom_id='{self.custom_id}'>"
+        return f"<ChannelSelect custom_id='{self.custom_id}' channel_types={self.channel_types}>"
 
     def to_dict(self) -> dict:
         """ Returns a dict representation of the channel select menu. """
         payload = super().to_dict()
-        payload["channel_types"] = self._channel_types
+        payload["channel_types"] = [int(c) for c in self.channel_types]
         return payload
 
 
