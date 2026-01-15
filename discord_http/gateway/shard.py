@@ -831,8 +831,12 @@ class Shard:
             The event data
         """
         data: dict = event.get("d", {})
+        new_name = name.lower()
 
         if not data:
+            return
+
+        if not self.bot.has_any_dispatch(new_name):
             return
 
         if self.debug_events:
@@ -848,7 +852,6 @@ class Shard:
             return
 
         # Then try normal parsing
-        new_name = name.lower()
         parser_method: Callable | Literal[False] | None = self._parser_cache.get(new_name)
 
         if parser_method is None:
