@@ -104,7 +104,9 @@ class HTTPClient:
         self.session = HTTPSession(
             connector=aiohttp.TCPConnector(limit=0),
             timeout=aiohttp.ClientTimeout(total=60),
-            cookie_jar=aiohttp.DummyCookieJar()
+            cookie_jar=aiohttp.DummyCookieJar(),
+            # orjson.dumps returns bytes, but aiohttp expects str
+            json_serialize=lambda obj: orjson.dumps(obj).decode("utf-8")
         )
 
     async def _close_session(self) -> None:
@@ -187,19 +189,23 @@ class HTTPClient:
             )
 
         async with self.session.request(method.upper(), str(url), **kwargs) as res:
-            try:
-                r = await getattr(res, res_method.lower())()
-            except ContentTypeError:
-                if res_method == "json":
-                    try:
-                        r = orjson.loads(await res.text())
-                    except orjson.JSONDecodeError:
-                        # Give up trying, something is really wrong...
-                        r = await res.text()
-                        res_method = "text"
-                else:
+            match res_method:
+                case "read":
+                    r = await res.read()
+
+                case "text":
                     r = await res.text()
-                    res_method = "text"
+
+                case "json":
+                    try:
+                        r = await res.json(loads=orjson.loads)
+                    except ContentTypeError:
+                        try:
+                            r = orjson.loads(await res.text())
+                        except orjson.JSONDecodeError:
+                            # Give up trying, something is really wrong...
+                            r = await res.text()
+                            res_method = "text"
 
             return HTTPResponse(
                 status=res.status,
@@ -341,11 +347,16 @@ class DiscordAPI:
         self.http: HTTPClient = HTTPClient()
 
         self._buckets: dict[str, Ratelimit] = {}
-        self._headers: str = "discord.http/{} Python/{} aiohttp/{}".format(
-            __version__,
-            ".".join(str(i) for i in sys.version_info[:3]),
-            aiohttp.__version__
-        )
+
+        self._default_headers: dict[str, str] = {
+            "User-Agent": "discord.http/{} Python/{} aiohttp/{}".format(
+                __version__,
+                ".".join(str(i) for i in sys.version_info[:3]),
+                aiohttp.__version__
+            ),
+            "Authorization": f"Bot {self.token}",
+            "Content-Type": "application/json"
+        }
 
     def _clear_old_ratelimits(self) -> None:
         if len(self._buckets) <= 256:
@@ -462,20 +473,20 @@ class DiscordAPI:
         `RuntimeError`
             Unreachable code, reached max tries (5)
         """
-        if "headers" not in kwargs:
-            kwargs["headers"] = {}
+        headers = {
+            **self._default_headers,  # Grab default headers
+            **kwargs.pop("headers", {})  # Merge with extra headers if any
+        }
 
-        if "Authorization" not in kwargs["headers"]:
-            kwargs["headers"]["Authorization"] = f"Bot {self.token}"
-
-        if res_method == "json" and "Content-Type" not in kwargs["headers"]:
-            kwargs["headers"]["Content-Type"] = "application/json"
-
-        kwargs["headers"]["User-Agent"] = self._headers
+        if res_method != "json":
+            headers.pop("Content-Type", None)
 
         reason = kwargs.pop("reason", None)
         if reason:
-            kwargs["headers"]["X-Audit-Log-Reason"] = url_quote(reason)
+            headers["X-Audit-Log-Reason"] = url_quote(reason)
+
+        # Set the headers after modifications
+        kwargs["headers"] = headers
 
         api_url = self.api_url
         if kwargs.pop("webhook", False):

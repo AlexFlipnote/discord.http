@@ -6,8 +6,9 @@ import sys
 import time
 import zlib
 
+from collections.abc import Callable
 from datetime import datetime
-from typing import Any, TYPE_CHECKING, overload
+from typing import Any, TYPE_CHECKING, overload, Literal
 
 from .. import utils
 from ..object import Snowflake
@@ -32,6 +33,13 @@ __all__ = (
 
 
 class ShardEventPayload:
+    __slots__ = (
+        "close_type",
+        "exception",
+        "reason",
+        "shard",
+    )
+
     def __init__(
         self,
         shard: "Shard",
@@ -66,6 +74,15 @@ class ShardEventPayload:
 
 
 class GatewayRatelimiter:
+    __slots__ = (
+        "lock",
+        "max",
+        "per",
+        "remaining",
+        "shard_id",
+        "window",
+    )
+
     def __init__(
         self,
         shard_id: int,
@@ -81,25 +98,25 @@ class GatewayRatelimiter:
         self.lock: asyncio.Lock = asyncio.Lock()
 
     def is_ratelimited(self) -> bool:
-        current = time.time()
+        current = time.monotonic()
         if current > self.window + self.per:
             return False
         return self.remaining == 0
 
     def get_delay(self) -> float:
-        current = time.time()
+        current = time.monotonic()
 
+        # Reset the window if the period has passed
         if current > self.window + self.per:
             self.remaining = self.max
-
-        if self.remaining == self.max:
             self.window = current
 
-        if self.remaining == 0:
-            return self.per - (current - self.window)
+        if self.remaining > 0:
+            self.remaining -= 1
+            return 0.0
 
-        self.remaining -= 1
-        return 0.0
+        # Return how much time is left until the window resets
+        return self.per - (current - self.window)
 
     async def block(self) -> None:
         async with self.lock:
@@ -107,13 +124,25 @@ class GatewayRatelimiter:
             if retry_after:
                 _log.warning(
                     "WebSocket ratelimit hit on ShardID "
-                    f"{self.shard_id}, waiting {round(retry_after, 2)}s..."
+                    f"{self.shard_id}, waiting {retry_after:.2f}s..."
                 )
                 await asyncio.sleep(retry_after)
                 _log.info(f"WebSocket ratelimit released on ShardID {self.shard_id}")
 
 
 class Status:
+    __slots__ = (
+        "_last_ack",
+        "_last_heartbeat",
+        "_last_recv",
+        "_last_send",
+        "gateway",
+        "latency",
+        "sequence",
+        "session_id",
+        "shard_id",
+    )
+
     def __init__(self, shard_id: int):
         self.shard_id = shard_id
 
@@ -240,6 +269,12 @@ class Shard:
         self._close_code: int | None = None
         self._last_activity: datetime = utils.utcnow()
 
+        self._parser_cache = {}
+        self._special_handlers = {
+            "GUILD_CREATE": self._parse_guild_create,
+            "GUILD_DELETE": self._parse_guild_delete,
+        }
+
     @property
     def url(self) -> str:
         """ Returns the websocket url for the client. """
@@ -337,14 +372,15 @@ class Shard:
         if type(raw_msg) is bytes:
             self._buffer.extend(raw_msg)
 
+            # Discord's zlib-stream suffix
             if len(raw_msg) < 4 or raw_msg[-4:] != b"\x00\x00\xff\xff":
                 return
 
-            raw_msg = self._zlib.decompress(self._buffer)
-            raw_msg = raw_msg.decode("utf-8")
-            self._buffer = bytearray()
-
-        msg: dict = orjson.loads(raw_msg)
+            decompressed_bytes = self._zlib.decompress(self._buffer)
+            msg: dict = orjson.loads(decompressed_bytes)
+            self._buffer.clear()
+        else:
+            msg: dict = orjson.loads(raw_msg)
 
         event = msg.get("t")
 
@@ -612,7 +648,9 @@ class Shard:
             kwargs = {
                 "max_msg_size": 0,
                 "timeout": 30.0,
-                "headers": {"User-Agent": self.bot.state._headers},
+                "headers": {
+                    "User-Agent": self.bot.state._default_headers["User-Agent"]
+                },
                 "autoclose": False,
                 "compress": 0,
             }
@@ -792,7 +830,6 @@ class Shard:
         event:
             The event data
         """
-        new_name = name.lower()
         data: dict = event.get("d", {})
 
         if not data:
@@ -801,22 +838,30 @@ class Shard:
         if self.debug_events:
             self.bot.dispatch("raw_socket_received", event)
 
-        parse_event = getattr(self.parser, new_name, None)
-        if not parse_event:
+        # First check special shard-level overrides
+        if name in self._special_handlers:
+            handler = self._special_handlers[name]
+            if asyncio.iscoroutinefunction(handler):
+                await handler(data)
+            else:
+                handler(data)
             return
 
-        match name:
-            case "GUILD_CREATE":
-                await self._parse_guild_create(data)
+        # Then try normal parsing
+        new_name = name.lower()
+        parser_method: Callable | Literal[False] | None = self._parser_cache.get(new_name)
 
-            case "GUILD_DELETE":
-                self._parse_guild_delete(data)
+        if parser_method is None:
+            # Store as False if not found to avoid repeated lookups
+            # Pyright likes to complain here, but the type above is correct
+            parser_method = getattr(self.parser, new_name, False)  # pyright: ignore[reportAssignmentType]
+            self._parser_cache[new_name] = parser_method
 
-            case _:  # Any other event that does not need special handling
-                try:
-                    self._send_dispatch(new_name, *parse_event(data))
-                except Exception as e:
-                    _log.error(f"Error while parsing event {new_name}", exc_info=e)
+        if parser_method:
+            try:
+                self._send_dispatch(new_name, *parser_method(data))
+            except Exception as e:
+                _log.error(f"Error while parsing event {new_name}", exc_info=e)
 
     def _send_dispatch(self, name: str, *args: Any) -> None:  # noqa: ANN401
         try:

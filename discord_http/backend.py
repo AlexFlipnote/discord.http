@@ -44,6 +44,11 @@ class DiscordHTTP(web.Application):
 
         super().__init__(client_max_size=10 * 1024 * 1024)
 
+        # Static values
+        self.verify_key: VerifyKey | None = None
+        if self.bot.public_key:
+            self.verify_key = VerifyKey(bytes.fromhex(self.bot.public_key))
+
         # Silence aiohttp access logs
         logging.getLogger("aiohttp.server").setLevel(logging.ERROR)
         logging.getLogger("aiohttp.access").setLevel(logging.ERROR)
@@ -54,18 +59,16 @@ class DiscordHTTP(web.Application):
 
         This should NOT be modified, unless you know what you're doing
         """
-        if not self.bot.public_key:
-            raise HTTPUnauthorized(text="invalid public key")
+        if not self.verify_key:
+            raise HTTPUnauthorized(text="invalid public key, cannot verify request")
 
-        verify_key = VerifyKey(bytes.fromhex(self.bot.public_key))
         signature: str = request.headers.get("X-Signature-Ed25519", "")
         timestamp: str = request.headers.get("X-Signature-Timestamp", "")
 
         try:
             data = await request.read()
-            body = data.decode("utf-8")
-            verify_key.verify(
-                f"{timestamp}{body}".encode(),
+            self.verify_key.verify(
+                timestamp.encode() + data,
                 bytes.fromhex(signature)
             )
         except BadSignatureError:
