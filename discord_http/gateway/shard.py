@@ -273,6 +273,7 @@ class Shard:
         self._special_handlers = {
             "GUILD_CREATE": self._parse_guild_create,
             "GUILD_DELETE": self._parse_guild_delete,
+            "GUILD_MEMBERS_CHUNK": self._parse_guild_members_chunk,
         }
 
     @property
@@ -836,9 +837,6 @@ class Shard:
         if not data:
             return
 
-        if not self.bot.has_any_dispatch(new_name):
-            return
-
         if self.debug_events:
             self.bot.dispatch("raw_socket_received", event)
 
@@ -849,6 +847,10 @@ class Shard:
                 await handler(data)
             else:
                 handler(data)
+            return
+
+        # After special handlers, check if anyone is listening to the event
+        if not self.bot.has_any_dispatch(new_name):
             return
 
         # Then try normal parsing
@@ -911,6 +913,13 @@ class Shard:
             event_name = "guild_delete"
 
         self._send_dispatch(event_name, guild)
+
+    async def _parse_guild_members_chunk(self, data: dict) -> None:
+        result = self.parser.guild_members_chunk(data)
+
+        # If the user IS actually listening to the event, dispatch it
+        if self.bot.has_any_dispatch("guild_members_chunk"):
+            self._send_dispatch("guild_members_chunk", *result)
 
     def connect(self) -> None:
         """ Connect the websocket. """
