@@ -157,8 +157,8 @@ class Parser:
             return None
 
         return (
-            self.bot.cache.get_guild(int(guild_id)) or
-            PartialGuild(state=self.bot.state, id=int(guild_id))
+            self.bot.cache.get_guild(guild_id) or
+            PartialGuild(state=self.bot.state, id=guild_id)
         )
 
     def _process_chunk_request(
@@ -220,7 +220,7 @@ class Parser:
         if not guild_id:
             return PartialUser(state=state, id=user_id)
 
-        guild = self._get_guild_or_partial(int(guild_id))
+        guild = self._get_guild_or_partial(guild_id)
         return guild.get_member(user_id) or PartialMember(
             state=state, id=user_id, guild_id=guild.id
         )
@@ -1018,7 +1018,7 @@ class Parser:
         return (ThreadMembersUpdatePayload(state=self.bot.state, data=data),)
 
     def _message(self, data: dict) -> Message:
-        guild_id = utils.get_int(data, "guild_id")
+        guild_id = int(data["guild_id"]) if "guild_id" in data else None
 
         return Message(
             state=self.bot.state,
@@ -1530,7 +1530,7 @@ class Parser:
         ValueError
             If the guild id is not provided by Discord.
         """
-        guild_id = utils.get_int(data, "guild_id")
+        guild_id = int(data["guild_id"]) if "guild_id" in data else None
         if guild_id is None:
             raise ValueError("guild_id somehow was not provided by Discord")
 
