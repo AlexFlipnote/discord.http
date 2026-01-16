@@ -849,24 +849,25 @@ class Shard:
                 handler(data)
             return
 
-        # After special handlers, check if anyone is listening to the event
-        if not self.bot.has_any_dispatch(new_name):
-            return
-
-        # Then try normal parsing
-        parser_method: Callable | Literal[False] | None = self._parser_cache.get(new_name)
+        # Check if parser has the method cached
+        parser_method: Callable[[dict], tuple[Any, ...]] | Literal[False] | None = self._parser_cache.get(new_name)
 
         if parser_method is None:
-            # Store as False if not found to avoid repeated lookups
+            # If not, now use getattr to get it and cache it if found
             # Pyright likes to complain here, but the type above is correct
             parser_method = getattr(self.parser, new_name, False)  # pyright: ignore[reportAssignmentType]
             self._parser_cache[new_name] = parser_method
 
         if parser_method:
-            try:
-                self._send_dispatch(new_name, *parser_method(data))
-            except Exception as e:
-                _log.error(f"Error while parsing event {new_name}", exc_info=e)
+            # Parse data, this will also cache depending on developer flags
+            payload = parser_method(data)
+
+            # If the developer is listening to the event, dispatch it
+            if self.bot.has_any_dispatch(new_name):
+                try:
+                    self._send_dispatch(new_name, *payload)
+                except Exception as e:
+                    _log.error(f"Error while parsing event {new_name}", exc_info=e)
 
     def _send_dispatch(self, name: str, *args: Any) -> None:  # noqa: ANN401
         try:
