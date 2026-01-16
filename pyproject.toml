@@ -9,7 +9,7 @@ url = "https://github.com/AlexFlipnote/discord.http"
 [project]
 name = "discord.http"
 description = "Python library that handles interactions from Discord POST requests."
-requires-python = ">=3.11.0"
+requires-python = ">=3.11.0, <3.14"
 license = "MIT"
 
 dynamic = ["version"]
