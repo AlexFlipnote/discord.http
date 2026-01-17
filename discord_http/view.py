@@ -2048,6 +2048,11 @@ class LabelComponent(Item):
 
         self.label: str | None = self.component.label or label
         if not isinstance(self.label, str):
+            if self.label is None:
+                raise TypeError(
+                    f"{type(self.component)} is being used inside a LabelComponent, but has no label set. "
+                    "(Provide one via the 'label' parameter)"
+                )
             raise TypeError(f"Label for {type(self.component)} must be provided and be a string")
 
         self.description: str | None = self.component.description or description
