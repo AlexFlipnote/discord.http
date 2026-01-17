@@ -59,6 +59,10 @@ class PartialRole(PartialBase):
         """ Returns a string that mentions the role. """
         return f"<@&{self.id}>"
 
+    def is_default_role(self) -> bool:
+        """ Returns whether the role is the default @everyone role. """
+        return self.id == self.guild_id
+
     async def add_role(
         self,
         user_id: Snowflake | int,
