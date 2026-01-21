@@ -619,6 +619,10 @@ class ComponentType(BaseEnum):
 
     checkpoint = 20  # Not sure.. very new value
 
+    radio_group = 21
+    checkbox_group = 22
+    checkbox = 23
+
 
 class SeparatorSpacingType(BaseEnum):
     small = 1

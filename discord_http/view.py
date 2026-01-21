@@ -67,6 +67,9 @@ _components_label = (
     ComponentType.mentionable_select,
     ComponentType.channel_select,
     ComponentType.file_upload,
+    ComponentType.radio_group,
+    ComponentType.checkbox_group,
+    ComponentType.checkbox,
 )
 
 _components_inaccessible = (
@@ -79,6 +82,9 @@ __all__ = (
     "AttachmentComponent",
     "Button",
     "ChannelSelect",
+    "CheckboxComponent",
+    "CheckboxGroupComponent",
+    "ComponentOption",
     "ContainerComponent",
     "FileComponent",
     "FileUploadComponent",
@@ -89,6 +95,7 @@ __all__ = (
     "MentionableSelect",
     "Modal",
     "Premium",
+    "RadioComponent",
     "RoleSelect",
     "SectionComponent",
     "Select",
@@ -1039,6 +1046,230 @@ class TextDisplayComponent(Item):
         return {
             "type": int(self.type),
             "content": self.content
+        }
+
+
+class ComponentOption:
+    """
+    Represents an option for radio and checkbox components.
+
+    Attributes
+    ----------
+    label: str
+        The label of the option
+    value: str
+        The value of the option
+    description: str | None
+        The description of the option
+    default: bool
+        Whether the option is the default selection
+    """
+    def __init__(
+        self,
+        *,
+        label: str,
+        value: str,
+        description: str | None = None,
+        default: bool = False
+    ):
+        self.label = label
+        self.value = value
+        self.description = description
+        self.default = default
+
+    def to_dict(self) -> dict:
+        """ Returns a dict representation of the option. """
+        payload: dict = {
+            "value": str(self.value),
+            "label": str(self.label),
+        }
+
+        if self.default:
+            payload["default"] = True
+
+        if self.description is not None:
+            payload["description"] = str(self.description)
+
+        return payload
+
+
+class RadioComponent(Item):
+    """
+    Represents a radio button component in a modal.
+
+    Attributes
+    ----------
+    options: list[ComponentOption]
+        The options for the radio component
+    custom_id: str
+        The custom ID of the radio component
+    label: str | None
+        The label of the radio component
+    description: str | None
+        The description of the radio component
+    required: bool
+        Whether the radio component is required or not
+    """
+    def __init__(
+        self,
+        *options: "ComponentOption",
+        custom_id: str,
+        label: str | None = None,
+        description: str | None = None,
+        required: bool = True
+    ):
+        super().__init__(type=ComponentType.radio_group)
+        self.options = list(options)
+        self.custom_id: str = custom_id
+        self.required: bool = required
+
+        # Label shortcuts
+        self.label: str | None = label
+        self.description: str | None = description
+
+    def add_item(self, value: str, label: str, description: str | None = None, default: bool = False) -> None:
+        """
+        Add an item to the radio component.
+
+        Parameters
+        ----------
+        value:
+            The value of the option, which will be returned on interaction response
+        label:
+            The label of the option, what the user sees
+        description:
+            The description of the option, additional text shown below the label
+        default:
+            Whether the option is the default selection
+        """
+        self.options.append(ComponentOption(
+            value=value,
+            label=label,
+            description=description,
+            default=default
+        ))
+
+    def to_dict(self) -> dict:
+        """ Returns a dict representation of the radio component. """
+        if len(self.options) < 2:
+            raise ValueError("RadioComponent must have at least 2 options")
+
+        payload = {
+            "type": int(self.type),
+            "custom_id": self.custom_id,
+            "options": [g.to_dict() for g in self.options[:10]]
+        }
+
+        if self.required:
+            payload["required"] = bool(self.required)
+
+        return payload
+
+
+class CheckboxGroupComponent(Item):
+    """
+    Represents a checkbox group component in a modal.
+
+    Attributes
+    ----------
+    options: list[ComponentOption]
+        The options for the checkbox group component
+    custom_id: str
+        The custom ID of the checkbox group component
+    label: str | None
+        The label of the checkbox group component
+    description: str | None
+        The description of the checkbox group component
+    min_values: int
+        The minimum number of values that can be selected
+    max_values: int | None
+        The maximum number of values that can be selected
+    required: bool
+        Whether the checkbox group component is required or not
+    """
+    def __init__(
+        self,
+        *options: ComponentOption,
+        custom_id: str | None = None,
+        label: str | None = None,
+        description: str | None = None,
+        min_values: int = 1,
+        max_values: int | None = None,
+        required: bool = True
+    ):
+        super().__init__(type=ComponentType.checkbox_group)
+        self.custom_id: str = custom_id or _garbage_id()
+        self.options: list[ComponentOption] = list(options)
+        self.label: str | None = label
+        self.description: str | None = description
+        self.min_values: int = min_values
+        self.max_values: int = max_values or len(self.options)
+        self.required: bool = required
+
+    def to_dict(self) -> dict:
+        """ Returns a dict representation of the checkbox group component. """
+        if not (1 <= len(self.options) <= 10):
+            raise ValueError("CheckboxGroupComponent must have between 1 and 10 options")
+
+        payload = {
+            "type": int(self.type),
+            "custom_id": self.custom_id,
+            "options": [o.to_dict() for o in self.options[:10]],
+        }
+
+        if isinstance(self.min_values, int):
+            if not (0 <= self.min_values <= 10):
+                raise ValueError("min_values must be between 0 and 10")
+            payload["min_values"] = self.min_values
+
+        if isinstance(self.max_values, int):
+            if not (1 <= self.max_values <= 10):
+                raise ValueError("max_values must be between 1 and 10")
+            payload["max_values"] = self.max_values
+
+        if self.required:
+            payload["required"] = self.required
+
+        return payload
+
+
+class CheckboxComponent(Item):
+    """
+    Represents a checkbox component in a modal.
+
+    This is a single checkbox component, and returns a boolean value on interaction.
+
+    Attributes
+    ----------
+    custom_id: str
+        The custom ID of the checkbox component
+    label: str | None
+        The label of the checkbox component
+    description: str | None
+        The description of the checkbox component
+    default: bool
+        Whether the checkbox is checked by default
+    """
+    def __init__(
+        self,
+        *,
+        custom_id: str | None = None,
+        label: str | None = None,
+        description: str | None = None,
+        default: bool = False
+    ):
+        super().__init__(type=ComponentType.checkbox)
+        self.custom_id: str = custom_id or _garbage_id()
+        self.label: str | None = label
+        self.description: str | None = description
+        self.default: bool = default
+
+    def to_dict(self) -> dict:
+        """ Returns a dict representation of the checkbox component. """
+        return {
+            "type": int(self.type),
+            "custom_id": self.custom_id,
+            "default": self.default
         }
 
 
@@ -2029,12 +2260,28 @@ class View(InteractionStorage):
 
 
 class LabelComponent(Item):
+    """
+    Represents a label component in a modal.
+
+    Attributes
+    ----------
+    label: str
+        The label of the component
+    description: str | None
+        The description of the component
+    component: TextInputComponent | Select | FileUploadComponent | RadioComponent | CheckboxGroupComponent | CheckboxComponent
+        The component contained within the label
+    """
     def __init__(
         self,
         *,
         label: str | None,
         description: str | None = None,
-        component: TextInputComponent | Select | FileUploadComponent
+        component: (
+            TextInputComponent | Select |
+            FileUploadComponent | RadioComponent | CheckboxGroupComponent |
+            CheckboxComponent
+        )
     ):
         super().__init__(type=ComponentType.label)
 
@@ -2044,7 +2291,7 @@ class LabelComponent(Item):
                 "Only TextInputComponent and Select are allowed"
             )
 
-        self.component: TextInputComponent | Select | FileUploadComponent = component
+        self.component = component
 
         self.label: str | None = self.component.label or label
         if not isinstance(self.label, str):
@@ -2103,7 +2350,11 @@ class Modal(InteractionStorage):
 
     def add_item(
         self,
-        component: TextDisplayComponent | TextInputComponent | Select | FileUploadComponent,
+        component: (
+            TextDisplayComponent | TextInputComponent | Select |
+            FileUploadComponent | RadioComponent | CheckboxGroupComponent |
+            CheckboxComponent
+        ),
         *,
         label: str | None = None,
         description: str | None = None,
