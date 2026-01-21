@@ -896,8 +896,8 @@ class Parser:
         guild_id: int | None = utils.get_int(data, "guild_id")
         channel_id: int = int(data["channel_id"])
         last_pin_timestamp: datetime | None = (
-            utils.parse_time(_last_pin_timestamp)
-            if (_last_pin_timestamp := data.get("last_pin_timestamp")) else None
+            utils.parse_time(last_pin_timestamp_raw)
+            if (last_pin_timestamp_raw := data.get("last_pin_timestamp")) else None
         )
 
         return (
