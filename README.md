@@ -27,9 +27,7 @@ from discord_http import Context, Client
 
 client = Client(
     token="Your bot token here",
-    application_id="Bot application ID",
-    public_key="Bot public key",
-    sync=True
+    sync=True  # Optional, defaults to False
 )
 
 @client.command()

@@ -11,9 +11,7 @@ add your own componenets to the server.
 
   client = Client(
       token="Your bot token here",
-      application_id="Bot application ID",
-      public_key="Bot public key",
-      sync=True
+      sync=True  # Optional, defaults to False
   )
 
 With this simple code, you have the ability to interact with aiohttp API using ``client.backend``.
