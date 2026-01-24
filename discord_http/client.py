@@ -256,7 +256,7 @@ class Client:
         await self.state.http._create_session()
 
         try:
-            client_object = await self.update_me()
+            client = await self.update_me()
         except RuntimeError as e:
             # Make sure the error is readable and stop HTTP server here
             _log.error(e)
@@ -269,7 +269,7 @@ class Client:
         self._ready.set()
 
         if self.has_any_dispatch("ready"):
-            self.dispatch("ready", client_object.bot)
+            self.dispatch("ready", client)
         else:
             _log.info(f"discord.http v{__version__} is now ready")
 
@@ -295,7 +295,7 @@ class Client:
 
         await self.state.http._close_session()
 
-    def _update_ids(self, data: dict) -> None:
+    def _update_command_ids(self, data: dict) -> None:
         for g in data:
             cmd = self.commands.get(g["name"], None)
             if not cmd:
@@ -327,7 +327,7 @@ class Client:
             data = await self.state.fetch_commands(
                 guild_id=self.guild_id
             )
-            self._update_ids(data)
+            self._update_command_ids(data)
 
     async def update_me(self) -> User:
         """ Get's the current application and returns the bot user. """
@@ -463,7 +463,7 @@ class Client:
                 guild_id=g
             )
 
-        self._update_ids(data)
+        self._update_command_ids(data)
 
     @property
     def user(self) -> User:
