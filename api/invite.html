@@ -5,10 +5,10 @@
     <meta name="color-scheme" content="light dark"><meta name="viewport" content="width=device-width, initial-scale=1" />
 <meta content="Invite - discord.http docs" property="og:title"><meta content="Bases: PartialInvite" name="description"><meta content="Bases: PartialInvite" property="og:description"><meta property="og:image" content="/_static/favicon.ico"><meta name="theme-color" content="#14bae4"><meta property="og:locale" content="en_GB"><meta name="keywords" content="discord, http, api, interaction, aiohttp, webhook, slash><meta name="revisit-after" content="2 days"><link rel="index" title="Index" href="../genindex.html"><link rel="search" title="Search" href="../search.html"><link rel="next" title="Member" href="member.html"><link rel="prev" title="Integrations" href="integrations.html">
 
-    <link rel="shortcut icon" href="../_static/favicon.ico"><!-- Generated with Sphinx 8.2.3 and Furo 2025.09.25 -->
+    <link rel="shortcut icon" href="../_static/favicon.ico"><!-- Generated with Sphinx 9.0.4 and Furo 2025.12.19 -->
         <title>Invite - discord.http docs</title>
       <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=03e43079" />
-    <link rel="stylesheet" type="text/css" href="../_static/styles/furo.css?v=580074bf" />
+    <link rel="stylesheet" type="text/css" href="../_static/styles/furo.css?v=7bdb33bb" />
     <link rel="stylesheet" type="text/css" href="../_static/styles/furo-extensions.css?v=8dab3a3b" />
     
     
@@ -295,7 +295,7 @@
 <span id="discord-http-invite-module"></span><h2>discord_http.invite module<a class="headerlink" href="#module-discord_http.invite" title="Link to this heading">¶</a></h2>
 <dl class="py class">
 <dt class="sig sig-object py" id="discord_http.invite.Invite">
-<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">discord_http.invite.</span></span><span class="sig-name descname"><span class="pre">Invite</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">state</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#discord_http.invite.Invite" title="Link to this definition">¶</a></dt>
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">discord_http.invite.</span></span><span class="sig-name descname"><span class="pre">Invite</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">state</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#discord_http.invite.Invite" title="Link to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#discord_http.invite.PartialInvite" title="discord_http.invite.PartialInvite"><code class="xref py py-class docutils literal notranslate"><span class="pre">PartialInvite</span></code></a></p>
 <p>Represents an invite object.</p>
 <dl class="field-list simple">
@@ -416,6 +416,72 @@
 </dl>
 </dd></dl>
 
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.invite.Invite.approximate_presence_count">
+<span class="sig-name descname"><span class="pre">approximate_presence_count</span></span><a class="headerlink" href="#discord_http.invite.Invite.approximate_presence_count" title="Link to this definition">¶</a></dt>
+<dd><p>The approximate number of online members, if applicable.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)">int</a> | None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.invite.Invite.approximate_member_count">
+<span class="sig-name descname"><span class="pre">approximate_member_count</span></span><a class="headerlink" href="#discord_http.invite.Invite.approximate_member_count" title="Link to this definition">¶</a></dt>
+<dd><p>The approximate number of total members, if applicable.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)">int</a> | None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.invite.Invite.roles">
+<span class="sig-name descname"><span class="pre">roles</span></span><a class="headerlink" href="#discord_http.invite.Invite.roles" title="Link to this definition">¶</a></dt>
+<dd><p>The roles a user gets when joining via this invite.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.14)">list</a>[<a class="reference internal" href="role.html#discord_http.role.Role" title="discord_http.role.Role">Role</a>]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.invite.Invite.flags">
+<span class="sig-name descname"><span class="pre">flags</span></span><a class="headerlink" href="#discord_http.invite.Invite.flags" title="Link to this definition">¶</a></dt>
+<dd><p>The flags associated with the invite.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="flags.html#discord_http.flags.GuildInviteFlags" title="discord_http.flags.GuildInviteFlags">GuildInviteFlags</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.invite.Invite.target_type">
+<span class="sig-name descname"><span class="pre">target_type</span></span><a class="headerlink" href="#discord_http.invite.Invite.target_type" title="Link to this definition">¶</a></dt>
+<dd><p>The target type of the invite, if applicable.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="enums.html#discord_http.enums.InviteTargetType" title="discord_http.enums.InviteTargetType">InviteTargetType</a> | None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.invite.Invite.target_user">
+<span class="sig-name descname"><span class="pre">target_user</span></span><a class="headerlink" href="#discord_http.invite.Invite.target_user" title="Link to this definition">¶</a></dt>
+<dd><p>The user of the invite whose stream to display for this invite.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="user.html#discord_http.user.User" title="discord_http.user.User">User</a> | None</p>
+</dd>
+</dl>
+</dd></dl>
+
 <dl class="py method">
 <dt class="sig sig-object py" id="discord_http.invite.Invite.is_vanity">
 <span class="sig-name descname"><span class="pre">is_vanity</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><span class="pre">bool</span></a></span></span><a class="headerlink" href="#discord_http.invite.Invite.is_vanity" title="Link to this definition">¶</a></dt>
@@ -431,7 +497,7 @@
 
 <dl class="py class">
 <dt class="sig sig-object py" id="discord_http.invite.PartialInvite">
-<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">discord_http.invite.</span></span><span class="sig-name descname"><span class="pre">PartialInvite</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">state</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">code</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">channel_id</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">guild_id</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#discord_http.invite.PartialInvite" title="Link to this definition">¶</a></dt>
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">discord_http.invite.</span></span><span class="sig-name descname"><span class="pre">PartialInvite</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">state</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">code</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">channel_id</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">guild_id</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#discord_http.invite.PartialInvite" title="Link to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
 <p>Represents a partial invite object.</p>
 <dl class="field-list simple">
@@ -490,18 +556,18 @@
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="discord_http.invite.PartialInvite.BASE">
-<span class="sig-name descname"><span class="pre">BASE</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'https://discord.gg'</span></em><a class="headerlink" href="#discord_http.invite.PartialInvite.BASE" title="Link to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">BASE</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'https://discord.gg'</span></span><a class="headerlink" href="#discord_http.invite.PartialInvite.BASE" title="Link to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="discord_http.invite.PartialInvite.channel">
-<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">channel</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="channel.html#discord_http.channel.PartialChannel" title="discord_http.channel.PartialChannel"><span class="pre">PartialChannel</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></em><a class="headerlink" href="#discord_http.invite.PartialInvite.channel" title="Link to this definition">¶</a></dt>
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">channel</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="channel.html#discord_http.channel.PartialChannel" title="discord_http.channel.PartialChannel"><span class="pre">PartialChannel</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span><a class="headerlink" href="#discord_http.invite.PartialInvite.channel" title="Link to this definition">¶</a></dt>
 <dd><p>The channel the invite is in.</p>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="discord_http.invite.PartialInvite.delete">
-<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">delete</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">reason</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#discord_http.invite.Invite" title="discord_http.invite.Invite"><span class="pre">Invite</span></a></span></span><a class="headerlink" href="#discord_http.invite.PartialInvite.delete" title="Link to this definition">¶</a></dt>
+<span class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">delete</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">reason</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#discord_http.invite.Invite" title="discord_http.invite.Invite"><span class="pre">Invite</span></a></span></span><a class="headerlink" href="#discord_http.invite.PartialInvite.delete" title="Link to this definition">¶</a></dt>
 <dd><p>Deletes the invite.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -518,7 +584,7 @@
 
 <dl class="py method">
 <dt class="sig sig-object py" id="discord_http.invite.PartialInvite.fetch">
-<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">fetch</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#discord_http.invite.Invite" title="discord_http.invite.Invite"><span class="pre">Invite</span></a></span></span><a class="headerlink" href="#discord_http.invite.PartialInvite.fetch" title="Link to this definition">¶</a></dt>
+<span class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">fetch</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#discord_http.invite.Invite" title="discord_http.invite.Invite"><span class="pre">Invite</span></a></span></span><a class="headerlink" href="#discord_http.invite.PartialInvite.fetch" title="Link to this definition">¶</a></dt>
 <dd><p>Fetches the invite details.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
@@ -532,7 +598,7 @@
 
 <dl class="py property">
 <dt class="sig sig-object py" id="discord_http.invite.PartialInvite.url">
-<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">url</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></em><a class="headerlink" href="#discord_http.invite.PartialInvite.url" title="Link to this definition">¶</a></dt>
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">url</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></span><a class="headerlink" href="#discord_http.invite.PartialInvite.url" title="Link to this definition">¶</a></dt>
 <dd><p>The URL of the invite.</p>
 </dd></dl>
 
@@ -609,6 +675,12 @@
 <li><a class="reference internal" href="#discord_http.invite.Invite.guild_id"><code class="docutils literal notranslate"><span class="pre">Invite.guild_id</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.invite.Invite.channel_id"><code class="docutils literal notranslate"><span class="pre">Invite.channel_id</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.invite.Invite.type"><code class="docutils literal notranslate"><span class="pre">Invite.type</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.invite.Invite.approximate_presence_count"><code class="docutils literal notranslate"><span class="pre">Invite.approximate_presence_count</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.invite.Invite.approximate_member_count"><code class="docutils literal notranslate"><span class="pre">Invite.approximate_member_count</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.invite.Invite.roles"><code class="docutils literal notranslate"><span class="pre">Invite.roles</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.invite.Invite.flags"><code class="docutils literal notranslate"><span class="pre">Invite.flags</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.invite.Invite.target_type"><code class="docutils literal notranslate"><span class="pre">Invite.target_type</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.invite.Invite.target_user"><code class="docutils literal notranslate"><span class="pre">Invite.target_user</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.invite.Invite.is_vanity"><code class="docutils literal notranslate"><span class="pre">Invite.is_vanity()</span></code></a></li>
 </ul>
 </li>
@@ -638,8 +710,8 @@
     </aside>
   </div>
 </div><script src="../_static/documentation_options.js?v=d45e8c67"></script>
-    <script src="../_static/doctools.js?v=9bcbadda"></script>
-    <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../_static/doctools.js?v=fd6eb6e6"></script>
+    <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../_static/scripts/furo.js?v=46bd48cc"></script>
     </body>
 </html>
