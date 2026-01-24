@@ -56,6 +56,8 @@ class Client:
 
     Attributes
     ----------
+    application: Application | None
+        The application object for the bot
     gateway: GatewayClient | None
         The gateway client, if enabled
     commands: dict[str, Command]
@@ -254,7 +256,7 @@ class Client:
         await self.state.http._create_session()
 
         try:
-            client_object = await self._prepare_me()
+            client_object = await self.update_me()
         except RuntimeError as e:
             # Make sure the error is readable and stop HTTP server here
             _log.error(e)
@@ -316,14 +318,6 @@ class Client:
             wrapped, name=f"discord.http/aiohttp: {event_name}"
         )
 
-    async def _prepare_me(self) -> User:
-        """ Gets the bot's user data, mostly used to validate token. """
-        self.application = await self.state.me()
-
-        _log.debug(f"/users/@me verified: {self.user} ({self.user.id})")
-
-        return self.user
-
     async def _prepare_commands(self) -> None:
         """ Only used to sync commands on boot. """
         if self.sync:
@@ -334,6 +328,12 @@ class Client:
                 guild_id=self.guild_id
             )
             self._update_ids(data)
+
+    async def update_me(self) -> User:
+        """ Get's the current application and returns the bot user. """
+        self.application = await self.state.me()
+        _log.debug(f"/applications/@me -> {self.user} ({self.user.id})")
+        return self.user
 
     @property
     def application_id(self) -> int | None:
@@ -470,14 +470,11 @@ class Client:
         """
         Returns the bot's user object.
 
-        Returns
-        -------
-            The bot's user object
-
         Raises
         ------
         `AttributeError`
-            If used before the bot is ready
+            - If used before the bot is ready
+            - If the application does not have a bot user associated with it
         """
         if not self.application:
             raise AttributeError(
@@ -614,7 +611,7 @@ class Client:
         await self.state.http._create_session()
 
         try:
-            await self._prepare_me()
+            await self.update_me()
         except RuntimeError as e:
             # Make sure the error is readable and stop HTTP server here
             _log.error(e)
