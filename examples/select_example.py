@@ -3,8 +3,6 @@ from discord_http import Client, Context, View, Select, ActionRow
 
 client = Client(
     token="BOT_TOKEN",
-    application_id=1337,
-    public_key="PUBLIC_KEY",
     sync=True
 )
 

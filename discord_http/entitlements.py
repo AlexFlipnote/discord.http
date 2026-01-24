@@ -54,7 +54,7 @@ class PartialSKU(PartialBase):
         """
         r = await self._state.query(
             "POST",
-            f"/applications/{self._state.application_id}/entitlements",
+            f"/applications/{self._state.bot.application_id}/entitlements",
             json={
                 "sku_id": str(self.id),
                 "owner_id": str(int(owner_id)),
@@ -127,7 +127,7 @@ class PartialEntitlements(PartialBase):
         """ Fetches the entitlement. """
         r = await self._state.query(
             "GET",
-            f"/applications/{self._state.application_id}/entitlements/{self.id}"
+            f"/applications/{self._state.bot.application_id}/entitlements/{self.id}"
         )
 
         return Entitlements(
@@ -139,7 +139,7 @@ class PartialEntitlements(PartialBase):
         """ Mark the entitlement as consumed. """
         await self._state.query(
             "POST",
-            f"/applications/{self._state.application_id}/entitlements/{self.id}/consume",
+            f"/applications/{self._state.bot.application_id}/entitlements/{self.id}/consume",
             res_method="text"
         )
 
@@ -147,7 +147,7 @@ class PartialEntitlements(PartialBase):
         """ Deletes a test entitlement. """
         await self._state.query(
             "DELETE",
-            f"/applications/{self._state.application_id}/entitlements/{self.id}",
+            f"/applications/{self._state.bot.application_id}/entitlements/{self.id}",
             res_method="text"
         )
 

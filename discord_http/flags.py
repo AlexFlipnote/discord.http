@@ -9,6 +9,7 @@ __all__ = (
     "AttachmentFlags",
     "BaseFlag",
     "ChannelFlags",
+    "GuildInviteFlags",
     "GuildMemberFlags",
     "MessageFlags",
     "PermissionOverwrite",
@@ -179,6 +180,10 @@ class SKUFlags(BaseFlag):
     available = 1 << 2
     guild_subscription = 1 << 7
     user_subscription = 1 << 8
+
+
+class GuildInviteFlags(BaseFlag):
+    is_guest_invite = 1 << 0
 
 
 class GuildMemberFlags(BaseFlag):

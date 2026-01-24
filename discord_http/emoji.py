@@ -196,7 +196,7 @@ class PartialEmoji(PartialBase):
 
         r = await self._state.query(
             "GET",
-            f"/applications/{self._state.application_id}/emojis/{self.id}"
+            f"/applications/{self._state.bot.application_id}/emojis/{self.id}"
         )
 
         return Emoji(
@@ -230,7 +230,7 @@ class PartialEmoji(PartialBase):
         else:
             await self._state.query(
                 "DELETE",
-                f"/applications/{self._state.application_id}/emojis/{self.id}",
+                f"/applications/{self._state.bot.application_id}/emojis/{self.id}",
                 res_method="text"
             )
 
@@ -294,7 +294,7 @@ class PartialEmoji(PartialBase):
 
         r = await self._state.query(
             "PATCH",
-            f"/applications/{self._state.application_id}/emojis/{self.id}",
+            f"/applications/{self._state.bot.application_id}/emojis/{self.id}",
             json={"name": payload["name"]},
         )
 

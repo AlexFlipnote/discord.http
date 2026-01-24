@@ -27,6 +27,7 @@ __all__ = (
     "ForumLayoutType",
     "IntegrationType",
     "InteractionType",
+    "InviteTargetType",
     "InviteType",
     "MFALevel",
     "MessageReferenceType",
@@ -164,10 +165,21 @@ class InviteType(BaseEnum):
     unknown = 3
 
 
+class InviteTargetType(BaseEnum):
+    stream = 1
+    embedded_application = 2
+
+
 class ApplicationCommandType(BaseEnum):
     chat_input = 1
     user = 2
     message = 3
+
+
+class ApplicationEventWebhookStatus(BaseEnum):
+    disabled = 1
+    enabled = 2
+    disabled_by_discord = 3
 
 
 class ReactionType(BaseEnum):

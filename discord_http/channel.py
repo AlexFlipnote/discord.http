@@ -12,7 +12,8 @@ from .emoji import EmojiParser
 from .errors import NotFound
 from .enums import (
     ChannelType, ResponseType, VideoQualityType,
-    SortOrderType, ForumLayoutType, PrivacyLevelType
+    SortOrderType, ForumLayoutType, PrivacyLevelType,
+    InviteTargetType
 )
 from .file import File
 from .flags import PermissionOverwrite, ChannelFlags, Permissions, MessageFlags
@@ -365,6 +366,11 @@ class PartialChannel(PartialBase):
         max_uses: int | None = 0,
         temporary: bool = False,
         unique: bool = False,
+        target_type: InviteTargetType | int | None = None,
+        target_user_id: Snowflake | int | None = None,
+        target_application_id: Snowflake | int | None = None,
+        user_ids: list[Snowflake | int] | None = None,
+        role_ids: list[Snowflake | int] | None = None,
     ) -> "Invite":
         """
         Create an invite for the channel.
@@ -379,6 +385,19 @@ class PartialChannel(PartialBase):
             If the invite should be temporary
         unique:
             If the invite should be unique
+        target_type:
+            The type of target for this voice channel invite
+        target_user_id:
+            The ID of the user whose stream to display for this invite.
+            (Requiresd if target_type is `InviteTargetType.stream`)
+        target_application_id:
+            The ID of the embedded application to open for this invite.
+            (Requiresd if target_type is `InviteTargetType.embedded_application`)
+        user_ids:
+            The users to be able to use this invite.
+            Any users not in this list, will see the invite as "invalid".
+        role_ids:
+            The roles to be able to use this invite
 
         Returns
         -------
@@ -387,15 +406,40 @@ class PartialChannel(PartialBase):
         if isinstance(max_age, timedelta):
             max_age = int(max_age.total_seconds())
 
+        multidata = MultipartData()
+
+        payload = {
+            "max_age": max_age,
+            "max_uses": max_uses,
+            "temporary": temporary,
+            "unique": unique
+        }
+
+        if target_type is not None:
+            payload["target_type"] = int(target_type)
+        if target_user_id is not None:
+            payload["target_user_id"] = str(int(target_user_id))
+        if target_application_id is not None:
+            payload["target_application_id"] = str(int(target_application_id))
+        if role_ids is not None:
+            payload["role_ids"] = [str(int(role_id)) for role_id in role_ids]
+
+        if user_ids is not None:
+            csv_content = "\n".join(str(int(user_id)) for user_id in user_ids)
+            multidata.attach(
+                "target_users_file",
+                f"{csv_content}\n",
+                filename="target_users_file.csv",
+                content_type="text/csv"
+            )
+
+        multidata.attach("payload_json", payload)
+
         r = await self._state.query(
             "POST",
             f"/channels/{self.id}/invites",
-            json={
-                "max_age": max_age,
-                "max_uses": max_uses,
-                "temporary": temporary,
-                "unique": unique
-            }
+            headers={"Content-Type": multidata.content_type},
+            data=multidata.finish()
         )
 
         from .invite import Invite

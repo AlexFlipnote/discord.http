@@ -21,8 +21,6 @@ class CustomClient(Client):
 
 client = CustomClient(
     token="BOT_TOKEN",
-    application_id=1337,
-    public_key="PUBLIC_KEY",
     sync=True
 )
 

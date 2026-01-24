@@ -60,7 +60,14 @@ class DiscordHTTP(web.Application):
         This should NOT be modified, unless you know what you're doing
         """
         if not self.verify_key:
-            raise HTTPUnauthorized(text="invalid public key, cannot verify request")
+            # Probably has not cached yet, but check again
+            if not self.bot.public_key:
+                _log.warning("Public key is not set, cannot validate incoming requests")
+                raise HTTPUnauthorized(text="invalid public key, cannot verify request")
+
+            # Feed the public key
+            _log.debug("Saved public key from bot to cache for request verification")
+            self.verify_key = VerifyKey(bytes.fromhex(self.bot.public_key))
 
         signature: str = request.headers.get("X-Signature-Ed25519", "")
         timestamp: str = request.headers.get("X-Signature-Timestamp", "")

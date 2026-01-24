@@ -23,7 +23,7 @@ from .gateway.flags import Intents
 
 if TYPE_CHECKING:
     from .client import Client
-    from .user import UserClient
+    from .user import Application
 
 MethodTypes = Literal["GET", "POST", "DELETE", "PUT", "HEAD", "PATCH", "OPTIONS"]
 ResMethodTypes = Literal["text", "read", "json"]
@@ -336,7 +336,6 @@ class DiscordAPI:
 
         # Aliases
         self.token: str = self.bot.token
-        self.application_id: int | None = self.bot.application_id
         self.api_version: int = self.bot.api_version or 10
 
         if not isinstance(self.api_version, int):
@@ -585,7 +584,7 @@ class DiscordAPI:
                     raise
             raise RuntimeError("Unreachable code, reached max tries (5)")
 
-    async def me(self) -> "UserClient":
+    async def me(self) -> "Application":
         """
         Fetches the bot's user information.
 
@@ -638,10 +637,10 @@ class DiscordAPI:
                 f"by the application. Denied intents: {denied_intents!r}"
             )
 
-        from .user import UserClient
-        return UserClient(
+        from .user import Application
+        return Application(
             state=self,
-            data=r.response["bot"]
+            data=r.response
         )
 
     async def _app_command_query(
@@ -668,12 +667,14 @@ class DiscordAPI:
         -------
             The response from the request
         """
-        if not self.application_id:
+        app_id = self.bot.application_id
+
+        if not app_id:
             raise ValueError("application_id is required to sync commands")
 
-        url = f"/applications/{self.application_id}/commands"
+        url = f"/applications/{app_id}/commands"
         if guild_id:
-            url = f"/applications/{self.application_id}/guilds/{guild_id}/commands"
+            url = f"/applications/{app_id}/guilds/{guild_id}/commands"
 
         try:
             r = await self.query(method, url, res_method="json", **kwargs)

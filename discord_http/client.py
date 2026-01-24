@@ -30,7 +30,7 @@ from .object import Snowflake
 from .role import PartialRole
 from .soundboard import SoundboardSound, PartialSoundboardSound
 from .sticker import PartialSticker, Sticker
-from .user import User, PartialUser, UserClient
+from .user import User, PartialUser, Application
 from .view import InteractionStorage
 from .voice import PartialVoiceState, VoiceState
 from .webhook import PartialWebhook, Webhook
@@ -77,10 +77,6 @@ class Client:
     ----------
     token: str
         Discord bot token
-    application_id: int | None
-        Application ID of the bot, not the User ID
-    public_key: str | None
-        Public key of the bot, used for validating interactions
     guild_id: int | None
         Guild ID to sync commands to, if not provided, it will sync to global
     sync: bool
@@ -149,9 +145,17 @@ class Client:
         disable_default_get_path: bool = False,
         debug_events: bool = False
     ):
-        self.application_id: int | None = application_id
+        if application_id is not None:
+            _log.warning(
+                "application_id parameter is no longer needed, it will be fetched automatically."
+            )
+        if public_key is not None:
+            _log.warning(
+                "public_key parameter is no longer needed, it will be fetched automatically."
+            )
+
+        self.application: Application | None = None
         self.api_version: int = int(api_version)
-        self.public_key: str | None = public_key
         self.token: str = token
         self.automatic_shards: bool = automatic_shards
         self.guild_id: int | None = guild_id
@@ -186,7 +190,6 @@ class Client:
         self._gateway_cache: "GatewayCacheFlags | None" = gateway_cache
         self._ready: asyncio.Event | None = asyncio.Event()
         self._shards_ready: asyncio.Event | None = asyncio.Event()
-        self._user_object: UserClient | None = None
 
         self._context: Callable[["Client", dict], Context] = Context
 
@@ -264,7 +267,7 @@ class Client:
         self._ready.set()
 
         if self.has_any_dispatch("ready"):
-            self.dispatch("ready", client_object)
+            self.dispatch("ready", client_object.bot)
         else:
             _log.info(f"discord.http v{__version__} is now ready")
 
@@ -313,9 +316,10 @@ class Client:
             wrapped, name=f"discord.http/aiohttp: {event_name}"
         )
 
-    async def _prepare_me(self) -> UserClient:
+    async def _prepare_me(self) -> User:
         """ Gets the bot's user data, mostly used to validate token. """
-        self._user_object = await self.state.me()
+        self.application = await self.state.me()
+
         _log.debug(f"/users/@me verified: {self.user} ({self.user.id})")
 
         return self.user
@@ -330,6 +334,16 @@ class Client:
                 guild_id=self.guild_id
             )
             self._update_ids(data)
+
+    @property
+    def application_id(self) -> int | None:
+        """ Alias for getting the application ID. """
+        return self.application.id if self.application else None
+
+    @property
+    def public_key(self) -> str | None:
+        """ Alias for getting the public key of the bot. """
+        return self.application.verify_key if self.application else None
 
     def get_shard_by_guild_id(
         self,
@@ -452,7 +466,7 @@ class Client:
         self._update_ids(data)
 
     @property
-    def user(self) -> UserClient:
+    def user(self) -> User:
         """
         Returns the bot's user object.
 
@@ -465,13 +479,18 @@ class Client:
         `AttributeError`
             If used before the bot is ready
         """
-        if not self._user_object:
+        if not self.application:
             raise AttributeError(
                 "User object is not available yet "
                 "(bot is not ready)"
             )
 
-        return self._user_object
+        if not self.application.bot:
+            raise AttributeError(
+                "Application does not have a bot user associated with it."
+            )
+
+        return self.application.bot
 
     @property
     def guilds(self) -> list[Guild | PartialGuild]:
@@ -623,9 +642,6 @@ class Client:
         if not inspect.iscoroutinefunction(func):
             raise TypeError("func must be a coroutine function")
 
-        if not self.application_id:
-            _log.warning("Application ID is not set, some calls might not work.")
-
         self.loop.run_until_complete(
             self._background_task_without_http(func)
         )
@@ -646,12 +662,6 @@ class Client:
         port:
             Port to use, if not provided, it will use `8080`
         """
-        if not self.application_id or not self.public_key:
-            raise RuntimeError(
-                "Application ID or/and Public Key is not provided, "
-                "please provide them when initializing the client server."
-            )
-
         self.backend.on_startup.append(self._prepare_bot)
         self.backend.on_cleanup.append(self.__cleanup)
         self.backend.start(host=host, port=port)
@@ -1193,6 +1203,12 @@ class Client:
             id=channel_id,
             guild_id=guild_id
         )
+
+    async def fetch_current_application(self) -> Application:
+        """ Fetches and update cache of the current application object. """
+        app = await self.state.me()
+        self.application = app
+        return app
 
     async def fetch_channel(
         self,

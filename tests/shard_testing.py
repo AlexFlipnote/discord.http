@@ -18,8 +18,6 @@ with open("./config.json") as f:
 
 client = Client(
     token=config["token"],
-    application_id=config["application_id"],
-    public_key=config["public_key"],
     debug_events=config["debug_events"],
     guild_id=config.get("guild_id", None),
     enable_gateway=True,
