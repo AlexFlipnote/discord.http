@@ -270,6 +270,38 @@ class Asset:
         )
 
     @classmethod
+    def _from_application_image(
+        cls,
+        state: "DiscordAPI",
+        app_id: int,
+        image: str
+    ) -> Self:
+        animated = image.startswith("a_")
+        format_ = "gif" if animated else "png"
+        return cls(
+            state=state,
+            url=f"{cls.BASE}/app-icons/{app_id}/{image}.{format_}?size=1024",
+            key=image,
+            animated=animated,
+        )
+
+    @classmethod
+    def _from_application_asset(
+        cls,
+        state: "DiscordAPI",
+        app_id: int,
+        image: str
+    ) -> Self:
+        animated = image.startswith("a_")
+        format_ = "gif" if animated else "png"
+        return cls(
+            state=state,
+            url=f"{cls.BASE}/app-assets/{app_id}/{image}.{format_}?size=1024",
+            key=image,
+            animated=animated,
+        )
+
+    @classmethod
     def _from_scheduled_event_cover_image(
         cls,
         state: "DiscordAPI",

@@ -27,6 +27,7 @@ __all__ = (
     "ForumLayoutType",
     "IntegrationType",
     "InteractionType",
+    "InviteTargetType",
     "InviteType",
     "MFALevel",
     "MessageReferenceType",
@@ -164,10 +165,21 @@ class InviteType(BaseEnum):
     unknown = 3
 
 
+class InviteTargetType(BaseEnum):
+    stream = 1
+    embedded_application = 2
+
+
 class ApplicationCommandType(BaseEnum):
     chat_input = 1
     user = 2
     message = 3
+
+
+class ApplicationEventWebhookStatus(BaseEnum):
+    disabled = 1
+    enabled = 2
+    disabled_by_discord = 3
 
 
 class ReactionType(BaseEnum):
@@ -618,6 +630,10 @@ class ComponentType(BaseEnum):
     file_upload = 19
 
     checkpoint = 20  # Not sure.. very new value
+
+    radio_group = 21
+    checkbox_group = 22
+    checkbox = 23
 
 
 class SeparatorSpacingType(BaseEnum):

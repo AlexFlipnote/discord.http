@@ -4,15 +4,19 @@ from . import utils
 from .asset import Asset
 from .colour import Colour
 from .embeds import Embed
-from .enums import DefaultAvatarType, DisplayNameEffectType, DisplayNameFontType
+from .enums import (
+    DefaultAvatarType, DisplayNameEffectType, DisplayNameFontType,
+    ApplicationEventWebhookStatus
+)
 from .file import File
-from .flags import UserFlags, MessageFlags
+from .flags import UserFlags, MessageFlags, ApplicationFlags
 from .mentions import AllowedMentions
 from .object import PartialBase, Snowflake
 from .response import ResponseType, MessageResponse
 from .view import View
 
 if TYPE_CHECKING:
+    from .entitlements import PartialSKU
     from .channel import DMChannel
     from .guild import Guild, PartialGuild
     from .http import DiscordAPI
@@ -21,13 +25,13 @@ if TYPE_CHECKING:
 MISSING = utils.MISSING
 
 __all__ = (
+    "Application",
     "AvatarDecoration",
     "DisplayNameStyles",
     "Nameplate",
     "PartialUser",
     "PrimaryGuild",
     "User",
-    "UserClient",
 )
 
 
@@ -192,6 +196,14 @@ class PartialUser(PartialBase):
         """ Returns a string that allows you to mention the user. """
         return f"<@!{self.id}>"
 
+    @property
+    def default_avatar(self) -> Asset:
+        """ Returns the default avatar of the user. """
+        return Asset._from_default_avatar(
+            self._state,
+            (self.id >> 22) % len(DefaultAvatarType)
+        )
+
     async def send(
         self,
         content: str | None = MISSING,
@@ -305,12 +317,58 @@ class PartialUser(PartialBase):
             data=r.response
         )
 
-    @property
-    def default_avatar(self) -> Asset:
-        """ Returns the default avatar of the user. """
-        return Asset._from_default_avatar(
-            self._state,
-            (self.id >> 22) % len(DefaultAvatarType)
+    async def edit(
+        self,
+        *,
+        username: str | None = MISSING,
+        avatar: bytes | None = MISSING,
+        banner: bytes | None = MISSING,
+    ) -> "User":
+        """
+        Edit the user (only works for the current bot).
+
+        Parameters
+        ----------
+        username:
+            The username to change the user to
+        avatar:
+            New avatar for the user
+        banner:
+            New banner for the user
+
+        Returns
+        -------
+            The user that was edited
+        """
+        if self.id != self._state.bot.user.id:
+            raise TypeError("Can only edit the bot user.")
+
+        payload: dict[str, Any] = {}
+
+        if username is not MISSING:
+            payload["username"] = username
+
+        if avatar is not MISSING:
+            if avatar is not None:
+                payload["avatar"] = utils.bytes_to_base64(avatar)
+            else:
+                payload["avatar"] = None
+
+        if banner is not MISSING:
+            if banner is not None:
+                payload["banner"] = utils.bytes_to_base64(banner)
+            else:
+                payload["banner"] = None
+
+        r = await self._state.query(
+            "PATCH",
+            "/users/@me",
+            json=payload
+        )
+
+        return User(
+            state=self._state,
+            data=r.response
         )
 
 
@@ -348,6 +406,8 @@ class User(PartialUser):
         The primary guild of the user (aka. clan), if any
     display_name_styles: DisplayNameStyles | None
         The display name style of the user, if any
+    verified: bool
+        Whether the user is verified (usually for bots)
     """
     def __init__(
         self,
@@ -363,6 +423,7 @@ class User(PartialUser):
         self.name: str = data["username"]
         self.bot: bool = data.get("bot", False)
         self.system: bool = data.get("system", False)
+        self.verified: bool = data.get("verified", False)
 
         # This section is ONLY here because bots still have a discriminator
         self.discriminator: str | None = data.get("discriminator")
@@ -474,7 +535,7 @@ class User(PartialUser):
         return self.avatar_decoration
 
 
-class UserClient(User):
+class Application(PartialBase):
     """
     Represents a user client object.
 
@@ -489,60 +550,80 @@ class UserClient(User):
         state: "DiscordAPI",
         data: dict
     ):
-        super().__init__(state=state, data=data)
+        super().__init__(id=int(data["id"]))
+        self._state = state
 
-        self.verified: bool = data.get("verified", False)
+        self.name: str = data["name"]
+        self.icon: Asset | None = None
+        self.description: str | None = data.get("description")
+        self.rpc_origins: list[str] = data.get("rpc_origins", [])
+        self.bot_public: bool = data.get("bot_public", False)
+        self.bot_require_code_grant: bool = data.get("bot_require_code_grant", False)
+        self.bot: User | None = None
+        self.terms_of_service_url: str | None = data.get("terms_of_service_url")
+        self.privacy_policy_url: str | None = data.get("privacy_policy_url")
+        self.owner: PartialUser | None = None
+        self.verify_key: str = data.get("verify_key", "")
+        self.guild: "PartialGuild | None" = None
+        self.primary_sku: "PartialSKU | None" = None
+        self.slug: str | None = data.get("slug")
+        self.cover_image: Asset | None = None
+        self.flags: ApplicationFlags = ApplicationFlags(data.get("flags", 0))
+        self.approximate_guild_count: int | None = data.get("approximate_guild_count")
+        self.approximate_user_install_count: int | None = data.get("approximate_user_install_count")
+        self.approximate_user_authorization_count: int | None = data.get("approximate_user_authorization_count")
+        self.redirect_uris: list[str] = data.get("redirect_uris", [])
+        self.interactions_endpoint_url: str | None = data.get("interactions_endpoint_url")
+        self.role_connections_verification_url: str | None = data.get("role_connections_verification_url")
+        self.event_webhooks_url: str | None = data.get("event_webhooks_url")
+        self.event_webhooks_status: ApplicationEventWebhookStatus = ApplicationEventWebhookStatus(
+            data.get("event_webhooks_status", int(ApplicationEventWebhookStatus.disabled))
+        )
+        self.event_webhooks_types: list[str] = data.get("event_webhooks_types", [])
+        self.tags: list[str] = data.get("tags", [])
+
+        self._from_data(data)
 
     def __repr__(self) -> str:
-        return f"<UserClient id={self.id} name='{self.name}'>"
+        return f"<Application id={self.id} name='{self.name}'>"
 
-    async def edit(
-        self,
-        *,
-        username: str | None = MISSING,
-        avatar: bytes | None = MISSING,
-        banner: bytes | None = MISSING,
-    ) -> "UserClient":
-        """
-        Edit the user.
+    def _from_data(self, data: dict) -> None:
+        if data.get("owner"):
+            self.owner = PartialUser(
+                state=self._state,
+                id=int(data["owner"]["id"])
+            )
 
-        Parameters
-        ----------
-        username:
-            The username to change the user to
-        avatar:
-            New avatar for the user
-        banner:
-            New banner for the user
+        if data.get("bot"):
+            self.bot = User(
+                state=self._state,
+                data=data["bot"]
+            )
 
-        Returns
-        -------
-            The user that was edited
-        """
-        payload: dict[str, Any] = {}
+        if data.get("guild_id"):
+            from .guild import PartialGuild
+            self.guild = PartialGuild(
+                state=self._state,
+                id=int(data["guild_id"])
+            )
 
-        if username is not MISSING:
-            payload["username"] = username
+        if data.get("icon"):
+            self.icon = Asset._from_application_image(
+                self._state,
+                self.id,
+                data["icon"]
+            )
 
-        if avatar is not MISSING:
-            if avatar is not None:
-                payload["avatar"] = utils.bytes_to_base64(avatar)
-            else:
-                payload["avatar"] = None
+        if data.get("cover_image"):
+            self.cover_image = Asset._from_application_image(
+                self._state,
+                self.id,
+                data["cover_image"]
+            )
 
-        if banner is not MISSING:
-            if banner is not None:
-                payload["banner"] = utils.bytes_to_base64(banner)
-            else:
-                payload["banner"] = None
-
-        r = await self._state.query(
-            "PATCH",
-            "/users/@me",
-            json=payload
-        )
-
-        return UserClient(
-            state=self._state,
-            data=r.response
-        )
+        if data.get("primary_sku_id"):
+            from .entitlements import PartialSKU
+            self.primary_sku = PartialSKU(
+                state=self._state,
+                id=int(data["primary_sku_id"])
+            )

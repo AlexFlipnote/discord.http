@@ -3,8 +3,10 @@ from typing import TYPE_CHECKING
 
 from . import utils
 from .channel import PartialChannel
-from .enums import InviteType
+from .enums import InviteType, InviteTargetType
+from .flags import GuildInviteFlags
 from .guild import PartialGuild, Guild
+from .role import Role
 from .user import User
 
 if TYPE_CHECKING:
@@ -157,6 +159,18 @@ class Invite(PartialInvite):
         The ID of the channel the invite is in, if applicable.
     type: InviteType
         The type of the invite.
+    approximate_presence_count: int | None
+        The approximate number of online members, if applicable.
+    approximate_member_count: int | None
+        The approximate number of total members, if applicable.
+    roles: list[Role]
+        The roles a user gets when joining via this invite.
+    flags: GuildInviteFlags
+        The flags associated with the invite.
+    target_type: InviteTargetType | None
+        The target type of the invite, if applicable.
+    target_user: User | None
+        The user of the invite whose stream to display for this invite.
     """
     def __init__(self, *, state: "DiscordAPI", data: dict):
         super().__init__(state=state, code=data["code"])
@@ -170,12 +184,20 @@ class Invite(PartialInvite):
         self.created_at: datetime | None = None
         self.expires_at: datetime | None = None
 
-        self.inviter: "User | None" = None
+        self.inviter: User | None = None
 
         self.guild_id: int | None = (
             utils.get_int(data, "guild_id") or
             utils.get_int(data.get("guild", {}), "id")
         )
+
+        self.approximate_presence_count: int | None = data.get("approximate_presence_count")
+        self.approximate_member_count: int | None = data.get("approximate_member_count")
+
+        self.roles: list[Role] = []
+        self.flags: GuildInviteFlags = GuildInviteFlags.none()
+        self.target_type: InviteTargetType | None = None
+        self.target_user: User | None = None
 
         self.channel_id: int | None = (
             utils.get_int(data, "channel_id") or
@@ -202,6 +224,21 @@ class Invite(PartialInvite):
                 self.guild = Guild(state=self._state, data=data["guild"])
             except KeyError:
                 pass
+
+        if data.get("target_type") is not None:
+            self.target_type = InviteTargetType(data["target_type"])
+
+        if data.get("target_user"):
+            self.target_user = User(state=self._state, data=data["target_user"])
+
+        if data.get("flags"):
+            self.flags = GuildInviteFlags(data["flags"])
+
+        if data.get("roles") and self.guild:
+            self.roles = [
+                Role(state=self._state, guild=self.guild, data=role_data)
+                for role_data in data["roles"]
+            ]
 
     def is_vanity(self) -> bool:
         """ Whether the invite is a vanity invite. """

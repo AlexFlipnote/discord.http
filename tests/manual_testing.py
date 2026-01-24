@@ -33,8 +33,6 @@ with open("./config.json") as f:
 
 client = Client(
     token=config["token"],
-    application_id=config["application_id"],
-    public_key=config["public_key"],
     debug_events=config["debug_events"],
     guild_id=config.get("guild_id", None),
     sync=True,
@@ -89,6 +87,25 @@ async def after_test_loop():
 @test_loop_static_1.before_loop()
 async def test_loop_static_before():
     print("Started static time test before loop")
+
+
+@client.command()
+async def test_create_invite(
+    ctx: Context,
+    user_id: str | None = None,
+    role: Role | None = None
+):
+    """ Create a test invite """
+    kwargs = {}
+
+    if user_id:
+        kwargs["user_ids"] = [int(user_id)]
+    if role:
+        kwargs["role_ids"] = [role]
+
+    invite = await ctx.channel.create_invite(**kwargs)
+
+    return ctx.response.send_message(invite.url)
 
 
 @client.command()
@@ -351,6 +368,16 @@ async def test_create_webhook(ctx: Context, name: str, avatar: Attachment | None
 
 
 @client.command()
+async def test_me(ctx: Context):
+    """ Test fetching bot user """
+    user = ctx.bot.user
+    return ctx.response.send_message(
+        f"Me: {user} | ID: {user.id} "
+        f"(Created: {user.created_at} / Verified: {user.verified})"
+    )
+
+
+@client.command()
 async def test_fetch_members(ctx: Context, guild_id: str):
     if not guild_id.isdigit():
         return ctx.response.send_message("Guild ID must be a number")
@@ -456,6 +483,12 @@ async def test_invite(ctx: Context, code: str):
     """ Check if an invite is valid """
     pi = ctx.bot.get_partial_invite(code)
     invite = await pi.fetch()
+    print((
+        invite.code,
+        invite.roles,
+        invite.inviter,
+        invite.flags
+    ))
     return ctx.response.send_message(
         f"Invite: {invite} with {invite.uses} uses, made by {invite.inviter}"
     )

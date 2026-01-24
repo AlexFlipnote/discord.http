@@ -2,8 +2,6 @@ from discord_http import Context, Client, Member, User, Message
 
 client = Client(
     token="BOT_TOKEN",
-    application_id=1337,
-    public_key="PUBLIC_KEY",
     sync=True
 )
 

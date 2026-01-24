@@ -2776,7 +2776,7 @@ class Guild(PartialGuild):
                 r for r in self.roles
                 if isinstance(r, Role) and
                 r.bot_id and
-                r.bot_id == self._state.application_id
+                r.bot_id == self._state.bot.application_id
             ),
             None
         )
