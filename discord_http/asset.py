@@ -96,8 +96,14 @@ class Asset:
             The amount of bytes written to the file
         """
         data = await self.fetch()
-        with open(path, "wb") as f:
-            return f.write(data)
+
+        def _sync_write() -> int:
+            with open(path, "wb") as f:
+                return f.write(data)
+
+        return await self._state.bot.loop.run_in_executor(
+            None, _sync_write
+        )
 
     def replace(
         self,
