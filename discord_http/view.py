@@ -1206,6 +1206,28 @@ class CheckboxGroupComponent(Item):
         self.max_values: int = max_values or len(self.options)
         self.required: bool = required
 
+    def add_item(self, value: str, label: str, description: str | None = None, default: bool = False) -> None:
+        """
+        Add an item to the checkbox group component.
+
+        Parameters
+        ----------
+        value:
+            The value of the option, which will be returned on interaction response
+        label:
+            The label of the option, what the user sees
+        description:
+            The description of the option, additional text shown below the label
+        default:
+            Whether the option is selected by default
+        """
+        self.options.append(ComponentOption(
+            label=label,
+            value=value,
+            description=description,
+            default=default
+        ))
+
     def to_dict(self) -> dict:
         """ Returns a dict representation of the checkbox group component. """
         if not (1 <= len(self.options) <= 10):
