@@ -1004,6 +1004,25 @@ Example: <cite>./path/to/file.png</cite></p></li>
 </dd></dl>
 
 <dl class="py method">
+<dt class="sig sig-object py" id="discord_http.view.CheckboxGroupComponent.add_item">
+<span class="sig-name descname"><span class="pre">add_item</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">label</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">description</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">default</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span></span><a class="headerlink" href="#discord_http.view.CheckboxGroupComponent.add_item" title="Link to this definition">¶</a></dt>
+<dd><p>Add an item to the checkbox group component.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>value</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></span>) – The value of the option, which will be returned on interaction response</p></li>
+<li><p><strong>label</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></span>) – The label of the option, what the user sees</p></li>
+<li><p><strong>description</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a> | <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></span>) – The description of the option, additional text shown below the label</p></li>
+<li><p><strong>default</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></a></span>) – Whether the option is selected by default</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></span></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
 <dt class="sig sig-object py" id="discord_http.view.CheckboxGroupComponent.to_dict">
 <span class="sig-name descname"><span class="pre">to_dict</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.14)"><span class="pre">dict</span></a></span></span><a class="headerlink" href="#discord_http.view.CheckboxGroupComponent.to_dict" title="Link to this definition">¶</a></dt>
 <dd><p>Returns a dict representation of the checkbox group component.</p>
@@ -2756,6 +2775,7 @@ Example: <cite>./path/to/file.png</cite></p></li>
 <li><a class="reference internal" href="#discord_http.view.CheckboxGroupComponent.min_values"><code class="docutils literal notranslate"><span class="pre">CheckboxGroupComponent.min_values</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.view.CheckboxGroupComponent.max_values"><code class="docutils literal notranslate"><span class="pre">CheckboxGroupComponent.max_values</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.view.CheckboxGroupComponent.required"><code class="docutils literal notranslate"><span class="pre">CheckboxGroupComponent.required</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.view.CheckboxGroupComponent.add_item"><code class="docutils literal notranslate"><span class="pre">CheckboxGroupComponent.add_item()</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.view.CheckboxGroupComponent.to_dict"><code class="docutils literal notranslate"><span class="pre">CheckboxGroupComponent.to_dict()</span></code></a></li>
 </ul>
 </li>
