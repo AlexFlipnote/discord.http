@@ -1203,7 +1203,7 @@ class CheckboxGroupComponent(Item):
         self.label: str | None = label
         self.description: str | None = description
         self.min_values: int = min_values
-        self.max_values: int = max_values or len(self.options)
+        self.max_values: int | None = max_values
         self.required: bool = required
 
     def add_item(self, value: str, label: str, description: str | None = None, default: bool = False) -> None:
@@ -1232,6 +1232,11 @@ class CheckboxGroupComponent(Item):
         """ Returns a dict representation of the checkbox group component. """
         if not (1 <= len(self.options) <= 10):
             raise ValueError("CheckboxGroupComponent must have between 1 and 10 options")
+
+        if self.max_values is None:
+            # If max_values is not set, set it to the number of options (up to 10)
+            # self.add_item does not automatically update self.max_values
+            self.max_values = min(len(self.options), 10)
 
         payload = {
             "type": int(self.type),
