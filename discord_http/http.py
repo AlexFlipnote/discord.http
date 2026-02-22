@@ -6,7 +6,6 @@ import random
 import sys
 
 from aiohttp.client_exceptions import ContentTypeError
-from collections import deque
 from multidict import CIMultiDictProxy
 from typing import Any, Self, overload, Literal, TypeVar, Generic, TYPE_CHECKING
 from urllib.parse import quote as url_quote
@@ -221,112 +220,66 @@ class Ratelimit:
         self._key: str = key
 
         self.limit: int = 1
-        self.outgoing: int = 0
-        self.remaining = self.limit
+        self.remaining: int = 1
         self.reset_after: float = 0.0
         self.expires: float | None = None
 
+        self._lock: asyncio.Lock = asyncio.Lock()
         self._loop: asyncio.AbstractEventLoop = asyncio.get_running_loop()
-
-        self._lock = asyncio.Lock()
         self._last_request: float = self._loop.time()
-        self._pending_requests: deque[asyncio.Future[Any]] = deque()
 
-    def reset(self) -> None:
-        """ Reset the ratelimit. """
-        self.remaining = self.limit - self.outgoing
-        self.expires = None
-        self.reset_after = 0.0
+    def __repr__(self) -> str:
+        return (
+            f"<Ratelimit key='{self._key}' limit={self.limit} "
+            f"remaining={self.remaining} reset_after={self.reset_after:.2f}>"
+        )
+
+    def is_inactive(self) -> bool:
+        """ Check if the ratelimit is inactive (5 minutes). """
+        return (self._loop.time() - self._last_request) >= 300
 
     def update(self, response: HTTPResponse) -> None:
         """
-        Update the ratelimit with the response headers.
+        Update the ratelimit information from the response headers.
 
         Parameters
         ----------
         response:
-            The HTTP response to update the ratelimit with
+            The HTTPResponse object to update the ratelimit information from
         """
-        self.remaining = int(response.headers.get("x-ratelimit-remaining", 0))
-        self.reset_after = float(response.headers.get("x-ratelimit-reset-after", 0))
+        self._last_request = self._loop.time()
+        headers = response.headers
+        self.limit = int(headers.get("X-RateLimit-Limit", 1))
+        self.remaining = int(headers.get("X-RateLimit-Remaining", 0))
+        self.reset_after = float(headers.get("X-RateLimit-Reset-After", 0))
         self.expires = self._loop.time() + self.reset_after
 
-    def _wake_next(self) -> None:
-        while self._pending_requests:
-            future = self._pending_requests.popleft()
-            if not future.done():
-                future.set_result(None)
-                break
-
-    def _wake(self, count: int = 1) -> None:
-        awaken = 0
-        while self._pending_requests:
-            future = self._pending_requests.popleft()
-            if not future.done():
-                future.set_result(None)
-                awaken += 1
-
-            if awaken >= count:
-                break
-
-    async def _refresh(self) -> None:
-        async with self._lock:
-            _log.debug(
-                f"Ratelimit bucket hit ({self._key}), "
-                f"waiting {self.reset_after}s..."
-            )
-            await asyncio.sleep(self.reset_after)
-            _log.debug(f"Ratelimit bucket released ({self._key})")
-
-        self.reset()
-        self._wake(self.remaining)
-
-    def is_expired(self) -> bool:
-        """ Check if the ratelimit is expired. """
-        return (
-            self.expires is not None and
-            self._loop.time() > self.expires
-        )
-
-    def is_inactive(self) -> bool:
-        """ Check if the ratelimit is inactive. """
-        return (
-            (self._loop.time() - self._last_request) >= 300 and
-            len(self._pending_requests) == 0
-        )
-
-    async def _queue_up(self) -> None:
-        self._last_request = self._loop.time()
-        if self.is_expired():
-            self.reset()
-
-        while self.remaining <= 0:
-            future = self._loop.create_future()
-            self._pending_requests.append(future)
-            try:
-                await future
-            except Exception:
-                future.cancel()
-                if self.remaining > 0 and not future.cancelled():
-                    self._wake_next()
-                raise
-
-        self.remaining -= 1
-        self.outgoing += 1
-
     async def __aenter__(self) -> Self:
-        await self._queue_up()
-        return self
+        # Stay in this loop until a successful token is acquired
+        while True:
+            async with self._lock:
+                now = self._loop.time()
+
+                # Check for bucket reset
+                if self.expires and now > self.expires:
+                    self.remaining = self.limit
+                    self.expires = None
+
+                # If we have remaining tokens, use one and proceed with the request
+                if self.remaining > 0:
+                    self.remaining -= 1
+                    return self
+
+                # No tokens? Calculate wait time
+                wait_time = (self.expires - now) if self.expires else 1.0
+                _log.debug(f"Ratelimit prevented ({self._key}), waiting {max(wait_time, 0):.2f}s...")
+
+            # Sleep outside the lock so others can at least check the state
+            await asyncio.sleep(max(wait_time, 0.1) + 0.1)
 
     async def __aexit__(self, *args) -> None:  # noqa: ANN002
-        self.outgoing -= 1
-        tokens = self.remaining - self.outgoing
-
-        if not self._lock.locked():
-            if tokens <= 0:
-                await self._refresh()
-            elif self._pending_requests:
-                self._wake(tokens)
+        # pyright complained about this not being used, that's why it's here
+        pass
 
 
 class DiscordAPI:
@@ -493,7 +446,8 @@ class DiscordAPI:
 
         retry_codes = retry_codes or []
 
-        ratelimit = self.get_ratelimit(f"{method} {path}")
+        clean_path = path.split("?")[0]  # Remove query parameters for ratelimit bucket key
+        ratelimit = self.get_ratelimit(f"{method} {clean_path}")
 
         http_400_error_table: dict[int, type[HTTPException]] = {
             200000: AutomodBlock,
@@ -516,17 +470,18 @@ class DiscordAPI:
             for tries in range(5):
                 try:
                     r: HTTPResponse = await self.http.request(
-                        method,
-                        f"{api_url}{path}",
+                        method, f"{api_url}{path}",
                         res_method=res_method,
                         **kwargs
                     )
-
-                    _log.debug(f"HTTP {method.upper()} ({r.status}): {path}")
+                    ratelimit.update(r)
+                    _log.debug(
+                        f"HTTP {method.upper()} ({r.status}): {path} | "
+                        f"Ratelimit: {ratelimit.remaining}/{ratelimit.limit} (reset: {ratelimit.reset_after:.2f}s)"
+                    )
 
                     match r.status:
                         case x if x >= 200 and x <= 299:
-                            ratelimit.update(r)
                             return r
 
                         case x if x in retry_codes:
@@ -546,9 +501,9 @@ class DiscordAPI:
                                 # For cases where you're ratelimited by CloudFlare
                                 raise Ratelimited(r)
 
-                            retry_after: float = response["retry_after"]
+                            retry_after: float = response.get("retry_after", 1.0)
                             _log.warning(f"Ratelimit hit ({method.upper()} {path}), waiting {retry_after}s...")
-                            await asyncio.sleep(retry_after)
+                            await asyncio.sleep(retry_after + 0.1)  # Small jitter to ensure the ratelimit has reset
                             continue
 
                         case x if x in (500, 502, 503, 504):
