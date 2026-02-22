@@ -93,7 +93,7 @@ class Typing:
 
     async def do_typing_loop(self) -> None:
         while True:
-            await asyncio.sleep(5)
+            await asyncio.sleep(8)
             await self._send_typing()
 
 
@@ -1358,13 +1358,14 @@ class PartialChannel(PartialBase):
                     await g.delete()
                 except NotFound as e:
                     if e.code == 10008:
-                        pass
+                        continue
                     raise e
 
         if message_ids is not None:
             # Remove duplicates just in case
             message_ids = list(set(message_ids))
-            await _bulk_delete(message_ids)  # type: ignore
+            for i in range(0, len(message_ids), 100):
+                await _bulk_delete(message_ids[i:i + 100])  # type: ignore
             return None
 
         count = 0

@@ -97,7 +97,7 @@ class Colour:
 
         hex_value = hex_value.removeprefix("#")
         if len(hex_value) == 3:
-            hex_value = hex_value * 2
+            hex_value = "".join(c * 2 for c in hex_value)
 
         return cls(int(hex_value, 16))
 
