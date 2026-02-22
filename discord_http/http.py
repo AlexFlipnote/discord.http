@@ -310,15 +310,33 @@ class DiscordAPI:
             "Content-Type": "application/json"
         }
 
+        # Background tasks
+        self.bot.loop.create_task(self._cleanup_loop())
+
+    async def _cleanup_loop(self) -> None:
+        """ A loop that runs every 5 minutes to clean up old ratelimits. """
+        while True:
+            await asyncio.sleep(300)
+            self._clear_old_ratelimits()
+
     def _clear_old_ratelimits(self) -> None:
         if len(self._buckets) <= 256:
+            _log.debug(f"Ratelimit buckets: {len(self._buckets)}, no cleanup needed.")
             return
 
-        for key in [k for k, v in self._buckets.items() if v.is_inactive()]:
+        to_remove = [
+            key for key, bucket in self._buckets.items()
+            if bucket.is_inactive()
+        ]
+
+        for key in to_remove:
             try:
                 del self._buckets[key]
             except KeyError:
                 pass
+
+        if to_remove:
+            _log.debug(f"Cleaned up {len(to_remove)} old ratelimits, {len(self._buckets)} remaining.")
 
     def get_ratelimit(self, key: str) -> Ratelimit:
         """
@@ -337,7 +355,6 @@ class DiscordAPI:
             value = self._buckets[key]
         except KeyError:
             self._buckets[key] = value = Ratelimit(key)
-            self._clear_old_ratelimits()
 
         return value
 
