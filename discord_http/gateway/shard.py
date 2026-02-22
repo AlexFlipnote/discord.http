@@ -562,6 +562,7 @@ class Shard:
         try:
             return await asyncio.wait_for(chunker.wait(), timeout=30.0)
         except TimeoutError:
+            self.parser._chunk_requests.pop(chunker.nonce, None)
             _log.warning(
                 "Timed out while waiting for guild members chunk "
                 f"(guild_id={guild_id}, query={query}, limit={limit})"

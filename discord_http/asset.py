@@ -34,6 +34,13 @@ class Asset:
     BASE = "https://cdn.discordapp.com"
     PROXY = "https://media.discordapp.net"
 
+    __slots__ = (
+        "_state",
+        "animated",
+        "key",
+        "url",
+    )
+
     def __init__(
         self,
         *,

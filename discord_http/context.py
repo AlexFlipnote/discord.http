@@ -176,6 +176,31 @@ class InteractionResponse:
     def __init__(self, parent: "Context"):
         self._parent = parent
 
+    def _call_after_generator(self, call_after: Callable | None) -> None:
+        """
+        Helper function to create a background task for `call_after`.
+
+        Parameters
+        ----------
+        call_after:
+            A coroutine to run after the response is sent
+
+        Raises
+        ------
+        TypeError
+            If `call_after` is not a coroutine
+        """
+        if call_after:
+            if not inspect.iscoroutinefunction(call_after):
+                raise TypeError("call_after must be a coroutine")
+
+            task = self._parent.bot.loop.create_task(
+                self._parent._background_task_manager(call_after),
+                name="discord.http/call_after"
+            )
+            self._parent.bot._background_tasks.add(task)
+            task.add_done_callback(self._parent.bot._background_tasks.discard)
+
     def pong(self) -> dict:
         """ Only used to acknowledge a ping from Discord Developer portal Interaction URL. """
         return {"type": 1}
@@ -210,14 +235,7 @@ class InteractionResponse:
         `TypeError`
             If `call_after` is not a coroutine
         """
-        if call_after:
-            if not inspect.iscoroutinefunction(call_after):
-                raise TypeError("call_after must be a coroutine")
-
-            self._parent.bot.loop.create_task(
-                self._parent._background_task_manager(call_after)
-            )
-
+        self._call_after_generator(call_after)
         return DeferResponse(ephemeral=ephemeral, thinking=thinking, flags=flags)
 
     def send_modal(
@@ -249,14 +267,7 @@ class InteractionResponse:
         if not isinstance(modal, Modal):
             raise TypeError("modal must be a Modal instance")
 
-        if call_after:
-            if not inspect.iscoroutinefunction(call_after):
-                raise TypeError("call_after must be a coroutine")
-
-            self._parent.bot.loop.create_task(
-                self._parent._background_task_manager(call_after)
-            )
-
+        self._call_after_generator(call_after)
         return ModalResponse(modal=modal)
 
     def send_empty(
@@ -276,14 +287,7 @@ class InteractionResponse:
         -------
             The response to the interaction
         """
-        if call_after:
-            if not inspect.iscoroutinefunction(call_after):
-                raise TypeError("call_after must be a coroutine")
-
-            self._parent.bot.loop.create_task(
-                self._parent._background_task_manager(call_after)
-            )
-
+        self._call_after_generator(call_after)
         return EmptyResponse()
 
     def send_message(
@@ -347,13 +351,7 @@ class InteractionResponse:
         `TypeError`
             If `call_after` is not a coroutine
         """
-        if call_after:
-            if not inspect.iscoroutinefunction(call_after):
-                raise TypeError("call_after must be a coroutine")
-
-            self._parent.bot.loop.create_task(
-                self._parent._background_task_manager(call_after)
-            )
+        self._call_after_generator(call_after)
 
         return MessageResponse(
             content=content,
@@ -422,13 +420,7 @@ class InteractionResponse:
         `TypeError`
             If `call_after` is not a coroutine
         """
-        if call_after:
-            if not inspect.iscoroutinefunction(call_after):
-                raise TypeError("call_after must be a coroutine")
-
-            self._parent.bot.loop.create_task(
-                self._parent._background_task_manager(call_after)
-            )
+        self._call_after_generator(call_after)
 
         return MessageResponse(
             content=content,

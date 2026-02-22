@@ -1,5 +1,7 @@
 import io
 
+from pathlib import Path
+
 __all__ = (
     "File",
 )
@@ -24,6 +26,20 @@ class File:
     waveform: str | None
         The waveform data for the file, if applicable.
     """
+
+    __slots__ = (
+        "_filename",
+        "_finalizer",
+        "_original_pos",
+        "_owner",
+        "data",
+        "description",
+        "duration_secs",
+        "spoiler",
+        "title",
+        "waveform",
+    )
+
     def __init__(
         self,
         data: io.BufferedIOBase | str,
@@ -42,30 +58,38 @@ class File:
         self.waveform = waveform
         self._filename = filename
 
-        if isinstance(data, io.IOBase):
+        if isinstance(data, (str, Path)):
+            self._filename = filename or Path(data).name
+            self.data = open(data, "rb")  # noqa: SIM115
+            self._owner = True
+            self._original_pos = 0
+        elif isinstance(data, io.IOBase):
             if not (data.seekable() and data.readable()):
                 raise ValueError(f"File buffer {data!r} must be seekable and readable")
             if not filename:
                 raise ValueError("Filename must be specified when passing a file buffer")
 
-            self.data: io.BufferedIOBase = data
-            self._original_pos = data.tell()
+            self._filename = filename
+            self.data = data
             self._owner = False
+            self._original_pos = data.tell()
         else:
-            if not self._filename:
-                self._filename = data
-            self.data = open(data, "rb")  # noqa: SIM115
-            self._original_pos = 0
-            self._owner = True
-
-        self._closer = self.data.close
-        self.data.close = lambda: None
+            raise TypeError(f"Expected str, Path, or IO object, got {type(data).__name__}")
 
     def __str__(self) -> str:
         return self.filename
 
     def __repr__(self) -> str:
-        return f"<File filename='{self.filename}'>"
+        return f"<File filename={self.filename!r} spoiler={self.spoiler}>"
+
+    def __enter__(self) -> "File":
+        return self
+
+    def __exit__(self, *args) -> None:  # noqa: ANN002
+        self.close()
+
+    def __del__(self) -> None:
+        self.close()
 
     @property
     def filename(self) -> str:
@@ -79,7 +103,6 @@ class File:
 
     def close(self) -> None:
         """ Close the file buffer. """
-        self.data.close = self._closer
         if self._owner:
             self.data.close()
 

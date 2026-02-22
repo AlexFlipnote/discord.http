@@ -207,6 +207,7 @@ class Client:
         self._before_invoke: Callable | None = None
         self._after_invoke: Callable | None = None
         self._waiting_listeners: dict[str, list[tuple[asyncio.Future, Callable]]] = {}
+        self._background_tasks: set[asyncio.Task] = set()
 
         utils.setup_logger(level=self.logging_level)
 
@@ -314,9 +315,13 @@ class Client:
             *args, **kwargs
         )
 
-        return self.loop.create_task(
-            wrapped, name=f"discord.http/aiohttp: {event_name}"
+        task = self.loop.create_task(
+            wrapped,
+            name=f"discord.http/aiohttp: {event_name}"
         )
+        self._background_tasks.add(task)
+        task.add_done_callback(self._background_tasks.discard)
+        return task
 
     async def _prepare_commands(self) -> None:
         """ Only used to sync commands on boot. """
@@ -806,7 +811,7 @@ class Client:
         if package not in self._cogs:
             raise RuntimeError(f"Cog {package} is not loaded")
 
-        for cog in self._cogs[package]:
+        for cog in list(self._cogs[package]):
             await self.remove_cog(cog)
 
         del self._cogs[package]
@@ -833,7 +838,7 @@ class Client:
         """
         await cog._eject(self)
 
-    def wait_for(
+    async def wait_for(
         self,
         event_name: str,
         *,
@@ -881,7 +886,14 @@ class Client:
             self._waiting_listeners[ev] = []
 
         self._waiting_listeners[ev].append((future, check))
-        return asyncio.wait_for(future, timeout=timeout)
+
+        try:
+            return await asyncio.wait_for(future, timeout=timeout)
+        finally:
+            try:
+                self._waiting_listeners[ev].remove((future, check))
+            except (ValueError, KeyError):
+                pass
 
     def command(
         self,
