@@ -3,6 +3,7 @@ import asyncio
 import logging
 import orjson
 import random
+import re
 import sys
 
 from aiohttp.client_exceptions import ContentTypeError
@@ -29,6 +30,10 @@ ResMethodTypes = Literal["text", "read", "json"]
 ResponseT = TypeVar("ResponseT")
 
 _log = logging.getLogger(__name__)
+
+ratelimit_bucket_re = re.compile(
+    r"/(messages|members|roles|emojis|stickers|permissions|reactions|interactions)/\d+"
+)
 
 __all__ = (
     "DiscordAPI",
@@ -217,7 +222,7 @@ class HTTPClient:
 
 class Ratelimit:
     def __init__(self, key: str):
-        self._key: str = key
+        self.key: str = key
 
         self.limit: int = 1
         self.remaining: int = 1
@@ -230,7 +235,7 @@ class Ratelimit:
 
     def __repr__(self) -> str:
         return (
-            f"<Ratelimit key='{self._key}' limit={self.limit} "
+            f"<Ratelimit key='{self.key}' limit={self.limit} "
             f"remaining={self.remaining} reset_after={self.reset_after:.2f}>"
         )
 
@@ -272,7 +277,7 @@ class Ratelimit:
 
                 # No tokens? Calculate wait time
                 wait_time = (self.expires - now) if self.expires else 1.0
-                _log.debug(f"Ratelimit prevented ({self._key}), waiting {max(wait_time, 0):.2f}s...")
+                _log.debug(f"Ratelimit prevented ({self.key}), waiting {max(wait_time, 0):.2f}s...")
 
             # Sleep outside the lock so others can at least check the state
             await asyncio.sleep(max(wait_time, 0.1) + 0.1)
@@ -337,6 +342,34 @@ class DiscordAPI:
 
         if to_remove:
             _log.debug(f"Cleaned up {len(to_remove)} old ratelimits, {len(self._buckets)} remaining.")
+
+    def _get_bucket_key(self, method: str, path: str) -> str:
+        """
+        Get the bucket key for the given method and path.
+
+        Parameters
+        ----------
+        method:
+            The HTTP method to use
+        path:
+            The path to make the request to
+
+        Returns
+        -------
+            The bucket key for the given method and path
+        """
+        # Remove query parameters
+        base_path = path.split("?")[0]
+
+        # Replace IDs in the path with :id to create a more general bucket key
+        # Each guild has its own bucket, but all channels share the same bucket, etc.
+        normalized = ratelimit_bucket_re.sub(r"/\1/:id", base_path)
+
+        # Special case for message deletion, as it has a separate bucket
+        if method == "DELETE" and "messages" in normalized:
+            normalized += "-delete"
+
+        return f"{method} {normalized}"
 
     def get_ratelimit(self, key: str) -> Ratelimit:
         """
@@ -463,8 +496,9 @@ class DiscordAPI:
 
         retry_codes = retry_codes or []
 
-        clean_path = path.split("?")[0]  # Remove query parameters for ratelimit bucket key
-        ratelimit = self.get_ratelimit(f"{method} {clean_path}")
+        ratelimit = self.get_ratelimit(
+            self._get_bucket_key(method, path)
+        )
 
         http_400_error_table: dict[int, type[HTTPException]] = {
             200000: AutomodBlock,
@@ -493,8 +527,8 @@ class DiscordAPI:
                     )
                     ratelimit.update(r)
                     _log.debug(
-                        f"HTTP {method.upper()} ({r.status}): {path} | "
-                        f"Ratelimit: {ratelimit.remaining}/{ratelimit.limit} (reset: {ratelimit.reset_after:.2f}s)"
+                        f"HTTP {method.upper()} ({r.status}): {path} "
+                        f"({ratelimit.remaining}/{ratelimit.limit}, {ratelimit.reset_after:.2f}s until reset)"
                     )
 
                     match r.status:
@@ -519,7 +553,7 @@ class DiscordAPI:
                                 raise Ratelimited(r)
 
                             retry_after: float = response.get("retry_after", 1.0)
-                            _log.warning(f"Ratelimit hit ({method.upper()} {path}), waiting {retry_after}s...")
+                            _log.warning(f"Ratelimit hit ({ratelimit.key}), waiting {retry_after}s...")
                             await asyncio.sleep(retry_after + 0.1)  # Small jitter to ensure the ratelimit has reset
                             continue
 
