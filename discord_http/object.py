@@ -17,6 +17,8 @@ class Snowflake:
     id: int
         The ID of the snowflake.
     """
+    __slots__ = ("id",)
+
     def __init__(
         self,
         id: int | str  # noqa: A002
@@ -35,7 +37,7 @@ class Snowflake:
         return self.id
 
     def __hash__(self) -> int:
-        return self.id >> 22
+        return hash(self.id)
 
     def __eq__(self, other: "Snowflake | int") -> bool:
         if isinstance(other, Snowflake):
@@ -93,6 +95,8 @@ class PartialBase(Snowflake):
     This class is based on the Snowflae class standard,
     but with a few extra attributes.
     """
+    __slots__ = ()
+
     def __init__(self, *, id: int):  # noqa: A002
         super().__init__(id=int(id))
 

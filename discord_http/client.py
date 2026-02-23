@@ -2,6 +2,7 @@ import asyncio
 import importlib
 import inspect
 import logging
+import sys
 
 from aiohttp import web
 from collections.abc import Callable, AsyncIterator, Coroutine
@@ -462,7 +463,7 @@ class Client:
                 data=[
                     v.to_dict()
                     for v in self.commands.values()
-                    if g in v.guild_ids and
+                    if g in [int(x) for x in v.guild_ids] and
                     v.parent is None
                 ],
                 guild_id=g
@@ -623,8 +624,10 @@ class Client:
             await self.__cleanup()
             return
 
-        await func()
-        await self.__cleanup()
+        try:
+            await func()
+        finally:
+            await self.__cleanup()
 
     def offline_run(
         self,
@@ -788,7 +791,11 @@ class Client:
         if package in self._cogs:
             raise RuntimeError(f"Cog {package} is already loaded")
 
+        was_imported = package in sys.modules
         lib = importlib.import_module(package)
+        if was_imported:
+            lib = importlib.reload(lib)
+
         setup = getattr(lib, "setup", None)
 
         if not setup:
@@ -815,6 +822,55 @@ class Client:
             await self.remove_cog(cog)
 
         del self._cogs[package]
+
+    async def reload_extension(
+        self,
+        package: str
+    ) -> None:
+        """
+        Reloads an extension.
+
+        Parameters
+        ----------
+        package:
+            The package to reload the extension from.
+
+        Raises
+        ------
+        `RuntimeError`
+            - If the extension failed to reload, but the previous state was restored successfully
+            - If the extension failed to reload, and the previous state failed to be restored
+        """
+        if package not in self._cogs:
+            raise RuntimeError(f"Cog {package} is not loaded")
+
+        previous_module = sys.modules.get(package)
+        previous_cogs = list(self._cogs[package])
+
+        await self.unload_extension(package)
+
+        try:
+            await self.load_extension(package)
+        except Exception as reload_error:
+            if package in self._cogs:
+                for cog in list(self._cogs[package]):
+                    await self.remove_cog(cog)
+                del self._cogs[package]
+
+            if previous_module is not None:
+                sys.modules[package] = previous_module
+
+            try:
+                for cog in previous_cogs:
+                    await self.add_cog(cog)
+            except Exception as restore_error:
+                raise RuntimeError(
+                    f"Failed to reload extension {package}, and failed to restore previous state"
+                ) from restore_error
+
+            raise RuntimeError(
+                f"Failed to reload extension {package}; previous state restored"
+            ) from reload_error
 
     async def add_cog(self, cog: "Cog") -> None:
         """
@@ -2207,7 +2263,10 @@ class Client:
         func:
             The listener to remove from the bot.
         """
-        self.listeners.remove(func)
+        try:
+            self.listeners.remove(func)
+        except ValueError:
+            pass
 
     def add_command(
         self,

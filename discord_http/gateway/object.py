@@ -37,6 +37,14 @@ __all__ = (
 
 
 class PlayingStatus:
+    __slots__ = (
+        "name",
+        "since",
+        "status",
+        "type",
+        "url",
+    )
+
     def __init__(
         self,
         *,
@@ -102,6 +110,16 @@ class PlayingStatus:
 
 
 class GuildJoinRequest:
+    __slots__ = (
+        "_state",
+        "guild",
+        "last_seen",
+        "rejection_reason",
+        "status",
+        "user",
+        "user_id",
+    )
+
     def __init__(
         self,
         *,
@@ -150,6 +168,13 @@ class ChannelPinsUpdate:  # noqa: B903
     guild:
         The guild the channel is in. If the channel is a DM channel, this will be `None`.
     """
+
+    __slots__ = (
+        "channel",
+        "guild",
+        "last_pin_timestamp",
+    )
+
     def __init__(
         self,
         channel: "BaseChannel | PartialChannel",
@@ -162,6 +187,18 @@ class ChannelPinsUpdate:  # noqa: B903
 
 
 class Presence:
+    __slots__ = (
+        "_state",
+        "activities",
+        "desktop",
+        "guild",
+        "mobile",
+        "status",
+        "type",
+        "user",
+        "web",
+    )
+
     def __init__(
         self,
         *,
@@ -219,6 +256,14 @@ class TypingStartEvent:  # noqa: B903
     timestamp:
         The time the user started typing.
     """
+
+    __slots__ = (
+        "channel",
+        "guild",
+        "timestamp",
+        "user",
+    )
+
     def __init__(
         self,
         *,
@@ -234,6 +279,23 @@ class TypingStartEvent:  # noqa: B903
 
 
 class AutomodExecution:
+    __slots__ = (
+        "_state",
+        "action",
+        "alert_system_message_id",
+        "channel",
+        "content",
+        "guild",
+        "last_seen",
+        "matched_content",
+        "matched_keyword",
+        "message_id",
+        "rejection_reason",
+        "rule_id",
+        "rule_trigger_type",
+        "user",
+    )
+
     def __init__(
         self,
         *,
@@ -277,6 +339,16 @@ class AutomodExecution:
 
 
 class PollVoteEvent:
+    __slots__ = (
+        "_state",
+        "answer_id",
+        "channel",
+        "guild",
+        "message",
+        "type",
+        "user",
+    )
+
     def __init__(
         self,
         *,
@@ -310,6 +382,21 @@ class PollVoteEvent:
 
 
 class Reaction:
+    __slots__ = (
+        "_state",
+        "burst",
+        "burst_colour",
+        "channel_id",
+        "emoji",
+        "guild_id",
+        "id",
+        "member",
+        "message_author_id",
+        "message_id",
+        "type",
+        "user_id",
+    )
+
     def __init__(self, *, state: "DiscordAPI", data: dict):
         self._state = state
 
@@ -402,6 +489,13 @@ class Reaction:
 
 
 class BulkDeletePayload:
+    __slots__ = (
+        "_state",
+        "channel",
+        "guild",
+        "messages",
+    )
+
     def __init__(
         self,
         *,
@@ -439,6 +533,15 @@ class ThreadListSyncPayload:
 
         This may contains ids of channels that have no active threads.
     """
+
+    __slots__ = (
+        "_members",
+        "_state",
+        "_threads",
+        "channel_ids",
+        "guild_id",
+    )
+
     def __init__(
         self,
         *,
@@ -544,6 +647,16 @@ class ThreadMembersUpdatePayload:
     removed_member_ids:
         The IDs of the members that were removed from the thread.
     """
+
+    __slots__ = (
+        "_added_members",
+        "_state",
+        "guild_id",
+        "id",
+        "member_count",
+        "removed_member_ids",
+    )
+
     def __init__(
         self,
         *,

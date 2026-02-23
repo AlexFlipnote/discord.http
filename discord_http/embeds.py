@@ -12,6 +12,20 @@ EmbedTypes = Literal["rich", "image", "video", "gifv", "article", "link", "poll_
 
 
 class Embed:
+    __slots__ = (
+        "author",
+        "colour",
+        "description",
+        "fields",
+        "footer",
+        "image",
+        "thumbnail",
+        "timestamp",
+        "title",
+        "type",
+        "url",
+    )
+
     def __init__(
         self,
         *,
@@ -75,9 +89,9 @@ class Embed:
             Returns the embed you are editing
         """
         if value is None:
-            self._colour = None
+            self.colour = None
         else:
-            self._colour = Colour(int(value))
+            self.colour = Colour(int(value))
 
         return self
 

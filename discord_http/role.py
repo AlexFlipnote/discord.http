@@ -28,6 +28,13 @@ class PartialRole(PartialBase):
     guild_id: int
         The ID of the guild this role is in
     """
+
+    __slots__ = (
+        "_state",
+        "_target_type",
+        "guild_id",
+    )
+
     def __init__(
         self,
         *,
@@ -316,6 +323,26 @@ class Role(PartialRole):
     unicode_emoji: str | None
         The unicode emoji associated with the role, if any
     """
+
+    __slots__ = (
+        "_available_for_purchase",
+        "_guild_connections",
+        "_icon",
+        "_premium_subscriber",
+        "bot_id",
+        "colour",
+        "hoist",
+        "integration_id",
+        "managed",
+        "mentionable",
+        "name",
+        "permissions",
+        "position",
+        "subscription_listing_id",
+        "tags",
+        "unicode_emoji",
+    )
+
     def __init__(
         self,
         *,

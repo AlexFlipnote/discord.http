@@ -33,6 +33,15 @@ class PartialInvite:
     guild: Guild | PartialGuild | None
         The guild associated with the invite, if applicable.
     """
+
+    __slots__ = (
+        "_state",
+        "channel_id",
+        "code",
+        "guild",
+        "guild_id",
+    )
+
     BASE = "https://discord.gg"
 
     def __init__(
@@ -172,10 +181,28 @@ class Invite(PartialInvite):
     target_user: User | None
         The user of the invite whose stream to display for this invite.
     """
+
+    __slots__ = (
+        "_account",
+        "_raw_type",
+        "approximate_member_count",
+        "approximate_presence_count",
+        "created_at",
+        "expires_at",
+        "flags",
+        "inviter",
+        "max_uses",
+        "roles",
+        "target_type",
+        "target_user",
+        "temporary",
+        "uses",
+    )
+
     def __init__(self, *, state: "DiscordAPI", data: dict):
         super().__init__(state=state, code=data["code"])
 
-        self.type: InviteType = InviteType(int(data["type"]))
+        self._raw_type: int = data["type"]
 
         self.uses: int = data.get("uses", 0)
         self.max_uses: int = data.get("max_uses", 0)
@@ -239,6 +266,11 @@ class Invite(PartialInvite):
                 Role(state=self._state, guild=self.guild, data=role_data)
                 for role_data in data["roles"]
             ]
+
+    @property
+    def type(self) -> InviteType:
+        """ The type of the invite. """
+        return InviteType(self._raw_type)
 
     def is_vanity(self) -> bool:
         """ Whether the invite is a vanity invite. """

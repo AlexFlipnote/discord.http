@@ -13,6 +13,12 @@ _log = logging.getLogger(__name__)
 
 
 class Sleeper:
+    __slots__ = (
+        "future",
+        "handle",
+        "loop",
+    )
+
     def __init__(self, dt: datetime, *, loop: asyncio.AbstractEventLoop):
         self.loop = loop
         self.future: asyncio.Future = loop.create_future()

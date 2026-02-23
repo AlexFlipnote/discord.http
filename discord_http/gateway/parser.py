@@ -42,6 +42,16 @@ __all__ = (
 
 
 class GuildMembersChunk:
+    __slots__ = (
+        "_state",
+        "_waiters",
+        "cache",
+        "guild_id",
+        "members",
+        "nonce",
+        "not_found",
+    )
+
     def __init__(
         self,
         *,
@@ -139,6 +149,8 @@ class GuildMembersChunk:
 
 
 class Parser:
+    __slots__ = ("_chunk_requests", "bot",)
+
     def __init__(self, bot: "Client"):
         self.bot = bot
 

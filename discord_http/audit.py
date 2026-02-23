@@ -180,12 +180,12 @@ def _handle_overwrites(entry: "AuditLogEntry", data: dict) -> list[tuple[
         deny = flags.Permissions(int(g["deny"]))
 
         target = None
-        ow_type = g["type"]
+        ow_type = int(g["type"])
         ow_id = int(g["id"])
 
-        if ow_type == "0":
+        if ow_type == 0:
             target = entry.guild.get_partial_role(ow_id)
-        elif ow_type == "1":
+        elif ow_type == 1:
             target = entry.guild.get_partial_member(ow_id)
 
         if target is None:
@@ -345,6 +345,13 @@ class AuditChange:
         "default_reaction_emoji": _handle_default_reaction,
     }
 
+    __slots__ = (
+        "entry",
+        "key",
+        "new_value",
+        "old_value",
+    )
+
     def __init__(
         self,
         *,
@@ -403,6 +410,19 @@ class AuditLogEntry(Snowflake):
     changes: `list[AuditChange]`
         A list of changes made in this audit log entry.
     """
+
+    __slots__ = (
+        "_state",
+        "_users",
+        "action_type",
+        "changes",
+        "guild",
+        "options",
+        "reason",
+        "target_id",
+        "user_id",
+    )
+
     def __init__(
         self,
         *,

@@ -46,6 +46,15 @@ class EmojiParser:
     - `EmojiParser("<:name:1234567890>")`
     - `EmojiParser("1234567890")`
     """
+
+    __slots__ = (
+        "animated",
+        "discord_emoji",
+        "id",
+        "name",
+        "raw",
+    )
+
     def __init__(self, emoji: str):
         self.raw: str = emoji
 
@@ -139,6 +148,8 @@ class EmojiParser:
 
 
 class PartialEmoji(PartialBase):
+    __slots__ = ("_state", "guild_id",)
+
     def __init__(
         self,
         *,
@@ -305,6 +316,16 @@ class PartialEmoji(PartialBase):
 
 
 class Emoji(PartialEmoji):
+    __slots__ = (
+        "animated",
+        "available",
+        "managed",
+        "name",
+        "require_colons",
+        "roles",
+        "user",
+    )
+
     def __init__(
         self,
         *,

@@ -25,6 +25,33 @@ __all__ = (
 
 
 class AutoModRuleTriggers:
+    """
+    Represents the triggers for an auto moderation rule.
+
+    Attributes
+    ----------
+    keyword_filter: list[str] | None
+        List of keywords to filter
+    regex_patterns: list[str] | None
+        List of regex patterns to filter
+    presets: list[AutoModRulePresetType] | None
+        List of auto moderation presets to filter
+    allow_list: list[str] | None
+        List of keywords that are allowed and will not trigger the rule
+    mention_total_limit: int | None
+        How many unique mentions allowed before trigger
+    mention_raid_protection_enabled: bool
+        If this should apply for raids
+    """
+    __slots__ = (
+        "allow_list",
+        "keyword_filter",
+        "mention_raid_protection_enabled",
+        "mention_total_limit",
+        "presets",
+        "regex_patterns",
+    )
+
     def __init__(
         self,
         *,
@@ -43,22 +70,22 @@ class AutoModRuleTriggers:
         self.mention_raid_protection_enabled: bool = mention_raid_protection_enabled
 
     def __repr__(self) -> str:
-        output = "<AutoModTriggers "
+        parts = []
 
         if self.keyword_filter:
-            output += f"keyword_filter={self.keyword_filter}"
+            parts.append(f"keyword_filter={self.keyword_filter}")
         if self.regex_patterns:
-            output += f"regex_patterns={self.regex_patterns}"
+            parts.append(f"regex_patterns={self.regex_patterns}")
         if self.presets:
-            output += f"presets={self.presets}"
+            parts.append(f"presets={self.presets}")
         if self.allow_list:
-            output += f"allow_list={self.allow_list}"
+            parts.append(f"allow_list={self.allow_list}")
         if self.mention_total_limit:
-            output += f"mention_total_limit={self.mention_total_limit}"
+            parts.append(f"mention_total_limit={self.mention_total_limit}")
         if self.mention_raid_protection_enabled:
-            output += "mention_raid_protection_enabled=True"
+            parts.append("mention_raid_protection_enabled=True")
 
-        return f"{output}>"
+        return f"<AutoModTriggers {' '.join(parts)}>"
 
     def to_dict(self) -> dict:
         """ The auto moderation rule as a dictionary. """
@@ -74,8 +101,8 @@ class AutoModRuleTriggers:
             payload["allow_list"] = [str(g) for g in self.allow_list]
         if self.mention_total_limit is not None:
             payload["mention_total_limit"] = int(self.mention_total_limit)
-        if self.mention_raid_protection_enabled is True:
-            payload["mention_raid_protection_enabled"] = True
+        if self.mention_raid_protection_enabled is not None:
+            payload["mention_raid_protection_enabled"] = self.mention_raid_protection_enabled
 
         return payload
 
@@ -104,6 +131,13 @@ class AutoModRuleTriggers:
 
 
 class AutoModRuleAction:
+    __slots__ = (
+        "channel_id",
+        "custom_message",
+        "duration_seconds",
+        "type",
+    )
+
     def __init__(
         self,
         *,
@@ -231,6 +265,11 @@ class AutoModRuleAction:
 
 
 class PartialAutoModRule(PartialBase):
+    __slots__ = (
+        "_state",
+        "guild_id",
+    )
+
     def __init__(
         self,
         *,
@@ -351,12 +390,13 @@ class PartialAutoModRule(PartialBase):
         if name is not MISSING:
             payload["name"] = str(name)
         if event_type is not MISSING:
-            payload["event_type"] = int(event_type or -1)
+            payload["event_type"] = int(event_type)  # pyright: ignore[reportArgumentType]
 
-        if any([
-            g is not MISSING
-            for g in [alert_channel, timeout_seconds, message]
-        ]):
+        if (
+            alert_channel is not MISSING or
+            timeout_seconds is not MISSING or
+            message is not MISSING
+        ):
             payload["actions"] = []
 
         if alert_channel is not MISSING:
@@ -444,6 +484,19 @@ class AutoModRule(PartialAutoModRule):
     exempt_channels: list[PartialChannel]
         The channels that are exempt from the automod rule
     """
+
+    __slots__ = (
+        "actions",
+        "creator_id",
+        "enabled",
+        "event_type",
+        "exempt_channels",
+        "exempt_roles",
+        "name",
+        "trigger_metadata",
+        "trigger_type",
+    )
+
     def __init__(
         self,
         *,

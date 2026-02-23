@@ -27,6 +27,13 @@ class PartialSoundboardSound(PartialBase):
     guild_id: int | None
         The ID of the guild this soundboard sound is in, if any
     """
+
+    __slots__ = (
+        "_state",
+        "guild_id",
+        "sound_id",
+    )
+
     def __init__(
         self,
         *,
@@ -223,6 +230,15 @@ class SoundboardSound(PartialSoundboardSound):
     available: bool
         Whether the soundboard sound is available for use
     """
+
+    __slots__ = (
+        "available",
+        "emoji_id",
+        "emoji_name",
+        "name",
+        "volume",
+    )
+
     def __init__(
         self,
         *,

@@ -31,8 +31,8 @@ re_channel: re.Pattern = re.compile(r"<#([0-9]{15,20})>")
 re_role: re.Pattern = re.compile(r"<@&([0-9]{15,20})>")
 re_mention: re.Pattern = re.compile(r"<@!?([0-9]{15,20})>")
 re_emoji: re.Pattern = re.compile(r"<(a)?:([a-zA-Z0-9_]+):([0-9]{15,20})>")
-re_common_markdown = re.compile(r"([_*~`<>|\[\]()#])")
-re_hex = re.compile(r"^(?:#)?(?:[0-9a-fA-F]{3}){1,2}$")
+re_common_markdown: re.Pattern = re.compile(r"([_*~`<>|\[\]()#])")
+re_hex: re.Pattern = re.compile(r"^(?:#)?(?:[0-9a-fA-F]{3}){1,2}$")
 re_jump_url: re.Pattern = re.compile(
     r"https:\/\/(?:.*\.)?discord\.com\/channels\/([0-9]{15,20}|@me)\/([0-9]{15,20})(?:\/([0-9]{15,20}))?"
 )
@@ -40,6 +40,15 @@ re_jump_url: re.Pattern = re.compile(
 
 class BenchmarkEntry:
     """ A simple, high-precision benchmarking class. """
+
+    __slots__ = (
+        "_end_perf",
+        "_start_perf",
+        "created_at",
+        "finished_at",
+        "internal",
+    )
+
     def __init__(self, *, internal: bool = False) -> None:
         self.internal: bool = internal
 
@@ -102,6 +111,9 @@ class Benchmark:
 
     Used to benchmark code execution time.
     """
+
+    __slots__ = ("_overall_start", "results",)
+
     def __init__(self):
         self.results: dict[str, BenchmarkEntry] = {}
 
@@ -246,6 +258,7 @@ def create_missing_texture(*, size: int = 256, tiles: int = 8) -> bytes:
 
 def traceback_maker(
     err: Exception,
+    *,
     advance: bool = True
 ) -> str:
     """
@@ -264,6 +277,8 @@ def traceback_maker(
     -------
         The traceback of the error
     """
+    if err.__traceback__ is None:
+        return f"{type(err).__name__}: {err}"
     traceback_ = "".join(traceback.format_tb(err.__traceback__))
     error = f"{traceback_}{type(err).__name__}: {err}"
     return error if advance else f"{type(err).__name__}: {err}"
@@ -459,7 +474,7 @@ def normalize_entity_id(
         case x if getattr(x, "id", None):
             # This is potentially a Snowflake
             # Due to circular imports, can't 100% check it, just trust it
-            return int(x)  # type: ignore
+            return int(x.id)  # pyright: ignore[reportAttributeAccessIssue]
 
         case x if isinstance(x, str):
             if not x.isdigit():
@@ -754,9 +769,11 @@ def get_int(
         return default
     if isinstance(output, int):
         return output
-    if not output.isdigit():
+
+    try:
+        return int(output)
+    except ValueError:
         raise ValueError(f"Key {key} returned a non-digit value")
-    return int(output)
 
 
 class URL:
@@ -766,6 +783,9 @@ class URL:
     Allows reading, updating, and reconstructing URLs in a convenient way.
     Similar to yarl.URL, but implemented using Python's standard library instead.
     """
+
+    __slots__ = ("_parsed",)
+
     def __init__(
         self,
         url: "str | ParseResult | URL"
@@ -1063,6 +1083,9 @@ class DiscordTimestamp:
     This takes a datetime, int or timedelta and
     converts it to a Discord timestamp.
     """
+
+    __slots__ = ("_ts",)
+
     def __init__(self, ts: int | datetime | timedelta):
         self._ts = ts
         if isinstance(ts, datetime):
@@ -1154,6 +1177,9 @@ class _MissingType:
     It is also filled with a bunch of methods to make it
     more compatible with other types and make pyright happy
     """
+
+    __slots__ = ("id",)
+
     def __init__(self) -> None:
         self.id: int = -1
 
@@ -1182,7 +1208,7 @@ class _MissingType:
         return b""
 
     def __eq__(self, other) -> bool:  # noqa: ANN001
-        return False
+        return isinstance(other, _MissingType)
 
     def __bool__(self) -> bool:
         return False

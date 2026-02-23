@@ -32,6 +32,14 @@ class PartialVoiceState(PartialBase):
     guild_id: int | None
         The ID of the guild this voice state is in, if any
     """
+
+    __slots__ = (
+        "_state",
+        "channel_id",
+        "guild_id",
+        "id",
+    )
+
     def __init__(
         self,
         *,
@@ -144,6 +152,23 @@ class VoiceState(PartialVoiceState):
     request_to_speak_timestamp: datetime | None
         The timestamp when the user requested to speak, if any
     """
+
+    __slots__ = (
+        "channel",
+        "deaf",
+        "guild",
+        "member",
+        "mute",
+        "request_to_speak_timestamp",
+        "self_deaf",
+        "self_mute",
+        "self_stream",
+        "self_video",
+        "session_id",
+        "suppress",
+        "user",
+    )
+
     def __init__(
         self,
         *,

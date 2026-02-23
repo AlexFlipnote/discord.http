@@ -23,6 +23,9 @@ class IntegrationAccount:
     name: str
         The name of the account.
     """
+
+    __slots__ = ("_state", "id", "name",)
+
     def __init__(
         self,
         *,
@@ -67,6 +70,19 @@ class IntegrationApplication(PartialBase):
     is_discoverable: bool
         Whether the application is discoverable.
     """
+
+    __slots__ = (
+        "_bot",
+        "_icon",
+        "_state",
+        "description",
+        "is_discoverable",
+        "is_monetized",
+        "is_verified",
+        "name",
+        "summary",
+    )
+
     def __init__(
         self,
         *,
@@ -125,6 +141,13 @@ class PartialIntegration(PartialBase):
     application_id: int | None
         The ID of the application associated with this integration.
     """
+
+    __slots__ = (
+        "_state",
+        "application_id",
+        "guild_id",
+    )
+
     def __init__(
         self,
         *,
@@ -211,6 +234,25 @@ class Integration(PartialIntegration):
     scopes: list[str]
         The scopes of the application has been granted.
     """
+
+    __slots__ = (
+        "_account",
+        "_application",
+        "_user",
+        "enable_emoticons",
+        "enabled",
+        "expire_behavior",
+        "expire_grace_period",
+        "name",
+        "revoked",
+        "role_id",
+        "scopes",
+        "subscriber_count",
+        "synced_at",
+        "syncing",
+        "type",
+    )
+
     def __init__(
         self,
         *,

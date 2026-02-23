@@ -68,6 +68,8 @@ class BanEntry(NamedTuple):
 
 
 class PartialScheduledEvent(PartialBase):
+    __slots__ = ("_state", "guild_id",)
+
     def __init__(
         self,
         *,
@@ -239,6 +241,19 @@ class PartialScheduledEvent(PartialBase):
 
 
 class ScheduledEvent(PartialScheduledEvent):
+    __slots__ = (
+        "channel",
+        "creator",
+        "description",
+        "end_time",
+        "entity_type",
+        "name",
+        "privacy_level",
+        "start_time",
+        "status",
+        "user_count",
+    )
+
     def __init__(
         self,
         *,
@@ -297,6 +312,22 @@ class ScheduledEvent(PartialScheduledEvent):
 
 
 class PartialGuild(PartialBase):
+    __slots__ = (
+        "_cache_channels",
+        "_cache_emojis",
+        "_cache_members",
+        "_cache_roles",
+        "_cache_soundboard_sounds",
+        "_cache_stickers",
+        "_cache_threads",
+        "_cache_voice_states",
+        "_large",
+        "_state",
+        "guild_id",
+        "member_count",
+        "unavailable",
+    )
+
     def __init__(
         self,
         *,
@@ -2594,6 +2625,40 @@ class Guild(PartialGuild):
     widget_enabled: bool
         Whether the widget is enabled for the guild
     """
+
+    __slots__ = (
+        "_banner",
+        "_icon",
+        "afk_channel_id",
+        "afk_timeout",
+        "default_message_notifications",
+        "description",
+        "explicit_content_filter",
+        "features",
+        "latest_onboarding_question_id",
+        "max_members",
+        "max_stage_video_channel_users",
+        "max_video_channel_users",
+        "mfa_level",
+        "name",
+        "nsfw",
+        "nsfw_level",
+        "owner_id",
+        "preferred_locale",
+        "premium_progress_bar_enabled",
+        "premium_subscription_count",
+        "premium_tier",
+        "public_updates_channel_id",
+        "region",
+        "safety_alerts_channel_id",
+        "system_channel_flags",
+        "system_channel_id",
+        "vanity_url_code",
+        "verification_level",
+        "widget_channel_id",
+        "widget_enabled",
+    )
+
     _GUILD_LIMITS: ClassVar[dict[int, _GuildLimits]] = {
         0: _GuildLimits(emojis=50, stickers=5, bitrate=96_000, filesize=26_214_400, soundboards=8),
         1: _GuildLimits(emojis=100, stickers=15, bitrate=128_000, filesize=26_214_400, soundboards=24),

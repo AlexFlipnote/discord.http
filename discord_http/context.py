@@ -70,6 +70,10 @@ __all__ = (
 
 
 class _ResolveParser:
+    __slots__ = (
+        "_parsed_data",
+    )
+
     def __init__(self, ctx: "Context", data: dict):
         self._parsed_data = {
             "members": [], "users": [],
@@ -133,6 +137,8 @@ class _ResolveParser:
 
 
 class ResolvedValues(_ResolveParser):
+    __slots__ = ()
+
     def __init__(self, ctx: "Context", data: dict):
         super().__init__(ctx, data)
 
@@ -163,6 +169,8 @@ class ResolvedValues(_ResolveParser):
 
 
 class SelectValues(ResolvedValues):
+    __slots__ = ()
+
     def __init__(self, ctx: "Context", data: dict):
         super().__init__(ctx, data)
 
@@ -173,6 +181,8 @@ class SelectValues(ResolvedValues):
 
 
 class InteractionResponse:
+    __slots__ = ("_parent",)
+
     def __init__(self, parent: "Context"):
         self._parent = parent
 
@@ -531,8 +541,8 @@ class Context:
         self.bot = bot
 
         self.id: int = int(data["id"])
+        self._raw_type: int = data["type"]
 
-        self.type: InteractionType = InteractionType(data["type"])
         self.command_type: ApplicationCommandType = ApplicationCommandType(
             data.get("data", {}).get("type", ApplicationCommandType.chat_input)
         )
@@ -666,14 +676,16 @@ class Context:
 
                             case ComponentType.mentionable_select:
                                 collected_values = []
+                                allowed_ids = set(ans.get("values", []))
+
                                 for m in self.resolved.members:
-                                    if str(m.id) in ans.get("values", []):
+                                    if str(m.id) in allowed_ids:
                                         collected_values.append(m)
                                 for r in self.resolved.roles:
-                                    if str(r.id) in ans.get("values", []):
+                                    if str(r.id) in allowed_ids:
                                         collected_values.append(r)
                                 for c in self.resolved.channels:
-                                    if str(c.id) in ans.get("values", []):
+                                    if str(c.id) in allowed_ids:
                                         collected_values.append(c)
                                 self.modal_values[ans["custom_id"]] = collected_values
 
@@ -700,6 +712,11 @@ class Context:
                     f"Error while running call_after:{call_after}",
                     exc_info=e
                 )
+
+    @property
+    def type(self) -> InteractionType:
+        """ Returns the type of the interaction. """
+        return InteractionType(self._raw_type)
 
     @property
     def guild(self) -> Guild | PartialGuild | None:

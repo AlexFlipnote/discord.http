@@ -59,7 +59,7 @@ class Asset:
         return self.url
 
     def __repr__(self) -> str:
-        shorten = self.url.replace(self.BASE, "")
+        shorten = self.url.replace(self.BASE, "").replace(self.PROXY, "")
         return f"<Asset url={shorten}>"
 
     async def fetch(self, *, fallback: bool = False) -> bytes:
@@ -101,6 +101,13 @@ class Asset:
         Returns
         -------
             The amount of bytes written to the file
+
+        Raises
+        ------
+        FileNotFoundError
+            If the directory in the provided path does not exist.
+        HTTPException
+            If the asset returns anything but `HTTP 2XX`.
         """
         data = await self.fetch()
 
@@ -135,12 +142,15 @@ class Asset:
         url = utils.URL(self.url)
         path, _ = os.path.splitext(url.path)
         prev_size = url.query.get("size")
+        is_animated = self.animated
 
         if format is not MISSING:
             url = url.update_path(f"{path}.{format}")
+            if format in ("png", "jpg", "jpeg", "webp"):
+                is_animated = False
+            elif format == "gif":
+                is_animated = True
 
-            # If we have a size, we need to keep it.
-            # URL.with_path removes it from the query.
             if prev_size is not None:
                 url = url.update_query(size=prev_size)
 
@@ -152,7 +162,7 @@ class Asset:
             state=self._state,
             url=url,
             key=self.key,
-            animated=self.animated
+            animated=is_animated
         )
 
     def with_static_format(
@@ -171,8 +181,6 @@ class Asset:
         -------
             The new asset object, if animated, it will return no changes
         """
-        if self.animated:
-            return self
         return self.replace(format=format)
 
     @classmethod

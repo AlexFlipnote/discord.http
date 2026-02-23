@@ -142,6 +142,26 @@ class AttachmentComponent:
     flags: int
         The flags of the attachment, if any
     """
+
+    __slots__ = (
+        "_edata",
+        "_file",
+        "_media",
+        "_state",
+        "_url",
+        "content_type",
+        "filename",
+        "flags",
+        "height",
+        "placeholder",
+        "placeholder_version",
+        "proxy_url",
+        "size",
+        "spoiler",
+        "url",
+        "width",
+    )
+
     def __init__(
         self,
         *,
@@ -283,6 +303,9 @@ class AttachmentComponent:
 
 class Item:
     """ Base class for all components in discord.http API. """
+
+    __slots__ = ("type",)
+
     def __init__(
         self,
         *,
@@ -300,6 +323,9 @@ class Item:
 
 class LockedItem(Item):
     """ Used for valid components, but cannot be used directly. """
+
+    __slots__ = ("_data",)
+
     def __init__(self, *, type: ComponentType, **kwargs: dict):  # noqa: A002
         self.type: ComponentType = type
         self._data: dict = kwargs
@@ -343,6 +369,19 @@ class TextInputComponent(Item):
     required: bool
         Whether the text input is required or not
     """
+
+    __slots__ = (
+        "custom_id",
+        "default",
+        "description",
+        "label",
+        "max_length",
+        "min_length",
+        "placeholder",
+        "required",
+        "style",
+    )
+
     def __init__(
         self,
         *,
@@ -426,6 +465,17 @@ class Button(Item):
     url: str | None
         The URL of the button, only required for link buttons
     """
+
+    __slots__ = (
+        "custom_id",
+        "disabled",
+        "emoji",
+        "label",
+        "sku_id",
+        "style",
+        "url",
+    )
+
     def __init__(
         self,
         *,
@@ -523,6 +573,9 @@ class Premium(Button):
     sku_id:
         SKU ID of the premium button
     """
+
+    __slots__ = ()
+
     def __init__(
         self,
         sku_id: "Snowflake | int"
@@ -551,6 +604,9 @@ class Link(Button):
     disabled:
         Whether the button is disabled or not
     """
+
+    __slots__ = ()
+
     def __init__(
         self,
         *,
@@ -599,6 +655,21 @@ class Select(Item):
     required: bool | None
         Whether the select menu is required or not (only works for modals)
     """
+
+    __slots__ = (
+        "_default_values",
+        "_options",
+        "custom_id",
+        "description",
+        "disabled",
+        "label",
+        "max_values",
+        "min_values",
+        "options",
+        "placeholder",
+        "required",
+    )
+
     def __init__(
         self,
         *,
@@ -728,6 +799,9 @@ class UserSelect(Select):
     required: bool | None
         Whether the select menu is required or not (only works for modals)
     """
+
+    __slots__ = ()
+
     def __init__(
         self,
         *,
@@ -788,6 +862,9 @@ class RoleSelect(Select):
     required: bool | None
         Whether the select menu is required or not (only works for modals)
     """
+
+    __slots__ = ()
+
     def __init__(
         self,
         *,
@@ -848,6 +925,9 @@ class MentionableSelect(Select):
     required: bool | None
         Whether the select menu is required or not (only works for modals)
     """
+
+    __slots__ = ()
+
     def __init__(
         self,
         *,
@@ -911,6 +991,9 @@ class ChannelSelect(Select):
     required: bool | None
         Whether the select menu is required or not (only works for modals)
     """
+
+    __slots__ = ("channel_types",)
+
     def __init__(
         self,
         channel_types: ChannelType | int | list[ChannelType | int],
@@ -980,6 +1063,16 @@ class FileUploadComponent(Item):
     description: str | None
         The description of the file upload component
     """
+
+    __slots__ = (
+        "custom_id",
+        "description",
+        "label",
+        "max_values",
+        "min_values",
+        "required",
+    )
+
     def __init__(
         self,
         *,
@@ -1031,6 +1124,9 @@ class TextDisplayComponent(Item):
     content: str
         The content of the text display component
     """
+
+    __slots__ = ("content",)
+
     def __init__(
         self,
         content: str
@@ -1064,6 +1160,14 @@ class ComponentOption:
     default: bool
         Whether the option is the default selection
     """
+
+    __slots__ = (
+        "default",
+        "description",
+        "label",
+        "value",
+    )
+
     def __init__(
         self,
         *,
@@ -1110,6 +1214,15 @@ class RadioComponent(Item):
     required: bool
         Whether the radio component is required or not
     """
+
+    __slots__ = (
+        "custom_id",
+        "description",
+        "label",
+        "options",
+        "required",
+    )
+
     def __init__(
         self,
         *options: "ComponentOption",
@@ -1187,6 +1300,17 @@ class CheckboxGroupComponent(Item):
     required: bool
         Whether the checkbox group component is required or not
     """
+
+    __slots__ = (
+        "custom_id",
+        "description",
+        "label",
+        "max_values",
+        "min_values",
+        "options",
+        "required",
+    )
+
     def __init__(
         self,
         *options: ComponentOption,
@@ -1277,6 +1401,14 @@ class CheckboxComponent(Item):
     default: bool
         Whether the checkbox is checked by default
     """
+
+    __slots__ = (
+        "custom_id",
+        "default",
+        "description",
+        "label",
+    )
+
     def __init__(
         self,
         *,
@@ -1311,6 +1443,9 @@ class SeparatorComponent(Item):
     divider: bool | None
         Whether the separator is a divider or not
     """
+
+    __slots__ = ("divider", "spacing",)
+
     def __init__(
         self,
         *,
@@ -1340,6 +1475,18 @@ class SeparatorComponent(Item):
 
 
 class InteractionStorage:
+    __slots__ = (
+        "_call_after",
+        "_event_wait",
+        "_msg_cache",
+        "_store_interaction",
+        "_timeout",
+        "_timeout_bool",
+        "_timeout_expiry",
+        "_users",
+        "loop",
+    )
+
     def __init__(self):
         self._event_wait = asyncio.Event()
         self._store_interaction: "Context | None" = None
@@ -1541,6 +1688,13 @@ class ThumbnailComponent(Item):
     description: str | None
         The description of the thumbnail
     """
+
+    __slots__ = (
+        "description",
+        "spoiler",
+        "url",
+    )
+
     def __init__(
         self,
         url: Asset | AttachmentComponent | str,
@@ -1585,6 +1739,12 @@ class SectionComponent(Item):
     accessory: Button | ThumbnailComponent | AttachmentComponent | Asset | File | str
         The accessory component for the section
     """
+
+    __slots__ = (
+        "accessory",
+        "components",
+    )
+
     def __init__(
         self,
         # This might change later if SectionComponent starts
@@ -1665,6 +1825,12 @@ class ActionRow(Item):
     components: Button | Select | Link
         The components contained within the action row
     """
+
+    __slots__ = (
+        "_select_types",
+        "components",
+    )
+
     def __init__(
         self,
         *components: Button | Select | Link
@@ -1823,6 +1989,13 @@ class MediaGalleryItem:
     spoiler: bool
         Whether the media item is marked as a spoiler
     """
+
+    __slots__ = (
+        "description",
+        "spoiler",
+        "url",
+    )
+
     def __init__(
         self,
         url: File | Asset | AttachmentComponent | str,
@@ -1861,6 +2034,9 @@ class MediaGalleryComponent(Item):
     items: MediaGalleryItem | File | Asset | str
         The items contained within the media gallery
     """
+
+    __slots__ = ("items",)
+
     def __init__(
         self,
         *items: MediaGalleryItem | File | Asset | str
@@ -1914,6 +2090,9 @@ class FileComponent(Item):
     spoiler: bool
         Whether the file is a spoiler
     """
+
+    __slots__ = ("file", "spoiler",)
+
     def __init__(
         self,
         file: Asset | AttachmentComponent | str,
@@ -1939,12 +2118,16 @@ class FileComponent(Item):
 
 
 class ContentInventoryEntry(LockedItem):
+    __slots__ = ()
+
     def __init__(self, *_: dict, **kwargs: dict):
         super().__init__(type=ComponentType.content_inventory_entry)
         self._data: dict = kwargs
 
 
 class CheckpointComponent(LockedItem):
+    __slots__ = ()
+
     def __init__(self, *_: dict, **kwargs: dict):
         super().__init__(type=ComponentType.checkpoint)
         self._data: dict = kwargs
@@ -1963,6 +2146,13 @@ class ContainerComponent(Item):
     spoiler: bool | None
         Whether the container is marked as a spoiler
     """
+
+    __slots__ = (
+        "colour",
+        "items",
+        "spoiler",
+    )
+
     def __init__(
         self,
         *items: Item,
@@ -2051,6 +2241,9 @@ class View(InteractionStorage):
     items: Item
         The items contained within the view, can be buttons, selects, links, etc.
     """
+
+    __slots__ = ("items",)
+
     def __init__(self, *items: Item):
         super().__init__()
 
@@ -2299,6 +2492,13 @@ class LabelComponent(Item):
     component: TextInputComponent | Select | FileUploadComponent | RadioComponent | CheckboxGroupComponent | CheckboxComponent
         The component contained within the label
     """
+
+    __slots__ = (
+        "component",
+        "description",
+        "label",
+    )
+
     def __init__(
         self,
         *,
@@ -2359,6 +2559,13 @@ class Modal(InteractionStorage):
     custom_id: str | None
         The custom ID of the modal
     """
+
+    __slots__ = (
+        "custom_id",
+        "items",
+        "title",
+    )
+
     def __init__(
         self,
         *,

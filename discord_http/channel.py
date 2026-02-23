@@ -67,6 +67,13 @@ def _typing_done_callback(f: asyncio.Future) -> None:
 
 
 class Typing:
+    __slots__ = (
+        "_state",
+        "channel",
+        "loop",
+        "task",
+    )
+
     def __init__(self, *, state: "DiscordAPI", channel: "PartialChannel"):
         self._state = state
 
@@ -108,6 +115,13 @@ class PartialChannel(PartialBase):
     parent_id: `int | None`
         The ID of the parent channel or category, if any
     """
+
+    __slots__ = (
+        "_state",
+        "guild_id",
+        "parent_id",
+    )
+
     def __init__(
         self,
         *,
@@ -120,8 +134,6 @@ class PartialChannel(PartialBase):
 
         self.guild_id: int | None = int(guild_id) if guild_id else None
         self.parent_id: int | None = None
-
-        self._raw_type: ChannelType = ChannelType.unknown
 
     def __repr__(self) -> str:
         return f"<PartialChannel id={self.id}>"
@@ -215,7 +227,7 @@ class PartialChannel(PartialBase):
     @property
     def type(self) -> ChannelType:
         """ Returns the channel's type. """
-        return self._raw_type
+        return ChannelType.unknown
 
     def get_partial_message(self, message_id: int) -> "PartialMessage":
         """
@@ -1194,6 +1206,10 @@ class PartialChannel(PartialBase):
             limit: int | None
         ) -> tuple[dict, int | None, int | None]:
             r = await _get_history(limit=http_limit, around=around_id)
+
+            if r.response and limit is not None:
+                limit -= len(r.response)
+
             return r.response, None, limit
 
         async def _after_http(
@@ -1539,6 +1555,18 @@ class BaseChannel(PartialChannel):
     permission_overwrites: list[PermissionOverwrite]
         The permission overwrites for the channel
     """
+
+    __slots__ = (
+        "_raw_type",
+        "last_message_id",
+        "name",
+        "nsfw",
+        "permission_overwrites",
+        "position",
+        "rate_limit_per_user",
+        "topic",
+    )
+
     def __init__(
         self,
         *,
@@ -1560,7 +1588,7 @@ class BaseChannel(PartialChannel):
         self.parent_id: int | None = utils.get_int(data, "parent_id")
         self.rate_limit_per_user: int = data.get("rate_limit_per_user", 0)
 
-        self._raw_type: ChannelType = ChannelType(data["type"])
+        self._raw_type: int = data["type"]
 
         self.permission_overwrites: list[PermissionOverwrite] = [
             PermissionOverwrite.from_dict(g)
@@ -1631,8 +1659,7 @@ class BaseChannel(PartialChannel):
 
         for ow in overwrites:
             if ow.is_member() and ow.target.id == member.id:
-                allows |= int(ow.allow)
-                denies |= int(ow.deny)
+                base = base.handle_overwrite(int(ow.allow), int(ow.deny))
                 break
 
         if member.is_timed_out():
@@ -1658,7 +1685,7 @@ class BaseChannel(PartialChannel):
     @property
     def type(self) -> ChannelType:
         """ Returns the channel's type. """
-        return ChannelType.guild_text
+        return ChannelType(self._raw_type)
 
     @classmethod
     def from_dict(
@@ -1694,6 +1721,8 @@ class BaseChannel(PartialChannel):
 
 
 class TextChannel(BaseChannel):
+    __slots__ = ()
+
     def __init__(self, *, state: "DiscordAPI", data: dict):
         super().__init__(state=state, data=data)
 
@@ -1721,6 +1750,13 @@ class DMChannel(BaseChannel):
     last_message: PartialMessage | None
         The last message in the DM channel
     """
+
+    __slots__ = (
+        "last_message",
+        "last_pin_timestamp",
+        "user",
+    )
+
     def __init__(self, *, state: "DiscordAPI", data: dict):
         super().__init__(state=state, data=data)
 
@@ -1773,6 +1809,8 @@ class DMChannel(BaseChannel):
 
 
 class StoreChannel(BaseChannel):
+    __slots__ = ()
+
     def __init__(self, *, state: "DiscordAPI", data: dict):
         super().__init__(state=state, data=data)
 
@@ -1786,6 +1824,8 @@ class StoreChannel(BaseChannel):
 
 
 class GroupDMChannel(BaseChannel):
+    __slots__ = ()
+
     def __init__(self, *, state: "DiscordAPI", data: dict):
         super().__init__(state=state, data=data)
 
@@ -1799,6 +1839,8 @@ class GroupDMChannel(BaseChannel):
 
 
 class DirectoryChannel(BaseChannel):
+    __slots__ = ()
+
     def __init__(self, *, state: "DiscordAPI", data: dict):
         super().__init__(state=state, data=data)
 
@@ -1812,6 +1854,8 @@ class DirectoryChannel(BaseChannel):
 
 
 class CategoryChannel(BaseChannel):
+    __slots__ = ()
+
     def __init__(self, *, state: "DiscordAPI", data: dict):
         super().__init__(state=state, data=data)
 
@@ -1971,6 +2015,8 @@ class CategoryChannel(BaseChannel):
 
 
 class NewsChannel(BaseChannel):
+    __slots__ = ()
+
     def __init__(self, state: "DiscordAPI", data: dict):
         super().__init__(state=state, data=data)
 
@@ -1993,6 +2039,9 @@ class PartialThread(PartialChannel):
     parent_id: int
         The ID of the parent channel
     """
+
+    __slots__ = ()
+
     def __init__(
         self,
         *,
@@ -2046,6 +2095,20 @@ class PublicThread(BaseChannel):
     last_message_id: int | None
         The ID of the last message in the thread
     """
+
+    __slots__ = (
+        "_metadata",
+        "archived",
+        "auto_archive_duration",
+        "channel_id",
+        "locked",
+        "member_count",
+        "message_count",
+        "newly_created",
+        "owner_id",
+        "total_message_sent",
+    )
+
     def __init__(self, *, state: "DiscordAPI", data: dict):
         super().__init__(state=state, data=data)
 
@@ -2130,6 +2193,15 @@ class ForumTag:
     emoji_name: str | None
         The emoji name of the tag
     """
+
+    __slots__ = (
+        "emoji_id",
+        "emoji_name",
+        "id",
+        "moderated",
+        "name",
+    )
+
     def __init__(self, *, data: dict):
         self.id: int | None = utils.get_int(data, "id")
 
@@ -2240,6 +2312,12 @@ class ForumChannel(PublicThread):
     tags: list[ForumTag]
         The available tags for the forum channel
     """
+
+    __slots__ = (
+        "default_reaction_emoji",
+        "tags",
+    )
+
     def __init__(self, state: "DiscordAPI", data: dict):
         super().__init__(state=state, data=data)
         self.default_reaction_emoji: EmojiParser | None = None
@@ -2271,6 +2349,8 @@ class ForumChannel(PublicThread):
 
 
 class ForumThread(PublicThread):
+    __slots__ = ()
+
     def __init__(self, state: "DiscordAPI", data: dict):
         super().__init__(state=state, data=data)
         self._from_data(data)
@@ -2297,6 +2377,8 @@ class ForumThread(PublicThread):
 
 
 class NewsThread(PublicThread):
+    __slots__ = ()
+
     def __init__(self, state: "DiscordAPI", data: dict):
         super().__init__(state=state, data=data)
 
@@ -2310,6 +2392,8 @@ class NewsThread(PublicThread):
 
 
 class PrivateThread(PublicThread):
+    __slots__ = ()
+
     def __init__(self, *, state: "DiscordAPI", data: dict):
         super().__init__(state=state, data=data)
 
@@ -2320,6 +2404,8 @@ class PrivateThread(PublicThread):
 
 
 class Thread(PublicThread):
+    __slots__ = ()
+
     def __init__(self, *, state: "DiscordAPI", data: dict):
         super().__init__(state=state, data=data)
 
@@ -2350,6 +2436,15 @@ class VoiceRegion:
     optimal: bool
         Whether the voice region is optimal for the current user
     """
+
+    __slots__ = (
+        "custom",
+        "deprecated",
+        "id",
+        "name",
+        "optimal",
+    )
+
     def __init__(self, *, data: dict):
         self.id: str = data["id"]
         self.name: str = data["name"]
@@ -2381,6 +2476,13 @@ class VoiceChannel(BaseChannel):
     rtc_region: str | None
         The RTC region of the voice channel, if set
     """
+
+    __slots__ = (
+        "bitrate",
+        "rtc_region",
+        "user_limit",
+    )
+
     def __init__(self, *, state: "DiscordAPI", data: dict):
         super().__init__(state=state, data=data)
         self.bitrate: int = int(data["bitrate"])
@@ -2417,6 +2519,17 @@ class StageInstance(PartialBase):
     guild_scheduled_event_id: int | None
         The guild scheduled event ID associated with this stage instance
     """
+
+    __slots__ = (
+        "_guild",
+        "_state",
+        "channel_id",
+        "guild_id",
+        "guild_scheduled_event_id",
+        "privacy_level",
+        "topic",
+    )
+
     def __init__(
         self,
         *,
@@ -2531,6 +2644,8 @@ class StageInstance(PartialBase):
 
 
 class StageChannel(VoiceChannel):
+    __slots__ = ("_stage_instance",)
+
     def __init__(self, *, state: "DiscordAPI", data: dict):
         super().__init__(state=state, data=data)
 

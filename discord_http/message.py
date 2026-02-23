@@ -55,6 +55,14 @@ class MessageInteraction(PartialBase):
     user: User
         The user who triggered the interaction.
     """
+
+    __slots__ = (
+        "_raw_type",
+        "_state",
+        "name",
+        "user",
+    )
+
     def __init__(
         self,
         *,
@@ -64,12 +72,17 @@ class MessageInteraction(PartialBase):
         super().__init__(id=int(data["id"]))
         self._state = state
 
-        self.type: InteractionType = InteractionType(data["type"])
+        self._raw_type: int = data["type"]
         self.name: str | None = data.get("name")
         self.user: User = User(
             state=state,
             data=data["user"]
         )
+
+    @property
+    def type(self) -> InteractionType:
+        """ The type of the interaction. """
+        return InteractionType(self._raw_type)
 
 
 class MessageReaction:
@@ -93,6 +106,20 @@ class MessageReaction:
     burst_colors: list[Colour]
         The colors of the burst reaction.
     """
+
+    __slots__ = (
+        "_burst_me",
+        "_message",
+        "_state",
+        "burst_colors",
+        "burst_count",
+        "burst_me",
+        "count",
+        "emoji",
+        "me",
+        "me_burst",
+    )
+
     def __init__(self, *, state: "DiscordAPI", message: "Message", data: dict):
         self._state = state
         self._message = message
@@ -241,6 +268,14 @@ class JumpURL:
     message_id: int | None
         The ID of the message, if applicable.
     """
+
+    __slots__ = (
+        "_state",
+        "channel_id",
+        "guild_id",
+        "message_id",
+    )
+
     def __init__(
         self,
         *,
@@ -382,6 +417,15 @@ class PollAnswer:
     me_voted: bool
         Whether the bot has voted for this answer.
     """
+
+    __slots__ = (
+        "count",
+        "emoji",
+        "id",
+        "me_voted",
+        "text",
+    )
+
     def __init__(
         self,
         *,
@@ -459,6 +503,17 @@ class Poll:
     is_finalized: bool
         Whether the poll is finalized or not.
     """
+
+    __slots__ = (
+        "allow_multiselect",
+        "answers",
+        "duration",
+        "expiry",
+        "is_finalized",
+        "layout_type",
+        "text",
+    )
+
     def __init__(
         self,
         *,
@@ -613,10 +668,19 @@ class MessageReference:
     message_id: int | None
         The ID of the message, if applicable.
     """
+
+    __slots__ = (
+        "_raw_type",
+        "_state",
+        "channel_id",
+        "guild_id",
+        "message_id",
+    )
+
     def __init__(self, *, state: "DiscordAPI", data: dict):
         self._state = state
 
-        self.type: MessageReferenceType = MessageReferenceType(data["type"])
+        self._raw_type: int = data["type"]
         self.guild_id: int | None = utils.get_int(data, "guild_id")
         self.channel_id: int | None = utils.get_int(data, "channel_id")
         self.message_id: int | None = utils.get_int(data, "message_id")
@@ -626,6 +690,11 @@ class MessageReference:
             f"<MessageReference guild_id={self.guild_id} channel_id={self.channel_id} "
             f"message_id={self.message_id}>"
         )
+
+    @property
+    def type(self) -> MessageReferenceType:
+        """ The type of the message reference. """
+        return MessageReferenceType(self._raw_type)
 
     @property
     def jump_url(self) -> JumpURL:
@@ -737,6 +806,25 @@ class Attachment:
     waveform: str | None
         The waveform of the attachment, if applicable.
     """
+
+    __slots__ = (
+        "_state",
+        "content_type",
+        "description",
+        "duration_secs",
+        "ephemeral",
+        "filename",
+        "flags",
+        "height",
+        "id",
+        "proxy_url",
+        "size",
+        "title",
+        "url",
+        "waveform",
+        "width",
+    )
+
     def __init__(self, *, state: "DiscordAPI", data: dict):
         self._state = state
 
@@ -906,6 +994,13 @@ class PartialMessage(PartialBase):
     guild_id: int | None
         The ID of the guild the message was sent in, if applicable.
     """
+
+    __slots__ = (
+        "_state",
+        "channel_id",
+        "guild_id",
+    )
+
     def __init__(
         self,
         *,
@@ -1009,9 +1104,12 @@ class PartialMessage(PartialBase):
                 pass
 
         if delay is not None:
-            asyncio.create_task(_delete_after(delay))  # noqa: RUF006
-        else:
-            await _delete()
+            task = self._state.bot.loop.create_task(_delete_after(delay))
+            self._state.bot._background_tasks.add(task)
+            task.add_done_callback(self._state.bot._background_tasks.discard)
+            return
+
+        await _delete()
 
     async def expire_poll(self) -> "Message":
         """
@@ -1478,6 +1576,18 @@ class MessageSnapshot:
     attachments: list[Attachment]
         The attachments of the message.
     """
+
+    __slots__ = (
+        "_message",
+        "_state",
+        "attachments",
+        "content",
+        "edited_timestamp",
+        "embeds",
+        "timestamp",
+        "type",
+    )
+
     def __init__(
         self,
         *,
@@ -1560,6 +1670,28 @@ class Message(PartialMessage):
     interaction: MessageInteraction | None
         The interaction associated with the message, if any.
     """
+
+    __slots__ = (
+        "attachments",
+        "author",
+        "content",
+        "edited_timestamp",
+        "embeds",
+        "interaction",
+        "mention_everyone",
+        "mentions",
+        "pinned",
+        "poll",
+        "reactions",
+        "reference",
+        "resolved_forward",
+        "resolved_reply",
+        "stickers",
+        "tts",
+        "type",
+        "view",
+    )
+
     def __init__(
         self,
         *,
@@ -1781,6 +1913,9 @@ class WebhookMessage(Message):
     token: str
         The token of the webhook, used for editing and deleting the message.
     """
+
+    __slots__ = ("application_id", "token")
+
     def __init__(self, *, state: "DiscordAPI", data: dict, application_id: int, token: str):
         super().__init__(state=state, data=data)
         self.application_id = int(application_id)
@@ -1883,6 +2018,9 @@ class WebhookMessage(Message):
                 pass
 
         if delay is not None:
-            asyncio.create_task(_delete_after(delay))  # noqa: RUF006
-        else:
-            await _delete()
+            task = self._state.bot.loop.create_task(_delete_after(delay))
+            self._state.bot._background_tasks.add(task)
+            task.add_done_callback(self._state.bot._background_tasks.discard)
+            return
+
+        await _delete()

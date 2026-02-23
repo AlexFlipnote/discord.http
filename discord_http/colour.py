@@ -2,8 +2,6 @@ import random
 
 from typing import Self
 
-from . import utils
-
 __all__ = (
     "Color",
     "Colour",
@@ -12,6 +10,9 @@ __all__ = (
 
 class Colour:
     """ Represents a colour object, used in multiple places in the API. """
+
+    __slots__ = ("value",)
+
     def __init__(self, value: int):
         if not isinstance(value, int):
             raise TypeError(f"value must be an integer, not {type(value)}")
@@ -91,15 +92,18 @@ class Colour:
         `ValueError`
             Invalid hex colour
         """
-        find_hex = utils.re_hex.search(hex_value)
-        if not find_hex:
-            raise ValueError(f"Invalid hex colour {hex_value!r}")
-
         hex_value = hex_value.removeprefix("#")
+
+        if len(hex_value) not in (3, 6):
+            raise ValueError(f"Hex value must be either 3 or 6 characters long, not {len(hex_value)}")
+
         if len(hex_value) == 3:
             hex_value = "".join(c * 2 for c in hex_value)
 
-        return cls(int(hex_value, 16))
+        try:
+            return cls(int(hex_value, 16))
+        except ValueError:
+            raise ValueError(f"Invalid hex colour {hex_value!r}")
 
     def to_hex(self) -> str:
         """ Returns the hex value of the colour. """
@@ -237,6 +241,9 @@ class Colour:
 
 class Color(Colour):
     """ Alias for Colour. """
+
+    __slots__ = ()
+
     def __init__(self, value: int):
         super().__init__(value)
 

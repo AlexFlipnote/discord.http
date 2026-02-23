@@ -16,7 +16,7 @@ from aiohttp.web_exceptions import (
 
 from . import utils
 from .commands import Command, SubGroup
-from .enums import InteractionType
+from .enums import InteractionType, CommandOptionType
 from .errors import CheckFailed
 from .response import BaseResponse, Ping, MessageResponse, EmptyResponse
 
@@ -37,6 +37,7 @@ class DiscordHTTP(web.Application):
 
     We recommend to not touch this class, unless you know what you're doing
     """
+
     def __init__(self, *, client: "Client"):
         self.uptime: datetime = utils.utcnow()
         self.bot: "Client" = client
@@ -94,7 +95,10 @@ class DiscordHTTP(web.Application):
         while isinstance(cmd, SubGroup):
             find_next_step = next((
                 g for g in data_options
-                if g.get("name", None) and not g.get("value", None)
+                if g.get("type") in (
+                    int(CommandOptionType.sub_command),
+                    int(CommandOptionType.sub_command_group)
+                )
             ), None)
 
             if not find_next_step:

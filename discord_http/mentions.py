@@ -22,6 +22,14 @@ class AllowedMentions:
     reply_user: bool
         Whether to mention the author of the message being replied to
     """
+
+    __slots__ = (
+        "everyone",
+        "reply_user",
+        "roles",
+        "users",
+    )
+
     def __init__(
         self,
         *,

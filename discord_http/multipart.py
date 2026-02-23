@@ -20,6 +20,9 @@ class MultipartData:
     bufs: list[bytes]
         A list of byte strings that make up the multipart data.
     """
+
+    __slots__ = ("boundary", "bufs")
+
     def __init__(self):
         self.boundary = "---------------discord.http"
         self.bufs: list[bytes] = []

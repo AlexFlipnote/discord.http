@@ -37,6 +37,14 @@ class PartialWebhook(PartialBase):
     token: str | None
         The token of the webhook, if any
     """
+
+    __slots__ = (
+        "_retry_codes",
+        "_state",
+        "id",
+        "token",
+    )
+
     def __init__(
         self,
         *,
@@ -342,6 +350,17 @@ class Webhook(PartialWebhook):
     guild_id: int | None
         The ID of the guild this webhook is in, if any
     """
+
+    __slots__ = (
+        "application_id",
+        "avatar",
+        "channel_id",
+        "guild_id",
+        "name",
+        "url",
+        "user",
+    )
+
     def __init__(self, *, state: "DiscordAPI", data: dict):
         self.application_id: int | None = utils.get_int(data, "application_id")
 

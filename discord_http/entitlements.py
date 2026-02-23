@@ -20,6 +20,8 @@ __all__ = (
 
 
 class PartialSKU(PartialBase):
+    __slots__ = ("_state",)
+
     def __init__(
         self,
         *,
@@ -85,6 +87,15 @@ class SKU(PartialSKU):
     application: PartialUser
         The application that owns the SKU.
     """
+
+    __slots__ = (
+        "_raw_flags",
+        "_raw_type",
+        "application",
+        "name",
+        "slug",
+    )
+
     def __init__(
         self,
         *,
@@ -95,8 +106,9 @@ class SKU(PartialSKU):
 
         self.name: str = data["name"]
         self.slug: str = data["slug"]
-        self.type: SKUType = SKUType(data["type"])
-        self.flags: SKUFlags = SKUFlags(data["flags"])
+
+        self._raw_type: int = data["type"]
+        self._raw_flags: int = data["flags"]
 
         self.application: PartialUser = PartialUser(
             state=self._state,
@@ -109,8 +121,20 @@ class SKU(PartialSKU):
     def __str__(self) -> str:
         return f"{self.name}"
 
+    @property
+    def type(self) -> SKUType:
+        """ The type of the SKU. """
+        return SKUType(self._raw_type)
+
+    @property
+    def flags(self) -> SKUFlags:
+        """ The flags of the SKU. """
+        return SKUFlags(self._raw_flags)
+
 
 class PartialEntitlements(PartialBase):
+    __slots__ = ("_state",)
+
     def __init__(
         self,
         *,
@@ -153,6 +177,19 @@ class PartialEntitlements(PartialBase):
 
 
 class Entitlements(PartialEntitlements):
+    __slots__ = (
+        "_data_consumed",
+        "application",
+        "deleted",
+        "ends_at",
+        "guild_id",
+        "sku",
+        "starts_at",
+        "subscription_id",
+        "type",
+        "user",
+    )
+
     def __init__(
         self,
         *,

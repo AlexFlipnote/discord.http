@@ -43,6 +43,14 @@ class PartialMember(PartialBase):
     presence: Presence | None
         The presence of the member, if available.
     """
+
+    __slots__ = (
+        "_state",
+        "_user",
+        "guild_id",
+        "presence",
+    )
+
     def __init__(
         self,
         *,
@@ -433,6 +441,23 @@ class Member(PartialMember):
     primary_guild: PrimaryGuild | None
         The primary guild of the member, if available.
     """
+
+    __slots__ = (
+        "_raw_permissions",
+        "_roles",
+        "avatar",
+        "avatar_decoration",
+        "banner",
+        "communication_disabled_until",
+        "flags",
+        "joined_at",
+        "nameplate",
+        "nick",
+        "pending",
+        "premium_since",
+        "primary_guild",
+    )
+
     def __init__(
         self,
         *,
@@ -720,6 +745,13 @@ class PartialThreadMember(PartialMember):
     flags: int
         The flags of the member in the thread.
     """
+
+    __slots__ = (
+        "flags",
+        "join_timestamp",
+        "thread_id",
+    )
+
     def __init__(
         self,
         *,
@@ -758,6 +790,12 @@ class ThreadMember(Member):
     flags: int
         The flags of the member in the thread.
     """
+
+    __slots__ = (
+        "join_timestamp",
+        "thread_id",
+    )
+
     def __init__(
         self,
         *,

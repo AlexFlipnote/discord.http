@@ -27,6 +27,13 @@ class PartialSticker(PartialBase):
     guild_id: int | None
         The ID of the guild this sticker is in, if any
     """
+
+    __slots__ = (
+        "_state",
+        "guild_id",
+        "name",
+    )
+
     def __init__(
         self,
         *,
@@ -207,6 +214,17 @@ class Sticker(PartialSticker):
     type: StickerType
         The type of the sticker
     """
+
+    __slots__ = (
+        "_raw_type",
+        "available",
+        "description",
+        "format_type",
+        "pack_id",
+        "sort_value",
+        "tags",
+    )
+
     def __init__(
         self,
         *,
@@ -221,6 +239,8 @@ class Sticker(PartialSticker):
             guild_id=guild.id if guild else None
         )
 
+        self._raw_type: int = data["type"]
+
         self.available: bool = data.get("available", False)
         self.available: bool = data["available"]
         self.description: str = data["description"]
@@ -228,7 +248,6 @@ class Sticker(PartialSticker):
         self.pack_id: int | None = utils.get_int(data, "pack_id")
         self.sort_value: int | None = utils.get_int(data, "sort_value")
         self.tags: str = data["tags"]
-        self.type: StickerType = StickerType(data["type"])
 
         # Re-define types
         self.name: str
@@ -238,6 +257,11 @@ class Sticker(PartialSticker):
 
     def __repr__(self) -> str:
         return f"<Sticker id={self.id} name='{self.name}'>"
+
+    @property
+    def type(self) -> StickerType:
+        """ The type of the sticker. """
+        return StickerType(self._raw_type)
 
     @property
     def url(self) -> str:

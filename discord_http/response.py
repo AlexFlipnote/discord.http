@@ -38,6 +38,14 @@ class Ping(Snowflake):
     version: int
         The version of the ping.
     """
+
+    __slots__ = (
+        "_raw_user",
+        "_state",
+        "application_id",
+        "version",
+    )
+
     def __init__(
         self,
         *,
@@ -57,7 +65,7 @@ class Ping(Snowflake):
 
     @property
     def application(self) -> "PartialUser":
-        """ Returns the user object of the bot. """
+        """ Returns the partial user object of the application. """
         from .user import PartialUser
         return PartialUser(state=self._state, id=self.application_id)
 
@@ -69,6 +77,8 @@ class Ping(Snowflake):
 
 
 class BaseResponse:
+    __slots__ = ()
+
     def __init__(self):
         pass
 
@@ -100,6 +110,13 @@ class DeferResponse(BaseResponse):
     flags: MessageFlags
         The flags for the response.
     """
+
+    __slots__ = (
+        "ephemeral",
+        "flags",
+        "thinking",
+    )
+
     def __init__(
         self,
         *,
@@ -144,6 +161,9 @@ class AutocompleteResponse(BaseResponse):
         A dictionary of choices for the autocomplete response.
         The keys are the values to be sent to Discord, and the values are the names to be displayed to the user.
     """
+
+    __slots__ = ("choices",)
+
     def __init__(
         self,
         choices: dict[Any, str]
@@ -179,6 +199,9 @@ class ModalResponse(BaseResponse):
     modal: Modal
         The modal to be displayed to the user.
     """
+
+    __slots__ = ("modal",)
+
     def __init__(self, modal: Modal):
         self.modal = modal
 
@@ -204,6 +227,9 @@ class EmptyResponse(BaseResponse):
     This is used when no data is needed to be sent back to Discord.
     Instead, you respond later with a normal message.
     """
+
+    __slots__ = ()
+
     def __init__(self):
         pass
 
@@ -253,6 +279,22 @@ class MessageResponse(BaseResponse):
     flags:
         Flags for the message response.
     """
+
+    __slots__ = (
+        "allowed_mentions",
+        "attachments",
+        "content",
+        "embeds",
+        "ephemeral",
+        "files",
+        "flags",
+        "message_reference",
+        "poll",
+        "tts",
+        "type",
+        "view",
+    )
+
     def __init__(
         self,
         content: str | None = MISSING,

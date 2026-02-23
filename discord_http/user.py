@@ -48,6 +48,13 @@ class DisplayNameStyles:
     effect: DisplayNameEffectType | None
         The effect of the display name, if any
     """
+
+    __slots__ = (
+        "colours",
+        "effect",
+        "font",
+    )
+
     def __init__(self, data: dict):
         self.colours: list[Colour] = [Colour(g) for g in data.get("colors", [])]
         self.font: DisplayNameFontType = DisplayNameFontType(
@@ -79,6 +86,15 @@ class Nameplate:
     asset: Asset
         The asset of the nameplate
     """
+
+    __slots__ = (
+        "_state",
+        "asset",
+        "label",
+        "palette",
+        "sku_id",
+    )
+
     def __init__(self, state: "DiscordAPI", data: dict):
         self._state = state
 
@@ -114,6 +130,14 @@ class PrimaryGuild:
     badge: Asset | None
         The badge of the guild, if any
     """
+
+    __slots__ = (
+        "_state",
+        "badge",
+        "guild_id",
+        "tag",
+    )
+
     def __init__(self, state: "DiscordAPI", data: dict):
         self._state = state
 
@@ -157,6 +181,13 @@ class AvatarDecoration(Snowflake):
     asset: Asset
         The asset of the avatar decoration
     """
+
+    __slots__ = (
+        "_state",
+        "asset",
+        "sku_id",
+    )
+
     def __init__(self, state: "DiscordAPI", data: dict):
         super().__init__(id=int(data["sku_id"]))
         self._state = state
@@ -179,6 +210,8 @@ class AvatarDecoration(Snowflake):
 
 
 class PartialUser(PartialBase):
+    __slots__ = ("_state",)
+
     def __init__(
         self,
         *,
@@ -409,6 +442,25 @@ class User(PartialUser):
     verified: bool
         Whether the user is verified (usually for bots)
     """
+
+    __slots__ = (
+        "accent_colour",
+        "avatar",
+        "avatar_decoration",
+        "banner",
+        "banner_colour",
+        "bot",
+        "discriminator",
+        "display_name_styles",
+        "global_name",
+        "name",
+        "nameplate",
+        "primary_guild",
+        "public_flags",
+        "system",
+        "verified",
+    )
+
     def __init__(
         self,
         *,
@@ -544,6 +596,38 @@ class Application(PartialBase):
     verified: bool
         Whether the user is verified
     """
+
+    __slots__ = (
+        "_state",
+        "approximate_guild_count",
+        "approximate_user_authorization_count",
+        "approximate_user_install_count",
+        "bot",
+        "bot_public",
+        "bot_require_code_grant",
+        "cover_image",
+        "description",
+        "event_webhooks_status",
+        "event_webhooks_types",
+        "event_webhooks_url",
+        "flags",
+        "guild",
+        "icon",
+        "interactions_endpoint_url",
+        "name",
+        "owner",
+        "primary_sku",
+        "privacy_policy_url",
+        "redirect_uris",
+        "role_connections_verification_url",
+        "rpc_origins",
+        "slug",
+        "tags",
+        "terms_of_service_url",
+        "verified",
+        "verify_key",
+    )
+
     def __init__(
         self,
         *,

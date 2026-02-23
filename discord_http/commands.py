@@ -529,10 +529,10 @@ class Command:
         if Permissions.administrator in resolved_perms:
             return Permissions(0)
 
-        return Permissions(sum([
+        return Permissions(sum(
             flag.value for flag in perms
             if flag not in resolved_perms
-        ]))
+        ))
 
     def _bot_has_permissions(self, ctx: "Context") -> Permissions:
         perms: Permissions | None = getattr(
@@ -544,10 +544,10 @@ class Command:
         if Permissions.administrator in ctx.app_permissions:
             return Permissions(0)
 
-        return Permissions(sum([
+        return Permissions(sum(
             flag.value for flag in perms
             if flag not in ctx.app_permissions
-        ]))
+        ))
 
     async def _command_checks(self, ctx: "Context") -> bool:
         checks: list[Callable] = getattr(
@@ -587,16 +587,11 @@ class Command:
         if after is None:
             return
 
-        async def _run_background() -> None:
-            with ctx.benchmark.measure("after_invoke"):
-                if inspect.iscoroutinefunction(after):
-                    await after(ctx)
-                else:
-                    after(ctx)
-
-        ctx.bot.loop.create_task(
-            _run_background()
-        )
+        with ctx.benchmark.measure("after_invoke"):
+            if inspect.iscoroutinefunction(after):
+                await after(ctx)
+            else:
+                after(ctx)
 
     def _cooldown_checker(self, ctx: "Context") -> None:
         if self.cooldown is None:
@@ -667,9 +662,9 @@ class Command:
 
         # Execute after invoke
         if getattr(self.command, "__after_invoke__", None):
-            context.bot.loop.create_task(
-                self._after_invoke(context)
-            )
+            task = context.bot.loop.create_task(self._after_invoke(context))
+            context.bot._background_tasks.add(task)
+            task.add_done_callback(context.bot._background_tasks.discard)
 
         return response
 
@@ -977,6 +972,10 @@ class SubGroup(Command):
             options = []
             for cmd in subcommands.values():
                 data = cmd.to_dict()
+
+                for invalid_key in ("nsfw", "integration_types", "contexts", "default_member_permissions"):
+                    data.pop(invalid_key, None)
+
                 if isinstance(cmd, SubGroup):
                     data["type"] = int(CommandOptionType.sub_command_group)
                     # Recursively build options for nested subcommand groups

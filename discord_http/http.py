@@ -42,6 +42,8 @@ __all__ = (
 
 
 class HTTPSession(aiohttp.ClientSession):
+    __slots__ = ()
+
     async def __aexit__(self, *args) -> None:  # noqa: ANN002
         if not self.closed:
             await self.close()
@@ -64,6 +66,15 @@ class HTTPResponse(Generic[ResponseT]):
     headers: CIMultiDictProxy[str]
         The headers of the response, as a CIMultiDictProxy.
     """
+
+    __slots__ = (
+        "headers",
+        "reason",
+        "res_method",
+        "response",
+        "status",
+    )
+
     def __init__(
         self,
         *,
@@ -97,6 +108,9 @@ class HTTPClient:
     session: HTTPSession | None
         The aiohttp session used for making requests.
     """
+
+    __slots__ = ("session",)
+
     def __init__(self):
         self.session: HTTPSession | None = None
 
@@ -106,7 +120,11 @@ class HTTPClient:
             await self.session.close()
 
         self.session = HTTPSession(
-            connector=aiohttp.TCPConnector(limit=0),
+            connector=aiohttp.TCPConnector(
+                limit=0,
+                use_dns_cache=True,
+                ttl_dns_cache=300
+            ),
             timeout=aiohttp.ClientTimeout(total=60),
             cookie_jar=aiohttp.DummyCookieJar(),
             # orjson.dumps returns bytes, but aiohttp expects str
@@ -221,6 +239,17 @@ class HTTPClient:
 
 
 class Ratelimit:
+    __slots__ = (
+        "_last_request",
+        "_lock",
+        "_loop",
+        "expires",
+        "key",
+        "limit",
+        "remaining",
+        "reset_after",
+    )
+
     def __init__(self, key: str):
         self.key: str = key
 

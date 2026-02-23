@@ -74,6 +74,12 @@ class BucketType(BaseEnum):
 
 
 class CooldownCache:
+    __slots__ = (
+        "_cache",
+        "_cooldown",
+        "_type",
+    )
+
     def __init__(
         self,
         original: "Cooldown",
@@ -200,6 +206,15 @@ class Cooldown:
     per: float
         The time in seconds for the rate limit
     """
+
+    __slots__ = (
+        "_last",
+        "_tokens",
+        "_window",
+        "per",
+        "rate",
+    )
+
     def __init__(self, rate: int, per: float):
         self.rate: int = int(rate)
         self.per: float = float(per)

@@ -21,6 +21,15 @@ __all__ = (
 
 
 class ActivityAssets:
+    __slots__ = (
+        "_state",
+        "application_id",
+        "large_image",
+        "large_text",
+        "small_image",
+        "small_text",
+    )
+
     def __init__(
         self,
         *,
@@ -55,6 +64,11 @@ class ActivityAssets:
 
 
 class ActivityTimestamps:
+    __slots__ = (
+        "end",
+        "start",
+    )
+
     def __init__(self, *, data: dict):
         self.start: datetime | None = None
         self.end: datetime | None = None
@@ -73,6 +87,12 @@ class ActivityTimestamps:
 
 
 class ActivitySecrets:
+    __slots__ = (
+        "join",
+        "match",
+        "spectate",
+    )
+
     def __init__(self, *, data: dict):
         self.join: str | None = data.get("join")
         self.spectate: str | None = data.get("spectate")
@@ -86,6 +106,12 @@ class ActivitySecrets:
 
 
 class ActivityParty:
+    __slots__ = (
+        "current_size",
+        "id",
+        "max_size",
+    )
+
     def __init__(self, *, data: dict):
         self.id: str | None = data.get("id")
         self.current_size: int | None = None
@@ -97,6 +123,27 @@ class ActivityParty:
 
 
 class Activity:
+    __slots__ = (
+        "_raw_type",
+        "_state",
+        "application_id",
+        "assets",
+        "buttons",
+        "created_at",
+        "details",
+        "emoji",
+        "flags",
+        "instance",
+        "name",
+        "party",
+        "secrets",
+        "session_id",
+        "state",
+        "sync_id",
+        "timestamps",
+        "url",
+    )
+
     def __init__(
         self,
         *,
@@ -104,9 +151,9 @@ class Activity:
         data: dict
     ):
         self._state = state
+        self._raw_type: int = data["type"]
 
         self.name: str = data["name"]
-        self.type: ActivityType = ActivityType(data["type"])
         self.url: str | None = data.get("url")
         self.created_at: datetime = utils.parse_time(data["created_at"])
         self.timestamps: ActivityTimestamps | None = None
@@ -153,3 +200,8 @@ class Activity:
                 application_id=self.application_id,
                 data=data["assets"]
             )
+
+    @property
+    def type(self) -> ActivityType:
+        """ The type of the activity. """
+        return ActivityType(self._raw_type)

@@ -23,6 +23,8 @@ __all__ = (
 
 
 class Cache:
+    __slots__ = ("__guilds", "bot", "cache_flags")
+
     def __init__(
         self,
         *,
