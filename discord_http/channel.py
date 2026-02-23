@@ -76,7 +76,7 @@ class Typing:
 
     def __init__(self, *, state: "DiscordAPI", channel: "PartialChannel"):
         self._state = state
-
+        self.task: asyncio.Task | None = None
         self.loop = state.bot.loop
         self.channel = channel
 
@@ -89,7 +89,8 @@ class Typing:
         self.task.add_done_callback(_typing_done_callback)
 
     async def __aexit__(self, *args) -> None:  # noqa: ANN002
-        self.task.cancel()
+        if self.task:
+            self.task.cancel()
 
     async def _send_typing(self) -> None:
         await self._state.query(
@@ -2351,7 +2352,7 @@ class ForumChannel(PublicThread):
 
 
 class ForumThread(PublicThread):
-    __slots__ = ()
+    __slots__ = ("message",)
 
     def __init__(self, state: "DiscordAPI", data: dict):
         super().__init__(state=state, data=data)
