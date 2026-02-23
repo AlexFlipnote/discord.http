@@ -411,20 +411,19 @@ class TextInputComponent(Item):
         self.default: str | None = default
         self.required: bool = required
 
-        if (
-            isinstance(self.min_length, int) and
-            self.min_length not in range(4001)
-        ):
-            raise ValueError("min_length must be between 0 and 4,000")
-
-        if (
-            isinstance(self.max_length, int) and
-            self.max_length not in range(1, 4001)
-        ):
-            raise ValueError("max_length must be between 1 and 4,000")
-
     def to_dict(self) -> dict:
         """ Returns a dict representation of the modal item. """
+        if len(self.custom_id) > 100:
+            raise ValueError("custom_id must be 100 characters or less")
+        if self.placeholder and len(self.placeholder) > 100:
+            raise ValueError("placeholder must be 100 characters or less")
+        if self.default and len(self.default) > 4000:
+            raise ValueError("default value must be 4000 characters or less")
+        if isinstance(self.min_length, int) and self.min_length not in range(4001):
+            raise ValueError("min_length must be between 0 and 4,000")
+        if isinstance(self.max_length, int) and self.max_length not in range(1, 4001):
+            raise ValueError("max_length must be between 1 and 4,000")
+
         payload = {
             "type": int(self.type),
             "custom_id": self.custom_id,
@@ -520,14 +519,13 @@ class Button(Item):
         if self.style in special_buttons:
             self.custom_id = None  # Force none for special buttons
 
+    def to_dict(self) -> dict:
+        """ Returns a dict representation of the button. """
         if self.style == ButtonStyles.link and not self.url:
             raise ValueError("url is required for link buttons")
-
         if self.style == ButtonStyles.premium and not self.sku_id:
             raise ValueError("sku_id is required for premium buttons")
 
-    def to_dict(self) -> dict:
-        """ Returns a dict representation of the button. """
         payload = {
             "type": int(self.type),
             "style": int(self.style),
@@ -553,12 +551,18 @@ class Button(Item):
                 payload["emoji"] = self.emoji
 
         if self.label:
+            if len(self.label) > 80:
+                raise ValueError("button label must be 80 characters or less")
             payload["label"] = self.label
 
         if self.custom_id:
+            if len(self.custom_id) > 100:
+                raise ValueError("button custom_id must be 100 characters or less")
             payload["custom_id"] = self.custom_id
 
         if self.url:
+            if len(self.url) > 512:
+                raise ValueError("button url must be 512 characters or less")
             payload["url"] = self.url
 
         return payload
@@ -736,8 +740,8 @@ class Select(Item):
         `ValueError`
             If there are more than 25 options
         """
-        if len(self._options) > 25:
-            raise ValueError("Cannot have more than 25 options")
+        if len(self._options) >= 25:
+            raise ValueError("Cannot have more than 25 options in a select menu")
 
         payload: dict = {
             "label": label,
@@ -754,6 +758,21 @@ class Select(Item):
 
     def to_dict(self) -> dict:
         """ Returns a dict representation of the select menu. """
+        if len(self.custom_id) > 100:
+            raise ValueError("custom_id must be 100 characters or less")
+        if self.min_values is not None and not (0 <= self.min_values <= 25):
+            raise ValueError("min_values must be between 0 and 25")
+        if self.max_values is not None and not (1 <= self.max_values <= 25):
+            raise ValueError("max_values must be between 1 and 25")
+
+        for opt in self._options:
+            if len(opt.get("label", "")) > 100:
+                raise ValueError("Option label must be 100 characters or less")
+            if len(opt.get("value", "")) > 100:
+                raise ValueError("Option value must be 100 characters or less")
+            if len(opt.get("description", "")) > 100:
+                raise ValueError("Option description must be 100 characters or less")
+
         payload = {
             "type": int(self.type),
             "custom_id": self.custom_id,
@@ -763,10 +782,14 @@ class Select(Item):
         }
 
         if self.placeholder is not None:
+            if len(self.placeholder) > 150:
+                raise ValueError("placeholder must be 150 characters or less")
             payload["placeholder"] = self.placeholder
         if self._default_values:
             payload["default_values"] = self._default_values
         if self._options:
+            if len(self._options) > 25:
+                raise ValueError("Cannot have more than 25 options")
             payload["options"] = self._options
         if self.required is not None:
             payload["required"] = self.required
@@ -1086,21 +1109,25 @@ class FileUploadComponent(Item):
         super().__init__(
             type=ComponentType.file_upload
         )
+        self.custom_id: str = (
+            str(custom_id)
+            if custom_id else _garbage_id()
+        )
+
         self.min_values: int | None = min_values
         self.max_values: int | None = max_values
         self.required: bool = required
         self.label: str | None = label
         self.description: str | None = description
-        self.custom_id: str | None = (
-            str(custom_id)
-            if custom_id else _garbage_id()
-        )
 
     def __repr__(self) -> str:
         return f"<FileUploadComponent custom_id='{self.custom_id}'>"
 
     def to_dict(self) -> dict:
         """ Returns a dict representation of the file upload component. """
+        if len(self.custom_id) > 100:
+            raise ValueError("custom_id must be 100 characters or less")
+
         payload = {
             "type": int(self.type),
             "custom_id": self.custom_id,
@@ -1108,8 +1135,13 @@ class FileUploadComponent(Item):
         }
 
         if self.min_values is not None:
+            if not (0 <= self.min_values <= 10):
+                raise ValueError("min_values must be between 0 and 10")
             payload["min_values"] = int(self.min_values)
+
         if self.max_values is not None:
+            if not (1 <= self.max_values <= 10):
+                raise ValueError("max_values must be between 1 and 10")
             payload["max_values"] = int(self.max_values)
 
         return payload
@@ -1183,6 +1215,11 @@ class ComponentOption:
 
     def to_dict(self) -> dict:
         """ Returns a dict representation of the option. """
+        if len(self.label) > 100:
+            raise ValueError("label must be 100 characters or less")
+        if len(self.value) > 100:
+            raise ValueError("value must be 100 characters or less")
+
         payload: dict = {
             "value": str(self.value),
             "label": str(self.label),
@@ -1192,6 +1229,8 @@ class ComponentOption:
             payload["default"] = True
 
         if self.description is not None:
+            if len(self.description) > 100:
+                raise ValueError("description must be 100 characters or less")
             payload["description"] = str(self.description)
 
         return payload
@@ -1255,6 +1294,9 @@ class RadioComponent(Item):
         default:
             Whether the option is the default selection
         """
+        if len(self.options) >= 10:
+            raise ValueError("Cannot have more than 10 options in a radio component")
+
         self.options.append(ComponentOption(
             value=value,
             label=label,
@@ -1264,13 +1306,15 @@ class RadioComponent(Item):
 
     def to_dict(self) -> dict:
         """ Returns a dict representation of the radio component. """
-        if len(self.options) < 2:
-            raise ValueError("RadioComponent must have at least 2 options")
+        if len(self.custom_id) > 100:
+            raise ValueError("custom_id must be 100 characters or less")
+        if not (2 <= len(self.options) <= 10):
+            raise ValueError("RadioComponent must have between 2 and 10 options")
 
         payload = {
             "type": int(self.type),
             "custom_id": self.custom_id,
-            "options": [g.to_dict() for g in self.options[:10]]
+            "options": [g.to_dict() for g in self.options]
         }
 
         if self.required:
@@ -1345,6 +1389,9 @@ class CheckboxGroupComponent(Item):
         default:
             Whether the option is selected by default
         """
+        if len(self.options) >= 10:
+            raise ValueError("Cannot have more than 10 options in a checkbox group component")
+
         self.options.append(ComponentOption(
             label=label,
             value=value,
@@ -1354,6 +1401,8 @@ class CheckboxGroupComponent(Item):
 
     def to_dict(self) -> dict:
         """ Returns a dict representation of the checkbox group component. """
+        if len(self.custom_id) > 100:
+            raise ValueError("custom_id must be 100 characters or less")
         if not (1 <= len(self.options) <= 10):
             raise ValueError("CheckboxGroupComponent must have between 1 and 10 options")
 
@@ -1365,7 +1414,7 @@ class CheckboxGroupComponent(Item):
         payload = {
             "type": int(self.type),
             "custom_id": self.custom_id,
-            "options": [o.to_dict() for o in self.options[:10]],
+            "options": [o.to_dict() for o in self.options],
         }
 
         if isinstance(self.min_values, int):
@@ -1425,6 +1474,9 @@ class CheckboxComponent(Item):
 
     def to_dict(self) -> dict:
         """ Returns a dict representation of the checkbox component. """
+        if len(self.custom_id) > 100:
+            raise ValueError("custom_id must be 100 characters or less")
+
         return {
             "type": int(self.type),
             "custom_id": self.custom_id,
@@ -1721,6 +1773,8 @@ class ThumbnailComponent(Item):
         }
 
         if self.description is not None:
+            if len(self.description) > 1024:
+                raise ValueError("description must be 1024 characters or less")
             payload["description"] = self.description
         if self.spoiler:
             payload["spoiler"] = bool(self.spoiler)
@@ -1757,21 +1811,14 @@ class SectionComponent(Item):
         self.components: list[TextDisplayComponent | str] = list(components)
         self.accessory: Button | ThumbnailComponent | AttachmentComponent | Asset | File | str = accessory
 
-        if not self.components:
-            raise ValueError("SectionComponent must have at least one component")
-
-        for i, g in enumerate(self.components):
-            if isinstance(g, str | TextDisplayComponent):
-                continue
-            raise ValueError(
-                f"Expected TextDisplayComponent or str, got {type(g)} at index {i}"
-            )
-
     def __repr__(self) -> str:
         return f"<SectionComponent components={self.components} accessory={self.accessory}>"
 
     def to_dict(self) -> dict:
         """ Returns a dict representation of the section component. """
+        if not (1 <= len(self.components) <= 3):
+            raise ValueError("SectionComponent must have between 1 and 3 child components")
+
         comps: list[TextDisplayComponent] = []
         for g in self.components:
             if isinstance(g, str):
@@ -1837,12 +1884,6 @@ class ActionRow(Item):
     ):
         super().__init__(type=ComponentType.action_row)
 
-        for i in components:
-            if i.type not in _components_action_row:
-                raise ValueError(
-                    f"Component type {i.type} is not supported inside an action row"
-                )
-
         self.components: list[Button | Select | Link] = list(components)
 
         self._select_types: list[ComponentType] = [
@@ -1868,11 +1909,6 @@ class ActionRow(Item):
         item:
             The item to add to the action row
         """
-        if item.type not in _components_action_row:
-            raise ValueError(
-                f"Component type {item.type} is not supported inside an action row"
-            )
-
         self.components.append(item)
 
     def remove_items(
@@ -1917,6 +1953,12 @@ class ActionRow(Item):
 
     def to_dict(self) -> dict:
         """ Returns a dict representation of the action row. """
+        for i in self.components:
+            if i.type not in _components_action_row:
+                raise ValueError(
+                    f"Component type {i.type} is not supported inside an action row"
+                )
+
         if len(self.components) <= 0:
             raise ValueError("Cannot have an action row with no components")
         if len(self.components) > 5:
@@ -2012,6 +2054,9 @@ class MediaGalleryItem:
 
     def to_dict(self) -> dict:
         """ Returns a dict representation of the media gallery item. """
+        if self.description and len(self.description) > 1024:
+            raise ValueError("description must be 1024 characters or less")
+
         url = str(self.url)
         if isinstance(self.url, File):
             url = f"attachment://{self.url.filename}"
@@ -2059,10 +2104,16 @@ class MediaGalleryComponent(Item):
         item:
             Items to add to the media gallery
         """
+        if len(self.items) >= 10:
+            raise ValueError("Cannot have more than 10 items in a media gallery component")
+
         self.items.append(item)
 
     def to_dict(self) -> dict:
         """ Returns a dict representation of the media gallery component. """
+        if not (1 <= len(self.items) <= 10):
+            raise ValueError("MediaGalleryComponent must have between 1 and 10 items")
+
         payload: list[MediaGalleryItem] = []
 
         for g in self.items:
@@ -2161,18 +2212,9 @@ class ContainerComponent(Item):
     ):
         super().__init__(type=ComponentType.container)
 
-        for i in items:
-            if i.type not in _components_v2:
-                raise ValueError(
-                    f"Component type {i.type} is not supported inside a container"
-                )
-
         self.items: list[Item] = list(items)
         self.colour: Colour | int | None = colour
         self.spoiler: bool | None = spoiler
-
-        if len(items) > 40:
-            raise ValueError("Cannot have more than 40 items in container")
 
     def __repr__(self) -> str:
         return f"<ContainerComponent items={self.items}>"
@@ -2190,6 +2232,9 @@ class ContainerComponent(Item):
         -------
             Returns the item that was added
         """
+        if len(self.items) >= 40:
+            raise ValueError("Cannot have more than 40 items in a container component")
+
         if isinstance(item, ContainerComponent):
             raise ValueError("Cannot add container component to container component")
 
@@ -2219,6 +2264,15 @@ class ContainerComponent(Item):
 
     def to_dict(self) -> dict:
         """ Returns a dict representation of the container component. """
+        for i in self.items:
+            if i.type not in _components_v2:
+                raise ValueError(
+                    f"Component type {i.type} is not supported inside a container"
+                )
+
+        if len(self.items) > 40:
+            raise ValueError("Cannot have more than 40 items in container")
+
         payload = {
             "type": int(self.type),
             "components": [g.to_dict() for g in self.items]
@@ -2246,18 +2300,6 @@ class View(InteractionStorage):
 
     def __init__(self, *items: Item):
         super().__init__()
-
-        for i in items:
-            if i.type in _components_inaccessible:
-                # Don't bother raising for inaccessible components.
-                # They are sent on User side only.
-                continue
-
-            if i.type not in _components_root:
-                raise ValueError(
-                    f"Component type {i.type} is not supported as a stand-alone component. "
-                    "Either use an action row, container or section component"
-                )
 
         self.items: list[Item] = list(items)
 
@@ -2312,11 +2354,8 @@ class View(InteractionStorage):
         -------
             Returns the added item
         """
-        if item.type not in _components_root:
-            raise ValueError(
-                f"Component type {item.type} is not supported as a stand-alone component. "
-                "Either use an action row, container or section component"
-            )
+        if len(self.items) >= 40:
+            raise ValueError("Cannot have more than 40 items in a view")
 
         self.items.append(item)
         return item
@@ -2363,6 +2402,18 @@ class View(InteractionStorage):
 
     def to_dict(self) -> list[dict]:
         """ Returns a dict representation of the view. """
+        for i in self.items:
+            if i.type in _components_inaccessible:
+                # Don't bother raising for inaccessible components.
+                # They are sent on User side only.
+                continue
+
+            if i.type not in _components_root:
+                raise ValueError(
+                    f"Component type {i.type} is not supported as a stand-alone component. "
+                    "Either use an action row, container or section component"
+                )
+
         if len(self.items) > 40:
             raise ValueError("Cannot have a view with more than 40 items")
 
@@ -2512,23 +2563,8 @@ class LabelComponent(Item):
     ):
         super().__init__(type=ComponentType.label)
 
-        if component.type not in _components_label:
-            raise ValueError(
-                f"Component type {component.type} is not supported as a label component. "
-                "Only TextInputComponent and Select are allowed"
-            )
-
         self.component = component
-
         self.label: str | None = self.component.label or label
-        if not isinstance(self.label, str):
-            if self.label is None:
-                raise TypeError(
-                    f"{type(self.component)} is being used inside a LabelComponent, but has no label set. "
-                    "(Provide one via the 'label' parameter)"
-                )
-            raise TypeError(f"Label for {type(self.component)} must be provided and be a string")
-
         self.description: str | None = self.component.description or description
 
     def __repr__(self) -> str:
@@ -2536,6 +2572,21 @@ class LabelComponent(Item):
 
     def to_dict(self) -> dict:
         """ Returns a dict representation of the label component. """
+        if self.component.type not in _components_label:
+            raise ValueError(
+                f"Component type {self.component.type} is not supported as a label component."
+            )
+
+        if not isinstance(self.label, str):
+            if self.label is None:
+                raise TypeError(
+                    f"{type(self.component)} is being used inside a LabelComponent, but has no label set. "
+                    "(Provide one via the 'label' parameter)"
+                )
+            raise TypeError(f"Label for {type(self.component)} must be provided and be a string")
+        if len(self.label) > 45:
+            raise ValueError("Label text must be 45 characters or less")
+
         payload = {
             "type": int(self.type),
             "label": self.label,
@@ -2543,6 +2594,8 @@ class LabelComponent(Item):
         }
 
         if self.description is not None:
+            if len(self.description) > 100:
+                raise ValueError("Description text must be 100 characters or less")
             payload["description"] = self.description
 
         return payload
@@ -2615,7 +2668,7 @@ class Modal(InteractionStorage):
             If the component is not a TextInputComponent or Select
         """
         if len(self.items) >= 5:
-            raise ValueError("Modal can only have 5 items at most")
+            raise ValueError("Cannot have more than 5 items in a modal")
 
         if isinstance(component, TextDisplayComponent):
             # This one is allowed as top-level
@@ -2633,6 +2686,9 @@ class Modal(InteractionStorage):
 
     def to_dict(self) -> dict:
         """ Returns a dict representation of the modal. """
+        if len(self.items) > 5:
+            raise ValueError("Modal can only have 5 items at most")
+
         return {
             "title": self.title,
             "custom_id": self.custom_id,
