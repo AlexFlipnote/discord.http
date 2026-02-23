@@ -950,6 +950,34 @@ class Context:
             await msg.delete(delay=float(delete_after))
         return msg
 
+    async def send_modal(
+        self,
+        modal: Modal,
+    ) -> None:
+        """
+        Send a modal after responding with an empty response in the initial interaction.
+
+        Parameters
+        ----------
+        modal:
+            The modal to send
+
+        Raises
+        ------
+        `TypeError`
+            If `modal` is not a `Modal` instance
+        """
+        if not isinstance(modal, Modal):
+            raise TypeError("modal must be a Modal instance")
+
+        payload = ModalResponse(modal=modal)
+
+        await self.bot.state.query(
+            "POST",
+            f"/interactions/{self.id}/{self._followup_token}/callback",
+            json=payload.to_dict()
+        )
+
     async def create_followup_response(
         self,
         content: str | None = MISSING,
