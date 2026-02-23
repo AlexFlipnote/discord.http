@@ -2040,7 +2040,9 @@ class PartialThread(PartialChannel):
         The ID of the parent channel
     """
 
-    __slots__ = ()
+    __slots__ = (
+        "_raw_type",
+    )
 
     def __init__(
         self,
