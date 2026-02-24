@@ -1,4 +1,3 @@
-import aiohttp
 import asyncio
 import logging
 import orjson
@@ -6,6 +5,7 @@ import sys
 import time
 import zlib
 
+from aiohttp import WSMsgType, ClientWebSocketResponse, ClientSession
 from collections.abc import Callable
 from datetime import datetime
 from typing import Any, TYPE_CHECKING, overload, Literal
@@ -97,6 +97,11 @@ class GatewayRatelimiter:
         self.per: float = per
         self.lock: asyncio.Lock = asyncio.Lock()
 
+    def reset(self) -> None:
+        """ Resets the ratelimiter. """
+        self.remaining = self.max
+        self.window = 0.0
+
     def is_ratelimited(self) -> bool:
         current = time.monotonic()
         if current > self.window + self.per:
@@ -166,6 +171,12 @@ class Status:
         self.sequence = None
         self.session_id = None
         self.gateway = DEFAULT_GATEWAY
+
+        self.latency = float("inf")
+        self._last_ack = time.perf_counter()
+        self._last_send = time.perf_counter()
+        self._last_recv = time.perf_counter()
+        self._last_heartbeat = None
 
     def can_resume(self) -> bool:
         return self.session_id is not None
@@ -244,10 +255,10 @@ class Shard:
         self.shard_count = shard_count
         self.debug_events = debug_events
 
-        self.ws: aiohttp.ClientWebSocketResponse | None = None
+        self.ws: ClientWebSocketResponse | None = None
 
         # Session was already made before, pyright is wrong
-        self.session: aiohttp.ClientSession = self.bot.state.http.session  # type: ignore
+        self.session: ClientSession = self.bot.state.http.session  # type: ignore
 
         self.parser = Parser(bot)
         self.status = Status(shard_id)
@@ -255,6 +266,7 @@ class Shard:
         self.playing_status: PlayingStatus | None = bot.playing_status
 
         self._ready: asyncio.Event = asyncio.Event()
+        self._ready_task: asyncio.Task | None = None
         self._guild_ready_timeout: float = float(bot.guild_ready_timeout)
         self._guild_create_queue: asyncio.Queue[dict] = asyncio.Queue()
         self._ratelimiter: GatewayRatelimiter = GatewayRatelimiter(shard_id)
@@ -296,9 +308,38 @@ class Shard:
         self._reset_buffer()
         self.status.reset()
 
+        self._close_code = None
+        self._ready.clear()
+        self._guild_create_queue = asyncio.Queue()
+
+        if self._ready_task is not None and not self._ready_task.done():
+            self._ready_task.cancel()
+            self._ready_task = None
+
+        for chunk_request in self.parser._chunk_requests.values():
+            future = chunk_request.get_future()
+            if not future.done():
+                future.cancel()
+
+        self.parser._chunk_requests.clear()
+
+    def _is_fatal_close(self) -> bool:
+        """ Check if the close code is completely unrecoverable. """
+        code = self._close_code or (self.ws.close_code if self.ws else None)
+        # 4004: Authentication failed
+        # 4010: Invalid shard
+        # 4011: Sharding required
+        # 4012: Invalid API version
+        # 4013: Invalid intent(s)
+        # 4014: Disallowed intent(s)
+        return code in (4004, 4010, 4011, 4012, 4013, 4014)
+
     def _can_handle_close(self) -> bool:
-        code = self._close_code or self.ws.close_code
-        return code not in (1000, 4004, 4010, 4011, 4012, 4013, 4014)
+        if self._is_fatal_close():
+            return False
+
+        code = self._close_code or (self.ws.close_code if self.ws else None)
+        return code != 1000
 
     def _was_normal_close(self) -> bool:
         code = self._close_code or self.ws.close_code
@@ -449,7 +490,11 @@ class Shard:
             case "READY":
                 self.status.update_sequence(msg["s"])
                 self.status.update_ready_data(data)
-                asyncio.create_task(self._delay_ready())  # noqa: RUF006
+
+                if self._ready_task is not None and not self._ready_task.done():
+                    self._ready_task.cancel()
+
+                self._ready_task = asyncio.create_task(self._delay_ready())
 
             case "RESUMED":
                 if self.bot.has_any_dispatch("shard_resumed"):
@@ -646,6 +691,7 @@ class Shard:
         try:
             keep_waiting: bool = True
             self._reset_buffer()
+            self._ratelimiter.reset()
 
             kwargs = {
                 "max_msg_size": 0,
@@ -684,20 +730,38 @@ class Shard:
                             await self.ws.ping()
 
                         else:
-                            await self.received_message(evt.data)
+                            match evt.type:
+                                case WSMsgType.TEXT | WSMsgType.BINARY:
+                                    await self.received_message(evt.data)
+
+                                case WSMsgType.CLOSE | WSMsgType.CLOSED | WSMsgType.CLOSING:
+                                    self._close_code = evt.data
+                                    raise ConnectionAbortedError(f"Shard {self.shard_id} received close frame with code {evt.data}")
+
+                                case WSMsgType.ERROR:
+                                    raise ConnectionError(f"Shard {self.shard_id} received websocket error: {evt.data}")
 
                 except Exception as e:
                     keep_waiting = False
 
                     if self._should_kill is True:
-                        # Custom close code, only used when shutting down
+                        # Library is shutting down, custom close was called
+                        _log.debug(f"Shard {self.shard_id} received a kill signal, shutting down")
+                        return
+
+                    if self._is_fatal_close():
+                        # The shard received a fatal close code, this means we should not attempt to reconnect and just shutdown the shard
+                        self._dispatch_close_reason(
+                            f"Shard {self.shard_id} received fatal close code {self._close_code}, shutting down.",
+                            ShardCloseType.hard_crash,
+                            exception=e
+                        )
                         return
 
                     _log.debug(f"Shard {self.shard_id} error", exc_info=e)
 
                     if self._can_handle_close():
                         self._reset_buffer()
-
                         self._dispatch_close_reason(
                             f"Shard {self.shard_id} closed, attempting reconnect due to resume event.",
                             ShardCloseType.resume,
