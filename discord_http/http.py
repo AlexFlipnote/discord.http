@@ -120,11 +120,7 @@ class HTTPClient:
             await self.session.close()
 
         self.session = HTTPSession(
-            connector=aiohttp.TCPConnector(
-                limit=0,
-                use_dns_cache=True,
-                ttl_dns_cache=300
-            ),
+            connector=aiohttp.TCPConnector(limit=0),
             timeout=aiohttp.ClientTimeout(total=60),
             cookie_jar=aiohttp.DummyCookieJar(),
             # orjson.dumps returns bytes, but aiohttp expects str
