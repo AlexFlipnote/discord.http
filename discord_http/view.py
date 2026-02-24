@@ -1990,7 +1990,7 @@ class ActionRow(Item):
         }
 
         default_value_dropdowns = (
-            UserSelect, RoleSelect, MentionableSelect, ChannelSelect
+            UserSelect, RoleSelect, MentionableSelect, ChannelSelect,
         )
 
         for c in data.get("components", []):
@@ -2493,17 +2493,7 @@ class View(InteractionStorage):
                     return MediaGalleryComponent(*medias)
 
                 case int(ComponentType.action_row):
-                    act_row = ActionRow()
-                    for a in c.get("components", []):
-                        sub_cls = cls_table[a.get("type", 2)]
-                        if a.get("type", None):
-                            del a["type"]
-                        if a.get("id", None):
-                            del a["id"]
-
-                        act_row.add_item(sub_cls(**a))
-
-                    return act_row
+                    return ActionRow.from_dict(c)
 
                 case _:
                     return cls(**c)
