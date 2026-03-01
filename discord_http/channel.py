@@ -118,6 +118,7 @@ class PartialChannel(PartialBase):
     """
 
     __slots__ = (
+        "_raw_type",
         "_state",
         "guild_id",
         "parent_id",
@@ -135,9 +136,17 @@ class PartialChannel(PartialBase):
 
         self.guild_id: int | None = int(guild_id) if guild_id else None
         self.parent_id: int | None = None
+        self._raw_type: int | None = None
 
     def __repr__(self) -> str:
         return f"<PartialChannel id={self.id}>"
+
+    @property
+    def type(self) -> ChannelType:
+        """ Returns the channel's type. """
+        if self._raw_type is not None:
+            return ChannelType(self._raw_type)
+        return ChannelType.unknown
 
     @property
     def mention(self) -> str:
@@ -224,11 +233,6 @@ class PartialChannel(PartialBase):
             The permissions for the member in the channel.
         """
         return Permissions.none()
-
-    @property
-    def type(self) -> ChannelType:
-        """ Returns the channel's type. """
-        return ChannelType.unknown
 
     def get_partial_message(self, message_id: int) -> "PartialMessage":
         """
@@ -1558,7 +1562,6 @@ class BaseChannel(PartialChannel):
     """
 
     __slots__ = (
-        "_raw_type",
         "last_message_id",
         "name",
         "nsfw",
@@ -2041,9 +2044,7 @@ class PartialThread(PartialChannel):
         The ID of the parent channel
     """
 
-    __slots__ = (
-        "_raw_type",
-    )
+    __slots__ = ()
 
     def __init__(
         self,

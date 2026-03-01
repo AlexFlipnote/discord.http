@@ -837,7 +837,7 @@ class Parser:
         if data.get("parent_id"):
             channel.parent_id = int(data["parent_id"])
         if data.get("type"):
-            channel._raw_type = ChannelType(int(data["type"]))
+            channel._raw_type = int(data["type"])
 
         return channel
 

@@ -55,27 +55,6 @@ class Client:
     """
     The main client class for discord.http.
 
-    Attributes
-    ----------
-    application: Application | None
-        The application object for the bot
-    gateway: GatewayClient | None
-        The gateway client, if enabled
-    commands: dict[str, Command]
-        The commands registered to the client
-    listeners: list[Listener]
-        The listeners registered to the client
-    interactions: dict[str, Interaction]
-        The interactions registered to the client
-    interactions_regex: dict[str, Interaction]
-        The interactions registered to the client with regex
-    cache: Cache
-        The cache for the client, used for caching guilds, users, etc.
-    state: DiscordAPI
-        The state for the client, used for making HTTP requests
-    backend: DiscordHTTP
-        The backend for the client, used for serving HTTP requests
-
     Parameters
     ----------
     token: str
@@ -122,6 +101,27 @@ class Client:
         Whether to disable the default GET path or not, if not provided, it will use `False`.
         The default GET path only provides information about the bot and when it was last rebooted.
         Usually a great tool to just validate that your bot is online.
+
+    Attributes
+    ----------
+    application: Application | None
+        The application object for the bot
+    gateway: GatewayClient | None
+        The gateway client, if enabled
+    commands: dict[str, Command]
+        The commands registered to the client
+    listeners: list[Listener]
+        The listeners registered to the client
+    interactions: dict[str, Interaction]
+        The interactions registered to the client
+    interactions_regex: dict[str, Interaction]
+        The interactions registered to the client with regex
+    cache: Cache
+        The cache for the client, used for caching guilds, users, etc.
+    state: DiscordAPI
+        The state for the client, used for making HTTP requests
+    backend: DiscordHTTP
+        The backend for the client, used for serving HTTP requests
     """
     def __init__(
         self,
@@ -916,14 +916,14 @@ class Client:
         timeout:
             The timeout to use, by default None.
 
+        Returns
+        -------
+            The event parameters
+
         Raises
         ------
         `TimeoutError`
             If the event was not dispatched within the timeout
-
-        Returns
-        -------
-            The event parameters
         """
         if not self.enable_gateway:
             _log.warning("Gateway is not enabled, skipped due to no events to wait for...")
