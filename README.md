@@ -26,8 +26,7 @@ You can install it by using `git+https://github.com/AlexFlipnote/discord.http@ma
 from discord_http import Context, Client
 
 client = Client(
-    token="Your bot token here",
-    sync=True  # Optional, defaults to False
+    token="Your bot token here"
 )
 
 @client.command()

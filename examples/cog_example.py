@@ -20,8 +20,7 @@ class CustomClient(Client):
 
 
 client = CustomClient(
-    token="BOT_TOKEN",
-    sync=True
+    token="BOT_TOKEN"
 )
 
 client.start(host="127.0.0.1", port=8080)

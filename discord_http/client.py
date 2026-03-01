@@ -83,7 +83,7 @@ class Client:
     guild_id: int | None
         Guild ID to sync commands to, if not provided, it will sync to global
     sync: bool
-        Whether to sync commands on boot or not
+        Whether to sync commands on boot or not (defaults to `True`)
     max_pending_connections:
         The maximum number of queued connections passed to the interaction URL, by default 128.
         If your bot is receiving a lot of traffic, you might want to increase this value.
@@ -130,7 +130,7 @@ class Client:
         application_id: int | None = None,
         public_key: str | None = None,
         guild_id: int | None = None,
-        sync: bool = False,
+        sync: bool = True,
         api_version: int = 10,
         loop: asyncio.AbstractEventLoop | None = None,
         allowed_mentions: AllowedMentions | None = None,

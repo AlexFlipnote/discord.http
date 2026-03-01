@@ -2,8 +2,7 @@ from discord_http import Client, Context, View, Select, ActionRow
 
 
 client = Client(
-    token="BOT_TOKEN",
-    sync=True
+    token="BOT_TOKEN"
 )
 
 

@@ -2,8 +2,7 @@ from aiohttp import web
 from discord_http import Client, Context
 
 client = Client(
-    token="BOT_TOKEN",
-    sync=True
+    token="BOT_TOKEN"
 )
 
 

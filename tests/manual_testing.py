@@ -35,7 +35,6 @@ client = Client(
     token=config["token"],
     debug_events=config["debug_events"],
     guild_id=config.get("guild_id", None),
-    sync=True,
     logging_level=logging.DEBUG,
     allowed_mentions=AllowedMentions(
         everyone=False, roles=False, users=True

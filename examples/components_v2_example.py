@@ -6,8 +6,7 @@ from discord_http import (
 )
 
 client = Client(
-    token="BOT_TOKEN",
-    sync=True
+    token="BOT_TOKEN"
 )
 
 

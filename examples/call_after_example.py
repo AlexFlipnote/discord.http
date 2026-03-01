@@ -3,8 +3,7 @@ import asyncio
 from discord_http import Context, Client
 
 client = Client(
-    token="BOT_TOKEN",
-    sync=True
+    token="BOT_TOKEN"
 )
 
 

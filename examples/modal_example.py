@@ -1,8 +1,7 @@
 from discord_http import Context, Client, Modal, TextInputComponent
 
 client = Client(
-    token="BOT_TOKEN",
-    sync=True
+    token="BOT_TOKEN"
 )
 
 

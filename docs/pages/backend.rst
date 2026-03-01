@@ -10,8 +10,7 @@ add your own componenets to the server.
   from discord_http import Context, Client
 
   client = Client(
-      token="Your bot token here",
-      sync=True  # Optional, defaults to False
+      token="Your bot token here"
   )
 
 With this simple code, you have the ability to interact with aiohttp API using ``client.backend``.
