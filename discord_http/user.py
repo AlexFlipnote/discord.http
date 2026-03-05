@@ -586,6 +586,10 @@ class User(PartialUser):
         """ Alias for `User.avatar_decoration`. """
         return self.avatar_decoration
 
+    def is_default_avatar(self) -> bool:
+        """ Returns whether the user has a default avatar. """
+        return self.avatar is None
+
 
 class Application(PartialBase):
     """

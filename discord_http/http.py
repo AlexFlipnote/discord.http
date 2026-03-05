@@ -32,7 +32,7 @@ ResponseT = TypeVar("ResponseT")
 _log = logging.getLogger(__name__)
 
 ratelimit_bucket_re = re.compile(
-    r"/(messages|members|roles|emojis|stickers|permissions|reactions|interactions)/\d+"
+    r"/(messages|members|roles|emojis|stickers|permissions|reactions|interactions)/([^/]+)"
 )
 
 __all__ = (

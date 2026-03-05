@@ -533,6 +533,37 @@ class Context:
     entitlements: list[Entitlements]
         The entitlements associated with the interaction
     """
+
+    __slots__ = (
+        "_channel",
+        "_data",
+        "_followup_token",
+        "_guild",
+        "_original_response",
+        "_raw_resolved",
+        "_raw_type",
+        "app_permissions",
+        "author",
+        "benchmark",
+        "bot",
+        "channel_id",
+        "command",
+        "command_type",
+        "custom_id",
+        "entitlements",
+        "guild_locale",
+        "id",
+        "last_message_id",
+        "locale",
+        "message",
+        "modal_values",
+        "options",
+        "recipients",
+        "resolved",
+        "select_values",
+        "user",
+    )
+
     def __init__(
         self,
         bot: "Client",

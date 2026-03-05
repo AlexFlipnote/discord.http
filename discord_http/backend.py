@@ -156,7 +156,9 @@ class DiscordHTTP(web.Application):
                 else:
                     self.bot._after_invoke(ctx)  # type: ignore
 
-        self.bot.loop.create_task(_run_background())
+        task = self.bot.loop.create_task(_run_background())
+        self.bot._background_tasks.add(task)
+        task.add_done_callback(self.bot._background_tasks.discard)
 
     async def _handle_application_command(
         self,

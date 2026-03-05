@@ -67,6 +67,20 @@ def _typing_done_callback(f: asyncio.Future) -> None:
 
 
 class Typing:
+    """
+    Helper class for the typing indicator.
+
+    Attributes
+    ----------
+    channel: PartialChannel
+        The channel the typing indicator is for
+    loop: asyncio.AbstractEventLoop
+        The event loop to use for the typing indicator
+    task: asyncio.Task | None
+        The task for the typing loop, if using `async with`
+    channel: PartialChannel
+        The channel the typing indicator is for
+    """
     __slots__ = (
         "_state",
         "channel",
@@ -1653,9 +1667,10 @@ class BaseChannel(PartialChannel):
             overwrites = self.permission_overwrites
 
         allows, denies = 0, 0
+        member_role_ids = {r.id for r in member.roles}
 
         for ow in overwrites:
-            if ow.is_role() and ow.target.id in member.roles:
+            if ow.is_role() and ow.target.id in member_role_ids:
                 allows |= int(ow.allow)
                 denies |= int(ow.deny)
 
