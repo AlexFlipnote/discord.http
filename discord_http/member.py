@@ -542,6 +542,10 @@ class Member(PartialMember):
 
         return self._roles
 
+    def is_default_avatar(self) -> bool:
+        """ Alias for `User.is_default_avatar()`. """
+        return self._user.is_default_avatar()
+
     def get_role(
         self,
         role: Snowflake | int
