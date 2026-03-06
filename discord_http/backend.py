@@ -158,7 +158,7 @@ class DiscordHTTP(web.Application):
 
         task = self.bot.loop.create_task(_run_background())
         self.bot._background_tasks.add(task)
-        task.add_done_callback(self.bot._background_tasks.discard)
+        task.add_done_callback(self.bot._cleanup_task)
 
     async def _handle_application_command(
         self,

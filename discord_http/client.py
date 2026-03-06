@@ -212,6 +212,15 @@ class Client:
 
         utils.setup_logger(level=self.logging_level)
 
+    def _cleanup_task(self, task: asyncio.Task) -> None:
+        """ A helper function to clean up asyncio tasks properly. """
+        self._background_tasks.discard(task)
+        try:
+            if not task.cancelled() and task.exception():
+                _log.error(f"Task failed: {task.get_name()}", exc_info=task.exception())
+        except Exception:
+            pass
+
     async def _run_global_checks(self, ctx: Context) -> bool:
         for g in self._global_cmd_checks:
             with ctx.benchmark.measure(f"global:check:{g.__name__}", internal=True):
@@ -321,7 +330,7 @@ class Client:
             name=f"discord.http/aiohttp: {event_name}"
         )
         self._background_tasks.add(task)
-        task.add_done_callback(self._background_tasks.discard)
+        task.add_done_callback(self._cleanup_task)
         return task
 
     async def _prepare_commands(self) -> None:
@@ -942,6 +951,10 @@ class Client:
             self._waiting_listeners[ev] = []
 
         self._waiting_listeners[ev].append((future, check))
+
+        if timeout is None:
+            # 1 hour, just to avoid waiting forever
+            timeout = 3600
 
         try:
             return await asyncio.wait_for(future, timeout=timeout)

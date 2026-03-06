@@ -1,3 +1,4 @@
+import io
 import os
 
 from typing import Self, TYPE_CHECKING, Literal
@@ -88,15 +89,22 @@ class Asset:
 
         return r.response
 
-    async def save(self, path: str) -> int:
+    async def save(
+        self,
+        path: str,
+        *,
+        chunk_size: int = 8192
+    ) -> int:
         """
         Fetches the file from the attachment URL and saves it locally to the path.
 
         Parameters
         ----------
-        path: `str`
+        path:
             Path to save the file to, which includes the filename and extension.
             Example: `./path/to/file.png`
+        chunk_size:
+            The amount of bytes to read at a time. Defaults to 8KB.
 
         Returns
         -------
@@ -109,15 +117,18 @@ class Asset:
         HTTPException
             If the asset returns anything but `HTTP 2XX`.
         """
-        data = await self.fetch()
+        total_bytes = 0
+        loop = self._state.bot.loop
 
-        def _sync_write() -> int:
-            with open(path, "wb") as f:
-                return f.write(data)
+        def _write_chunk(f: io.BufferedWriter, chunk: bytes) -> None:
+            f.write(chunk)
 
-        return await self._state.bot.loop.run_in_executor(
-            None, _sync_write
-        )
+        with open(path, "wb") as f:
+            async for chunk in self._state.http.stream_request("GET", self.url, chunk_size=chunk_size):
+                await loop.run_in_executor(None, _write_chunk, f, chunk)
+                total_bytes += len(chunk)
+
+        return total_bytes
 
     def replace(
         self,

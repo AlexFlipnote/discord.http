@@ -664,7 +664,7 @@ class Command:
         if getattr(self.command, "__after_invoke__", None):
             task = context.bot.loop.create_task(self._after_invoke(context))
             context.bot._background_tasks.add(task)
-            task.add_done_callback(context.bot._background_tasks.discard)
+            task.add_done_callback(context.bot._cleanup_task)
 
         return response
 

@@ -1,3 +1,5 @@
+import sys
+
 from base64 import b64encode
 from collections.abc import AsyncIterator, Callable
 from dataclasses import dataclass
@@ -21,7 +23,6 @@ from .enums import (
 from .emoji import Emoji, PartialEmoji
 from .file import File
 from .flags import Permissions, SystemChannelFlags, PermissionOverwrite
-from .multipart import MultipartData
 from .object import PartialBase, Snowflake
 from .role import Role, PartialRole
 from .soundboard import SoundboardSound, PartialSoundboardSound
@@ -356,6 +357,156 @@ class PartialGuild(PartialBase):
 
     def __repr__(self) -> str:
         return f"<PartialGuild id={self.id}>"
+
+    def _populate_internal_cache(self, data: dict) -> None:
+        flags = self._state.bot._gateway_cache
+        if flags is None:
+            return
+
+        from .gateway.flags import GatewayCacheFlags
+        guild_id = self.id
+
+        if data.get("channels"):
+            if GatewayCacheFlags.channels in flags:
+                from .channel import BaseChannel
+                self._cache_channels = {
+                    int(g["id"]): BaseChannel.from_dict(
+                        state=self._state,
+                        data=g,
+                        guild_id=guild_id
+                    )
+                    for g in data["channels"]
+                }
+            elif GatewayCacheFlags.partial_channels in flags:
+                self._cache_channels = {
+                    int(g["id"]): self._state.bot.get_partial_channel(
+                        int(g["id"]),
+                        guild_id=guild_id
+                    )
+                    for g in data["channels"]
+                }
+
+        if data.get("members"):
+            if GatewayCacheFlags.members in flags:
+                from .member import Member
+                self._cache_members = {
+                    int(g["user"]["id"]): Member(
+                        state=self._state,
+                        guild=self,
+                        data=g
+                    )
+                    for g in data["members"]
+                }
+            elif GatewayCacheFlags.partial_members in flags:
+                self._cache_members = {
+                    int(g["user"]["id"]): self._state.bot.get_partial_member(
+                        g["user"]["id"],
+                        guild_id=guild_id
+                    )
+                    for g in data["members"]
+                }
+            else:
+                # Still cache the only member which is the bot
+                from .member import Member
+                self._cache_members = {
+                    int(g["user"]["id"]): Member(
+                        state=self._state,
+                        guild=self,
+                        data=g
+                    )
+                    for g in data["members"]
+                    if int(g["user"]["id"]) == self._state.bot.user.id
+                }
+
+        if data.get("roles"):
+            if GatewayCacheFlags.roles in flags:
+                pass
+            elif GatewayCacheFlags.partial_roles in flags:
+                self._cache_roles = {
+                    k: self._state.bot.get_partial_role(
+                        v.id, guild_id
+                    )
+                    for k, v in dict(self._cache_roles).items()
+                }
+            else:
+                self._cache_roles = {}
+
+        if data.get("emojis"):
+            if GatewayCacheFlags.emojis in flags:
+                pass
+            elif GatewayCacheFlags.partial_emojis in flags:
+                self._cache_emojis = {
+                    k: self._state.bot.get_partial_emoji(
+                        v.id, guild_id=guild_id
+                    )
+                    for k, v in dict(self._cache_emojis).items()
+                }
+            else:
+                self._cache_emojis = {}
+
+        if data.get("stickers"):
+            if GatewayCacheFlags.stickers in flags:
+                pass
+            elif GatewayCacheFlags.partial_stickers in flags:
+                self._cache_stickers = {
+                    k: self._state.bot.get_partial_sticker(
+                        v.id, guild_id=guild_id
+                    )
+                    for k, v in dict(self._cache_stickers).items()
+                }
+            else:
+                self._cache_stickers = {}
+
+        if data.get("threads"):
+            if GatewayCacheFlags.threads in flags:
+                self._cache_threads = {
+                    int(g["id"]): BaseChannel.from_dict(
+                        state=self._state,
+                        data=g,
+                        guild_id=guild_id
+                    )
+                    for g in data["threads"]
+                }
+            elif GatewayCacheFlags.partial_threads in flags:
+                self._cache_threads = {
+                    int(g["id"]): self._state.bot.get_partial_channel(
+                        int(g["id"]),
+                        guild_id=guild_id
+                    )
+                    for g in data["threads"]
+                }
+            else:
+                self._cache_threads = {}
+
+        # Do voice states in the end
+        if data.get("voice_states"):
+            if GatewayCacheFlags.voice_states in flags:
+                self._cache_voice_states = {
+                    int(g["user_id"]): VoiceState(
+                        state=self._state,
+                        data=g,
+                        guild=self,
+                        channel=(
+                            self.get_channel(int(g["channel_id"])) or
+                            self._state.bot.get_partial_channel(
+                                int(g["channel_id"]),
+                                guild_id=guild_id
+                            )
+                        )
+                    )
+                    for g in data["voice_states"]
+                }
+            elif GatewayCacheFlags.partial_voice_states in flags:
+                self._cache_voice_states = {
+                    int(g["user_id"]): self._state.bot.get_partial_voice_state(
+                        int(g["user_id"]),
+                        guild_id=guild_id,
+                        channel_id=int(g["channel_id"])
+                    )
+                    for g in data["voice_states"]
+                }
+            else:
+                self._cache_voice_states = {}
 
     @property
     def large(self) -> bool:
@@ -1574,8 +1725,7 @@ class PartialGuild(PartialBase):
         finally:
             file.reset()
 
-        multidata = MultipartData()
-
+        multidata = utils.MultipartData()
         multidata.attach("name", str(name))
         multidata.attach("description", str(description))
         multidata.attach("tags", utils.unicode_name(emoji))
@@ -2692,7 +2842,7 @@ class Guild(PartialGuild):
         self.premium_subscription_count: int = data.get("premium_subscription_count", 0)
         self.premium_tier: int = data.get("premium_tier", 0)
         self.public_updates_channel_id: int | None = utils.get_int(data, "public_updates_channel_id")
-        self.region: str | None = data.get("region")
+        self.region: str | None = sys.intern(data.get("region", ""))
         self.safety_alerts_channel_id: int | None = utils.get_int(data, "safety_alerts_channel_id")
         self.system_channel_flags: int = data.get("system_channel_flags", 0)
         self.system_channel_id: int | None = utils.get_int(data, "system_channel_id")
@@ -2765,7 +2915,7 @@ class Guild(PartialGuild):
         self.premium_subscription_count: int = data.get("premium_subscription_count", 0)
         self.premium_tier: int = data.get("premium_tier", 0)
         self.public_updates_channel_id: int | None = utils.get_int(data, "public_updates_channel_id")
-        self.region: str | None = data.get("region")
+        self.region: str | None = sys.intern(data.get("region", ""))
         self.safety_alerts_channel_id: int | None = utils.get_int(data, "safety_alerts_channel_id")
         self.system_channel_flags: int = data.get("system_channel_flags", 0)
         self.system_channel_id: int | None = utils.get_int(data, "system_channel_id")

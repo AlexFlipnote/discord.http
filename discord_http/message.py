@@ -1106,7 +1106,7 @@ class PartialMessage(PartialBase):
         if delay is not None:
             task = self._state.bot.loop.create_task(_delete_after(delay))
             self._state.bot._background_tasks.add(task)
-            task.add_done_callback(self._state.bot._background_tasks.discard)
+            task.add_done_callback(self._state.bot._cleanup_task)
             return
 
         await _delete()
@@ -2020,7 +2020,7 @@ class WebhookMessage(Message):
         if delay is not None:
             task = self._state.bot.loop.create_task(_delete_after(delay))
             self._state.bot._background_tasks.add(task)
-            task.add_done_callback(self._state.bot._background_tasks.discard)
+            task.add_done_callback(self._state.bot._cleanup_task)
             return
 
         await _delete()

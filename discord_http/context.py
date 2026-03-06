@@ -24,7 +24,6 @@ from .enums import (
     ComponentType
 )
 from .file import File
-from .multipart import MultipartData
 from .flags import Permissions, MessageFlags
 from .guild import Guild, PartialGuild
 from .member import Member
@@ -209,7 +208,7 @@ class InteractionResponse:
                 name="discord.http/call_after"
             )
             self._parent.bot._background_tasks.add(task)
-            task.add_done_callback(self._parent.bot._background_tasks.discard)
+            task.add_done_callback(self._parent.bot._cleanup_task)
 
     def pong(self) -> dict:
         """ Only used to acknowledge a ping from Discord Developer portal Interaction URL. """
@@ -949,7 +948,7 @@ class Context:
             )
         )
 
-        multidata = MultipartData()
+        multidata = utils.MultipartData()
 
         if isinstance(payload.files, list):
             for i, file in enumerate(payload.files):

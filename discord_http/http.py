@@ -7,6 +7,7 @@ import re
 import sys
 
 from aiohttp.client_exceptions import ContentTypeError
+from collections.abc import AsyncIterator
 from multidict import CIMultiDictProxy
 from typing import Any, Self, overload, Literal, TypeVar, Generic, TYPE_CHECKING
 from urllib.parse import quote as url_quote
@@ -232,6 +233,45 @@ class HTTPClient:
                 reason=res.reason,
                 headers=res.headers
             )
+
+    async def stream_request(
+        self,
+        method: str,
+        url: str,
+        *,
+        chunk_size: int = 8192,
+        **kwargs
+    ) -> AsyncIterator[bytes]:
+        """
+        Make a request and yield the response in chunks to prevent memory spikes.
+
+        Perfect for downloading large files or assets.
+
+        Parameters
+        ----------
+        method:
+            The HTTP method to use (e.g., "GET")
+        url:
+            The URL to make the request to
+        chunk_size:
+            The amount of bytes to yield at a time. Defaults to 8KB.
+        **kwargs:
+            The keyword arguments to pass to the aiohttp.ClientSession.request method
+
+        Yields
+        ------
+            Chunks of the response as bytes
+        """
+        if method.upper() not in MethodTypes.__args__:
+            raise ValueError(f"Invalid HTTP method: {method}")
+
+        async with self.session.request(method.upper(), str(url), **kwargs) as res:
+            if res.status not in range(200, 300):
+                error_text = await res.text()
+                raise ValueError(f"Stream request failed with status {res.status}: {error_text}")
+
+            async for chunk in res.content.iter_chunked(chunk_size):
+                yield chunk
 
 
 class Ratelimit:

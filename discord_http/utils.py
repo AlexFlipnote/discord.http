@@ -1,5 +1,7 @@
 import binascii
+import io
 import logging
+import orjson
 import posixpath
 import re
 import struct
@@ -36,6 +38,106 @@ re_hex: re.Pattern = re.compile(r"^(?:#)?(?:[0-9a-fA-F]{3}){1,2}$")
 re_jump_url: re.Pattern = re.compile(
     r"https:\/\/(?:.*\.)?discord\.com\/channels\/([0-9]{15,20}|@me)\/([0-9]{15,20})(?:\/([0-9]{15,20}))?"
 )
+
+
+class MultipartData:
+    """
+    Represents multipart data for HTTP requests to Discord API.
+
+    I tried to use aiohttp's method of doing multipart data, but it was just horrible...
+
+    Attributes
+    ----------
+    boundary: str
+        The boundary string used to separate parts in the multipart data.
+    bufs: list[bytes]
+        A list of byte strings that make up the multipart data.
+    """
+
+    __slots__ = ("boundary", "bufs")
+
+    def __init__(self):
+        self.boundary = "---------------discord.http"
+        self.bufs: list[bytes] = []
+
+    @property
+    def content_type(self) -> str:
+        """ The content type of the multipart data. """
+        return f"multipart/form-data; boundary={self.boundary}"
+
+    def attach(
+        self,
+        name: str,
+        data: File | io.BufferedIOBase | dict | str | bytes,
+        *,
+        filename: str | None = None,
+        content_type: str | None = None
+    ) -> None:
+        """
+        Attach data to the multipart data.
+
+        Parameters
+        ----------
+        name:
+            Name of the file data
+        data:
+            The data to attach
+        filename:
+            Filename to be sent on Discord
+        content_type:
+            The content type of the file data
+            (Defaults to 'application/octet-stream' if not provided)
+        """
+        if data is None:
+            return
+
+        header = f'\r\n--{self.boundary}\r\nContent-Disposition: form-data; name="{name}"'
+        if filename:
+            header += f'; filename="{filename}"'
+
+        if isinstance(data, File):
+            ctype = content_type or "application/octet-stream"
+            header += f"\r\nContent-Type: {ctype}\r\n\r\n"
+            data = data.data
+
+        elif isinstance(data, (io.BufferedIOBase, bytes)):
+            # Do nothing, data is already in the correct format
+            ctype = content_type or "application/octet-stream"
+            header += f"\r\nContent-Type: {ctype}\r\n\r\n"
+
+        elif isinstance(data, dict):
+            header += "\r\nContent-Type: application/json\r\n\r\n"
+            data = orjson.dumps(data)
+
+        else:
+            header += "\r\n\r\n"
+            data = str(data)
+
+        self.bufs.append(header.encode("utf8"))
+
+        if getattr(data, "read", None):
+            # Probably a file-like object
+            data = data.read()  # type: ignore
+
+        if isinstance(data, str):
+            # Sometimes data.read() returns a string due to things like StringIO
+            data = data.encode("utf-8")
+
+        # We know data is bytes at this point
+        # Can safely append and ignore type checking
+        self.bufs.append(data)  # type: ignore
+
+    def finish(self) -> bytes:
+        """ Return the multipart data to be sent to Discord. """
+        if not self.bufs:
+            return b""
+
+        self.bufs.append(f"\r\n--{self.boundary}--\r\n".encode())
+        result = b"".join(self.bufs)
+
+        # Explicitly clear the buffers to free memory, since multipart data can be quite large
+        self.bufs.clear()
+        return result
 
 
 class BenchmarkEntry:

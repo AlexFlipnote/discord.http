@@ -6,7 +6,6 @@ from .enums import ResponseType
 from .file import File
 from .flags import MessageFlags
 from .mentions import AllowedMentions
-from .multipart import MultipartData
 from .object import Snowflake
 from .view import View, Modal
 
@@ -85,7 +84,7 @@ class BaseResponse:
     @property
     def content_type(self) -> str:
         """ Returns the content type of the response. """
-        multidata = MultipartData()
+        multidata = utils.MultipartData()
         return multidata.content_type
 
     def to_dict(self) -> dict:
@@ -93,7 +92,7 @@ class BaseResponse:
         raise NotImplementedError
 
     def to_multipart(self) -> bytes:
-        """ Default method to convert the response to a `bytes`. """
+        """ Default method to covnert the response to multipart data. """
         raise NotImplementedError
 
 
@@ -144,8 +143,8 @@ class DeferResponse(BaseResponse):
         }
 
     def to_multipart(self) -> bytes:
-        """ Returns the response as a `bytes`. """
-        multidata = MultipartData()
+        """ Returns the multipart data. """
+        multidata = utils.MultipartData()
         multidata.attach("payload_json", self.to_dict())
 
         return multidata.finish()
@@ -183,8 +182,8 @@ class AutocompleteResponse(BaseResponse):
         }
 
     def to_multipart(self) -> bytes:
-        """ Returns the response as a `bytes`. """
-        multidata = MultipartData()
+        """ Returns the multipart data. """
+        multidata = utils.MultipartData()
         multidata.attach("payload_json", self.to_dict())
 
         return multidata.finish()
@@ -213,8 +212,8 @@ class ModalResponse(BaseResponse):
         }
 
     def to_multipart(self) -> bytes:
-        """ Returns the response as a `bytes`. """
-        multidata = MultipartData()
+        """ Returns the multipart data. """
+        multidata = utils.MultipartData()
         multidata.attach("payload_json", self.to_dict())
 
         return multidata.finish()
@@ -238,7 +237,7 @@ class EmptyResponse(BaseResponse):
         return {}
 
     def to_multipart(self) -> bytes:
-        """ Returns the response as a `bytes`. """
+        """ Returns the multipart data. """
         return b""
 
 
@@ -439,9 +438,9 @@ class MessageResponse(BaseResponse):
 
         Returns
         -------
-            The multipart data that can either be sent
+            The multipart data that can either be sent to Discord or forwarded to a new parser
         """
-        multidata = MultipartData()
+        multidata = utils.MultipartData()
 
         if isinstance(self.files, list):
             for i, file in enumerate(self.files):

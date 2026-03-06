@@ -278,7 +278,10 @@ class Parser:
             The created guild
         """
         guild = self._guild(data)
-        cache_guild = self.bot.cache.add_guild(guild.id, guild, data)
+        cache_guild = self.bot.cache.add_guild(guild.id, guild)
+
+        if cache_guild:
+            cache_guild._populate_internal_cache(data)
 
         return (cache_guild or guild,)
 

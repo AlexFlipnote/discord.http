@@ -23,7 +23,6 @@ from .invite import *
 from .member import *
 from .mentions import *
 from .message import *
-from .multipart import *
 from .object import *
 from .response import *
 from .role import *

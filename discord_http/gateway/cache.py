@@ -49,8 +49,7 @@ class Cache:
     def add_guild(
         self,
         guild_id: int,
-        guild: "PartialGuild | Guild",
-        data: dict
+        guild: "PartialGuild | Guild"
     ) -> "Guild | PartialGuild | None":
         """
         Add a guild to the cache.
@@ -79,146 +78,7 @@ class Cache:
             # (Partial)Guild is not cached, nowhere to store it
             return None
 
-        guild_ = self.__guilds[guild_id]
-
-        # When GUILD_CREATE is received, the cache is already created
-        # Make sure we respect what the cache flags are
-        if GatewayCacheFlags.channels in self.cache_flags:
-            guild_._cache_channels = {
-                int(g["id"]): BaseChannel.from_dict(
-                    state=self.bot.state,
-                    data=g,
-                    guild_id=guild_id
-                )
-                for g in data["channels"]
-            }
-        elif GatewayCacheFlags.partial_channels in self.cache_flags:
-            guild_._cache_channels = {
-                int(g["id"]): self.bot.get_partial_channel(
-                    int(g["id"]),
-                    guild_id=guild_id
-                )
-                for g in data["channels"]
-            }
-        else:
-            guild_._cache_channels = {}
-
-        if GatewayCacheFlags.members in self.cache_flags:
-            from ..member import Member
-            guild_._cache_members = {
-                int(g["user"]["id"]): Member(
-                    state=self.bot.state,
-                    guild=guild_,
-                    data=g
-                )
-                for g in data["members"]
-            }
-        elif GatewayCacheFlags.partial_members in self.cache_flags:
-            guild_._cache_members = {
-                int(g["user"]["id"]): self.bot.get_partial_member(
-                    g["user"]["id"], guild_id=guild_id
-                )
-                for g in data["members"]
-            }
-        else:
-            # Still cache the only member which is the bot
-            from ..member import Member
-            guild_._cache_members = {
-                int(g["user"]["id"]): Member(
-                    state=self.bot.state,
-                    guild=guild_,
-                    data=g
-                )
-                for g in data["members"]
-                if int(g["user"]["id"]) == self.bot.user.id
-            }
-
-        if GatewayCacheFlags.roles in self.cache_flags:
-            pass
-        elif GatewayCacheFlags.partial_roles in self.cache_flags:
-            guild_._cache_roles = {
-                k: self.bot.get_partial_role(
-                    v.id, guild_id
-                )
-                for k, v in dict(guild_._cache_roles).items()
-            }
-        else:
-            guild_._cache_roles = {}
-
-        if GatewayCacheFlags.emojis in self.cache_flags:
-            pass
-        elif GatewayCacheFlags.partial_emojis in self.cache_flags:
-            guild_._cache_emojis = {
-                k: self.bot.get_partial_emoji(
-                    v.id, guild_id=guild_id
-                )
-                for k, v in dict(guild_._cache_emojis).items()
-            }
-        else:
-            guild_._cache_emojis = {}
-
-        if GatewayCacheFlags.stickers in self.cache_flags:
-            pass
-        elif GatewayCacheFlags.partial_stickers in self.cache_flags:
-            guild_._cache_stickers = {
-                k: self.bot.get_partial_sticker(
-                    v.id, guild_id=guild_id
-                )
-                for k, v in dict(guild_._cache_stickers).items()
-            }
-        else:
-            guild_._cache_stickers = {}
-
-        if GatewayCacheFlags.threads in self.cache_flags:
-            guild_._cache_threads = {
-                int(g["id"]): BaseChannel.from_dict(
-                    state=self.bot.state,
-                    data=g,
-                    guild_id=guild_id
-                )
-                for g in data["threads"]
-            }
-        elif GatewayCacheFlags.partial_threads in self.cache_flags:
-            guild_._cache_threads = {
-                int(g["id"]): self.bot.get_partial_channel(
-                    int(g["id"]),
-                    guild_id=guild_id
-                )
-                for g in data["threads"]
-            }
-        else:
-            guild_._cache_threads = {}
-
-        # Do voice states in the end
-        if GatewayCacheFlags.voice_states in self.cache_flags:
-            guild_._cache_voice_states = {
-                int(g["user_id"]): VoiceState(
-                    state=self.bot.state,
-                    data=g,
-                    guild=guild_,
-                    channel=(
-                        guild_.get_channel(int(g["channel_id"])) or
-                        self.bot.get_partial_channel(
-                            int(g["channel_id"]),
-                            guild_id=guild_id
-                        )
-                    )
-                )
-                for g in data["voice_states"]
-            }
-        elif GatewayCacheFlags.partial_voice_states in self.cache_flags:
-            guild_._cache_voice_states = {
-                int(g["user_id"]): self.bot.get_partial_voice_state(
-                    int(g["user_id"]),
-                    guild_id=guild_id,
-                    channel_id=int(g["channel_id"])
-                )
-                for g in data["voice_states"]
-            }
-        else:
-            guild_._cache_voice_states = {}
-
-        return guild_
+        return self.__guilds.get(guild_id)
 
     def update_guild(self, guild_id: int, data: dict) -> None:
         """

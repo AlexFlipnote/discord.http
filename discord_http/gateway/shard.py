@@ -420,7 +420,13 @@ class Shard:
 
             decompressed_bytes = self._zlib.decompress(self._buffer)
             msg: dict = orjson.loads(decompressed_bytes)
-            self._buffer.clear()
+
+            if len(self._buffer) > 1048576:  # 1 MB in bytes
+                # Prevent memory leak if something goes wrong with decompression
+                self._buffer = bytearray()
+            else:
+                # Clear the buffer after successful decompression
+                self._buffer.clear()
         else:
             msg: dict = orjson.loads(raw_msg)
 

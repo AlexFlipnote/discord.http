@@ -6,7 +6,6 @@ from .enums import ResponseType
 from .file import File
 from .flags import MessageFlags
 from .mentions import AllowedMentions
-from .multipart import MultipartData
 from .object import PartialBase
 from .response import MessageResponse
 from .user import User
@@ -209,7 +208,7 @@ class PartialWebhook(PartialBase):
             )
         )
 
-        multidata = MultipartData()
+        multidata = utils.MultipartData()
 
         if isinstance(payload.files, list):
             for i, file in enumerate(payload.files):

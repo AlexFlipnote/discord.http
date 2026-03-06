@@ -415,8 +415,9 @@ async def test_save(ctx: Context, message_id: str):
     if not msg.attachments:
         return ctx.response.send_message("Message has no attachments")
 
-    await msg.attachments[0].save("./save.png")
-    return ctx.response.send_message("Saved")
+    file = msg.attachments[0]
+    raw_bytes = await file.save(f"./save.{file.filename.split('.')[-1]}")
+    return ctx.response.send_message(f"Saved {raw_bytes:,} bytes")
 
 
 @client.command()
