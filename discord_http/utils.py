@@ -11,6 +11,7 @@ import traceback
 import unicodedata
 import zlib
 
+from aiohttp import MultipartWriter
 from base64 import b64encode
 from collections.abc import Iterator
 from datetime import datetime, timedelta, UTC
@@ -44,21 +45,22 @@ class MultipartData:
     """
     Represents multipart data for HTTP requests to Discord API.
 
-    I tried to use aiohttp's method of doing multipart data, but it was just horrible...
+    It uses aiohttp's MultipartWriter under the hood to construct multipart/form-data payloads,
+    allowing you to attach files, JSON data, and other content seamlessly.
 
     Attributes
     ----------
     boundary: str
         The boundary string used to separate parts in the multipart data.
-    bufs: list[bytes]
-        A list of byte strings that make up the multipart data.
+    writer: MultipartWriter
+        The MultipartWriter instance used to construct the multipart data.
     """
 
-    __slots__ = ("boundary", "bufs")
+    __slots__ = ("boundary", "writer",)
 
     def __init__(self):
         self.boundary = "---------------discord.http"
-        self.bufs: list[bytes] = []
+        self.writer = MultipartWriter("form-data", boundary=self.boundary)
 
     @property
     def content_type(self) -> str:
@@ -74,70 +76,51 @@ class MultipartData:
         content_type: str | None = None
     ) -> None:
         """
-        Attach data to the multipart data.
+        Attach a part to the multipart data.
 
         Parameters
         ----------
         name:
-            Name of the file data
+            The name of the form field.
         data:
-            The data to attach
+            The data to attach. Can be a File, a file-like object, a dictionary, a string, or bytes.
         filename:
-            Filename to be sent on Discord
+            The filename to use for the attached file, if applicable.
         content_type:
-            The content type of the file data
-            (Defaults to 'application/octet-stream' if not provided)
+            The content type of the attached file, if applicable.
         """
         if data is None:
             return
 
-        header = f'\r\n--{self.boundary}\r\nContent-Disposition: form-data; name="{name}"'
-        if filename:
-            header += f'; filename="{filename}"'
-
         if isinstance(data, File):
-            ctype = content_type or "application/octet-stream"
-            header += f"\r\nContent-Type: {ctype}\r\n\r\n"
-            data = data.data
-
-        elif isinstance(data, (io.BufferedIOBase, bytes)):
-            # Do nothing, data is already in the correct format
-            ctype = content_type or "application/octet-stream"
-            header += f"\r\nContent-Type: {ctype}\r\n\r\n"
-
+            part = self.writer.append(data.data)
+            part.set_content_disposition(
+                "form-data",
+                name=name,
+                filename=filename or getattr(data, "_filename", "file")
+            )
         elif isinstance(data, dict):
-            header += "\r\nContent-Type: application/json\r\n\r\n"
-            data = orjson.dumps(data)
-
+            part = self.writer.append(orjson.dumps(data))
+            part.set_content_disposition("form-data", name=name)
+            part.headers["Content-Type"] = "application/json"
+        elif hasattr(data, "read"):
+            part = self.writer.append(data)
+            part.set_content_disposition(
+                "form-data",
+                name=name,
+                filename=filename or "file"
+            )
         else:
-            header += "\r\n\r\n"
-            data = str(data)
+            val = data if isinstance(data, (bytes, str)) else str(data)
+            part = self.writer.append(val)
+            part.set_content_disposition("form-data", name=name)
 
-        self.bufs.append(header.encode("utf8"))
+        if content_type:
+            part.headers["Content-Type"] = content_type
 
-        if getattr(data, "read", None):
-            # Probably a file-like object
-            data = data.read()  # type: ignore
-
-        if isinstance(data, str):
-            # Sometimes data.read() returns a string due to things like StringIO
-            data = data.encode("utf-8")
-
-        # We know data is bytes at this point
-        # Can safely append and ignore type checking
-        self.bufs.append(data)  # type: ignore
-
-    def finish(self) -> bytes:
-        """ Return the multipart data to be sent to Discord. """
-        if not self.bufs:
-            return b""
-
-        self.bufs.append(f"\r\n--{self.boundary}--\r\n".encode())
-        result = b"".join(self.bufs)
-
-        # Explicitly clear the buffers to free memory, since multipart data can be quite large
-        self.bufs.clear()
-        return result
+    def finish(self) -> MultipartWriter:
+        """ Return the MultipartWriter to be handled seamlessly by aiohttp. """
+        return self.writer
 
 
 class BenchmarkEntry:

@@ -1,3 +1,4 @@
+from aiohttp import MultipartWriter
 from typing import TYPE_CHECKING, Any
 
 from . import utils
@@ -142,7 +143,7 @@ class DeferResponse(BaseResponse):
             }
         }
 
-    def to_multipart(self) -> bytes:
+    def to_multipart(self) -> MultipartWriter:
         """ Returns the multipart data. """
         multidata = utils.MultipartData()
         multidata.attach("payload_json", self.to_dict())
@@ -181,7 +182,7 @@ class AutocompleteResponse(BaseResponse):
             }
         }
 
-    def to_multipart(self) -> bytes:
+    def to_multipart(self) -> MultipartWriter:
         """ Returns the multipart data. """
         multidata = utils.MultipartData()
         multidata.attach("payload_json", self.to_dict())
@@ -211,7 +212,7 @@ class ModalResponse(BaseResponse):
             "data": self.modal.to_dict()
         }
 
-    def to_multipart(self) -> bytes:
+    def to_multipart(self) -> MultipartWriter:
         """ Returns the multipart data. """
         multidata = utils.MultipartData()
         multidata.attach("payload_json", self.to_dict())
@@ -427,7 +428,7 @@ class MessageResponse(BaseResponse):
             return output
         return {"type": int(self.type), "data": output}
 
-    def to_multipart(self, is_request: bool = False) -> bytes:
+    def to_multipart(self, is_request: bool = False) -> MultipartWriter:
         """
         The multipart data that is sent to Discord.
 
