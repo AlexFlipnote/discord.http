@@ -41,7 +41,7 @@ re_jump_url: re.Pattern = re.compile(
 )
 
 
-class MultipartData:
+class MultipartData(MultipartWriter):
     """
     Represents multipart data for HTTP requests to Discord API.
 
@@ -56,11 +56,11 @@ class MultipartData:
         The MultipartWriter instance used to construct the multipart data.
     """
 
-    __slots__ = ("boundary", "writer",)
+    __slots__ = ("_files_keepalive",)
 
     def __init__(self):
-        self.boundary = "---------------discord.http"
-        self.writer = MultipartWriter("form-data", boundary=self.boundary)
+        super().__init__("form-data", boundary="---------------discord.http")
+        self._files_keepalive: list[Any] = []
 
     @property
     def content_type(self) -> str:
@@ -93,18 +93,20 @@ class MultipartData:
             return
 
         if isinstance(data, File):
-            part = self.writer.append(data.data)
+            self._files_keepalive.append(data)
+
+            part = self.append(data.data)
             part.set_content_disposition(
                 "form-data",
                 name=name,
                 filename=filename or getattr(data, "_filename", "file")
             )
         elif isinstance(data, dict):
-            part = self.writer.append(orjson.dumps(data))
+            part = self.append(orjson.dumps(data))
             part.set_content_disposition("form-data", name=name)
             part.headers["Content-Type"] = "application/json"
         elif hasattr(data, "read"):
-            part = self.writer.append(data)
+            part = self.append(data)
             part.set_content_disposition(
                 "form-data",
                 name=name,
@@ -112,15 +114,15 @@ class MultipartData:
             )
         else:
             val = data if isinstance(data, (bytes, str)) else str(data)
-            part = self.writer.append(val)
+            part = self.append(val)
             part.set_content_disposition("form-data", name=name)
 
         if content_type:
             part.headers["Content-Type"] = content_type
 
     def finish(self) -> MultipartWriter:
-        """ Return the MultipartWriter to be handled seamlessly by aiohttp. """
-        return self.writer
+        """ [Legacy] Return the MultipartWriter. """
+        return self
 
 
 class BenchmarkEntry:
