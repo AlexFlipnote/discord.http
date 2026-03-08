@@ -60,6 +60,9 @@ class MultipartData(MultipartWriter):
 
     def __init__(self):
         super().__init__("form-data", boundary="---------------discord.http")
+
+        # Keep a reference to prevent aiohttp from complaining due to race conditions with file-like objects
+        # It will be cleared with File.__del__, so it should not cause memory leaks
         self._files_keepalive: list[Any] = []
 
     @property
