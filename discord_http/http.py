@@ -279,7 +279,9 @@ class Ratelimit:
         "_last_request",
         "_lock",
         "_loop",
+        "bucket_reset_epoch",
         "expires",
+        "in_flight",
         "key",
         "limit",
         "remaining",
@@ -293,6 +295,9 @@ class Ratelimit:
         self.remaining: int = 1
         self.reset_after: float = 0.0
         self.expires: float | None = None
+
+        self.bucket_reset_epoch: float = 0.0
+        self.in_flight: int = 0
 
         self._lock: asyncio.Lock = asyncio.Lock()
         self._loop: asyncio.AbstractEventLoop = asyncio.get_running_loop()
@@ -319,10 +324,30 @@ class Ratelimit:
         """
         self._last_request = self._loop.time()
         headers = response.headers
-        self.limit = int(headers.get("X-RateLimit-Limit", 1))
-        self.remaining = int(headers.get("X-RateLimit-Remaining", 0))
-        self.reset_after = float(headers.get("X-RateLimit-Reset-After", 0))
-        self.expires = self._loop.time() + self.reset_after
+
+        reset_epoch_str = headers.get("X-RateLimit-Reset")
+        if not reset_epoch_str:
+            return
+
+        reset_epoch = float(reset_epoch_str)
+        limit = int(headers.get("X-RateLimit-Limit", 1))
+        remaining = int(headers.get("X-RateLimit-Remaining", 0))
+        reset_after = float(headers.get("X-RateLimit-Reset-After", 0.0))
+
+        unaccounted_in_flight = max(0, self.in_flight - 1)
+        calculated_remaining = max(0, remaining - unaccounted_in_flight)
+
+        # New bucket window
+        if reset_epoch > self.bucket_reset_epoch + 0.5:
+            self.bucket_reset_epoch = reset_epoch
+            self.limit = limit
+            self.reset_after = reset_after
+            self.expires = self._loop.time() + self.reset_after
+            self.remaining = calculated_remaining
+
+        # Same bucket window
+        elif abs(reset_epoch - self.bucket_reset_epoch) <= 0.5:
+            self.remaining = min(self.remaining, calculated_remaining)
 
     async def __aenter__(self) -> Self:
         # Stay in this loop until a successful token is acquired
@@ -338,6 +363,7 @@ class Ratelimit:
                 # If we have remaining tokens, use one and proceed with the request
                 if self.remaining > 0:
                     self.remaining -= 1
+                    self.in_flight += 1
                     return self
 
                 # No tokens? Calculate wait time
@@ -348,8 +374,9 @@ class Ratelimit:
             await asyncio.sleep(max(wait_time, 0.1) + 0.1)
 
     async def __aexit__(self, *args) -> None:  # noqa: ANN002
-        # pyright complained about this not being used, that's why it's here
-        pass
+        """ When a request is done, decrease the in-flight count. """
+        async with self._lock:
+            self.in_flight -= 1
 
 
 class DiscordAPI:
@@ -582,8 +609,8 @@ class DiscordAPI:
                     pass
             return response
 
-        async with ratelimit:
-            for tries in range(5):
+        for tries in range(5):
+            async with ratelimit:
                 try:
                     r: HTTPResponse = await self.http.request(
                         method, f"{api_url}{path}",
@@ -619,7 +646,11 @@ class DiscordAPI:
 
                             retry_after: float = response.get("retry_after", 1.0)
                             _log.warning(f"Ratelimit hit ({ratelimit.key}), waiting {retry_after}s...")
-                            await asyncio.sleep(retry_after + 0.1)  # Small jitter to ensure the ratelimit has reset
+
+                            async with ratelimit._lock:
+                                ratelimit.remaining = 0
+                                ratelimit.expires = ratelimit._loop.time() + retry_after
+
                             continue
 
                         case x if x in (500, 502, 503, 504):
@@ -653,7 +684,8 @@ class DiscordAPI:
                         await _sleep(tries)
                         continue
                     raise
-            raise RuntimeError("Unreachable code, reached max tries (5)")
+
+        raise RuntimeError("Unreachable code, reached max tries (5)")
 
     async def me(self) -> "Application":
         """
