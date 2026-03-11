@@ -406,9 +406,9 @@ class Client:
         guild_id:
             The ID of the guild to query members in
         query:
-            The query to search for
+            The query to search for (defaults to an empty string, which will return all members)
         limit:
-            The maximum amount of members to return
+            The maximum amount of members to return (defaults to 0, which will return all members)
         presences:
             Whether to include presences in the response
         user_ids:

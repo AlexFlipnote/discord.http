@@ -27,12 +27,6 @@ class EmojiParser:
 
     It is used for things like reactions, forum, components, etc
 
-    Examples
-    --------
-    - `EmojiParser("👍")`
-    - `EmojiParser("<:name:1234567890>")`
-    - `EmojiParser("1234567890")`
-
     Attributes
     ----------
     raw: str
@@ -45,6 +39,12 @@ class EmojiParser:
         Whether the emoji is a Discord emoji or not.
     name: str
         The name of the emoji. If it's a Discord emoji, it will be the name of the emoji.
+
+    Examples
+    --------
+    - `EmojiParser("👍")`
+    - `EmojiParser("<:name:1234567890>")`
+    - `EmojiParser("1234567890")`
     """
 
     __slots__ = (
