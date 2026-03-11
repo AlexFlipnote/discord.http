@@ -408,26 +408,23 @@ class Embed:
         """
         self = cls.__new__(cls)
 
-        self.colour = None
-        if data.get("color") is not None:
-            self.colour = Colour(data["color"])
-
         self.title = data.get("title")
         self.description = data.get("description")
         self.timestamp = data.get("timestamp")
         self.url = data.get("url")
         self.type = cast("EmbedTypes", sys.intern(data.get("type", "rich")))
 
-        if data.get("footer"):
-            self.footer = EmbedFooter.from_dict(data["footer"])
-        if data.get("image"):
-            self.image = EmbedMedia.from_dict(data["image"])
-        if data.get("thumbnail"):
-            self.thumbnail = EmbedMedia.from_dict(data["thumbnail"])
-        if data.get("author"):
-            self.author = EmbedAuthor.from_dict(data["author"])
+        self.colour = Colour(data["color"]) if data.get("color") is not None else None
 
-        self.fields = [EmbedField.from_dict(field) for field in data.get("fields", [])]
+        self.footer = EmbedFooter.from_dict(data["footer"]) if data.get("footer") else None
+        self.author = EmbedAuthor.from_dict(data["author"]) if data.get("author") else None
+        self.image = EmbedMedia.from_dict(data["image"]) if data.get("image") else None
+        self.thumbnail = EmbedMedia.from_dict(data["thumbnail"]) if data.get("thumbnail") else None
+
+        self.fields = [
+            EmbedField.from_dict(f)
+            for f in data.get("fields", [])
+        ]
 
         return self
 
