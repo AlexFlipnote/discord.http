@@ -1592,7 +1592,7 @@ class InteractionStorage:
 
         asyncio.create_task(  # noqa: RUF006
             self.on_timeout(),
-            name=f"discordhttp-timeout-{int(time.time())}"
+            name=f"discord.http/view-timeout-{int(time.time())}"
         )
 
     async def on_timeout(self) -> None:
@@ -1682,7 +1682,10 @@ class InteractionStorage:
         self._call_after = call_after
         self._timeout = timeout
         self._timeout_expiry = time.monotonic() + timeout
-        self.loop.create_task(self._timeout_watcher())
+        self.loop.create_task(
+            self._timeout_watcher(),
+            name=f"discord.http/view-timeout-watcher-{int(time.time())}"
+        )
 
         self._update_event(False)
 

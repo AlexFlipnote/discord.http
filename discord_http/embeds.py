@@ -1,5 +1,8 @@
+import sys
+
+from dataclasses import dataclass
 from datetime import datetime
-from typing import Self, Literal
+from typing import Self, Literal, cast
 
 from .asset import Asset
 from .colour import Colour
@@ -9,6 +12,80 @@ __all__ = (
 )
 
 EmbedTypes = Literal["rich", "image", "video", "gifv", "article", "link", "poll_result"]
+
+
+@dataclass(slots=True)
+class EmbedAuthor:
+    name: str
+    url: str | None = None
+    icon_url: str | None = None
+
+    def to_dict(self) -> dict:
+        data = {"name": self.name}
+        if self.url:
+            data["url"] = self.url
+        if self.icon_url:
+            data["icon_url"] = self.icon_url
+        return data
+
+    @classmethod
+    def from_dict(cls, data: dict) -> Self:
+        return cls(
+            name=data["name"],
+            url=data.get("url"),
+            icon_url=data.get("icon_url")
+        )
+
+
+@dataclass(slots=True)
+class EmbedFooter:
+    text: str | None
+    icon_url: str | None
+
+    def to_dict(self) -> dict:
+        data = {}
+        if self.text is not None:
+            data["text"] = self.text
+        if self.icon_url is not None:
+            data["icon_url"] = self.icon_url
+        return data
+
+    @classmethod
+    def from_dict(cls, data: dict) -> Self:
+        return cls(
+            text=data.get("text"),
+            icon_url=data.get("icon_url")
+        )
+
+
+@dataclass(slots=True)
+class EmbedField:
+    name: str
+    value: str
+    inline: bool = True
+
+    def to_dict(self) -> dict:
+        return {"name": self.name, "value": self.value, "inline": self.inline}
+
+    @classmethod
+    def from_dict(cls, data: dict) -> Self:
+        return cls(
+            name=data["name"],
+            value=data["value"],
+            inline=data.get("inline", True)
+        )
+
+
+@dataclass(slots=True)
+class EmbedMedia:
+    url: str
+
+    def to_dict(self) -> dict:
+        return {"url": self.url}
+
+    @classmethod
+    def from_dict(cls, data: dict) -> Self:
+        return cls(url=data["url"])
 
 
 class Embed:
@@ -49,11 +126,11 @@ class Embed:
         self.url: str | None = url
         self.type: EmbedTypes = "rich"
 
-        self.footer: dict = {}
-        self.image: dict = {}
-        self.thumbnail: dict = {}
-        self.author: dict = {}
-        self.fields: list[dict] = []
+        self.footer: EmbedFooter | None = None
+        self.author: EmbedAuthor | None = None
+        self.image: EmbedMedia | None = None
+        self.thumbnail: EmbedMedia | None = None
+        self.fields: list[EmbedField] = []
 
         if self.title is not None:
             self.title = str(self.title)
@@ -61,11 +138,24 @@ class Embed:
         if self.description is not None:
             self.description = str(self.description)
 
+        if self.url is not None:
+            self.url = str(self.url)
+
         if timestamp is not None:
             self.timestamp = timestamp
 
     def __repr__(self) -> str:
         return f"<Embed title={self.title} colour={self.colour}>"
+
+    def __len__(self) -> int:
+        total = len(self.title or "") + len(self.description or "")
+        if self.footer:
+            total += len(self.footer.text or "")
+        if self.author:
+            total += len(self.author.name or "")
+        for field in self.fields:
+            total += len(field.name) + len(field.value)
+        return total
 
     def copy(self) -> Self:
         """ Returns a copy of the embed. """
@@ -88,11 +178,18 @@ class Embed:
         -------
             Returns the embed you are editing
         """
-        if value is None:
-            self.colour = None
-        else:
-            self.colour = Colour(int(value))
+        self.colour = Colour(int(value)) if value else None
+        return self
 
+    def remove_colour(self) -> Self:
+        """
+        Remove the colour from the embed.
+
+        Returns
+        -------
+            Returns the embed you are editing
+        """
+        self.colour = None
         return self
 
     def set_footer(
@@ -116,12 +213,13 @@ class Embed:
             Returns the embed you are editing
         """
         if not any((text, icon_url)):
-            self.footer.clear()
-        else:
-            if text:
-                self.footer["text"] = str(text)
-            if icon_url:
-                self.footer["icon_url"] = str(icon_url)
+            self.footer = None
+            return self
+
+        self.footer = EmbedFooter(
+            text=str(text) if text else None,
+            icon_url=str(icon_url) if icon_url else None
+        )
 
         return self
 
@@ -133,7 +231,7 @@ class Embed:
         -------
             Returns the embed you are editing
         """
-        self.footer = {}
+        self.footer = None
         return self
 
     def set_author(
@@ -159,12 +257,11 @@ class Embed:
         -------
             Returns the embed you are editing
         """
-        self.author["name"] = str(name)
-
-        if url is not None:
-            self.author["url"] = str(url)
-        if icon_url is not None:
-            self.author["icon_url"] = str(icon_url)
+        self.author = EmbedAuthor(
+            name=str(name),
+            url=str(url) if url else None,
+            icon_url=str(icon_url) if icon_url else None
+        )
 
         return self
 
@@ -176,7 +273,7 @@ class Embed:
         -------
             Returns the embed you are editing
         """
-        self.author = {}
+        self.author = None
         return self
 
     def set_image(
@@ -196,11 +293,7 @@ class Embed:
         -------
             Returns the embed you are editing
         """
-        if url is not None:
-            self.image["url"] = str(url)
-        else:
-            self.image.clear()
-
+        self.image = EmbedMedia(url=str(url)) if url else None
         return self
 
     def remove_image(self) -> Self:
@@ -211,7 +304,7 @@ class Embed:
         -------
             Returns the embed you are editing
         """
-        self.image = {}
+        self.image = None
         return self
 
     def set_thumbnail(
@@ -231,11 +324,7 @@ class Embed:
         -------
             Returns the embed you are editing
         """
-        if url is not None:
-            self.thumbnail["url"] = str(url)
-        else:
-            self.thumbnail.clear()
-
+        self.thumbnail = EmbedMedia(url=str(url)) if url else None
         return self
 
     def remove_thumbnail(self) -> Self:
@@ -246,7 +335,7 @@ class Embed:
         -------
             Returns the embed you are editing
         """
-        self.thumbnail = {}
+        self.thumbnail = None
         return self
 
     def add_field(
@@ -272,11 +361,14 @@ class Embed:
         -------
             Returns the embed you are editing
         """
-        self.fields.append({
-            "name": str(name),
-            "value": str(value),
-            "inline": inline,
-        })
+        if len(self.fields) >= 25:
+            raise ValueError("Embeds cannot have more than 25 fields.")
+
+        self.fields.append(EmbedField(
+            name=str(name),
+            value=str(value),
+            inline=inline
+        ))
 
         return self
 
@@ -324,19 +416,24 @@ class Embed:
         self.description = data.get("description")
         self.timestamp = data.get("timestamp")
         self.url = data.get("url")
-        self.type = data.get("type", "rich")
+        self.type = cast("EmbedTypes", sys.intern(data.get("type", "rich")))
 
-        self.footer = data.get("footer", {})
-        self.image = data.get("image", {})
-        self.thumbnail = data.get("thumbnail", {})
-        self.author = data.get("author", {})
-        self.fields = data.get("fields", [])
+        if data.get("footer"):
+            self.footer = EmbedFooter.from_dict(data["footer"])
+        if data.get("image"):
+            self.image = EmbedMedia.from_dict(data["image"])
+        if data.get("thumbnail"):
+            self.thumbnail = EmbedMedia.from_dict(data["thumbnail"])
+        if data.get("author"):
+            self.author = EmbedAuthor.from_dict(data["author"])
+
+        self.fields = [EmbedField.from_dict(field) for field in data.get("fields", [])]
 
         return self
 
     def to_dict(self) -> dict:
         """ The embed as a dictionary. """
-        embed = {}
+        embed: dict = {"type": self.type}
 
         if self.title:
             embed["title"] = self.title
@@ -345,17 +442,17 @@ class Embed:
         if self.url:
             embed["url"] = self.url
         if self.author:
-            embed["author"] = self.author
+            embed["author"] = self.author.to_dict()
         if self.colour:
             embed["color"] = int(self.colour)
         if self.footer:
-            embed["footer"] = self.footer
+            embed["footer"] = self.footer.to_dict()
         if self.image:
-            embed["image"] = self.image
+            embed["image"] = self.image.to_dict()
         if self.thumbnail:
-            embed["thumbnail"] = self.thumbnail
+            embed["thumbnail"] = self.thumbnail.to_dict()
         if self.fields:
-            embed["fields"] = self.fields
+            embed["fields"] = [field.to_dict() for field in self.fields]
         if self.timestamp and isinstance(self.timestamp, datetime):
             if self.timestamp.tzinfo is None:
                 self.timestamp = self.timestamp.astimezone()

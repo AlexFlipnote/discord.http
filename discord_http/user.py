@@ -1,3 +1,5 @@
+import sys
+
 from typing import TYPE_CHECKING, Any
 
 from . import utils
@@ -142,7 +144,7 @@ class PrimaryGuild:
         self._state = state
 
         self.guild_id: int | None = utils.get_int(data, "identity_guild_id")
-        self.tag: str | None = data.get("tag")
+        self.tag: str | None = sys.intern(t) if (t := data.get("tag")) else None
         self.badge: Asset | None = None
 
         self._from_data(data)
@@ -472,7 +474,7 @@ class User(PartialUser):
         self.avatar: Asset | None = None
         self.banner: Asset | None = None
 
-        self.name: str = data["username"]
+        self.name: str = sys.intern(data["username"])
         self.bot: bool = data.get("bot", False)
         self.system: bool = data.get("system", False)
         self.verified: bool = data.get("verified", False)
@@ -486,7 +488,7 @@ class User(PartialUser):
         self.accent_colour: Colour | None = None
         self.banner_colour: Colour | None = None
 
-        self.global_name: str | None = data.get("global_name")
+        self.global_name: str | None = sys.intern(g) if (g := data.get("global_name")) else None
 
         self.public_flags: UserFlags | None = None
         self.primary_guild: PrimaryGuild | None = None

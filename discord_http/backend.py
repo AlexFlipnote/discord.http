@@ -2,6 +2,7 @@ import copy
 import inspect
 import logging
 import orjson
+import time
 
 from datetime import datetime
 from nacl.exceptions import BadSignatureError
@@ -156,7 +157,10 @@ class DiscordHTTP(web.Application):
                 else:
                     self.bot._after_invoke(ctx)  # type: ignore
 
-        task = self.bot.loop.create_task(_run_background())
+        task = self.bot.loop.create_task(
+            _run_background(),
+            name=f"discord.http/global-after-invoke:{int(time.time())}"
+        )
         self.bot._background_tasks.add(task)
         task.add_done_callback(self.bot._cleanup_task)
 

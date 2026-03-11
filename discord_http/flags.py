@@ -34,7 +34,12 @@ class BaseFlag(_FlagPyMeta):
     @classmethod
     def all(cls) -> Self:
         """ Returns a flag with all the flags. """
-        return cls(sum([int(g) for g in cls.__members__.values()]))
+        if not hasattr(cls, "_ALL_VALUE"):
+            val = 0
+            for m in cls.__members__.values():
+                val |= m.value
+            cls._ALL_VALUE = val
+        return cls(cls._ALL_VALUE)
 
     @classmethod
     def none(cls) -> Self:
@@ -73,10 +78,7 @@ class BaseFlag(_FlagPyMeta):
 
     def to_names(self) -> list[str]:
         """ Returns the current names of the flag. """
-        return [
-            name for name, member in self.__class__.__members__.items()
-            if member in self
-        ]
+        return [g.name for g in self if g.name]
 
     def add_flags(
         self,
@@ -104,7 +106,8 @@ class BaseFlag(_FlagPyMeta):
                 self |= p
                 continue
 
-            if p in self.list_names:
+            member_flag = self.__class__.__members__.get(p)
+            if member_flag and member_flag in self:
                 continue
 
             try:
@@ -143,7 +146,8 @@ class BaseFlag(_FlagPyMeta):
                 self &= ~p
                 continue
 
-            if p not in self.list_names:
+            member_flag = self.__class__.__members__.get(p)
+            if member_flag and member_flag in self:
                 continue
 
             try:
@@ -324,6 +328,13 @@ class Permissions(BaseFlag):
 
 
 class PermissionOverwrite:
+    __slots__ = (
+        "allow",
+        "deny",
+        "target",
+        "target_type",
+    )
+
     def __init__(
         self,
         target: Snowflake | int,

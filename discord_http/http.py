@@ -408,7 +408,10 @@ class DiscordAPI:
         }
 
         # Background tasks
-        self.bot.loop.create_task(self._cleanup_loop())
+        self.bot.loop.create_task(
+            self._cleanup_loop(),
+            name="discord.http/cleanup_loop"
+        )
 
     async def _cleanup_loop(self) -> None:
         """ A loop that runs every 5 minutes to clean up old ratelimits. """

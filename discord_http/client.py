@@ -327,7 +327,7 @@ class Client:
 
         task = self.loop.create_task(
             wrapped,
-            name=f"discord.http/aiohttp: {event_name}"
+            name=f"discord.http/aiohttp:{event_name}"
         )
         self._background_tasks.add(task)
         task.add_done_callback(self._cleanup_task)

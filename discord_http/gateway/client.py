@@ -193,7 +193,10 @@ class GatewayClient:
 
             _log.debug(f"All {len(chunks)} bucket(s) have launched a total of {self.shard_count} shard(s)")
 
-        asyncio.create_task(self._delay_full_ready())  # noqa: RUF006
+        asyncio.create_task(  # noqa: RUF006
+            self._delay_full_ready(),
+            name="discord.http/gateway/delay_full_ready"
+        )
 
     async def _delay_full_ready(self) -> None:
         waiting: list[Coroutine] = [
@@ -209,7 +212,10 @@ class GatewayClient:
 
     def start(self) -> None:
         """ Start the gateway client. """
-        self.bot.loop.create_task(self._launch_all_shards())
+        self.bot.loop.create_task(
+            self._launch_all_shards(),
+            name="discord.http/gateway/launch_all_shards"
+        )
 
     async def close(self) -> None:
         """ Close the gateway client. """
@@ -222,5 +228,8 @@ class GatewayClient:
             if to_close:
                 await asyncio.wait(to_close)
 
-        task = asyncio.create_task(_close())
+        task = asyncio.create_task(
+            _close(),
+            name="discord.http/gateway/close_all_shards"
+        )
         await task

@@ -2,6 +2,7 @@ import inspect
 import itertools
 import logging
 import re
+import time
 
 from collections.abc import Callable, Coroutine
 from types import UnionType
@@ -662,7 +663,10 @@ class Command:
 
         # Execute after invoke
         if getattr(self.command, "__after_invoke__", None):
-            task = context.bot.loop.create_task(self._after_invoke(context))
+            task = context.bot.loop.create_task(
+                self._after_invoke(context),
+                name=f"discord.http/after-invoke:{int(time.time())}"
+            )
             context.bot._background_tasks.add(task)
             task.add_done_callback(context.bot._cleanup_task)
 

@@ -242,7 +242,10 @@ class Loop:
             args = (self._injected, *args)
 
         self._last_loop_failed = False
-        self._task = asyncio.create_task(self._looper(*args, **kwargs))
+        self._task = asyncio.create_task(
+            self._looper(*args, **kwargs),
+            name=f"discord.http/loop:{self.func.__name__}"
+        )
         return self._task
 
     def stop(self) -> None:

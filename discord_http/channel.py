@@ -99,7 +99,10 @@ class Typing:
 
     async def __aenter__(self) -> None:
         await self._send_typing()
-        self.task = self.loop.create_task(self.do_typing_loop())
+        self.task = self.loop.create_task(
+            self.do_typing_loop(),
+            name=f"discord.http/typing:{self.channel.id}"
+        )
         self.task.add_done_callback(_typing_done_callback)
 
     async def __aexit__(self, *args) -> None:  # noqa: ANN002
@@ -114,9 +117,12 @@ class Typing:
         )
 
     async def do_typing_loop(self) -> None:
-        while True:
-            await asyncio.sleep(8)
-            await self._send_typing()
+        try:
+            while True:
+                await asyncio.sleep(8)
+                await self._send_typing()
+        except asyncio.CancelledError:
+            pass
 
 
 class PartialChannel(PartialBase):

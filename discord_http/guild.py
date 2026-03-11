@@ -2900,7 +2900,7 @@ class Guild(PartialGuild):
         self.default_message_notifications: int = data.get("default_message_notifications", 0)
         self.description: str | None = data.get("description")
         self.explicit_content_filter: int = data.get("explicit_content_filter", 0)
-        self.features: list[str] = data.get("features", [])
+        self.features: list[str] = [sys.intern(f) for f in data.get("features", [])]
         self.latest_onboarding_question_id: int | None = utils.get_int(data, "latest_onboarding_question_id")
         self.max_members: int = data.get("max_members", 0)
         self.max_stage_video_channel_users: int = data.get("max_stage_video_channel_users", 0)

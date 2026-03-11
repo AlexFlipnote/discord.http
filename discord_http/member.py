@@ -444,7 +444,7 @@ class Member(PartialMember):
 
     __slots__ = (
         "_raw_permissions",
-        "_roles",
+        "_role_ids",
         "avatar",
         "avatar_decoration",
         "banner",
@@ -483,14 +483,12 @@ class Member(PartialMember):
         self.joined_at: datetime = utils.parse_time(data["joined_at"])
         self.communication_disabled_until: datetime | None = None
         self.premium_since: datetime | None = None
-        self._roles: list[PartialRole] = [
-            PartialRole(state=state, id=int(r), guild_id=self.guild.id)
-            for r in data["roles"]
-        ]
 
         self.avatar_decoration: AvatarDecoration | None = None
         self.nameplate: Nameplate | None = self._user.nameplate
         self.primary_guild: PrimaryGuild | None = self._user.primary_guild
+
+        self._role_ids: tuple[int, ...] = tuple(int(r) for r in data["roles"])
 
         self._from_data(data)
 
@@ -532,15 +530,12 @@ class Member(PartialMember):
     @property
     def roles(self) -> list[Role | PartialRole]:
         """ Returns the roles of the member. """
-        if self.guild.roles:
-            # If there is a guild cache, we could potentially return full Role object
-            g_roles = [r.id for r in self._roles]
-            return [
-                g for g in self.guild.roles
-                if g.id in g_roles
-            ]
-
-        return self._roles
+        guild = self.guild
+        return [
+            guild.get_role(r_id) or
+            PartialRole(state=self._state, id=r_id, guild_id=guild.id)
+            for r_id in self._role_ids
+        ]
 
     def is_default_avatar(self) -> bool:
         """ Alias for `User.is_default_avatar()`. """

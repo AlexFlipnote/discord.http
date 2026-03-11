@@ -102,11 +102,3 @@ class PartialBase(Snowflake):
 
     def __repr__(self) -> str:
         return f"<PartialBase id={self.id}>"
-
-    def is_partial(self) -> bool:
-        """
-        Returns True if the object is partial.
-
-        This depends on the class name starting with Partial or not.
-        """
-        return self.__class__.__name__.startswith("Partial")

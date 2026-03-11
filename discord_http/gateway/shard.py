@@ -504,7 +504,10 @@ class Shard:
                 if self._ready_task is not None and not self._ready_task.done():
                     self._ready_task.cancel()
 
-                self._ready_task = asyncio.create_task(self._delay_ready())
+                self._ready_task = asyncio.create_task(
+                    self._delay_ready(),
+                    name=f"discord.http/gateway/shard-{self.shard_id}/delay_ready"
+                )
 
             case "RESUMED":
                 if self.bot.has_any_dispatch("shard_resumed"):
@@ -974,7 +977,8 @@ class Shard:
 
         if self._guild_needs_chunking(guild):
             asyncio.create_task(  # noqa: RUF006
-                self._chunk_and_dispatch(data, event_name)
+                self._chunk_and_dispatch(data, event_name),
+                name=f"discord.http/gateway/shard-{self.shard_id}/chunk-{guild.id}"
             )
             return
 

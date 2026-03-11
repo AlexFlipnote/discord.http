@@ -1,5 +1,6 @@
 import io
 import os
+import sys
 
 from typing import Self, TYPE_CHECKING, Literal
 
@@ -52,8 +53,8 @@ class Asset:
     ):
         self._state = state
 
-        self.url: str = url
-        self.key: str = key
+        self.url: str = sys.intern(url)
+        self.key: str = sys.intern(key)
         self.animated: bool = animated
 
     def __str__(self) -> str:

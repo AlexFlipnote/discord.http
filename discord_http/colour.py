@@ -31,23 +31,26 @@ class Colour:
     def __repr__(self) -> str:
         return f"<Colour value={self.value}>"
 
-    def _get_byte(self, byte: int) -> int:
-        return (self.value >> (8 * byte)) & 0xFF
+    def __eq__(self, other: "Colour") -> bool:
+        return isinstance(other, Colour) and self.value == other.value
+
+    def __hash__(self) -> int:
+        return hash(self.value)
 
     @property
     def r(self) -> int:
         """ Returns the red component of the colour. """
-        return self._get_byte(2)
+        return (self.value >> 16) & 0xFF
 
     @property
     def g(self) -> int:
         """ Returns the green component of the colour. """
-        return self._get_byte(1)
+        return (self.value >> 8) & 0xFF
 
     @property
     def b(self) -> int:
         """ Returns the blue component of the colour. """
-        return self._get_byte(0)
+        return self.value & 0xFF
 
     @classmethod
     def from_rgb(cls, r: int, g: int, b: int) -> Self:

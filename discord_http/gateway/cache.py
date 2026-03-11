@@ -23,7 +23,7 @@ __all__ = (
 
 
 class Cache:
-    __slots__ = ("__guilds", "bot", "cache_flags")
+    __slots__ = ("__guilds", "_state", "bot", "cache_flags")
 
     def __init__(
         self,
@@ -44,7 +44,7 @@ class Cache:
         """ Returns the guild from the cache if it exists. """
         if guild_id is None:
             return None
-        return self.__guilds.get(guild_id, None)
+        return self.__guilds.get(guild_id)
 
     def add_guild(
         self,
@@ -462,12 +462,11 @@ class Cache:
 
         if GatewayCacheFlags.emojis in self.cache_flags:
             guild._cache_emojis = {
-                int(g.id): g
-                for g in emojis
+                g.id: g for g in emojis
             }
         elif GatewayCacheFlags.partial_emojis in self.cache_flags:
             guild._cache_emojis = {
-                int(g.id): self.bot.get_partial_emoji(
+                g.id: self.bot.get_partial_emoji(
                     g.id, guild_id=guild_id
                 )
                 for g in emojis
@@ -493,12 +492,12 @@ class Cache:
 
         if GatewayCacheFlags.stickers in self.cache_flags:
             guild._cache_stickers = {
-                int(g.id): g
+                g.id: g
                 for g in stickers
             }
         elif GatewayCacheFlags.partial_stickers in self.cache_flags:
             guild._cache_stickers = {
-                int(g.id): self.bot.get_partial_sticker(
+                g.id: self.bot.get_partial_sticker(
                     g.id, guild_id=guild_id
                 )
                 for g in stickers

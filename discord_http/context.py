@@ -1,6 +1,7 @@
 import asyncio
 import inspect
 import logging
+import time
 
 from collections.abc import Callable
 from datetime import datetime, timedelta
@@ -205,7 +206,7 @@ class InteractionResponse:
 
             task = self._parent.bot.loop.create_task(
                 self._parent._background_task_manager(call_after),
-                name="discord.http/call_after"
+                name=f"discord.http/call_after:{int(time.time())}"
             )
             self._parent.bot._background_tasks.add(task)
             task.add_done_callback(self._parent.bot._cleanup_task)

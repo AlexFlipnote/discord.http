@@ -1104,7 +1104,10 @@ class PartialMessage(PartialBase):
                 pass
 
         if delay is not None:
-            task = self._state.bot.loop.create_task(_delete_after(delay))
+            task = self._state.bot.loop.create_task(
+                _delete_after(delay),
+                name=f"discord.http/delete_message_after/{self.id}"
+            )
             self._state.bot._background_tasks.add(task)
             task.add_done_callback(self._state.bot._cleanup_task)
             return
@@ -1578,7 +1581,6 @@ class MessageSnapshot:
     """
 
     __slots__ = (
-        "_message",
         "_state",
         "attachments",
         "content",
@@ -1595,36 +1597,45 @@ class MessageSnapshot:
         data: dict
     ):
         self._state = state
-        self._message: dict = data.get("message", {})
 
-        self.type: MessageType = MessageType(self._message.get("type", 0))
-        self.content: str = self._message.get("content", "")
+        self.type: MessageType = MessageType(0)
+        self.content: str = ""
 
         self.timestamp: datetime | None = None
         self.edited_timestamp: datetime | None = None
 
-        self.embeds: list[Embed] = [
-            Embed.from_dict(embed)
-            for embed in self._message.get("embeds", [])
-        ]
-
-        self.attachments: list[Attachment] = [
-            Attachment(state=state, data=a)
-            for a in self._message.get("attachments", [])
-        ]
+        self.embeds: list[Embed] = []
+        self.attachments: list[Attachment] = []
 
         self._from_data(data)
 
-    def _from_data(self, data: dict) -> None:  # noqa: ARG002
-        if self._message.get("edited_timestamp", None):
+    def _from_data(self, data: dict) -> None:
+        message = data.get("message", {})
+
+        self.type = MessageType(message.get("type", 0))
+        self.content = message.get("content", "")
+
+        if message.get("edited_timestamp", None):
             self.edited_timestamp = utils.parse_time(
-                self._message["edited_timestamp"]
+                message["edited_timestamp"]
             )
 
-        if self._message.get("timestamp", None):
+        if message.get("timestamp", None):
             self.timestamp = utils.parse_time(
-                self._message["timestamp"]
+                message["timestamp"]
             )
+
+        if message.get("embeds", None):
+            self.embeds = [
+                Embed.from_dict(embed)
+                for embed in message["embeds"]
+            ]
+
+        if message.get("attachments", None):
+            self.attachments = [
+                Attachment(state=self._state, data=a)
+                for a in message["attachments"]
+            ]
 
 
 class Message(PartialMessage):
@@ -2018,7 +2029,10 @@ class WebhookMessage(Message):
                 pass
 
         if delay is not None:
-            task = self._state.bot.loop.create_task(_delete_after(delay))
+            task = self._state.bot.loop.create_task(
+                _delete_after(delay),
+                name=f"discord.http/delete_webhook_message_after/{self.id}"
+            )
             self._state.bot._background_tasks.add(task)
             task.add_done_callback(self._state.bot._cleanup_task)
             return
