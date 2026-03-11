@@ -118,7 +118,12 @@ class MultipartData(MultipartWriter):
         else:
             val = data if isinstance(data, (bytes, str)) else str(data)
             part = self.append(val)
-            part.set_content_disposition("form-data", name=name)
+
+            disp_kwargs = {"name": name, "quote_fields": False}
+            if filename:
+                disp_kwargs["filename"] = filename
+
+            part.set_content_disposition("form-data", **disp_kwargs)
 
         if content_type:
             part.headers["Content-Type"] = content_type
