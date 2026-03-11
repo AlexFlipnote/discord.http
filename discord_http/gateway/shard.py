@@ -421,7 +421,11 @@ class Shard:
             decompressed_bytes = self._zlib.decompress(self._buffer)
             msg: dict = orjson.loads(decompressed_bytes)
 
-            if len(self._buffer) > 1048576:  # 1 MB in bytes
+            # There has been times it keeps in memory
+            # Thanks Python, very cool...
+            del decompressed_bytes
+
+            if len(self._buffer) > 1024 * 512:  # 512 KB
                 # Prevent memory leak if something goes wrong with decompression
                 self._buffer = bytearray()
             else:
@@ -545,16 +549,17 @@ class Shard:
         nonce:
             The nonce to use, by default None
         """
-        payload = {
-            "guild_id": str(guild_id),
-            "limit": int(limit),
+        payload: dict[str, str | int | list[str]] = {
+            "guild_id": str(guild_id)
         }
 
-        if user_ids is not None:
+        if user_ids:
             payload["user_ids"] = [str(int(g)) for g in user_ids]
-        if query is not None:
-            payload["query"] = str(query)
-        if presences is True:
+        else:
+            payload["query"] = str(query or "")
+            payload["limit"] = int(limit)
+
+        if presences:
             payload["presences"] = True
 
         if nonce is not None:
@@ -613,12 +618,13 @@ class Shard:
         try:
             return await asyncio.wait_for(chunker.wait(), timeout=30.0)
         except TimeoutError:
-            self.parser._chunk_requests.pop(chunker.nonce, None)
             _log.warning(
                 "Timed out while waiting for guild members chunk "
                 f"(guild_id={guild_id}, query={query}, limit={limit})"
             )
             raise
+        finally:
+            self.parser._chunk_requests.pop(chunker.nonce, None)
 
     @overload
     async def chunk_guild(
@@ -995,9 +1001,9 @@ class Shard:
 
     def connect(self) -> None:
         """ Connect the websocket. """
-        self._connection = asyncio.ensure_future(
-            self._socket_manager()
-        )
+        if self._connection and not self._connection.done():
+            self._connection.cancel()
+        self._connection = asyncio.ensure_future(self._socket_manager())
 
     async def change_presence(self, status: PlayingStatus) -> None:
         """
