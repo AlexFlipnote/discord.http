@@ -433,7 +433,7 @@ class Embed:
 
     def to_dict(self) -> dict:
         """ The embed as a dictionary. """
-        embed: dict = {"type": self.type}
+        embed = {}
 
         if self.title:
             embed["title"] = self.title
