@@ -2,7 +2,7 @@
 requires = ["setuptools", "wheel"]
 build-backend = "setuptools.build_meta"
 
-[tool.pdm.source]
+[[tool.pdm.source]]
 name = "public"
 url = "https://github.com/AlexFlipnote/discord.http"
 
