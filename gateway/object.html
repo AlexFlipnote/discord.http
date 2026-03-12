@@ -3,7 +3,7 @@
   <head><meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
     <meta name="color-scheme" content="light dark"><meta name="viewport" content="width=device-width, initial-scale=1" />
-<meta content="Object (Gateway events) - discord.http docs" property="og:title"><meta content="Python library that handles interactions from Discord POST requests." name="description"><meta content="Python library that handles interactions from Discord POST requests." property="og:description"><meta property="og:image" content="/_static/favicon.ico"><meta name="theme-color" content="#14bae4"><meta property="og:locale" content="en_GB"><meta name="keywords" content="discord, http, api, interaction, aiohttp, webhook, slash><meta name="revisit-after" content="2 days"><link rel="index" title="Index" href="../genindex.html"><link rel="search" title="Search" href="../search.html"><link rel="next" title="HTTP backend" href="../pages/backend.html"><link rel="prev" title="Flags" href="flags.html">
+<meta content="Object (Gateway events) - discord.http docs" property="og:title"><meta content="Bases: object" name="description"><meta content="Bases: object" property="og:description"><meta property="og:image" content="/_static/favicon.ico"><meta name="theme-color" content="#14bae4"><meta property="og:locale" content="en_GB"><meta name="keywords" content="discord, http, api, interaction, aiohttp, webhook, slash><meta name="revisit-after" content="2 days"><link rel="index" title="Index" href="../genindex.html"><link rel="search" title="Search" href="../search.html"><link rel="next" title="HTTP backend" href="../pages/backend.html"><link rel="prev" title="Flags" href="flags.html">
 
     <link rel="shortcut icon" href="../_static/favicon.ico"><!-- Generated with Sphinx 9.0.4 and Furo 2025.12.19 -->
         <title>Object (Gateway events) - discord.http docs</title>
@@ -245,7 +245,7 @@
 </ul>
 <p class="caption" role="heading"><span class="caption-text">Development</span></p>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="../pages/format.html">Style guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../pages/format.html">Style Guide</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../pages/contribute.html">Contributing</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../pages/license.html">License</a></li>
 <li class="toctree-l1"><a class="reference external" href="https://discord.gg/yqb7vATbjH">Discord</a></li>
@@ -290,8 +290,678 @@
         <article role="main" id="furo-main-content">
           <section id="object-gateway-events">
 <h1>Object (Gateway events)<a class="headerlink" href="#object-gateway-events" title="Link to this heading">¶</a></h1>
-<section id="discord-http-gateway-object-module">
-<h2>discord_http.gateway.object module<a class="headerlink" href="#discord-http-gateway-object-module" title="Link to this heading">¶</a></h2>
+<section id="module-discord_http.gateway.object">
+<span id="discord-http-gateway-object-module"></span><h2>discord_http.gateway.object module<a class="headerlink" href="#module-discord_http.gateway.object" title="Link to this heading">¶</a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="discord_http.gateway.object.AutomodExecution">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">discord_http.gateway.object.</span></span><span class="sig-name descname"><span class="pre">AutomodExecution</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">state</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">guild</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">channel</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">user</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#discord_http.gateway.object.AutomodExecution" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<p>Represents an automod execution event.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>state</strong> (<a class="reference internal" href="../api/http.html#discord_http.http.DiscordAPI" title="discord_http.http.DiscordAPI"><em>DiscordAPI</em></a>)</p></li>
+<li><p><strong>guild</strong> (<a class="reference internal" href="../api/guild.html#discord_http.guild.PartialGuild" title="discord_http.guild.PartialGuild"><em>PartialGuild</em></a><em> | </em><a class="reference internal" href="../api/guild.html#discord_http.guild.Guild" title="discord_http.guild.Guild"><em>Guild</em></a>)</p></li>
+<li><p><strong>channel</strong> (<a class="reference internal" href="../api/channel.html#discord_http.channel.PartialChannel" title="discord_http.channel.PartialChannel"><em>PartialChannel</em></a><em> | </em><em>None</em>)</p></li>
+<li><p><strong>user</strong> (<a class="reference internal" href="../api/member.html#discord_http.member.Member" title="discord_http.member.Member"><em>Member</em></a><em> | </em><a class="reference internal" href="../api/member.html#discord_http.member.PartialMember" title="discord_http.member.PartialMember"><em>PartialMember</em></a>)</p></li>
+<li><p><strong>data</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.14)"><em>dict</em></a>)</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.gateway.object.AutomodExecution.action">
+<span class="sig-name descname"><span class="pre">action</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="../api/automod.html#discord_http.automod.AutoModRuleAction" title="discord_http.automod.AutoModRuleAction"><span class="pre">AutoModRuleAction</span></a></span><a class="headerlink" href="#discord_http.gateway.object.AutomodExecution.action" title="Link to this definition">¶</a></dt>
+<dd><p>The action that was taken by the automod rule.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.gateway.object.AutomodExecution.rule_id">
+<span class="sig-name descname"><span class="pre">rule_id</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><span class="pre">int</span></a></span><a class="headerlink" href="#discord_http.gateway.object.AutomodExecution.rule_id" title="Link to this definition">¶</a></dt>
+<dd><p>The ID of the automod rule that was triggered.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.gateway.object.AutomodExecution.rule_trigger_type">
+<span class="sig-name descname"><span class="pre">rule_trigger_type</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="../api/enums.html#discord_http.enums.AutoModRuleTriggerType" title="discord_http.enums.AutoModRuleTriggerType"><span class="pre">AutoModRuleTriggerType</span></a></span><a class="headerlink" href="#discord_http.gateway.object.AutomodExecution.rule_trigger_type" title="Link to this definition">¶</a></dt>
+<dd><p>The trigger type of the automod rule that was triggered.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.gateway.object.AutomodExecution.guild">
+<span class="sig-name descname"><span class="pre">guild</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="../api/guild.html#discord_http.guild.Guild" title="discord_http.guild.Guild"><span class="pre">Guild</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="../api/guild.html#discord_http.guild.PartialGuild" title="discord_http.guild.PartialGuild"><span class="pre">PartialGuild</span></a></span><a class="headerlink" href="#discord_http.gateway.object.AutomodExecution.guild" title="Link to this definition">¶</a></dt>
+<dd><p>The guild the automod execution was triggered in.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.gateway.object.AutomodExecution.channel">
+<span class="sig-name descname"><span class="pre">channel</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="../api/channel.html#discord_http.channel.PartialChannel" title="discord_http.channel.PartialChannel"><span class="pre">PartialChannel</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span><a class="headerlink" href="#discord_http.gateway.object.AutomodExecution.channel" title="Link to this definition">¶</a></dt>
+<dd><p>The channel the automod execution was triggered in, if applicable.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.gateway.object.AutomodExecution.user">
+<span class="sig-name descname"><span class="pre">user</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="../api/member.html#discord_http.member.Member" title="discord_http.member.Member"><span class="pre">Member</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="../api/member.html#discord_http.member.PartialMember" title="discord_http.member.PartialMember"><span class="pre">PartialMember</span></a></span><a class="headerlink" href="#discord_http.gateway.object.AutomodExecution.user" title="Link to this definition">¶</a></dt>
+<dd><p>The user that triggered the automod execution.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.gateway.object.AutomodExecution.message_id">
+<span class="sig-name descname"><span class="pre">message_id</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><span class="pre">int</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span><a class="headerlink" href="#discord_http.gateway.object.AutomodExecution.message_id" title="Link to this definition">¶</a></dt>
+<dd><p>The ID of the message that triggered the automod execution, if applicable.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.gateway.object.AutomodExecution.alert_system_message_id">
+<span class="sig-name descname"><span class="pre">alert_system_message_id</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><span class="pre">int</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span><a class="headerlink" href="#discord_http.gateway.object.AutomodExecution.alert_system_message_id" title="Link to this definition">¶</a></dt>
+<dd><p>The ID of the system message that was sent as an alert for the automod execution, if applicable.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.gateway.object.AutomodExecution.content">
+<span class="sig-name descname"><span class="pre">content</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span><a class="headerlink" href="#discord_http.gateway.object.AutomodExecution.content" title="Link to this definition">¶</a></dt>
+<dd><p>The content that triggered the automod execution, if applicable.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.gateway.object.AutomodExecution.matched_keyword">
+<span class="sig-name descname"><span class="pre">matched_keyword</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span><a class="headerlink" href="#discord_http.gateway.object.AutomodExecution.matched_keyword" title="Link to this definition">¶</a></dt>
+<dd><p>The keyword that triggered the automod execution, if applicable.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.gateway.object.AutomodExecution.matched_content">
+<span class="sig-name descname"><span class="pre">matched_content</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span><a class="headerlink" href="#discord_http.gateway.object.AutomodExecution.matched_content" title="Link to this definition">¶</a></dt>
+<dd><p>The content that matched the keyword and triggered the automod execution, if applicable.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="discord_http.gateway.object.AutomodExecution.rule">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">rule</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="../api/automod.html#discord_http.automod.PartialAutoModRule" title="discord_http.automod.PartialAutoModRule"><span class="pre">PartialAutoModRule</span></a></span><a class="headerlink" href="#discord_http.gateway.object.AutomodExecution.rule" title="Link to this definition">¶</a></dt>
+<dd><p>Returns a partial object of automod rule.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.gateway.object.AutomodExecution.rejection_reason">
+<span class="sig-name descname"><span class="pre">rejection_reason</span></span><a class="headerlink" href="#discord_http.gateway.object.AutomodExecution.rejection_reason" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="discord_http.gateway.object.BulkDeletePayload">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">discord_http.gateway.object.</span></span><span class="sig-name descname"><span class="pre">BulkDeletePayload</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">state</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">guild</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">channel</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#discord_http.gateway.object.BulkDeletePayload" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<p>Represents a bulk delete event.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>state</strong> (<a class="reference internal" href="../api/http.html#discord_http.http.DiscordAPI" title="discord_http.http.DiscordAPI"><em>DiscordAPI</em></a>)</p></li>
+<li><p><strong>data</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.14)"><em>dict</em></a>)</p></li>
+<li><p><strong>guild</strong> (<a class="reference internal" href="../api/guild.html#discord_http.guild.PartialGuild" title="discord_http.guild.PartialGuild"><em>PartialGuild</em></a>)</p></li>
+<li><p><strong>channel</strong> (<a class="reference internal" href="../api/channel.html#discord_http.channel.BaseChannel" title="discord_http.channel.BaseChannel"><em>BaseChannel</em></a><em> | </em><a class="reference internal" href="../api/channel.html#discord_http.channel.PartialChannel" title="discord_http.channel.PartialChannel"><em>PartialChannel</em></a>)</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.gateway.object.BulkDeletePayload.guild">
+<span class="sig-name descname"><span class="pre">guild</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="../api/guild.html#discord_http.guild.Guild" title="discord_http.guild.Guild"><span class="pre">Guild</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="../api/guild.html#discord_http.guild.PartialGuild" title="discord_http.guild.PartialGuild"><span class="pre">PartialGuild</span></a></span><a class="headerlink" href="#discord_http.gateway.object.BulkDeletePayload.guild" title="Link to this definition">¶</a></dt>
+<dd><p>The guild the messages were deleted in.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.gateway.object.BulkDeletePayload.channel">
+<span class="sig-name descname"><span class="pre">channel</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="../api/channel.html#discord_http.channel.BaseChannel" title="discord_http.channel.BaseChannel"><span class="pre">BaseChannel</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="../api/channel.html#discord_http.channel.PartialChannel" title="discord_http.channel.PartialChannel"><span class="pre">PartialChannel</span></a></span><a class="headerlink" href="#discord_http.gateway.object.BulkDeletePayload.channel" title="Link to this definition">¶</a></dt>
+<dd><p>The channel the messages were deleted in.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.gateway.object.BulkDeletePayload.messages">
+<span class="sig-name descname"><span class="pre">messages</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.14)"><span class="pre">list</span></a><span class="p"><span class="pre">[</span></span><a class="reference internal" href="../api/message.html#discord_http.message.PartialMessage" title="discord_http.message.PartialMessage"><span class="pre">PartialMessage</span></a><span class="p"><span class="pre">]</span></span></span><a class="headerlink" href="#discord_http.gateway.object.BulkDeletePayload.messages" title="Link to this definition">¶</a></dt>
+<dd><p>The messages that were deleted.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="discord_http.gateway.object.ChannelPinsUpdate">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">discord_http.gateway.object.</span></span><span class="sig-name descname"><span class="pre">ChannelPinsUpdate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">channel</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">last_pin_timestamp</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">guild</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#discord_http.gateway.object.ChannelPinsUpdate" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<p>Represents a channel pins update event.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>channel</strong> (<a class="reference internal" href="../api/channel.html#discord_http.channel.BaseChannel" title="discord_http.channel.BaseChannel"><em>BaseChannel</em></a><em> | </em><a class="reference internal" href="../api/channel.html#discord_http.channel.PartialChannel" title="discord_http.channel.PartialChannel"><em>PartialChannel</em></a>)</p></li>
+<li><p><strong>last_pin_timestamp</strong> (<em>datetime</em><em> | </em><em>None</em>)</p></li>
+<li><p><strong>guild</strong> (<a class="reference internal" href="../api/guild.html#discord_http.guild.PartialGuild" title="discord_http.guild.PartialGuild"><em>PartialGuild</em></a><em> | </em><a class="reference internal" href="../api/guild.html#discord_http.guild.Guild" title="discord_http.guild.Guild"><em>Guild</em></a><em> | </em><em>None</em>)</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.gateway.object.ChannelPinsUpdate.channel">
+<span class="sig-name descname"><span class="pre">channel</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="../api/channel.html#discord_http.channel.BaseChannel" title="discord_http.channel.BaseChannel"><span class="pre">BaseChannel</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="../api/channel.html#discord_http.channel.PartialChannel" title="discord_http.channel.PartialChannel"><span class="pre">PartialChannel</span></a></span><a class="headerlink" href="#discord_http.gateway.object.ChannelPinsUpdate.channel" title="Link to this definition">¶</a></dt>
+<dd><p>The channel the pins were updated in.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.gateway.object.ChannelPinsUpdate.guild">
+<span class="sig-name descname"><span class="pre">guild</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="../api/guild.html#discord_http.guild.PartialGuild" title="discord_http.guild.PartialGuild"><span class="pre">PartialGuild</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="../api/guild.html#discord_http.guild.Guild" title="discord_http.guild.Guild"><span class="pre">Guild</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span><a class="headerlink" href="#discord_http.gateway.object.ChannelPinsUpdate.guild" title="Link to this definition">¶</a></dt>
+<dd><p>The guild the channel is in. If the channel is a DM channel, this will be <cite>None</cite>.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.gateway.object.ChannelPinsUpdate.last_pin_timestamp">
+<span class="sig-name descname"><span class="pre">last_pin_timestamp</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/datetime.html#datetime.datetime" title="(in Python v3.14)"><span class="pre">datetime</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span><a class="headerlink" href="#discord_http.gateway.object.ChannelPinsUpdate.last_pin_timestamp" title="Link to this definition">¶</a></dt>
+<dd><p>The last time a pin was updated in the channel.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="discord_http.gateway.object.GuildJoinRequest">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">discord_http.gateway.object.</span></span><span class="sig-name descname"><span class="pre">GuildJoinRequest</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">state</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">guild</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#discord_http.gateway.object.GuildJoinRequest" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<p>Represents a guild join request event.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>state</strong> (<a class="reference internal" href="../api/http.html#discord_http.http.DiscordAPI" title="discord_http.http.DiscordAPI"><em>DiscordAPI</em></a>)</p></li>
+<li><p><strong>guild</strong> (<a class="reference internal" href="../api/guild.html#discord_http.guild.Guild" title="discord_http.guild.Guild"><em>Guild</em></a><em> | </em><a class="reference internal" href="../api/guild.html#discord_http.guild.PartialGuild" title="discord_http.guild.PartialGuild"><em>PartialGuild</em></a>)</p></li>
+<li><p><strong>data</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.14)"><em>dict</em></a>)</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.gateway.object.GuildJoinRequest.status">
+<span class="sig-name descname"><span class="pre">status</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></span><a class="headerlink" href="#discord_http.gateway.object.GuildJoinRequest.status" title="Link to this definition">¶</a></dt>
+<dd><p>The status of the join request. Can be “pending”, “accepted”, or “rejected”.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.gateway.object.GuildJoinRequest.rejection_reason">
+<span class="sig-name descname"><span class="pre">rejection_reason</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span><a class="headerlink" href="#discord_http.gateway.object.GuildJoinRequest.rejection_reason" title="Link to this definition">¶</a></dt>
+<dd><p>The reason the join request was rejected, if applicable.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.gateway.object.GuildJoinRequest.user">
+<span class="sig-name descname"><span class="pre">user</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="../api/user.html#discord_http.user.User" title="discord_http.user.User"><span class="pre">User</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span><a class="headerlink" href="#discord_http.gateway.object.GuildJoinRequest.user" title="Link to this definition">¶</a></dt>
+<dd><p>The user that made the join request, or <cite>None</cite> if the user is not available.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.gateway.object.GuildJoinRequest.user_id">
+<span class="sig-name descname"><span class="pre">user_id</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><span class="pre">int</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span><a class="headerlink" href="#discord_http.gateway.object.GuildJoinRequest.user_id" title="Link to this definition">¶</a></dt>
+<dd><p>The ID of the user that made the join request, if available.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.gateway.object.GuildJoinRequest.guild">
+<span class="sig-name descname"><span class="pre">guild</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="../api/guild.html#discord_http.guild.Guild" title="discord_http.guild.Guild"><span class="pre">Guild</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="../api/guild.html#discord_http.guild.PartialGuild" title="discord_http.guild.PartialGuild"><span class="pre">PartialGuild</span></a></span><a class="headerlink" href="#discord_http.gateway.object.GuildJoinRequest.guild" title="Link to this definition">¶</a></dt>
+<dd><p>The guild the join request was made to.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.gateway.object.GuildJoinRequest.last_seen">
+<span class="sig-name descname"><span class="pre">last_seen</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/datetime.html#datetime.datetime" title="(in Python v3.14)"><span class="pre">datetime</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span><a class="headerlink" href="#discord_http.gateway.object.GuildJoinRequest.last_seen" title="Link to this definition">¶</a></dt>
+<dd><p>The last time the user was seen in the guild, if applicable.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="discord_http.gateway.object.PlayingStatus">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">discord_http.gateway.object.</span></span><span class="sig-name descname"><span class="pre">PlayingStatus</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">status</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">type</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">url</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#discord_http.gateway.object.PlayingStatus" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<p>Represents the playing status of the bot.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>name</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><em>str</em></a><em> | </em><em>None</em>)</p></li>
+<li><p><strong>status</strong> (<a class="reference internal" href="enums.html#discord_http.gateway.enums.StatusType" title="discord_http.gateway.enums.StatusType"><em>StatusType</em></a><em> | </em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><em>str</em></a><em> | </em><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><em>int</em></a><em> | </em><em>None</em>)</p></li>
+<li><p><strong>type</strong> (<a class="reference internal" href="enums.html#discord_http.gateway.enums.ActivityType" title="discord_http.gateway.enums.ActivityType"><em>ActivityType</em></a><em> | </em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><em>str</em></a><em> | </em><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><em>int</em></a><em> | </em><em>None</em>)</p></li>
+<li><p><strong>url</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><em>str</em></a><em> | </em><em>None</em>)</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.gateway.object.PlayingStatus.name">
+<span class="sig-name descname"><span class="pre">name</span></span><a class="headerlink" href="#discord_http.gateway.object.PlayingStatus.name" title="Link to this definition">¶</a></dt>
+<dd><p>The name of the activity, if any.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.gateway.object.PlayingStatus.status">
+<span class="sig-name descname"><span class="pre">status</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="enums.html#discord_http.gateway.enums.StatusType" title="discord_http.gateway.enums.StatusType"><span class="pre">StatusType</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><span class="pre">int</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span><a class="headerlink" href="#discord_http.gateway.object.PlayingStatus.status" title="Link to this definition">¶</a></dt>
+<dd><p>The status of the activity, if any.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.gateway.object.PlayingStatus.type">
+<span class="sig-name descname"><span class="pre">type</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="enums.html#discord_http.gateway.enums.ActivityType" title="discord_http.gateway.enums.ActivityType"><span class="pre">ActivityType</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><span class="pre">int</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span><a class="headerlink" href="#discord_http.gateway.object.PlayingStatus.type" title="Link to this definition">¶</a></dt>
+<dd><p>The type of the activity, if any.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.gateway.object.PlayingStatus.url">
+<span class="sig-name descname"><span class="pre">url</span></span><a class="headerlink" href="#discord_http.gateway.object.PlayingStatus.url" title="Link to this definition">¶</a></dt>
+<dd><p>The url of the activity, if any. Only applicable for streaming activities.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.gateway.object.PlayingStatus.since">
+<span class="sig-name descname"><span class="pre">since</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><span class="pre">int</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span><a class="headerlink" href="#discord_http.gateway.object.PlayingStatus.since" title="Link to this definition">¶</a></dt>
+<dd><p>The timestamp of when the activity started, if applicable.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="discord_http.gateway.object.PlayingStatus.to_dict">
+<span class="sig-name descname"><span class="pre">to_dict</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.14)"><span class="pre">dict</span></a></span></span><a class="headerlink" href="#discord_http.gateway.object.PlayingStatus.to_dict" title="Link to this definition">¶</a></dt>
+<dd><p>The playing status as a dictionary.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">dict</span></code></a></span></p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="discord_http.gateway.object.PollVoteEvent">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">discord_http.gateway.object.</span></span><span class="sig-name descname"><span class="pre">PollVoteEvent</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">state</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">user</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">channel</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">guild</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">type</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#discord_http.gateway.object.PollVoteEvent" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<p>Represents a poll vote event.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>state</strong> (<a class="reference internal" href="../api/http.html#discord_http.http.DiscordAPI" title="discord_http.http.DiscordAPI"><em>DiscordAPI</em></a>)</p></li>
+<li><p><strong>user</strong> (<a class="reference internal" href="../api/member.html#discord_http.member.Member" title="discord_http.member.Member"><em>Member</em></a><em> | </em><a class="reference internal" href="../api/member.html#discord_http.member.PartialMember" title="discord_http.member.PartialMember"><em>PartialMember</em></a><em> | </em><a class="reference internal" href="../api/user.html#discord_http.user.PartialUser" title="discord_http.user.PartialUser"><em>PartialUser</em></a>)</p></li>
+<li><p><strong>channel</strong> (<a class="reference internal" href="../api/channel.html#discord_http.channel.PartialChannel" title="discord_http.channel.PartialChannel"><em>PartialChannel</em></a>)</p></li>
+<li><p><strong>guild</strong> (<a class="reference internal" href="../api/guild.html#discord_http.guild.PartialGuild" title="discord_http.guild.PartialGuild"><em>PartialGuild</em></a><em> | </em><em>None</em>)</p></li>
+<li><p><strong>type</strong> (<a class="reference internal" href="enums.html#discord_http.gateway.enums.PollVoteActionType" title="discord_http.gateway.enums.PollVoteActionType"><em>PollVoteActionType</em></a>)</p></li>
+<li><p><strong>data</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.14)"><em>dict</em></a>)</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.gateway.object.PollVoteEvent.user">
+<span class="sig-name descname"><span class="pre">user</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="../api/member.html#discord_http.member.Member" title="discord_http.member.Member"><span class="pre">Member</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="../api/member.html#discord_http.member.PartialMember" title="discord_http.member.PartialMember"><span class="pre">PartialMember</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="../api/user.html#discord_http.user.PartialUser" title="discord_http.user.PartialUser"><span class="pre">PartialUser</span></a></span><a class="headerlink" href="#discord_http.gateway.object.PollVoteEvent.user" title="Link to this definition">¶</a></dt>
+<dd><p>The user that made the vote.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.gateway.object.PollVoteEvent.guild">
+<span class="sig-name descname"><span class="pre">guild</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="../api/guild.html#discord_http.guild.PartialGuild" title="discord_http.guild.PartialGuild"><span class="pre">PartialGuild</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span><a class="headerlink" href="#discord_http.gateway.object.PollVoteEvent.guild" title="Link to this definition">¶</a></dt>
+<dd><p>The guild the poll is in. If the poll is in a DM channel, this will be <cite>None</cite>.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.gateway.object.PollVoteEvent.channel">
+<span class="sig-name descname"><span class="pre">channel</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="../api/channel.html#discord_http.channel.PartialChannel" title="discord_http.channel.PartialChannel"><span class="pre">PartialChannel</span></a></span><a class="headerlink" href="#discord_http.gateway.object.PollVoteEvent.channel" title="Link to this definition">¶</a></dt>
+<dd><p>The channel the poll is in.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.gateway.object.PollVoteEvent.message">
+<span class="sig-name descname"><span class="pre">message</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="../api/message.html#discord_http.message.PartialMessage" title="discord_http.message.PartialMessage"><span class="pre">PartialMessage</span></a></span><a class="headerlink" href="#discord_http.gateway.object.PollVoteEvent.message" title="Link to this definition">¶</a></dt>
+<dd><p>The message the poll is in.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.gateway.object.PollVoteEvent.type">
+<span class="sig-name descname"><span class="pre">type</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="enums.html#discord_http.gateway.enums.PollVoteActionType" title="discord_http.gateway.enums.PollVoteActionType"><span class="pre">PollVoteActionType</span></a></span><a class="headerlink" href="#discord_http.gateway.object.PollVoteEvent.type" title="Link to this definition">¶</a></dt>
+<dd><p>The type of the poll vote action, either “vote” or “unvote”.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.gateway.object.PollVoteEvent.answer_id">
+<span class="sig-name descname"><span class="pre">answer_id</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><span class="pre">int</span></a></span><a class="headerlink" href="#discord_http.gateway.object.PollVoteEvent.answer_id" title="Link to this definition">¶</a></dt>
+<dd><p>The ID of the answer that was voted or unvoted.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="discord_http.gateway.object.Presence">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">discord_http.gateway.object.</span></span><span class="sig-name descname"><span class="pre">Presence</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">state</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">user</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">guild</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#discord_http.gateway.object.Presence" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<p>Represents a presence update event.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>state</strong> (<a class="reference internal" href="../api/http.html#discord_http.http.DiscordAPI" title="discord_http.http.DiscordAPI"><em>DiscordAPI</em></a>)</p></li>
+<li><p><strong>user</strong> (<a class="reference internal" href="../api/member.html#discord_http.member.Member" title="discord_http.member.Member"><em>Member</em></a><em> | </em><a class="reference internal" href="../api/member.html#discord_http.member.PartialMember" title="discord_http.member.PartialMember"><em>PartialMember</em></a>)</p></li>
+<li><p><strong>guild</strong> (<a class="reference internal" href="../api/guild.html#discord_http.guild.PartialGuild" title="discord_http.guild.PartialGuild"><em>PartialGuild</em></a><em> | </em><a class="reference internal" href="../api/guild.html#discord_http.guild.Guild" title="discord_http.guild.Guild"><em>Guild</em></a>)</p></li>
+<li><p><strong>data</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.14)"><em>dict</em></a>)</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.gateway.object.Presence.user">
+<span class="sig-name descname"><span class="pre">user</span></span><a class="headerlink" href="#discord_http.gateway.object.Presence.user" title="Link to this definition">¶</a></dt>
+<dd><p>The user the presence update is for.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.gateway.object.Presence.guild">
+<span class="sig-name descname"><span class="pre">guild</span></span><a class="headerlink" href="#discord_http.gateway.object.Presence.guild" title="Link to this definition">¶</a></dt>
+<dd><p>The guild the presence update is for.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.gateway.object.Presence.status">
+<span class="sig-name descname"><span class="pre">status</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="enums.html#discord_http.gateway.enums.StatusType" title="discord_http.gateway.enums.StatusType"><span class="pre">StatusType</span></a></span><a class="headerlink" href="#discord_http.gateway.object.Presence.status" title="Link to this definition">¶</a></dt>
+<dd><p>The status of the presence update.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.gateway.object.Presence.activities">
+<span class="sig-name descname"><span class="pre">activities</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.14)"><span class="pre">list</span></a><span class="p"><span class="pre">[</span></span><a class="reference internal" href="activity.html#discord_http.gateway.activity.Activity" title="discord_http.gateway.activity.Activity"><span class="pre">Activity</span></a><span class="p"><span class="pre">]</span></span></span><a class="headerlink" href="#discord_http.gateway.object.Presence.activities" title="Link to this definition">¶</a></dt>
+<dd><p>The activities of the presence update.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.gateway.object.Presence.desktop">
+<span class="sig-name descname"><span class="pre">desktop</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="enums.html#discord_http.gateway.enums.StatusType" title="discord_http.gateway.enums.StatusType"><span class="pre">StatusType</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span><a class="headerlink" href="#discord_http.gateway.object.Presence.desktop" title="Link to this definition">¶</a></dt>
+<dd><p>The desktop status of the presence update, if applicable.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.gateway.object.Presence.mobile">
+<span class="sig-name descname"><span class="pre">mobile</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="enums.html#discord_http.gateway.enums.StatusType" title="discord_http.gateway.enums.StatusType"><span class="pre">StatusType</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span><a class="headerlink" href="#discord_http.gateway.object.Presence.mobile" title="Link to this definition">¶</a></dt>
+<dd><p>The mobile status of the presence update, if applicable.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.gateway.object.Presence.web">
+<span class="sig-name descname"><span class="pre">web</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="enums.html#discord_http.gateway.enums.StatusType" title="discord_http.gateway.enums.StatusType"><span class="pre">StatusType</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span><a class="headerlink" href="#discord_http.gateway.object.Presence.web" title="Link to this definition">¶</a></dt>
+<dd><p>The web status of the presence update, if applicable.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.gateway.object.Presence.type">
+<span class="sig-name descname"><span class="pre">type</span></span><a class="headerlink" href="#discord_http.gateway.object.Presence.type" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="discord_http.gateway.object.Reaction">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">discord_http.gateway.object.</span></span><span class="sig-name descname"><span class="pre">Reaction</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">state</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#discord_http.gateway.object.Reaction" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<p>Represents a reaction event.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>state</strong> (<a class="reference internal" href="../api/http.html#discord_http.http.DiscordAPI" title="discord_http.http.DiscordAPI"><em>DiscordAPI</em></a>)</p></li>
+<li><p><strong>data</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.14)"><em>dict</em></a>)</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.gateway.object.Reaction.user_id">
+<span class="sig-name descname"><span class="pre">user_id</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><span class="pre">int</span></a></span><a class="headerlink" href="#discord_http.gateway.object.Reaction.user_id" title="Link to this definition">¶</a></dt>
+<dd><p>The ID of the user that made the reaction.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.gateway.object.Reaction.id">
+<span class="sig-name descname"><span class="pre">id</span></span><a class="headerlink" href="#discord_http.gateway.object.Reaction.id" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.gateway.object.Reaction.channel_id">
+<span class="sig-name descname"><span class="pre">channel_id</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><span class="pre">int</span></a></span><a class="headerlink" href="#discord_http.gateway.object.Reaction.channel_id" title="Link to this definition">¶</a></dt>
+<dd><p>The ID of the channel the reaction was made in.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.gateway.object.Reaction.message_id">
+<span class="sig-name descname"><span class="pre">message_id</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><span class="pre">int</span></a></span><a class="headerlink" href="#discord_http.gateway.object.Reaction.message_id" title="Link to this definition">¶</a></dt>
+<dd><p>The ID of the message the reaction was made to.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.gateway.object.Reaction.guild_id">
+<span class="sig-name descname"><span class="pre">guild_id</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><span class="pre">int</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span><a class="headerlink" href="#discord_http.gateway.object.Reaction.guild_id" title="Link to this definition">¶</a></dt>
+<dd><p>The ID of the guild the reaction was made in, or <cite>None</cite> if the reaction was made in a DM channel.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.gateway.object.Reaction.message_author_id">
+<span class="sig-name descname"><span class="pre">message_author_id</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><span class="pre">int</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span><a class="headerlink" href="#discord_http.gateway.object.Reaction.message_author_id" title="Link to this definition">¶</a></dt>
+<dd><p>The ID of the user that authored the message the reaction was made to, or <cite>None</cite> if the message author is not available.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.gateway.object.Reaction.member">
+<span class="sig-name descname"><span class="pre">member</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="../api/member.html#discord_http.member.Member" title="discord_http.member.Member"><span class="pre">Member</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span><a class="headerlink" href="#discord_http.gateway.object.Reaction.member" title="Link to this definition">¶</a></dt>
+<dd><p>The member that made the reaction, or <cite>None</cite> if the member is not available.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.gateway.object.Reaction.emoji">
+<span class="sig-name descname"><span class="pre">emoji</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="../api/emoji.html#discord_http.emoji.EmojiParser" title="discord_http.emoji.EmojiParser"><span class="pre">EmojiParser</span></a></span><a class="headerlink" href="#discord_http.gateway.object.Reaction.emoji" title="Link to this definition">¶</a></dt>
+<dd><p>The emoji that was reacted with.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.gateway.object.Reaction.burst">
+<span class="sig-name descname"><span class="pre">burst</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><span class="pre">bool</span></a></span><a class="headerlink" href="#discord_http.gateway.object.Reaction.burst" title="Link to this definition">¶</a></dt>
+<dd><p>Whether the reaction is a burst reaction.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.gateway.object.Reaction.burst_colour">
+<span class="sig-name descname"><span class="pre">burst_colour</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="../api/colour.html#discord_http.colour.Colour" title="discord_http.colour.Colour"><span class="pre">Colour</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span><a class="headerlink" href="#discord_http.gateway.object.Reaction.burst_colour" title="Link to this definition">¶</a></dt>
+<dd><p>The colour of the burst reaction, if applicable.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.gateway.object.Reaction.type">
+<span class="sig-name descname"><span class="pre">type</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="../api/enums.html#discord_http.enums.ReactionType" title="discord_http.enums.ReactionType"><span class="pre">ReactionType</span></a></span><a class="headerlink" href="#discord_http.gateway.object.Reaction.type" title="Link to this definition">¶</a></dt>
+<dd><p>The type of the reaction.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="discord_http.gateway.object.Reaction.guild">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">guild</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="../api/guild.html#discord_http.guild.Guild" title="discord_http.guild.Guild"><span class="pre">Guild</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="../api/guild.html#discord_http.guild.PartialGuild" title="discord_http.guild.PartialGuild"><span class="pre">PartialGuild</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span><a class="headerlink" href="#discord_http.gateway.object.Reaction.guild" title="Link to this definition">¶</a></dt>
+<dd><p>The guild the message was sent in.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="discord_http.gateway.object.Reaction.channel">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">channel</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="../api/channel.html#discord_http.channel.PartialChannel" title="discord_http.channel.PartialChannel"><span class="pre">PartialChannel</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span><a class="headerlink" href="#discord_http.gateway.object.Reaction.channel" title="Link to this definition">¶</a></dt>
+<dd><p>Returns the channel the message was sent in.</p>
+<p>If guild and channel cache is enabled, it can also return full channel object.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="discord_http.gateway.object.Reaction.message">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">message</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="../api/message.html#discord_http.message.PartialMessage" title="discord_http.message.PartialMessage"><span class="pre">PartialMessage</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span><a class="headerlink" href="#discord_http.gateway.object.Reaction.message" title="Link to this definition">¶</a></dt>
+<dd><p>Returns the message if a message_id is available.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="discord_http.gateway.object.ThreadListSyncPayload">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">discord_http.gateway.object.</span></span><span class="sig-name descname"><span class="pre">ThreadListSyncPayload</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">state</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#discord_http.gateway.object.ThreadListSyncPayload" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<p>Represents a thread list sync payload.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>state</strong> (<a class="reference internal" href="../api/http.html#discord_http.http.DiscordAPI" title="discord_http.http.DiscordAPI"><em>DiscordAPI</em></a>)</p></li>
+<li><p><strong>data</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.14)"><em>dict</em></a>)</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.gateway.object.ThreadListSyncPayload.guild_id">
+<span class="sig-name descname"><span class="pre">guild_id</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><span class="pre">int</span></a></span><a class="headerlink" href="#discord_http.gateway.object.ThreadListSyncPayload.guild_id" title="Link to this definition">¶</a></dt>
+<dd><p>The guild ID the thread list sync is for.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.gateway.object.ThreadListSyncPayload.channel_ids">
+<span class="sig-name descname"><span class="pre">channel_ids</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.14)"><span class="pre">list</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><span class="pre">int</span></a><span class="p"><span class="pre">]</span></span></span><a class="headerlink" href="#discord_http.gateway.object.ThreadListSyncPayload.channel_ids" title="Link to this definition">¶</a></dt>
+<dd><p>The parent channel IDs whose threads are being synced.
+If this is empty, it means all threads in the guild are being synced.
+This may contains ids of channels that have no active threads.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="discord_http.gateway.object.ThreadListSyncPayload.guild">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">guild</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="../api/guild.html#discord_http.guild.PartialGuild" title="discord_http.guild.PartialGuild"><span class="pre">PartialGuild</span></a></span><a class="headerlink" href="#discord_http.gateway.object.ThreadListSyncPayload.guild" title="Link to this definition">¶</a></dt>
+<dd><p>The guild the thread is in.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="discord_http.gateway.object.ThreadListSyncPayload.threads">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">threads</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.14)"><span class="pre">list</span></a><span class="p"><span class="pre">[</span></span><a class="reference internal" href="../api/channel.html#discord_http.channel.Thread" title="discord_http.channel.Thread"><span class="pre">Thread</span></a><span class="p"><span class="pre">]</span></span></span><a class="headerlink" href="#discord_http.gateway.object.ThreadListSyncPayload.threads" title="Link to this definition">¶</a></dt>
+<dd><p>The threads in the thread list.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="discord_http.gateway.object.ThreadListSyncPayload.members">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">members</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.14)"><span class="pre">list</span></a><span class="p"><span class="pre">[</span></span><span class="pre">PartialThreadMember</span><span class="p"><span class="pre">]</span></span></span><a class="headerlink" href="#discord_http.gateway.object.ThreadListSyncPayload.members" title="Link to this definition">¶</a></dt>
+<dd><p>The members in the thread list.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="discord_http.gateway.object.ThreadListSyncPayload.channels">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">channels</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.14)"><span class="pre">list</span></a><span class="p"><span class="pre">[</span></span><a class="reference internal" href="../api/channel.html#discord_http.channel.PartialChannel" title="discord_http.channel.PartialChannel"><span class="pre">PartialChannel</span></a><span class="p"><span class="pre">]</span></span></span><a class="headerlink" href="#discord_http.gateway.object.ThreadListSyncPayload.channels" title="Link to this definition">¶</a></dt>
+<dd><p>The channels in the thread list.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="discord_http.gateway.object.ThreadListSyncPayload.combined">
+<span class="sig-name descname"><span class="pre">combined</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/collections.abc.html#collections.abc.Iterator" title="(in Python v3.14)"><span class="pre">Iterator</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.14)"><span class="pre">tuple</span></a><span class="p"><span class="pre">[</span></span><a class="reference internal" href="../api/channel.html#discord_http.channel.PartialChannel" title="discord_http.channel.PartialChannel"><span class="pre">PartialChannel</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.14)"><span class="pre">tuple</span></a><span class="p"><span class="pre">[</span></span><a class="reference internal" href="../api/channel.html#discord_http.channel.Thread" title="discord_http.channel.Thread"><span class="pre">Thread</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.14)"><span class="pre">list</span></a><span class="p"><span class="pre">[</span></span><span class="pre">PartialThreadMember</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#discord_http.gateway.object.ThreadListSyncPayload.combined" title="Link to this definition">¶</a></dt>
+<dd><p>Returns a combined iterator of channels and threads.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/collections.abc.html#collections.abc.Iterator" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Iterator</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">tuple</span></code></a>[<a class="reference internal" href="../api/channel.html#discord_http.channel.PartialChannel" title="discord_http.channel.PartialChannel"><code class="xref py py-class docutils literal notranslate"><span class="pre">PartialChannel</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">tuple</span></code></a>[<a class="reference internal" href="../api/channel.html#discord_http.channel.Thread" title="discord_http.channel.Thread"><code class="xref py py-class docutils literal notranslate"><span class="pre">Thread</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">list</span></code></a>[<code class="xref py py-class docutils literal notranslate"><span class="pre">PartialThreadMember</span></code>]]]]</span></p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="discord_http.gateway.object.ThreadMembersUpdatePayload">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">discord_http.gateway.object.</span></span><span class="sig-name descname"><span class="pre">ThreadMembersUpdatePayload</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">state</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#discord_http.gateway.object.ThreadMembersUpdatePayload" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<p>Represents a thread members update’s payload.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>state</strong> (<a class="reference internal" href="../api/http.html#discord_http.http.DiscordAPI" title="discord_http.http.DiscordAPI"><em>DiscordAPI</em></a>)</p></li>
+<li><p><strong>data</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.14)"><em>dict</em></a>)</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.gateway.object.ThreadMembersUpdatePayload.id">
+<span class="sig-name descname"><span class="pre">id</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><span class="pre">int</span></a></span><a class="headerlink" href="#discord_http.gateway.object.ThreadMembersUpdatePayload.id" title="Link to this definition">¶</a></dt>
+<dd><p>The ID of the thread.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.gateway.object.ThreadMembersUpdatePayload.guild_id">
+<span class="sig-name descname"><span class="pre">guild_id</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><span class="pre">int</span></a></span><a class="headerlink" href="#discord_http.gateway.object.ThreadMembersUpdatePayload.guild_id" title="Link to this definition">¶</a></dt>
+<dd><p>The guild ID the thread is in.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.gateway.object.ThreadMembersUpdatePayload.member_count">
+<span class="sig-name descname"><span class="pre">member_count</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><span class="pre">int</span></a></span><a class="headerlink" href="#discord_http.gateway.object.ThreadMembersUpdatePayload.member_count" title="Link to this definition">¶</a></dt>
+<dd><p>The total number of members in the thread, capped at 50.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.gateway.object.ThreadMembersUpdatePayload.removed_member_ids">
+<span class="sig-name descname"><span class="pre">removed_member_ids</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.14)"><span class="pre">list</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><span class="pre">int</span></a><span class="p"><span class="pre">]</span></span></span><a class="headerlink" href="#discord_http.gateway.object.ThreadMembersUpdatePayload.removed_member_ids" title="Link to this definition">¶</a></dt>
+<dd><p>The IDs of the members that were removed from the thread.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="discord_http.gateway.object.ThreadMembersUpdatePayload.guild">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">guild</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="../api/guild.html#discord_http.guild.PartialGuild" title="discord_http.guild.PartialGuild"><span class="pre">PartialGuild</span></a></span><a class="headerlink" href="#discord_http.gateway.object.ThreadMembersUpdatePayload.guild" title="Link to this definition">¶</a></dt>
+<dd><p>The guild the thread is in.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="discord_http.gateway.object.ThreadMembersUpdatePayload.thread">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">thread</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="../api/channel.html#discord_http.channel.PartialChannel" title="discord_http.channel.PartialChannel"><span class="pre">PartialChannel</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="../api/channel.html#discord_http.channel.Thread" title="discord_http.channel.Thread"><span class="pre">Thread</span></a></span><a class="headerlink" href="#discord_http.gateway.object.ThreadMembersUpdatePayload.thread" title="Link to this definition">¶</a></dt>
+<dd><p>The thread the members were updated in.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="discord_http.gateway.object.ThreadMembersUpdatePayload.added_members">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">added_members</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.14)"><span class="pre">list</span></a><span class="p"><span class="pre">[</span></span><a class="reference internal" href="../api/member.html#discord_http.member.ThreadMember" title="discord_http.member.ThreadMember"><span class="pre">ThreadMember</span></a><span class="p"><span class="pre">]</span></span></span><a class="headerlink" href="#discord_http.gateway.object.ThreadMembersUpdatePayload.added_members" title="Link to this definition">¶</a></dt>
+<dd><p>The members that were added to the thread.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.14)">list</a>[PartialThreadMember]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="discord_http.gateway.object.ThreadMembersUpdatePayload.removed_members">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">removed_members</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.14)"><span class="pre">list</span></a><span class="p"><span class="pre">[</span></span><a class="reference internal" href="../api/member.html#discord_http.member.PartialMember" title="discord_http.member.PartialMember"><span class="pre">PartialMember</span></a><span class="p"><span class="pre">]</span></span></span><a class="headerlink" href="#discord_http.gateway.object.ThreadMembersUpdatePayload.removed_members" title="Link to this definition">¶</a></dt>
+<dd><p>The members that were removed from the thread.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.14)">list</a>[<a class="reference internal" href="../api/member.html#discord_http.member.PartialMember" title="discord_http.member.PartialMember">PartialMember</a>]</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="discord_http.gateway.object.TypingStartEvent">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">discord_http.gateway.object.</span></span><span class="sig-name descname"><span class="pre">TypingStartEvent</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">guild</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">channel</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">user</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">timestamp</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#discord_http.gateway.object.TypingStartEvent" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<p>Represents a typing start event.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>guild</strong> (<a class="reference internal" href="../api/guild.html#discord_http.guild.PartialGuild" title="discord_http.guild.PartialGuild"><em>PartialGuild</em></a><em> | </em><a class="reference internal" href="../api/guild.html#discord_http.guild.Guild" title="discord_http.guild.Guild"><em>Guild</em></a><em> | </em><em>None</em>)</p></li>
+<li><p><strong>channel</strong> (<a class="reference internal" href="../api/channel.html#discord_http.channel.BaseChannel" title="discord_http.channel.BaseChannel"><em>BaseChannel</em></a><em> | </em><a class="reference internal" href="../api/channel.html#discord_http.channel.PartialChannel" title="discord_http.channel.PartialChannel"><em>PartialChannel</em></a>)</p></li>
+<li><p><strong>user</strong> (<a class="reference internal" href="../api/user.html#discord_http.user.PartialUser" title="discord_http.user.PartialUser"><em>PartialUser</em></a><em> | </em><a class="reference internal" href="../api/user.html#discord_http.user.User" title="discord_http.user.User"><em>User</em></a><em> | </em><a class="reference internal" href="../api/member.html#discord_http.member.Member" title="discord_http.member.Member"><em>Member</em></a><em> | </em><a class="reference internal" href="../api/member.html#discord_http.member.PartialMember" title="discord_http.member.PartialMember"><em>PartialMember</em></a>)</p></li>
+<li><p><strong>timestamp</strong> (<em>datetime</em>)</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.gateway.object.TypingStartEvent.guild">
+<span class="sig-name descname"><span class="pre">guild</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="../api/guild.html#discord_http.guild.PartialGuild" title="discord_http.guild.PartialGuild"><span class="pre">PartialGuild</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="../api/guild.html#discord_http.guild.Guild" title="discord_http.guild.Guild"><span class="pre">Guild</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span><a class="headerlink" href="#discord_http.gateway.object.TypingStartEvent.guild" title="Link to this definition">¶</a></dt>
+<dd><p>The guild the typing event was triggered in. If the channel is a DM channel, this will be <cite>None</cite>.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.gateway.object.TypingStartEvent.channel">
+<span class="sig-name descname"><span class="pre">channel</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="../api/channel.html#discord_http.channel.BaseChannel" title="discord_http.channel.BaseChannel"><span class="pre">BaseChannel</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="../api/channel.html#discord_http.channel.PartialChannel" title="discord_http.channel.PartialChannel"><span class="pre">PartialChannel</span></a></span><a class="headerlink" href="#discord_http.gateway.object.TypingStartEvent.channel" title="Link to this definition">¶</a></dt>
+<dd><p>The channel the typing event was triggered in.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.gateway.object.TypingStartEvent.user">
+<span class="sig-name descname"><span class="pre">user</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="../api/user.html#discord_http.user.PartialUser" title="discord_http.user.PartialUser"><span class="pre">PartialUser</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="../api/user.html#discord_http.user.User" title="discord_http.user.User"><span class="pre">User</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="../api/member.html#discord_http.member.Member" title="discord_http.member.Member"><span class="pre">Member</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="../api/member.html#discord_http.member.PartialMember" title="discord_http.member.PartialMember"><span class="pre">PartialMember</span></a></span><a class="headerlink" href="#discord_http.gateway.object.TypingStartEvent.user" title="Link to this definition">¶</a></dt>
+<dd><p>The user that started typing.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.gateway.object.TypingStartEvent.timestamp">
+<span class="sig-name descname"><span class="pre">timestamp</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/datetime.html#datetime.datetime" title="(in Python v3.14)"><span class="pre">datetime</span></a></span><a class="headerlink" href="#discord_http.gateway.object.TypingStartEvent.timestamp" title="Link to this definition">¶</a></dt>
+<dd><p>The time the user started typing.</p>
+</dd></dl>
+
+</dd></dl>
+
 </section>
 </section>
 
@@ -351,7 +1021,120 @@
           <div class="toc-tree">
             <ul>
 <li><a class="reference internal" href="#">Object (Gateway events)</a><ul>
-<li><a class="reference internal" href="#discord-http-gateway-object-module">discord_http.gateway.object module</a></li>
+<li><a class="reference internal" href="#module-discord_http.gateway.object">discord_http.gateway.object module</a><ul>
+<li><a class="reference internal" href="#discord_http.gateway.object.AutomodExecution"><code class="docutils literal notranslate"><span class="pre">AutomodExecution</span></code></a><ul>
+<li><a class="reference internal" href="#discord_http.gateway.object.AutomodExecution.action"><code class="docutils literal notranslate"><span class="pre">AutomodExecution.action</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.gateway.object.AutomodExecution.rule_id"><code class="docutils literal notranslate"><span class="pre">AutomodExecution.rule_id</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.gateway.object.AutomodExecution.rule_trigger_type"><code class="docutils literal notranslate"><span class="pre">AutomodExecution.rule_trigger_type</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.gateway.object.AutomodExecution.guild"><code class="docutils literal notranslate"><span class="pre">AutomodExecution.guild</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.gateway.object.AutomodExecution.channel"><code class="docutils literal notranslate"><span class="pre">AutomodExecution.channel</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.gateway.object.AutomodExecution.user"><code class="docutils literal notranslate"><span class="pre">AutomodExecution.user</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.gateway.object.AutomodExecution.message_id"><code class="docutils literal notranslate"><span class="pre">AutomodExecution.message_id</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.gateway.object.AutomodExecution.alert_system_message_id"><code class="docutils literal notranslate"><span class="pre">AutomodExecution.alert_system_message_id</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.gateway.object.AutomodExecution.content"><code class="docutils literal notranslate"><span class="pre">AutomodExecution.content</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.gateway.object.AutomodExecution.matched_keyword"><code class="docutils literal notranslate"><span class="pre">AutomodExecution.matched_keyword</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.gateway.object.AutomodExecution.matched_content"><code class="docutils literal notranslate"><span class="pre">AutomodExecution.matched_content</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.gateway.object.AutomodExecution.rule"><code class="docutils literal notranslate"><span class="pre">AutomodExecution.rule</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.gateway.object.AutomodExecution.rejection_reason"><code class="docutils literal notranslate"><span class="pre">AutomodExecution.rejection_reason</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#discord_http.gateway.object.BulkDeletePayload"><code class="docutils literal notranslate"><span class="pre">BulkDeletePayload</span></code></a><ul>
+<li><a class="reference internal" href="#discord_http.gateway.object.BulkDeletePayload.guild"><code class="docutils literal notranslate"><span class="pre">BulkDeletePayload.guild</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.gateway.object.BulkDeletePayload.channel"><code class="docutils literal notranslate"><span class="pre">BulkDeletePayload.channel</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.gateway.object.BulkDeletePayload.messages"><code class="docutils literal notranslate"><span class="pre">BulkDeletePayload.messages</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#discord_http.gateway.object.ChannelPinsUpdate"><code class="docutils literal notranslate"><span class="pre">ChannelPinsUpdate</span></code></a><ul>
+<li><a class="reference internal" href="#discord_http.gateway.object.ChannelPinsUpdate.channel"><code class="docutils literal notranslate"><span class="pre">ChannelPinsUpdate.channel</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.gateway.object.ChannelPinsUpdate.guild"><code class="docutils literal notranslate"><span class="pre">ChannelPinsUpdate.guild</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.gateway.object.ChannelPinsUpdate.last_pin_timestamp"><code class="docutils literal notranslate"><span class="pre">ChannelPinsUpdate.last_pin_timestamp</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#discord_http.gateway.object.GuildJoinRequest"><code class="docutils literal notranslate"><span class="pre">GuildJoinRequest</span></code></a><ul>
+<li><a class="reference internal" href="#discord_http.gateway.object.GuildJoinRequest.status"><code class="docutils literal notranslate"><span class="pre">GuildJoinRequest.status</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.gateway.object.GuildJoinRequest.rejection_reason"><code class="docutils literal notranslate"><span class="pre">GuildJoinRequest.rejection_reason</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.gateway.object.GuildJoinRequest.user"><code class="docutils literal notranslate"><span class="pre">GuildJoinRequest.user</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.gateway.object.GuildJoinRequest.user_id"><code class="docutils literal notranslate"><span class="pre">GuildJoinRequest.user_id</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.gateway.object.GuildJoinRequest.guild"><code class="docutils literal notranslate"><span class="pre">GuildJoinRequest.guild</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.gateway.object.GuildJoinRequest.last_seen"><code class="docutils literal notranslate"><span class="pre">GuildJoinRequest.last_seen</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#discord_http.gateway.object.PlayingStatus"><code class="docutils literal notranslate"><span class="pre">PlayingStatus</span></code></a><ul>
+<li><a class="reference internal" href="#discord_http.gateway.object.PlayingStatus.name"><code class="docutils literal notranslate"><span class="pre">PlayingStatus.name</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.gateway.object.PlayingStatus.status"><code class="docutils literal notranslate"><span class="pre">PlayingStatus.status</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.gateway.object.PlayingStatus.type"><code class="docutils literal notranslate"><span class="pre">PlayingStatus.type</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.gateway.object.PlayingStatus.url"><code class="docutils literal notranslate"><span class="pre">PlayingStatus.url</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.gateway.object.PlayingStatus.since"><code class="docutils literal notranslate"><span class="pre">PlayingStatus.since</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.gateway.object.PlayingStatus.to_dict"><code class="docutils literal notranslate"><span class="pre">PlayingStatus.to_dict()</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#discord_http.gateway.object.PollVoteEvent"><code class="docutils literal notranslate"><span class="pre">PollVoteEvent</span></code></a><ul>
+<li><a class="reference internal" href="#discord_http.gateway.object.PollVoteEvent.user"><code class="docutils literal notranslate"><span class="pre">PollVoteEvent.user</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.gateway.object.PollVoteEvent.guild"><code class="docutils literal notranslate"><span class="pre">PollVoteEvent.guild</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.gateway.object.PollVoteEvent.channel"><code class="docutils literal notranslate"><span class="pre">PollVoteEvent.channel</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.gateway.object.PollVoteEvent.message"><code class="docutils literal notranslate"><span class="pre">PollVoteEvent.message</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.gateway.object.PollVoteEvent.type"><code class="docutils literal notranslate"><span class="pre">PollVoteEvent.type</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.gateway.object.PollVoteEvent.answer_id"><code class="docutils literal notranslate"><span class="pre">PollVoteEvent.answer_id</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#discord_http.gateway.object.Presence"><code class="docutils literal notranslate"><span class="pre">Presence</span></code></a><ul>
+<li><a class="reference internal" href="#discord_http.gateway.object.Presence.user"><code class="docutils literal notranslate"><span class="pre">Presence.user</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.gateway.object.Presence.guild"><code class="docutils literal notranslate"><span class="pre">Presence.guild</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.gateway.object.Presence.status"><code class="docutils literal notranslate"><span class="pre">Presence.status</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.gateway.object.Presence.activities"><code class="docutils literal notranslate"><span class="pre">Presence.activities</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.gateway.object.Presence.desktop"><code class="docutils literal notranslate"><span class="pre">Presence.desktop</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.gateway.object.Presence.mobile"><code class="docutils literal notranslate"><span class="pre">Presence.mobile</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.gateway.object.Presence.web"><code class="docutils literal notranslate"><span class="pre">Presence.web</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.gateway.object.Presence.type"><code class="docutils literal notranslate"><span class="pre">Presence.type</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#discord_http.gateway.object.Reaction"><code class="docutils literal notranslate"><span class="pre">Reaction</span></code></a><ul>
+<li><a class="reference internal" href="#discord_http.gateway.object.Reaction.user_id"><code class="docutils literal notranslate"><span class="pre">Reaction.user_id</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.gateway.object.Reaction.id"><code class="docutils literal notranslate"><span class="pre">Reaction.id</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.gateway.object.Reaction.channel_id"><code class="docutils literal notranslate"><span class="pre">Reaction.channel_id</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.gateway.object.Reaction.message_id"><code class="docutils literal notranslate"><span class="pre">Reaction.message_id</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.gateway.object.Reaction.guild_id"><code class="docutils literal notranslate"><span class="pre">Reaction.guild_id</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.gateway.object.Reaction.message_author_id"><code class="docutils literal notranslate"><span class="pre">Reaction.message_author_id</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.gateway.object.Reaction.member"><code class="docutils literal notranslate"><span class="pre">Reaction.member</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.gateway.object.Reaction.emoji"><code class="docutils literal notranslate"><span class="pre">Reaction.emoji</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.gateway.object.Reaction.burst"><code class="docutils literal notranslate"><span class="pre">Reaction.burst</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.gateway.object.Reaction.burst_colour"><code class="docutils literal notranslate"><span class="pre">Reaction.burst_colour</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.gateway.object.Reaction.type"><code class="docutils literal notranslate"><span class="pre">Reaction.type</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.gateway.object.Reaction.guild"><code class="docutils literal notranslate"><span class="pre">Reaction.guild</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.gateway.object.Reaction.channel"><code class="docutils literal notranslate"><span class="pre">Reaction.channel</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.gateway.object.Reaction.message"><code class="docutils literal notranslate"><span class="pre">Reaction.message</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#discord_http.gateway.object.ThreadListSyncPayload"><code class="docutils literal notranslate"><span class="pre">ThreadListSyncPayload</span></code></a><ul>
+<li><a class="reference internal" href="#discord_http.gateway.object.ThreadListSyncPayload.guild_id"><code class="docutils literal notranslate"><span class="pre">ThreadListSyncPayload.guild_id</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.gateway.object.ThreadListSyncPayload.channel_ids"><code class="docutils literal notranslate"><span class="pre">ThreadListSyncPayload.channel_ids</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.gateway.object.ThreadListSyncPayload.guild"><code class="docutils literal notranslate"><span class="pre">ThreadListSyncPayload.guild</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.gateway.object.ThreadListSyncPayload.threads"><code class="docutils literal notranslate"><span class="pre">ThreadListSyncPayload.threads</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.gateway.object.ThreadListSyncPayload.members"><code class="docutils literal notranslate"><span class="pre">ThreadListSyncPayload.members</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.gateway.object.ThreadListSyncPayload.channels"><code class="docutils literal notranslate"><span class="pre">ThreadListSyncPayload.channels</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.gateway.object.ThreadListSyncPayload.combined"><code class="docutils literal notranslate"><span class="pre">ThreadListSyncPayload.combined()</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#discord_http.gateway.object.ThreadMembersUpdatePayload"><code class="docutils literal notranslate"><span class="pre">ThreadMembersUpdatePayload</span></code></a><ul>
+<li><a class="reference internal" href="#discord_http.gateway.object.ThreadMembersUpdatePayload.id"><code class="docutils literal notranslate"><span class="pre">ThreadMembersUpdatePayload.id</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.gateway.object.ThreadMembersUpdatePayload.guild_id"><code class="docutils literal notranslate"><span class="pre">ThreadMembersUpdatePayload.guild_id</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.gateway.object.ThreadMembersUpdatePayload.member_count"><code class="docutils literal notranslate"><span class="pre">ThreadMembersUpdatePayload.member_count</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.gateway.object.ThreadMembersUpdatePayload.removed_member_ids"><code class="docutils literal notranslate"><span class="pre">ThreadMembersUpdatePayload.removed_member_ids</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.gateway.object.ThreadMembersUpdatePayload.guild"><code class="docutils literal notranslate"><span class="pre">ThreadMembersUpdatePayload.guild</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.gateway.object.ThreadMembersUpdatePayload.thread"><code class="docutils literal notranslate"><span class="pre">ThreadMembersUpdatePayload.thread</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.gateway.object.ThreadMembersUpdatePayload.added_members"><code class="docutils literal notranslate"><span class="pre">ThreadMembersUpdatePayload.added_members</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.gateway.object.ThreadMembersUpdatePayload.removed_members"><code class="docutils literal notranslate"><span class="pre">ThreadMembersUpdatePayload.removed_members</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#discord_http.gateway.object.TypingStartEvent"><code class="docutils literal notranslate"><span class="pre">TypingStartEvent</span></code></a><ul>
+<li><a class="reference internal" href="#discord_http.gateway.object.TypingStartEvent.guild"><code class="docutils literal notranslate"><span class="pre">TypingStartEvent.guild</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.gateway.object.TypingStartEvent.channel"><code class="docutils literal notranslate"><span class="pre">TypingStartEvent.channel</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.gateway.object.TypingStartEvent.user"><code class="docutils literal notranslate"><span class="pre">TypingStartEvent.user</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.gateway.object.TypingStartEvent.timestamp"><code class="docutils literal notranslate"><span class="pre">TypingStartEvent.timestamp</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
 </ul>
 </li>
 </ul>

@@ -245,7 +245,7 @@
 </ul>
 <p class="caption" role="heading"><span class="caption-text">Development</span></p>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="../pages/format.html">Style guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../pages/format.html">Style Guide</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../pages/contribute.html">Contributing</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../pages/license.html">License</a></li>
 <li class="toctree-l1"><a class="reference external" href="https://discord.gg/yqb7vATbjH">Discord</a></li>
@@ -298,17 +298,43 @@
 <dd><p>Bases: <a class="reference internal" href="object.html#discord_http.object.PartialBase" title="discord_http.object.PartialBase"><code class="xref py py-class docutils literal notranslate"><span class="pre">PartialBase</span></code></a></p>
 <p>Represents a partial role object.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Variables<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>guild_id</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><em>int</em></a>) – The ID of the guild this role is in</p>
-</dd>
-<dt class="field-even">Parameters<span class="colon">:</span></dt>
-<dd class="field-even"><ul class="simple">
-<li><p><strong>state</strong> (<em>DiscordAPI</em>)</p></li>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>state</strong> (<a class="reference internal" href="http.html#discord_http.http.DiscordAPI" title="discord_http.http.DiscordAPI"><em>DiscordAPI</em></a>)</p></li>
 <li><p><strong>id</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><em>int</em></a>)</p></li>
 <li><p><strong>guild_id</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><em>int</em></a>)</p></li>
 </ul>
 </dd>
 </dl>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.role.PartialRole.guild_id">
+<span class="sig-name descname"><span class="pre">guild_id</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><span class="pre">int</span></a></span><a class="headerlink" href="#discord_http.role.PartialRole.guild_id" title="Link to this definition">¶</a></dt>
+<dd><p>The ID of the guild this role is in.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="discord_http.role.PartialRole.guild">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">guild</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="guild.html#discord_http.guild.Guild" title="discord_http.guild.Guild"><span class="pre">Guild</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="guild.html#discord_http.guild.PartialGuild" title="discord_http.guild.PartialGuild"><span class="pre">PartialGuild</span></a></span><a class="headerlink" href="#discord_http.role.PartialRole.guild" title="Link to this definition">¶</a></dt>
+<dd><p>Returns the guild this role is in.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="discord_http.role.PartialRole.mention">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">mention</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></span><a class="headerlink" href="#discord_http.role.PartialRole.mention" title="Link to this definition">¶</a></dt>
+<dd><p>Returns a string that mentions the role.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="discord_http.role.PartialRole.is_default_role">
+<span class="sig-name descname"><span class="pre">is_default_role</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><span class="pre">bool</span></a></span></span><a class="headerlink" href="#discord_http.role.PartialRole.is_default_role" title="Link to this definition">¶</a></dt>
+<dd><p>Returns whether the role is the default &#64;everyone role.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></a></span></p>
+</dd>
+</dl>
+</dd></dl>
+
 <dl class="py method">
 <dt class="sig sig-object py" id="discord_http.role.PartialRole.add_role">
 <span class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">add_role</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">user_id</span></span></em>, <em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">reason</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span></span><a class="headerlink" href="#discord_http.role.PartialRole.add_role" title="Link to this definition">¶</a></dt>
@@ -318,6 +344,23 @@
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>user_id</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference internal" href="object.html#discord_http.object.Snowflake" title="discord_http.object.Snowflake"><code class="xref py py-class docutils literal notranslate"><span class="pre">Snowflake</span></code></a> | <a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a></span>) – The user ID to add the role to</p></li>
 <li><p><strong>reason</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a> | <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></span>) – The reason for adding the role</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></span></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="discord_http.role.PartialRole.remove_role">
+<span class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">remove_role</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">user_id</span></span></em>, <em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">reason</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span></span><a class="headerlink" href="#discord_http.role.PartialRole.remove_role" title="Link to this definition">¶</a></dt>
+<dd><p>Remove the role from someone.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>user_id</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference internal" href="object.html#discord_http.object.Snowflake" title="discord_http.object.Snowflake"><code class="xref py py-class docutils literal notranslate"><span class="pre">Snowflake</span></code></a> | <a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a></span>) – The user ID to remove the role from</p></li>
+<li><p><strong>reason</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a> | <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></span>) – The reason for removing the role</p></li>
 </ul>
 </dd>
 <dt class="field-even">Return type<span class="colon">:</span></dt>
@@ -382,19 +425,204 @@ The third value must be one of the following:
 </dd></dl>
 
 <dl class="py property">
-<dt class="sig sig-object py" id="discord_http.role.PartialRole.guild">
-<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">guild</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Guild</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">PartialGuild</span></span><a class="headerlink" href="#discord_http.role.PartialRole.guild" title="Link to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="discord_http.role.PartialRole.created_at">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">created_at</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/datetime.html#datetime.datetime" title="(in Python v3.14)"><span class="pre">datetime</span></a></span><a class="headerlink" href="#discord_http.role.PartialRole.created_at" title="Link to this definition">¶</a></dt>
+<dd><p>The datetime of the snowflake.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.role.PartialRole.id">
+<span class="sig-name descname"><span class="pre">id</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><span class="pre">int</span></a></span><a class="headerlink" href="#discord_http.role.PartialRole.id" title="Link to this definition">¶</a></dt>
+<dd><p>The ID of the snowflake.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="discord_http.role.Role">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">discord_http.role.</span></span><span class="sig-name descname"><span class="pre">Role</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">state</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">guild</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#discord_http.role.Role" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#discord_http.role.PartialRole" title="discord_http.role.PartialRole"><code class="xref py py-class docutils literal notranslate"><span class="pre">PartialRole</span></code></a></p>
+<p>Represents a role object.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>state</strong> (<a class="reference internal" href="http.html#discord_http.http.DiscordAPI" title="discord_http.http.DiscordAPI"><em>DiscordAPI</em></a>)</p></li>
+<li><p><strong>guild</strong> (<a class="reference internal" href="guild.html#discord_http.guild.Guild" title="discord_http.guild.Guild"><em>Guild</em></a><em> | </em><a class="reference internal" href="guild.html#discord_http.guild.PartialGuild" title="discord_http.guild.PartialGuild"><em>PartialGuild</em></a>)</p></li>
+<li><p><strong>data</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.14)"><em>dict</em></a>)</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.role.Role.name">
+<span class="sig-name descname"><span class="pre">name</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></span><a class="headerlink" href="#discord_http.role.Role.name" title="Link to this definition">¶</a></dt>
+<dd><p>The name of the role.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.role.Role.hoist">
+<span class="sig-name descname"><span class="pre">hoist</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><span class="pre">bool</span></a></span><a class="headerlink" href="#discord_http.role.Role.hoist" title="Link to this definition">¶</a></dt>
+<dd><p>Whether the role is displayed separately in the sidebar.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.role.Role.managed">
+<span class="sig-name descname"><span class="pre">managed</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><span class="pre">bool</span></a></span><a class="headerlink" href="#discord_http.role.Role.managed" title="Link to this definition">¶</a></dt>
+<dd><p>Whether the role is managed by an integration.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.role.Role.mentionable">
+<span class="sig-name descname"><span class="pre">mentionable</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><span class="pre">bool</span></a></span><a class="headerlink" href="#discord_http.role.Role.mentionable" title="Link to this definition">¶</a></dt>
+<dd><p>Whether the role is mentionable.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.role.Role.permissions">
+<span class="sig-name descname"><span class="pre">permissions</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="flags.html#discord_http.flags.Permissions" title="discord_http.flags.Permissions"><span class="pre">Permissions</span></a></span><a class="headerlink" href="#discord_http.role.Role.permissions" title="Link to this definition">¶</a></dt>
+<dd><p>The permissions of the role.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.role.Role.colour">
+<span class="sig-name descname"><span class="pre">colour</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="colour.html#discord_http.colour.Colour" title="discord_http.colour.Colour"><span class="pre">Colour</span></a></span><a class="headerlink" href="#discord_http.role.Role.colour" title="Link to this definition">¶</a></dt>
+<dd><p>The colour of the role.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.role.Role.position">
+<span class="sig-name descname"><span class="pre">position</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><span class="pre">int</span></a></span><a class="headerlink" href="#discord_http.role.Role.position" title="Link to this definition">¶</a></dt>
+<dd><p>The position of the role in the role hierarchy.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.role.Role.tags">
+<span class="sig-name descname"><span class="pre">tags</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.14)"><span class="pre">dict</span></a></span><a class="headerlink" href="#discord_http.role.Role.tags" title="Link to this definition">¶</a></dt>
+<dd><p>The tags of the role, such as <cite>premium_subscriber</cite>, <cite>available_for_purchase</cite>, <cite>guild_connections</cite>, etc.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.role.Role.bot_id">
+<span class="sig-name descname"><span class="pre">bot_id</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><span class="pre">int</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span><a class="headerlink" href="#discord_http.role.Role.bot_id" title="Link to this definition">¶</a></dt>
+<dd><p>The ID of the bot that manages the role, if any.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.role.Role.integration_id">
+<span class="sig-name descname"><span class="pre">integration_id</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><span class="pre">int</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span><a class="headerlink" href="#discord_http.role.Role.integration_id" title="Link to this definition">¶</a></dt>
+<dd><p>The ID of the integration that manages the role, if any.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.role.Role.subscription_listing_id">
+<span class="sig-name descname"><span class="pre">subscription_listing_id</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><span class="pre">int</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span><a class="headerlink" href="#discord_http.role.Role.subscription_listing_id" title="Link to this definition">¶</a></dt>
+<dd><p>The ID of the subscription listing for the role, if any.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.role.Role.unicode_emoji">
+<span class="sig-name descname"><span class="pre">unicode_emoji</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span><a class="headerlink" href="#discord_http.role.Role.unicode_emoji" title="Link to this definition">¶</a></dt>
+<dd><p>The unicode emoji associated with the role, if any.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="discord_http.role.Role.add_role">
+<span class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">add_role</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">user_id</span></span></em>, <em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">reason</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span></span><a class="headerlink" href="#discord_http.role.Role.add_role" title="Link to this definition">¶</a></dt>
+<dd><p>Add the role to someone.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>user_id</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference internal" href="object.html#discord_http.object.Snowflake" title="discord_http.object.Snowflake"><code class="xref py py-class docutils literal notranslate"><span class="pre">Snowflake</span></code></a> | <a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a></span>) – The user ID to add the role to</p></li>
+<li><p><strong>reason</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a> | <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></span>) – The reason for adding the role</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></span></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="discord_http.role.Role.created_at">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">created_at</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/datetime.html#datetime.datetime" title="(in Python v3.14)"><span class="pre">datetime</span></a></span><a class="headerlink" href="#discord_http.role.Role.created_at" title="Link to this definition">¶</a></dt>
+<dd><p>The datetime of the snowflake.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="discord_http.role.Role.delete">
+<span class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">delete</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">reason</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span></span><a class="headerlink" href="#discord_http.role.Role.delete" title="Link to this definition">¶</a></dt>
+<dd><p>Delete the role.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>reason</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a> | <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></span>) – The reason for deleting the role</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></span></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="discord_http.role.Role.edit">
+<span class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">edit</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">&lt;MISSING&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">color</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">&lt;MISSING&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">colour</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">&lt;MISSING&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">hoist</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">&lt;MISSING&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mentionable</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">&lt;MISSING&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">positions</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">&lt;MISSING&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">permissions</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">&lt;MISSING&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">unicode_emoji</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">&lt;MISSING&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">icon</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">&lt;MISSING&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">reason</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#discord_http.role.Role" title="discord_http.role.Role"><span class="pre">Role</span></a></span></span><a class="headerlink" href="#discord_http.role.Role.edit" title="Link to this definition">¶</a></dt>
+<dd><p>Edit the role.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>name</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a> | <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></span>) – The new name of the role</p></li>
+<li><p><strong>color</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">tuple</span></code></a>[<a class="reference internal" href="colour.html#discord_http.colour.Colour" title="discord_http.colour.Colour"><code class="xref py py-class docutils literal notranslate"><span class="pre">Colour</span></code></a> | <a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/constants.html#Ellipsis" title="(in Python v3.14)"><code class="xref py py-data docutils literal notranslate"><span class="pre">...</span></code></a>] | <a class="reference internal" href="colour.html#discord_http.colour.Colour" title="discord_http.colour.Colour"><code class="xref py py-class docutils literal notranslate"><span class="pre">Colour</span></code></a> | <a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a> | <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></span>) – Alias for colour</p></li>
+<li><p><strong>colour</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">tuple</span></code></a>[<a class="reference internal" href="colour.html#discord_http.colour.Colour" title="discord_http.colour.Colour"><code class="xref py py-class docutils literal notranslate"><span class="pre">Colour</span></code></a> | <a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/constants.html#Ellipsis" title="(in Python v3.14)"><code class="xref py py-data docutils literal notranslate"><span class="pre">...</span></code></a>] | <a class="reference internal" href="colour.html#discord_http.colour.Colour" title="discord_http.colour.Colour"><code class="xref py py-class docutils literal notranslate"><span class="pre">Colour</span></code></a> | <a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a> | <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></span>) – The new colour of the role.
+If tuple is provided, it switches to the new gradient role colours.
+The third value must be one of the following:
+- 16761760
+- 11127295
+- 16759788</p></li>
+<li><p><strong>hoist</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></a> | <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></span>) – Whether the role should be displayed separately in the sidebar</p></li>
+<li><p><strong>mentionable</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></a> | <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></span>) – Whether the role should be mentionable</p></li>
+<li><p><strong>unicode_emoji</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a> | <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></span>) – The new unicode emoji of the role</p></li>
+<li><p><strong>positions</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a> | <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></span>) – The new position of the role</p></li>
+<li><p><strong>permissions</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference internal" href="flags.html#discord_http.flags.Permissions" title="discord_http.flags.Permissions"><code class="xref py py-class docutils literal notranslate"><span class="pre">Permissions</span></code></a> | <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></span>) – The new permissions for the role</p></li>
+<li><p><strong>icon</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference internal" href="file.html#discord_http.file.File" title="discord_http.file.File"><code class="xref py py-class docutils literal notranslate"><span class="pre">File</span></code></a> | <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#bytes" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bytes</span></code></a> | <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></span>) – The new icon of the role</p></li>
+<li><p><strong>reason</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a> | <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></span>) – The reason for editing the role</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><a class="reference internal" href="#discord_http.role.Role" title="discord_http.role.Role"><code class="xref py py-class docutils literal notranslate"><span class="pre">Role</span></code></a></span></p>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The edited role and its data</p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#ValueError" title="(in Python v3.14)"><strong>ValueError</strong></a> – <ul class="simple">
+<li><p>If both <cite>unicode_emoji</cite> and <cite>icon</cite> are set
+    - If there were no changes applied to the role
+    - If position was changed, but Discord API returned invalid data</p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="discord_http.role.Role.guild">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">guild</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="guild.html#discord_http.guild.Guild" title="discord_http.guild.Guild"><span class="pre">Guild</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="guild.html#discord_http.guild.PartialGuild" title="discord_http.guild.PartialGuild"><span class="pre">PartialGuild</span></a></span><a class="headerlink" href="#discord_http.role.Role.guild" title="Link to this definition">¶</a></dt>
 <dd><p>Returns the guild this role is in.</p>
 </dd></dl>
 
 <dl class="py attribute">
-<dt class="sig sig-object py" id="discord_http.role.PartialRole.guild_id">
-<span class="sig-name descname"><span class="pre">guild_id</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><span class="pre">int</span></a></span><a class="headerlink" href="#discord_http.role.PartialRole.guild_id" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
+<dt class="sig sig-object py" id="discord_http.role.Role.guild_id">
+<span class="sig-name descname"><span class="pre">guild_id</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><span class="pre">int</span></a></span><a class="headerlink" href="#discord_http.role.Role.guild_id" title="Link to this definition">¶</a></dt>
+<dd><p>The ID of the guild this role is in.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.role.Role.id">
+<span class="sig-name descname"><span class="pre">id</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><span class="pre">int</span></a></span><a class="headerlink" href="#discord_http.role.Role.id" title="Link to this definition">¶</a></dt>
+<dd><p>The ID of the snowflake.</p>
+</dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="discord_http.role.PartialRole.is_default_role">
-<span class="sig-name descname"><span class="pre">is_default_role</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><span class="pre">bool</span></a></span></span><a class="headerlink" href="#discord_http.role.PartialRole.is_default_role" title="Link to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="discord_http.role.Role.is_default_role">
+<span class="sig-name descname"><span class="pre">is_default_role</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><span class="pre">bool</span></a></span></span><a class="headerlink" href="#discord_http.role.Role.is_default_role" title="Link to this definition">¶</a></dt>
 <dd><p>Returns whether the role is the default &#64;everyone role.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
@@ -404,14 +632,14 @@ The third value must be one of the following:
 </dd></dl>
 
 <dl class="py property">
-<dt class="sig sig-object py" id="discord_http.role.PartialRole.mention">
-<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">mention</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></span><a class="headerlink" href="#discord_http.role.PartialRole.mention" title="Link to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="discord_http.role.Role.mention">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">mention</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></span><a class="headerlink" href="#discord_http.role.Role.mention" title="Link to this definition">¶</a></dt>
 <dd><p>Returns a string that mentions the role.</p>
 </dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="discord_http.role.PartialRole.remove_role">
-<span class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">remove_role</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">user_id</span></span></em>, <em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">reason</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span></span><a class="headerlink" href="#discord_http.role.PartialRole.remove_role" title="Link to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="discord_http.role.Role.remove_role">
+<span class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">remove_role</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">user_id</span></span></em>, <em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">reason</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span></span><a class="headerlink" href="#discord_http.role.Role.remove_role" title="Link to this definition">¶</a></dt>
 <dd><p>Remove the role from someone.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -426,97 +654,22 @@ The third value must be one of the following:
 </dl>
 </dd></dl>
 
-</dd></dl>
-
-<dl class="py class">
-<dt class="sig sig-object py" id="discord_http.role.Role">
-<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">discord_http.role.</span></span><span class="sig-name descname"><span class="pre">Role</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">state</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">guild</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#discord_http.role.Role" title="Link to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference internal" href="#discord_http.role.PartialRole" title="discord_http.role.PartialRole"><code class="xref py py-class docutils literal notranslate"><span class="pre">PartialRole</span></code></a></p>
-<p>Represents a role object.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Variables<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>name</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><em>str</em></a>) – The name of the role</p></li>
-<li><p><strong>hoist</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><em>bool</em></a>) – Whether the role is displayed separately in the sidebar</p></li>
-<li><p><strong>managed</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><em>bool</em></a>) – Whether the role is managed by an integration</p></li>
-<li><p><strong>mentionable</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><em>bool</em></a>) – Whether the role is mentionable</p></li>
-<li><p><strong>permissions</strong> (<a class="reference internal" href="flags.html#discord_http.flags.Permissions" title="discord_http.flags.Permissions"><em>Permissions</em></a>) – The permissions of the role</p></li>
-<li><p><strong>colour</strong> (<a class="reference internal" href="colour.html#discord_http.colour.Colour" title="discord_http.colour.Colour"><em>Colour</em></a>) – The colour of the role</p></li>
-<li><p><strong>position</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><em>int</em></a>) – The position of the role in the role hierarchy</p></li>
-<li><p><strong>tags</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.14)"><em>dict</em></a>) – The tags of the role, such as <cite>premium_subscriber</cite>, <cite>available_for_purchase</cite>,
-<cite>guild_connections</cite>, etc.</p></li>
-<li><p><strong>bot_id</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><em>int</em></a><em> | </em><em>None</em>) – The ID of the bot that manages the role, if any</p></li>
-<li><p><strong>integration_id</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><em>int</em></a><em> | </em><em>None</em>) – The ID of the integration that manages the role, if any</p></li>
-<li><p><strong>subscription_listing_id</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><em>int</em></a><em> | </em><em>None</em>) – The ID of the subscription listing for the role, if any</p></li>
-<li><p><strong>unicode_emoji</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><em>str</em></a><em> | </em><em>None</em>) – The unicode emoji associated with the role, if any</p></li>
-</ul>
-</dd>
-<dt class="field-even">Parameters<span class="colon">:</span></dt>
-<dd class="field-even"><ul class="simple">
-<li><p><strong>state</strong> (<em>DiscordAPI</em>)</p></li>
-<li><p><strong>guild</strong> (<em>Guild</em><em> | </em><em>PartialGuild</em>)</p></li>
-<li><p><strong>data</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.14)"><em>dict</em></a>)</p></li>
-</ul>
-</dd>
-</dl>
-<dl class="py attribute">
-<dt class="sig sig-object py" id="discord_http.role.Role.bot_id">
-<span class="sig-name descname"><span class="pre">bot_id</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><span class="pre">int</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span><a class="headerlink" href="#discord_http.role.Role.bot_id" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="discord_http.role.Role.colour">
-<span class="sig-name descname"><span class="pre">colour</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="colour.html#discord_http.colour.Colour" title="discord_http.colour.Colour"><span class="pre">Colour</span></a></span><a class="headerlink" href="#discord_http.role.Role.colour" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py property">
-<dt class="sig sig-object py" id="discord_http.role.Role.display_icon">
-<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">display_icon</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Asset</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span><a class="headerlink" href="#discord_http.role.Role.display_icon" title="Link to this definition">¶</a></dt>
-<dd><p>Returns the display icon of the role.</p>
-</dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="discord_http.role.Role.hoist">
-<span class="sig-name descname"><span class="pre">hoist</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><span class="pre">bool</span></a></span><a class="headerlink" href="#discord_http.role.Role.hoist" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
-
 <dl class="py property">
 <dt class="sig sig-object py" id="discord_http.role.Role.icon">
-<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">icon</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Asset</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span><a class="headerlink" href="#discord_http.role.Role.icon" title="Link to this definition">¶</a></dt>
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">icon</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="asset.html#discord_http.asset.Asset" title="discord_http.asset.Asset"><span class="pre">Asset</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span><a class="headerlink" href="#discord_http.role.Role.icon" title="Link to this definition">¶</a></dt>
 <dd><p>Returns the icon of the role if it’s custom.</p>
 </dd></dl>
 
-<dl class="py attribute">
-<dt class="sig sig-object py" id="discord_http.role.Role.integration_id">
-<span class="sig-name descname"><span class="pre">integration_id</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><span class="pre">int</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span><a class="headerlink" href="#discord_http.role.Role.integration_id" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="discord_http.role.Role.is_available_for_purchase">
-<span class="sig-name descname"><span class="pre">is_available_for_purchase</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><span class="pre">bool</span></a></span></span><a class="headerlink" href="#discord_http.role.Role.is_available_for_purchase" title="Link to this definition">¶</a></dt>
-<dd><p>Returns whether the role is available for purchase.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></a></span></p>
-</dd>
-</dl>
+<dl class="py property">
+<dt class="sig sig-object py" id="discord_http.role.Role.display_icon">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">display_icon</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="asset.html#discord_http.asset.Asset" title="discord_http.asset.Asset"><span class="pre">Asset</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span><a class="headerlink" href="#discord_http.role.Role.display_icon" title="Link to this definition">¶</a></dt>
+<dd><p>Returns the display icon of the role.</p>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="discord_http.role.Role.is_bot_managed">
 <span class="sig-name descname"><span class="pre">is_bot_managed</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><span class="pre">bool</span></a></span></span><a class="headerlink" href="#discord_http.role.Role.is_bot_managed" title="Link to this definition">¶</a></dt>
 <dd><p>Returns whether the role is bot managed.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></a></span></p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="discord_http.role.Role.is_guild_connection">
-<span class="sig-name descname"><span class="pre">is_guild_connection</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><span class="pre">bool</span></a></span></span><a class="headerlink" href="#discord_http.role.Role.is_guild_connection" title="Link to this definition">¶</a></dt>
-<dd><p>Returns whether the role is a guild connection.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></a></span></p>
@@ -546,45 +699,27 @@ The third value must be one of the following:
 </dl>
 </dd></dl>
 
-<dl class="py attribute">
-<dt class="sig sig-object py" id="discord_http.role.Role.managed">
-<span class="sig-name descname"><span class="pre">managed</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><span class="pre">bool</span></a></span><a class="headerlink" href="#discord_http.role.Role.managed" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="discord_http.role.Role.is_available_for_purchase">
+<span class="sig-name descname"><span class="pre">is_available_for_purchase</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><span class="pre">bool</span></a></span></span><a class="headerlink" href="#discord_http.role.Role.is_available_for_purchase" title="Link to this definition">¶</a></dt>
+<dd><p>Returns whether the role is available for purchase.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></a></span></p>
+</dd>
+</dl>
+</dd></dl>
 
-<dl class="py attribute">
-<dt class="sig sig-object py" id="discord_http.role.Role.mentionable">
-<span class="sig-name descname"><span class="pre">mentionable</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><span class="pre">bool</span></a></span><a class="headerlink" href="#discord_http.role.Role.mentionable" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="discord_http.role.Role.name">
-<span class="sig-name descname"><span class="pre">name</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></span><a class="headerlink" href="#discord_http.role.Role.name" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="discord_http.role.Role.permissions">
-<span class="sig-name descname"><span class="pre">permissions</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="flags.html#discord_http.flags.Permissions" title="discord_http.flags.Permissions"><span class="pre">Permissions</span></a></span><a class="headerlink" href="#discord_http.role.Role.permissions" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="discord_http.role.Role.position">
-<span class="sig-name descname"><span class="pre">position</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><span class="pre">int</span></a></span><a class="headerlink" href="#discord_http.role.Role.position" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="discord_http.role.Role.subscription_listing_id">
-<span class="sig-name descname"><span class="pre">subscription_listing_id</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><span class="pre">int</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span><a class="headerlink" href="#discord_http.role.Role.subscription_listing_id" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="discord_http.role.Role.tags">
-<span class="sig-name descname"><span class="pre">tags</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.14)"><span class="pre">dict</span></a></span><a class="headerlink" href="#discord_http.role.Role.tags" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="discord_http.role.Role.unicode_emoji">
-<span class="sig-name descname"><span class="pre">unicode_emoji</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span><a class="headerlink" href="#discord_http.role.Role.unicode_emoji" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="discord_http.role.Role.is_guild_connection">
+<span class="sig-name descname"><span class="pre">is_guild_connection</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><span class="pre">bool</span></a></span></span><a class="headerlink" href="#discord_http.role.Role.is_guild_connection" title="Link to this definition">¶</a></dt>
+<dd><p>Returns whether the role is a guild connection.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></a></span></p>
+</dd>
+</dl>
+</dd></dl>
 
 </dd></dl>
 
@@ -649,36 +784,48 @@ The third value must be one of the following:
 <li><a class="reference internal" href="#">Role</a><ul>
 <li><a class="reference internal" href="#module-discord_http.role">discord_http.role module</a><ul>
 <li><a class="reference internal" href="#discord_http.role.PartialRole"><code class="docutils literal notranslate"><span class="pre">PartialRole</span></code></a><ul>
+<li><a class="reference internal" href="#discord_http.role.PartialRole.guild_id"><code class="docutils literal notranslate"><span class="pre">PartialRole.guild_id</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.role.PartialRole.guild"><code class="docutils literal notranslate"><span class="pre">PartialRole.guild</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.role.PartialRole.mention"><code class="docutils literal notranslate"><span class="pre">PartialRole.mention</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.role.PartialRole.is_default_role"><code class="docutils literal notranslate"><span class="pre">PartialRole.is_default_role()</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.role.PartialRole.add_role"><code class="docutils literal notranslate"><span class="pre">PartialRole.add_role()</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.role.PartialRole.remove_role"><code class="docutils literal notranslate"><span class="pre">PartialRole.remove_role()</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.role.PartialRole.delete"><code class="docutils literal notranslate"><span class="pre">PartialRole.delete()</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.role.PartialRole.edit"><code class="docutils literal notranslate"><span class="pre">PartialRole.edit()</span></code></a></li>
-<li><a class="reference internal" href="#discord_http.role.PartialRole.guild"><code class="docutils literal notranslate"><span class="pre">PartialRole.guild</span></code></a></li>
-<li><a class="reference internal" href="#discord_http.role.PartialRole.guild_id"><code class="docutils literal notranslate"><span class="pre">PartialRole.guild_id</span></code></a></li>
-<li><a class="reference internal" href="#discord_http.role.PartialRole.is_default_role"><code class="docutils literal notranslate"><span class="pre">PartialRole.is_default_role()</span></code></a></li>
-<li><a class="reference internal" href="#discord_http.role.PartialRole.mention"><code class="docutils literal notranslate"><span class="pre">PartialRole.mention</span></code></a></li>
-<li><a class="reference internal" href="#discord_http.role.PartialRole.remove_role"><code class="docutils literal notranslate"><span class="pre">PartialRole.remove_role()</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.role.PartialRole.created_at"><code class="docutils literal notranslate"><span class="pre">PartialRole.created_at</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.role.PartialRole.id"><code class="docutils literal notranslate"><span class="pre">PartialRole.id</span></code></a></li>
 </ul>
 </li>
 <li><a class="reference internal" href="#discord_http.role.Role"><code class="docutils literal notranslate"><span class="pre">Role</span></code></a><ul>
-<li><a class="reference internal" href="#discord_http.role.Role.bot_id"><code class="docutils literal notranslate"><span class="pre">Role.bot_id</span></code></a></li>
-<li><a class="reference internal" href="#discord_http.role.Role.colour"><code class="docutils literal notranslate"><span class="pre">Role.colour</span></code></a></li>
-<li><a class="reference internal" href="#discord_http.role.Role.display_icon"><code class="docutils literal notranslate"><span class="pre">Role.display_icon</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.role.Role.name"><code class="docutils literal notranslate"><span class="pre">Role.name</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.role.Role.hoist"><code class="docutils literal notranslate"><span class="pre">Role.hoist</span></code></a></li>
-<li><a class="reference internal" href="#discord_http.role.Role.icon"><code class="docutils literal notranslate"><span class="pre">Role.icon</span></code></a></li>
-<li><a class="reference internal" href="#discord_http.role.Role.integration_id"><code class="docutils literal notranslate"><span class="pre">Role.integration_id</span></code></a></li>
-<li><a class="reference internal" href="#discord_http.role.Role.is_available_for_purchase"><code class="docutils literal notranslate"><span class="pre">Role.is_available_for_purchase()</span></code></a></li>
-<li><a class="reference internal" href="#discord_http.role.Role.is_bot_managed"><code class="docutils literal notranslate"><span class="pre">Role.is_bot_managed()</span></code></a></li>
-<li><a class="reference internal" href="#discord_http.role.Role.is_guild_connection"><code class="docutils literal notranslate"><span class="pre">Role.is_guild_connection()</span></code></a></li>
-<li><a class="reference internal" href="#discord_http.role.Role.is_integration"><code class="docutils literal notranslate"><span class="pre">Role.is_integration()</span></code></a></li>
-<li><a class="reference internal" href="#discord_http.role.Role.is_premium_subscriber"><code class="docutils literal notranslate"><span class="pre">Role.is_premium_subscriber()</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.role.Role.managed"><code class="docutils literal notranslate"><span class="pre">Role.managed</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.role.Role.mentionable"><code class="docutils literal notranslate"><span class="pre">Role.mentionable</span></code></a></li>
-<li><a class="reference internal" href="#discord_http.role.Role.name"><code class="docutils literal notranslate"><span class="pre">Role.name</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.role.Role.permissions"><code class="docutils literal notranslate"><span class="pre">Role.permissions</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.role.Role.colour"><code class="docutils literal notranslate"><span class="pre">Role.colour</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.role.Role.position"><code class="docutils literal notranslate"><span class="pre">Role.position</span></code></a></li>
-<li><a class="reference internal" href="#discord_http.role.Role.subscription_listing_id"><code class="docutils literal notranslate"><span class="pre">Role.subscription_listing_id</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.role.Role.tags"><code class="docutils literal notranslate"><span class="pre">Role.tags</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.role.Role.bot_id"><code class="docutils literal notranslate"><span class="pre">Role.bot_id</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.role.Role.integration_id"><code class="docutils literal notranslate"><span class="pre">Role.integration_id</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.role.Role.subscription_listing_id"><code class="docutils literal notranslate"><span class="pre">Role.subscription_listing_id</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.role.Role.unicode_emoji"><code class="docutils literal notranslate"><span class="pre">Role.unicode_emoji</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.role.Role.add_role"><code class="docutils literal notranslate"><span class="pre">Role.add_role()</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.role.Role.created_at"><code class="docutils literal notranslate"><span class="pre">Role.created_at</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.role.Role.delete"><code class="docutils literal notranslate"><span class="pre">Role.delete()</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.role.Role.edit"><code class="docutils literal notranslate"><span class="pre">Role.edit()</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.role.Role.guild"><code class="docutils literal notranslate"><span class="pre">Role.guild</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.role.Role.guild_id"><code class="docutils literal notranslate"><span class="pre">Role.guild_id</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.role.Role.id"><code class="docutils literal notranslate"><span class="pre">Role.id</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.role.Role.is_default_role"><code class="docutils literal notranslate"><span class="pre">Role.is_default_role()</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.role.Role.mention"><code class="docutils literal notranslate"><span class="pre">Role.mention</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.role.Role.remove_role"><code class="docutils literal notranslate"><span class="pre">Role.remove_role()</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.role.Role.icon"><code class="docutils literal notranslate"><span class="pre">Role.icon</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.role.Role.display_icon"><code class="docutils literal notranslate"><span class="pre">Role.display_icon</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.role.Role.is_bot_managed"><code class="docutils literal notranslate"><span class="pre">Role.is_bot_managed()</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.role.Role.is_integration"><code class="docutils literal notranslate"><span class="pre">Role.is_integration()</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.role.Role.is_premium_subscriber"><code class="docutils literal notranslate"><span class="pre">Role.is_premium_subscriber()</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.role.Role.is_available_for_purchase"><code class="docutils literal notranslate"><span class="pre">Role.is_available_for_purchase()</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.role.Role.is_guild_connection"><code class="docutils literal notranslate"><span class="pre">Role.is_guild_connection()</span></code></a></li>
 </ul>
 </li>
 </ul>

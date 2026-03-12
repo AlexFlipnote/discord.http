@@ -245,7 +245,7 @@
 </ul>
 <p class="caption" role="heading"><span class="caption-text">Development</span></p>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="../pages/format.html">Style guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../pages/format.html">Style Guide</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../pages/contribute.html">Contributing</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../pages/license.html">License</a></li>
 <li class="toctree-l1"><a class="reference external" href="https://discord.gg/yqb7vATbjH">Discord</a></li>
@@ -298,16 +298,8 @@
 <dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
 <p>Represents the allowed mentions for a message.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Variables<span class="colon">:</span></dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>everyone</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><em>bool</em></a>) – Whether to allow <cite>&#64;everyone</cite> and <cite>&#64;here</cite> mentions</p></li>
-<li><p><strong>users</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><em>bool</em></a><em> | </em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.14)"><em>list</em></a><em>[</em><a class="reference internal" href="object.html#discord_http.object.Snowflake" title="discord_http.object.Snowflake"><em>Snowflake</em></a><em> | </em><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><em>int</em></a><em>] </em><em>| </em><em>None</em>) – Whether to allow user mentions, or a list of user IDs to allow mentions for</p></li>
-<li><p><strong>roles</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><em>bool</em></a><em> | </em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.14)"><em>list</em></a><em>[</em><a class="reference internal" href="object.html#discord_http.object.Snowflake" title="discord_http.object.Snowflake"><em>Snowflake</em></a><em> | </em><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><em>int</em></a><em>] </em><em>| </em><em>None</em>) – Whether to allow role mentions, or a list of role IDs to allow mentions for</p></li>
-<li><p><strong>reply_user</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><em>bool</em></a>) – Whether to mention the author of the message being replied to</p></li>
-</ul>
-</dd>
-<dt class="field-even">Parameters<span class="colon">:</span></dt>
-<dd class="field-even"><ul class="simple">
 <li><p><strong>everyone</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><em>bool</em></a>)</p></li>
 <li><p><strong>users</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><em>bool</em></a><em> | </em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.14)"><em>list</em></a><em>[</em><a class="reference internal" href="object.html#discord_http.object.Snowflake" title="discord_http.object.Snowflake"><em>Snowflake</em></a><em> | </em><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><em>int</em></a><em>] </em><em>| </em><em>None</em>)</p></li>
 <li><p><strong>roles</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><em>bool</em></a><em> | </em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.14)"><em>list</em></a><em>[</em><a class="reference internal" href="object.html#discord_http.object.Snowflake" title="discord_http.object.Snowflake"><em>Snowflake</em></a><em> | </em><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><em>int</em></a><em>] </em><em>| </em><em>None</em>)</p></li>
@@ -315,6 +307,30 @@
 </ul>
 </dd>
 </dl>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.mentions.AllowedMentions.everyone">
+<span class="sig-name descname"><span class="pre">everyone</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><span class="pre">bool</span></a></span><a class="headerlink" href="#discord_http.mentions.AllowedMentions.everyone" title="Link to this definition">¶</a></dt>
+<dd><p>Whether to allow <cite>&#64;everyone</cite> and <cite>&#64;here</cite> mentions.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.mentions.AllowedMentions.users">
+<span class="sig-name descname"><span class="pre">users</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><span class="pre">bool</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.14)"><span class="pre">list</span></a><span class="p"><span class="pre">[</span></span><a class="reference internal" href="object.html#discord_http.object.Snowflake" title="discord_http.object.Snowflake"><span class="pre">Snowflake</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><span class="pre">int</span></a><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span><a class="headerlink" href="#discord_http.mentions.AllowedMentions.users" title="Link to this definition">¶</a></dt>
+<dd><p>Whether to allow user mentions, or a list of user IDs to allow mentions for.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.mentions.AllowedMentions.roles">
+<span class="sig-name descname"><span class="pre">roles</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><span class="pre">bool</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.14)"><span class="pre">list</span></a><span class="p"><span class="pre">[</span></span><a class="reference internal" href="object.html#discord_http.object.Snowflake" title="discord_http.object.Snowflake"><span class="pre">Snowflake</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><span class="pre">int</span></a><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span><a class="headerlink" href="#discord_http.mentions.AllowedMentions.roles" title="Link to this definition">¶</a></dt>
+<dd><p>Whether to allow role mentions, or a list of role IDs to allow mentions for.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.mentions.AllowedMentions.reply_user">
+<span class="sig-name descname"><span class="pre">reply_user</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><span class="pre">bool</span></a></span><a class="headerlink" href="#discord_http.mentions.AllowedMentions.reply_user" title="Link to this definition">¶</a></dt>
+<dd><p>Whether to mention the author of the message being replied to.</p>
+</dd></dl>
+
 <dl class="py method">
 <dt class="sig sig-object py" id="discord_http.mentions.AllowedMentions.all">
 <span class="property"><span class="k"><span class="pre">classmethod</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">all</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Self" title="(in Python v3.14)"><span class="pre">Self</span></a></span></span><a class="headerlink" href="#discord_http.mentions.AllowedMentions.all" title="Link to this definition">¶</a></dt>
@@ -325,11 +341,6 @@
 </dd>
 </dl>
 </dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="discord_http.mentions.AllowedMentions.everyone">
-<span class="sig-name descname"><span class="pre">everyone</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><span class="pre">bool</span></a></span><a class="headerlink" href="#discord_http.mentions.AllowedMentions.everyone" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="discord_http.mentions.AllowedMentions.none">
@@ -342,16 +353,6 @@
 </dl>
 </dd></dl>
 
-<dl class="py attribute">
-<dt class="sig sig-object py" id="discord_http.mentions.AllowedMentions.reply_user">
-<span class="sig-name descname"><span class="pre">reply_user</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><span class="pre">bool</span></a></span><a class="headerlink" href="#discord_http.mentions.AllowedMentions.reply_user" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="discord_http.mentions.AllowedMentions.roles">
-<span class="sig-name descname"><span class="pre">roles</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><span class="pre">bool</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.14)"><span class="pre">list</span></a><span class="p"><span class="pre">[</span></span><a class="reference internal" href="object.html#discord_http.object.Snowflake" title="discord_http.object.Snowflake"><span class="pre">Snowflake</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><span class="pre">int</span></a><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span><a class="headerlink" href="#discord_http.mentions.AllowedMentions.roles" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
-
 <dl class="py method">
 <dt class="sig sig-object py" id="discord_http.mentions.AllowedMentions.to_dict">
 <span class="sig-name descname"><span class="pre">to_dict</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.14)"><span class="pre">dict</span></a></span></span><a class="headerlink" href="#discord_http.mentions.AllowedMentions.to_dict" title="Link to this definition">¶</a></dt>
@@ -362,11 +363,6 @@
 </dd>
 </dl>
 </dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="discord_http.mentions.AllowedMentions.users">
-<span class="sig-name descname"><span class="pre">users</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><span class="pre">bool</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.14)"><span class="pre">list</span></a><span class="p"><span class="pre">[</span></span><a class="reference internal" href="object.html#discord_http.object.Snowflake" title="discord_http.object.Snowflake"><span class="pre">Snowflake</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><span class="pre">int</span></a><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span><a class="headerlink" href="#discord_http.mentions.AllowedMentions.users" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
 
 </dd></dl>
 
@@ -431,13 +427,13 @@
 <li><a class="reference internal" href="#">Mentions</a><ul>
 <li><a class="reference internal" href="#module-discord_http.mentions">discord_http.mentions module</a><ul>
 <li><a class="reference internal" href="#discord_http.mentions.AllowedMentions"><code class="docutils literal notranslate"><span class="pre">AllowedMentions</span></code></a><ul>
-<li><a class="reference internal" href="#discord_http.mentions.AllowedMentions.all"><code class="docutils literal notranslate"><span class="pre">AllowedMentions.all()</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.mentions.AllowedMentions.everyone"><code class="docutils literal notranslate"><span class="pre">AllowedMentions.everyone</span></code></a></li>
-<li><a class="reference internal" href="#discord_http.mentions.AllowedMentions.none"><code class="docutils literal notranslate"><span class="pre">AllowedMentions.none()</span></code></a></li>
-<li><a class="reference internal" href="#discord_http.mentions.AllowedMentions.reply_user"><code class="docutils literal notranslate"><span class="pre">AllowedMentions.reply_user</span></code></a></li>
-<li><a class="reference internal" href="#discord_http.mentions.AllowedMentions.roles"><code class="docutils literal notranslate"><span class="pre">AllowedMentions.roles</span></code></a></li>
-<li><a class="reference internal" href="#discord_http.mentions.AllowedMentions.to_dict"><code class="docutils literal notranslate"><span class="pre">AllowedMentions.to_dict()</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.mentions.AllowedMentions.users"><code class="docutils literal notranslate"><span class="pre">AllowedMentions.users</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.mentions.AllowedMentions.roles"><code class="docutils literal notranslate"><span class="pre">AllowedMentions.roles</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.mentions.AllowedMentions.reply_user"><code class="docutils literal notranslate"><span class="pre">AllowedMentions.reply_user</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.mentions.AllowedMentions.all"><code class="docutils literal notranslate"><span class="pre">AllowedMentions.all()</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.mentions.AllowedMentions.none"><code class="docutils literal notranslate"><span class="pre">AllowedMentions.none()</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.mentions.AllowedMentions.to_dict"><code class="docutils literal notranslate"><span class="pre">AllowedMentions.to_dict()</span></code></a></li>
 </ul>
 </li>
 </ul>

@@ -3,7 +3,7 @@
   <head><meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
     <meta name="color-scheme" content="light dark"><meta name="viewport" content="width=device-width, initial-scale=1" />
-<meta content="Enums - discord.http docs" property="og:title"><meta content="Python library that handles interactions from Discord POST requests." name="description"><meta content="Python library that handles interactions from Discord POST requests." property="og:description"><meta property="og:image" content="/_static/favicon.ico"><meta name="theme-color" content="#14bae4"><meta property="og:locale" content="en_GB"><meta name="keywords" content="discord, http, api, interaction, aiohttp, webhook, slash><meta name="revisit-after" content="2 days"><link rel="index" title="Index" href="../genindex.html"><link rel="search" title="Search" href="../search.html"><link rel="next" title="Flags" href="flags.html"><link rel="prev" title="Client" href="client.html">
+<meta content="Enums - discord.http docs" property="og:title"><meta content="Bases: BaseEnum" name="description"><meta content="Bases: BaseEnum" property="og:description"><meta property="og:image" content="/_static/favicon.ico"><meta name="theme-color" content="#14bae4"><meta property="og:locale" content="en_GB"><meta name="keywords" content="discord, http, api, interaction, aiohttp, webhook, slash><meta name="revisit-after" content="2 days"><link rel="index" title="Index" href="../genindex.html"><link rel="search" title="Search" href="../search.html"><link rel="next" title="Flags" href="flags.html"><link rel="prev" title="Client" href="client.html">
 
     <link rel="shortcut icon" href="../_static/favicon.ico"><!-- Generated with Sphinx 9.0.4 and Furo 2025.12.19 -->
         <title>Enums - discord.http docs</title>
@@ -245,7 +245,7 @@
 </ul>
 <p class="caption" role="heading"><span class="caption-text">Development</span></p>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="../pages/format.html">Style guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../pages/format.html">Style Guide</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../pages/contribute.html">Contributing</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../pages/license.html">License</a></li>
 <li class="toctree-l1"><a class="reference external" href="https://discord.gg/yqb7vATbjH">Discord</a></li>
@@ -290,8 +290,253 @@
         <article role="main" id="furo-main-content">
           <section id="enums">
 <h1>Enums<a class="headerlink" href="#enums" title="Link to this heading">¶</a></h1>
-<section id="discord-http-gateway-enums-module">
-<h2>discord_http.gateway.enums module<a class="headerlink" href="#discord-http-gateway-enums-module" title="Link to this heading">¶</a></h2>
+<section id="module-discord_http.gateway.enums">
+<span id="discord-http-gateway-enums-module"></span><h2>discord_http.gateway.enums module<a class="headerlink" href="#module-discord_http.gateway.enums" title="Link to this heading">¶</a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="discord_http.gateway.enums.ActivityType">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">discord_http.gateway.enums.</span></span><span class="sig-name descname"><span class="pre">ActivityType</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#discord_http.gateway.enums.ActivityType" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="../api/enums.html#discord_http.enums.BaseEnum" title="discord_http.enums.BaseEnum"><code class="xref py py-class docutils literal notranslate"><span class="pre">BaseEnum</span></code></a></p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.gateway.enums.ActivityType.playing">
+<span class="sig-name descname"><span class="pre">playing</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">0</span></span><a class="headerlink" href="#discord_http.gateway.enums.ActivityType.playing" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.gateway.enums.ActivityType.streaming">
+<span class="sig-name descname"><span class="pre">streaming</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">1</span></span><a class="headerlink" href="#discord_http.gateway.enums.ActivityType.streaming" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.gateway.enums.ActivityType.listening">
+<span class="sig-name descname"><span class="pre">listening</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">2</span></span><a class="headerlink" href="#discord_http.gateway.enums.ActivityType.listening" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.gateway.enums.ActivityType.watching">
+<span class="sig-name descname"><span class="pre">watching</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">3</span></span><a class="headerlink" href="#discord_http.gateway.enums.ActivityType.watching" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.gateway.enums.ActivityType.custom">
+<span class="sig-name descname"><span class="pre">custom</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">4</span></span><a class="headerlink" href="#discord_http.gateway.enums.ActivityType.custom" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.gateway.enums.ActivityType.competing">
+<span class="sig-name descname"><span class="pre">competing</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">5</span></span><a class="headerlink" href="#discord_http.gateway.enums.ActivityType.competing" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.gateway.enums.ActivityType.hang">
+<span class="sig-name descname"><span class="pre">hang</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">6</span></span><a class="headerlink" href="#discord_http.gateway.enums.ActivityType.hang" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="discord_http.gateway.enums.ActivityType.random">
+<span class="property"><span class="k"><span class="pre">classmethod</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">random</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Self" title="(in Python v3.14)"><span class="pre">Self</span></a></span></span><a class="headerlink" href="#discord_http.gateway.enums.ActivityType.random" title="Link to this definition">¶</a></dt>
+<dd><p>Return a random enum.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">Self</span></code></span></p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="discord_http.gateway.enums.PayloadType">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">discord_http.gateway.enums.</span></span><span class="sig-name descname"><span class="pre">PayloadType</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#discord_http.gateway.enums.PayloadType" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="../api/enums.html#discord_http.enums.BaseEnum" title="discord_http.enums.BaseEnum"><code class="xref py py-class docutils literal notranslate"><span class="pre">BaseEnum</span></code></a></p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.gateway.enums.PayloadType.dispatch">
+<span class="sig-name descname"><span class="pre">dispatch</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">0</span></span><a class="headerlink" href="#discord_http.gateway.enums.PayloadType.dispatch" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.gateway.enums.PayloadType.heartbeat">
+<span class="sig-name descname"><span class="pre">heartbeat</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">1</span></span><a class="headerlink" href="#discord_http.gateway.enums.PayloadType.heartbeat" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.gateway.enums.PayloadType.identify">
+<span class="sig-name descname"><span class="pre">identify</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">2</span></span><a class="headerlink" href="#discord_http.gateway.enums.PayloadType.identify" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.gateway.enums.PayloadType.presence">
+<span class="sig-name descname"><span class="pre">presence</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">3</span></span><a class="headerlink" href="#discord_http.gateway.enums.PayloadType.presence" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.gateway.enums.PayloadType.voice_state">
+<span class="sig-name descname"><span class="pre">voice_state</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">4</span></span><a class="headerlink" href="#discord_http.gateway.enums.PayloadType.voice_state" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.gateway.enums.PayloadType.voice_ping">
+<span class="sig-name descname"><span class="pre">voice_ping</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">5</span></span><a class="headerlink" href="#discord_http.gateway.enums.PayloadType.voice_ping" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.gateway.enums.PayloadType.resume">
+<span class="sig-name descname"><span class="pre">resume</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">6</span></span><a class="headerlink" href="#discord_http.gateway.enums.PayloadType.resume" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.gateway.enums.PayloadType.reconnect">
+<span class="sig-name descname"><span class="pre">reconnect</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">7</span></span><a class="headerlink" href="#discord_http.gateway.enums.PayloadType.reconnect" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.gateway.enums.PayloadType.request_guild_members">
+<span class="sig-name descname"><span class="pre">request_guild_members</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">8</span></span><a class="headerlink" href="#discord_http.gateway.enums.PayloadType.request_guild_members" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.gateway.enums.PayloadType.invalidate_session">
+<span class="sig-name descname"><span class="pre">invalidate_session</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">9</span></span><a class="headerlink" href="#discord_http.gateway.enums.PayloadType.invalidate_session" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.gateway.enums.PayloadType.hello">
+<span class="sig-name descname"><span class="pre">hello</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">10</span></span><a class="headerlink" href="#discord_http.gateway.enums.PayloadType.hello" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.gateway.enums.PayloadType.heartbeat_ack">
+<span class="sig-name descname"><span class="pre">heartbeat_ack</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">11</span></span><a class="headerlink" href="#discord_http.gateway.enums.PayloadType.heartbeat_ack" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.gateway.enums.PayloadType.guild_sync">
+<span class="sig-name descname"><span class="pre">guild_sync</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">12</span></span><a class="headerlink" href="#discord_http.gateway.enums.PayloadType.guild_sync" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="discord_http.gateway.enums.PayloadType.random">
+<span class="property"><span class="k"><span class="pre">classmethod</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">random</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Self" title="(in Python v3.14)"><span class="pre">Self</span></a></span></span><a class="headerlink" href="#discord_http.gateway.enums.PayloadType.random" title="Link to this definition">¶</a></dt>
+<dd><p>Return a random enum.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">Self</span></code></span></p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="discord_http.gateway.enums.PollVoteActionType">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">discord_http.gateway.enums.</span></span><span class="sig-name descname"><span class="pre">PollVoteActionType</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#discord_http.gateway.enums.PollVoteActionType" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="../api/enums.html#discord_http.enums.BaseEnum" title="discord_http.enums.BaseEnum"><code class="xref py py-class docutils literal notranslate"><span class="pre">BaseEnum</span></code></a></p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.gateway.enums.PollVoteActionType.add">
+<span class="sig-name descname"><span class="pre">add</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">0</span></span><a class="headerlink" href="#discord_http.gateway.enums.PollVoteActionType.add" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.gateway.enums.PollVoteActionType.remove">
+<span class="sig-name descname"><span class="pre">remove</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">1</span></span><a class="headerlink" href="#discord_http.gateway.enums.PollVoteActionType.remove" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="discord_http.gateway.enums.PollVoteActionType.random">
+<span class="property"><span class="k"><span class="pre">classmethod</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">random</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Self" title="(in Python v3.14)"><span class="pre">Self</span></a></span></span><a class="headerlink" href="#discord_http.gateway.enums.PollVoteActionType.random" title="Link to this definition">¶</a></dt>
+<dd><p>Return a random enum.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">Self</span></code></span></p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="discord_http.gateway.enums.ShardCloseType">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">discord_http.gateway.enums.</span></span><span class="sig-name descname"><span class="pre">ShardCloseType</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#discord_http.gateway.enums.ShardCloseType" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="../api/enums.html#discord_http.enums.BaseEnum" title="discord_http.enums.BaseEnum"><code class="xref py py-class docutils literal notranslate"><span class="pre">BaseEnum</span></code></a></p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.gateway.enums.ShardCloseType.resume">
+<span class="sig-name descname"><span class="pre">resume</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">0</span></span><a class="headerlink" href="#discord_http.gateway.enums.ShardCloseType.resume" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.gateway.enums.ShardCloseType.reconnect">
+<span class="sig-name descname"><span class="pre">reconnect</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">1</span></span><a class="headerlink" href="#discord_http.gateway.enums.ShardCloseType.reconnect" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.gateway.enums.ShardCloseType.invalid_session">
+<span class="sig-name descname"><span class="pre">invalid_session</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">2</span></span><a class="headerlink" href="#discord_http.gateway.enums.ShardCloseType.invalid_session" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.gateway.enums.ShardCloseType.normal_crash">
+<span class="sig-name descname"><span class="pre">normal_crash</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">100</span></span><a class="headerlink" href="#discord_http.gateway.enums.ShardCloseType.normal_crash" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.gateway.enums.ShardCloseType.hard_crash">
+<span class="sig-name descname"><span class="pre">hard_crash</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">101</span></span><a class="headerlink" href="#discord_http.gateway.enums.ShardCloseType.hard_crash" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="discord_http.gateway.enums.ShardCloseType.random">
+<span class="property"><span class="k"><span class="pre">classmethod</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">random</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Self" title="(in Python v3.14)"><span class="pre">Self</span></a></span></span><a class="headerlink" href="#discord_http.gateway.enums.ShardCloseType.random" title="Link to this definition">¶</a></dt>
+<dd><p>Return a random enum.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">Self</span></code></span></p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="discord_http.gateway.enums.StatusType">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">discord_http.gateway.enums.</span></span><span class="sig-name descname"><span class="pre">StatusType</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#discord_http.gateway.enums.StatusType" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="../api/enums.html#discord_http.enums.BaseEnum" title="discord_http.enums.BaseEnum"><code class="xref py py-class docutils literal notranslate"><span class="pre">BaseEnum</span></code></a></p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.gateway.enums.StatusType.offline">
+<span class="sig-name descname"><span class="pre">offline</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">0</span></span><a class="headerlink" href="#discord_http.gateway.enums.StatusType.offline" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.gateway.enums.StatusType.online">
+<span class="sig-name descname"><span class="pre">online</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">1</span></span><a class="headerlink" href="#discord_http.gateway.enums.StatusType.online" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.gateway.enums.StatusType.idle">
+<span class="sig-name descname"><span class="pre">idle</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">2</span></span><a class="headerlink" href="#discord_http.gateway.enums.StatusType.idle" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.gateway.enums.StatusType.dnd">
+<span class="sig-name descname"><span class="pre">dnd</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">3</span></span><a class="headerlink" href="#discord_http.gateway.enums.StatusType.dnd" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.gateway.enums.StatusType.streaming">
+<span class="sig-name descname"><span class="pre">streaming</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">4</span></span><a class="headerlink" href="#discord_http.gateway.enums.StatusType.streaming" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="discord_http.gateway.enums.StatusType.random">
+<span class="property"><span class="k"><span class="pre">classmethod</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">random</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Self" title="(in Python v3.14)"><span class="pre">Self</span></a></span></span><a class="headerlink" href="#discord_http.gateway.enums.StatusType.random" title="Link to this definition">¶</a></dt>
+<dd><p>Return a random enum.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">Self</span></code></span></p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
 </section>
 </section>
 
@@ -351,7 +596,61 @@
           <div class="toc-tree">
             <ul>
 <li><a class="reference internal" href="#">Enums</a><ul>
-<li><a class="reference internal" href="#discord-http-gateway-enums-module">discord_http.gateway.enums module</a></li>
+<li><a class="reference internal" href="#module-discord_http.gateway.enums">discord_http.gateway.enums module</a><ul>
+<li><a class="reference internal" href="#discord_http.gateway.enums.ActivityType"><code class="docutils literal notranslate"><span class="pre">ActivityType</span></code></a><ul>
+<li><a class="reference internal" href="#discord_http.gateway.enums.ActivityType.playing"><code class="docutils literal notranslate"><span class="pre">ActivityType.playing</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.gateway.enums.ActivityType.streaming"><code class="docutils literal notranslate"><span class="pre">ActivityType.streaming</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.gateway.enums.ActivityType.listening"><code class="docutils literal notranslate"><span class="pre">ActivityType.listening</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.gateway.enums.ActivityType.watching"><code class="docutils literal notranslate"><span class="pre">ActivityType.watching</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.gateway.enums.ActivityType.custom"><code class="docutils literal notranslate"><span class="pre">ActivityType.custom</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.gateway.enums.ActivityType.competing"><code class="docutils literal notranslate"><span class="pre">ActivityType.competing</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.gateway.enums.ActivityType.hang"><code class="docutils literal notranslate"><span class="pre">ActivityType.hang</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.gateway.enums.ActivityType.random"><code class="docutils literal notranslate"><span class="pre">ActivityType.random()</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#discord_http.gateway.enums.PayloadType"><code class="docutils literal notranslate"><span class="pre">PayloadType</span></code></a><ul>
+<li><a class="reference internal" href="#discord_http.gateway.enums.PayloadType.dispatch"><code class="docutils literal notranslate"><span class="pre">PayloadType.dispatch</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.gateway.enums.PayloadType.heartbeat"><code class="docutils literal notranslate"><span class="pre">PayloadType.heartbeat</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.gateway.enums.PayloadType.identify"><code class="docutils literal notranslate"><span class="pre">PayloadType.identify</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.gateway.enums.PayloadType.presence"><code class="docutils literal notranslate"><span class="pre">PayloadType.presence</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.gateway.enums.PayloadType.voice_state"><code class="docutils literal notranslate"><span class="pre">PayloadType.voice_state</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.gateway.enums.PayloadType.voice_ping"><code class="docutils literal notranslate"><span class="pre">PayloadType.voice_ping</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.gateway.enums.PayloadType.resume"><code class="docutils literal notranslate"><span class="pre">PayloadType.resume</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.gateway.enums.PayloadType.reconnect"><code class="docutils literal notranslate"><span class="pre">PayloadType.reconnect</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.gateway.enums.PayloadType.request_guild_members"><code class="docutils literal notranslate"><span class="pre">PayloadType.request_guild_members</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.gateway.enums.PayloadType.invalidate_session"><code class="docutils literal notranslate"><span class="pre">PayloadType.invalidate_session</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.gateway.enums.PayloadType.hello"><code class="docutils literal notranslate"><span class="pre">PayloadType.hello</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.gateway.enums.PayloadType.heartbeat_ack"><code class="docutils literal notranslate"><span class="pre">PayloadType.heartbeat_ack</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.gateway.enums.PayloadType.guild_sync"><code class="docutils literal notranslate"><span class="pre">PayloadType.guild_sync</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.gateway.enums.PayloadType.random"><code class="docutils literal notranslate"><span class="pre">PayloadType.random()</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#discord_http.gateway.enums.PollVoteActionType"><code class="docutils literal notranslate"><span class="pre">PollVoteActionType</span></code></a><ul>
+<li><a class="reference internal" href="#discord_http.gateway.enums.PollVoteActionType.add"><code class="docutils literal notranslate"><span class="pre">PollVoteActionType.add</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.gateway.enums.PollVoteActionType.remove"><code class="docutils literal notranslate"><span class="pre">PollVoteActionType.remove</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.gateway.enums.PollVoteActionType.random"><code class="docutils literal notranslate"><span class="pre">PollVoteActionType.random()</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#discord_http.gateway.enums.ShardCloseType"><code class="docutils literal notranslate"><span class="pre">ShardCloseType</span></code></a><ul>
+<li><a class="reference internal" href="#discord_http.gateway.enums.ShardCloseType.resume"><code class="docutils literal notranslate"><span class="pre">ShardCloseType.resume</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.gateway.enums.ShardCloseType.reconnect"><code class="docutils literal notranslate"><span class="pre">ShardCloseType.reconnect</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.gateway.enums.ShardCloseType.invalid_session"><code class="docutils literal notranslate"><span class="pre">ShardCloseType.invalid_session</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.gateway.enums.ShardCloseType.normal_crash"><code class="docutils literal notranslate"><span class="pre">ShardCloseType.normal_crash</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.gateway.enums.ShardCloseType.hard_crash"><code class="docutils literal notranslate"><span class="pre">ShardCloseType.hard_crash</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.gateway.enums.ShardCloseType.random"><code class="docutils literal notranslate"><span class="pre">ShardCloseType.random()</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#discord_http.gateway.enums.StatusType"><code class="docutils literal notranslate"><span class="pre">StatusType</span></code></a><ul>
+<li><a class="reference internal" href="#discord_http.gateway.enums.StatusType.offline"><code class="docutils literal notranslate"><span class="pre">StatusType.offline</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.gateway.enums.StatusType.online"><code class="docutils literal notranslate"><span class="pre">StatusType.online</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.gateway.enums.StatusType.idle"><code class="docutils literal notranslate"><span class="pre">StatusType.idle</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.gateway.enums.StatusType.dnd"><code class="docutils literal notranslate"><span class="pre">StatusType.dnd</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.gateway.enums.StatusType.streaming"><code class="docutils literal notranslate"><span class="pre">StatusType.streaming</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.gateway.enums.StatusType.random"><code class="docutils literal notranslate"><span class="pre">StatusType.random()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
 </ul>
 </li>
 </ul>

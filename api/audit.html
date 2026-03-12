@@ -3,7 +3,7 @@
   <head><meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
     <meta name="color-scheme" content="light dark"><meta name="viewport" content="width=device-width, initial-scale=1" />
-<meta content="Audit - discord.http docs" property="og:title"><meta content="Python library that handles interactions from Discord POST requests." name="description"><meta content="Python library that handles interactions from Discord POST requests." property="og:description"><meta property="og:image" content="/_static/favicon.ico"><meta name="theme-color" content="#14bae4"><meta property="og:locale" content="en_GB"><meta name="keywords" content="discord, http, api, interaction, aiohttp, webhook, slash><meta name="revisit-after" content="2 days"><link rel="index" title="Index" href="../genindex.html"><link rel="search" title="Search" href="../search.html"><link rel="next" title="AutoModRule" href="automod.html"><link rel="prev" title="Asset" href="asset.html">
+<meta content="Audit - discord.http docs" property="og:title"><meta content="Bases: object" name="description"><meta content="Bases: object" property="og:description"><meta property="og:image" content="/_static/favicon.ico"><meta name="theme-color" content="#14bae4"><meta property="og:locale" content="en_GB"><meta name="keywords" content="discord, http, api, interaction, aiohttp, webhook, slash><meta name="revisit-after" content="2 days"><link rel="index" title="Index" href="../genindex.html"><link rel="search" title="Search" href="../search.html"><link rel="next" title="AutoModRule" href="automod.html"><link rel="prev" title="Asset" href="asset.html">
 
     <link rel="shortcut icon" href="../_static/favicon.ico"><!-- Generated with Sphinx 9.0.4 and Furo 2025.12.19 -->
         <title>Audit - discord.http docs</title>
@@ -245,7 +245,7 @@
 </ul>
 <p class="caption" role="heading"><span class="caption-text">Development</span></p>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="../pages/format.html">Style guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../pages/format.html">Style Guide</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../pages/contribute.html">Contributing</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../pages/license.html">License</a></li>
 <li class="toctree-l1"><a class="reference external" href="https://discord.gg/yqb7vATbjH">Discord</a></li>
@@ -290,8 +290,131 @@
         <article role="main" id="furo-main-content">
           <section id="audit">
 <h1>Audit<a class="headerlink" href="#audit" title="Link to this heading">¶</a></h1>
-<section id="discord-http-audit-module">
-<h2>discord_http.audit module<a class="headerlink" href="#discord-http-audit-module" title="Link to this heading">¶</a></h2>
+<section id="module-discord_http.audit">
+<span id="discord-http-audit-module"></span><h2>discord_http.audit module<a class="headerlink" href="#module-discord_http.audit" title="Link to this heading">¶</a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="discord_http.audit.AuditChange">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">discord_http.audit.</span></span><span class="sig-name descname"><span class="pre">AuditChange</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">entry</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#discord_http.audit.AuditChange" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<p>Represents a change in an audit log entry.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>entry</strong> (<a class="reference internal" href="#discord_http.audit.AuditLogEntry" title="discord_http.audit.AuditLogEntry"><em>AuditLogEntry</em></a>)</p></li>
+<li><p><strong>data</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.14)"><em>dict</em></a>)</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.audit.AuditChange.entry">
+<span class="sig-name descname"><span class="pre">entry</span></span><a class="headerlink" href="#discord_http.audit.AuditChange.entry" title="Link to this definition">¶</a></dt>
+<dd><p>The audit log entry this change belongs to.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.audit.AuditChange.key">
+<span class="sig-name descname"><span class="pre">key</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></span><a class="headerlink" href="#discord_http.audit.AuditChange.key" title="Link to this definition">¶</a></dt>
+<dd><p>The key of the change.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.audit.AuditChange.new_value">
+<span class="sig-name descname"><span class="pre">new_value</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Any" title="(in Python v3.14)"><span class="pre">Any</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span><a class="headerlink" href="#discord_http.audit.AuditChange.new_value" title="Link to this definition">¶</a></dt>
+<dd><p>The new value of the change, if applicable.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.audit.AuditChange.old_value">
+<span class="sig-name descname"><span class="pre">old_value</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Any" title="(in Python v3.14)"><span class="pre">Any</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span><a class="headerlink" href="#discord_http.audit.AuditChange.old_value" title="Link to this definition">¶</a></dt>
+<dd><p>The old value of the change, if applicable.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="discord_http.audit.AuditLogEntry">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">discord_http.audit.</span></span><span class="sig-name descname"><span class="pre">AuditLogEntry</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">state</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">guild</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">users</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#discord_http.audit.AuditLogEntry" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="object.html#discord_http.object.Snowflake" title="discord_http.object.Snowflake"><code class="xref py py-class docutils literal notranslate"><span class="pre">Snowflake</span></code></a></p>
+<p>Represents an entry in an audit log.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>state</strong> (<a class="reference internal" href="http.html#discord_http.http.DiscordAPI" title="discord_http.http.DiscordAPI"><em>DiscordAPI</em></a>)</p></li>
+<li><p><strong>data</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.14)"><em>dict</em></a>)</p></li>
+<li><p><strong>guild</strong> (<a class="reference internal" href="guild.html#discord_http.guild.PartialGuild" title="discord_http.guild.PartialGuild"><em>PartialGuild</em></a><em> | </em><em>None</em>)</p></li>
+<li><p><strong>users</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.14)"><em>dict</em></a><em>[</em><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><em>int</em></a><em>, </em><a class="reference internal" href="user.html#discord_http.user.User" title="discord_http.user.User"><em>User</em></a><em>] </em><em>| </em><em>None</em>)</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.audit.AuditLogEntry.guild">
+<span class="sig-name descname"><span class="pre">guild</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="guild.html#discord_http.guild.PartialGuild" title="discord_http.guild.PartialGuild"><span class="pre">PartialGuild</span></a></span><a class="headerlink" href="#discord_http.audit.AuditLogEntry.guild" title="Link to this definition">¶</a></dt>
+<dd><p>The guild this audit log entry belongs to.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.audit.AuditLogEntry.action_type">
+<span class="sig-name descname"><span class="pre">action_type</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="enums.html#discord_http.enums.AuditLogType" title="discord_http.enums.AuditLogType"><span class="pre">AuditLogType</span></a></span><a class="headerlink" href="#discord_http.audit.AuditLogEntry.action_type" title="Link to this definition">¶</a></dt>
+<dd><p>The type of action that was performed.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.audit.AuditLogEntry.reason">
+<span class="sig-name descname"><span class="pre">reason</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span><a class="headerlink" href="#discord_http.audit.AuditLogEntry.reason" title="Link to this definition">¶</a></dt>
+<dd><p>The reason for the action, if provided.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.audit.AuditLogEntry.user_id">
+<span class="sig-name descname"><span class="pre">user_id</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><span class="pre">int</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span><a class="headerlink" href="#discord_http.audit.AuditLogEntry.user_id" title="Link to this definition">¶</a></dt>
+<dd><p>The ID of the user who performed the action, if available.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.audit.AuditLogEntry.target_id">
+<span class="sig-name descname"><span class="pre">target_id</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><span class="pre">int</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span><a class="headerlink" href="#discord_http.audit.AuditLogEntry.target_id" title="Link to this definition">¶</a></dt>
+<dd><p>The ID of the target of the action, if available.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="discord_http.audit.AuditLogEntry.created_at">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">created_at</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/datetime.html#datetime.datetime" title="(in Python v3.14)"><span class="pre">datetime</span></a></span><a class="headerlink" href="#discord_http.audit.AuditLogEntry.created_at" title="Link to this definition">¶</a></dt>
+<dd><p>The datetime of the snowflake.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.audit.AuditLogEntry.id">
+<span class="sig-name descname"><span class="pre">id</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><span class="pre">int</span></a></span><a class="headerlink" href="#discord_http.audit.AuditLogEntry.id" title="Link to this definition">¶</a></dt>
+<dd><p>The ID of the snowflake.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.audit.AuditLogEntry.options">
+<span class="sig-name descname"><span class="pre">options</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.14)"><span class="pre">dict</span></a></span><a class="headerlink" href="#discord_http.audit.AuditLogEntry.options" title="Link to this definition">¶</a></dt>
+<dd><p>Additional options related to the action, if any.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.audit.AuditLogEntry.changes">
+<span class="sig-name descname"><span class="pre">changes</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.14)"><span class="pre">list</span></a><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#discord_http.audit.AuditChange" title="discord_http.audit.AuditChange"><span class="pre">AuditChange</span></a><span class="p"><span class="pre">]</span></span></span><a class="headerlink" href="#discord_http.audit.AuditLogEntry.changes" title="Link to this definition">¶</a></dt>
+<dd><p>A list of changes made in this audit log entry.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="discord_http.audit.AuditLogEntry.user">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">user</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="user.html#discord_http.user.User" title="discord_http.user.User"><span class="pre">User</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="user.html#discord_http.user.PartialUser" title="discord_http.user.PartialUser"><span class="pre">PartialUser</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span><a class="headerlink" href="#discord_http.audit.AuditLogEntry.user" title="Link to this definition">¶</a></dt>
+<dd><p>Returns the user object of the audit log if available.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="discord_http.audit.AuditLogEntry.target">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">target</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="object.html#discord_http.object.Snowflake" title="discord_http.object.Snowflake"><span class="pre">Snowflake</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span><a class="headerlink" href="#discord_http.audit.AuditLogEntry.target" title="Link to this definition">¶</a></dt>
+<dd><p>Returns the target object of the audit log.</p>
+<p>The Snowflake can be a PartialChannel, User, PartialRole, etc</p>
+</dd></dl>
+
+</dd></dl>
+
 </section>
 </section>
 
@@ -351,7 +474,30 @@
           <div class="toc-tree">
             <ul>
 <li><a class="reference internal" href="#">Audit</a><ul>
-<li><a class="reference internal" href="#discord-http-audit-module">discord_http.audit module</a></li>
+<li><a class="reference internal" href="#module-discord_http.audit">discord_http.audit module</a><ul>
+<li><a class="reference internal" href="#discord_http.audit.AuditChange"><code class="docutils literal notranslate"><span class="pre">AuditChange</span></code></a><ul>
+<li><a class="reference internal" href="#discord_http.audit.AuditChange.entry"><code class="docutils literal notranslate"><span class="pre">AuditChange.entry</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.audit.AuditChange.key"><code class="docutils literal notranslate"><span class="pre">AuditChange.key</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.audit.AuditChange.new_value"><code class="docutils literal notranslate"><span class="pre">AuditChange.new_value</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.audit.AuditChange.old_value"><code class="docutils literal notranslate"><span class="pre">AuditChange.old_value</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#discord_http.audit.AuditLogEntry"><code class="docutils literal notranslate"><span class="pre">AuditLogEntry</span></code></a><ul>
+<li><a class="reference internal" href="#discord_http.audit.AuditLogEntry.guild"><code class="docutils literal notranslate"><span class="pre">AuditLogEntry.guild</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.audit.AuditLogEntry.action_type"><code class="docutils literal notranslate"><span class="pre">AuditLogEntry.action_type</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.audit.AuditLogEntry.reason"><code class="docutils literal notranslate"><span class="pre">AuditLogEntry.reason</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.audit.AuditLogEntry.user_id"><code class="docutils literal notranslate"><span class="pre">AuditLogEntry.user_id</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.audit.AuditLogEntry.target_id"><code class="docutils literal notranslate"><span class="pre">AuditLogEntry.target_id</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.audit.AuditLogEntry.created_at"><code class="docutils literal notranslate"><span class="pre">AuditLogEntry.created_at</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.audit.AuditLogEntry.id"><code class="docutils literal notranslate"><span class="pre">AuditLogEntry.id</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.audit.AuditLogEntry.options"><code class="docutils literal notranslate"><span class="pre">AuditLogEntry.options</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.audit.AuditLogEntry.changes"><code class="docutils literal notranslate"><span class="pre">AuditLogEntry.changes</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.audit.AuditLogEntry.user"><code class="docutils literal notranslate"><span class="pre">AuditLogEntry.user</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.audit.AuditLogEntry.target"><code class="docutils literal notranslate"><span class="pre">AuditLogEntry.target</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
 </ul>
 </li>
 </ul>

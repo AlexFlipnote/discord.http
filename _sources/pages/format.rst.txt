@@ -1,87 +1,130 @@
-Style guide
+Style Guide
 ===========
-This is a style guide for the discord.http library. It's a work in progress, and will be updated as the library evolves.
 
-General guidelines
-------------------
-- Use 4 spaces for indentation.
-- Line length are limited to 256 characters.
-- Version of python used should be 3.11 or higher.
-- Quotes should always be double quotes. Except for strings that require double quote inside.
-- Files always end with a newline.
-- Never use any ``print()`` statements, use ``logging`` instead.
-- Use ``f-strings`` instead of ``.format()`` whenever possible.
+This document outlines the coding standards for the ``discord_http`` library. All contributions should adhere to these guidelines to maintain consistency and readability.
 
-Import conventions
+General Guidelines
 ------------------
-The following conventions should be followed when importing modules from the library:
+- **Indentation:** Use 4 spaces per level.
+- **Line Length:** Maximum 256 characters.
+- **Python Version:** 3.11 or higher.
+- **Quotes:** Use double quotes (``"``) by default. Use single quotes (``'``) only to avoid escaping internal double quotes.
+- **Files:** Must always end with a single newline.
+- **Logging:** Never use ``print()``. Use the standard ``logging`` module.
+- **Formatting:** Use f-strings over ``.format()`` or ``%`` wherever possible.
+
+Import Conventions
+------------------
+Imports should be grouped by type, separated by a blank line, and sorted alphabetically within each group.
+The reason for this is to improve readability and maintain a consistent structure across the codebase, making it easier for developers to quickly identify dependencies and navigate the code.
+
+Implementation Order
+~~~~~~~~~~~~~~~~~~~~
+1. **Standard/External Imports:** ``import module``
+2. **From-style Imports:** ``from module import object``
+3. **Local/Relative Imports:** ``from .module import object``
+4. **Type-Checking Imports:** Wrapped in an ``if TYPE_CHECKING:`` block to avoid circular imports and reduce runtime overhead.
 
 .. code-block:: python
 
-    import discord.http
     import random
 
     from datetime import datetime
     from typing import TYPE_CHECKING
 
-    from .<module> import <function>
+    from .utils import MISSING
 
-1. Any imports that do not use the ``from`` keyword should be placed at the top of the file.
-2. Imports that do in fact use the ``from`` keyword are then placed underneath the first imports.
-3. Imports that are only used locally should be at the bottom of the import tree.
-4. All imports should be sorted alphabetically.
+    if TYPE_CHECKING:
+        from .client import Client
+        from .models import User
 
-Type hints
+Type Hints
 ----------
-All functions and methods should have type hints. The type hints should be formatted as follows:
-
-For example:
+All functions, methods, and variables must be fully type-hinted using modern Python syntax (e.g., ``|`` for unions).
+We do not use the older ``Union``, ``Optional`` or similar syntax from the ``typing`` module, as it is more verbose and less readable.
+There are exceptions to this rule, but only when there are no native Python types that can be used, such as ``Literal`` or ``TypedDict``.
 
 .. code-block:: python
 
-    def function(arg1: int, arg2: str | None = None) -> str:
+    def fetch_user(user_id: int, cache: bool | None = None) -> User:
         ...
-
 
 Docstrings
 ----------
-Docstrings should be formatted as follows:
+Use the NumPy/Google-style hybrid for detailed documentation. Skip type hints inside the docstring to avoid redundancy with the code signature.
+These days, most IDEs and documentation generators can extract type information directly from the code.
+Including it in the docstring is unnecessary and can lead to maintenance issues if the code signature changes but the docstring does not.
 
 .. code-block:: python
 
     def function(arg1: int, arg2: str) -> str:
         """
-        This is a function.
+        Summary of the function.
 
-        Here is more information about the function.
-        It is separated from the short summary by a blank line.
+        Extended description providing more context.
 
         Parameters
         ----------
         arg1:
-            This is the first argument.
-            We skip the type hint inside the docstring.
+            Description of the first argument.
         arg2:
-            This is the second argument.
-            We skip the type hint inside the docstring.
+            Description of the second argument.
 
-        Returns/Yields
-        --------------
-            This is the return value.
-            We skip the return inside the docstring.
+        Returns
+        -------
+            Description of the return value.
 
         Raises
         ------
         ValueError:
-            This is raised if the function fails.
-            Raises do use type inside the docstring.
+            Description of why this error is raised.
         """
         ...
 
-For short summaries, make it a one-liner like for example:
+For simple logic, use a concise one-line docstring:
 
 .. code-block:: python
 
-    def function(arg1: int, arg2: str) -> str:
-        """ This is a function. """
+    def is_expired(self) -> bool:
+        """ Returns whether the object has expired. """
         ...
+
+Attributes and Slots
+--------------------
+To ensure clean documentation, ``discord_http`` utilizes ``__slots__`` and **Inline Attribute Docstrings**.
+Of course, there are exceptions to this rule, such as when using ``dataclasses`` or when defining a class which can be changed by the user, such as a ``Client`` or ``Bot`` subclass.
+However, for all other classes, the following rules apply.
+
+This rule is in place to make both Sphinx (this page you are looking at now) and IDEs display attributes in a more user-friendly way, as well as to reduce redundancy in documentation.
+
+Implementation Rules
+~~~~~~~~~~~~~~~~~~~~
+1. **No Attribute Blocks:** Do not list attributes in the class docstring.
+2. **Inline Documentation:** Place docstrings directly beneath the variable assignment in ``__init__``.
+3. **Slots:** All public attributes must be defined in ``__slots__``.
+4. **Inheritance:** Do not re-define inherited slots in subclasses; only define new attributes unique to that class.
+5. **Type Hints:** All attributes must be fully type-hinted.
+6. **No Redundancy:** Avoid type hints in docstrings for attributes, as they are already present in the code.
+
+.. code-block:: python
+
+    class BaseObject:
+        """ Represents a base object. """
+        __slots__ = ("id", "name")
+
+        def __init__(self, data: dict):
+            self.id: int = int(data["id"])
+            """ The unique ID of this object. """
+
+            self.name: str | None = data.get("name")
+            """ The name of this object. """
+
+    class CustomObject(BaseObject):
+        """ Represents a more specific object. """
+        __slots__ = ("extra",)
+
+        def __init__(self, data: dict):
+            super().__init__(data)
+
+            self.extra: bool = data.get("extra", False)
+            """ An extra attribute unique to this subclass. """

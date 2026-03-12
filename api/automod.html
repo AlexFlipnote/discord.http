@@ -245,7 +245,7 @@
 </ul>
 <p class="caption" role="heading"><span class="caption-text">Development</span></p>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="../pages/format.html">Style guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../pages/format.html">Style Guide</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../pages/contribute.html">Contributing</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../pages/license.html">License</a></li>
 <li class="toctree-l1"><a class="reference external" href="https://discord.gg/yqb7vATbjH">Discord</a></li>
@@ -298,76 +298,154 @@
 <dd><p>Bases: <a class="reference internal" href="#discord_http.automod.PartialAutoModRule" title="discord_http.automod.PartialAutoModRule"><code class="xref py py-class docutils literal notranslate"><span class="pre">PartialAutoModRule</span></code></a></p>
 <p>Represents an auto moderation rule in a guild.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Variables<span class="colon">:</span></dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>name</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><em>str</em></a>) – The name of the automod rule</p></li>
-<li><p><strong>creator_id</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><em>int</em></a>) – The ID of the user that created the automod rule</p></li>
-<li><p><strong>event_type</strong> (<a class="reference internal" href="enums.html#discord_http.enums.AutoModRuleEventType" title="discord_http.enums.AutoModRuleEventType"><em>AutoModRuleEventType</em></a>) – The type of event that triggers the automod rule</p></li>
-<li><p><strong>trigger_type</strong> (<a class="reference internal" href="enums.html#discord_http.enums.AutoModRuleTriggerType" title="discord_http.enums.AutoModRuleTriggerType"><em>AutoModRuleTriggerType</em></a>) – The type of trigger for the automod rule</p></li>
-<li><p><strong>actions</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.14)"><em>list</em></a><em>[</em><a class="reference internal" href="#discord_http.automod.AutoModRuleAction" title="discord_http.automod.AutoModRuleAction"><em>AutoModRuleAction</em></a><em>]</em>) – The actions that the automod rule takes when triggered</p></li>
-<li><p><strong>trigger_metadata</strong> (<a class="reference internal" href="#discord_http.automod.AutoModRuleTriggers" title="discord_http.automod.AutoModRuleTriggers"><em>AutoModRuleTriggers</em></a><em> | </em><em>None</em>) – The metadata for the trigger of the automod rule</p></li>
-<li><p><strong>enabled</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><em>bool</em></a>) – Whether the automod rule is enabled or not</p></li>
-<li><p><strong>exempt_roles</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.14)"><em>list</em></a><em>[</em><a class="reference internal" href="role.html#discord_http.role.PartialRole" title="discord_http.role.PartialRole"><em>PartialRole</em></a><em>]</em>) – The roles that are exempt from the automod rule</p></li>
-<li><p><strong>exempt_channels</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.14)"><em>list</em></a><em>[</em><a class="reference internal" href="channel.html#discord_http.channel.PartialChannel" title="discord_http.channel.PartialChannel"><em>PartialChannel</em></a><em>]</em>) – The channels that are exempt from the automod rule</p></li>
-</ul>
-</dd>
-<dt class="field-even">Parameters<span class="colon">:</span></dt>
-<dd class="field-even"><ul class="simple">
-<li><p><strong>state</strong> (<em>DiscordAPI</em>)</p></li>
+<li><p><strong>state</strong> (<a class="reference internal" href="http.html#discord_http.http.DiscordAPI" title="discord_http.http.DiscordAPI"><em>DiscordAPI</em></a>)</p></li>
 <li><p><strong>data</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.14)"><em>dict</em></a>)</p></li>
 </ul>
 </dd>
 </dl>
 <dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.automod.AutoModRule.name">
+<span class="sig-name descname"><span class="pre">name</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></span><a class="headerlink" href="#discord_http.automod.AutoModRule.name" title="Link to this definition">¶</a></dt>
+<dd><p>The name of the automod rule.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="discord_http.automod.AutoModRule.created_at">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">created_at</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/datetime.html#datetime.datetime" title="(in Python v3.14)"><span class="pre">datetime</span></a></span><a class="headerlink" href="#discord_http.automod.AutoModRule.created_at" title="Link to this definition">¶</a></dt>
+<dd><p>The datetime of the snowflake.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="discord_http.automod.AutoModRule.delete">
+<span class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">delete</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">reason</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span></span><a class="headerlink" href="#discord_http.automod.AutoModRule.delete" title="Link to this definition">¶</a></dt>
+<dd><p>Delete the automod rule.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>reason</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a> | <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></span>) – Reason for deleting the automod</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></span></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="discord_http.automod.AutoModRule.edit">
+<span class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">edit</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">&lt;MISSING&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">event_type</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">&lt;MISSING&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">keyword_filter</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">&lt;MISSING&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">regex_patterns</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">&lt;MISSING&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">presets</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">&lt;MISSING&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">allow_list</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">&lt;MISSING&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mention_total_limit</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">&lt;MISSING&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mention_raid_protection_enabled</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">&lt;MISSING&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">alert_channel</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">&lt;MISSING&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">timeout_seconds</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">&lt;MISSING&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">message</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">&lt;MISSING&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">enabled</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">&lt;MISSING&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">exempt_roles</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">&lt;MISSING&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">exempt_channels</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">&lt;MISSING&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">reason</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#discord_http.automod.AutoModRule" title="discord_http.automod.AutoModRule"><span class="pre">AutoModRule</span></a></span></span><a class="headerlink" href="#discord_http.automod.AutoModRule.edit" title="Link to this definition">¶</a></dt>
+<dd><p>Create an automod rule.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>name</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a> | <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></span>) – Name of the automod</p></li>
+<li><p><strong>event_type</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference internal" href="enums.html#discord_http.enums.AutoModRuleEventType" title="discord_http.enums.AutoModRuleEventType"><code class="xref py py-class docutils literal notranslate"><span class="pre">AutoModRuleEventType</span></code></a> | <a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a> | <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></span>) – What type of event</p></li>
+<li><p><strong>keyword_filter</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">list</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>] | <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></span>) – Keywords to filter</p></li>
+<li><p><strong>regex_patterns</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">list</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>] | <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></span>) – Keywords in regex pattern to filter</p></li>
+<li><p><strong>presets</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">list</span></code></a>[<a class="reference internal" href="enums.html#discord_http.enums.AutoModRulePresetType" title="discord_http.enums.AutoModRulePresetType"><code class="xref py py-class docutils literal notranslate"><span class="pre">AutoModRulePresetType</span></code></a>] | <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></span>) – Automod presets to include</p></li>
+<li><p><strong>allow_list</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">list</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>] | <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></span>) – List of keywords that are allowed</p></li>
+<li><p><strong>mention_total_limit</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a> | <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></span>) – How many unique mentions allowed before trigger</p></li>
+<li><p><strong>mention_raid_protection_enabled</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></a></span>) – If this should apply for raids</p></li>
+<li><p><strong>alert_channel</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference internal" href="object.html#discord_http.object.Snowflake" title="discord_http.object.Snowflake"><code class="xref py py-class docutils literal notranslate"><span class="pre">Snowflake</span></code></a> | <a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a> | <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></span>) – Where the action should be logged</p></li>
+<li><p><strong>timeout_seconds</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a> | <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></span>) – How many seconds the user in question should be timed out</p></li>
+<li><p><strong>message</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a> | <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></span>) – What message the user gets when action is taken</p></li>
+<li><p><strong>enabled</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></a></span>) – If the automod should be enabled or not</p></li>
+<li><p><strong>exempt_roles</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">list</span></code></a>[<a class="reference internal" href="object.html#discord_http.object.Snowflake" title="discord_http.object.Snowflake"><code class="xref py py-class docutils literal notranslate"><span class="pre">Snowflake</span></code></a> | <a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a>] | <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></span>) – Which roles are allowed to bypass</p></li>
+<li><p><strong>exempt_channels</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">list</span></code></a>[<a class="reference internal" href="object.html#discord_http.object.Snowflake" title="discord_http.object.Snowflake"><code class="xref py py-class docutils literal notranslate"><span class="pre">Snowflake</span></code></a> | <a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a>] | <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></span>) – Which channels are allowed to bypass</p></li>
+<li><p><strong>reason</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a> | <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></span>) – Reason for editing the automod</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><a class="reference internal" href="#discord_http.automod.AutoModRule" title="discord_http.automod.AutoModRule"><code class="xref py py-class docutils literal notranslate"><span class="pre">AutoModRule</span></code></a></span></p>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The automod that was just edited</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="discord_http.automod.AutoModRule.fetch">
+<span class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">fetch</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#discord_http.automod.AutoModRule" title="discord_http.automod.AutoModRule"><span class="pre">AutoModRule</span></a></span></span><a class="headerlink" href="#discord_http.automod.AutoModRule.fetch" title="Link to this definition">¶</a></dt>
+<dd><p>Fetches more information about the automod rule.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><a class="reference internal" href="#discord_http.automod.AutoModRule" title="discord_http.automod.AutoModRule"><code class="xref py py-class docutils literal notranslate"><span class="pre">AutoModRule</span></code></a></span></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="discord_http.automod.AutoModRule.guild">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">guild</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="guild.html#discord_http.guild.Guild" title="discord_http.guild.Guild"><span class="pre">Guild</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="guild.html#discord_http.guild.PartialGuild" title="discord_http.guild.PartialGuild"><span class="pre">PartialGuild</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span><a class="headerlink" href="#discord_http.automod.AutoModRule.guild" title="Link to this definition">¶</a></dt>
+<dd><p>The guild object this event is in.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.automod.AutoModRule.guild_id">
+<span class="sig-name descname"><span class="pre">guild_id</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><span class="pre">int</span></a></span><a class="headerlink" href="#discord_http.automod.AutoModRule.guild_id" title="Link to this definition">¶</a></dt>
+<dd><p>The ID of the guild this automod rule is in.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.automod.AutoModRule.id">
+<span class="sig-name descname"><span class="pre">id</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><span class="pre">int</span></a></span><a class="headerlink" href="#discord_http.automod.AutoModRule.id" title="Link to this definition">¶</a></dt>
+<dd><p>The ID of the snowflake.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.automod.AutoModRule.creator_id">
+<span class="sig-name descname"><span class="pre">creator_id</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><span class="pre">int</span></a></span><a class="headerlink" href="#discord_http.automod.AutoModRule.creator_id" title="Link to this definition">¶</a></dt>
+<dd><p>The ID of the user that created the automod rule.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.automod.AutoModRule.event_type">
+<span class="sig-name descname"><span class="pre">event_type</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="enums.html#discord_http.enums.AutoModRuleEventType" title="discord_http.enums.AutoModRuleEventType"><span class="pre">AutoModRuleEventType</span></a></span><a class="headerlink" href="#discord_http.automod.AutoModRule.event_type" title="Link to this definition">¶</a></dt>
+<dd><p>The type of event that triggers the automod rule.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.automod.AutoModRule.trigger_type">
+<span class="sig-name descname"><span class="pre">trigger_type</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="enums.html#discord_http.enums.AutoModRuleTriggerType" title="discord_http.enums.AutoModRuleTriggerType"><span class="pre">AutoModRuleTriggerType</span></a></span><a class="headerlink" href="#discord_http.automod.AutoModRule.trigger_type" title="Link to this definition">¶</a></dt>
+<dd><p>The type of trigger for the automod rule.</p>
+</dd></dl>
+
+<dl class="py attribute">
 <dt class="sig sig-object py" id="discord_http.automod.AutoModRule.actions">
 <span class="sig-name descname"><span class="pre">actions</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.14)"><span class="pre">list</span></a><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#discord_http.automod.AutoModRuleAction" title="discord_http.automod.AutoModRuleAction"><span class="pre">AutoModRuleAction</span></a><span class="p"><span class="pre">]</span></span></span><a class="headerlink" href="#discord_http.automod.AutoModRule.actions" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>The actions that the automod rule takes when triggered.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.automod.AutoModRule.trigger_metadata">
+<span class="sig-name descname"><span class="pre">trigger_metadata</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="#discord_http.automod.AutoModRuleTriggers" title="discord_http.automod.AutoModRuleTriggers"><span class="pre">AutoModRuleTriggers</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span><a class="headerlink" href="#discord_http.automod.AutoModRule.trigger_metadata" title="Link to this definition">¶</a></dt>
+<dd><p>The metadata for the trigger of the automod rule.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.automod.AutoModRule.enabled">
+<span class="sig-name descname"><span class="pre">enabled</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><span class="pre">bool</span></a></span><a class="headerlink" href="#discord_http.automod.AutoModRule.enabled" title="Link to this definition">¶</a></dt>
+<dd><p>Whether the automod rule is enabled or not.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.automod.AutoModRule.exempt_roles">
+<span class="sig-name descname"><span class="pre">exempt_roles</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.14)"><span class="pre">list</span></a><span class="p"><span class="pre">[</span></span><a class="reference internal" href="role.html#discord_http.role.PartialRole" title="discord_http.role.PartialRole"><span class="pre">PartialRole</span></a><span class="p"><span class="pre">]</span></span></span><a class="headerlink" href="#discord_http.automod.AutoModRule.exempt_roles" title="Link to this definition">¶</a></dt>
+<dd><p>The roles that are exempt from the automod rule.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.automod.AutoModRule.exempt_channels">
+<span class="sig-name descname"><span class="pre">exempt_channels</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.14)"><span class="pre">list</span></a><span class="p"><span class="pre">[</span></span><a class="reference internal" href="channel.html#discord_http.channel.PartialChannel" title="discord_http.channel.PartialChannel"><span class="pre">PartialChannel</span></a><span class="p"><span class="pre">]</span></span></span><a class="headerlink" href="#discord_http.automod.AutoModRule.exempt_channels" title="Link to this definition">¶</a></dt>
+<dd><p>The channels that are exempt from the automod rule.</p>
+</dd></dl>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="discord_http.automod.AutoModRule.creator">
 <span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">creator</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="user.html#discord_http.user.PartialUser" title="discord_http.user.PartialUser"><span class="pre">PartialUser</span></a></span><a class="headerlink" href="#discord_http.automod.AutoModRule.creator" title="Link to this definition">¶</a></dt>
 <dd><p>The user that created the automod rule in User object form.</p>
 </dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="discord_http.automod.AutoModRule.creator_id">
-<span class="sig-name descname"><span class="pre">creator_id</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><span class="pre">int</span></a></span><a class="headerlink" href="#discord_http.automod.AutoModRule.creator_id" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="discord_http.automod.AutoModRule.enabled">
-<span class="sig-name descname"><span class="pre">enabled</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><span class="pre">bool</span></a></span><a class="headerlink" href="#discord_http.automod.AutoModRule.enabled" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="discord_http.automod.AutoModRule.event_type">
-<span class="sig-name descname"><span class="pre">event_type</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="enums.html#discord_http.enums.AutoModRuleEventType" title="discord_http.enums.AutoModRuleEventType"><span class="pre">AutoModRuleEventType</span></a></span><a class="headerlink" href="#discord_http.automod.AutoModRule.event_type" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="discord_http.automod.AutoModRule.exempt_channels">
-<span class="sig-name descname"><span class="pre">exempt_channels</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.14)"><span class="pre">list</span></a><span class="p"><span class="pre">[</span></span><a class="reference internal" href="channel.html#discord_http.channel.PartialChannel" title="discord_http.channel.PartialChannel"><span class="pre">PartialChannel</span></a><span class="p"><span class="pre">]</span></span></span><a class="headerlink" href="#discord_http.automod.AutoModRule.exempt_channels" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="discord_http.automod.AutoModRule.exempt_roles">
-<span class="sig-name descname"><span class="pre">exempt_roles</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.14)"><span class="pre">list</span></a><span class="p"><span class="pre">[</span></span><a class="reference internal" href="role.html#discord_http.role.PartialRole" title="discord_http.role.PartialRole"><span class="pre">PartialRole</span></a><span class="p"><span class="pre">]</span></span></span><a class="headerlink" href="#discord_http.automod.AutoModRule.exempt_roles" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="discord_http.automod.AutoModRule.name">
-<span class="sig-name descname"><span class="pre">name</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></span><a class="headerlink" href="#discord_http.automod.AutoModRule.name" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="discord_http.automod.AutoModRule.trigger_metadata">
-<span class="sig-name descname"><span class="pre">trigger_metadata</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="#discord_http.automod.AutoModRuleTriggers" title="discord_http.automod.AutoModRuleTriggers"><span class="pre">AutoModRuleTriggers</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span><a class="headerlink" href="#discord_http.automod.AutoModRule.trigger_metadata" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="discord_http.automod.AutoModRule.trigger_type">
-<span class="sig-name descname"><span class="pre">trigger_type</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="enums.html#discord_http.enums.AutoModRuleTriggerType" title="discord_http.enums.AutoModRuleTriggerType"><span class="pre">AutoModRuleTriggerType</span></a></span><a class="headerlink" href="#discord_http.automod.AutoModRule.trigger_type" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
 
 </dd></dl>
 
@@ -377,16 +455,8 @@
 <dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
 <p>Represents an action for an auto moderation rule.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Variables<span class="colon">:</span></dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>type</strong> (<a class="reference internal" href="enums.html#discord_http.enums.AutoModRuleActionType" title="discord_http.enums.AutoModRuleActionType"><em>AutoModRuleActionType</em></a>) – The type of action to take when the auto moderation rule is triggered</p></li>
-<li><p><strong>channel_id</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><em>int</em></a><em> | </em><em>None</em>) – The channel to send the alert message to if the action type is send_alert_message</p></li>
-<li><p><strong>duration_seconds</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><em>int</em></a><em> | </em><em>None</em>) – The number of seconds to timeout the user for if the action type is timeout</p></li>
-<li><p><strong>custom_message</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><em>str</em></a><em> | </em><em>None</em>) – The message to show the user if the action type is block_message</p></li>
-</ul>
-</dd>
-<dt class="field-even">Parameters<span class="colon">:</span></dt>
-<dd class="field-even"><ul class="simple">
 <li><p><strong>type</strong> (<a class="reference internal" href="enums.html#discord_http.enums.AutoModRuleActionType" title="discord_http.enums.AutoModRuleActionType"><em>AutoModRuleActionType</em></a>)</p></li>
 <li><p><strong>channel_id</strong> (<a class="reference internal" href="object.html#discord_http.object.Snowflake" title="discord_http.object.Snowflake"><em>Snowflake</em></a><em> | </em><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><em>int</em></a><em> | </em><em>None</em>)</p></li>
 <li><p><strong>duration_seconds</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><em>int</em></a><em> | </em><em>None</em>)</p></li>
@@ -395,17 +465,47 @@
 </dd>
 </dl>
 <dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.automod.AutoModRuleAction.type">
+<span class="sig-name descname"><span class="pre">type</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="enums.html#discord_http.enums.AutoModRuleActionType" title="discord_http.enums.AutoModRuleActionType"><span class="pre">AutoModRuleActionType</span></a></span><a class="headerlink" href="#discord_http.automod.AutoModRuleAction.type" title="Link to this definition">¶</a></dt>
+<dd><p>The type of action to take when the auto moderation rule is triggered.</p>
+</dd></dl>
+
+<dl class="py attribute">
 <dt class="sig sig-object py" id="discord_http.automod.AutoModRuleAction.channel_id">
 <span class="sig-name descname"><span class="pre">channel_id</span></span><a class="headerlink" href="#discord_http.automod.AutoModRuleAction.channel_id" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>The channel to send the alert message to if action type is send_alert_message.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.automod.AutoModRuleAction.custom_message">
+<span class="sig-name descname"><span class="pre">custom_message</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span><a class="headerlink" href="#discord_http.automod.AutoModRuleAction.custom_message" title="Link to this definition">¶</a></dt>
+<dd><p>The message shown to the user if action type is block_message.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.automod.AutoModRuleAction.duration_seconds">
+<span class="sig-name descname"><span class="pre">duration_seconds</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><span class="pre">int</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span><a class="headerlink" href="#discord_http.automod.AutoModRuleAction.duration_seconds" title="Link to this definition">¶</a></dt>
+<dd><p>The timeout duration in seconds if action type is timeout.</p>
+</dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="discord_http.automod.AutoModRuleAction.create_alert_location">
-<span class="property"><span class="k"><span class="pre">classmethod</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">create_alert_location</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">channel</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Self" title="(in Python v3.14)"><span class="pre">Self</span></a></span></span><a class="headerlink" href="#discord_http.automod.AutoModRuleAction.create_alert_location" title="Link to this definition">¶</a></dt>
-<dd><p>Create an auto moderation rule action to send an alert message.</p>
+<dt class="sig sig-object py" id="discord_http.automod.AutoModRuleAction.to_dict">
+<span class="sig-name descname"><span class="pre">to_dict</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.14)"><span class="pre">dict</span></a></span></span><a class="headerlink" href="#discord_http.automod.AutoModRuleAction.to_dict" title="Link to this definition">¶</a></dt>
+<dd><p>The auto moderation rule action as a dictionary.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">dict</span></code></a></span></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="discord_http.automod.AutoModRuleAction.from_dict">
+<span class="property"><span class="k"><span class="pre">classmethod</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">from_dict</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Self" title="(in Python v3.14)"><span class="pre">Self</span></a></span></span><a class="headerlink" href="#discord_http.automod.AutoModRuleAction.from_dict" title="Link to this definition">¶</a></dt>
+<dd><p>Create an auto moderation rule action from a dictionary.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>channel</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference internal" href="object.html#discord_http.object.Snowflake" title="discord_http.object.Snowflake"><code class="xref py py-class docutils literal notranslate"><span class="pre">Snowflake</span></code></a> | <a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a></span>) – The channel to send the alert message to</p>
+<dd class="field-odd"><p><strong>data</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">dict</span></code></a></span>) – The dictionary to create the auto moderation rule action from</p>
 </dd>
 <dt class="field-even">Return type<span class="colon">:</span></dt>
 <dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">Self</span></code></span></p>
@@ -434,6 +534,23 @@
 </dd></dl>
 
 <dl class="py method">
+<dt class="sig sig-object py" id="discord_http.automod.AutoModRuleAction.create_alert_location">
+<span class="property"><span class="k"><span class="pre">classmethod</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">create_alert_location</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">channel</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Self" title="(in Python v3.14)"><span class="pre">Self</span></a></span></span><a class="headerlink" href="#discord_http.automod.AutoModRuleAction.create_alert_location" title="Link to this definition">¶</a></dt>
+<dd><p>Create an auto moderation rule action to send an alert message.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>channel</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference internal" href="object.html#discord_http.object.Snowflake" title="discord_http.object.Snowflake"><code class="xref py py-class docutils literal notranslate"><span class="pre">Snowflake</span></code></a> | <a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a></span>) – The channel to send the alert message to</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">Self</span></code></span></p>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The auto moderation rule action</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
 <dt class="sig sig-object py" id="discord_http.automod.AutoModRuleAction.create_timeout">
 <span class="property"><span class="k"><span class="pre">classmethod</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">create_timeout</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">seconds</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Self" title="(in Python v3.14)"><span class="pre">Self</span></a></span></span><a class="headerlink" href="#discord_http.automod.AutoModRuleAction.create_timeout" title="Link to this definition">¶</a></dt>
 <dd><p>Create an auto moderation rule action to timeout a user.</p>
@@ -450,49 +567,6 @@
 </dl>
 </dd></dl>
 
-<dl class="py attribute">
-<dt class="sig sig-object py" id="discord_http.automod.AutoModRuleAction.custom_message">
-<span class="sig-name descname"><span class="pre">custom_message</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span><a class="headerlink" href="#discord_http.automod.AutoModRuleAction.custom_message" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="discord_http.automod.AutoModRuleAction.duration_seconds">
-<span class="sig-name descname"><span class="pre">duration_seconds</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><span class="pre">int</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span><a class="headerlink" href="#discord_http.automod.AutoModRuleAction.duration_seconds" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="discord_http.automod.AutoModRuleAction.from_dict">
-<span class="property"><span class="k"><span class="pre">classmethod</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">from_dict</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Self" title="(in Python v3.14)"><span class="pre">Self</span></a></span></span><a class="headerlink" href="#discord_http.automod.AutoModRuleAction.from_dict" title="Link to this definition">¶</a></dt>
-<dd><p>Create an auto moderation rule action from a dictionary.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>data</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">dict</span></code></a></span>) – The dictionary to create the auto moderation rule action from</p>
-</dd>
-<dt class="field-even">Return type<span class="colon">:</span></dt>
-<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">Self</span></code></span></p>
-</dd>
-<dt class="field-odd">Returns<span class="colon">:</span></dt>
-<dd class="field-odd"><p>The auto moderation rule action</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="discord_http.automod.AutoModRuleAction.to_dict">
-<span class="sig-name descname"><span class="pre">to_dict</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.14)"><span class="pre">dict</span></a></span></span><a class="headerlink" href="#discord_http.automod.AutoModRuleAction.to_dict" title="Link to this definition">¶</a></dt>
-<dd><p>The auto moderation rule action as a dictionary.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">dict</span></code></a></span></p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="discord_http.automod.AutoModRuleAction.type">
-<span class="sig-name descname"><span class="pre">type</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="enums.html#discord_http.enums.AutoModRuleActionType" title="discord_http.enums.AutoModRuleActionType"><span class="pre">AutoModRuleActionType</span></a></span><a class="headerlink" href="#discord_http.automod.AutoModRuleAction.type" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
-
 </dd></dl>
 
 <dl class="py class">
@@ -501,18 +575,8 @@
 <dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
 <p>Represents the triggers for an auto moderation rule.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Variables<span class="colon">:</span></dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>keyword_filter</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.14)"><em>list</em></a><em>[</em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><em>str</em></a><em>] </em><em>| </em><em>None</em>) – List of keywords to filter</p></li>
-<li><p><strong>regex_patterns</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.14)"><em>list</em></a><em>[</em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><em>str</em></a><em>] </em><em>| </em><em>None</em>) – List of regex patterns to filter</p></li>
-<li><p><strong>presets</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.14)"><em>list</em></a><em>[</em><a class="reference internal" href="enums.html#discord_http.enums.AutoModRulePresetType" title="discord_http.enums.AutoModRulePresetType"><em>AutoModRulePresetType</em></a><em>] </em><em>| </em><em>None</em>) – List of auto moderation presets to filter</p></li>
-<li><p><strong>allow_list</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.14)"><em>list</em></a><em>[</em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><em>str</em></a><em>] </em><em>| </em><em>None</em>) – List of keywords that are allowed and will not trigger the rule</p></li>
-<li><p><strong>mention_total_limit</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><em>int</em></a><em> | </em><em>None</em>) – How many unique mentions allowed before trigger</p></li>
-<li><p><strong>mention_raid_protection_enabled</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><em>bool</em></a>) – If this should apply for raids</p></li>
-</ul>
-</dd>
-<dt class="field-even">Parameters<span class="colon">:</span></dt>
-<dd class="field-even"><ul class="simple">
 <li><p><strong>keyword_filter</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.14)"><em>list</em></a><em>[</em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><em>str</em></a><em>] </em><em>| </em><em>None</em>)</p></li>
 <li><p><strong>regex_patterns</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.14)"><em>list</em></a><em>[</em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><em>str</em></a><em>] </em><em>| </em><em>None</em>)</p></li>
 <li><p><strong>presets</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.14)"><em>list</em></a><em>[</em><a class="reference internal" href="enums.html#discord_http.enums.AutoModRulePresetType" title="discord_http.enums.AutoModRulePresetType"><em>AutoModRulePresetType</em></a><em>] </em><em>| </em><em>None</em>)</p></li>
@@ -523,9 +587,51 @@
 </dd>
 </dl>
 <dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.automod.AutoModRuleTriggers.keyword_filter">
+<span class="sig-name descname"><span class="pre">keyword_filter</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.14)"><span class="pre">list</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span><a class="headerlink" href="#discord_http.automod.AutoModRuleTriggers.keyword_filter" title="Link to this definition">¶</a></dt>
+<dd><p>List of keywords to filter.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.automod.AutoModRuleTriggers.regex_patterns">
+<span class="sig-name descname"><span class="pre">regex_patterns</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.14)"><span class="pre">list</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span><a class="headerlink" href="#discord_http.automod.AutoModRuleTriggers.regex_patterns" title="Link to this definition">¶</a></dt>
+<dd><p>List of regex patterns to filter.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.automod.AutoModRuleTriggers.presets">
+<span class="sig-name descname"><span class="pre">presets</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.14)"><span class="pre">list</span></a><span class="p"><span class="pre">[</span></span><a class="reference internal" href="enums.html#discord_http.enums.AutoModRulePresetType" title="discord_http.enums.AutoModRulePresetType"><span class="pre">AutoModRulePresetType</span></a><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span><a class="headerlink" href="#discord_http.automod.AutoModRuleTriggers.presets" title="Link to this definition">¶</a></dt>
+<dd><p>List of auto moderation presets to filter.</p>
+</dd></dl>
+
+<dl class="py attribute">
 <dt class="sig sig-object py" id="discord_http.automod.AutoModRuleTriggers.allow_list">
 <span class="sig-name descname"><span class="pre">allow_list</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.14)"><span class="pre">list</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span><a class="headerlink" href="#discord_http.automod.AutoModRuleTriggers.allow_list" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>List of keywords that are allowed and will not trigger the rule.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.automod.AutoModRuleTriggers.mention_total_limit">
+<span class="sig-name descname"><span class="pre">mention_total_limit</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><span class="pre">int</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span><a class="headerlink" href="#discord_http.automod.AutoModRuleTriggers.mention_total_limit" title="Link to this definition">¶</a></dt>
+<dd><p>How many unique mentions are allowed before trigger.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.automod.AutoModRuleTriggers.mention_raid_protection_enabled">
+<span class="sig-name descname"><span class="pre">mention_raid_protection_enabled</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><span class="pre">bool</span></a></span><a class="headerlink" href="#discord_http.automod.AutoModRuleTriggers.mention_raid_protection_enabled" title="Link to this definition">¶</a></dt>
+<dd><p>Whether this should apply for raids.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="discord_http.automod.AutoModRuleTriggers.to_dict">
+<span class="sig-name descname"><span class="pre">to_dict</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.14)"><span class="pre">dict</span></a></span></span><a class="headerlink" href="#discord_http.automod.AutoModRuleTriggers.to_dict" title="Link to this definition">¶</a></dt>
+<dd><p>The auto moderation rule as a dictionary.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">dict</span></code></a></span></p>
+</dd>
+</dl>
+</dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="discord_http.automod.AutoModRuleTriggers.from_dict">
@@ -544,42 +650,6 @@
 </dl>
 </dd></dl>
 
-<dl class="py attribute">
-<dt class="sig sig-object py" id="discord_http.automod.AutoModRuleTriggers.keyword_filter">
-<span class="sig-name descname"><span class="pre">keyword_filter</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.14)"><span class="pre">list</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span><a class="headerlink" href="#discord_http.automod.AutoModRuleTriggers.keyword_filter" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="discord_http.automod.AutoModRuleTriggers.mention_raid_protection_enabled">
-<span class="sig-name descname"><span class="pre">mention_raid_protection_enabled</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><span class="pre">bool</span></a></span><a class="headerlink" href="#discord_http.automod.AutoModRuleTriggers.mention_raid_protection_enabled" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="discord_http.automod.AutoModRuleTriggers.mention_total_limit">
-<span class="sig-name descname"><span class="pre">mention_total_limit</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><span class="pre">int</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span><a class="headerlink" href="#discord_http.automod.AutoModRuleTriggers.mention_total_limit" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="discord_http.automod.AutoModRuleTriggers.presets">
-<span class="sig-name descname"><span class="pre">presets</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.14)"><span class="pre">list</span></a><span class="p"><span class="pre">[</span></span><a class="reference internal" href="enums.html#discord_http.enums.AutoModRulePresetType" title="discord_http.enums.AutoModRulePresetType"><span class="pre">AutoModRulePresetType</span></a><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span><a class="headerlink" href="#discord_http.automod.AutoModRuleTriggers.presets" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="discord_http.automod.AutoModRuleTriggers.regex_patterns">
-<span class="sig-name descname"><span class="pre">regex_patterns</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.14)"><span class="pre">list</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span><a class="headerlink" href="#discord_http.automod.AutoModRuleTriggers.regex_patterns" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="discord_http.automod.AutoModRuleTriggers.to_dict">
-<span class="sig-name descname"><span class="pre">to_dict</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.14)"><span class="pre">dict</span></a></span></span><a class="headerlink" href="#discord_http.automod.AutoModRuleTriggers.to_dict" title="Link to this definition">¶</a></dt>
-<dd><p>The auto moderation rule as a dictionary.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">dict</span></code></a></span></p>
-</dd>
-</dl>
-</dd></dl>
-
 </dd></dl>
 
 <dl class="py class">
@@ -588,17 +658,37 @@
 <dd><p>Bases: <a class="reference internal" href="object.html#discord_http.object.PartialBase" title="discord_http.object.PartialBase"><code class="xref py py-class docutils literal notranslate"><span class="pre">PartialBase</span></code></a></p>
 <p>Represents a partial auto moderation rule, usually from an event.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Variables<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>guild_id</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><em>int</em></a>) – The ID of the guild this automod rule is in</p>
-</dd>
-<dt class="field-even">Parameters<span class="colon">:</span></dt>
-<dd class="field-even"><ul class="simple">
-<li><p><strong>state</strong> (<em>DiscordAPI</em>)</p></li>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>state</strong> (<a class="reference internal" href="http.html#discord_http.http.DiscordAPI" title="discord_http.http.DiscordAPI"><em>DiscordAPI</em></a>)</p></li>
 <li><p><strong>id</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><em>int</em></a>)</p></li>
 <li><p><strong>guild_id</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><em>int</em></a>)</p></li>
 </ul>
 </dd>
 </dl>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.automod.PartialAutoModRule.guild_id">
+<span class="sig-name descname"><span class="pre">guild_id</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><span class="pre">int</span></a></span><a class="headerlink" href="#discord_http.automod.PartialAutoModRule.guild_id" title="Link to this definition">¶</a></dt>
+<dd><p>The ID of the guild this automod rule is in.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="discord_http.automod.PartialAutoModRule.guild">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">guild</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="guild.html#discord_http.guild.Guild" title="discord_http.guild.Guild"><span class="pre">Guild</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="guild.html#discord_http.guild.PartialGuild" title="discord_http.guild.PartialGuild"><span class="pre">PartialGuild</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span><a class="headerlink" href="#discord_http.automod.PartialAutoModRule.guild" title="Link to this definition">¶</a></dt>
+<dd><p>The guild object this event is in.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="discord_http.automod.PartialAutoModRule.fetch">
+<span class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">fetch</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#discord_http.automod.AutoModRule" title="discord_http.automod.AutoModRule"><span class="pre">AutoModRule</span></a></span></span><a class="headerlink" href="#discord_http.automod.PartialAutoModRule.fetch" title="Link to this definition">¶</a></dt>
+<dd><p>Fetches more information about the automod rule.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><a class="reference internal" href="#discord_http.automod.AutoModRule" title="discord_http.automod.AutoModRule"><code class="xref py py-class docutils literal notranslate"><span class="pre">AutoModRule</span></code></a></span></p>
+</dd>
+</dl>
+</dd></dl>
+
 <dl class="py method">
 <dt class="sig sig-object py" id="discord_http.automod.PartialAutoModRule.delete">
 <span class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">delete</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">reason</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span></span><a class="headerlink" href="#discord_http.automod.PartialAutoModRule.delete" title="Link to this definition">¶</a></dt>
@@ -646,27 +736,17 @@
 </dl>
 </dd></dl>
 
-<dl class="py method">
-<dt class="sig sig-object py" id="discord_http.automod.PartialAutoModRule.fetch">
-<span class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">fetch</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#discord_http.automod.AutoModRule" title="discord_http.automod.AutoModRule"><span class="pre">AutoModRule</span></a></span></span><a class="headerlink" href="#discord_http.automod.PartialAutoModRule.fetch" title="Link to this definition">¶</a></dt>
-<dd><p>Fetches more information about the automod rule.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><a class="reference internal" href="#discord_http.automod.AutoModRule" title="discord_http.automod.AutoModRule"><code class="xref py py-class docutils literal notranslate"><span class="pre">AutoModRule</span></code></a></span></p>
-</dd>
-</dl>
-</dd></dl>
-
 <dl class="py property">
-<dt class="sig sig-object py" id="discord_http.automod.PartialAutoModRule.guild">
-<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">guild</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Guild</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">PartialGuild</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span><a class="headerlink" href="#discord_http.automod.PartialAutoModRule.guild" title="Link to this definition">¶</a></dt>
-<dd><p>The guild object this event is in.</p>
+<dt class="sig sig-object py" id="discord_http.automod.PartialAutoModRule.created_at">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">created_at</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/datetime.html#datetime.datetime" title="(in Python v3.14)"><span class="pre">datetime</span></a></span><a class="headerlink" href="#discord_http.automod.PartialAutoModRule.created_at" title="Link to this definition">¶</a></dt>
+<dd><p>The datetime of the snowflake.</p>
 </dd></dl>
 
 <dl class="py attribute">
-<dt class="sig sig-object py" id="discord_http.automod.PartialAutoModRule.guild_id">
-<span class="sig-name descname"><span class="pre">guild_id</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><span class="pre">int</span></a></span><a class="headerlink" href="#discord_http.automod.PartialAutoModRule.guild_id" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
+<dt class="sig sig-object py" id="discord_http.automod.PartialAutoModRule.id">
+<span class="sig-name descname"><span class="pre">id</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><span class="pre">int</span></a></span><a class="headerlink" href="#discord_http.automod.PartialAutoModRule.id" title="Link to this definition">¶</a></dt>
+<dd><p>The ID of the snowflake.</p>
+</dd></dl>
 
 </dd></dl>
 
@@ -731,47 +811,56 @@
 <li><a class="reference internal" href="#">AutoModRule</a><ul>
 <li><a class="reference internal" href="#module-discord_http.automod">discord_http.automod module</a><ul>
 <li><a class="reference internal" href="#discord_http.automod.AutoModRule"><code class="docutils literal notranslate"><span class="pre">AutoModRule</span></code></a><ul>
-<li><a class="reference internal" href="#discord_http.automod.AutoModRule.actions"><code class="docutils literal notranslate"><span class="pre">AutoModRule.actions</span></code></a></li>
-<li><a class="reference internal" href="#discord_http.automod.AutoModRule.creator"><code class="docutils literal notranslate"><span class="pre">AutoModRule.creator</span></code></a></li>
-<li><a class="reference internal" href="#discord_http.automod.AutoModRule.creator_id"><code class="docutils literal notranslate"><span class="pre">AutoModRule.creator_id</span></code></a></li>
-<li><a class="reference internal" href="#discord_http.automod.AutoModRule.enabled"><code class="docutils literal notranslate"><span class="pre">AutoModRule.enabled</span></code></a></li>
-<li><a class="reference internal" href="#discord_http.automod.AutoModRule.event_type"><code class="docutils literal notranslate"><span class="pre">AutoModRule.event_type</span></code></a></li>
-<li><a class="reference internal" href="#discord_http.automod.AutoModRule.exempt_channels"><code class="docutils literal notranslate"><span class="pre">AutoModRule.exempt_channels</span></code></a></li>
-<li><a class="reference internal" href="#discord_http.automod.AutoModRule.exempt_roles"><code class="docutils literal notranslate"><span class="pre">AutoModRule.exempt_roles</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.automod.AutoModRule.name"><code class="docutils literal notranslate"><span class="pre">AutoModRule.name</span></code></a></li>
-<li><a class="reference internal" href="#discord_http.automod.AutoModRule.trigger_metadata"><code class="docutils literal notranslate"><span class="pre">AutoModRule.trigger_metadata</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.automod.AutoModRule.created_at"><code class="docutils literal notranslate"><span class="pre">AutoModRule.created_at</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.automod.AutoModRule.delete"><code class="docutils literal notranslate"><span class="pre">AutoModRule.delete()</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.automod.AutoModRule.edit"><code class="docutils literal notranslate"><span class="pre">AutoModRule.edit()</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.automod.AutoModRule.fetch"><code class="docutils literal notranslate"><span class="pre">AutoModRule.fetch()</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.automod.AutoModRule.guild"><code class="docutils literal notranslate"><span class="pre">AutoModRule.guild</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.automod.AutoModRule.guild_id"><code class="docutils literal notranslate"><span class="pre">AutoModRule.guild_id</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.automod.AutoModRule.id"><code class="docutils literal notranslate"><span class="pre">AutoModRule.id</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.automod.AutoModRule.creator_id"><code class="docutils literal notranslate"><span class="pre">AutoModRule.creator_id</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.automod.AutoModRule.event_type"><code class="docutils literal notranslate"><span class="pre">AutoModRule.event_type</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.automod.AutoModRule.trigger_type"><code class="docutils literal notranslate"><span class="pre">AutoModRule.trigger_type</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.automod.AutoModRule.actions"><code class="docutils literal notranslate"><span class="pre">AutoModRule.actions</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.automod.AutoModRule.trigger_metadata"><code class="docutils literal notranslate"><span class="pre">AutoModRule.trigger_metadata</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.automod.AutoModRule.enabled"><code class="docutils literal notranslate"><span class="pre">AutoModRule.enabled</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.automod.AutoModRule.exempt_roles"><code class="docutils literal notranslate"><span class="pre">AutoModRule.exempt_roles</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.automod.AutoModRule.exempt_channels"><code class="docutils literal notranslate"><span class="pre">AutoModRule.exempt_channels</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.automod.AutoModRule.creator"><code class="docutils literal notranslate"><span class="pre">AutoModRule.creator</span></code></a></li>
 </ul>
 </li>
 <li><a class="reference internal" href="#discord_http.automod.AutoModRuleAction"><code class="docutils literal notranslate"><span class="pre">AutoModRuleAction</span></code></a><ul>
+<li><a class="reference internal" href="#discord_http.automod.AutoModRuleAction.type"><code class="docutils literal notranslate"><span class="pre">AutoModRuleAction.type</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.automod.AutoModRuleAction.channel_id"><code class="docutils literal notranslate"><span class="pre">AutoModRuleAction.channel_id</span></code></a></li>
-<li><a class="reference internal" href="#discord_http.automod.AutoModRuleAction.create_alert_location"><code class="docutils literal notranslate"><span class="pre">AutoModRuleAction.create_alert_location()</span></code></a></li>
-<li><a class="reference internal" href="#discord_http.automod.AutoModRuleAction.create_message"><code class="docutils literal notranslate"><span class="pre">AutoModRuleAction.create_message()</span></code></a></li>
-<li><a class="reference internal" href="#discord_http.automod.AutoModRuleAction.create_timeout"><code class="docutils literal notranslate"><span class="pre">AutoModRuleAction.create_timeout()</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.automod.AutoModRuleAction.custom_message"><code class="docutils literal notranslate"><span class="pre">AutoModRuleAction.custom_message</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.automod.AutoModRuleAction.duration_seconds"><code class="docutils literal notranslate"><span class="pre">AutoModRuleAction.duration_seconds</span></code></a></li>
-<li><a class="reference internal" href="#discord_http.automod.AutoModRuleAction.from_dict"><code class="docutils literal notranslate"><span class="pre">AutoModRuleAction.from_dict()</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.automod.AutoModRuleAction.to_dict"><code class="docutils literal notranslate"><span class="pre">AutoModRuleAction.to_dict()</span></code></a></li>
-<li><a class="reference internal" href="#discord_http.automod.AutoModRuleAction.type"><code class="docutils literal notranslate"><span class="pre">AutoModRuleAction.type</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.automod.AutoModRuleAction.from_dict"><code class="docutils literal notranslate"><span class="pre">AutoModRuleAction.from_dict()</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.automod.AutoModRuleAction.create_message"><code class="docutils literal notranslate"><span class="pre">AutoModRuleAction.create_message()</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.automod.AutoModRuleAction.create_alert_location"><code class="docutils literal notranslate"><span class="pre">AutoModRuleAction.create_alert_location()</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.automod.AutoModRuleAction.create_timeout"><code class="docutils literal notranslate"><span class="pre">AutoModRuleAction.create_timeout()</span></code></a></li>
 </ul>
 </li>
 <li><a class="reference internal" href="#discord_http.automod.AutoModRuleTriggers"><code class="docutils literal notranslate"><span class="pre">AutoModRuleTriggers</span></code></a><ul>
-<li><a class="reference internal" href="#discord_http.automod.AutoModRuleTriggers.allow_list"><code class="docutils literal notranslate"><span class="pre">AutoModRuleTriggers.allow_list</span></code></a></li>
-<li><a class="reference internal" href="#discord_http.automod.AutoModRuleTriggers.from_dict"><code class="docutils literal notranslate"><span class="pre">AutoModRuleTriggers.from_dict()</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.automod.AutoModRuleTriggers.keyword_filter"><code class="docutils literal notranslate"><span class="pre">AutoModRuleTriggers.keyword_filter</span></code></a></li>
-<li><a class="reference internal" href="#discord_http.automod.AutoModRuleTriggers.mention_raid_protection_enabled"><code class="docutils literal notranslate"><span class="pre">AutoModRuleTriggers.mention_raid_protection_enabled</span></code></a></li>
-<li><a class="reference internal" href="#discord_http.automod.AutoModRuleTriggers.mention_total_limit"><code class="docutils literal notranslate"><span class="pre">AutoModRuleTriggers.mention_total_limit</span></code></a></li>
-<li><a class="reference internal" href="#discord_http.automod.AutoModRuleTriggers.presets"><code class="docutils literal notranslate"><span class="pre">AutoModRuleTriggers.presets</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.automod.AutoModRuleTriggers.regex_patterns"><code class="docutils literal notranslate"><span class="pre">AutoModRuleTriggers.regex_patterns</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.automod.AutoModRuleTriggers.presets"><code class="docutils literal notranslate"><span class="pre">AutoModRuleTriggers.presets</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.automod.AutoModRuleTriggers.allow_list"><code class="docutils literal notranslate"><span class="pre">AutoModRuleTriggers.allow_list</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.automod.AutoModRuleTriggers.mention_total_limit"><code class="docutils literal notranslate"><span class="pre">AutoModRuleTriggers.mention_total_limit</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.automod.AutoModRuleTriggers.mention_raid_protection_enabled"><code class="docutils literal notranslate"><span class="pre">AutoModRuleTriggers.mention_raid_protection_enabled</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.automod.AutoModRuleTriggers.to_dict"><code class="docutils literal notranslate"><span class="pre">AutoModRuleTriggers.to_dict()</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.automod.AutoModRuleTriggers.from_dict"><code class="docutils literal notranslate"><span class="pre">AutoModRuleTriggers.from_dict()</span></code></a></li>
 </ul>
 </li>
 <li><a class="reference internal" href="#discord_http.automod.PartialAutoModRule"><code class="docutils literal notranslate"><span class="pre">PartialAutoModRule</span></code></a><ul>
+<li><a class="reference internal" href="#discord_http.automod.PartialAutoModRule.guild_id"><code class="docutils literal notranslate"><span class="pre">PartialAutoModRule.guild_id</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.automod.PartialAutoModRule.guild"><code class="docutils literal notranslate"><span class="pre">PartialAutoModRule.guild</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.automod.PartialAutoModRule.fetch"><code class="docutils literal notranslate"><span class="pre">PartialAutoModRule.fetch()</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.automod.PartialAutoModRule.delete"><code class="docutils literal notranslate"><span class="pre">PartialAutoModRule.delete()</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.automod.PartialAutoModRule.edit"><code class="docutils literal notranslate"><span class="pre">PartialAutoModRule.edit()</span></code></a></li>
-<li><a class="reference internal" href="#discord_http.automod.PartialAutoModRule.fetch"><code class="docutils literal notranslate"><span class="pre">PartialAutoModRule.fetch()</span></code></a></li>
-<li><a class="reference internal" href="#discord_http.automod.PartialAutoModRule.guild"><code class="docutils literal notranslate"><span class="pre">PartialAutoModRule.guild</span></code></a></li>
-<li><a class="reference internal" href="#discord_http.automod.PartialAutoModRule.guild_id"><code class="docutils literal notranslate"><span class="pre">PartialAutoModRule.guild_id</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.automod.PartialAutoModRule.created_at"><code class="docutils literal notranslate"><span class="pre">PartialAutoModRule.created_at</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.automod.PartialAutoModRule.id"><code class="docutils literal notranslate"><span class="pre">PartialAutoModRule.id</span></code></a></li>
 </ul>
 </li>
 </ul>
