@@ -33,6 +33,7 @@ class Asset:
     animated: bool
         Whether the asset is animated
     """
+
     BASE = "https://cdn.discordapp.com"
     PROXY = "https://media.discordapp.net"
 

@@ -42,6 +42,22 @@ __all__ = (
 
 
 class GuildMembersChunk:
+    """
+    Represents a chunk of guild members.
+
+    Attributes
+    ----------
+    nonce: str
+        The nonce of the chunk request, used to identify the chunk request.
+    guild_id: int
+        The ID of the guild the chunk belongs to.
+    not_found: list[int]
+        A list of user IDs that were not found in the chunk search.
+    members: list[Member]
+        The members in the chunk.
+    cache: bool
+        Whether to cache the members in the chunk, defaults to `False`.
+    """
     __slots__ = (
         "_state",
         "_waiters",
@@ -149,6 +165,8 @@ class GuildMembersChunk:
 
 
 class Parser:
+    """ The parser for the gateway events. """
+
     __slots__ = ("_chunk_requests", "bot",)
 
     def __init__(self, bot: "Client"):

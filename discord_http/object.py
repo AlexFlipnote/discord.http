@@ -94,6 +94,11 @@ class PartialBase(Snowflake):
 
     This class is based on the Snowflae class standard,
     but with a few extra attributes.
+
+    Attributes
+    ----------
+    id: int
+        The ID of the object.
     """
     __slots__ = ()
 

@@ -1527,6 +1527,8 @@ class SeparatorComponent(Item):
 
 
 class InteractionStorage:
+    """ Storage class for waiting for interactions in a command. """
+
     __slots__ = (
         "_call_after",
         "_event_wait",
@@ -2172,6 +2174,12 @@ class FileComponent(Item):
 
 
 class ContentInventoryEntry(LockedItem):
+    """
+    Represents a content inventory entry component in a message.
+
+    This is used for the content inventory feature in Discord.
+    """
+
     __slots__ = ()
 
     def __init__(self, *_: dict, **kwargs: dict):
@@ -2180,6 +2188,11 @@ class ContentInventoryEntry(LockedItem):
 
 
 class CheckpointComponent(LockedItem):
+    """
+    Represents a checkpoint component in a message.
+
+    This is used for the checkpoint feature in Discord.
+    """
     __slots__ = ()
 
     def __init__(self, *_: dict, **kwargs: dict):

@@ -33,9 +33,27 @@ __all__ = (
 
 
 class ShardEventPayload:
+    """
+    Represents the payload for shard events.
+
+    Attributes
+    ----------
+    id: int
+        The ID of the shard that the event is related to.
+    shard: Shard
+        The shard that the event is related to.
+    reason: str | None
+        The reason for the event, if any.
+    exception: Exception | None
+        The exception that caused the event, if any.
+    close_type: ShardCloseType | None
+        The type of close that caused the event, if any.
+    """
+
     __slots__ = (
         "close_type",
         "exception",
+        "id",
         "reason",
         "shard",
     )
@@ -48,13 +66,14 @@ class ShardEventPayload:
         exception: Exception | None = None,
         close_type: ShardCloseType | None = None,
     ):
+        self.id: int = shard.shard_id
         self.shard: "Shard" = shard
         self.reason: str | None = reason
         self.exception: Exception | None = exception
         self.close_type: ShardCloseType | None = close_type
 
     def __repr__(self) -> str:
-        return f"<ShardEventPayload shard={self.shard.shard_id} reason={self.reason}>"
+        return f"<ShardEventPayload id={self.id} shard={self.shard} reason={self.reason}>"
 
     def is_dead(self) -> bool:
         """ Whether the shard is crashed or not. """
@@ -74,6 +93,24 @@ class ShardEventPayload:
 
 
 class GatewayRatelimiter:
+    """
+    Represents the ratelimiter for the gateway.
+
+    Attributes
+    ----------
+    shard_id: int
+        The ID of the shard that the ratelimiter is for.
+    max: int
+        The maximum number of messages that can be sent in the current window.
+    remaining: int
+        The number of messages remaining in the current window.
+    window: float
+        The start time of the current window.
+    per: float
+        The length of the window in seconds.
+    lock: asyncio.Lock
+        The lock for the ratelimiter, used to block when the ratelimit is hit.
+    """
     __slots__ = (
         "lock",
         "max",
@@ -136,6 +173,22 @@ class GatewayRatelimiter:
 
 
 class Status:
+    """
+    Represents the status of a shard.
+
+    Attributes
+    ----------
+    shard_id: int
+        The ID of the shard.
+    sequence: int | None
+        The last sequence number received from the gateway, if any.
+    session_id: str | None
+        The session ID of the shard, if any.
+    gateway: utils.URL
+        The gateway URL for the shard.
+    latency: float
+        The latency of the shard, in seconds.
+    """
     __slots__ = (
         "_last_ack",
         "_last_heartbeat",
@@ -234,6 +287,36 @@ class Status:
 
 
 class Shard:
+    """
+    Represents a shard for the gateway.
+
+    Attributes
+    ----------
+    bot: Client
+        The bot instance that the shard belongs to.
+    intents: Intents | None
+        The intents that the shard is using, or `None` if not specified.
+    cache_flags: GatewayCacheFlags | None
+        The cache flags that the shard is using, or `None` if not specified.
+    api_version: int
+        The API version that the shard is using.
+    shard_id: int
+        The ID of the shard.
+    shard_count: int | None
+        The total number of shards, or `None` if not specified.
+    debug_events: bool
+        Whether to debug events or not.
+    ws: ClientWebSocketResponse | None
+        The websocket connection for the shard, if any.
+    session: ClientSession
+        The HTTP session for the shard.
+    parser: Parser
+        The parser for the shard.
+    status: Status
+        The status of the shard.
+    playing_status: PlayingStatus | None
+        The playing status of the shard, if any.
+    """
     def __init__(
         self,
         bot: "Client",

@@ -68,6 +68,8 @@ class Client:
         If your bot is receiving a lot of traffic, you might want to increase this value.
     api_version: int
         API version to use for both HTTP and WS, if not provided, it will use the default (10)
+    api_base_url: str | None
+        Base URL to use for the API, if not provided, it will use the default (`https://discord.com/api`)
     loop: asyncio.AbstractEventLoop | None
         Event loop to use, if not provided, it will use `asyncio.get_running_loop()`
     allowed_mentions: AllowedMentions | None
@@ -132,6 +134,7 @@ class Client:
         guild_id: int | None = None,
         sync: bool = True,
         api_version: int = 10,
+        api_base_url: str | None = None,
         loop: asyncio.AbstractEventLoop | None = None,
         allowed_mentions: AllowedMentions | None = None,
         enable_gateway: bool = False,
@@ -159,6 +162,7 @@ class Client:
 
         self.application: Application | None = None
         self.api_version: int = int(api_version)
+        self.api_base_url: str = str(api_base_url or "https://discord.com/api")
         self.token: str = token
         self.automatic_shards: bool = automatic_shards
         self.guild_id: int | None = guild_id

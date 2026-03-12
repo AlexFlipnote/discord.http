@@ -42,6 +42,7 @@ class CommandError(Exception):
 
 
 class CommandOnCooldown(CheckFailed):
+    """ Raised whenever a command is on cooldown. """
     def __init__(self, cooldown: Cooldown, retry_after: float):
         self.cooldown: Cooldown = cooldown
         self.retry_after: float = retry_after

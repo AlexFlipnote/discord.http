@@ -212,6 +212,8 @@ class AvatarDecoration(Snowflake):
 
 
 class PartialUser(PartialBase):
+    """ Represents a partial user object. """
+
     __slots__ = ("_state",)
 
     def __init__(

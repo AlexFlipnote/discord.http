@@ -44,6 +44,8 @@ __all__ = (
 
 
 class HTTPSession(aiohttp.ClientSession):
+    """ A subclass of aiohttp.ClientSession that ensures the session is properly closed. """
+
     __slots__ = ()
 
     async def __aexit__(self, *args) -> None:  # noqa: ANN002
@@ -276,6 +278,25 @@ class HTTPClient:
 
 
 class Ratelimit:
+    """
+    Represents a ratelimit bucket.
+
+    Attributes
+    ----------
+    key: str
+        The key of the ratelimit bucket, usually in the format "METHOD /path/:id"
+    limit: int
+        The maximum number of requests that can be made in the current bucket window
+    remaining: int
+        The number of requests remaining in the current bucket window
+    reset_after: float
+        The number of seconds until the bucket resets
+    expires: float | None
+        The epoch time when the bucket expires, or None if it doesn't expire
+    in_flight: int
+        The number of requests currently in-flight for this bucket
+    """
+
     __slots__ = (
         "_last_request",
         "_lock",
@@ -381,6 +402,27 @@ class Ratelimit:
 
 
 class DiscordAPI:
+    """
+    The main class for interacting with the Discord API.
+
+    Attributes
+    ----------
+    bot: Client
+        The client instance that owns this HTTP client.
+    cache:
+        A reference to the client's cache for easy access within HTTP methods.
+    token: str
+        The bot token used for authentication with the Discord API.
+    api_version: int
+        The version of the Discord API to use for requests.
+    base_url: str
+        The base URL for the Discord API.
+    api_url: str
+        The full API URL including the version (e.g., "https://discord.com/api/v10").
+    http: HTTPClient
+        The HTTP client used to make requests to the Discord API.
+    """
+
     def __init__(self, *, client: "Client"):
         self.bot: "Client" = client
         self.cache = self.bot.cache
@@ -392,7 +434,7 @@ class DiscordAPI:
         if not isinstance(self.api_version, int):
             raise TypeError("api_version must be an integer")
 
-        self.base_url: str = "https://discord.com/api"
+        self.base_url = self.bot.api_base_url
         self.api_url: str = f"{self.base_url}/v{self.api_version}"
         self.http: HTTPClient = HTTPClient()
 

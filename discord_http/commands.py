@@ -86,6 +86,7 @@ __all__ = (
 
 
 class Cog:
+    """ Represents a cog, a collection of commands, listeners, and interactions. """
     def __new__(cls, *args, **kwargs):  # noqa: ANN002, ARG004
         """ Create a new cog. """
         commands = {}
@@ -165,6 +166,16 @@ class Cog:
 
 
 class PartialCommand(PartialBase):
+    """
+    Represents a partial command, usually from an event.
+
+    Attributes
+    ----------
+    name: str
+        The name of the command
+    guild_id: int | None
+        The ID of the guild this command is in, or None if it's a global command
+    """
     def __init__(self, data: dict):
         super().__init__(id=int(data["id"]))
         self.name: str = data["name"]
@@ -178,6 +189,19 @@ class PartialCommand(PartialBase):
 
 
 class LocaleContainer:
+    """
+    Represents a container for localized names and descriptions.
+
+    Attributes
+    ----------
+    key: str
+        The key of the option this localization is for, or "_" for the command itself.
+    name: str
+        The localized name.
+    description: str
+        The localized description.
+    """
+
     def __init__(
         self,
         key: str,
@@ -216,6 +240,36 @@ class Converter(Protocol[ConverterT]):
 
 
 class Command:
+    """
+    Represents a Discord command.
+
+    Attributes
+    ----------
+    id: int | None
+        The ID of the command, None if it's not registered yet.
+    command: Callable
+        The function that is called when the command is invoked.
+    cog: Cog | None
+        The cog this command belongs to, None if it does not belong to a cog.
+    type: int
+        The type of the command, either 1 for chat input, 2 for user context menu, or 3 for message context menu.
+    name: str
+        The name of the command.
+    description: str | None
+        The description of the command, only applicable for chat input commands.
+    options: list[dict]
+        The options of the command, only applicable for chat input commands.
+    parent: SubGroup | None
+        The parent subcommand group of this command, if it is a subcommand.
+    guild_install: bool
+        Whether this command should be installed in guilds or not.
+    user_install: bool
+        Whether this command should be installed for users or not.
+    list_autocompletes: dict[str, Callable]
+        A mapping of option names to their autocomplete functions.
+    guild_ids: list[int]
+        A list of guild IDs this command is in, empty if it's a global command.
+    """
     def __init__(
         self,
         command: Callable,
@@ -835,6 +889,7 @@ class Command:
 
 
 class SubCommand(Command):
+    """ Represents a subcommand, a command that is part of a subcommand group. """
     def __init__(
         self,
         func: Callable,
@@ -861,6 +916,28 @@ class SubCommand(Command):
 
 
 class SubGroup(Command):
+    """
+    Represents a subcommand group, a collection of subcommands.
+
+    Attributes
+    ----------
+    name: str
+        The name of the subcommand group.
+    description: str
+        The description of the subcommand group.
+    guild_ids: list[int]
+        A list of guild IDs this subcommand group is in, empty if it's a global subcommand group.
+    guild_install: bool
+        Whether this subcommand group should be installed in guilds or not.
+    user_install: bool
+        Whether this subcommand group should be installed for users or not.
+    parent: SubGroup | None
+        The parent subcommand group of this subcommand group, if it is a nested subcommand group.
+    subcommands: dict[str, SubCommand | SubGroup]
+        A mapping of subcommand names to their respective SubCommand or SubGroup objects.
+    cog: Cog | None
+        The cog this subcommand group belongs to, None if it does not belong to a cog.
+    """
     def __init__(
         self,
         *,
@@ -994,6 +1071,18 @@ class SubGroup(Command):
 
 
 class Interaction:
+    """
+    Represents a Discord interaction, usually from a component or modal.
+
+    Attributes
+    ----------
+    func: Callable
+        The function that is called when the interaction is invoked.
+    custom_id: str
+        The custom ID of the interaction, used to match with incoming interactions.
+    regex: bool
+        Whether the custom ID is a regex pattern or not.
+    """
     def __init__(
         self,
         func: Callable,
@@ -1071,6 +1160,18 @@ class Interaction:
 
 
 class Listener:
+    """
+    Represents a Discord event listener.
+
+    Attributes
+    ----------
+    name: str
+        The name of the event to listen to, e.g. "on_message_create".
+    coro: Callable
+        The coroutine function that is called when the event is triggered.
+    cog: Cog | None
+        The cog this listener belongs to, None if it does not belong to a cog.
+    """
     def __init__(
         self,
         *,

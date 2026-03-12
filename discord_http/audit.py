@@ -294,6 +294,7 @@ class AuditChange:
     new_value: `Any | None`
         The new value of the change, if applicable.
     """
+
     _translaters: ClassVar[dict[str, Callable[["AuditLogEntry", Any], Any] | None]] = {
         "verification_level": _handle_enum(enums.VerificationLevel),
         "explicit_content_filter": _handle_enum(enums.ContentFilterLevel),

@@ -13,6 +13,18 @@ _log = logging.getLogger(__name__)
 
 
 class Sleeper:
+    """
+    A helper class that handles sleeping until a specified datetime.
+
+    Attributes
+    ----------
+    loop: asyncio.AbstractEventLoop
+        The event loop that the sleeper is using.
+    future: asyncio.Future
+        The future that is waiting for the timer to finish.
+    handle: asyncio.TimerHandle
+        The handle for the timer that is waiting for the specified datetime.
+    """
     __slots__ = (
         "future",
         "handle",
@@ -71,6 +83,18 @@ class Sleeper:
 
 
 class Loop:
+    """
+    A helper class that handles looping a function at a specified interval.
+
+    Attributes
+    ----------
+    func: Callable
+        The function to loop.
+    reconnect: bool
+        Whether the loop should reconnect if it fails or not.
+    count: int | None
+        The number of times to run the loop. If `None`, the loop will run forever.
+    """
     def __init__(
         self,
         *,

@@ -25,6 +25,8 @@ class _FlagPyMeta(Flag, boundary=CONFORM):
 
 
 class BaseFlag(_FlagPyMeta):
+    """ Base class for all flags. """
+
     def __str__(self) -> str:
         return str(self.value)
 

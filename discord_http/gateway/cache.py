@@ -23,6 +23,8 @@ __all__ = (
 
 
 class Cache:
+    """ Represents the discord.http/gateway cache. """
+
     __slots__ = ("__guilds", "_state", "bot", "cache_flags")
 
     def __init__(

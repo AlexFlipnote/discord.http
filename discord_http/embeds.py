@@ -89,6 +89,35 @@ class EmbedMedia:
 
 
 class Embed:
+    """
+    Represents a Discord embed.
+
+    Attributes
+    ----------
+    title: str | None
+        The title of the embed, if any.
+    description: str | None
+        The description of the embed, if any.
+    colour: Colour | None
+        The colour of the embed, if any.
+    url: str | None
+        The URL of the embed, if any.
+    timestamp: datetime | None
+        The timestamp of the embed, if any.
+    type: EmbedTypes
+        The type of the embed, which can be "rich", "image", "video",
+        "gifv", "article", "link", or "poll_result". Defaults to "rich".
+    footer: EmbedFooter | None
+        The footer of the embed, if any.
+    author: EmbedAuthor | None
+        The author of the embed, if any.
+    image: EmbedMedia | None
+        The image of the embed, if any.
+    thumbnail: EmbedMedia | None
+        The thumbnail of the embed, if any.
+    fields: list[EmbedField]
+        The fields of the embed, if any.
+    """
     __slots__ = (
         "author",
         "colour",

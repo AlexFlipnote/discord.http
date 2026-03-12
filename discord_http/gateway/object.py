@@ -37,6 +37,22 @@ __all__ = (
 
 
 class PlayingStatus:
+    """
+    Represents the playing status of the bot.
+
+    Attributes
+    ----------
+    name: str | None
+        The name of the activity, if any.
+    status: StatusType | None
+        The status of the activity, if any.
+    type: ActivityType | None
+        The type of the activity, if any.
+    url: str | None
+        The url of the activity, if any. Only applicable for streaming activities.
+    since: int | None
+        The timestamp of when the activity started, if applicable.
+    """
     __slots__ = (
         "name",
         "since",
@@ -110,6 +126,25 @@ class PlayingStatus:
 
 
 class GuildJoinRequest:
+    """
+    Represents a guild join request event.
+
+    Attributes
+    ----------
+    user:
+        The user that made the join request.
+    guild:
+        The guild the join request was made to.
+    last_seen:
+        The last time the user was seen in the guild, if applicable.
+    rejection_reason:
+        The reason the join request was rejected, if applicable.
+    status:
+        The status of the join request. Can be "pending", "accepted", or "rejected".
+    user:
+        The user that made the join request, or `None` if the user is not available.
+    """
+
     __slots__ = (
         "_state",
         "guild",
@@ -187,6 +222,27 @@ class ChannelPinsUpdate:  # noqa: B903
 
 
 class Presence:
+    """
+    Represents a presence update event.
+
+    Attributes
+    ----------
+    user:
+        The user the presence update is for.
+    guild:
+        The guild the presence update is for.
+    status:
+        The status of the presence update.
+    activities:
+        The activities of the presence update.
+    desktop:
+        The desktop status of the presence update, if applicable.
+    mobile:
+        The mobile status of the presence update, if applicable.
+    web:
+        The web status of the presence update, if applicable.
+    """
+
     __slots__ = (
         "_state",
         "activities",
@@ -279,6 +335,33 @@ class TypingStartEvent:  # noqa: B903
 
 
 class AutomodExecution:
+    """
+    Represents an automod execution event.
+
+    Attributes
+    ----------
+    guild:
+        The guild the automod execution was triggered in.
+    user:
+        The user that triggered the automod execution.
+    action:
+        The action that was taken by the automod rule.
+    rule:
+        The automod rule that was executed.
+    channel:
+        The channel the automod execution was triggered in, if applicable.
+    content:
+        The content that triggered the automod execution, if applicable.
+    matched_keyword:
+        The keyword that triggered the automod execution, if applicable.
+    matched_content:
+        The content that matched the keyword and triggered the automod execution, if applicable.
+    message_id:
+        The ID of the message that triggered the automod execution, if applicable.
+    alert_system_message_id:
+        The ID of the system message that was sent as an alert for the automod execution, if applicable.
+    """
+
     __slots__ = (
         "_state",
         "action",
@@ -286,7 +369,6 @@ class AutomodExecution:
         "channel",
         "content",
         "guild",
-        "last_seen",
         "matched_content",
         "matched_keyword",
         "message_id",
@@ -339,6 +421,25 @@ class AutomodExecution:
 
 
 class PollVoteEvent:
+    """
+    Represents a poll vote event.
+
+    Attributes
+    ----------
+    user:
+        The user that made the vote.
+    guild:
+        The guild the poll is in. If the poll is in a DM channel, this will be `None`.
+    channel:
+        The channel the poll is in.
+    message:
+        The message the poll is in.
+    type:
+        The type of the poll vote action, either "vote" or "unvote".
+    answer_id:
+        The ID of the answer that was voted or unvoted.
+    """
+
     __slots__ = (
         "_state",
         "answer_id",
@@ -382,6 +483,33 @@ class PollVoteEvent:
 
 
 class Reaction:
+    """
+    Represents a reaction event.
+
+    Attributes
+    ----------
+    user_id: int
+        The ID of the user that made the reaction.
+    channel_id: int
+        The ID of the channel the reaction was made in.
+    message_id: int
+        The ID of the message the reaction was made to.
+    guild_id: int | None
+        The ID of the guild the reaction was made in, or `None` if the reaction was made in a DM channel.
+    message_author_id: int | None
+        The ID of the user that authored the message the reaction was made to, or `None` if the message author is not available.
+    member: Member | None
+        The member that made the reaction, or `None` if the member is not available.
+    emoji: EmojiParser
+        The emoji that was reacted with.
+    burst: bool
+        Whether the reaction is a burst reaction.
+    burst_colour: Colour | None
+        The colour of the burst reaction, if applicable.
+    type: ReactionType
+        The type of the reaction.
+    """
+
     __slots__ = (
         "_state",
         "burst",
@@ -489,6 +617,19 @@ class Reaction:
 
 
 class BulkDeletePayload:
+    """
+    Represents a bulk delete event.
+
+    Attributes
+    ----------
+    guild: PartialGuild | Guild
+        The guild the messages were deleted in.
+    channel: BaseChannel | PartialChannel
+        The channel the messages were deleted in.
+    messages: list[PartialMessage]
+        The messages that were deleted.
+    """
+
     __slots__ = (
         "_state",
         "channel",

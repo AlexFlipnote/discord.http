@@ -37,6 +37,17 @@ class DiscordHTTP(web.Application):
     Serves as the fundemental HTTP server for Discord Interactions.
 
     We recommend to not touch this class, unless you know what you're doing
+
+    Attributes
+    ----------
+    uptime: datetime
+        The time when the HTTP server was started
+    bot: Client
+        The bot instance that is using this HTTP server
+    debug_events: bool
+        Whether to dispatch debug events for interactions received, defaults to False
+    verify_key: VerifyKey | None
+        The verify key used to validate incoming requests, if not set, it will try to fetch from the bot's public key
     """
 
     def __init__(self, *, client: "Client"):

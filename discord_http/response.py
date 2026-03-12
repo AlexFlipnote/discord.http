@@ -77,6 +77,8 @@ class Ping(Snowflake):
 
 
 class BaseResponse:
+    """ Represents a base response for interactions. """
+
     __slots__ = ()
 
     def __init__(self):

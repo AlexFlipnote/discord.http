@@ -148,6 +148,19 @@ class EmojiParser:
 
 
 class PartialEmoji(PartialBase):
+    """
+    Represents a partial emoji.
+
+    This is used when the emoji is not fully available, such as in reactions.
+
+    Attributes
+    ----------
+    id: int
+        The ID of the emoji.
+    guild_id: int | None
+        The ID of the guild the emoji belongs to, if any.
+    """
+
     __slots__ = ("_state", "guild_id",)
 
     def __init__(
@@ -316,6 +329,26 @@ class PartialEmoji(PartialBase):
 
 
 class Emoji(PartialEmoji):
+    """
+    Represents a Discord emoji.
+
+    Attributes
+    ----------
+    name: str
+        The name of the emoji.
+    animated: bool
+        Whether the emoji is animated or not.
+    available: bool
+        Whether the emoji is available or not.
+    require_colons: bool
+        Whether the emoji requires colons or not.
+    managed: bool
+        Whether the emoji is managed by an integration or not.
+    user: User | None
+        The user that created the emoji, if available.
+    roles: list[PartialRole]
+        The roles that are allowed to use the emoji. (Only for guilds)
+    """
     __slots__ = (
         "animated",
         "available",

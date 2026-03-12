@@ -137,6 +137,8 @@ class _ResolveParser:
 
 
 class ResolvedValues(_ResolveParser):
+    """ Represents the resolved values of an interaction. """
+
     __slots__ = ()
 
     def __init__(self, ctx: "Context", data: dict):
@@ -144,31 +146,32 @@ class ResolvedValues(_ResolveParser):
 
     @property
     def members(self) -> list[Member]:
-        """ Of members resolved. """
+        """ Returns the resolved members if any. """
         return self._parsed_data["members"]
 
     @property
     def users(self) -> list[User]:
-        """ Of users resolved. """
+        """ Returns the resolved users if any. """
         return self._parsed_data["users"]
 
     @property
     def channels(self) -> list[BaseChannel]:
-        """ Of channels resolved. """
+        """ Returns the resolved channels if any. """
         return self._parsed_data["channels"]
 
     @property
     def roles(self) -> list[Role]:
-        """ Of roles resolved. """
+        """ Returns the resolved roles if any. """
         return self._parsed_data["roles"]
 
     @property
     def attachments(self) -> list[Attachment]:
-        """ Of attachments resolved. """
+        """ Returns the resolved attachments if any. """
         return self._parsed_data["attachments"]
 
 
 class SelectValues(ResolvedValues):
+    """ Represents the selected values of a select menu interaction. """
     __slots__ = ()
 
     def __init__(self, ctx: "Context", data: dict):
@@ -181,6 +184,8 @@ class SelectValues(ResolvedValues):
 
 
 class InteractionResponse:
+    """ Represents the response to an interaction. """
+
     __slots__ = ("_parent",)
 
     def __init__(self, parent: "Context"):

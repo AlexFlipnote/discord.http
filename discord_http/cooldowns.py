@@ -15,6 +15,8 @@ __all__ = (
 
 
 class BucketType(BaseEnum):
+    """ Represents the type of bucket to use for local rate limiting. """
+
     default = 0
     user = 1
     member = 2
@@ -74,6 +76,8 @@ class BucketType(BaseEnum):
 
 
 class CooldownCache:
+    """ Represents a cache for cooldowns. """
+
     __slots__ = (
         "_cache",
         "_cooldown",

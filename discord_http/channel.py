@@ -81,6 +81,7 @@ class Typing:
     channel: PartialChannel
         The channel the typing indicator is for
     """
+
     __slots__ = (
         "_state",
         "channel",
@@ -1744,6 +1745,8 @@ class BaseChannel(PartialChannel):
 
 
 class TextChannel(BaseChannel):
+    """ Represents a text channel. """
+
     __slots__ = ()
 
     def __init__(self, *, state: "DiscordAPI", data: dict):
@@ -1832,6 +1835,8 @@ class DMChannel(BaseChannel):
 
 
 class StoreChannel(BaseChannel):
+    """ Represents a store channel. """
+
     __slots__ = ()
 
     def __init__(self, *, state: "DiscordAPI", data: dict):
@@ -1847,6 +1852,8 @@ class StoreChannel(BaseChannel):
 
 
 class GroupDMChannel(BaseChannel):
+    """ Represents a group DM channel. """
+
     __slots__ = ()
 
     def __init__(self, *, state: "DiscordAPI", data: dict):
@@ -1862,6 +1869,8 @@ class GroupDMChannel(BaseChannel):
 
 
 class DirectoryChannel(BaseChannel):
+    """ Represents a directory channel. """
+
     __slots__ = ()
 
     def __init__(self, *, state: "DiscordAPI", data: dict):
@@ -1877,6 +1886,8 @@ class DirectoryChannel(BaseChannel):
 
 
 class CategoryChannel(BaseChannel):
+    """ Represents a category channel. """
+
     __slots__ = ()
 
     def __init__(self, *, state: "DiscordAPI", data: dict):
@@ -2038,6 +2049,8 @@ class CategoryChannel(BaseChannel):
 
 
 class NewsChannel(BaseChannel):
+    """ Represents a news channel. """
+
     __slots__ = ()
 
     def __init__(self, state: "DiscordAPI", data: dict):
@@ -2332,8 +2345,6 @@ class ForumChannel(PublicThread):
     ----------
     default_reaction_emoji: EmojiParser | None
         The default reaction emoji for the forum channel
-    tags: list[ForumTag]
-        The available tags for the forum channel
     """
 
     __slots__ = (
@@ -2378,6 +2389,8 @@ class ForumChannel(PublicThread):
 
 
 class ForumThread(PublicThread):
+    """ Represents a thread in a forum channel. """
+
     __slots__ = ("message",)
 
     def __init__(self, state: "DiscordAPI", data: dict):
@@ -2406,6 +2419,8 @@ class ForumThread(PublicThread):
 
 
 class NewsThread(PublicThread):
+    """ Represents a news thread. """
+
     __slots__ = ()
 
     def __init__(self, state: "DiscordAPI", data: dict):
@@ -2421,6 +2436,8 @@ class NewsThread(PublicThread):
 
 
 class PrivateThread(PublicThread):
+    """ Represents a private thread. """
+
     __slots__ = ()
 
     def __init__(self, *, state: "DiscordAPI", data: dict):
@@ -2433,6 +2450,8 @@ class PrivateThread(PublicThread):
 
 
 class Thread(PublicThread):
+    """ Represents a thread channel. """
+
     __slots__ = ()
 
     def __init__(self, *, state: "DiscordAPI", data: dict):
@@ -2673,6 +2692,8 @@ class StageInstance(PartialBase):
 
 
 class StageChannel(VoiceChannel):
+    """ Represents a stage channel object. """
+
     __slots__ = ("_stage_instance",)
 
     def __init__(self, *, state: "DiscordAPI", data: dict):

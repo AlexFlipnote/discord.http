@@ -21,6 +21,22 @@ __all__ = (
 
 
 class ActivityAssets:
+    """
+    Represents the assets of an activity.
+
+    Attributes
+    ----------
+    application_id: int
+        The ID of the application this activity belongs to.
+    large_image: Asset | None
+        The large image asset of the activity, if any.
+    large_text: str | None
+        The text for the large image, if any.
+    small_image: Asset | None
+        The small image asset of the activity, if any.
+    small_text: str | None
+        The text for the small image, if any.
+    """
     __slots__ = (
         "_state",
         "application_id",
@@ -64,6 +80,16 @@ class ActivityAssets:
 
 
 class ActivityTimestamps:
+    """
+    Represents the timestamps of an activity.
+
+    Attributes
+    ----------
+    start: datetime | None
+        The start time of the activity, if any.
+    end: datetime | None
+        The end time of the activity, if any.
+    """
     __slots__ = (
         "end",
         "start",
@@ -87,6 +113,19 @@ class ActivityTimestamps:
 
 
 class ActivitySecrets:
+    """
+    Represents the secrets of an activity.
+
+    Attributes
+    ----------
+    join: str | None
+        The secret for joining the activity, if any.
+    spectate: str | None
+        The secret for spectating the activity, if any.
+    match: str | None
+        The secret for joining a specific match, if any.
+    """
+
     __slots__ = (
         "join",
         "match",
@@ -106,6 +145,19 @@ class ActivitySecrets:
 
 
 class ActivityParty:
+    """
+    Represents the party of an activity.
+
+    Attributes
+    ----------
+    id: str | None
+        The ID of the party, if any.
+    current_size: int | None
+        The current size of the party, if any.
+    max_size: int | None
+        The maximum size of the party, if any.
+    """
+
     __slots__ = (
         "current_size",
         "id",
@@ -123,6 +175,43 @@ class ActivityParty:
 
 
 class Activity:
+    """
+    Represents an activity.
+
+    Attributes
+    ----------
+    name: str
+        The name of the activity.
+    url: str | None
+        The URL of the activity, if any.
+    created_at: datetime
+        The time the activity was created at.
+    application_id: int | None
+        The ID of the application this activity belongs to, if any.
+    state: str | None
+        The state of the activity, if any.
+    details: str | None
+        The details of the activity, if any.
+    sync_id: str | None
+        The sync ID of the activity, if any.
+    session_id: str | None
+        The session ID of the activity, if any.
+    emoji: EmojiParser | None
+        The emoji of the activity, if any.
+    party: ActivityParty | None
+        The party of the activity, if any.
+    assets: ActivityAssets | None
+        The assets of the activity, if any.
+    secrets: ActivitySecrets | None
+        The secrets of the activity, if any.
+    instance: bool
+        Whether the activity is an instance, if any.
+    flags: ActivityFlags
+        The flags of the activity, if any.
+    buttons: list[str]
+        The buttons of the activity, if any.
+    """
+
     __slots__ = (
         "_raw_type",
         "_state",

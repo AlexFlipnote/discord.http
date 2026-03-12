@@ -9,7 +9,14 @@ __all__ = (
 
 
 class Colour:
-    """ Represents a colour object, used in multiple places in the API. """
+    """
+    Represents a colour object, used in multiple places in the API.
+
+    Attributes
+    ----------
+    value: int
+        The integer value of the colour, between 0 and 16777215 (0xFFFFFF)
+    """
 
     __slots__ = ("value",)
 

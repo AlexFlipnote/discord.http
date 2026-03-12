@@ -52,6 +52,7 @@ __all__ = (
 
 class BaseEnum(_Enum):
     """ Enum, but with more comparison operators to make life easier. """
+
     @classmethod
     def random(cls) -> Self:
         """ Return a random enum. """

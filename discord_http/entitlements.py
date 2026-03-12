@@ -20,6 +20,8 @@ __all__ = (
 
 
 class PartialSKU(PartialBase):
+    """ Represents a partial SKU object. """
+
     __slots__ = ("_state",)
 
     def __init__(
@@ -133,6 +135,8 @@ class SKU(PartialSKU):
 
 
 class PartialEntitlements(PartialBase):
+    """ Represents a partial entitlement object. """
+
     __slots__ = ("_state",)
 
     def __init__(
@@ -177,6 +181,30 @@ class PartialEntitlements(PartialBase):
 
 
 class Entitlements(PartialEntitlements):
+    """
+    Represents an entitlement object.
+
+    Attributes
+    ----------
+    deleted: bool
+        Whether the entitlement is deleted or not.
+    type: EntitlementType
+        The type of the entitlement.
+    user: PartialUser | None
+        The user that owns the entitlement, if the owner type is user.
+    guild_id: int | None
+        The guild ID that owns the entitlement, if the owner type is guild.
+    subscription_id: int | None
+        The subscription ID that the entitlement belongs to, if any.
+    application: PartialUser
+        The application that owns the entitlement.
+    sku: PartialSKU
+        The SKU that the entitlement belongs to.
+    starts_at: datetime | None
+        The time the entitlement starts at, if any.
+    ends_at: datetime | None
+        The time the entitlement ends at, if any.
+    """
     __slots__ = (
         "_data_consumed",
         "application",

@@ -69,6 +69,16 @@ class BanEntry(NamedTuple):
 
 
 class PartialScheduledEvent(PartialBase):
+    """
+    Represents a partial scheduled event in a guild.
+
+    Attributes
+    ----------
+    id: int
+        The ID of the scheduled event.
+    guild_id: int
+        The ID of the guild the scheduled event belongs to.
+    """
     __slots__ = ("_state", "guild_id",)
 
     def __init__(
@@ -242,6 +252,36 @@ class PartialScheduledEvent(PartialBase):
 
 
 class ScheduledEvent(PartialScheduledEvent):
+    """
+    Represents a scheduled event in a guild.
+
+    Attributes
+    ----------
+    id: int
+        The ID of the scheduled event.
+    guild_id: int
+        The ID of the guild the scheduled event belongs to.
+    name: str
+        The name of the scheduled event.
+    description: str | None
+        The description of the scheduled event.
+    user_count: int | None
+        The number of users interested in the event (only for guild events).
+    privacy_level: PrivacyLevelType
+        The privacy level of the event.
+    status: ScheduledEventStatusType
+        The status of the event.
+    entity_type: ScheduledEventEntityType
+        The entity type of the event.
+    channel: PartialChannel | None
+        The channel the event is in, if applicable.
+    creator: User | None
+        The creator of the event, if applicable.
+    start_time: datetime
+        The time the event starts at.
+    end_time: datetime | None
+        The time the event ends at, if applicable.
+    """
     __slots__ = (
         "channel",
         "creator",
@@ -313,6 +353,19 @@ class ScheduledEvent(PartialScheduledEvent):
 
 
 class PartialGuild(PartialBase):
+    """
+    Represents a partial guild object.
+
+    Attributes
+    ----------
+    id: int
+        The ID of the guild.
+    guild_id: int
+        The ID of the guild the scheduled event belongs to.
+    member_count: int | None
+        The number of members in the guild, if available.
+    """
+
     __slots__ = (
         "_cache_channels",
         "_cache_emojis",

@@ -43,6 +43,7 @@ class AutoModRuleTriggers:
     mention_raid_protection_enabled: bool
         If this should apply for raids
     """
+
     __slots__ = (
         "allow_list",
         "keyword_filter",
@@ -131,6 +132,21 @@ class AutoModRuleTriggers:
 
 
 class AutoModRuleAction:
+    """
+    Represents an action for an auto moderation rule.
+
+    Attributes
+    ----------
+    type: AutoModRuleActionType
+        The type of action to take when the auto moderation rule is triggered
+    channel_id: int | None
+        The channel to send the alert message to if the action type is send_alert_message
+    duration_seconds: int | None
+        The number of seconds to timeout the user for if the action type is timeout
+    custom_message: str | None
+        The message to show the user if the action type is block_message
+    """
+
     __slots__ = (
         "channel_id",
         "custom_message",
@@ -265,6 +281,15 @@ class AutoModRuleAction:
 
 
 class PartialAutoModRule(PartialBase):
+    """
+    Represents a partial auto moderation rule, usually from an event.
+
+    Attributes
+    ----------
+    guild_id: int
+        The ID of the guild this automod rule is in
+    """
+
     __slots__ = (
         "_state",
         "guild_id",

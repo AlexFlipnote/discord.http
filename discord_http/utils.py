@@ -134,7 +134,21 @@ class MultipartData(MultipartWriter):
 
 
 class BenchmarkEntry:
-    """ A simple, high-precision benchmarking class. """
+    """
+    A simple, high-precision benchmarking class.
+
+    All times are assumed to be in UTC.
+
+    Attributes
+    ----------
+    internal: bool
+        Whether this benchmark entry is for internal use (default: False).
+        Mostly used to differentiate between user and internal benchmarks
+    created_at: datetime | None
+        The time the benchmark was created.
+    finished_at: datetime | None
+        The time the benchmark was finished.
+    """
 
     __slots__ = (
         "_end_perf",
@@ -205,6 +219,12 @@ class Benchmark:
     A simple benchmarking context manager.
 
     Used to benchmark code execution time.
+
+    Attributes
+    ----------
+    results: dict[str, BenchmarkEntry]
+        A dictionary of benchmark entries, where the key is the name of
+        the benchmark and the value is the BenchmarkEntry object.
     """
 
     __slots__ = ("_overall_start", "results",)
@@ -1270,6 +1290,11 @@ class _MissingType:
 
     It is also filled with a bunch of methods to make it
     more compatible with other types and make pyright happy
+
+    Attributes
+    ----------
+    id: int
+        The id of the missing value, defaults to -1
     """
 
     __slots__ = ("id",)
@@ -1315,6 +1340,19 @@ MISSING: Any = _MissingType()
 
 
 class CustomFormatter(logging.Formatter):
+    """
+    A custom logging formatter that adds colors and prefixes to log messages.
+
+    It has hardcoded colours to avoid adding a dependency just for this (such as colorama or similar).
+
+    In order to use this logger, do the following:
+
+    .. code-block:: python
+
+        import logging
+        _log = logging.getLogger("discord_http")
+        # And now you can use _log.debug, _log.info, etc. and it will be formatted with the CustomFormatter
+    """
     reset = "\x1b[0m"
 
     # Normal colours
