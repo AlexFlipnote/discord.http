@@ -817,9 +817,9 @@ class DiscordAPI:
         target = f"for Guild:{guild_id}" if guild_id else "globally"
 
         if r.status >= 200 and r.status <= 299:
-            _log.info(f"🔁 Successfully synced commands {target}")
+            _log.info(f"Successfully synced commands {target}")
         else:
-            _log.warning(f"🔁 Failed to sync commands {target}: {r.response}")
+            _log.warning(f"Failed to sync commands {target}: {r.response}")
 
         return r.response
 
