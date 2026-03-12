@@ -5,7 +5,6 @@ from ..voice import VoiceState, PartialVoiceState
 
 from .flags import GatewayCacheFlags
 
-
 if TYPE_CHECKING:
     from ..channel import PartialChannel, PartialThread
     from ..client import Client

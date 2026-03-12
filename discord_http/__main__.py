@@ -5,7 +5,6 @@ import sys
 
 from importlib.metadata import version
 
-
 def get_package_version(name: str) -> str:
     """
     Get the version of a package.

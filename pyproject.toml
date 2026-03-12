@@ -152,6 +152,15 @@ ignore = [
   "A005",  # Files
 ]
 
+[tool.ruff.lint.isort]
+combine-as-imports = true
+lines-after-imports = 1
+known-first-party = ["discord_http"]
+section-order = ["future", "standard-library", "third-party", "first-party", "local-folder"]
+
+[tool.ruff.lint.pydocstyle]
+convention = "numpy"
+
 [tool.ruff.format]
 quote-style = "double"
 indent-style = "space"
@@ -172,13 +181,15 @@ include = [
 ]
 
 exclude = [
-  "**/__pycache__",
   "**/*.pyc",
+  "**/.*",
+  "**/__pycache__",
+  "**/node_modules",
   "*.egg-info",
   ".venv",
   "build",
-  "docs",
   "dist",
+  "docs",
   "examples",
   "tests",
 ]
