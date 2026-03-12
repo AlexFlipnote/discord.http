@@ -1,5 +1,6 @@
 import aiohttp
 import asyncio
+import errno
 import logging
 import orjson
 import random
@@ -683,7 +684,7 @@ class DiscordAPI:
                             raise HTTPException(r)
 
                 except OSError as e:
-                    if tries < 4 and e.errno in (54, 10054):
+                    if tries < 4 and e.errno in (errno.ECONNRESET, errno.ECONNABORTED, 54):
                         await _sleep(tries)
                         continue
                     raise
