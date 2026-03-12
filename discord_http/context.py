@@ -622,20 +622,21 @@ class Context:
         self.user: Member | User = self._parse_user(data)
         """ The user who initiated the interaction. """
 
+        self._guild: PartialGuild | None = None
+        self._channel: BaseChannel | None = None
+
         self._from_data(data)
 
     def _from_data(self, data: dict) -> None:
         if data.get("channel_id"):
             self.channel_id = int(data["channel_id"])
 
-        self._guild: PartialGuild | None = None
         if data.get("guild_id"):
             self._guild = PartialGuild(
                 state=self.bot.state,
                 id=int(data["guild_id"])
             )
 
-        self._channel: BaseChannel | None = None
         if data.get("channel"):
             channel_data = data["channel"]
             if self._guild:
