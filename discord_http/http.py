@@ -410,7 +410,7 @@ class DiscordAPI:
         # Background tasks
         self.bot.loop.create_task(
             self._cleanup_loop(),
-            name="discord.http/cleanup_loop"
+            name="discord.http/cleanup_http_loop"
         )
 
     async def _cleanup_loop(self) -> None:
