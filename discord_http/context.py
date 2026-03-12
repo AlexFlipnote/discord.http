@@ -539,6 +539,9 @@ class Context:
         bot: "Client",
         data: dict
     ):
+        self._guild: PartialGuild | None = None
+        self._channel: BaseChannel | None = None
+
         self.bot: "Client" = bot
         """ The bot/client instance that the interaction belongs to. """
 
@@ -619,13 +622,11 @@ class Context:
         self.author: Member | User | None = None
         """ The author of the message that was interacted with, if any. """
 
+        # Parse the data, then continue with the rest of the initialization
+        self._from_data(data)
+
         self.user: Member | User = self._parse_user(data)
         """ The user who initiated the interaction. """
-
-        self._guild: PartialGuild | None = None
-        self._channel: BaseChannel | None = None
-
-        self._from_data(data)
 
     def _from_data(self, data: dict) -> None:
         if data.get("channel_id"):
