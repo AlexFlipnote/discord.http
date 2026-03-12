@@ -217,7 +217,6 @@
 <li class="toctree-l2"><a class="reference internal" href="member.html">Member</a></li>
 <li class="toctree-l2"><a class="reference internal" href="mentions.html">Mentions</a></li>
 <li class="toctree-l2"><a class="reference internal" href="message.html">Message</a></li>
-<li class="toctree-l2"><a class="reference internal" href="multipart.html">Multipart</a></li>
 <li class="toctree-l2"><a class="reference internal" href="object.html">Object</a></li>
 <li class="toctree-l2"><a class="reference internal" href="response.html">Response</a></li>
 <li class="toctree-l2"><a class="reference internal" href="role.html">Role</a></li>
@@ -300,7 +299,7 @@
 <p>Raised whenever a HTTP request was blocked by Discord.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>r</strong> (<a class="reference internal" href="http.html#discord_http.http.HTTPResponse" title="discord_http.http.HTTPResponse"><em>HTTPResponse</em></a>)</p>
+<dd class="field-odd"><p><strong>r</strong> (<em>HTTPResponse</em>)</p>
 </dd>
 </dl>
 </dd></dl>
@@ -335,6 +334,7 @@
 <dt class="sig sig-object py" id="discord_http.errors.CommandOnCooldown">
 <span class="property"><span class="k"><span class="pre">exception</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">discord_http.errors.</span></span><span class="sig-name descname"><span class="pre">CommandOnCooldown</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">cooldown</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">retry_after</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#discord_http.errors.CommandOnCooldown" title="Link to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#discord_http.errors.CheckFailed" title="discord_http.errors.CheckFailed"><code class="xref py py-class docutils literal notranslate"><span class="pre">CheckFailed</span></code></a></p>
+<p>Raised whenever a command is on cooldown.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
@@ -359,7 +359,7 @@
 <p>Raised whenever an unexpected HTTP error occurs.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>r</strong> (<a class="reference internal" href="http.html#discord_http.http.HTTPResponse" title="discord_http.http.HTTPResponse"><em>HTTPResponse</em></a>)</p>
+<dd class="field-odd"><p><strong>r</strong> (<em>HTTPResponse</em>)</p>
 </dd>
 </dl>
 </dd></dl>
@@ -371,7 +371,7 @@
 <p>Raised whenever a HTTP request returns 403.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>r</strong> (<a class="reference internal" href="http.html#discord_http.http.HTTPResponse" title="discord_http.http.HTTPResponse"><em>HTTPResponse</em></a>)</p>
+<dd class="field-odd"><p><strong>r</strong> (<em>HTTPResponse</em>)</p>
 </dd>
 </dl>
 </dd></dl>
@@ -383,7 +383,7 @@
 <p>Base exception for HTTP requests.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>r</strong> (<a class="reference internal" href="http.html#discord_http.http.HTTPResponse" title="discord_http.http.HTTPResponse"><em>HTTPResponse</em></a>)</p>
+<dd class="field-odd"><p><strong>r</strong> (<em>HTTPResponse</em>)</p>
 </dd>
 </dl>
 </dd></dl>
@@ -402,7 +402,7 @@
 <p>Raised whenever a HTTP request returns 404.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>r</strong> (<a class="reference internal" href="http.html#discord_http.http.HTTPResponse" title="discord_http.http.HTTPResponse"><em>HTTPResponse</em></a>)</p>
+<dd class="field-odd"><p><strong>r</strong> (<em>HTTPResponse</em>)</p>
 </dd>
 </dl>
 </dd></dl>
@@ -414,7 +414,7 @@
 <p>Raised whenever a HTTP request returns 429, but without a Retry-After header.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>r</strong> (<a class="reference internal" href="http.html#discord_http.http.HTTPResponse" title="discord_http.http.HTTPResponse"><em>HTTPResponse</em></a>)</p>
+<dd class="field-odd"><p><strong>r</strong> (<em>HTTPResponse</em>)</p>
 </dd>
 </dl>
 </dd></dl>

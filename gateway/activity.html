@@ -3,7 +3,7 @@
   <head><meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
     <meta name="color-scheme" content="light dark"><meta name="viewport" content="width=device-width, initial-scale=1" />
-<meta content="Activity - discord.http docs" property="og:title"><meta content="Bases: object" name="description"><meta content="Bases: object" property="og:description"><meta property="og:image" content="/_static/favicon.ico"><meta name="theme-color" content="#14bae4"><meta property="og:locale" content="en_GB"><meta name="keywords" content="discord, http, api, interaction, aiohttp, webhook, slash><meta name="revisit-after" content="2 days"><link rel="index" title="Index" href="../genindex.html"><link rel="search" title="Search" href="../search.html"><link rel="next" title="Client" href="client.html"><link rel="prev" title="Gateway references" href="../pages/gateway.html">
+<meta content="Activity - discord.http docs" property="og:title"><meta content="Python library that handles interactions from Discord POST requests." name="description"><meta content="Python library that handles interactions from Discord POST requests." property="og:description"><meta property="og:image" content="/_static/favicon.ico"><meta name="theme-color" content="#14bae4"><meta property="og:locale" content="en_GB"><meta name="keywords" content="discord, http, api, interaction, aiohttp, webhook, slash><meta name="revisit-after" content="2 days"><link rel="index" title="Index" href="../genindex.html"><link rel="search" title="Search" href="../search.html"><link rel="next" title="Client" href="client.html"><link rel="prev" title="Gateway references" href="../pages/gateway.html">
 
     <link rel="shortcut icon" href="../_static/favicon.ico"><!-- Generated with Sphinx 9.0.4 and Furo 2025.12.19 -->
         <title>Activity - discord.http docs</title>
@@ -217,7 +217,6 @@
 <li class="toctree-l2"><a class="reference internal" href="../api/member.html">Member</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../api/mentions.html">Mentions</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../api/message.html">Message</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../api/multipart.html">Multipart</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../api/object.html">Object</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../api/response.html">Response</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../api/role.html">Role</a></li>
@@ -291,70 +290,8 @@
         <article role="main" id="furo-main-content">
           <section id="activity">
 <h1>Activity<a class="headerlink" href="#activity" title="Link to this heading">¶</a></h1>
-<section id="module-discord_http.gateway.activity">
-<span id="discord-http-gateway-activity-module"></span><h2>discord_http.gateway.activity module<a class="headerlink" href="#module-discord_http.gateway.activity" title="Link to this heading">¶</a></h2>
-<dl class="py class">
-<dt class="sig sig-object py" id="discord_http.gateway.activity.Activity">
-<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">discord_http.gateway.activity.</span></span><span class="sig-name descname"><span class="pre">Activity</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">state</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#discord_http.gateway.activity.Activity" title="Link to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>state</strong> (<a class="reference internal" href="../api/http.html#discord_http.http.DiscordAPI" title="discord_http.http.DiscordAPI"><em>DiscordAPI</em></a>)</p></li>
-<li><p><strong>data</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.14)"><em>dict</em></a>)</p></li>
-</ul>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py class">
-<dt class="sig sig-object py" id="discord_http.gateway.activity.ActivityAssets">
-<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">discord_http.gateway.activity.</span></span><span class="sig-name descname"><span class="pre">ActivityAssets</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">state</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">application_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#discord_http.gateway.activity.ActivityAssets" title="Link to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>state</strong> (<a class="reference internal" href="../api/http.html#discord_http.http.DiscordAPI" title="discord_http.http.DiscordAPI"><em>DiscordAPI</em></a>)</p></li>
-<li><p><strong>application_id</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><em>int</em></a>)</p></li>
-<li><p><strong>data</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.14)"><em>dict</em></a>)</p></li>
-</ul>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py class">
-<dt class="sig sig-object py" id="discord_http.gateway.activity.ActivityParty">
-<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">discord_http.gateway.activity.</span></span><span class="sig-name descname"><span class="pre">ActivityParty</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">data</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#discord_http.gateway.activity.ActivityParty" title="Link to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>data</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.14)"><em>dict</em></a>)</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py class">
-<dt class="sig sig-object py" id="discord_http.gateway.activity.ActivitySecrets">
-<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">discord_http.gateway.activity.</span></span><span class="sig-name descname"><span class="pre">ActivitySecrets</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">data</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#discord_http.gateway.activity.ActivitySecrets" title="Link to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>data</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.14)"><em>dict</em></a>)</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py class">
-<dt class="sig sig-object py" id="discord_http.gateway.activity.ActivityTimestamps">
-<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">discord_http.gateway.activity.</span></span><span class="sig-name descname"><span class="pre">ActivityTimestamps</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">data</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#discord_http.gateway.activity.ActivityTimestamps" title="Link to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>data</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.14)"><em>dict</em></a>)</p>
-</dd>
-</dl>
-</dd></dl>
-
+<section id="discord-http-gateway-activity-module">
+<h2>discord_http.gateway.activity module<a class="headerlink" href="#discord-http-gateway-activity-module" title="Link to this heading">¶</a></h2>
 </section>
 </section>
 
@@ -414,14 +351,7 @@
           <div class="toc-tree">
             <ul>
 <li><a class="reference internal" href="#">Activity</a><ul>
-<li><a class="reference internal" href="#module-discord_http.gateway.activity">discord_http.gateway.activity module</a><ul>
-<li><a class="reference internal" href="#discord_http.gateway.activity.Activity"><code class="docutils literal notranslate"><span class="pre">Activity</span></code></a></li>
-<li><a class="reference internal" href="#discord_http.gateway.activity.ActivityAssets"><code class="docutils literal notranslate"><span class="pre">ActivityAssets</span></code></a></li>
-<li><a class="reference internal" href="#discord_http.gateway.activity.ActivityParty"><code class="docutils literal notranslate"><span class="pre">ActivityParty</span></code></a></li>
-<li><a class="reference internal" href="#discord_http.gateway.activity.ActivitySecrets"><code class="docutils literal notranslate"><span class="pre">ActivitySecrets</span></code></a></li>
-<li><a class="reference internal" href="#discord_http.gateway.activity.ActivityTimestamps"><code class="docutils literal notranslate"><span class="pre">ActivityTimestamps</span></code></a></li>
-</ul>
-</li>
+<li><a class="reference internal" href="#discord-http-gateway-activity-module">discord_http.gateway.activity module</a></li>
 </ul>
 </li>
 </ul>

@@ -3,7 +3,7 @@
   <head><meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
     <meta name="color-scheme" content="light dark"><meta name="viewport" content="width=device-width, initial-scale=1" />
-<meta content="Backend - discord.http docs" property="og:title"><meta content="Bases: Application" name="description"><meta content="Bases: Application" property="og:description"><meta property="og:image" content="/_static/favicon.ico"><meta name="theme-color" content="#14bae4"><meta property="og:locale" content="en_GB"><meta name="keywords" content="discord, http, api, interaction, aiohttp, webhook, slash><meta name="revisit-after" content="2 days"><link rel="index" title="Index" href="../genindex.html"><link rel="search" title="Search" href="../search.html"><link rel="next" title="Channel" href="channel.html"><link rel="prev" title="AutoModRule" href="automod.html">
+<meta content="Backend - discord.http docs" property="og:title"><meta content="Python library that handles interactions from Discord POST requests." name="description"><meta content="Python library that handles interactions from Discord POST requests." property="og:description"><meta property="og:image" content="/_static/favicon.ico"><meta name="theme-color" content="#14bae4"><meta property="og:locale" content="en_GB"><meta name="keywords" content="discord, http, api, interaction, aiohttp, webhook, slash><meta name="revisit-after" content="2 days"><link rel="index" title="Index" href="../genindex.html"><link rel="search" title="Search" href="../search.html"><link rel="next" title="Channel" href="channel.html"><link rel="prev" title="AutoModRule" href="automod.html">
 
     <link rel="shortcut icon" href="../_static/favicon.ico"><!-- Generated with Sphinx 9.0.4 and Furo 2025.12.19 -->
         <title>Backend - discord.http docs</title>
@@ -217,7 +217,6 @@
 <li class="toctree-l2"><a class="reference internal" href="member.html">Member</a></li>
 <li class="toctree-l2"><a class="reference internal" href="mentions.html">Mentions</a></li>
 <li class="toctree-l2"><a class="reference internal" href="message.html">Message</a></li>
-<li class="toctree-l2"><a class="reference internal" href="multipart.html">Multipart</a></li>
 <li class="toctree-l2"><a class="reference internal" href="object.html">Object</a></li>
 <li class="toctree-l2"><a class="reference internal" href="response.html">Response</a></li>
 <li class="toctree-l2"><a class="reference internal" href="role.html">Role</a></li>
@@ -291,120 +290,8 @@
         <article role="main" id="furo-main-content">
           <section id="backend">
 <h1>Backend<a class="headerlink" href="#backend" title="Link to this heading">¶</a></h1>
-<section id="module-discord_http.backend">
-<span id="discord-http-backend-module"></span><h2>discord_http.backend module<a class="headerlink" href="#module-discord_http.backend" title="Link to this heading">¶</a></h2>
-<dl class="py class">
-<dt class="sig sig-object py" id="discord_http.backend.DiscordHTTP">
-<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">discord_http.backend.</span></span><span class="sig-name descname"><span class="pre">DiscordHTTP</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">client</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#discord_http.backend.DiscordHTTP" title="Link to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Application</span></code></p>
-<p>Serves as the fundemental HTTP server for Discord Interactions.</p>
-<p>We recommend to not touch this class, unless you know what you’re doing</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>client</strong> (<a class="reference internal" href="client.html#discord_http.client.Client" title="discord_http.client.Client"><em>Client</em></a>)</p>
-</dd>
-</dl>
-<dl class="py method">
-<dt class="sig sig-object py" id="discord_http.backend.DiscordHTTP.error_messages">
-<span class="sig-name descname"><span class="pre">error_messages</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ctx</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">e</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="response.html#discord_http.response.MessageResponse" title="discord_http.response.MessageResponse"><span class="pre">MessageResponse</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span></span><a class="headerlink" href="#discord_http.backend.DiscordHTTP.error_messages" title="Link to this definition">¶</a></dt>
-<dd><p>Used to return error messages to Discord.</p>
-<p>By default, it will only cover CheckFailed errors.
-You can overwrite this function to return your own error messages.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>ctx</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference internal" href="context.html#discord_http.context.Context" title="discord_http.context.Context"><code class="xref py py-class docutils literal notranslate"><span class="pre">Context</span></code></a></span>) – The context of the command</p></li>
-<li><p><strong>e</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#Exception" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Exception</span></code></a></span>) – The exception that was raised</p></li>
-</ul>
-</dd>
-<dt class="field-even">Return type<span class="colon">:</span></dt>
-<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><a class="reference internal" href="response.html#discord_http.response.MessageResponse" title="discord_http.response.MessageResponse"><code class="xref py py-class docutils literal notranslate"><span class="pre">MessageResponse</span></code></a> | <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></span></p>
-</dd>
-<dt class="field-odd">Returns<span class="colon">:</span></dt>
-<dd class="field-odd"><p>The message response provided by the library error handler</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="discord_http.backend.DiscordHTTP.index_ping">
-<span class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">index_ping</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">_request</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Response</span></span></span><a class="headerlink" href="#discord_http.backend.DiscordHTTP.index_ping" title="Link to this definition">¶</a></dt>
-<dd><p>Used to ping the interaction url, to check if it’s working.</p>
-<p>You can overwrite this function to return your own data as well.
-Remember that it must return <cite>dict</cite></p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>request</strong> – The incoming request object (not used by default)</p></li>
-<li><p><strong>_request</strong> (<em>Request</em>)</p></li>
-</ul>
-</dd>
-<dt class="field-even">Return type<span class="colon">:</span></dt>
-<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">Response</span></code></span></p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="discord_http.backend.DiscordHTTP.jsonify">
-<span class="sig-name descname"><span class="pre">jsonify</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">status</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">200</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Response</span></span></span><a class="headerlink" href="#discord_http.backend.DiscordHTTP.jsonify" title="Link to this definition">¶</a></dt>
-<dd><p>Respond with JSON data in a standardized way using orjson.</p>
-<p>Serves as the replacement for aiohttp’s built-in json response.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>data</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">dict</span></code></a></span>) – The data to respond with</p></li>
-<li><p><strong>status</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a></span>) – The status code to respond with</p></li>
-</ul>
-</dd>
-<dt class="field-even">Return type<span class="colon">:</span></dt>
-<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">Response</span></code></span></p>
-</dd>
-<dt class="field-odd">Returns<span class="colon">:</span></dt>
-<dd class="field-odd"><p>The response object</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="discord_http.backend.DiscordHTTP.multipart_response">
-<span class="sig-name descname"><span class="pre">multipart_response</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">body</span></span></em>, <em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">status</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">200</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Response</span></span></span><a class="headerlink" href="#discord_http.backend.DiscordHTTP.multipart_response" title="Link to this definition">¶</a></dt>
-<dd><p>Respond with multipart data in a standardized way.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>body</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">BaseResponse</span></code> | <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></span>) – The body to respond with</p></li>
-<li><p><strong>status</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a></span>) – The status code to respond with</p></li>
-</ul>
-</dd>
-<dt class="field-even">Return type<span class="colon">:</span></dt>
-<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">Response</span></code></span></p>
-</dd>
-<dt class="field-odd">Returns<span class="colon">:</span></dt>
-<dd class="field-odd"><p>The response object</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="discord_http.backend.DiscordHTTP.start">
-<span class="sig-name descname"><span class="pre">start</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">host</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'127.0.0.1'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">port</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">8080</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span></span><a class="headerlink" href="#discord_http.backend.DiscordHTTP.start" title="Link to this definition">¶</a></dt>
-<dd><p>Start the HTTP server.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>host</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></span>) – Host to use, if not provided, it will use <cite>127.0.0.1</cite></p></li>
-<li><p><strong>port</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a></span>) – Port to use, if not provided, it will use <cite>8080</cite></p></li>
-</ul>
-</dd>
-<dt class="field-even">Return type<span class="colon">:</span></dt>
-<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></span></p>
-</dd>
-</dl>
-</dd></dl>
-
-</dd></dl>
-
+<section id="discord-http-backend-module">
+<h2>discord_http.backend module<a class="headerlink" href="#discord-http-backend-module" title="Link to this heading">¶</a></h2>
 </section>
 </section>
 
@@ -464,17 +351,7 @@ Remember that it must return <cite>dict</cite></p>
           <div class="toc-tree">
             <ul>
 <li><a class="reference internal" href="#">Backend</a><ul>
-<li><a class="reference internal" href="#module-discord_http.backend">discord_http.backend module</a><ul>
-<li><a class="reference internal" href="#discord_http.backend.DiscordHTTP"><code class="docutils literal notranslate"><span class="pre">DiscordHTTP</span></code></a><ul>
-<li><a class="reference internal" href="#discord_http.backend.DiscordHTTP.error_messages"><code class="docutils literal notranslate"><span class="pre">DiscordHTTP.error_messages()</span></code></a></li>
-<li><a class="reference internal" href="#discord_http.backend.DiscordHTTP.index_ping"><code class="docutils literal notranslate"><span class="pre">DiscordHTTP.index_ping()</span></code></a></li>
-<li><a class="reference internal" href="#discord_http.backend.DiscordHTTP.jsonify"><code class="docutils literal notranslate"><span class="pre">DiscordHTTP.jsonify()</span></code></a></li>
-<li><a class="reference internal" href="#discord_http.backend.DiscordHTTP.multipart_response"><code class="docutils literal notranslate"><span class="pre">DiscordHTTP.multipart_response()</span></code></a></li>
-<li><a class="reference internal" href="#discord_http.backend.DiscordHTTP.start"><code class="docutils literal notranslate"><span class="pre">DiscordHTTP.start()</span></code></a></li>
-</ul>
-</li>
-</ul>
-</li>
+<li><a class="reference internal" href="#discord-http-backend-module">discord_http.backend module</a></li>
 </ul>
 </li>
 </ul>

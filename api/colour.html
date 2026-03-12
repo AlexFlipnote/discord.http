@@ -217,7 +217,6 @@
 <li class="toctree-l2"><a class="reference internal" href="member.html">Member</a></li>
 <li class="toctree-l2"><a class="reference internal" href="mentions.html">Mentions</a></li>
 <li class="toctree-l2"><a class="reference internal" href="message.html">Message</a></li>
-<li class="toctree-l2"><a class="reference internal" href="multipart.html">Multipart</a></li>
 <li class="toctree-l2"><a class="reference internal" href="object.html">Object</a></li>
 <li class="toctree-l2"><a class="reference internal" href="response.html">Response</a></li>
 <li class="toctree-l2"><a class="reference internal" href="role.html">Role</a></li>
@@ -311,8 +310,11 @@
 <dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
 <p>Represents a colour object, used in multiple places in the API.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>value</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><em>int</em></a>)</p>
+<dt class="field-odd">Variables<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>value</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><em>int</em></a>) – The integer value of the colour, between 0 and 16777215 (0xFFFFFF)</p>
+</dd>
+<dt class="field-even">Parameters<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>value</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><em>int</em></a>)</p>
 </dd>
 </dl>
 <dl class="py method">
@@ -622,6 +624,11 @@
 </dl>
 </dd></dl>
 
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.colour.Colour.value">
+<span class="sig-name descname"><span class="pre">value</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><span class="pre">int</span></a></span><a class="headerlink" href="#discord_http.colour.Colour.value" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
 <dl class="py method">
 <dt class="sig sig-object py" id="discord_http.colour.Colour.whale_shark">
 <span class="property"><span class="k"><span class="pre">classmethod</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">whale_shark</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Self" title="(in Python v3.14)"><span class="pre">Self</span></a></span></span><a class="headerlink" href="#discord_http.colour.Colour.whale_shark" title="Link to this definition">¶</a></dt>
@@ -735,6 +742,7 @@
 <li><a class="reference internal" href="#discord_http.colour.Colour.to_hex"><code class="docutils literal notranslate"><span class="pre">Colour.to_hex()</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.colour.Colour.to_rgb"><code class="docutils literal notranslate"><span class="pre">Colour.to_rgb()</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.colour.Colour.turquoise"><code class="docutils literal notranslate"><span class="pre">Colour.turquoise()</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.colour.Colour.value"><code class="docutils literal notranslate"><span class="pre">Colour.value</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.colour.Colour.whale_shark"><code class="docutils literal notranslate"><span class="pre">Colour.whale_shark()</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.colour.Colour.wisteria"><code class="docutils literal notranslate"><span class="pre">Colour.wisteria()</span></code></a></li>
 </ul>

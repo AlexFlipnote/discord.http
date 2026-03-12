@@ -217,7 +217,6 @@
 <li class="toctree-l2"><a class="reference internal" href="member.html">Member</a></li>
 <li class="toctree-l2"><a class="reference internal" href="mentions.html">Mentions</a></li>
 <li class="toctree-l2"><a class="reference internal" href="message.html">Message</a></li>
-<li class="toctree-l2"><a class="reference internal" href="multipart.html">Multipart</a></li>
 <li class="toctree-l2"><a class="reference internal" href="object.html">Object</a></li>
 <li class="toctree-l2"><a class="reference internal" href="response.html">Response</a></li>
 <li class="toctree-l2"><a class="reference internal" href="role.html">Role</a></li>
@@ -374,6 +373,7 @@
 <dt class="sig sig-object py" id="discord_http.flags.BaseFlag">
 <span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">discord_http.flags.</span></span><span class="sig-name descname"><span class="pre">BaseFlag</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#discord_http.flags.BaseFlag" title="Link to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">_FlagPyMeta</span></code></p>
+<p>Base class for all flags.</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="discord_http.flags.BaseFlag.add_flags">
 <span class="sig-name descname"><span class="pre">add_flags</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">flag_name</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Self" title="(in Python v3.14)"><span class="pre">Self</span></a></span></span><a class="headerlink" href="#discord_http.flags.BaseFlag.add_flags" title="Link to this definition">¶</a></dt>
@@ -649,6 +649,11 @@
 </ul>
 </dd>
 </dl>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.flags.PermissionOverwrite.allow">
+<span class="sig-name descname"><span class="pre">allow</span></span><a class="headerlink" href="#discord_http.flags.PermissionOverwrite.allow" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
 <dl class="py method">
 <dt class="sig sig-object py" id="discord_http.flags.PermissionOverwrite.copy">
 <span class="sig-name descname"><span class="pre">copy</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Self" title="(in Python v3.14)"><span class="pre">Self</span></a></span></span><a class="headerlink" href="#discord_http.flags.PermissionOverwrite.copy" title="Link to this definition">¶</a></dt>
@@ -659,6 +664,11 @@
 </dd>
 </dl>
 </dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.flags.PermissionOverwrite.deny">
+<span class="sig-name descname"><span class="pre">deny</span></span><a class="headerlink" href="#discord_http.flags.PermissionOverwrite.deny" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="discord_http.flags.PermissionOverwrite.from_dict">
@@ -698,6 +708,16 @@
 </dd>
 </dl>
 </dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.flags.PermissionOverwrite.target">
+<span class="sig-name descname"><span class="pre">target</span></span><a class="headerlink" href="#discord_http.flags.PermissionOverwrite.target" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.flags.PermissionOverwrite.target_type">
+<span class="sig-name descname"><span class="pre">target_type</span></span><a class="headerlink" href="#discord_http.flags.PermissionOverwrite.target_type" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="discord_http.flags.PermissionOverwrite.to_dict">
@@ -1264,10 +1284,14 @@
 </ul>
 </li>
 <li><a class="reference internal" href="#discord_http.flags.PermissionOverwrite"><code class="docutils literal notranslate"><span class="pre">PermissionOverwrite</span></code></a><ul>
+<li><a class="reference internal" href="#discord_http.flags.PermissionOverwrite.allow"><code class="docutils literal notranslate"><span class="pre">PermissionOverwrite.allow</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.flags.PermissionOverwrite.copy"><code class="docutils literal notranslate"><span class="pre">PermissionOverwrite.copy()</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.flags.PermissionOverwrite.deny"><code class="docutils literal notranslate"><span class="pre">PermissionOverwrite.deny</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.flags.PermissionOverwrite.from_dict"><code class="docutils literal notranslate"><span class="pre">PermissionOverwrite.from_dict()</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.flags.PermissionOverwrite.is_member"><code class="docutils literal notranslate"><span class="pre">PermissionOverwrite.is_member()</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.flags.PermissionOverwrite.is_role"><code class="docutils literal notranslate"><span class="pre">PermissionOverwrite.is_role()</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.flags.PermissionOverwrite.target"><code class="docutils literal notranslate"><span class="pre">PermissionOverwrite.target</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.flags.PermissionOverwrite.target_type"><code class="docutils literal notranslate"><span class="pre">PermissionOverwrite.target_type</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.flags.PermissionOverwrite.to_dict"><code class="docutils literal notranslate"><span class="pre">PermissionOverwrite.to_dict()</span></code></a></li>
 </ul>
 </li>

@@ -30,7 +30,6 @@ Here are all the things you can find on discord.http, packed in one page
   ../api/member
   ../api/mentions
   ../api/message
-  ../api/multipart
   ../api/object
   ../api/response
   ../api/role

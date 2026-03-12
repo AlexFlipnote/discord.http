@@ -217,7 +217,6 @@
 <li class="toctree-l2"><a class="reference internal" href="../api/member.html">Member</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../api/mentions.html">Mentions</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../api/message.html">Message</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../api/multipart.html">Multipart</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../api/object.html">Object</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../api/response.html">Response</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../api/role.html">Role</a></li>
@@ -295,98 +294,8 @@
 <p class="admonition-title">Note</p>
 <p>Keep in mind that this is not generally used by you, but rather by discord.http only.</p>
 </div>
-<section id="module-discord_http.gateway.client">
-<span id="discord-http-gateway-client-module"></span><h2>discord_http.gateway.client module<a class="headerlink" href="#module-discord_http.gateway.client" title="Link to this heading">¶</a></h2>
-<dl class="py class">
-<dt class="sig sig-object py" id="discord_http.gateway.client.GatewayClient">
-<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">discord_http.gateway.client.</span></span><span class="sig-name descname"><span class="pre">GatewayClient</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">bot</span></span></em>, <em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">cache_flags</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">intents</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">automatic_shards</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">shard_id</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">shard_count</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">shard_ids</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_concurrency</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#discord_http.gateway.client.GatewayClient" title="Link to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>bot</strong> (<a class="reference internal" href="../api/client.html#discord_http.client.Client" title="discord_http.client.Client"><em>Client</em></a>)</p></li>
-<li><p><strong>cache_flags</strong> (<a class="reference internal" href="flags.html#discord_http.gateway.flags.GatewayCacheFlags" title="discord_http.gateway.flags.GatewayCacheFlags"><em>GatewayCacheFlags</em></a><em> | </em><em>None</em>)</p></li>
-<li><p><strong>intents</strong> (<a class="reference internal" href="flags.html#discord_http.gateway.flags.Intents" title="discord_http.gateway.flags.Intents"><em>Intents</em></a><em> | </em><em>None</em>)</p></li>
-<li><p><strong>automatic_shards</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><em>bool</em></a>)</p></li>
-<li><p><strong>shard_id</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><em>int</em></a><em> | </em><em>None</em>)</p></li>
-<li><p><strong>shard_count</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><em>int</em></a>)</p></li>
-<li><p><strong>shard_ids</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.14)"><em>list</em></a><em>[</em><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><em>int</em></a><em>] </em><em>| </em><em>None</em>)</p></li>
-<li><p><strong>max_concurrency</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><em>int</em></a><em> | </em><em>None</em>)</p></li>
-</ul>
-</dd>
-</dl>
-<dl class="py method">
-<dt class="sig sig-object py" id="discord_http.gateway.client.GatewayClient.change_presence">
-<span class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">change_presence</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">status</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span></span><a class="headerlink" href="#discord_http.gateway.client.GatewayClient.change_presence" title="Link to this definition">¶</a></dt>
-<dd><p>Changes the presence of all shards to the specified status.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>status</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference internal" href="object.html#discord_http.gateway.object.PlayingStatus" title="discord_http.gateway.object.PlayingStatus"><code class="xref py py-class docutils literal notranslate"><span class="pre">PlayingStatus</span></code></a></span>) – The status to change to.</p>
-</dd>
-<dt class="field-even">Return type<span class="colon">:</span></dt>
-<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></span></p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="discord_http.gateway.client.GatewayClient.close">
-<span class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">close</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span></span><a class="headerlink" href="#discord_http.gateway.client.GatewayClient.close" title="Link to this definition">¶</a></dt>
-<dd><p>Close the gateway client.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></span></p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="discord_http.gateway.client.GatewayClient.get_shard">
-<span class="sig-name descname"><span class="pre">get_shard</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">shard_id</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Shard</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span></span><a class="headerlink" href="#discord_http.gateway.client.GatewayClient.get_shard" title="Link to this definition">¶</a></dt>
-<dd><p>Returns the shard object of the shard with the specified ID.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>shard_id</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a></span>) – The ID of the shard to get.</p>
-</dd>
-<dt class="field-even">Return type<span class="colon">:</span></dt>
-<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">Shard</span></code> | <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></span></p>
-</dd>
-<dt class="field-odd">Returns<span class="colon">:</span></dt>
-<dd class="field-odd"><p>The shard object with the specified ID, or <cite>None</cite> if not found.</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="discord_http.gateway.client.GatewayClient.shard_by_guild_id">
-<span class="sig-name descname"><span class="pre">shard_by_guild_id</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">guild_id</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><span class="pre">int</span></a></span></span><a class="headerlink" href="#discord_http.gateway.client.GatewayClient.shard_by_guild_id" title="Link to this definition">¶</a></dt>
-<dd><p>Returns the shard ID of the shard that the guild is in.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>guild_id</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference internal" href="../api/object.html#discord_http.object.Snowflake" title="discord_http.object.Snowflake"><code class="xref py py-class docutils literal notranslate"><span class="pre">Snowflake</span></code></a> | <a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a></span>) – The ID of the guild to get the shard ID of</p>
-</dd>
-<dt class="field-even">Return type<span class="colon">:</span></dt>
-<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a></span></p>
-</dd>
-<dt class="field-odd">Returns<span class="colon">:</span></dt>
-<dd class="field-odd"><p>The shard ID of the guild</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="discord_http.gateway.client.GatewayClient.start">
-<span class="sig-name descname"><span class="pre">start</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span></span><a class="headerlink" href="#discord_http.gateway.client.GatewayClient.start" title="Link to this definition">¶</a></dt>
-<dd><p>Start the gateway client.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></span></p>
-</dd>
-</dl>
-</dd></dl>
-
-</dd></dl>
-
+<section id="discord-http-gateway-client-module">
+<h2>discord_http.gateway.client module<a class="headerlink" href="#discord-http-gateway-client-module" title="Link to this heading">¶</a></h2>
 </section>
 </section>
 
@@ -446,17 +355,7 @@
           <div class="toc-tree">
             <ul>
 <li><a class="reference internal" href="#">Client</a><ul>
-<li><a class="reference internal" href="#module-discord_http.gateway.client">discord_http.gateway.client module</a><ul>
-<li><a class="reference internal" href="#discord_http.gateway.client.GatewayClient"><code class="docutils literal notranslate"><span class="pre">GatewayClient</span></code></a><ul>
-<li><a class="reference internal" href="#discord_http.gateway.client.GatewayClient.change_presence"><code class="docutils literal notranslate"><span class="pre">GatewayClient.change_presence()</span></code></a></li>
-<li><a class="reference internal" href="#discord_http.gateway.client.GatewayClient.close"><code class="docutils literal notranslate"><span class="pre">GatewayClient.close()</span></code></a></li>
-<li><a class="reference internal" href="#discord_http.gateway.client.GatewayClient.get_shard"><code class="docutils literal notranslate"><span class="pre">GatewayClient.get_shard()</span></code></a></li>
-<li><a class="reference internal" href="#discord_http.gateway.client.GatewayClient.shard_by_guild_id"><code class="docutils literal notranslate"><span class="pre">GatewayClient.shard_by_guild_id()</span></code></a></li>
-<li><a class="reference internal" href="#discord_http.gateway.client.GatewayClient.start"><code class="docutils literal notranslate"><span class="pre">GatewayClient.start()</span></code></a></li>
-</ul>
-</li>
-</ul>
-</li>
+<li><a class="reference internal" href="#discord-http-gateway-client-module">discord_http.gateway.client module</a></li>
 </ul>
 </li>
 </ul>
