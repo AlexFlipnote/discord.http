@@ -64,7 +64,7 @@ class _GuildLimits:
 
 
 class BanEntry(NamedTuple):
-    user: "User"
+    user: User
     reason: str | None
 
 

@@ -32,6 +32,7 @@ html_favicon = "favicon.ico"
 master_doc = "index"
 
 autodoc_typehints = "description"
+napoleon_use_ivar = True
 typehints_use_signature_return = True
 
 source_suffix = {
