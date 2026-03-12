@@ -42,22 +42,7 @@ __all__ = (
 
 
 class GuildMembersChunk:
-    """
-    Represents a chunk of guild members.
-
-    Attributes
-    ----------
-    nonce: str
-        The nonce of the chunk request, used to identify the chunk request.
-    guild_id: int
-        The ID of the guild the chunk belongs to.
-    not_found: list[int]
-        A list of user IDs that were not found in the chunk search.
-    members: list[Member]
-        The members in the chunk.
-    cache: bool
-        Whether to cache the members in the chunk, defaults to `False`.
-    """
+    """ Represents a chunk of guild members. """
     __slots__ = (
         "_state",
         "_waiters",
@@ -76,13 +61,22 @@ class GuildMembersChunk:
         cache: bool = False
     ):
         self._state = state
+
         self.nonce: str = os.urandom(16).hex()
+        """ The nonce of the chunk request, used to identify the chunk request. """
 
         self.guild_id: int = guild_id
+        """ The ID of the guild the chunk belongs to. """
+
         self.not_found: list[int] = []
+        """ A list of user IDs that were not found in the chunk search. """
+
         self.members: list[Member] = []
+        """ The members in the chunk. """
 
         self.cache: bool = cache
+        """ Whether to cache the members in the chunk, defaults to `False`. """
+
         self._waiters: list[asyncio.Future[list[Member]]] = []
 
     def __repr__(self) -> str:
@@ -171,6 +165,7 @@ class Parser:
 
     def __init__(self, bot: "Client"):
         self.bot = bot
+        """ The bot/client instance that the parser belongs to. """
 
         self._chunk_requests: dict[int | str, GuildMembersChunk] = {}
 

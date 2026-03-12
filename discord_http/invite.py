@@ -19,20 +19,7 @@ __all__ = (
 
 
 class PartialInvite:
-    """
-    Represents a partial invite object.
-
-    Attributes
-    ----------
-    code: str
-        The invite code.
-    channel_id: int | None
-        The ID of the channel the invite is in, if applicable.
-    guild_id: int | None
-        The ID of the guild the invite is in, if applicable.
-    guild: Guild | PartialGuild | None
-        The guild associated with the invite, if applicable.
-    """
+    """ Represents a partial invite object. """
 
     __slots__ = (
         "_state",
@@ -42,7 +29,7 @@ class PartialInvite:
         "guild_id",
     )
 
-    BASE = "https://discord.gg"
+    BASE: str = "https://discord.gg"
 
     def __init__(
         self,
@@ -53,12 +40,18 @@ class PartialInvite:
         guild_id: int | None = None
     ):
         self._state = state
-        self.code = code
 
-        self.channel_id = channel_id
-        self.guild_id = guild_id
+        self.code = code
+        """ The invite code. """
+
+        self.channel_id: int | None = channel_id
+        """ The ID of the channel the invite is in, if applicable. """
+
+        self.guild_id: int | None = guild_id
+        """ The ID of the guild the invite is in, if applicable. """
 
         self.guild: "Guild | PartialGuild | None" = self._get_guild
+        """ The guild associated with the invite, if applicable. """
 
     def __str__(self) -> str:
         return self.url
@@ -143,44 +136,7 @@ class PartialInvite:
 
 
 class Invite(PartialInvite):
-    """
-    Represents an invite object.
-
-    Attributes
-    ----------
-    code: str
-        The invite code.
-    uses: int
-        The number of times the invite has been used.
-    max_uses: int
-        The maximum number of times the invite can be used.
-    temporary: bool
-        Whether the invite grants temporary membership.
-    created_at: datetime | None
-        The time the invite was created.
-    expires_at: datetime | None
-        The time the invite expires, if applicable.
-    inviter: User | None
-        The user who created the invite, if applicable.
-    guild_id: int | None
-        The ID of the guild the invite is in, if applicable.
-    channel_id: int | None
-        The ID of the channel the invite is in, if applicable.
-    type: InviteType
-        The type of the invite.
-    approximate_presence_count: int | None
-        The approximate number of online members, if applicable.
-    approximate_member_count: int | None
-        The approximate number of total members, if applicable.
-    roles: list[Role]
-        The roles a user gets when joining via this invite.
-    flags: GuildInviteFlags
-        The flags associated with the invite.
-    target_type: InviteTargetType | None
-        The target type of the invite, if applicable.
-    target_user: User | None
-        The user of the invite whose stream to display for this invite.
-    """
+    """ Represents an invite object. """
 
     __slots__ = (
         "_account",
@@ -205,31 +161,52 @@ class Invite(PartialInvite):
         self._raw_type: int = data["type"]
 
         self.uses: int = data.get("uses", 0)
+        """ The number of times the invite has been used. """
+
         self.max_uses: int = data.get("max_uses", 0)
+        """ The maximum number of times the invite can be used. """
+
         self.temporary: bool = data.get("temporary", False)
+        """ Whether the invite grants temporary membership. """
 
         self.created_at: datetime | None = None
+        """ The time the invite was created. """
+
         self.expires_at: datetime | None = None
+        """ The time the invite expires, if applicable. """
 
         self.inviter: User | None = None
+        """ The user who created the invite, if applicable. """
 
         self.guild_id: int | None = (
             utils.get_int(data, "guild_id") or
             utils.get_int(data.get("guild", {}), "id")
         )
+        """ The ID of the guild the invite is in, if applicable. """
 
         self.approximate_presence_count: int | None = data.get("approximate_presence_count")
+        """ The approximate number of online members, if applicable. """
+
         self.approximate_member_count: int | None = data.get("approximate_member_count")
+        """ The approximate number of total members, if applicable. """
 
         self.roles: list[Role] = []
+        """ The roles a user gets when joining via this invite. """
+
         self.flags: GuildInviteFlags = GuildInviteFlags.none()
+        """ The flags associated with the invite. """
+
         self.target_type: InviteTargetType | None = None
+        """ The target type of the invite, if applicable. """
+
         self.target_user: User | None = None
+        """ The user of the invite whose stream to display for this invite. """
 
         self.channel_id: int | None = (
             utils.get_int(data, "channel_id") or
             utils.get_int(data.get("channel", {}), "id")
         )
+        """ The ID of the channel the invite is in, if applicable. """
 
         self._from_data(data)
 

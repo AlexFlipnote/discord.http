@@ -33,16 +33,7 @@ __all__ = (
 
 
 class PartialMember(PartialBase):
-    """
-    Represents a partial member object.
-
-    Attributes
-    ----------
-    guild_id: int
-        The ID of the guild the member belongs to.
-    presence: Presence | None
-        The presence of the member, if available.
-    """
+    """ Represents a partial member object. """
 
     __slots__ = (
         "_state",
@@ -64,7 +55,10 @@ class PartialMember(PartialBase):
         self._user = PartialUser(state=state, id=self.id)
 
         self.guild_id: int = int(guild_id)
+        """ The ID of the guild the member belongs to. """
+
         self.presence: "Presence | None" = None
+        """ The presence of the member, if available. """
 
     def __repr__(self) -> str:
         return f"<PartialMember id={self.id} guild_id={self.guild_id}>"
@@ -413,34 +407,7 @@ class PartialMember(PartialBase):
 
 
 class Member(PartialMember):
-    """
-    Represents a member of a guild.
-
-    Attributes
-    ----------
-    avatar: Asset | None
-        The avatar of the member, if available.
-    banner: Asset | None
-        The banner of the member, if available.
-    flags: GuildMemberFlags
-        The flags of the member.
-    pending: bool
-        Whether the member is pending or not.
-    nick: str | None
-        The nickname of the member, if available.
-    joined_at: datetime
-        The time the member joined the guild.
-    communication_disabled_until: datetime | None
-        The time until the member is communication disabled (timeout).
-    premium_since: datetime | None
-        The time the member started boosting the guild, if available.
-    avatar_decoration: AvatarDecoration | None
-        The avatar decoration of the member, if available.
-    nameplate: Nameplate | None
-        The nameplate of the member, if available.
-    primary_guild: PrimaryGuild | None
-        The primary guild of the member, if available.
-    """
+    """ Represents a member of a guild. """
 
     __slots__ = (
         "_raw_permissions",
@@ -472,23 +439,41 @@ class Member(PartialMember):
         )
 
         self._user = User(state=state, data=data["user"])
+        self._raw_permissions: int | None = utils.get_int(data, "permissions")
+        self._role_ids: tuple[int, ...] = tuple(int(r) for r in data["roles"])
 
         self.avatar: Asset | None = None
+        """ The avatar of the member, if available. """
+
         self.banner: Asset | None = None
+        """ The banner of the member, if available. """
 
         self.flags: GuildMemberFlags = GuildMemberFlags(data["flags"])
+        """ The flags of the member. """
+
         self.pending: bool = data.get("pending", False)
-        self._raw_permissions: int | None = utils.get_int(data, "permissions")
+        """ Whether the member is pending or not. """
+
         self.nick: str | None = data.get("nick")
+        """ The nickname of the member, if available. """
+
         self.joined_at: datetime = utils.parse_time(data["joined_at"])
+        """ The time the member joined the guild. """
+
         self.communication_disabled_until: datetime | None = None
+        """ The time until the member is communication disabled (timeout). """
+
         self.premium_since: datetime | None = None
+        """ The time the member started boosting the guild, if available. """
 
         self.avatar_decoration: AvatarDecoration | None = None
-        self.nameplate: Nameplate | None = self._user.nameplate
-        self.primary_guild: PrimaryGuild | None = self._user.primary_guild
+        """ The avatar decoration of the member, if available. """
 
-        self._role_ids: tuple[int, ...] = tuple(int(r) for r in data["roles"])
+        self.nameplate: Nameplate | None = self._user.nameplate
+        """ The nameplate of the member, if available. """
+
+        self.primary_guild: PrimaryGuild | None = self._user.primary_guild
+        """ The primary guild of the member, if available. """
 
         self._from_data(data)
 
@@ -732,18 +717,7 @@ class Member(PartialMember):
 
 
 class PartialThreadMember(PartialMember):
-    """
-    Represents a partial thread member object.
-
-    Attributes
-    ----------
-    thread_id: int
-        The ID of the thread the member is in.
-    join_timestamp: datetime
-        The time the member joined the thread.
-    flags: int
-        The flags of the member in the thread.
-    """
+    """ Represents a partial thread member object. """
 
     __slots__ = (
         "flags",
@@ -764,8 +738,13 @@ class PartialThreadMember(PartialMember):
             guild_id=guild_id,
         )
         self.thread_id: int = int(data["id"])
+        """ The ID of the thread the member is in. """
+
         self.join_timestamp: datetime = utils.parse_time(data["join_timestamp"])
+        """ The time the member joined the thread. """
+
         self.flags: int = data["flags"]
+        """ The flags of the member in the thread. """
 
     @property
     def thread(self) -> "PartialChannel | Thread":
@@ -777,18 +756,7 @@ class PartialThreadMember(PartialMember):
 
 
 class ThreadMember(Member):
-    """
-    Represents a member of a thread.
-
-    Attributes
-    ----------
-    thread_id: int
-        The ID of the thread the member is in.
-    join_timestamp: datetime
-        The time the member joined the thread.
-    flags: int
-        The flags of the member in the thread.
-    """
+    """ Represents a member of a thread. """
 
     __slots__ = (
         "join_timestamp",
@@ -809,8 +777,13 @@ class ThreadMember(Member):
         )
 
         self.thread_id: int = int(data["id"])
+        """ The ID of the thread the member is in. """
+
         self.join_timestamp: datetime = utils.parse_time(data["join_timestamp"])
+        """ The time the member joined the thread. """
+
         self.flags: int = data["flags"]
+        """ The flags of the member in the thread. """
 
     @property
     def thread(self) -> "PartialChannel | Thread":

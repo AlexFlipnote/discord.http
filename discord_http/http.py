@@ -54,22 +54,7 @@ class HTTPSession(aiohttp.ClientSession):
 
 
 class HTTPResponse(Generic[ResponseT]):
-    """
-    Represents a response from the HTTP request.
-
-    Attributes
-    ----------
-    status: int
-        The HTTP status code of the response.
-    response: ResponseT
-        The response data, which can be of type str, bytes, or dict depending on the request.
-    res_method: ResMethodTypes
-        The method used to retrieve the response data.
-    reason: str | None
-        The reason phrase returned by the server, if any.
-    headers: CIMultiDictProxy[str]
-        The headers of the response, as a CIMultiDictProxy.
-    """
+    """ Represents a response from the HTTP request. """
 
     __slots__ = (
         "headers",
@@ -89,10 +74,19 @@ class HTTPResponse(Generic[ResponseT]):
         headers: CIMultiDictProxy[str],
     ):
         self.status = status
+        """ The HTTP status code of the response. """
+
         self.response = response
+        """ The response data, which can be of type str, bytes, or dict depending on the request. """
+
         self.res_method = res_method
+        """ The method used to retrieve the response data. """
+
         self.reason = reason
+        """ The reason phrase returned by the server, if any. """
+
         self.headers = headers
+        """ The headers of the response, as a CIMultiDictProxy. """
 
     def __repr__(self) -> str:
         return (
@@ -106,17 +100,13 @@ class HTTPClient:
     Used to make HTTP requests, but with a session.
 
     Can be used to make requests outside of the usual Discord API
-
-    Attributes
-    ----------
-    session: HTTPSession | None
-        The aiohttp session used for making requests.
     """
 
     __slots__ = ("session",)
 
     def __init__(self):
         self.session: HTTPSession | None = None
+        """ The aiohttp session used for making requests. """
 
     async def _create_session(self) -> None:
         """ Creates a new session for the library. """
@@ -278,24 +268,7 @@ class HTTPClient:
 
 
 class Ratelimit:
-    """
-    Represents a ratelimit bucket.
-
-    Attributes
-    ----------
-    key: str
-        The key of the ratelimit bucket, usually in the format "METHOD /path/:id"
-    limit: int
-        The maximum number of requests that can be made in the current bucket window
-    remaining: int
-        The number of requests remaining in the current bucket window
-    reset_after: float
-        The number of seconds until the bucket resets
-    expires: float | None
-        The epoch time when the bucket expires, or None if it doesn't expire
-    in_flight: int
-        The number of requests currently in-flight for this bucket
-    """
+    """ Represents a ratelimit bucket. """
 
     __slots__ = (
         "_last_request",
@@ -312,14 +285,25 @@ class Ratelimit:
 
     def __init__(self, key: str):
         self.key: str = key
+        """ The key of the ratelimit bucket, usually in the format "METHOD /path/:id". """
 
         self.limit: int = 1
+        """ The maximum number of requests that can be made in the current bucket window. """
+
         self.remaining: int = 1
+        """ The number of requests remaining in the current bucket window. """
+
         self.reset_after: float = 0.0
+        """ The number of seconds until the bucket resets. """
+
         self.expires: float | None = None
+        """ The epoch time when the bucket expires, or None if it doesn't expire. """
 
         self.bucket_reset_epoch: float = 0.0
+        """ The epoch time when the current bucket window started. """
+
         self.in_flight: int = 0
+        """ The number of requests currently in-flight for this bucket. """
 
         self._lock: asyncio.Lock = asyncio.Lock()
         self._loop: asyncio.AbstractEventLoop = asyncio.get_running_loop()
@@ -402,41 +386,32 @@ class Ratelimit:
 
 
 class DiscordAPI:
-    """
-    The main class for interacting with the Discord API.
-
-    Attributes
-    ----------
-    bot: Client
-        The client instance that owns this HTTP client.
-    cache:
-        A reference to the client's cache for easy access within HTTP methods.
-    token: str
-        The bot token used for authentication with the Discord API.
-    api_version: int
-        The version of the Discord API to use for requests.
-    base_url: str
-        The base URL for the Discord API.
-    api_url: str
-        The full API URL including the version (e.g., "https://discord.com/api/v10").
-    http: HTTPClient
-        The HTTP client used to make requests to the Discord API.
-    """
+    """ The main class for interacting with the Discord API. """
 
     def __init__(self, *, client: "Client"):
         self.bot: "Client" = client
+        """ The client instance that owns this HTTP client. cache: A reference to the client's cache for easy access within HTTP methods. """
+
         self.cache = self.bot.cache
 
         # Aliases
         self.token: str = self.bot.token
+        """ The bot token used for authentication with the Discord API. """
+
         self.api_version: int = self.bot.api_version or 10
+        """ The version of the Discord API to use for requests. """
 
         if not isinstance(self.api_version, int):
             raise TypeError("api_version must be an integer")
 
         self.base_url = self.bot.api_base_url
+        """ The base URL for the Discord API. """
+
         self.api_url: str = f"{self.base_url}/v{self.api_version}"
+        """ The full API URL including the version (e.g., "https://discord.com/api/v10"). """
+
         self.http: HTTPClient = HTTPClient()
+        """ The HTTP client used to make requests to the Discord API. """
 
         self._buckets: dict[str, Ratelimit] = {}
 

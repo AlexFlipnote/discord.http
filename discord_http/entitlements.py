@@ -73,22 +73,7 @@ class PartialSKU(PartialBase):
 
 
 class SKU(PartialSKU):
-    """
-    Represents a SKU (Stock Keeping Unit) object.
-
-    Attributes
-    ----------
-    name: str
-        The name of the SKU.
-    slug: str
-        The slug of the SKU.
-    type: SKUType
-        The type of the SKU.
-    flags: SKUFlags
-        The flags of the SKU.
-    application: PartialUser
-        The application that owns the SKU.
-    """
+    """ Represents a SKU (Stock Keeping Unit) object. """
 
     __slots__ = (
         "_raw_flags",
@@ -107,7 +92,10 @@ class SKU(PartialSKU):
         super().__init__(state=state, id=int(data["id"]))
 
         self.name: str = data["name"]
+        """ The name of the SKU. """
+
         self.slug: str = data["slug"]
+        """ The slug of the SKU. """
 
         self._raw_type: int = data["type"]
         self._raw_flags: int = data["flags"]
@@ -116,6 +104,7 @@ class SKU(PartialSKU):
             state=self._state,
             id=int(data["application_id"])
         )
+        """ The application that owns the SKU. """
 
     def __repr__(self) -> str:
         return f"<SKU id={self.id} name={self.name} type={self.type}>"
@@ -181,30 +170,7 @@ class PartialEntitlements(PartialBase):
 
 
 class Entitlements(PartialEntitlements):
-    """
-    Represents an entitlement object.
-
-    Attributes
-    ----------
-    deleted: bool
-        Whether the entitlement is deleted or not.
-    type: EntitlementType
-        The type of the entitlement.
-    user: PartialUser | None
-        The user that owns the entitlement, if the owner type is user.
-    guild_id: int | None
-        The guild ID that owns the entitlement, if the owner type is guild.
-    subscription_id: int | None
-        The subscription ID that the entitlement belongs to, if any.
-    application: PartialUser
-        The application that owns the entitlement.
-    sku: PartialSKU
-        The SKU that the entitlement belongs to.
-    starts_at: datetime | None
-        The time the entitlement starts at, if any.
-    ends_at: datetime | None
-        The time the entitlement ends at, if any.
-    """
+    """ Represents an entitlement object. """
     __slots__ = (
         "_data_consumed",
         "application",
@@ -227,23 +193,37 @@ class Entitlements(PartialEntitlements):
         super().__init__(state=state, id=int(data["id"]))
 
         self.deleted: bool = data["deleted"]
+        """ Whether the entitlement is deleted or not. """
+
         self.type: EntitlementType = EntitlementType(data["type"])
+        """ The type of the entitlement. """
 
         self.user: PartialUser | None = None
+        """ The user that owns the entitlement, if the owner type is user. """
+
         self.guild_id: int | None = utils.get_int(data, "guild_id")
+        """ The guild ID that owns the entitlement, if the owner type is guild. """
+
         self.subscription_id: int | None = utils.get_int(data, "subscription_id")
+        """ The subscription ID that the entitlement belongs to, if any. """
 
         self.application: PartialUser = PartialUser(
             state=self._state,
             id=int(data["application_id"])
         )
+        """ The application that owns the entitlement. """
+
         self.sku: PartialSKU = PartialSKU(
             state=self._state,
             id=int(data["sku_id"])
         )
+        """ The SKU that the entitlement belongs to. """
 
         self.starts_at: datetime | None = None
+        """ The time the entitlement starts at, if any. """
+
         self.ends_at: datetime | None = None
+        """ The time the entitlement ends at, if any. """
 
         self._from_data(data)
         self._data_consumed: bool = data.get("consumed", False)

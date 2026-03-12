@@ -38,18 +38,7 @@ __all__ = (
 
 
 class DisplayNameStyles:
-    """
-    Represents the display name style of a user.
-
-    Attributes
-    ----------
-    colours: list[Colour] | None
-        The colors of the display name, if any
-    font: DisplayNameFontType | None
-        The font of the display name, if any
-    effect: DisplayNameEffectType | None
-        The effect of the display name, if any
-    """
+    """ Represents the display name style of a user. """
 
     __slots__ = (
         "colours",
@@ -59,12 +48,17 @@ class DisplayNameStyles:
 
     def __init__(self, data: dict):
         self.colours: list[Colour] = [Colour(g) for g in data.get("colors", [])]
+        """ The colors of the display name, if any. """
+
         self.font: DisplayNameFontType = DisplayNameFontType(
             data.get("font", int(DisplayNameFontType.default))
         )
+        """ The font of the display name, if any. """
+
         self.effect: DisplayNameEffectType = DisplayNameEffectType(
             data.get("effect", int(DisplayNameEffectType.solid))
         )
+        """ The effect of the display name, if any. """
 
     def __repr__(self) -> str:
         return (
@@ -74,20 +68,7 @@ class DisplayNameStyles:
 
 
 class Nameplate:
-    """
-    Represents a nameplate collectible of a user.
-
-    Attributes
-    ----------
-    sku_id: int
-        The ID of the SKU associated with the nameplate
-    label: str
-        The label of the nameplate
-    palette: str
-        The palette of the nameplate
-    asset: Asset
-        The asset of the nameplate
-    """
+    """ Represents a nameplate collectible of a user. """
 
     __slots__ = (
         "_state",
@@ -101,9 +82,16 @@ class Nameplate:
         self._state = state
 
         self.sku_id: int = int(data["sku_id"])
+        """ The ID of the SKU associated with the nameplate. """
+
         self.label: str = data["label"]
+        """ The label of the nameplate. """
+
         self.palette: str = data["palette"]
+        """ The palette of the nameplate. """
+
         self.asset: Asset = Asset._from_collectibles(state, data["asset"])
+        """ The asset of the nameplate. """
 
     def __repr__(self) -> str:
         return f"<Nameplate sku_id={self.sku_id} label='{self.label}' palette='{self.palette}'>"
@@ -122,15 +110,6 @@ class PrimaryGuild:
     Represents a primary guild of a user.
 
     This is commonly known as 'clan'.
-
-    Attributes
-    ----------
-    guild_id: int
-        The ID of the guild
-    tag: str | None
-        The tag of the guild, if any
-    badge: Asset | None
-        The badge of the guild, if any
     """
 
     __slots__ = (
@@ -144,8 +123,13 @@ class PrimaryGuild:
         self._state = state
 
         self.guild_id: int | None = utils.get_int(data, "identity_guild_id")
+        """ The ID of the guild. """
+
         self.tag: str | None = sys.intern(t) if (t := data.get("tag")) else None
+        """ The tag of the guild, if any. """
+
         self.badge: Asset | None = None
+        """ The badge of the guild, if any. """
 
         self._from_data(data)
 
@@ -173,16 +157,7 @@ class PrimaryGuild:
 
 
 class AvatarDecoration(Snowflake):
-    """
-    Represents an avatar decoration of a user.
-
-    Attributes
-    ----------
-    sku_id: int
-        The ID of the SKU associated with the avatar decoration
-    asset: Asset
-        The asset of the avatar decoration
-    """
+    """ Represents an avatar decoration of a user. """
 
     __slots__ = (
         "_state",
@@ -195,9 +170,12 @@ class AvatarDecoration(Snowflake):
         self._state = state
 
         self.sku_id: int = int(data["sku_id"])
+        """ The ID of the SKU associated with the avatar decoration. """
+
         self.asset = Asset._from_avatar_decoration(
             self._state, data["asset"]
         )
+        """ The asset of the avatar decoration. """
 
     def __repr__(self) -> str:
         return f"<AvatarDecoration sku_id={self.sku_id} asset='{self.asset}'>"
@@ -410,42 +388,7 @@ class PartialUser(PartialBase):
 
 
 class User(PartialUser):
-    """
-    Represents a user object.
-
-    Attributes
-    ----------
-    avatar: Asset | None
-        The avatar of the user, if any
-    banner: Asset | None
-        The banner of the user, if any
-    name: str
-        The name of the user
-    bot: bool
-        Whether the user is a bot
-    system: bool
-        Whether the user is a system user
-    discriminator: str | None
-        The discriminator of the user, if any
-    global_name: str | None
-        The global name of the user, if any
-    accent_colour: Colour | None
-        The accent colour of the user, if any
-    banner_colour: Colour | None
-        The banner colour of the user, if any
-    public_flags: UserFlags | None
-        The public flags of the user, if any
-    avatar_decoration: AvatarDecoration | None
-        The avatar decoration of the member, if available.
-    nameplate: Nameplate | None
-        The nameplate of the member, if available.
-    primary_guild: PrimaryGuild | None
-        The primary guild of the user (aka. clan), if any
-    display_name_styles: DisplayNameStyles | None
-        The display name style of the user, if any
-    verified: bool
-        Whether the user is verified (usually for bots)
-    """
+    """ Represents a user object. """
 
     __slots__ = (
         "accent_colour",
@@ -474,29 +417,54 @@ class User(PartialUser):
         super().__init__(state=state, id=int(data["id"]))
 
         self.avatar: Asset | None = None
+        """ The avatar of the user, if any. """
+
         self.banner: Asset | None = None
+        """ The banner of the user, if any. """
 
         self.name: str = sys.intern(data["username"])
+        """ The name of the user. """
+
         self.bot: bool = data.get("bot", False)
+        """ Whether the user is a bot. """
+
         self.system: bool = data.get("system", False)
+        """ Whether the user is a system user. """
+
         self.verified: bool = data.get("verified", False)
+        """ Whether the user is verified (usually for bots). """
 
         # This section is ONLY here because bots still have a discriminator
         self.discriminator: str | None = data.get("discriminator")
+        """ The discriminator of the user, if any. """
+
         if self.discriminator == "0":
             # Instead of showing "0", just make it None....
             self.discriminator = None
 
         self.accent_colour: Colour | None = None
+        """ The accent colour of the user, if any. """
+
         self.banner_colour: Colour | None = None
+        """ The banner colour of the user, if any. """
 
         self.global_name: str | None = sys.intern(g) if (g := data.get("global_name")) else None
+        """ The global name of the user, if any. """
 
         self.public_flags: UserFlags | None = None
+        """ The public flags of the user, if any. """
+
         self.primary_guild: PrimaryGuild | None = None
+        """ The primary guild of the user (aka. clan), if any. """
+
         self.avatar_decoration: AvatarDecoration | None = None
+        """ The avatar decoration of the member, if available. """
+
         self.nameplate: Nameplate | None = None
+        """ The nameplate of the member, if available. """
+
         self.display_name_styles: DisplayNameStyles | None = None
+        """ The display name style of the user, if any. """
 
         self._from_data(data)
 
@@ -596,14 +564,7 @@ class User(PartialUser):
 
 
 class Application(PartialBase):
-    """
-    Represents a user client object.
-
-    Attributes
-    ----------
-    verified: bool
-        Whether the user is verified
-    """
+    """ Represents a user client object. """
 
     __slots__ = (
         "_state",
@@ -646,33 +607,84 @@ class Application(PartialBase):
         self._state = state
 
         self.name: str = data["name"]
+        """ The name of the application. """
+
         self.icon: Asset | None = None
+        """ The icon of the application, if any. """
+
         self.description: str | None = data.get("description")
+        """ The description of the application, if any. """
+
         self.rpc_origins: list[str] = data.get("rpc_origins", [])
+        """ The RPC origins of the application. """
+
         self.bot_public: bool = data.get("bot_public", False)
+        """ Whether the bot is public. """
+
         self.bot_require_code_grant: bool = data.get("bot_require_code_grant", False)
+        """ Whether the bot requires code grant. """
+
         self.bot: User | None = None
+        """ The bot user of the application, if any. """
+
         self.terms_of_service_url: str | None = data.get("terms_of_service_url")
+        """ The URL of the terms of service of the application, if any. """
+
         self.privacy_policy_url: str | None = data.get("privacy_policy_url")
+        """ The URL of the privacy policy of the application, if any. """
+
         self.owner: PartialUser | None = None
+        """ The owner of the application, if any. """
+
         self.verify_key: str = data.get("verify_key", "")
+        """ The verify key of the application. """
+
         self.guild: "PartialGuild | None" = None
+        """ The guild of the application, if the application is a game sold on Discord. """
+
         self.primary_sku: "PartialSKU | None" = None
+        """ The primary SKU of the application, if the application is a game sold on Discord. """
+
         self.slug: str | None = data.get("slug")
+        """ The slug of the application, if any. """
+
         self.cover_image: Asset | None = None
+        """ The cover image of the application, if any. """
+
         self.flags: ApplicationFlags = ApplicationFlags(data.get("flags", 0))
+        """ The flags of the application. """
+
         self.approximate_guild_count: int | None = data.get("approximate_guild_count")
+        """ The approximate number of guilds the application is in, if the application is a game sold on Discord. """
+
         self.approximate_user_install_count: int | None = data.get("approximate_user_install_count")
+        """ The approximate number of users that have the application installed, if the application is a game sold on Discord. """
+
         self.approximate_user_authorization_count: int | None = data.get("approximate_user_authorization_count")
+        """ The approximate number of users that have authorized the application, if the application is a game sold on Discord. """
+
         self.redirect_uris: list[str] = data.get("redirect_uris", [])
+        """ The redirect URIs of the application, if any. """
+
         self.interactions_endpoint_url: str | None = data.get("interactions_endpoint_url")
+        """ The interactions endpoint URL of the application, if any. """
+
         self.role_connections_verification_url: str | None = data.get("role_connections_verification_url")
+        """ The role connections verification URL of the application, if any. """
+
         self.event_webhooks_url: str | None = data.get("event_webhooks_url")
+        """ The event webhooks URL of the application, if any. """
+
         self.event_webhooks_status: ApplicationEventWebhookStatus = ApplicationEventWebhookStatus(
             data.get("event_webhooks_status", int(ApplicationEventWebhookStatus.disabled))
         )
+        """ The event webhooks status of the application. """
+
         self.event_webhooks_types: list[str] = data.get("event_webhooks_types", [])
+        """ The event webhooks types of the application. """
+
         self.tags: list[str] = data.get("tags", [])
+        """ The tags of the application. """
 
         self._from_data(data)
 

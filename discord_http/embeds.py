@@ -89,35 +89,7 @@ class EmbedMedia:
 
 
 class Embed:
-    """
-    Represents a Discord embed.
-
-    Attributes
-    ----------
-    title: str | None
-        The title of the embed, if any.
-    description: str | None
-        The description of the embed, if any.
-    colour: Colour | None
-        The colour of the embed, if any.
-    url: str | None
-        The URL of the embed, if any.
-    timestamp: datetime | None
-        The timestamp of the embed, if any.
-    type: EmbedTypes
-        The type of the embed, which can be "rich", "image", "video",
-        "gifv", "article", "link", or "poll_result". Defaults to "rich".
-    footer: EmbedFooter | None
-        The footer of the embed, if any.
-    author: EmbedAuthor | None
-        The author of the embed, if any.
-    image: EmbedMedia | None
-        The image of the embed, if any.
-    thumbnail: EmbedMedia | None
-        The thumbnail of the embed, if any.
-    fields: list[EmbedField]
-        The fields of the embed, if any.
-    """
+    """ Represents a Discord embed. """
     __slots__ = (
         "author",
         "colour",
@@ -143,6 +115,7 @@ class Embed:
         timestamp: datetime | None = None,
     ):
         self.colour: Colour | int | None = None
+        """ The colour of the embed, if any. """
 
         if colour is not None:
             self.colour = Colour(int(colour))
@@ -150,16 +123,34 @@ class Embed:
             self.colour = Colour(int(color))
 
         self.title: str | None = title
+        """ The title of the embed, if any. """
+
         self.description: str | None = description
+        """ The description of the embed, if any. """
+
         self.timestamp: datetime | None = timestamp
+        """ The timestamp of the embed, if any. """
+
         self.url: str | None = url
+        """ The URL of the embed, if any. """
+
         self.type: EmbedTypes = "rich"
+        """ The type of the embed, which can be "rich", "image", "video", "gifv", "article", "link", or "poll_result". Defaults to "rich". """
 
         self.footer: EmbedFooter | None = None
+        """ The footer of the embed, if any. """
+
         self.author: EmbedAuthor | None = None
+        """ The author of the embed, if any. """
+
         self.image: EmbedMedia | None = None
+        """ The image of the embed, if any. """
+
         self.thumbnail: EmbedMedia | None = None
+        """ The thumbnail of the embed, if any. """
+
         self.fields: list[EmbedField] = []
+        """ The fields of the embed, if any. """
 
         if self.title is not None:
             self.title = str(self.title)

@@ -20,18 +20,7 @@ __all__ = (
 
 
 class PartialVoiceState(PartialBase):
-    """
-    Represents a partial voice state object.
-
-    Attributes
-    ----------
-    id: int
-        The ID of the user this voice state belongs to
-    channel_id: int | None
-        The ID of the voice channel this user is in, if any
-    guild_id: int | None
-        The ID of the guild this voice state is in, if any
-    """
+    """ Represents a partial voice state object. """
 
     __slots__ = (
         "_state",
@@ -49,9 +38,15 @@ class PartialVoiceState(PartialBase):
         guild_id: int | None = None,
     ):
         self._state = state
+
         self.id: int = int(id)
+        """ The ID of the user this voice state belongs to. """
+
         self.channel_id: int | None = channel_id
+        """ The ID of the voice channel this user is in, if any. """
+
         self.guild_id: int | None = guild_id
+        """ The ID of the guild this voice state is in, if any. """
 
     def __repr__(self) -> str:
         return f"<PartialVoiceState id={self.id} guild_id={self.guild_id}>"
@@ -120,38 +115,7 @@ class PartialVoiceState(PartialBase):
 
 
 class VoiceState(PartialVoiceState):
-    """
-    Represents a voice state object.
-
-    Attributes
-    ----------
-    session_id: str
-        The session ID of the voice state
-    user: PartialUser
-        The user this voice state belongs to
-    member: Member | None
-        The member this voice state belongs to, if any
-    channel: BaseChannel | PartialChannel | None
-        The voice channel this user is in, if any
-    guild: PartialGuild | None
-        The guild this voice state is in, if any
-    deaf: bool
-        Whether the user is deafened by the server
-    mute: bool
-        Whether the user is muted by the server
-    self_deaf: bool
-        Whether the user is deafened by themselves
-    self_mute: bool
-        Whether the user is muted by themselves
-    self_stream: bool
-        Whether the user is streaming
-    self_video: bool
-        Whether the user is using video
-    suppress: bool
-        Whether the user is suppressed by the server
-    request_to_speak_timestamp: datetime | None
-        The timestamp when the user requested to speak, if any
-    """
+    """ Represents a voice state object. """
 
     __slots__ = (
         "channel",
@@ -185,21 +149,43 @@ class VoiceState(PartialVoiceState):
         )
 
         self.session_id: str = data["session_id"]
+        """ The session ID of the voice state. """
 
         self.user: PartialUser = PartialUser(state=state, id=int(data["user_id"]))
+        """ The user this voice state belongs to. """
+
         self.member: "Member | None" = None
+        """ The member this voice state belongs to, if any. """
 
         self.channel: "BaseChannel | PartialChannel | None" = channel
+        """ The voice channel this user is in, if any. """
+
         self.guild: "PartialGuild | None" = guild
+        """ The guild this voice state is in, if any. """
 
         self.deaf: bool = data["deaf"]
+        """ Whether the user is deafened by the server. """
+
         self.mute: bool = data["mute"]
+        """ Whether the user is muted by the server. """
+
         self.self_deaf: bool = data["self_deaf"]
+        """ Whether the user is deafened by themselves. """
+
         self.self_mute: bool = data["self_mute"]
+        """ Whether the user is muted by themselves. """
+
         self.self_stream: bool = data.get("self_stream", False)
+        """ Whether the user is streaming. """
+
         self.self_video: bool = data["self_video"]
+        """ Whether the user is using video. """
+
         self.suppress: bool = data["suppress"]
+        """ Whether the user is suppressed by the server. """
+
         self.request_to_speak_timestamp: datetime | None = None
+        """ The timestamp when the user requested to speak, if any. """
 
         self._from_data(data)
 

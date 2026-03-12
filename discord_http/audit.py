@@ -280,20 +280,7 @@ def _handle_flags(cls: type[F]) -> Callable[["AuditLogEntry", str | int], F]:
 
 
 class AuditChange:
-    """
-    Represents a change in an audit log entry.
-
-    Attributes
-    ----------
-    entry: `AuditLogEntry`
-        The audit log entry this change belongs to.
-    key: `str`
-        The key of the change.
-    old_value: `Any | None`
-        The old value of the change, if applicable.
-    new_value: `Any | None`
-        The new value of the change, if applicable.
-    """
+    """ Represents a change in an audit log entry. """
 
     _translaters: ClassVar[dict[str, Callable[["AuditLogEntry", Any], Any] | None]] = {
         "verification_level": _handle_enum(enums.VerificationLevel),
@@ -360,11 +347,16 @@ class AuditChange:
         data: dict
     ):
         self.entry = entry
+        """ The audit log entry this change belongs to. """
 
         self.key: str = data["key"]
+        """ The key of the change. """
 
         self.old_value: Any | None = data.get("old_value")
+        """ The old value of the change, if applicable. """
+
         self.new_value: Any | None = data.get("new_value")
+        """ The new value of the change, if applicable. """
 
         if self.key in ("$add", "$remove"):
             self.new_value = self._handle_partial_role(data)
@@ -391,26 +383,7 @@ class AuditChange:
 
 
 class AuditLogEntry(Snowflake):
-    """
-    Represents an entry in an audit log.
-
-    Attributes
-    ----------
-    guild: `PartialGuild`
-        The guild this audit log entry belongs to.
-    action_type: `enums.AuditLogType`
-        The type of action that was performed.
-    reason: `str | None`
-        The reason for the action, if provided.
-    user_id: `int | None`
-        The ID of the user who performed the action, if available.
-    target_id: `int | None`
-        The ID of the target of the action, if available.
-    options: `dict`
-        Additional options related to the action, if any.
-    changes: `list[AuditChange]`
-        A list of changes made in this audit log entry.
-    """
+    """ Represents an entry in an audit log. """
 
     __slots__ = (
         "_state",
@@ -439,22 +412,31 @@ class AuditLogEntry(Snowflake):
             state=self._state,
             id=int(data["guild_id"])
         )
+        """ The guild this audit log entry belongs to. """
 
         try:
             self.action_type: enums.AuditLogType = enums.AuditLogType(int(data["action_type"]))
+            """ The type of action that was performed. """
         except ValueError:
             # There might be a new audit log type added
             _log.debug(f"Unknown audit log type detected from guild {self.guild.id}: {data['action_type']}")
             self.action_type = enums.AuditLogType.unknown
 
         self.reason: str | None = data.get("reason")
+        """ The reason for the action, if provided. """
 
         self.user_id: int | None = utils.get_int(data, "user_id")
+        """ The ID of the user who performed the action, if available. """
+
         self.target_id: int | None = utils.get_int(data, "target_id")
+        """ The ID of the target of the action, if available. """
 
         # Add parsing methods for options
         self.options: dict = data.get("options", {})
+        """ Additional options related to the action, if any. """
+
         self.changes: list[AuditChange] = []
+        """ A list of changes made in this audit log entry. """
 
         self._users: dict[int, User] = users or {}
 

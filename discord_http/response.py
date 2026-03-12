@@ -30,13 +30,6 @@ class Ping(Snowflake):
     Represents a ping response from the Discord API.
 
     Usually reserved for internal use.
-
-    Attributes
-    ----------
-    application_id: int
-        The ID of the application that created the ping.
-    version: int
-        The version of the ping.
     """
 
     __slots__ = (
@@ -58,7 +51,10 @@ class Ping(Snowflake):
         self._raw_user = data["user"]
 
         self.application_id: int = int(data["application_id"])
+        """ The ID of the application that created the ping. """
+
         self.version: int = int(data["version"])
+        """ The version of the ping. """
 
     def __repr__(self) -> str:
         return f"<Ping application={self.application} user='{self.user}'>"

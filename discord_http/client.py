@@ -103,27 +103,6 @@ class Client:
         Whether to disable the default GET path or not, if not provided, it will use `False`.
         The default GET path only provides information about the bot and when it was last rebooted.
         Usually a great tool to just validate that your bot is online.
-
-    Attributes
-    ----------
-    application: Application | None
-        The application object for the bot
-    gateway: GatewayClient | None
-        The gateway client, if enabled
-    commands: dict[str, Command]
-        The commands registered to the client
-    listeners: list[Listener]
-        The listeners registered to the client
-    interactions: dict[str, Interaction]
-        The interactions registered to the client
-    interactions_regex: dict[str, Interaction]
-        The interactions registered to the client with regex
-    cache: Cache
-        The cache for the client, used for caching guilds, users, etc.
-    state: DiscordAPI
-        The state for the client, used for making HTTP requests
-    backend: DiscordHTTP
-        The backend for the client, used for serving HTTP requests
     """
     def __init__(
         self,
@@ -161,6 +140,8 @@ class Client:
             )
 
         self.application: Application | None = None
+        """ The application object for the bot. """
+
         self.api_version: int = int(api_version)
         self.api_base_url: str = str(api_base_url or "https://discord.com/api")
         self.token: str = token
@@ -179,6 +160,8 @@ class Client:
         self.max_pending_connections: int = max_pending_connections
 
         self.gateway: "GatewayClient | None" = None
+        """ The gateway client, if enabled. """
+
         self.disable_default_get_path: bool = disable_default_get_path
 
         try:
@@ -188,21 +171,31 @@ class Client:
             asyncio.set_event_loop(self.loop)
 
         self.commands: dict[str, Command] = {}
+        """ The commands registered to the client. """
+
         self.listeners: list[Listener] = []
+        """ The listeners registered to the client. """
+
         self.interactions: dict[str, Interaction] = {}
+        """ The interactions registered to the client. """
+
         self.interactions_regex: dict[str, Interaction] = {}
+        """ The interactions registered to the client with regex. """
 
         self._global_cmd_checks: list[Callable] = []
-
         self._gateway_cache: "GatewayCacheFlags | None" = gateway_cache
         self._ready: asyncio.Event | None = asyncio.Event()
         self._shards_ready: asyncio.Event | None = asyncio.Event()
-
         self._context: Callable[["Client", dict], Context] = Context
 
         self.cache: Cache = Cache(client=self)
+        """ The cache for the client, used for caching guilds, users, etc. """
+
         self.state: DiscordAPI = DiscordAPI(client=self)
+        """ The state for the client, used for making HTTP requests. """
+
         self.backend: DiscordHTTP = DiscordHTTP(client=self)
+        """ The backend for the client, used for serving HTTP requests. """
 
         self._view_storage: dict[str | int, InteractionStorage] = {}
         self._default_allowed_mentions = allowed_mentions or AllowedMentions.all()

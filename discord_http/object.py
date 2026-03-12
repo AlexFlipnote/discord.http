@@ -9,14 +9,7 @@ __all__ = (
 
 
 class Snowflake:
-    """
-    A class to represent a Discord Snowflake.
-
-    Attributes
-    ----------
-    id: int
-        The ID of the snowflake.
-    """
+    """ A class to represent a Discord Snowflake. """
     __slots__ = ("id",)
 
     def __init__(
@@ -29,6 +22,7 @@ class Snowflake:
             raise TypeError(f"id must be an integer or convertible to integer, not {type(id)}")
 
         self.id: int = id
+        """ The ID of the snowflake. """
 
     def __repr__(self) -> str:
         return f"<Snowflake id={self.id}>"
@@ -94,11 +88,6 @@ class PartialBase(Snowflake):
 
     This class is based on the Snowflae class standard,
     but with a few extra attributes.
-
-    Attributes
-    ----------
-    id: int
-        The ID of the object.
     """
     __slots__ = ()
 

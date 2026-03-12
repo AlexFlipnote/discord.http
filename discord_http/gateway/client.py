@@ -23,29 +23,7 @@ __all__ = (
 
 
 class GatewayClient:
-    """
-    Represents the discord.http/gateway client of the bot.
-
-    Attributes
-    ----------
-    bot: Client
-        The bot instance that this gateway client belongs to.
-    intents: Intents | None
-        The intents that the gateway client is using, or `None` if not specified.
-    cache_flags: GatewayCacheFlags | None
-        The cache flags that the gateway client is using, or `None` if not specified.
-    automatic_shards: bool
-        Whether to automatically determine the number of shards to launch based on the gateway response.
-    shard_id: int | None
-        The shard ID to launch, or `None` if not specified.
-    shard_count: int
-        The total number of shards to launch, defaults to 1.
-    shard_ids: list[int] | None
-        A list of shard IDs to launch, or `None` to launch all shards from
-        0 to `shard_count - 1`.
-    max_concurrency: int | None
-        The maximum number of shards to launch concurrently, or `None` to launch all shards at once.
-    """
+    """ Represents the discord.http/gateway client of the bot. """
     def __init__(
         self,
         bot: "Client",
@@ -59,14 +37,28 @@ class GatewayClient:
         max_concurrency: int | None = None
     ):
         self.bot = bot
+        """ The bot instance that this gateway client belongs to. """
+
         self.intents = intents
+        """ The intents that the gateway client is using, or `None` if not specified. """
+
         self.cache_flags = cache_flags
+        """ The cache flags that the gateway client is using, or `None` if not specified. """
 
         self.automatic_shards = automatic_shards
+        """ Whether to automatically determine the number of shards to launch based on the gateway response. """
+
         self.shard_id = shard_id
+        """ The shard ID to launch, or `None` if not specified. """
+
         self.shard_count = shard_count
+        """ The total number of shards to launch, defaults to 1. """
+
         self.shard_ids = shard_ids
+        """ A list of shard IDs to launch, or `None` to launch all shards from 0 to `shard_count - 1`. """
+
         self.max_concurrency = max_concurrency
+        """ The maximum number of shards to launch concurrently, or `None` to launch all shards at once. """
 
         self.__shards: dict[int, Shard] = {}
 

@@ -22,14 +22,7 @@ __all__ = (
 
 
 class PartialRole(PartialBase):
-    """
-    Represents a partial role object.
-
-    Attributes
-    ----------
-    guild_id: int
-        The ID of the guild this role is in
-    """
+    """ Represents a partial role object. """
 
     __slots__ = (
         "_state",
@@ -49,6 +42,7 @@ class PartialRole(PartialBase):
         self._target_type: PermissionType = PermissionType.role
 
         self.guild_id: int = guild_id
+        """ The ID of the guild this role is in. """
 
     def __repr__(self) -> str:
         return f"<PartialRole id={self.id} guild_id={self.guild_id}>"
@@ -294,37 +288,7 @@ class PartialRole(PartialBase):
 
 
 class Role(PartialRole):
-    """
-    Represents a role object.
-
-    Attributes
-    ----------
-    name: str
-        The name of the role
-    hoist: bool
-        Whether the role is displayed separately in the sidebar
-    managed: bool
-        Whether the role is managed by an integration
-    mentionable: bool
-        Whether the role is mentionable
-    permissions: Permissions
-        The permissions of the role
-    colour: Colour
-        The colour of the role
-    position: int
-        The position of the role in the role hierarchy
-    tags: dict
-        The tags of the role, such as `premium_subscriber`, `available_for_purchase`,
-        `guild_connections`, etc.
-    bot_id: int | None
-        The ID of the bot that manages the role, if any
-    integration_id: int | None
-        The ID of the integration that manages the role, if any
-    subscription_listing_id: int | None
-        The ID of the subscription listing for the role, if any
-    unicode_emoji: str | None
-        The unicode emoji associated with the role, if any
-    """
+    """ Represents a role object. """
 
     __slots__ = (
         "_available_for_purchase",
@@ -355,18 +319,40 @@ class Role(PartialRole):
         super().__init__(state=state, id=int(data["id"]), guild_id=guild.id)
 
         self.name: str = sys.intern(data["name"])
+        """ The name of the role. """
+
         self.hoist: bool = data["hoist"]
+        """ Whether the role is displayed separately in the sidebar. """
+
         self.managed: bool = data.get("managed", False)
+        """ Whether the role is managed by an integration. """
+
         self.mentionable: bool = data.get("mentionable", False)
+        """ Whether the role is mentionable. """
+
         self.permissions: Permissions = Permissions(int(data["permissions"]))
+        """ The permissions of the role. """
+
         self.colour: Colour = Colour(int(data["color"]))
+        """ The colour of the role. """
+
         self.position: int = int(data["position"])
+        """ The position of the role in the role hierarchy. """
+
         self.tags: dict = data.get("tags", {})
+        """ The tags of the role, such as `premium_subscriber`, `available_for_purchase`, `guild_connections`, etc. """
 
         self.bot_id: int | None = utils.get_int(data, "bot_id")
+        """ The ID of the bot that manages the role, if any. """
+
         self.integration_id: int | None = utils.get_int(data, "integration_id")
+        """ The ID of the integration that manages the role, if any. """
+
         self.subscription_listing_id: int | None = utils.get_int(data, "subscription_listing_id")
+        """ The ID of the subscription listing for the role, if any. """
+
         self.unicode_emoji: str | None = data.get("unicode_emoji")
+        """ The unicode emoji associated with the role, if any. """
 
         self._premium_subscriber: bool = "premium_subscriber" in self.tags
         self._available_for_purchase: bool = "available_for_purchase" in self.tags

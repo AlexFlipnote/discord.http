@@ -17,16 +17,7 @@ __all__ = (
 
 
 class PartialSticker(PartialBase):
-    """
-    Represents a partial sticker object.
-
-    Attributes
-    ----------
-    name: str | None
-        The name of the sticker, if any
-    guild_id: int | None
-        The ID of the guild this sticker is in, if any
-    """
+    """ Represents a partial sticker object. """
 
     __slots__ = (
         "_state",
@@ -46,7 +37,10 @@ class PartialSticker(PartialBase):
         self._state = state
 
         self.name: str | None = name
+        """ The name of the sticker, if any. """
+
         self.guild_id: int | None = guild_id
+        """ The ID of the guild this sticker is in, if any. """
 
     def __repr__(self) -> str:
         return f"<PartialSticker id={self.id}>"
@@ -194,26 +188,7 @@ class PartialSticker(PartialBase):
 
 
 class Sticker(PartialSticker):
-    """
-    Represents a sticker object.
-
-    Attributes
-    ----------
-    available: bool
-        Whether the sticker is available
-    description: str
-        The description of the sticker
-    format_type: StickerFormatType
-        The format type of the sticker
-    pack_id: int | None
-        The ID of the sticker pack this sticker belongs to, if any
-    sort_value: int | None
-        The sort value of the sticker, if any
-    tags: str
-        The tags of the sticker
-    type: StickerType
-        The type of the sticker
-    """
+    """ Represents a sticker object. """
 
     __slots__ = (
         "_raw_type",
@@ -242,12 +217,22 @@ class Sticker(PartialSticker):
         self._raw_type: int = data["type"]
 
         self.available: bool = data.get("available", False)
-        self.available: bool = data["available"]
+        """ Whether the sticker is available. """
+
         self.description: str = data["description"]
+        """ The description of the sticker. """
+
         self.format_type: StickerFormatType = StickerFormatType(data["format_type"])
+        """ The format type of the sticker. """
+
         self.pack_id: int | None = utils.get_int(data, "pack_id")
+        """ The ID of the sticker pack this sticker belongs to, if any. """
+
         self.sort_value: int | None = utils.get_int(data, "sort_value")
+        """ The sort value of the sticker, if any. """
+
         self.tags: str = data["tags"]
+        """ The tags of the sticker. """
 
         # Re-define types
         self.name: str

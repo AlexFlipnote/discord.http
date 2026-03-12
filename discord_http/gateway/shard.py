@@ -33,22 +33,7 @@ __all__ = (
 
 
 class ShardEventPayload:
-    """
-    Represents the payload for shard events.
-
-    Attributes
-    ----------
-    id: int
-        The ID of the shard that the event is related to.
-    shard: Shard
-        The shard that the event is related to.
-    reason: str | None
-        The reason for the event, if any.
-    exception: Exception | None
-        The exception that caused the event, if any.
-    close_type: ShardCloseType | None
-        The type of close that caused the event, if any.
-    """
+    """ Represents the payload for shard events. """
 
     __slots__ = (
         "close_type",
@@ -67,10 +52,19 @@ class ShardEventPayload:
         close_type: ShardCloseType | None = None,
     ):
         self.id: int = shard.shard_id
+        """ The ID of the shard that the event is related to. """
+
         self.shard: "Shard" = shard
+        """ The shard that the event is related to. """
+
         self.reason: str | None = reason
+        """ The reason for the event, if any. """
+
         self.exception: Exception | None = exception
+        """ The exception that caused the event, if any. """
+
         self.close_type: ShardCloseType | None = close_type
+        """ The type of close that caused the event, if any. """
 
     def __repr__(self) -> str:
         return f"<ShardEventPayload id={self.id} shard={self.shard} reason={self.reason}>"
@@ -93,24 +87,7 @@ class ShardEventPayload:
 
 
 class GatewayRatelimiter:
-    """
-    Represents the ratelimiter for the gateway.
-
-    Attributes
-    ----------
-    shard_id: int
-        The ID of the shard that the ratelimiter is for.
-    max: int
-        The maximum number of messages that can be sent in the current window.
-    remaining: int
-        The number of messages remaining in the current window.
-    window: float
-        The start time of the current window.
-    per: float
-        The length of the window in seconds.
-    lock: asyncio.Lock
-        The lock for the ratelimiter, used to block when the ratelimit is hit.
-    """
+    """ Represents the ratelimiter for the gateway. """
     __slots__ = (
         "lock",
         "max",
@@ -127,12 +104,22 @@ class GatewayRatelimiter:
         per: float = 60.0
     ) -> None:
         self.shard_id: int = shard_id
+        """ The ID of the shard that the ratelimiter is for. """
 
         self.max: int = count
+        """ The maximum number of messages that can be sent in the current window. """
+
         self.remaining: int = count
+        """ The number of messages remaining in the current window. """
+
         self.window: float = 0.0
+        """ The start time of the current window. """
+
         self.per: float = per
+        """ The length of the window in seconds. """
+
         self.lock: asyncio.Lock = asyncio.Lock()
+        """ The lock for the ratelimiter, used to block when the ratelimit is hit. """
 
     def reset(self) -> None:
         """ Resets the ratelimiter. """
@@ -173,22 +160,7 @@ class GatewayRatelimiter:
 
 
 class Status:
-    """
-    Represents the status of a shard.
-
-    Attributes
-    ----------
-    shard_id: int
-        The ID of the shard.
-    sequence: int | None
-        The last sequence number received from the gateway, if any.
-    session_id: str | None
-        The session ID of the shard, if any.
-    gateway: utils.URL
-        The gateway URL for the shard.
-    latency: float
-        The latency of the shard, in seconds.
-    """
+    """ Represents the status of a shard. """
     __slots__ = (
         "_last_ack",
         "_last_heartbeat",
@@ -203,12 +175,20 @@ class Status:
 
     def __init__(self, shard_id: int):
         self.shard_id = shard_id
+        """ The ID of the shard. """
 
         self.sequence: int | None = None
+        """ The last sequence number received from the gateway, if any. """
+
         self.session_id: str | None = None
+        """ The session ID of the shard, if any. """
+
         self.gateway = DEFAULT_GATEWAY
+        """ The gateway URL for the shard. """
 
         self.latency: float = float("inf")
+        """ The latency of the shard, in seconds. """
+
         self._last_ack: float = time.perf_counter()
         self._last_send: float = time.perf_counter()
         self._last_recv: float = time.perf_counter()
@@ -287,36 +267,7 @@ class Status:
 
 
 class Shard:
-    """
-    Represents a shard for the gateway.
-
-    Attributes
-    ----------
-    bot: Client
-        The bot instance that the shard belongs to.
-    intents: Intents | None
-        The intents that the shard is using, or `None` if not specified.
-    cache_flags: GatewayCacheFlags | None
-        The cache flags that the shard is using, or `None` if not specified.
-    api_version: int
-        The API version that the shard is using.
-    shard_id: int
-        The ID of the shard.
-    shard_count: int | None
-        The total number of shards, or `None` if not specified.
-    debug_events: bool
-        Whether to debug events or not.
-    ws: ClientWebSocketResponse | None
-        The websocket connection for the shard, if any.
-    session: ClientSession
-        The HTTP session for the shard.
-    parser: Parser
-        The parser for the shard.
-    status: Status
-        The status of the shard.
-    playing_status: PlayingStatus | None
-        The playing status of the shard, if any.
-    """
+    """ Represents a shard for the gateway. """
     def __init__(
         self,
         bot: "Client",
@@ -329,24 +280,41 @@ class Shard:
         debug_events: bool = False,
     ):
         self.bot = bot
+        """ The bot instance that the shard belongs to. """
 
         self.intents: Intents = intents or Intents.none()
+        """ The intents that the shard is using, or `None` if not specified. """
+
         self.cache_flags = cache_flags
+        """ The cache flags that the shard is using, or `None` if not specified. """
 
         self.api_version = api_version
+        """ The API version that the shard is using. """
+
         self.shard_id = shard_id
+        """ The ID of the shard. """
+
         self.shard_count = shard_count
+        """ The total number of shards, or `None` if not specified. """
+
         self.debug_events = debug_events
+        """ Whether to debug events or not. """
 
         self.ws: ClientWebSocketResponse | None = None
+        """ The websocket connection for the shard, if any. """
 
         # Session was already made before, pyright is wrong
         self.session: ClientSession = self.bot.state.http.session  # type: ignore
+        """ The HTTP session for the shard. """
 
         self.parser = Parser(bot)
+        """ The parser for the shard. """
+
         self.status = Status(shard_id)
+        """ The status of the shard. """
 
         self.playing_status: PlayingStatus | None = bot.playing_status
+        """ The playing status of the shard, if any. """
 
         self._ready: asyncio.Event = asyncio.Event()
         self._ready_task: asyncio.Task | None = None

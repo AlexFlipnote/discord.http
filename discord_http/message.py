@@ -43,18 +43,7 @@ __all__ = (
 
 
 class MessageInteraction(PartialBase):
-    """
-    Represents a message interaction.
-
-    Attributes
-    ----------
-    type: InteractionType
-        The type of the interaction.
-    name: str | None
-        The name of the interaction, if available.
-    user: User
-        The user who triggered the interaction.
-    """
+    """ Represents a message interaction. """
 
     __slots__ = (
         "_raw_type",
@@ -71,13 +60,16 @@ class MessageInteraction(PartialBase):
     ):
         super().__init__(id=int(data["id"]))
         self._state = state
-
         self._raw_type: int = data["type"]
+
         self.name: str | None = data.get("name")
+        """ The name of the interaction, if available. """
+
         self.user: User = User(
             state=state,
             data=data["user"]
         )
+        """ The user who triggered the interaction. """
 
     @property
     def type(self) -> InteractionType:
@@ -86,26 +78,7 @@ class MessageInteraction(PartialBase):
 
 
 class MessageReaction:
-    """
-    Represents a reaction to a message.
-
-    Attributes
-    ----------
-    count: int
-        The number of users that reacted with this emoji.
-    burst_count: int
-        The number of users that reacted with this emoji in burst mode.
-    me: bool
-        Whether the bot has reacted with this emoji.
-    emoji: EmojiParser
-        The emoji that was used for the reaction.
-    me_burst: bool
-        Whether the bot has reacted with this emoji in burst mode.
-    burst_me: bool
-        Whether the bot has reacted with this emoji in burst mode.
-    burst_colors: list[Colour]
-        The colors of the burst reaction.
-    """
+    """ Represents a reaction to a message. """
 
     __slots__ = (
         "_burst_me",
@@ -125,18 +98,31 @@ class MessageReaction:
         self._message = message
 
         self.count: int = int(data["count"])
+        """ The number of users that reacted with this emoji. """
+
         self.burst_count: int = int(data["burst_count"])
+        """ The number of users that reacted with this emoji in burst mode. """
 
         self.me: bool = data.get("me", False)
+        """ Whether the bot has reacted with this emoji. """
+
         self.emoji: EmojiParser = EmojiParser.from_dict(data["emoji"])
+        """ The emoji that was used for the reaction. """
 
         self.me_burst: bool = data.get("me_burst", False)
+        """ Whether the bot has reacted with this emoji in burst mode. """
+
         self.burst_me: bool = data.get("burst_me", False)
+        """ Whether the bot has reacted with this emoji in burst mode. """
+
         self.burst_count: int = data.get("burst_count", 0)
+        """ The number of users that reacted with this emoji in burst mode. """
+
         self.burst_colors: list[Colour] = [
             Colour.from_hex(g)
             for g in data.get("burst_colors", [])
         ]
+        """ The colors of the burst reaction. """
 
     def __repr__(self) -> str:
         return (
@@ -256,18 +242,7 @@ class MessageReaction:
 
 
 class JumpURL:
-    """
-    Represents a jump URL to a message.
-
-    Attributes
-    ----------
-    guild_id: int | None
-        The ID of the guild the message was sent in, if applicable.
-    channel_id: int | None
-        The ID of the channel the message was sent in.
-    message_id: int | None
-        The ID of the message, if applicable.
-    """
+    """ Represents a jump URL to a message. """
 
     __slots__ = (
         "_state",
@@ -288,8 +263,13 @@ class JumpURL:
         self._state = state
 
         self.guild_id: int | None = int(guild_id) if guild_id else None
+        """ The ID of the guild the message was sent in, if applicable. """
+
         self.channel_id: int | None = channel_id or None
+        """ The ID of the channel the message was sent in. """
+
         self.message_id: int | None = message_id or None
+        """ The ID of the message, if applicable. """
 
         if url:
             if any([guild_id, channel_id, message_id]):
@@ -401,22 +381,7 @@ class JumpURL:
 
 
 class PollAnswer:
-    """
-    Represents an answer in a poll.
-
-    Attributes
-    ----------
-    id: int
-        The ID of the answer.
-    text: str | None
-        The text of the answer, if available.
-    emoji: EmojiParser | str | None
-        The emoji of the answer, if available.
-    count: int
-        The number of votes for this answer.
-    me_voted: bool
-        Whether the bot has voted for this answer.
-    """
+    """ Represents an answer in a poll. """
 
     __slots__ = (
         "count",
@@ -434,9 +399,14 @@ class PollAnswer:
         emoji: EmojiParser | str | None = None
     ):
         self.id: int = id
+        """ The ID of the answer. """
+
         self.text: str | None = text
+        """ The text of the answer, if available. """
 
         self.emoji: EmojiParser | str | None = None
+        """ The emoji of the answer, if available. """
+
         if isinstance(emoji, str):
             self.emoji = EmojiParser(emoji)
 
@@ -445,7 +415,10 @@ class PollAnswer:
 
         # Data only available when fetching message data
         self.count: int = 0
+        """ The number of votes for this answer. """
+
         self.me_voted: bool = False
+        """ Whether the bot has voted for this answer. """
 
     def __repr__(self) -> str:
         return f"<PollAnswer id={self.id} count={self.count}>"
@@ -483,26 +456,7 @@ class PollAnswer:
 
 
 class Poll:
-    """
-    Represents a poll in a message.
-
-    Attributes
-    ----------
-    text: str | None
-        The question text of the poll.
-    allow_multiselect: bool
-        Whether the poll allows multiple answers to be selected.
-    answers: list[PollAnswer]
-        The list of answers in the poll.
-    duration: int | None
-        The duration of the poll in hours, if applicable.
-    layout_type: int
-        The layout type of the poll, currently only 1 is available.
-    expiry: datetime | None
-        The expiry time of the poll, if applicable.
-    is_finalized: bool
-        Whether the poll is finalized or not.
-    """
+    """ Represents a poll in a message. """
 
     __slots__ = (
         "allow_multiselect",
@@ -522,11 +476,16 @@ class Poll:
         duration: timedelta | int | None = None
     ):
         self.text: str | None = text
+        """ The question text of the poll. """
 
         self.allow_multiselect: bool = allow_multiselect
+        """ Whether the poll allows multiple answers to be selected. """
+
         self.answers: list[PollAnswer] = []
+        """ The list of answers in the poll. """
 
         self.duration: int | None = None
+        """ The duration of the poll in hours, if applicable. """
 
         if duration is not None:
             if isinstance(duration, timedelta):
@@ -540,10 +499,14 @@ class Poll:
             self.duration = int(self.duration / 3600)
 
         self.layout_type: int = 1  # This is the only layout type available
+        """ The layout type of the poll, currently only 1 is available. """
 
         # Data only available when fetching message data
         self.expiry: datetime | None = None
+        """ The expiry time of the poll, if applicable. """
+
         self.is_finalized: bool = False
+        """ Whether the poll is finalized or not. """
 
     def __repr__(self) -> str:
         return f"<Poll text='{self.text}' answers={self.answers}>"
@@ -654,20 +617,7 @@ class Poll:
 
 
 class MessageReference:
-    """
-    Represents a reference to a message.
-
-    Attributes
-    ----------
-    type: MessageReferenceType
-        The type of the message reference.
-    guild_id: int | None
-        The ID of the guild the message was sent in, if applicable.
-    channel_id: int | None
-        The ID of the channel the message was sent in.
-    message_id: int | None
-        The ID of the message, if applicable.
-    """
+    """ Represents a reference to a message. """
 
     __slots__ = (
         "_raw_type",
@@ -679,11 +629,16 @@ class MessageReference:
 
     def __init__(self, *, state: "DiscordAPI", data: dict):
         self._state = state
-
         self._raw_type: int = data["type"]
+
         self.guild_id: int | None = utils.get_int(data, "guild_id")
+        """ The ID of the guild the message was sent in, if applicable. """
+
         self.channel_id: int | None = utils.get_int(data, "channel_id")
+        """ The ID of the channel the message was sent in. """
+
         self.message_id: int | None = utils.get_int(data, "message_id")
+        """ The ID of the message, if applicable. """
 
     def __repr__(self) -> str:
         return (
@@ -772,40 +727,7 @@ class MessageReference:
 
 
 class Attachment:
-    """
-    Represents an attachment in a message.
-
-    Attributes
-    ----------
-    id: int
-        The ID of the attachment.
-    filename: str
-        The name of the file.
-    size: int
-        The size of the file in bytes.
-    url: str
-        The URL to the attachment.
-    proxy_url: str
-        The proxied URL to the attachment.
-    ephemeral: bool
-        Whether the attachment is ephemeral or not.
-    flags: AttachmentFlags
-        The flags of the attachment.
-    content_type: str | None
-        The content type of the attachment, if available.
-    title: str | None
-        The title of the attachment, if available.
-    description: str | None
-        The description of the attachment, if available.
-    height: int | None
-        The height of the attachment, if applicable.
-    width: int | None
-        The width of the attachment, if applicable.
-    duration_secs: int | None
-        The duration of the attachment in seconds, if applicable.
-    waveform: str | None
-        The waveform of the attachment, if applicable.
-    """
+    """ Represents an attachment in a message. """
 
     __slots__ = (
         "_state",
@@ -829,23 +751,48 @@ class Attachment:
         self._state = state
 
         self.id: int = int(data["id"])
+        """ The ID of the attachment. """
+
         self.filename: str = data["filename"]
+        """ The name of the file. """
+
         self.size: int = int(data["size"])
+        """ The size of the file in bytes. """
+
         self.url: str = data["url"]
+        """ The URL to the attachment. """
+
         self.proxy_url: str = data["proxy_url"]
+        """ The proxied URL to the attachment. """
+
         self.ephemeral: bool = data.get("ephemeral", False)
+        """ Whether the attachment is ephemeral or not. """
+
         self.flags: AttachmentFlags = AttachmentFlags(data.get("flags", 0))
+        """ The flags of the attachment. """
 
         self.content_type: str | None = data.get("content_type")
+        """ The content type of the attachment, if available. """
+
         self.title: str | None = data.get("title")
+        """ The title of the attachment, if available. """
+
         self.description: str | None = data.get("description")
+        """ The description of the attachment, if available. """
 
         self.height: int | None = data.get("height")
+        """ The height of the attachment, if applicable. """
+
         self.width: int | None = data.get("width")
+        """ The width of the attachment, if applicable. """
+
         self.ephemeral: bool = data.get("ephemeral", False)
 
         self.duration_secs: int | None = data.get("duration_secs")
+        """ The duration of the attachment in seconds, if applicable. """
+
         self.waveform: str | None = data.get("waveform")
+        """ The waveform of the attachment, if applicable. """
 
     def __str__(self) -> str:
         return self.filename or ""
@@ -984,16 +931,7 @@ class Attachment:
 
 
 class PartialMessage(PartialBase):
-    """
-    Represents a partial message object.
-
-    Attributes
-    ----------
-    channel_id: int
-        The ID of the channel the message was sent in.
-    guild_id: int | None
-        The ID of the guild the message was sent in, if applicable.
-    """
+    """ Represents a partial message object. """
 
     __slots__ = (
         "_state",
@@ -1013,7 +951,10 @@ class PartialMessage(PartialBase):
         self._state = state
 
         self.channel_id: int = int(channel_id)
+        """ The ID of the channel the message was sent in. """
+
         self.guild_id: int | None = int(guild_id) if guild_id else None
+        """ The ID of the guild the message was sent in, if applicable. """
 
     def __repr__(self) -> str:
         return f"<PartialMessage id={self.id}>"
@@ -1561,24 +1502,7 @@ class PartialMessage(PartialBase):
 
 
 class MessageSnapshot:
-    """
-    Represents a snapshot of a message, used for message forwarding.
-
-    Attributes
-    ----------
-    type: MessageType
-        The type of the message.
-    content: str
-        The content of the message.
-    timestamp: datetime | None
-        The timestamp of the message, if available.
-    edited_timestamp: datetime | None
-        The timestamp of when the message was last edited, if available.
-    embeds: list[Embed]
-        The embeds of the message.
-    attachments: list[Attachment]
-        The attachments of the message.
-    """
+    """ Represents a snapshot of a message, used for message forwarding. """
 
     __slots__ = (
         "_state",
@@ -1599,13 +1523,22 @@ class MessageSnapshot:
         self._state = state
 
         self.type: MessageType = MessageType(0)
+        """ The type of the message. """
+
         self.content: str = ""
+        """ The content of the message. """
 
         self.timestamp: datetime | None = None
+        """ The timestamp of the message, if available. """
+
         self.edited_timestamp: datetime | None = None
+        """ The timestamp of when the message was last edited, if available. """
 
         self.embeds: list[Embed] = []
+        """ The embeds of the message. """
+
         self.attachments: list[Attachment] = []
+        """ The attachments of the message. """
 
         self._from_data(data)
 
@@ -1639,48 +1572,7 @@ class MessageSnapshot:
 
 
 class Message(PartialMessage):
-    """
-    Represents a message object.
-
-    Attributes
-    ----------
-    type: MessageType
-        The type of the message.
-    content: str
-        The content of the message.
-    author: User | Member
-        The author of the message.
-    pinned: bool
-        Whether the message is pinned or not.
-    mention_everyone: bool
-        Whether the message mentions everyone or not.
-    tts: bool
-        Whether the message is a TTS message or not.
-    poll: Poll | None
-        The poll associated with the message, if any.
-    embeds: list[Embed]
-        The embeds of the message.
-    attachments: list[Attachment]
-        The attachments of the message.
-    stickers: list[PartialSticker]
-        The stickers of the message.
-    reactions: list[MessageReaction]
-        The reactions to the message.
-    mentions: list[Member | User]
-        The mentions in the message.
-    view: View | None
-        The components of the message, if any.
-    edited_timestamp: datetime | None
-        The timestamp of when the message was last edited, if available.
-    reference: MessageReference | None
-        The reference to another message, if any.
-    resolved_reply: Message | None
-        The resolved reply to the message, if any.
-    resolved_forward: list[MessageSnapshot]
-        The resolved forward messages, if any.
-    interaction: MessageInteraction | None
-        The interaction associated with the message, if any.
-    """
+    """ Represents a message object. """
 
     __slots__ = (
         "attachments",
@@ -1718,44 +1610,70 @@ class Message(PartialMessage):
         )
 
         self.type: MessageType = MessageType(data["type"])
+        """ The type of the message. """
+
         self.content: str = data.get("content", "")
+        """ The content of the message. """
+
         self.author: "User | Member" = User(state=state, data=data["author"])
+        """ The author of the message. """
+
         self.pinned: bool = data.get("pinned", False)
+        """ Whether the message is pinned or not. """
+
         self.mention_everyone: bool = data.get("mention_everyone", False)
+        """ Whether the message mentions everyone or not. """
+
         self.tts: bool = data.get("tts", False)
+        """ Whether the message is a TTS message or not. """
+
         self.poll: Poll | None = None
+        """ The poll associated with the message, if any. """
 
         self.embeds: list[Embed] = [
             Embed.from_dict(embed)
             for embed in data.get("embeds", [])
         ]
+        """ The embeds of the message. """
 
         self.attachments: list[Attachment] = [
             Attachment(state=state, data=a)
             for a in data.get("attachments", [])
         ]
+        """ The attachments of the message. """
 
         self.stickers: list[PartialSticker] = [
             PartialSticker(state=state, id=int(s["id"]), name=s["name"])
             for s in data.get("sticker_items", [])
         ]
+        """ The stickers of the message. """
 
         self.reactions: list[MessageReaction] = [
             MessageReaction(state=state, message=self, data=g)
             for g in data.get("reactions", [])
         ]
+        """ The reactions to the message. """
 
         self.mentions: list["Member | User"] = []
+        """ The mentions in the message. """
 
         self.view: View | None = None
+        """ The components of the message, if any. """
+
         self.edited_timestamp: datetime | None = None
+        """ The timestamp of when the message was last edited, if available. """
 
         self.reference: MessageReference | None = None
+        """ The reference to another message, if any. """
 
         self.resolved_reply: Message | None = None
+        """ The resolved reply to the message, if any. """
+
         self.resolved_forward: list[MessageSnapshot] = []
+        """ The resolved forward messages, if any. """
 
         self.interaction: MessageInteraction | None = None
+        """ The interaction associated with the message, if any. """
 
         self._from_data(data)
 
@@ -1914,23 +1832,17 @@ class Message(PartialMessage):
 
 
 class WebhookMessage(Message):
-    """
-    Represents a message sent by a webhook.
-
-    Attributes
-    ----------
-    application_id: int
-        The ID of the application that created the webhook.
-    token: str
-        The token of the webhook, used for editing and deleting the message.
-    """
+    """ Represents a message sent by a webhook. """
 
     __slots__ = ("application_id", "token")
 
     def __init__(self, *, state: "DiscordAPI", data: dict, application_id: int, token: str):
         super().__init__(state=state, data=data)
         self.application_id = int(application_id)
+        """ The ID of the application that created the webhook. """
+
         self.token = token
+        """ The token of the webhook, used for editing and deleting the message. """
 
     async def edit(
         self,

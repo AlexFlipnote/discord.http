@@ -37,22 +37,7 @@ __all__ = (
 
 
 class PlayingStatus:
-    """
-    Represents the playing status of the bot.
-
-    Attributes
-    ----------
-    name: str | None
-        The name of the activity, if any.
-    status: StatusType | None
-        The status of the activity, if any.
-    type: ActivityType | None
-        The type of the activity, if any.
-    url: str | None
-        The url of the activity, if any. Only applicable for streaming activities.
-    since: int | None
-        The timestamp of when the activity started, if applicable.
-    """
+    """ Represents the playing status of the bot. """
     __slots__ = (
         "name",
         "since",
@@ -70,9 +55,16 @@ class PlayingStatus:
         url: str | None = None,
     ):
         self.since: int | None = None
+        """ The timestamp of when the activity started, if applicable. """
+
         self.name = name
+        """ The name of the activity, if any. """
+
         self.status: StatusType | str | int | None = status
+        """ The status of the activity, if any. """
+
         self.type: ActivityType | str | int | None = type
+        """ The type of the activity, if any. """
 
         if isinstance(self.status, str):
             self.status = StatusType[self.status]
@@ -85,6 +77,8 @@ class PlayingStatus:
             self.type = ActivityType(self.type)
 
         self.url = None
+        """ The url of the activity, if any. Only applicable for streaming activities. """
+
         if self.type == ActivityType.streaming:
             self.url = str(url)
 
@@ -126,24 +120,7 @@ class PlayingStatus:
 
 
 class GuildJoinRequest:
-    """
-    Represents a guild join request event.
-
-    Attributes
-    ----------
-    user:
-        The user that made the join request.
-    guild:
-        The guild the join request was made to.
-    last_seen:
-        The last time the user was seen in the guild, if applicable.
-    rejection_reason:
-        The reason the join request was rejected, if applicable.
-    status:
-        The status of the join request. Can be "pending", "accepted", or "rejected".
-    user:
-        The user that made the join request, or `None` if the user is not available.
-    """
+    """ Represents a guild join request event. """
 
     __slots__ = (
         "_state",
@@ -165,13 +142,22 @@ class GuildJoinRequest:
         self._state = state
 
         self.status: str = data["status"]
+        """ The status of the join request. Can be "pending", "accepted", or "rejected". """
+
         self.rejection_reason: str | None = None
+        """ The reason the join request was rejected, if applicable. """
 
         self.user: User | None = None
+        """ The user that made the join request, or `None` if the user is not available. """
+
         self.user_id: int | None = None
+        """ The ID of the user that made the join request, if available. """
 
         self.guild: "Guild | PartialGuild" = guild
+        """ The guild the join request was made to. """
+
         self.last_seen: datetime | None = None
+        """ The last time the user was seen in the guild, if applicable. """
 
         self._from_data(data)
 
@@ -190,19 +176,8 @@ class GuildJoinRequest:
             self.rejection_reason = request.get("rejection_reason", None)
 
 
-class ChannelPinsUpdate:  # noqa: B903
-    """
-    Represents a channel pins update event.
-
-    Attributes
-    ----------
-    channel:
-        The channel the pins were updated in.
-    last_pin_timestamp:
-        The last time a pin was updated in the channel.
-    guild:
-        The guild the channel is in. If the channel is a DM channel, this will be `None`.
-    """
+class ChannelPinsUpdate:
+    """ Represents a channel pins update event. """
 
     __slots__ = (
         "channel",
@@ -217,31 +192,17 @@ class ChannelPinsUpdate:  # noqa: B903
         guild: "PartialGuild | Guild | None",
     ):
         self.channel: "BaseChannel | PartialChannel" = channel
+        """ The channel the pins were updated in. """
+
         self.guild: "PartialGuild | Guild | None" = guild
+        """ The guild the channel is in. If the channel is a DM channel, this will be `None`. """
+
         self.last_pin_timestamp: "datetime | None" = last_pin_timestamp
+        """ The last time a pin was updated in the channel. """
 
 
 class Presence:
-    """
-    Represents a presence update event.
-
-    Attributes
-    ----------
-    user:
-        The user the presence update is for.
-    guild:
-        The guild the presence update is for.
-    status:
-        The status of the presence update.
-    activities:
-        The activities of the presence update.
-    desktop:
-        The desktop status of the presence update, if applicable.
-    mobile:
-        The mobile status of the presence update, if applicable.
-    web:
-        The web status of the presence update, if applicable.
-    """
+    """ Represents a presence update event. """
 
     __slots__ = (
         "_state",
@@ -266,16 +227,28 @@ class Presence:
         self._state = state
 
         self.user = user
+        """ The user the presence update is for. """
+
         self.guild = guild
+        """ The guild the presence update is for. """
+
         self.status: StatusType = StatusType[data["status"]]
+        """ The status of the presence update. """
+
         self.activities: list[Activity] = [
             Activity(state=self._state, data=g)
             for g in data.get("activities", [])
         ]
+        """ The activities of the presence update. """
 
         self.desktop: StatusType | None = None
+        """ The desktop status of the presence update, if applicable. """
+
         self.mobile: StatusType | None = None
+        """ The mobile status of the presence update, if applicable. """
+
         self.web: StatusType | None = None
+        """ The web status of the presence update, if applicable. """
 
         self._from_data(data)
 
@@ -297,21 +270,8 @@ class Presence:
             self.web = StatusType[client_status["web"]]
 
 
-class TypingStartEvent:  # noqa: B903
-    """
-    Represents a typing start event.
-
-    Attributes
-    ----------
-    guild:
-        The guild the typing event was triggered in. If the channel is a DM channel, this will be `None`.
-    channel:
-        The channel the typing event was triggered in.
-    user:
-        The user that started typing.
-    timestamp:
-        The time the user started typing.
-    """
+class TypingStartEvent:
+    """ Represents a typing start event. """
 
     __slots__ = (
         "channel",
@@ -329,38 +289,20 @@ class TypingStartEvent:  # noqa: B903
         timestamp: "datetime",
     ):
         self.guild: "PartialGuild | Guild | None" = guild
+        """ The guild the typing event was triggered in. If the channel is a DM channel, this will be `None`. """
+
         self.channel: "BaseChannel | PartialChannel" = channel
+        """ The channel the typing event was triggered in. """
+
         self.user: "PartialUser | User | Member | PartialMember" = user
+        """ The user that started typing. """
+
         self.timestamp: "datetime" = timestamp
+        """ The time the user started typing. """
 
 
 class AutomodExecution:
-    """
-    Represents an automod execution event.
-
-    Attributes
-    ----------
-    guild:
-        The guild the automod execution was triggered in.
-    user:
-        The user that triggered the automod execution.
-    action:
-        The action that was taken by the automod rule.
-    rule:
-        The automod rule that was executed.
-    channel:
-        The channel the automod execution was triggered in, if applicable.
-    content:
-        The content that triggered the automod execution, if applicable.
-    matched_keyword:
-        The keyword that triggered the automod execution, if applicable.
-    matched_content:
-        The content that matched the keyword and triggered the automod execution, if applicable.
-    message_id:
-        The ID of the message that triggered the automod execution, if applicable.
-    alert_system_message_id:
-        The ID of the system message that was sent as an alert for the automod execution, if applicable.
-    """
+    """ Represents an automod execution event. """
 
     __slots__ = (
         "_state",
@@ -390,19 +332,37 @@ class AutomodExecution:
         self._state = state
 
         self.action: AutoModRuleAction = AutoModRuleAction.from_dict(data["action"])
+        """ The action that was taken by the automod rule. """
+
         self.rule_id: int = int(data["rule_id"])
+        """ The ID of the automod rule that was triggered. """
+
         self.rule_trigger_type: AutoModRuleTriggerType = AutoModRuleTriggerType(data["rule_trigger_type"])
+        """ The trigger type of the automod rule that was triggered. """
 
         self.guild: "Guild | PartialGuild" = guild
+        """ The guild the automod execution was triggered in. """
+
         self.channel: "PartialChannel | None" = channel
+        """ The channel the automod execution was triggered in, if applicable. """
+
         self.user: "Member | PartialMember" = user
+        """ The user that triggered the automod execution. """
 
         self.message_id: int | None = utils.get_int(data, "message_id")
+        """ The ID of the message that triggered the automod execution, if applicable. """
+
         self.alert_system_message_id: int | None = utils.get_int(data, "alert_system_message_id")
+        """ The ID of the system message that was sent as an alert for the automod execution, if applicable. """
+
         self.content: str | None = data.get("content")
+        """ The content that triggered the automod execution, if applicable. """
 
         self.matched_keyword: str | None = data.get("matched_keyword")
+        """ The keyword that triggered the automod execution, if applicable. """
+
         self.matched_content: str | None = data.get("matched_content")
+        """ The content that matched the keyword and triggered the automod execution, if applicable. """
 
     def __repr__(self) -> str:
         return (
@@ -421,24 +381,7 @@ class AutomodExecution:
 
 
 class PollVoteEvent:
-    """
-    Represents a poll vote event.
-
-    Attributes
-    ----------
-    user:
-        The user that made the vote.
-    guild:
-        The guild the poll is in. If the poll is in a DM channel, this will be `None`.
-    channel:
-        The channel the poll is in.
-    message:
-        The message the poll is in.
-    type:
-        The type of the poll vote action, either "vote" or "unvote".
-    answer_id:
-        The ID of the answer that was voted or unvoted.
-    """
+    """ Represents a poll vote event. """
 
     __slots__ = (
         "_state",
@@ -463,17 +406,27 @@ class PollVoteEvent:
         self._state = state
 
         self.user: "Member | PartialMember | PartialUser" = user
+        """ The user that made the vote. """
+
         self.guild: "PartialGuild | None" = guild
+        """ The guild the poll is in. If the poll is in a DM channel, this will be `None`. """
+
         self.channel: "PartialChannel" = channel
+        """ The channel the poll is in. """
+
         self.message: PartialMessage = PartialMessage(
             state=self._state,
             id=int(data["message_id"]),
             channel_id=self.channel.id,
             guild_id=self.guild.id if self.guild else None
         )
+        """ The message the poll is in. """
 
         self.type: PollVoteActionType = type
+        """ The type of the poll vote action, either "vote" or "unvote". """
+
         self.answer_id: int = int(data["answer_id"])
+        """ The ID of the answer that was voted or unvoted. """
 
     def __repr__(self) -> str:
         return (
@@ -483,32 +436,7 @@ class PollVoteEvent:
 
 
 class Reaction:
-    """
-    Represents a reaction event.
-
-    Attributes
-    ----------
-    user_id: int
-        The ID of the user that made the reaction.
-    channel_id: int
-        The ID of the channel the reaction was made in.
-    message_id: int
-        The ID of the message the reaction was made to.
-    guild_id: int | None
-        The ID of the guild the reaction was made in, or `None` if the reaction was made in a DM channel.
-    message_author_id: int | None
-        The ID of the user that authored the message the reaction was made to, or `None` if the message author is not available.
-    member: Member | None
-        The member that made the reaction, or `None` if the member is not available.
-    emoji: EmojiParser
-        The emoji that was reacted with.
-    burst: bool
-        Whether the reaction is a burst reaction.
-    burst_colour: Colour | None
-        The colour of the burst reaction, if applicable.
-    type: ReactionType
-        The type of the reaction.
-    """
+    """ Represents a reaction event. """
 
     __slots__ = (
         "_state",
@@ -529,19 +457,34 @@ class Reaction:
         self._state = state
 
         self.user_id: int = int(data["user_id"])
+        """ The ID of the user that made the reaction. """
+
         self.channel_id: int = int(data["channel_id"])
+        """ The ID of the channel the reaction was made in. """
+
         self.message_id: int = int(data["message_id"])
+        """ The ID of the message the reaction was made to. """
 
         self.guild_id: int | None = utils.get_int(data, "guild_id")
+        """ The ID of the guild the reaction was made in, or `None` if the reaction was made in a DM channel. """
+
         self.message_author_id: int | None = utils.get_int(data, "message_author_id")
+        """ The ID of the user that authored the message the reaction was made to, or `None` if the message author is not available. """
+
         self.member: "Member | None" = None
+        """ The member that made the reaction, or `None` if the member is not available. """
 
         self.emoji: EmojiParser = EmojiParser.from_dict(data["emoji"])
+        """ The emoji that was reacted with. """
 
         self.burst: bool = data["burst"]
+        """ Whether the reaction is a burst reaction. """
+
         self.burst_colour: Colour | None = None
+        """ The colour of the burst reaction, if applicable. """
 
         self.type: ReactionType = ReactionType(data["type"])
+        """ The type of the reaction. """
 
         self._from_data(data)
 
@@ -617,18 +560,7 @@ class Reaction:
 
 
 class BulkDeletePayload:
-    """
-    Represents a bulk delete event.
-
-    Attributes
-    ----------
-    guild: PartialGuild | Guild
-        The guild the messages were deleted in.
-    channel: BaseChannel | PartialChannel
-        The channel the messages were deleted in.
-    messages: list[PartialMessage]
-        The messages that were deleted.
-    """
+    """ Represents a bulk delete event. """
 
     __slots__ = (
         "_state",
@@ -646,8 +578,12 @@ class BulkDeletePayload:
         channel: "BaseChannel | PartialChannel"
     ):
         self._state = state
+
         self.guild: "Guild | PartialGuild" = guild
+        """ The guild the messages were deleted in. """
+
         self.channel: "BaseChannel | PartialChannel" = channel
+        """ The channel the messages were deleted in. """
 
         self.messages: list[PartialMessage] = [
             PartialMessage(
@@ -658,22 +594,11 @@ class BulkDeletePayload:
             )
             for g in data["ids"]
         ]
+        """ The messages that were deleted. """
 
 
 class ThreadListSyncPayload:
-    """
-    Represents a thread list sync payload.
-
-    Attributes
-    ----------
-    guild_id:
-        The guild ID the threads are in.
-    channel_ids: ]
-        The parent channel IDs whose threads are being synced.
-        If this is empty, it means all threads in the guild are being synced.
-
-        This may contains ids of channels that have no active threads.
-    """
+    """ Represents a thread list sync payload. """
 
     __slots__ = (
         "_members",
@@ -692,7 +617,15 @@ class ThreadListSyncPayload:
         self._state = state
 
         self.guild_id: int = int(data["guild_id"])
+        """ The guild ID the thread list sync is for. """
+
         self.channel_ids: list[int] = [int(c) for c in data.get("channel_ids", [])]
+        """
+        The parent channel IDs whose threads are being synced.
+        If this is empty, it means all threads in the guild are being synced.
+        This may contains ids of channels that have no active threads.
+        """
+
         self._threads: list[dict] = data["threads"]
         self._members: list[dict] = data["members"]
 
@@ -774,20 +707,7 @@ class ThreadListSyncPayload:
 
 
 class ThreadMembersUpdatePayload:
-    """
-    Represents a thread members update's payload.
-
-    Attributes
-    ----------
-    id:
-        The ID of the thread.
-    guild_id:
-        The guild ID the thread is in.
-    member_count:
-        The total number of members in the thread, capped at 50.
-    removed_member_ids:
-        The IDs of the members that were removed from the thread.
-    """
+    """ Represents a thread members update's payload. """
 
     __slots__ = (
         "_added_members",
@@ -807,9 +727,16 @@ class ThreadMembersUpdatePayload:
         self._state = state
 
         self.id: int = int(data["id"])
+        """ The ID of the thread. """
+
         self.guild_id: int = int(data["guild_id"])
+        """ The guild ID the thread is in. """
+
         self.member_count: int = data["member_count"]
+        """ The total number of members in the thread, capped at 50. """
+
         self.removed_member_ids: list[int] = data.get("removed_member_ids", [])
+        """ The IDs of the members that were removed from the thread. """
 
         self._added_members: list[dict] = data.get("added_members", [])
 

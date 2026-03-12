@@ -13,16 +13,7 @@ if TYPE_CHECKING:
 
 
 class IntegrationAccount:
-    """
-    Represents an account associated with an integration.
-
-    Attributes
-    ----------
-    id: str | int
-        The ID of the account.
-    name: str
-        The name of the account.
-    """
+    """ Represents an account associated with an integration. """
 
     __slots__ = ("_state", "id", "name",)
 
@@ -33,9 +24,13 @@ class IntegrationAccount:
         data: dict,
     ) -> None:
         self._state = state
+
         self.name: str = data.get("name", "")
+        """ The name of the account. """
 
         self.id: str | int = str(data["id"])
+        """ The ID of the account. """
+
         if self.id.isdigit():
             self.id = int(self.id)
 
@@ -52,24 +47,7 @@ class IntegrationAccount:
 
 
 class IntegrationApplication(PartialBase):
-    """
-    Represents a bot/OAuth2 application for integrations.
-
-    Attributes
-    ----------
-    name: str
-        The name of the application.
-    description: str
-        The description of the application.
-    summary: str
-        The summary of the application.
-    is_monetized: bool
-        Whether the application is monetized.
-    is_verified: bool
-        Whether the application is verified.
-    is_discoverable: bool
-        Whether the application is discoverable.
-    """
+    """ Represents a bot/OAuth2 application for integrations. """
 
     __slots__ = (
         "_bot",
@@ -92,16 +70,26 @@ class IntegrationApplication(PartialBase):
         super().__init__(id=int(data["id"]))
 
         self._state: "DiscordAPI" = state
-
-        self.name: str = data["name"]
         self._icon: str | None = data["icon"]
-        self.description: str = data["description"]
         self._bot: dict | None = data.get("bot")
 
+        self.name: str = data["name"]
+        """ The name of the application. """
+
+        self.description: str = data["description"]
+        """ The description of the application. """
+
         self.summary: str = data.get("summary", "")
+        """ The summary of the application. """
+
         self.is_monetized: bool = data.get("is_monetized", False)
+        """ Whether the application is monetized. """
+
         self.is_verified: bool = data.get("is_verified", False)
+        """ Whether the application is verified. """
+
         self.is_discoverable: bool = data.get("is_discoverable", False)
+        """ Whether the application is discoverable. """
 
     @property
     def icon(self) -> Asset | None:
@@ -133,13 +121,6 @@ class PartialIntegration(PartialBase):
     Represents a partial integration object.
 
     This is mosly used to get the ids of objects if not in cache.
-
-    Attributes
-    ----------
-    guild_id: int
-        The guild associated with this integration.
-    application_id: int | None
-        The ID of the application associated with this integration.
     """
 
     __slots__ = (
@@ -158,11 +139,15 @@ class PartialIntegration(PartialBase):
     ) -> None:
         super().__init__(id=int(id))
         self._state = state
+
         self.guild_id: int = guild_id
+        """ The guild associated with this integration. """
+
         self.application_id: int | None = (
             int(application_id)
             if application_id else None
         )
+        """ The ID of the application associated with this integration. """
 
     @property
     def guild(self) -> "PartialGuild | Guild":
@@ -191,49 +176,7 @@ class PartialIntegration(PartialBase):
 
 
 class Integration(PartialIntegration):
-    """
-    Represents a guild integration.
-
-    Attributes
-    ----------
-    id: int
-        The ID of the integration.
-    name: str
-        The name of the integration.
-    guild: PartialGuild | Guild
-        The guild associated with this integration.
-    type: str
-        The type of the integration.
-        (e.g. "twitch", "youtube" or "discord")
-    enabled: bool
-        Whether the integration is enabled.
-    syncing: bool
-        Whether the integration is syncing.
-        This is not applicable to bot integrations.
-    role_id: int | None
-        ID of the role that the integration uses for "subscribers".
-        TThis is not applicable to bot integrations.
-    enable_emoticons: bool
-        Whether emoticons should be synced for this
-        integration (twitch only currently)
-        This is not applicable to bot integrations.
-    expire_behavior: ExpireBehaviour | None
-        The behavior of expiring subscribers.
-        This is not applicable to bot integrations.
-    expire_grace_period: int | None
-        The grace period before expiring subscribers.
-        This is not applicable to bot integrations.
-    synced_at: datetime | None
-        The time the integration was last synced.
-        This is not applicable to bot integrations.
-    subscriber_count: int
-        The number of subscribers for the integration.
-        This is not applicable to bot integrations.
-    revoked: bool
-        Whether the integration has been revoked.
-    scopes: list[str]
-        The scopes of the application has been granted.
-    """
+    """ Represents a guild integration. """
 
     __slots__ = (
         "_account",
@@ -273,26 +216,48 @@ class Integration(PartialIntegration):
         self._account: dict | None = data.get("account")
 
         self.name: str = data["name"]
+        """ The name of the integration. """
+
         self.type: str = data["type"]
+        """ The type of the integration. (e.g. "twitch", "youtube" or "discord"). """
 
         self.enabled: bool = data["enabled"]
+        """ Whether the integration is enabled. """
+
         self.syncing: bool = data.get("syncing", False)
+        """ Whether the integration is syncing. This is not applicable to bot integrations. """
+
         self.role_id: int | None = data.get("role_id")
+        """ ID of the role that the integration uses for "subscribers". TThis is not applicable to bot integrations. """
+
         self.enable_emoticons: bool = data.get("enable_emoticons", False)
+        """ Whether emoticons should be synced for this integration (twitch only currently) This is not applicable to bot integrations. """
+
         self.expire_behavior: ExpireBehaviour | None = (
             ExpireBehaviour(expire_behavior)
             if (expire_behavior := data.get("expire_behavior"))
             else None
         )
+        """ The behavior of expiring subscribers. This is not applicable to bot integrations. """
+
         self.expire_grace_period: int | None = data.get("expire_grace_period")
+        """ The grace period before expiring subscribers. This is not applicable to bot integrations. """
+
         self.synced_at: datetime | None = (
             utils.parse_time(synced_at)
             if (synced_at := data.get("synced_at"))
             else None
         )
+        """ The time the integration was last synced. This is not applicable to bot integrations. """
+
         self.subscriber_count: int = data.get("subscriber_count", 0)
+        """ The number of subscribers for the integration. This is not applicable to bot integrations. """
+
         self.revoked: bool = data.get("revoked", False)
+        """ Whether the integration has been revoked. """
+
         self.scopes: list[str] = data.get("scopes", [])
+        """ The scopes of the application has been granted. """
 
     @property
     def user(self) -> User | None:

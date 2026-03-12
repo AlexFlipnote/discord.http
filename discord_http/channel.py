@@ -67,20 +67,7 @@ def _typing_done_callback(f: asyncio.Future) -> None:
 
 
 class Typing:
-    """
-    Helper class for the typing indicator.
-
-    Attributes
-    ----------
-    channel: PartialChannel
-        The channel the typing indicator is for
-    loop: asyncio.AbstractEventLoop
-        The event loop to use for the typing indicator
-    task: asyncio.Task | None
-        The task for the typing loop, if using `async with`
-    channel: PartialChannel
-        The channel the typing indicator is for
-    """
+    """ Helper class for the typing indicator. """
 
     __slots__ = (
         "_state",
@@ -91,9 +78,15 @@ class Typing:
 
     def __init__(self, *, state: "DiscordAPI", channel: "PartialChannel"):
         self._state = state
+
         self.task: asyncio.Task | None = None
+        """ The task for the typing loop, if using `async with`. """
+
         self.loop = state.bot.loop
+        """ The event loop to use for the typing indicator. """
+
         self.channel = channel
+        """ The channel the typing indicator is for. """
 
     def __await__(self) -> Generator[None, None, None]:
         return self._send_typing().__await__()
@@ -127,16 +120,7 @@ class Typing:
 
 
 class PartialChannel(PartialBase):
-    """
-    Represents a partial channel object.
-
-    Attributes
-    ----------
-    guild_id: `int | None`
-        The ID of the guild the channel belongs to, if any
-    parent_id: `int | None`
-        The ID of the parent channel or category, if any
-    """
+    """ Represents a partial channel object. """
 
     __slots__ = (
         "_raw_type",
@@ -156,7 +140,11 @@ class PartialChannel(PartialBase):
         self._state = state
 
         self.guild_id: int | None = int(guild_id) if guild_id else None
+        """ The ID of the guild the channel belongs to, if any. """
+
         self.parent_id: int | None = None
+        """ The ID of the parent channel or category, if any. """
+
         self._raw_type: int | None = None
 
     def __repr__(self) -> str:
@@ -1582,26 +1570,7 @@ class PartialChannel(PartialBase):
 
 
 class BaseChannel(PartialChannel):
-    """
-    Represents a base channel object.
-
-    Attributes
-    ----------
-    name: str | None
-        The name of the channel
-    nsfw: bool
-        Whether the channel is NSFW
-    topic: str | None
-        The topic of the channel
-    position: int | None
-        The position of the channel in the guild
-    last_message_id: int | None
-        The ID of the last message in the channel
-    parent_id: int | None
-        The ID of the parent channel (if any)
-    rate_limit_per_user: int
-        The rate limit per user in seconds
-    """
+    """ Represents a base channel object. """
 
     __slots__ = (
         "_permission_overwrites",
@@ -1628,12 +1597,25 @@ class BaseChannel(PartialChannel):
         )
 
         self.name: str | None = data.get("name")
+        """ The name of the channel. """
+
         self.nsfw: bool = data.get("nsfw", False)
+        """ Whether the channel is NSFW. """
+
         self.topic: str | None = data.get("topic")
+        """ The topic of the channel. """
+
         self.position: int | None = utils.get_int(data, "position")
+        """ The position of the channel in the guild. """
+
         self.last_message_id: int | None = utils.get_int(data, "last_message_id")
+        """ The ID of the last message in the channel. """
+
         self.parent_id: int | None = utils.get_int(data, "parent_id")
+        """ The ID of the parent channel (if any). """
+
         self.rate_limit_per_user: int = data.get("rate_limit_per_user", 0)
+        """ The rate limit per user in seconds. """
 
         self._raw_type: int = data["type"]
         self._raw_overwrites: list[dict] = data.get("permission_overwrites", [])
@@ -1764,18 +1746,7 @@ class TextChannel(BaseChannel):
 
 
 class DMChannel(BaseChannel):
-    """
-    Represents a Direct Message channel.
-
-    Attributes
-    ----------
-    name: str | None
-        The name of the channel (usually the user's name)
-    user: User | None
-        The user in the DM channel
-    last_message: PartialMessage | None
-        The last message in the DM channel
-    """
+    """ Represents a Direct Message channel. """
 
     __slots__ = (
         "last_message",
@@ -1787,8 +1758,13 @@ class DMChannel(BaseChannel):
         super().__init__(state=state, data=data)
 
         self.name: str | None = None
+        """ The name of the channel (usually the user's name). """
+
         self.user: "User | None" = None
+        """ The user in the DM channel. """
+
         self.last_message: "PartialMessage | None" = None
+        """ The last message in the DM channel. """
 
         self._from_data(data)
 
@@ -2067,14 +2043,7 @@ class NewsChannel(BaseChannel):
 
 # Thread channels
 class PartialThread(PartialChannel):
-    """
-    Represents a partial thread channel object.
-
-    Attributes
-    ----------
-    parent_id: int
-        The ID of the parent channel
-    """
+    """ Represents a partial thread channel object. """
 
     __slots__ = ()
 
@@ -2088,7 +2057,10 @@ class PartialThread(PartialChannel):
         type: ChannelType | int  # noqa: A002
     ):
         super().__init__(state=state, id=int(id), guild_id=int(guild_id))
+
         self.parent_id: int = int(parent_id)
+        """ The ID of the parent channel. """
+
         self._raw_type: ChannelType = ChannelType(int(type))
 
     def __repr__(self) -> str:
@@ -2101,36 +2073,7 @@ class PartialThread(PartialChannel):
 
 
 class PublicThread(BaseChannel):
-    """
-    Represents a public thread channel object.
-
-    Attributes
-    ----------
-    name: str
-        The name of the thread
-    message_count: int
-        The number of messages in the thread
-    member_count: int
-        The number of members in the thread
-    rate_limit_per_user: int
-        The rate limit per user in seconds
-    locked: bool
-        Whether the thread is locked
-    archived: bool
-        Whether the thread is archived
-    auto_archive_duration: int
-        The duration in minutes to automatically archive the thread after recent activity
-    channel_id: int
-        The ID of the channel
-    newly_created: bool
-        Whether the thread was newly created
-    guild_id: int | None
-        The ID of the guild the thread belongs to
-    owner_id: int | None
-        The ID of the user who owns the thread
-    last_message_id: int | None
-        The ID of the last message in the thread
-    """
+    """ Represents a public thread channel object. """
 
     __slots__ = (
         "_metadata",
@@ -2149,23 +2092,45 @@ class PublicThread(BaseChannel):
         super().__init__(state=state, data=data)
 
         self.name: str = data["name"]
+        """ The name of the thread. """
 
         self.message_count: int = utils.get_int(data, "message_count") or 0
+        """ The number of messages in the thread. """
+
         self.member_count: int = utils.get_int(data, "member_count") or 0
+        """ The number of members in the thread. """
+
         self.rate_limit_per_user: int = utils.get_int(data, "rate_limit_per_user") or 0
+        """ The rate limit per user in seconds. """
+
         self.total_message_sent: int = utils.get_int(data, "total_message_sent") or 0
+        """ The total number of messages sent in the thread. """
 
         self._metadata: dict = data.get("thread_metadata", {})
 
         self.locked: bool = self._metadata.get("locked", False)
+        """ Whether the thread is locked. """
+
         self.archived: bool = self._metadata.get("archived", False)
+        """ Whether the thread is archived. """
+
         self.auto_archive_duration: int = self._metadata.get("auto_archive_duration", 60)
+        """ The duration in minutes to automatically archive the thread after recent activity. """
 
         self.channel_id: int = int(data["id"])
+        """ The ID of the channel. """
+
         self.newly_created: bool = data.get("newly_created", False)
+        """ Whether the thread was newly created. """
+
         self.guild_id: int | None = utils.get_int(data, "guild_id")
+        """ The ID of the guild the thread belongs to. """
+
         self.owner_id: int | None = utils.get_int(data, "owner_id")
+        """ The ID of the user who owns the thread. """
+
         self.last_message_id: int | None = utils.get_int(data, "last_message_id")
+        """ The ID of the last message in the thread. """
 
     def __repr__(self) -> str:
         return f"<PublicThread id={self.id} name='{self.name}'>"
@@ -2213,22 +2178,7 @@ class PublicThread(BaseChannel):
 
 
 class ForumTag:
-    """
-    Represents a forum tag object.
-
-    Attributes
-    ----------
-    id: int | None
-        The ID of the tag
-    name: str
-        The name of the tag
-    moderated: bool
-        Whether the tag is moderated
-    emoji_id: int | None
-        The emoji ID of the tag
-    emoji_name: str | None
-        The emoji name of the tag
-    """
+    """ Represents a forum tag object. """
 
     __slots__ = (
         "emoji_id",
@@ -2240,12 +2190,19 @@ class ForumTag:
 
     def __init__(self, *, data: dict):
         self.id: int | None = utils.get_int(data, "id")
+        """ The ID of the tag. """
 
         self.name: str = data["name"]
+        """ The name of the tag. """
+
         self.moderated: bool = data.get("moderated", False)
+        """ Whether the tag is moderated. """
 
         self.emoji_id: int | None = utils.get_int(data, "emoji_id")
+        """ The emoji ID of the tag. """
+
         self.emoji_name: str | None = data.get("emoji_name")
+        """ The emoji name of the tag. """
 
     def __repr__(self) -> str:
         return f"<ForumTag id={self.id} name='{self.name}'>"
@@ -2338,14 +2295,7 @@ class ForumTag:
 
 
 class ForumChannel(PublicThread):
-    """
-    Represents a forum channel object.
-
-    Attributes
-    ----------
-    default_reaction_emoji: EmojiParser | None
-        The default reaction emoji for the forum channel
-    """
+    """ Represents a forum channel object. """
 
     __slots__ = (
         "_raw_tags",
@@ -2356,6 +2306,7 @@ class ForumChannel(PublicThread):
     def __init__(self, state: "DiscordAPI", data: dict):
         super().__init__(state=state, data=data)
         self.default_reaction_emoji: EmojiParser | None = None
+        """ The default reaction emoji for the forum channel. """
 
         self._raw_tags: list[dict] = data.get("available_tags", [])
         self._tags: list[ForumTag] | None = None
@@ -2468,22 +2419,7 @@ class Thread(PublicThread):
 # Voice channels
 
 class VoiceRegion:
-    """
-    Represents a voice region object.
-
-    Attributes
-    ----------
-    id: str
-        The ID of the voice region
-    name: str
-        The name of the voice region
-    custom: bool
-        Whether the voice region is custom
-    deprecated: bool
-        Whether the voice region is deprecated
-    optimal: bool
-        Whether the voice region is optimal for the current user
-    """
+    """ Represents a voice region object. """
 
     __slots__ = (
         "custom",
@@ -2495,10 +2431,19 @@ class VoiceRegion:
 
     def __init__(self, *, data: dict):
         self.id: str = data["id"]
+        """ The ID of the voice region. """
+
         self.name: str = data["name"]
+        """ The name of the voice region. """
+
         self.custom: bool = data["custom"]
+        """ Whether the voice region is custom. """
+
         self.deprecated: bool = data["deprecated"]
+        """ Whether the voice region is deprecated. """
+
         self.optimal: bool = data["optimal"]
+        """ Whether the voice region is optimal for the current user. """
 
     def __str__(self) -> str:
         return self.name
@@ -2508,22 +2453,7 @@ class VoiceRegion:
 
 
 class VoiceChannel(BaseChannel):
-    """
-    Represents a voice channel object.
-
-    Attributes
-    ----------
-    id: int
-        The ID of the voice channel
-    name: str | None
-        The name of the voice channel
-    bitrate: int
-        The bitrate of the voice channel in bits per second
-    user_limit: int
-        The user limit of the voice channel
-    rtc_region: str | None
-        The RTC region of the voice channel, if set
-    """
+    """ Represents a voice channel object. """
 
     __slots__ = (
         "bitrate",
@@ -2533,9 +2463,15 @@ class VoiceChannel(BaseChannel):
 
     def __init__(self, *, state: "DiscordAPI", data: dict):
         super().__init__(state=state, data=data)
+
         self.bitrate: int = int(data["bitrate"])
+        """ The bitrate of the voice channel in bits per second. """
+
         self.user_limit: int = int(data["user_limit"])
+        """ The user limit of the voice channel. """
+
         self.rtc_region: str | None = data.get("rtc_region")
+        """ The RTC region of the voice channel, if set. """
 
     def __repr__(self) -> str:
         return f"<VoiceChannel id={self.id} name='{self.name}'>"
@@ -2551,21 +2487,6 @@ class StageInstance(PartialBase):
     Represents a stage instance for a stage channel.
 
     This holds information about a live stage.
-
-    Attributes
-    ----------
-    id: int
-        The ID of the stage instance
-    channel_id: int
-        The ID of the stage channel
-    guild_id: int
-        The associated guild ID of the stage channel
-    topic: str
-        The topic of the stage instance
-    privacy_level: PrivacyLevelType
-        The privacy level of the stage instance
-    guild_scheduled_event_id: int | None
-        The guild scheduled event ID associated with this stage instance
     """
 
     __slots__ = (
@@ -2586,16 +2507,26 @@ class StageInstance(PartialBase):
         guild: "PartialGuild | None" = None,
     ) -> None:
         super().__init__(id=int(data["id"]))
+
         self._state: "DiscordAPI" = state
         self._guild: "PartialGuild | None" = guild
         self._from_data(data)
 
     def _from_data(self, data: dict) -> None:
         self.channel_id: int = int(data["channel_id"])
+        """ The ID of the stage channel. """
+
         self.guild_id: int = int(data["guild_id"])
+        """ The associated guild ID of the stage channel. """
+
         self.topic: str = data["topic"]
+        """ The topic of the stage instance. """
+
         self.privacy_level: PrivacyLevelType = PrivacyLevelType(data["privacy_level"])
+        """ The privacy level of the stage instance. """
+
         self.guild_scheduled_event_id: int | None = utils.get_int(data, "guild_scheduled_event_id")
+        """ The guild scheduled event ID associated with this stage instance. """
 
     @property
     def guild(self) -> "Guild | PartialGuild | None":

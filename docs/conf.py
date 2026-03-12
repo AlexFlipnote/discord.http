@@ -30,10 +30,20 @@ html_theme = "furo"
 html_title = "discord.http docs"
 html_favicon = "favicon.ico"
 master_doc = "index"
+suppress_warnings = ["ref.python"]
 
-autodoc_typehints = "description"
-napoleon_use_ivar = True
 typehints_use_signature_return = True
+napoleon_use_ivar = True
+autodoc_typehints = "description"
+set_type_checking_flag = True
+autoclass_content = "class"
+autodoc_default_options = {
+    "members": True,
+    "member-order": "bysource",
+    "inherited-members": True,
+    "undoc-members": False,
+    "show-inheritance": True,
+}
 
 source_suffix = {
     ".rst": "restructuredtext",

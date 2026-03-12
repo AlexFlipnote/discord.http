@@ -33,7 +33,10 @@ class Cache:
         client: "Client"
     ):
         self.bot = client
+        """ The client that the cache belongs to. """
+
         self.cache_flags = client._gateway_cache
+        """ The cache flags that determine what is cached. """
 
         self.__guilds: dict[int, "PartialGuild | Guild"] = {}
 

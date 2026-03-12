@@ -21,22 +21,7 @@ __all__ = (
 
 
 class ActivityAssets:
-    """
-    Represents the assets of an activity.
-
-    Attributes
-    ----------
-    application_id: int
-        The ID of the application this activity belongs to.
-    large_image: Asset | None
-        The large image asset of the activity, if any.
-    large_text: str | None
-        The text for the large image, if any.
-    small_image: Asset | None
-        The small image asset of the activity, if any.
-    small_text: str | None
-        The text for the small image, if any.
-    """
+    """ Represents the assets of an activity. """
     __slots__ = (
         "_state",
         "application_id",
@@ -54,12 +39,21 @@ class ActivityAssets:
         data: dict
     ):
         self._state = state
+
         self.application_id: int = application_id
+        """ The ID of the application this activity belongs to. """
 
         self.large_image: Asset | None = None
+        """ The large image asset of the activity, if any. """
+
         self.large_text: str | None = data.get("large_text")
+        """ The text for the large image, if any. """
+
         self.small_image: Asset | None = None
+        """ The small image asset of the activity, if any. """
+
         self.small_text: str | None = data.get("small_text")
+        """ The text for the small image, if any. """
 
         self._from_data(data)
 
@@ -80,16 +74,7 @@ class ActivityAssets:
 
 
 class ActivityTimestamps:
-    """
-    Represents the timestamps of an activity.
-
-    Attributes
-    ----------
-    start: datetime | None
-        The start time of the activity, if any.
-    end: datetime | None
-        The end time of the activity, if any.
-    """
+    """ Represents the timestamps of an activity. """
     __slots__ = (
         "end",
         "start",
@@ -97,7 +82,10 @@ class ActivityTimestamps:
 
     def __init__(self, *, data: dict):
         self.start: datetime | None = None
+        """ The start time of the activity, if any. """
+
         self.end: datetime | None = None
+        """ The end time of the activity, if any. """
 
         self._from_data(data)
 
@@ -113,18 +101,7 @@ class ActivityTimestamps:
 
 
 class ActivitySecrets:
-    """
-    Represents the secrets of an activity.
-
-    Attributes
-    ----------
-    join: str | None
-        The secret for joining the activity, if any.
-    spectate: str | None
-        The secret for spectating the activity, if any.
-    match: str | None
-        The secret for joining a specific match, if any.
-    """
+    """ Represents the secrets of an activity. """
 
     __slots__ = (
         "join",
@@ -134,8 +111,13 @@ class ActivitySecrets:
 
     def __init__(self, *, data: dict):
         self.join: str | None = data.get("join")
+        """ The secret for joining the activity, if any. """
+
         self.spectate: str | None = data.get("spectate")
+        """ The secret for spectating the activity, if any. """
+
         self.match: str | None = data.get("match")
+        """ The secret for joining a specific match, if any. """
 
     def __repr__(self) -> str:
         return (
@@ -145,18 +127,7 @@ class ActivitySecrets:
 
 
 class ActivityParty:
-    """
-    Represents the party of an activity.
-
-    Attributes
-    ----------
-    id: str | None
-        The ID of the party, if any.
-    current_size: int | None
-        The current size of the party, if any.
-    max_size: int | None
-        The maximum size of the party, if any.
-    """
+    """ Represents the party of an activity. """
 
     __slots__ = (
         "current_size",
@@ -166,8 +137,13 @@ class ActivityParty:
 
     def __init__(self, *, data: dict):
         self.id: str | None = data.get("id")
+        """ The ID of the party, if any. """
+
         self.current_size: int | None = None
+        """ The current size of the party, if any. """
+
         self.max_size: int | None = None
+        """ The maximum size of the party, if any. """
 
         if data.get("size"):
             self.current_size = data["size"][0]
@@ -175,42 +151,7 @@ class ActivityParty:
 
 
 class Activity:
-    """
-    Represents an activity.
-
-    Attributes
-    ----------
-    name: str
-        The name of the activity.
-    url: str | None
-        The URL of the activity, if any.
-    created_at: datetime
-        The time the activity was created at.
-    application_id: int | None
-        The ID of the application this activity belongs to, if any.
-    state: str | None
-        The state of the activity, if any.
-    details: str | None
-        The details of the activity, if any.
-    sync_id: str | None
-        The sync ID of the activity, if any.
-    session_id: str | None
-        The session ID of the activity, if any.
-    emoji: EmojiParser | None
-        The emoji of the activity, if any.
-    party: ActivityParty | None
-        The party of the activity, if any.
-    assets: ActivityAssets | None
-        The assets of the activity, if any.
-    secrets: ActivitySecrets | None
-        The secrets of the activity, if any.
-    instance: bool
-        Whether the activity is an instance, if any.
-    flags: ActivityFlags
-        The flags of the activity, if any.
-    buttons: list[str]
-        The buttons of the activity, if any.
-    """
+    """ Represents an activity. """
 
     __slots__ = (
         "_raw_type",
@@ -243,21 +184,52 @@ class Activity:
         self._raw_type: int = data["type"]
 
         self.name: str = data["name"]
+        """ The name of the activity. """
+
         self.url: str | None = data.get("url")
+        """ The URL of the activity, if any. """
+
         self.created_at: datetime = utils.parse_time(data["created_at"])
+        """ The time the activity was created at. """
+
         self.timestamps: ActivityTimestamps | None = None
+        """ The timestamps of the activity, if any. """
+
         self.application_id: int | None = utils.get_int(data, "application_id")
+        """ The ID of the application this activity belongs to, if any. """
+
         self.state: str | None = data.get("state")
+        """ The state of the activity, if any. """
+
         self.details: str | None = data.get("details")
+        """ The details of the activity, if any. """
+
         self.sync_id: str | None = data.get("sync_id")
+        """ The sync ID of the activity, if any. """
+
         self.session_id: str | None = data.get("session_id")
+        """ The session ID of the activity, if any. """
+
         self.emoji: EmojiParser | None = None
+        """ The emoji of the activity, if any. """
+
         self.party: ActivityParty | None = None
+        """ The party of the activity, if any. """
+
         self.assets: ActivityAssets | None = None
+        """ The assets of the activity, if any. """
+
         self.secrets: ActivitySecrets | None = None
+        """ The secrets of the activity, if any. """
+
         self.instance: bool = data.get("instance", False)
+        """ Whether the activity is an instance, if any. """
+
         self.flags: ActivityFlags = ActivityFlags(data.get("flags", 0))
+        """ The flags of the activity, if any. """
+
         self.buttons: list[str] = data.get("buttons", [])
+        """ The buttons of the activity, if any. """
 
         self._from_data(data)
 

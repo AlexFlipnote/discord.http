@@ -9,14 +9,7 @@ __all__ = (
 
 
 class Colour:
-    """
-    Represents a colour object, used in multiple places in the API.
-
-    Attributes
-    ----------
-    value: int
-        The integer value of the colour, between 0 and 16777215 (0xFFFFFF)
-    """
+    """ Represents a colour object, used in multiple places in the API. """
 
     __slots__ = ("value",)
 
@@ -28,6 +21,7 @@ class Colour:
             raise ValueError(f"value must be between 0 and 16777215, not {value}")
 
         self.value: int = value
+        """ The integer value of the colour, between 0 and 16777215 (0xFFFFFF). """
 
     def __int__(self) -> int:
         return self.value

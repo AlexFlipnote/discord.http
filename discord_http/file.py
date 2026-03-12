@@ -8,24 +8,7 @@ __all__ = (
 
 
 class File:
-    """
-    Represents a file to be uploaded to Discord.
-
-    Attributes
-    ----------
-    data: io.BufferedIOBase
-        The file data as a file-like object.
-    spoiler: bool
-        Whether the file is a spoiler.
-    title: str | None
-        The title of the file, if any.
-    description: str | None
-        The description of the file, if any.
-    duration_secs: float | int | None
-        The duration of the file in seconds, if applicable.
-    waveform: str | None
-        The waveform data for the file, if applicable.
-    """
+    """ Represents a file to be uploaded to Discord. """
 
     __slots__ = (
         "_filename",
@@ -52,15 +35,27 @@ class File:
         waveform: str | None = None
     ):
         self.spoiler = spoiler
+        """ Whether the file is a spoiler. """
+
         self.title = title
+        """ The title of the file, if any. """
+
         self.description = description
+        """ The description of the file, if any. """
+
         self.duration_secs = duration_secs
+        """ The duration of the file in seconds, if applicable. """
+
         self.waveform = waveform
+        """ The waveform data for the file, if applicable. """
+
         self._filename = filename
 
         if isinstance(data, (str, Path)):
             self._filename = filename or Path(data).name
             self.data = open(data, "rb")  # noqa: SIM115
+            """ The file data as a file-like object. """
+
             self._owner = True
             self._original_pos = 0
         elif isinstance(data, io.IOBase):

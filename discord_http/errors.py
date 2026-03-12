@@ -45,9 +45,17 @@ class CommandOnCooldown(CheckFailed):
     """ Raised whenever a command is on cooldown. """
     def __init__(self, cooldown: Cooldown, retry_after: float):
         self.cooldown: Cooldown = cooldown
+        """ The cooldown that was triggered. """
+
         self.retry_after: float = retry_after
+        """ The time in seconds until the cooldown expires. """
+
         self.retry_after_ts: float = int(time.time() + retry_after)
+        """ The timestamp when the cooldown expires. """
+
         self.discord_format: str = f"<t:{self.retry_after_ts}:R>"
+        """ The Discord timestamp format for the retry after time. """
+
         super().__init__(f"Command is on cooldown, try again {self.discord_format}")
 
 
@@ -69,10 +77,16 @@ class HTTPException(DiscordException):
     """ Base exception for HTTP requests. """
     def __init__(self, r: "HTTPResponse"):
         self.request = r
+        """ The HTTP request that caused the exception. """
+
         self.status: int = r.status
+        """ The HTTP status code. """
 
         self.code: int
+        """ The error code returned by Discord, if any. """
+
         self.text: str
+        """ The error message returned by Discord, if any. """
 
         if isinstance(r.response, dict):
             self.code = r.response.get("code", 0)

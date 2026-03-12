@@ -26,16 +26,7 @@ MISSING = utils.MISSING
 
 
 class PartialWebhook(PartialBase):
-    """
-    Represents a partial webhook object.
-
-    Attributes
-    ----------
-    id: int
-        The ID of the webhook
-    token: str | None
-        The token of the webhook, if any
-    """
+    """ Represents a partial webhook object. """
 
     __slots__ = (
         "_retry_codes",
@@ -54,7 +45,9 @@ class PartialWebhook(PartialBase):
         super().__init__(id=int(id))
         self._state = state
         self._retry_codes = []
+
         self.token: str | None = token
+        """ The token of the webhook, if any. """
 
     def __repr__(self) -> str:
         return f"<PartialWebhook id={self.id}>"
@@ -331,24 +324,7 @@ class PartialWebhook(PartialBase):
 
 
 class Webhook(PartialWebhook):
-    """
-    Represents a webhook object.
-
-    Attributes
-    ----------
-    application_id: int | None
-        The ID of the application that created the webhook, if any
-    name: str | None
-        The name of the webhook, if any
-    avatar: str | None
-        The avatar of the webhook, if any
-    url: str | None
-        The URL of the webhook, if any
-    channel_id: int | None
-        The ID of the channel this webhook is in, if any
-    guild_id: int | None
-        The ID of the guild this webhook is in, if any
-    """
+    """ Represents a webhook object. """
 
     __slots__ = (
         "application_id",
@@ -362,6 +338,7 @@ class Webhook(PartialWebhook):
 
     def __init__(self, *, state: "DiscordAPI", data: dict):
         self.application_id: int | None = utils.get_int(data, "application_id")
+        """ The ID of the application that created the webhook, if any. """
 
         super().__init__(
             state=state,
@@ -374,11 +351,22 @@ class Webhook(PartialWebhook):
         )
 
         self.name: str | None = data.get("name")
+        """ The name of the webhook, if any. """
+
         self.avatar: str | None = None
+        """ The avatar of the webhook, if any. """
+
         self.url: str | None = data.get("url")
+        """ The URL of the webhook, if any. """
 
         self.channel_id: int | None = utils.get_int(data, "channel_id")
+        """ The ID of the channel this webhook is in, if any. """
+
         self.guild_id: int | None = utils.get_int(data, "guild_id")
+        """ The ID of the guild this webhook is in, if any. """
+
+        self.user: User | None = None
+        """ The user that created the webhook, if any. """
 
         self._from_data(data)
 
@@ -389,7 +377,6 @@ class Webhook(PartialWebhook):
         return self.name or "Unknown"
 
     def _from_data(self, data: dict) -> None:
-        self.user: User | None = None
         if data.get("user"):
             self.user = User(
                 state=self._state,

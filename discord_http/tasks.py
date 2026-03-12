@@ -13,18 +13,7 @@ _log = logging.getLogger(__name__)
 
 
 class Sleeper:
-    """
-    A helper class that handles sleeping until a specified datetime.
-
-    Attributes
-    ----------
-    loop: asyncio.AbstractEventLoop
-        The event loop that the sleeper is using.
-    future: asyncio.Future
-        The future that is waiting for the timer to finish.
-    handle: asyncio.TimerHandle
-        The handle for the timer that is waiting for the specified datetime.
-    """
+    """ A helper class that handles sleeping until a specified datetime. """
     __slots__ = (
         "future",
         "handle",
@@ -33,12 +22,17 @@ class Sleeper:
 
     def __init__(self, dt: datetime, *, loop: asyncio.AbstractEventLoop):
         self.loop = loop
+        """ The event loop that the sleeper is using. """
+
         self.future: asyncio.Future = loop.create_future()
+        """ The future that is waiting for the timer to finish. """
+
         self.handle: asyncio.TimerHandle = loop.call_later(
             max((dt - utils.utcnow()).total_seconds(), 0),
             self.future.set_result,
             True
         )
+        """ The handle for the timer that is waiting for the specified datetime. """
 
     def recalculate(self, dt: datetime) -> None:
         """
@@ -83,18 +77,7 @@ class Sleeper:
 
 
 class Loop:
-    """
-    A helper class that handles looping a function at a specified interval.
-
-    Attributes
-    ----------
-    func: Callable
-        The function to loop.
-    reconnect: bool
-        Whether the loop should reconnect if it fails or not.
-    count: int | None
-        The number of times to run the loop. If `None`, the loop will run forever.
-    """
+    """ A helper class that handles looping a function at a specified interval. """
     def __init__(
         self,
         *,
@@ -107,9 +90,14 @@ class Loop:
         reconnect: bool = True
     ):
         self.func: Callable = func
+        """ The function to loop. """
+
         self.reconnect: bool = reconnect
+        """ Whether the loop should reconnect if it fails or not. """
 
         self.count: int | None = count
+        """ The number of times to run the loop. If `None`, the loop will run forever. """
+
         if self.count is not None and self.count <= 0:
             raise ValueError("count must be greater than 0 or None")
 

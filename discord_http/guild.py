@@ -64,21 +64,12 @@ class _GuildLimits:
 
 
 class BanEntry(NamedTuple):
-    user: User
+    user: "User"
     reason: str | None
 
 
 class PartialScheduledEvent(PartialBase):
-    """
-    Represents a partial scheduled event in a guild.
-
-    Attributes
-    ----------
-    id: int
-        The ID of the scheduled event.
-    guild_id: int
-        The ID of the guild the scheduled event belongs to.
-    """
+    """ Represents a partial scheduled event in a guild. """
     __slots__ = ("_state", "guild_id",)
 
     def __init__(
@@ -92,6 +83,7 @@ class PartialScheduledEvent(PartialBase):
         self._state = state
 
         self.guild_id: int = guild_id
+        """ The ID of the guild the scheduled event belongs to. """
 
     def __repr__(self) -> str:
         return f"<PartialScheduledEvent id={self.id}>"
@@ -252,36 +244,7 @@ class PartialScheduledEvent(PartialBase):
 
 
 class ScheduledEvent(PartialScheduledEvent):
-    """
-    Represents a scheduled event in a guild.
-
-    Attributes
-    ----------
-    id: int
-        The ID of the scheduled event.
-    guild_id: int
-        The ID of the guild the scheduled event belongs to.
-    name: str
-        The name of the scheduled event.
-    description: str | None
-        The description of the scheduled event.
-    user_count: int | None
-        The number of users interested in the event (only for guild events).
-    privacy_level: PrivacyLevelType
-        The privacy level of the event.
-    status: ScheduledEventStatusType
-        The status of the event.
-    entity_type: ScheduledEventEntityType
-        The entity type of the event.
-    channel: PartialChannel | None
-        The channel the event is in, if applicable.
-    creator: User | None
-        The creator of the event, if applicable.
-    start_time: datetime
-        The time the event starts at.
-    end_time: datetime | None
-        The time the event ends at, if applicable.
-    """
+    """ Represents a scheduled event in a guild. """
     __slots__ = (
         "channel",
         "creator",
@@ -308,18 +271,34 @@ class ScheduledEvent(PartialScheduledEvent):
         )
 
         self.name: str = data["name"]
+        """ The name of the scheduled event. """
+
         self.description: str | None = data.get("description")
+        """ The description of the scheduled event. """
+
         self.user_count: int | None = utils.get_int(data, "user_count")
+        """ The number of users interested in the event (only for guild events). """
 
         self.privacy_level: PrivacyLevelType = PrivacyLevelType(data["privacy_level"])
+        """ The privacy level of the event. """
+
         self.status: ScheduledEventStatusType = ScheduledEventStatusType(data["status"])
+        """ The status of the event. """
+
         self.entity_type: ScheduledEventEntityType = ScheduledEventEntityType(data["entity_type"])
+        """ The entity type of the event. """
 
         self.channel: PartialChannel | None = None
+        """ The channel the event is in, if applicable. """
+
         self.creator: "User | None" = None
+        """ The creator of the event, if applicable. """
 
         self.start_time: datetime = utils.parse_time(data["scheduled_start_time"])
+        """ The time the event starts at. """
+
         self.end_time: datetime | None = None
+        """ The time the event ends at, if applicable. """
 
         self._from_data(data)
 
@@ -353,18 +332,7 @@ class ScheduledEvent(PartialScheduledEvent):
 
 
 class PartialGuild(PartialBase):
-    """
-    Represents a partial guild object.
-
-    Attributes
-    ----------
-    id: int
-        The ID of the guild.
-    guild_id: int
-        The ID of the guild the scheduled event belongs to.
-    member_count: int | None
-        The number of members in the guild, if available.
-    """
+    """ Represents a partial guild object. """
 
     __slots__ = (
         "_cache_channels",
@@ -392,6 +360,13 @@ class PartialGuild(PartialBase):
         self._state = state
 
         self.unavailable: bool = False
+        """
+        Whether the guild is unavailable or not.
+        This can be true during outages or when the bot is not a member of the guild.
+        """
+
+        self.member_count: int | None = None
+        """ The number of members in the guild, if available. """
 
         self._cache_members: dict[int, "Member | PartialMember"] = {}
         self._cache_channels: dict[int, "BaseChannel | PartialChannel"] = {}
@@ -402,7 +377,6 @@ class PartialGuild(PartialBase):
         self._cache_stickers: dict[int, "Sticker | PartialSticker"] = {}
         self._cache_voice_states: dict[int, "VoiceState | PartialVoiceState"] = {}
 
-        self.member_count: int | None = None
         self._large: bool | None = (
             None if self.member_count is None
             else self.member_count >= 250
@@ -2766,68 +2740,7 @@ class PartialGuild(PartialBase):
 
 
 class Guild(PartialGuild):
-    """
-    Represents a guild (server) in Discord.
-
-    Attributes
-    ----------
-    afk_channel_id: int | None
-        The ID of the AFK channel, if any
-    afk_timeout: int
-        The AFK timeout in seconds
-    default_message_notifications: int
-        The default message notification level of the guild
-    description: str | None
-        The description of the guild
-    explicit_content_filter: int
-        The explicit content filter level of the guild
-    features: list[str]
-        The features of the guild
-    latest_onboarding_question_id: int | None
-        The ID of the latest onboarding question, if any
-    max_members: int
-        The maximum number of members in the guild
-    max_stage_video_channel_users: int
-        The maximum number of users in a stage video channel
-    max_video_channel_users: int
-        The maximum number of users in a video channel
-    mfa_level: int | None
-        The MFA level of the guild
-    name: str
-        The name of the guild
-    nsfw: bool
-        Whether the guild is marked as NSFW
-    nsfw_level: int
-        The NSFW level of the guild
-    owner_id: int | None
-        The ID of the owner of the guild, if any
-    preferred_locale: str | None
-        The preferred locale of the guild
-    premium_progress_bar_enabled: bool
-        Whether the premium progress bar is enabled
-    premium_subscription_count: int
-        The number of premium subscriptions in the guild
-    premium_tier: int
-        The premium tier of the guild
-    public_updates_channel_id: int | None
-        The ID of the public updates channel, if any
-    region: str | None
-        The voice region of the guild, if any
-    safety_alerts_channel_id: int | None
-        The ID of the safety alerts channel, if any
-    system_channel_flags: int
-        The system channel flags of the guild
-    system_channel_id: int | None
-        The ID of the system channel, if any
-    vanity_url_code: str | None
-        The vanity URL code of the guild, if any
-    verification_level: VerificationLevel
-        The verification level of the guild
-    widget_channel_id: int | None
-        The ID of the widget channel, if any
-    widget_enabled: bool
-        Whether the widget is enabled for the guild
-    """
+    """ Represents a guild (server) in Discord. """
 
     __slots__ = (
         "_banner",
@@ -2871,38 +2784,93 @@ class Guild(PartialGuild):
 
     def __init__(self, *, state: "DiscordAPI", data: dict):
         super().__init__(state=state, id=int(data["id"]))
+
         self.afk_channel_id: int | None = utils.get_int(data, "afk_channel_id")
+        """ The ID of the AFK channel, if any. """
+
         self.afk_timeout: int = data.get("afk_timeout", 0)
+        """ The AFK timeout in seconds. """
+
         self.default_message_notifications: int = data.get("default_message_notifications", 0)
+        """ The default message notification level of the guild. """
+
         self.description: str | None = data.get("description")
+        """ The description of the guild. """
 
         self._icon: str | None = data.get("icon")
         self._banner: str | None = data.get("banner")
 
         self.explicit_content_filter: int = data.get("explicit_content_filter", 0)
+        """ The explicit content filter level of the guild. """
+
         self.features: list[str] = data.get("features", [])
+        """ The features of the guild. """
+
         self.latest_onboarding_question_id: int | None = utils.get_int(data, "latest_onboarding_question_id")
+        """ The ID of the latest onboarding question, if any. """
+
         self.max_members: int = data.get("max_members", 0)
+        """ The maximum number of members in the guild. """
+
         self.max_stage_video_channel_users: int = data.get("max_stage_video_channel_users", 0)
+        """ The maximum number of users in a stage video channel. """
+
         self.max_video_channel_users: int = data.get("max_video_channel_users", 0)
+        """ The maximum number of users in a video channel. """
+
         self.mfa_level: int | None = utils.get_int(data, "mfa_level")
+        """ The MFA level of the guild. """
+
         self.name: str = data["name"]
+        """ The name of the guild. """
+
         self.nsfw: bool = data.get("nsfw", False)
+        """ Whether the guild is marked as NSFW. """
+
         self.nsfw_level: int = data.get("nsfw_level", 0)
+        """ The NSFW level of the guild. """
+
         self.owner_id: int | None = utils.get_int(data, "owner_id")
+        """ The ID of the owner of the guild, if any. """
+
         self.preferred_locale: str | None = data.get("preferred_locale")
+        """ The preferred locale of the guild. """
+
         self.premium_progress_bar_enabled: bool = data.get("premium_progress_bar_enabled", False)
+        """ Whether the premium progress bar is enabled. """
+
         self.premium_subscription_count: int = data.get("premium_subscription_count", 0)
+        """ The number of premium subscriptions in the guild. """
+
         self.premium_tier: int = data.get("premium_tier", 0)
+        """ The premium tier of the guild. """
+
         self.public_updates_channel_id: int | None = utils.get_int(data, "public_updates_channel_id")
+        """ The ID of the public updates channel, if any. """
+
         self.region: str | None = sys.intern(data.get("region", ""))
+        """ The voice region of the guild, if any. """
+
         self.safety_alerts_channel_id: int | None = utils.get_int(data, "safety_alerts_channel_id")
+        """ The ID of the safety alerts channel, if any. """
+
         self.system_channel_flags: int = data.get("system_channel_flags", 0)
+        """ The system channel flags of the guild. """
+
         self.system_channel_id: int | None = utils.get_int(data, "system_channel_id")
+        """ The ID of the system channel, if any. """
+
         self.vanity_url_code: str | None = data.get("vanity_url_code")
+        """ The vanity URL code of the guild, if any. """
+
         self.verification_level: VerificationLevel = VerificationLevel(data.get("verification_level", 0))
+        """ The verification level of the guild. """
+
         self.widget_channel_id: int | None = utils.get_int(data, "widget_channel_id")
+        """ The ID of the widget channel, if any. """
+
         self.widget_enabled: bool = data.get("widget_enabled", False)
+        """ Whether the widget is enabled for the guild. """
 
         self._from_data(data)
 

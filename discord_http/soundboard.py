@@ -17,16 +17,7 @@ __all__ = (
 
 
 class PartialSoundboardSound(PartialBase):
-    """
-    Represents a partial soundboard sound object.
-
-    Attributes
-    ----------
-    sound_id: int
-        The ID of the soundboard sound
-    guild_id: int | None
-        The ID of the guild this soundboard sound is in, if any
-    """
+    """ Represents a partial soundboard sound object. """
 
     __slots__ = (
         "_state",
@@ -43,8 +34,12 @@ class PartialSoundboardSound(PartialBase):
     ):
         super().__init__(id=int(id))
         self._state = state
+
         self.sound_id: int = self.id
+        """ The ID of the soundboard sound. """
+
         self.guild_id: int | None = guild_id
+        """ The ID of the guild this soundboard sound is in, if any. """
 
     def __repr__(self) -> str:
         return f"<PartialSoundboardSound id={self.id} guild_id={self.guild_id}>"
@@ -214,22 +209,7 @@ class PartialSoundboardSound(PartialBase):
 
 
 class SoundboardSound(PartialSoundboardSound):
-    """
-    Represents a soundboard sound object.
-
-    Attributes
-    ----------
-    name: str
-        The name of the soundboard sound
-    volume: int
-        The volume of the soundboard sound
-    emoji_id: int | None
-        The ID of the custom emoji used for the soundboard sound, if any
-    emoji_name: str | None
-        The unicode emoji used for the soundboard sound, if any
-    available: bool
-        Whether the soundboard sound is available for use
-    """
+    """ Represents a soundboard sound object. """
 
     __slots__ = (
         "available",
@@ -253,10 +233,19 @@ class SoundboardSound(PartialSoundboardSound):
         )
 
         self.name: str = data["name"]
+        """ The name of the soundboard sound. """
+
         self.volume: int = data["volume"]
+        """ The volume of the soundboard sound. """
+
         self.emoji_id: int | None = utils.get_int(data, "emoji_id")
+        """ The ID of the custom emoji used for the soundboard sound, if any. """
+
         self.emoji_name: int | None = data.get("emoji_name")
+        """ The unicode emoji used for the soundboard sound, if any. """
+
         self.available: bool = data["available"]
+        """ Whether the soundboard sound is available for use. """
 
     def __str__(self) -> str:
         return self.name

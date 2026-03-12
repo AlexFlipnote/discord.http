@@ -47,13 +47,6 @@ class MultipartData(MultipartWriter):
 
     It uses aiohttp's MultipartWriter under the hood to construct multipart/form-data payloads,
     allowing you to attach files, JSON data, and other content seamlessly.
-
-    Attributes
-    ----------
-    boundary: str
-        The boundary string used to separate parts in the multipart data.
-    writer: MultipartWriter
-        The MultipartWriter instance used to construct the multipart data.
     """
 
     __slots__ = ("_files_keepalive",)
@@ -138,16 +131,6 @@ class BenchmarkEntry:
     A simple, high-precision benchmarking class.
 
     All times are assumed to be in UTC.
-
-    Attributes
-    ----------
-    internal: bool
-        Whether this benchmark entry is for internal use (default: False).
-        Mostly used to differentiate between user and internal benchmarks
-    created_at: datetime | None
-        The time the benchmark was created.
-    finished_at: datetime | None
-        The time the benchmark was finished.
     """
 
     __slots__ = (
@@ -160,12 +143,19 @@ class BenchmarkEntry:
 
     def __init__(self, *, internal: bool = False) -> None:
         self.internal: bool = internal
+        """
+        Whether this benchmark entry is for internal use (default: False).
+        Mostly used to differentiate between user and internal benchmarks.
+        """
+
+        self.created_at: datetime | None = None
+        """ The time the benchmark was created. """
+
+        self.finished_at: datetime | None = None
+        """ The time the benchmark was finished. """
 
         self._start_perf: float | None = None
         self._end_perf: float | None = None
-
-        self.created_at: datetime | None = None
-        self.finished_at: datetime | None = None
 
     def __enter__(self) -> "BenchmarkEntry":
         self.start()
@@ -219,18 +209,13 @@ class Benchmark:
     A simple benchmarking context manager.
 
     Used to benchmark code execution time.
-
-    Attributes
-    ----------
-    results: dict[str, BenchmarkEntry]
-        A dictionary of benchmark entries, where the key is the name of
-        the benchmark and the value is the BenchmarkEntry object.
     """
 
     __slots__ = ("_overall_start", "results",)
 
     def __init__(self):
         self.results: dict[str, BenchmarkEntry] = {}
+        """ A dictionary of benchmark entries, where the key is the name of the benchmark and the value is the BenchmarkEntry object. """
 
         self._overall_start = time.perf_counter()
 
@@ -1290,17 +1275,13 @@ class _MissingType:
 
     It is also filled with a bunch of methods to make it
     more compatible with other types and make pyright happy
-
-    Attributes
-    ----------
-    id: int
-        The id of the missing value, defaults to -1
     """
 
     __slots__ = ("id",)
 
     def __init__(self) -> None:
         self.id: int = -1
+        """ The id of the missing value, defaults to -1. """
 
     def __hash__(self) -> int:
         return 0

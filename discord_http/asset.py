@@ -21,21 +21,10 @@ __all__ = (
 
 
 class Asset:
-    """
-    Represents a Discord asset (e.g. an image or video).
+    """ Represents a Discord asset (e.g. an image or video). """
 
-    Attributes
-    ----------
-    url: str
-        The URL of the asset
-    key: str
-        The key of the asset
-    animated: bool
-        Whether the asset is animated
-    """
-
-    BASE = "https://cdn.discordapp.com"
-    PROXY = "https://media.discordapp.net"
+    BASE: str = "https://cdn.discordapp.com"
+    PROXY: str = "https://media.discordapp.net"
 
     __slots__ = (
         "_state",
@@ -55,8 +44,13 @@ class Asset:
         self._state = state
 
         self.url: str = sys.intern(url)
+        """ The URL of the asset. """
+
         self.key: str = sys.intern(key)
+        """ The key of the asset. """
+
         self.animated: bool = animated
+        """ Whether the asset is animated. """
 
     def __str__(self) -> str:
         return self.url

@@ -8,20 +8,7 @@ __all__ = (
 
 
 class AllowedMentions:
-    """
-    Represents the allowed mentions for a message.
-
-    Attributes
-    ----------
-    everyone: bool
-        Whether to allow `@everyone` and `@here` mentions
-    users: bool | list[Snowflake | int] | None
-        Whether to allow user mentions, or a list of user IDs to allow mentions for
-    roles: bool | list[Snowflake | int] | None
-        Whether to allow role mentions, or a list of role IDs to allow mentions for
-    reply_user: bool
-        Whether to mention the author of the message being replied to
-    """
+    """ Represents the allowed mentions for a message. """
 
     __slots__ = (
         "everyone",
@@ -39,9 +26,16 @@ class AllowedMentions:
         replied_user: bool = True,
     ):
         self.everyone: bool = everyone
+        """ Whether to allow `@everyone` and `@here` mentions. """
+
         self.users: bool | list[Snowflake | int] | None = users
+        """ Whether to allow user mentions, or a list of user IDs to allow mentions for. """
+
         self.roles: bool | list[Snowflake | int] | None = roles
+        """ Whether to allow role mentions, or a list of role IDs to allow mentions for. """
+
         self.reply_user: bool = replied_user
+        """ Whether to mention the author of the message being replied to. """
 
     @classmethod
     def all(cls) -> Self:

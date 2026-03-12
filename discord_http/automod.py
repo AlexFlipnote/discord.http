@@ -25,24 +25,7 @@ __all__ = (
 
 
 class AutoModRuleTriggers:
-    """
-    Represents the triggers for an auto moderation rule.
-
-    Attributes
-    ----------
-    keyword_filter: list[str] | None
-        List of keywords to filter
-    regex_patterns: list[str] | None
-        List of regex patterns to filter
-    presets: list[AutoModRulePresetType] | None
-        List of auto moderation presets to filter
-    allow_list: list[str] | None
-        List of keywords that are allowed and will not trigger the rule
-    mention_total_limit: int | None
-        How many unique mentions allowed before trigger
-    mention_raid_protection_enabled: bool
-        If this should apply for raids
-    """
+    """ Represents the triggers for an auto moderation rule. """
 
     __slots__ = (
         "allow_list",
@@ -64,11 +47,22 @@ class AutoModRuleTriggers:
         mention_raid_protection_enabled: bool = False
     ):
         self.keyword_filter: list[str] | None = keyword_filter
+        """ List of keywords to filter. """
+
         self.regex_patterns: list[str] | None = regex_patterns
+        """ List of regex patterns to filter. """
+
         self.presets: list[AutoModRulePresetType] | None = presets
+        """ List of auto moderation presets to filter. """
+
         self.allow_list: list[str] | None = allow_list
+        """ List of keywords that are allowed and will not trigger the rule. """
+
         self.mention_total_limit: int | None = mention_total_limit
+        """ How many unique mentions are allowed before trigger. """
+
         self.mention_raid_protection_enabled: bool = mention_raid_protection_enabled
+        """ Whether this should apply for raids. """
 
     def __repr__(self) -> str:
         parts = []
@@ -132,20 +126,7 @@ class AutoModRuleTriggers:
 
 
 class AutoModRuleAction:
-    """
-    Represents an action for an auto moderation rule.
-
-    Attributes
-    ----------
-    type: AutoModRuleActionType
-        The type of action to take when the auto moderation rule is triggered
-    channel_id: int | None
-        The channel to send the alert message to if the action type is send_alert_message
-    duration_seconds: int | None
-        The number of seconds to timeout the user for if the action type is timeout
-    custom_message: str | None
-        The message to show the user if the action type is block_message
-    """
+    """ Represents an action for an auto moderation rule. """
 
     __slots__ = (
         "channel_id",
@@ -163,9 +144,16 @@ class AutoModRuleAction:
         custom_message: str | None = None,
     ):
         self.type: AutoModRuleActionType = type
+        """ The type of action to take when the auto moderation rule is triggered. """
+
         self.channel_id = channel_id
+        """ The channel to send the alert message to if action type is send_alert_message. """
+
         self.duration_seconds: int | None = duration_seconds
+        """ The timeout duration in seconds if action type is timeout. """
+
         self.custom_message: str | None = custom_message
+        """ The message shown to the user if action type is block_message. """
 
         if self.duration_seconds is not None:
             # 4 Week limit, let's just handle it
@@ -281,14 +269,7 @@ class AutoModRuleAction:
 
 
 class PartialAutoModRule(PartialBase):
-    """
-    Represents a partial auto moderation rule, usually from an event.
-
-    Attributes
-    ----------
-    guild_id: int
-        The ID of the guild this automod rule is in
-    """
+    """ Represents a partial auto moderation rule, usually from an event. """
 
     __slots__ = (
         "_state",
@@ -306,6 +287,7 @@ class PartialAutoModRule(PartialBase):
         self._state = state
 
         self.guild_id: int = guild_id
+        """ The ID of the guild this automod rule is in. """
 
     def __repr__(self) -> str:
         return f"<PartialAutoModRule id={self.id}>"
@@ -485,30 +467,7 @@ class PartialAutoModRule(PartialBase):
 
 
 class AutoModRule(PartialAutoModRule):
-    """
-    Represents an auto moderation rule in a guild.
-
-    Attributes
-    ----------
-    name: str
-        The name of the automod rule
-    creator_id: int
-        The ID of the user that created the automod rule
-    event_type: AutoModRuleEventType
-        The type of event that triggers the automod rule
-    trigger_type: AutoModRuleTriggerType
-        The type of trigger for the automod rule
-    actions: list[AutoModRuleAction]
-        The actions that the automod rule takes when triggered
-    trigger_metadata: AutoModRuleTriggers | None
-        The metadata for the trigger of the automod rule
-    enabled: bool
-        Whether the automod rule is enabled or not
-    exempt_roles: list[PartialRole]
-        The roles that are exempt from the automod rule
-    exempt_channels: list[PartialChannel]
-        The channels that are exempt from the automod rule
-    """
+    """ Represents an auto moderation rule in a guild. """
 
     __slots__ = (
         "actions",
@@ -535,28 +494,40 @@ class AutoModRule(PartialAutoModRule):
         )
 
         self.name: str = data["name"]
+        """ The name of the automod rule. """
+
         self.creator_id: int = int(data["creator_id"])
+        """ The ID of the user that created the automod rule. """
+
         self.event_type: AutoModRuleEventType = AutoModRuleEventType(data["event_type"])
+        """ The type of event that triggers the automod rule. """
+
         self.trigger_type: AutoModRuleTriggerType = AutoModRuleTriggerType(data["trigger_type"])
+        """ The type of trigger for the automod rule. """
 
         self.actions: list[AutoModRuleAction] = [
             AutoModRuleAction.from_dict(g)
             for g in data["actions"]
         ]
+        """ The actions that the automod rule takes when triggered. """
 
         self.trigger_metadata: AutoModRuleTriggers | None = None
+        """ The metadata for the trigger of the automod rule. """
 
         self.enabled: bool = data.get("enabled", False)
+        """ Whether the automod rule is enabled or not. """
 
         self.exempt_roles: list[PartialRole] = [
             PartialRole(state=state, id=int(g), guild_id=self.guild_id)
             for g in data.get("exempt_roles", [])
         ]
+        """ The roles that are exempt from the automod rule. """
 
         self.exempt_channels: list[PartialChannel] = [
             PartialChannel(state=state, id=int(g), guild_id=self.guild_id)
             for g in data.get("exempt_channels", [])
         ]
+        """ The channels that are exempt from the automod rule. """
 
         self._from_data(data)
 

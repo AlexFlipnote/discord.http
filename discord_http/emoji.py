@@ -27,19 +27,6 @@ class EmojiParser:
 
     It is used for things like reactions, forum, components, etc
 
-    Attributes
-    ----------
-    raw: str
-        The raw emoji string that was passed to the constructor.
-    id: int | None
-        The ID of the emoji if it's a Discord emoji, otherwise None.
-    animated: bool
-        Whether the emoji is animated or not.
-    discord_emoji: bool
-        Whether the emoji is a Discord emoji or not.
-    name: str
-        The name of the emoji. If it's a Discord emoji, it will be the name of the emoji.
-
     Examples
     --------
     - `EmojiParser("👍")`
@@ -57,10 +44,16 @@ class EmojiParser:
 
     def __init__(self, emoji: str):
         self.raw: str = emoji
+        """ The raw emoji string that was passed to the constructor. """
 
         self.id: int | None = None
+        """ The ID of the emoji if it's a Discord emoji, otherwise None. """
+
         self.animated: bool = False
+        """ Whether the emoji is animated or not. """
+
         self.discord_emoji: bool = False
+        """ Whether the emoji is a Discord emoji or not. """
 
         is_custom: re.Match | None = utils.re_emoji.search(emoji)
 
@@ -69,6 +62,8 @@ class EmojiParser:
             self.discord_emoji = True
             self.animated = bool(animated)
             self.name: str = name
+            """ The name of the emoji. If it's a Discord emoji, it will be the name of the emoji. """
+
             self.id = int(id_)
 
         elif emoji.isdigit():
@@ -152,13 +147,6 @@ class PartialEmoji(PartialBase):
     Represents a partial emoji.
 
     This is used when the emoji is not fully available, such as in reactions.
-
-    Attributes
-    ----------
-    id: int
-        The ID of the emoji.
-    guild_id: int | None
-        The ID of the guild the emoji belongs to, if any.
     """
 
     __slots__ = ("_state", "guild_id",)
@@ -174,6 +162,7 @@ class PartialEmoji(PartialBase):
         self._state = state
 
         self.guild_id: int | None = guild_id
+        """ The ID of the guild the emoji belongs to, if any. """
 
     def __repr__(self) -> str:
         return f"<PartialEmoji id={self.id}>"
@@ -329,26 +318,7 @@ class PartialEmoji(PartialBase):
 
 
 class Emoji(PartialEmoji):
-    """
-    Represents a Discord emoji.
-
-    Attributes
-    ----------
-    name: str
-        The name of the emoji.
-    animated: bool
-        Whether the emoji is animated or not.
-    available: bool
-        Whether the emoji is available or not.
-    require_colons: bool
-        Whether the emoji requires colons or not.
-    managed: bool
-        Whether the emoji is managed by an integration or not.
-    user: User | None
-        The user that created the emoji, if available.
-    roles: list[PartialRole]
-        The roles that are allowed to use the emoji. (Only for guilds)
-    """
+    """ Represents a Discord emoji. """
     __slots__ = (
         "animated",
         "available",
@@ -373,16 +343,28 @@ class Emoji(PartialEmoji):
         )
 
         self.name: str = data["name"]
+        """ The name of the emoji. """
+
         self.animated: bool = data.get("animated", False)
+        """ Whether the emoji is animated or not. """
+
         self.available: bool = data.get("available", True)
+        """ Whether the emoji is available or not. """
+
         self.require_colons: bool = data.get("require_colons", True)
+        """ Whether the emoji requires colons or not. """
+
         self.managed: bool = data.get("managed", False)
+        """ Whether the emoji is managed by an integration or not. """
 
         self.user: "User | None" = None
+        """ The user that created the emoji, if available. """
+
         self.roles: list[PartialRole] = [
             PartialRole(state=state, id=r, guild_id=guild.id)
             for r in data.get("roles", [])
         ]
+        """ The roles that are allowed to use the emoji. (Only for guilds). """
 
         self._from_data(data)
 

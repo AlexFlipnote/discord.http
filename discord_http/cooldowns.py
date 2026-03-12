@@ -200,16 +200,7 @@ class CooldownCache:
 
 
 class Cooldown:
-    """
-    Represents a cooldown for a rate limit.
-
-    Attributes
-    ----------
-    rate: int
-        The amount of tokens per `per` time
-    per: float
-        The time in seconds for the rate limit
-    """
+    """ Represents a cooldown for a rate limit. """
 
     __slots__ = (
         "_last",
@@ -221,7 +212,10 @@ class Cooldown:
 
     def __init__(self, rate: int, per: float):
         self.rate: int = int(rate)
+        """ The amount of tokens per `per` time. """
+
         self.per: float = float(per)
+        """ The time in seconds for the rate limit. """
 
         self._window: float = 0.0
         self._tokens: int = self.rate

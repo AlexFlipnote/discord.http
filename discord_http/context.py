@@ -502,42 +502,7 @@ class InteractionResponse:
 
 
 class Context:
-    """
-    Represents the context of an interaction.
-
-    Attributes
-    ----------
-    id: int
-        The ID of the interaction
-    type: InteractionType
-        The type of the interaction
-    command_type: ApplicationCommandType
-        The type of the command, if any
-    app_permissions: Permissions
-        The permissions of the application in the guild
-    custom_id: str | None
-        The custom ID of the interaction, if any
-    resolved: ResolvedValues
-        The resolved values of the interaction
-    select_values: SelectValues
-        The selected values of the interaction, if any
-    modal_values: dict[str, str]
-        The values of the modal, if any
-    options: list[dict]
-        The options of the interaction, if any
-    command: Command | None
-        The command that was executed, if any
-    last_message_id: int | None
-        The ID of the last message in the channel, if any
-    recipients: list[User]
-        The recipients of the interaction, if any
-    locale: LocaleTypes | None
-        The locale of the interaction, if any
-    guild_locale: LocaleTypes | None
-        The locale of the guild, if any
-    entitlements: list[Entitlements]
-        The entitlements associated with the interaction
-    """
+    """ Represents the context of an interaction. """
 
     __slots__ = (
         "_channel",
@@ -574,29 +539,45 @@ class Context:
         bot: "Client",
         data: dict
     ):
-        self.bot = bot
+        self.bot: "Client" = bot
+        """ The bot/client instance that the interaction belongs to. """
 
         self.id: int = int(data["id"])
+        """ The ID of the interaction. """
+
         self._raw_type: int = data["type"]
 
         self.command_type: ApplicationCommandType = ApplicationCommandType(
             data.get("data", {}).get("type", ApplicationCommandType.chat_input)
         )
+        """ The type of the command, if any. """
 
         # Default utilities
         self.benchmark = utils.Benchmark()
+        """ A utility for benchmarking the time taken to execute code after responding to the interaction. """
 
         # Arguments that gets parsed on runtime
         self.command: "Command | None" = None
+        """ The command that was executed, if any. """
 
         self.app_permissions: Permissions = Permissions(int(data.get("app_permissions", 0)))
+        """ The permissions of the application in the guild. """
+
         self.custom_id: str | None = data.get("data", {}).get("custom_id", None)
+        """ The custom ID of the interaction, if any. """
 
         self.resolved: ResolvedValues = ResolvedValues.none(self)
+        """ The resolved values of the interaction. """
+
         self.select_values: SelectValues = SelectValues.none(self)
+        """ The selected values of the interaction, if any. """
+
         self.modal_values: dict[str, str | list[Member | Role | BaseChannel | Attachment | str]] = {}
+        """ The values of the modal, if any. """
 
         self.options: list[dict] = data.get("data", {}).get("options", [])
+        """ The options of the interaction, if any. """
+
         self._followup_token: str = data.get("token", "")
 
         self._original_response: WebhookMessage | None = None
@@ -606,8 +587,11 @@ class Context:
             Entitlements(state=self.bot.state, data=g)
             for g in data.get("entitlements", [])
         ]
+        """ The entitlements associated with the interaction. """
 
         self.last_message_id: int | None = None
+        """ The ID of the last message in the channel, if any. """
+
         if data.get("channel", {}).get("last_message_id", None):
             self.last_message_id = int(data["channel"]["last_message_id"])
 
@@ -615,17 +599,32 @@ class Context:
             User(state=self.bot.state, data=g)
             for g in data.get("channel", {}).get("recipients", [])
         ]
+        """ The recipients of the interaction, if any. """
 
         self.locale: "LocaleTypes | None" = data.get("locale")
-        self.guild_locale: "LocaleTypes | None" = data.get("guild_locale")
+        """ The locale of the interaction, if any. """
 
-        # Should not be used, but if you *really* want the raw data, here it is
+        self.guild_locale: "LocaleTypes | None" = data.get("guild_locale")
+        """ The locale of the guild, if any. """
+
+        self.channel_id: int | None = None
+        """ The ID of the channel the interaction was sent in, if applicable. """
+
+        self.message: Message | None = None
+        """ The message associated with the interaction, if any. """
+
         self._data: dict = data
+        """ Should not be used, but if you *really* want the raw data, here it is. """
+
+        self.author: Member | User | None = None
+        """ The author of the message that was interacted with, if any. """
+
+        self.user: Member | User = self._parse_user(data)
+        """ The user who initiated the interaction. """
 
         self._from_data(data)
 
     def _from_data(self, data: dict) -> None:
-        self.channel_id: int | None = None
         if data.get("channel_id"):
             self.channel_id = int(data["channel_id"])
 
@@ -647,7 +646,6 @@ class Context:
                 data=channel_data
             )
 
-        self.message: Message | None = None
         if data.get("message"):
             self.message = Message(
                 state=self.bot.state,
@@ -666,11 +664,8 @@ class Context:
         if self._raw_resolved:
             self.resolved = ResolvedValues(self, data)
 
-        self.author: Member | User | None = None
         if self.message is not None:
             self.author = self.message.author
-
-        self.user: Member | User = self._parse_user(data)
 
         match self.type:
             case InteractionType.message_component:

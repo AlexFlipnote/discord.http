@@ -114,34 +114,7 @@ def _garbage_id() -> str:
 
 
 class AttachmentComponent:
-    """
-    Represents an attachment component.
-
-    Attributes
-    ----------
-    url: str
-        The URL of the attachment
-    description: str | None
-        The description of the attachment, if any
-    spoiler: bool
-        Whether the attachment is a spoiler or not
-    filename: str | None
-        The filename of the attachment, if any
-    size: int
-        The size of the attachment in bytes
-    height: int | None
-        The height of the attachment, if any
-    width: int | None
-        The width of the attachment, if any
-    placeholder: str | None
-        The placeholder of the attachment, if any
-    placeholder_version: int | None
-        The placeholder version of the attachment, if any
-    content_type: str | None
-        The content type of the attachment, if any
-    flags: int
-        The flags of the attachment, if any
-    """
+    """ Represents an attachment component. """
 
     __slots__ = (
         "_edata",
@@ -178,17 +151,37 @@ class AttachmentComponent:
             raise ValueError("Either file or media must be provided")
 
         self.spoiler: bool = data.get("spoiler", False)
+        """ Whether the attachment is a spoiler or not. """
+
         self.filename: str | None = data.get("name", "")
+        """ The filename of the attachment, if any. """
+
         self.size: int = data.get("size", 0)
+        """ The size of the attachment in bytes. """
 
         self.url: str = self._edata["url"]
+        """ The URL of the attachment. """
+
         self.proxy_url: str = self._edata["proxy_url"]
+        """ The proxied URL of the attachment. """
+
         self.height: int | None = self._edata.get("height", None)
+        """ The height of the attachment, if any. """
+
         self.width: int | None = self._edata.get("width", None)
+        """ The width of the attachment, if any. """
+
         self.placeholder: str | None = self._edata.get("placeholder", None)
+        """ The placeholder of the attachment, if any. """
+
         self.placeholder_version: int | None = self._edata.get("placeholder_version", None)
+        """ The placeholder version of the attachment, if any. """
+
         self.content_type: str | None = self._edata.get("content_type", None)
+        """ The content type of the attachment, if any. """
+
         self.flags: int = self._edata.get("flags", 0)
+        """ The flags of the attachment, if any. """
 
     def __str__(self) -> str:
         if self.filename:
@@ -312,6 +305,7 @@ class Item:
         type: ComponentType  # noqa: A002
     ):
         self.type: ComponentType = type
+        """ The type of the component. """
 
     def __repr__(self) -> str:
         return f"<Item type={self.type}>"
@@ -345,30 +339,7 @@ class LockedItem(Item):
 
 
 class TextInputComponent(Item):
-    """
-    Represents a text input component in a modal.
-
-    Attributes
-    ----------
-    label: str | None
-        The label of the text input
-    description: str | None
-        The description of the text input
-    custom_id: str | None
-        The custom ID of the text input
-    style: TextStyles | None
-        The style of the text input
-    placeholder: str | None
-        The placeholder text of the text input
-    min_length: int | None
-        The minimum length of the text input
-    max_length: int | None
-        The maximum length of the text input
-    default: str | None
-        The default value of the text input
-    required: bool
-        Whether the text input is required or not
-    """
+    """ Represents a text input component in a modal. """
 
     __slots__ = (
         "custom_id",
@@ -401,15 +372,31 @@ class TextInputComponent(Item):
             str(custom_id)
             if custom_id else _garbage_id()
         )
+        """ The custom ID of the text input. """
+
         self.label: str | None = label
+        """ The label of the text input. """
+
         self.description: str | None = description
+        """ The description of the text input. """
+
         self.style: int = int(style or TextStyles.short)
+        """ The style of the text input. """
 
         self.placeholder: str | None = placeholder
+        """ The placeholder text of the text input. """
+
         self.min_length: int | None = min_length
+        """ The minimum length of the text input. """
+
         self.max_length: int | None = max_length
+        """ The maximum length of the text input. """
+
         self.default: str | None = default
+        """ The default value of the text input. """
+
         self.required: bool = required
+        """ Whether the text input is required or not. """
 
     def to_dict(self) -> dict:
         """ Returns a dict representation of the modal item. """
@@ -444,26 +431,7 @@ class TextInputComponent(Item):
 
 
 class Button(Item):
-    """
-    Represents a button component in a message.
-
-    Attributes
-    ----------
-    label: str | None
-        The label of the button
-    style: ButtonStyles | str | int
-        The style of the button
-    disabled: bool
-        Whether the button is disabled or not
-    custom_id: str | None
-        The custom ID of the button
-    sku_id: "Snowflake | int | None"
-        The SKU ID of the button, only required for premium buttons
-    emoji: str | dict | None
-        The emoji associated with the button
-    url: str | None
-        The URL of the button, only required for link buttons
-    """
+    """ Represents a button component in a message. """
 
     __slots__ = (
         "custom_id",
@@ -490,15 +458,28 @@ class Button(Item):
         special_buttons = (ButtonStyles.link, ButtonStyles.premium)
 
         self.label: str | None = label
+        """ The label of the button. """
+
         self.disabled: bool = disabled
+        """ Whether the button is disabled or not. """
+
         self.url: str | None = url
+        """ The URL of the button, only required for link buttons. """
+
         self.emoji: str | dict | None = emoji
+        """ The emoji associated with the button. """
+
         self.sku_id: "Snowflake | int | None" = sku_id
+        """ The SKU ID of the button, only required for premium buttons. """
+
         self.style: ButtonStyles | str | int = style
+        """ The style of the button. """
+
         self.custom_id: str | None = (
             str(custom_id)
             if custom_id else _garbage_id()
         )
+        """ The custom ID of the button. """
 
         match style:
             case x if isinstance(x, ButtonStyles):
@@ -569,14 +550,7 @@ class Button(Item):
 
 
 class Premium(Button):
-    """
-    Button alias for the premium SKU style.
-
-    Attributes
-    ----------
-    sku_id:
-        SKU ID of the premium button
-    """
+    """ Button alias for the premium SKU style. """
 
     __slots__ = ()
 
@@ -594,20 +568,7 @@ class Premium(Button):
 
 
 class Link(Button):
-    """
-    Button alias for the link style.
-
-    Attributes
-    ----------
-    url:
-        URL to open when the button is clicked
-    label:
-        Label of the button
-    emoji:
-        Emoji shown on the left side of the button
-    disabled:
-        Whether the button is disabled or not
-    """
+    """ Button alias for the link style. """
 
     __slots__ = ()
 
@@ -629,36 +590,14 @@ class Link(Button):
 
         # Link buttons use url instead of custom_id
         self.custom_id: str | None = None
+        """ The custom ID of the button. """
 
     def __repr__(self) -> str:
         return f"<Link url='{self.url}'>"
 
 
 class Select(Item):
-    """
-    Represents a select menu component in a message.
-
-    Attributes
-    ----------
-    label: str | None
-        The label of the select menu (only works for modals)
-    description: str | None
-        The description of the select menu (only works for modals)
-    placeholder: str | None
-        The placeholder text for the select menu
-    custom_id: str | None
-        The custom ID of the select menu
-    min_values: int | None
-        The minimum number of values that can be selected
-    max_values: int | None
-        The maximum number of values that can be selected
-    disabled: bool
-        Whether the select menu is disabled or not
-    options: list[dict] | None
-        The options for the select menu
-    required: bool | None
-        Whether the select menu is required or not (only works for modals)
-    """
+    """ Represents a select menu component in a message. """
 
     __slots__ = (
         "_default_values",
@@ -693,16 +632,31 @@ class Select(Item):
         )
 
         self.label: str | None = label
+        """ The label of the select menu (only works for modals). """
+
         self.description: str | None = description
+        """ The description of the select menu (only works for modals). """
+
         self.placeholder: str | None = placeholder
+        """ The placeholder text for the select menu. """
+
         self.min_values: int | None = min_values
+        """ The minimum number of values that can be selected. """
+
         self.max_values: int | None = max_values
+        """ The maximum number of values that can be selected. """
+
         self.disabled: bool = disabled
+        """ Whether the select menu is disabled or not. """
+
         self.required: bool | None = required
+        """ Whether the select menu is required or not (only works for modals). """
+
         self.custom_id: str = (
             str(custom_id)
             if custom_id else _garbage_id()
         )
+        """ The custom ID of the select menu. """
 
         self._options: list[dict] = options or []
         self._default_values: list[dict[str, str]] = []
@@ -798,30 +752,7 @@ class Select(Item):
 
 
 class UserSelect(Select):
-    """
-    Represents a user select menu component in a message.
-
-    Attributes
-    ----------
-    placeholder: str | None
-        The placeholder text for the user select menu
-    custom_id: str | None
-        The custom ID of the user select menu
-    min_values: int | None
-        The minimum number of values that can be selected
-    max_values: int | None
-        The maximum number of values that can be selected
-    default_values: list["Member | int"] | None
-        The default selected values for the user select menu
-    disabled: bool
-        Whether the user select menu is disabled or not
-    label: str | None
-        The label of the select menu (only works for modals)
-    description: str | None
-        The description of the select menu (only works for modals)
-    required: bool | None
-        Whether the select menu is required or not (only works for modals)
-    """
+    """ Represents a user select menu component in a message. """
 
     __slots__ = ()
 
@@ -861,30 +792,7 @@ class UserSelect(Select):
 
 
 class RoleSelect(Select):
-    """
-    Represents a role select menu component in a message.
-
-    Attributes
-    ----------
-    placeholder: str | None
-        The placeholder text for the role select menu
-    custom_id: str | None
-        The custom ID of the role select menu
-    min_values: int | None
-        The minimum number of values that can be selected
-    max_values: int | None
-        The maximum number of values that can be selected
-    default_values: list["Role | int"] | None
-        The default selected values for the role select menu
-    disabled: bool
-        Whether the role select menu is disabled or not
-    label: str | None
-        The label of the select menu (only works for modals)
-    description: str | None
-        The description of the select menu (only works for modals)
-    required: bool | None
-        Whether the select menu is required or not (only works for modals)
-    """
+    """ Represents a role select menu component in a message. """
 
     __slots__ = ()
 
@@ -924,30 +832,7 @@ class RoleSelect(Select):
 
 
 class MentionableSelect(Select):
-    """
-    Represents a mentionable select menu component in a message.
-
-    Attributes
-    ----------
-    placeholder: str | None
-        The placeholder text for the mentionable select menu
-    custom_id: str | None
-        The custom ID of the mentionable select menu
-    min_values: int | None
-        The minimum number of values that can be selected
-    max_values: int | None
-        The maximum number of values that can be selected
-    default_values: list["Member | Role | int"] | None
-        The default selected values for the mentionable select menu
-    disabled: bool
-        Whether the mentionable select menu is disabled or not
-    label: str | None
-        The label of the select menu (only works for modals)
-    description: str | None
-        The description of the select menu (only works for modals)
-    required: bool | None
-        Whether the select menu is required or not (only works for modals)
-    """
+    """ Represents a mentionable select menu component in a message. """
 
     __slots__ = ()
 
@@ -988,32 +873,7 @@ class MentionableSelect(Select):
 
 
 class ChannelSelect(Select):
-    """
-    Represents a channel select menu component in a message.
-
-    Attributes
-    ----------
-    channel_types: list[ChannelType]
-        The channel types that can be selected
-    placeholder: str | None
-        The placeholder text for the channel select menu
-    custom_id: str | None
-        The custom ID of the channel select menu
-    min_values: int | None
-        The minimum number of values that can be selected
-    max_values: int | None
-        The maximum number of values that can be selected
-    default_values: list["BaseChannel | int"] | None
-        The default selected values for the channel select menu
-    disabled: bool
-        Whether the channel select menu is disabled or not
-    label: str | None
-        The label of the select menu (only works for modals)
-    description: str | None
-        The description of the select menu (only works for modals)
-    required: bool | None
-        Whether the select menu is required or not (only works for modals)
-    """
+    """ Represents a channel select menu component in a message. """
 
     __slots__ = ("channel_types",)
 
@@ -1050,6 +910,7 @@ class ChannelSelect(Select):
             ChannelType(int(c)) for c in channel_types
             if isinstance(c, (ChannelType, int))
         ]
+        """ The channel types that can be selected. """
 
         if isinstance(default_values, list):
             self._default_values = [
@@ -1068,24 +929,7 @@ class ChannelSelect(Select):
 
 
 class FileUploadComponent(Item):
-    """
-    Represents a file upload component in a modal.
-
-    Attributes
-    ----------
-    custom_id: str | None
-        The custom ID of the file upload component
-    min_values: int | None
-        The minimum number of values that can be uploaded
-    max_values: int | None
-        The maximum number of values that can be uploaded
-    required: bool
-        Whether the file upload component is required or not
-    label: str | None
-        The label of the file upload component
-    description: str | None
-        The description of the file upload component
-    """
+    """ Represents a file upload component in a modal. """
 
     __slots__ = (
         "custom_id",
@@ -1109,16 +953,27 @@ class FileUploadComponent(Item):
         super().__init__(
             type=ComponentType.file_upload
         )
+
         self.custom_id: str = (
             str(custom_id)
             if custom_id else _garbage_id()
         )
+        """ The custom ID of the file upload component. """
 
         self.min_values: int | None = min_values
+        """ The minimum number of values that can be uploaded. """
+
         self.max_values: int | None = max_values
+        """ The maximum number of values that can be uploaded. """
+
         self.required: bool = required
+        """ Whether the file upload component is required or not. """
+
         self.label: str | None = label
+        """ The label of the file upload component. """
+
         self.description: str | None = description
+        """ The description of the file upload component. """
 
     def __repr__(self) -> str:
         return f"<FileUploadComponent custom_id='{self.custom_id}'>"
@@ -1148,14 +1003,7 @@ class FileUploadComponent(Item):
 
 
 class TextDisplayComponent(Item):
-    """
-    Represents a text display component in a message.
-
-    Attributes
-    ----------
-    content: str
-        The content of the text display component
-    """
+    """ Represents a text display component in a message. """
 
     __slots__ = ("content",)
 
@@ -1164,7 +1012,9 @@ class TextDisplayComponent(Item):
         content: str
     ):
         super().__init__(type=ComponentType.text_display)
+
         self.content = content
+        """ The content of the text display component. """
 
     def __repr__(self) -> str:
         return f"<TextDisplay content='{self.content}'>"
@@ -1178,20 +1028,7 @@ class TextDisplayComponent(Item):
 
 
 class ComponentOption:
-    """
-    Represents an option for radio and checkbox components.
-
-    Attributes
-    ----------
-    label: str
-        The label of the option
-    value: str
-        The value of the option
-    description: str | None
-        The description of the option
-    default: bool
-        Whether the option is the default selection
-    """
+    """ Represents an option for radio and checkbox components. """
 
     __slots__ = (
         "default",
@@ -1209,9 +1046,16 @@ class ComponentOption:
         default: bool = False
     ):
         self.label = label
+        """ The label of the option. """
+
         self.value = value
+        """ The value of the option. """
+
         self.description = description
+        """ The description of the option. """
+
         self.default = default
+        """ Whether the option is the default selection. """
 
     def to_dict(self) -> dict:
         """ Returns a dict representation of the option. """
@@ -1237,22 +1081,7 @@ class ComponentOption:
 
 
 class RadioComponent(Item):
-    """
-    Represents a radio button component in a modal.
-
-    Attributes
-    ----------
-    options: list[ComponentOption]
-        The options for the radio component
-    custom_id: str
-        The custom ID of the radio component
-    label: str | None
-        The label of the radio component
-    description: str | None
-        The description of the radio component
-    required: bool
-        Whether the radio component is required or not
-    """
+    """ Represents a radio button component in a modal. """
 
     __slots__ = (
         "custom_id",
@@ -1271,13 +1100,22 @@ class RadioComponent(Item):
         required: bool = True
     ):
         super().__init__(type=ComponentType.radio_group)
+
         self.options = list(options)
+        """ The options for the radio component. """
+
         self.custom_id: str = custom_id
+        """ The custom ID of the radio component. """
+
         self.required: bool = required
+        """ Whether the radio component is required or not. """
 
         # Label shortcuts
         self.label: str | None = label
+        """ The label of the radio component. """
+
         self.description: str | None = description
+        """ The description of the radio component. """
 
     def add_item(self, value: str, label: str, description: str | None = None, default: bool = False) -> None:
         """
@@ -1324,26 +1162,7 @@ class RadioComponent(Item):
 
 
 class CheckboxGroupComponent(Item):
-    """
-    Represents a checkbox group component in a modal.
-
-    Attributes
-    ----------
-    options: list[ComponentOption]
-        The options for the checkbox group component
-    custom_id: str
-        The custom ID of the checkbox group component
-    label: str | None
-        The label of the checkbox group component
-    description: str | None
-        The description of the checkbox group component
-    min_values: int
-        The minimum number of values that can be selected
-    max_values: int | None
-        The maximum number of values that can be selected
-    required: bool
-        Whether the checkbox group component is required or not
-    """
+    """ Represents a checkbox group component in a modal. """
 
     __slots__ = (
         "custom_id",
@@ -1367,12 +1186,25 @@ class CheckboxGroupComponent(Item):
     ):
         super().__init__(type=ComponentType.checkbox_group)
         self.custom_id: str = custom_id or _garbage_id()
+        """ The custom ID of the checkbox group component. """
+
         self.options: list[ComponentOption] = list(options)
+        """ The options for the checkbox group component. """
+
         self.label: str | None = label
+        """ The label of the checkbox group component. """
+
         self.description: str | None = description
+        """ The description of the checkbox group component. """
+
         self.min_values: int = min_values
+        """ The minimum number of values that can be selected. """
+
         self.max_values: int | None = max_values
+        """ The maximum number of values that can be selected. """
+
         self.required: bool = required
+        """ Whether the checkbox group component is required or not. """
 
     def add_item(self, value: str, label: str, description: str | None = None, default: bool = False) -> None:
         """
@@ -1438,17 +1270,6 @@ class CheckboxComponent(Item):
     Represents a checkbox component in a modal.
 
     This is a single checkbox component, and returns a boolean value on interaction.
-
-    Attributes
-    ----------
-    custom_id: str
-        The custom ID of the checkbox component
-    label: str | None
-        The label of the checkbox component
-    description: str | None
-        The description of the checkbox component
-    default: bool
-        Whether the checkbox is checked by default
     """
 
     __slots__ = (
@@ -1468,9 +1289,16 @@ class CheckboxComponent(Item):
     ):
         super().__init__(type=ComponentType.checkbox)
         self.custom_id: str = custom_id or _garbage_id()
+        """ The custom ID of the checkbox component. """
+
         self.label: str | None = label
+        """ The label of the checkbox component. """
+
         self.description: str | None = description
+        """ The description of the checkbox component. """
+
         self.default: bool = default
+        """ Whether the checkbox is checked by default. """
 
     def to_dict(self) -> dict:
         """ Returns a dict representation of the checkbox component. """
@@ -1485,16 +1313,7 @@ class CheckboxComponent(Item):
 
 
 class SeparatorComponent(Item):
-    """
-    Represents a separator component in a message.
-
-    Attributes
-    ----------
-    spacing: SeparatorSpacingType | None
-        The spacing type of the separator
-    divider: bool | None
-        Whether the separator is a divider or not
-    """
+    """ Represents a separator component in a message. """
 
     __slots__ = ("divider", "spacing",)
 
@@ -1507,7 +1326,10 @@ class SeparatorComponent(Item):
         super().__init__(type=ComponentType.separator)
 
         self.spacing: SeparatorSpacingType | None = spacing
+        """ The spacing type of the separator. """
+
         self.divider: bool | None = divider
+        """ Whether the separator is a divider or not. """
 
     def __repr__(self) -> str:
         return f"<Separator spacing={self.spacing} divider={self.divider}>"
@@ -1735,16 +1557,7 @@ class InteractionStorage:
 
 
 class ThumbnailComponent(Item):
-    """
-    Represents a thumbnail component in a message.
-
-    Attributes
-    ----------
-    url: Asset | AttachmentComponent | str
-        The URL of the thumbnail image
-    description: str | None
-        The description of the thumbnail
-    """
+    """ Represents a thumbnail component in a message. """
 
     __slots__ = (
         "description",
@@ -1762,8 +1575,13 @@ class ThumbnailComponent(Item):
         super().__init__(type=ComponentType.thumbnail)
 
         self.url: Asset | AttachmentComponent | str = str(url)
+        """ The URL of the thumbnail image. """
+
         self.description: str | None = description
+        """ The description of the thumbnail. """
+
         self.spoiler: bool = spoiler
+        """ Whether the thumbnail is a spoiler or not. """
 
     def __repr__(self) -> str:
         return f"<Thumbnail url='{self.url}'>"
@@ -1788,16 +1606,7 @@ class ThumbnailComponent(Item):
 
 
 class SectionComponent(Item):
-    """
-    Represents a section component in a message.
-
-    Attributes
-    ----------
-    components: TextDisplayComponent | str
-        The components contained within the section
-    accessory: Button | ThumbnailComponent | AttachmentComponent | Asset | File | str
-        The accessory component for the section
-    """
+    """ Represents a section component in a message. """
 
     __slots__ = (
         "accessory",
@@ -1814,7 +1623,10 @@ class SectionComponent(Item):
         super().__init__(type=ComponentType.section)
 
         self.components: list[TextDisplayComponent | str] = list(components)
+        """ The components contained within the section. """
+
         self.accessory: Button | ThumbnailComponent | AttachmentComponent | Asset | File | str = accessory
+        """ The accessory component for the section. """
 
     def __repr__(self) -> str:
         return f"<SectionComponent components={self.components} accessory={self.accessory}>"
@@ -1869,14 +1681,7 @@ class SectionComponent(Item):
 
 
 class ActionRow(Item):
-    """
-    Represents an action row component in a message, containing buttons, selects, and links.
-
-    Attributes
-    ----------
-    components: Button | Select | Link
-        The components contained within the action row
-    """
+    """ Represents an action row component in a message, containing buttons, selects, and links. """
 
     __slots__ = (
         "_select_types",
@@ -1890,6 +1695,7 @@ class ActionRow(Item):
         super().__init__(type=ComponentType.action_row)
 
         self.components: list[Button | Select | Link] = list(components)
+        """ The components contained within the action row. """
 
         self._select_types: list[ComponentType] = [
             ComponentType.string_select,
@@ -2024,18 +1830,7 @@ class ActionRow(Item):
 
 
 class MediaGalleryItem:
-    """
-    Represents an item in a media gallery.
-
-    Attributes
-    ----------
-    url: File | Asset | AttachmentComponent | str
-        The URL of the media item, can be a file, asset, attachment component, or a string URL
-    description: str | None
-        The description of the media item
-    spoiler: bool
-        Whether the media item is marked as a spoiler
-    """
+    """ Represents an item in a media gallery. """
 
     __slots__ = (
         "description",
@@ -2051,8 +1846,13 @@ class MediaGalleryItem:
         spoiler: bool = False
     ):
         self.url: File | Asset | AttachmentComponent | str = str(url)
+        """ The URL of the media item, can be a file, asset, attachment component, or a string URL. """
+
         self.description: str | None = description
+        """ The description of the media item. """
+
         self.spoiler: bool = spoiler
+        """ Whether the media item is marked as a spoiler. """
 
     def __repr__(self) -> str:
         return f"<MediaGalleryItem url={self.url}>"
@@ -2076,14 +1876,7 @@ class MediaGalleryItem:
 
 
 class MediaGalleryComponent(Item):
-    """
-    Represents a media gallery component in a message.
-
-    Attributes
-    ----------
-    items: MediaGalleryItem | File | Asset | str
-        The items contained within the media gallery
-    """
+    """ Represents a media gallery component in a message. """
 
     __slots__ = ("items",)
 
@@ -2092,7 +1885,9 @@ class MediaGalleryComponent(Item):
         *items: MediaGalleryItem | File | Asset | str
     ):
         super().__init__(type=ComponentType.media_gallery)
+
         self.items: list[MediaGalleryItem | File | Asset | str] = list(items)
+        """ The items contained within the media gallery. """
 
     def __repr__(self) -> str:
         return f"<MediaGalleryComponent items={self.items}>"
@@ -2136,16 +1931,7 @@ class MediaGalleryComponent(Item):
 
 
 class FileComponent(Item):
-    """
-    Represents a file component in a message.
-
-    Attributes
-    ----------
-    file: Asset | AttachmentComponent | str
-        The file to be sent
-    spoiler: bool
-        Whether the file is a spoiler
-    """
+    """ Represents a file component in a message. """
 
     __slots__ = ("file", "spoiler",)
 
@@ -2156,8 +1942,12 @@ class FileComponent(Item):
         spoiler: bool = False
     ):
         super().__init__(type=ComponentType.file)
+
         self.file: Asset | AttachmentComponent | str = file
+        """ The file to be sent. """
+
         self.spoiler: bool = spoiler
+        """ Whether the file is a spoiler. """
 
     def __repr__(self) -> str:
         return f"<FileComponent file={self.file}>"
@@ -2201,18 +1991,7 @@ class CheckpointComponent(LockedItem):
 
 
 class ContainerComponent(Item):
-    """
-    Represents a container component in a message.
-
-    Attributes
-    ----------
-    items: Item
-        The items contained within the container
-    colour: Colour | int | None
-        The colour of the container, can be a Colour object or an integer
-    spoiler: bool | None
-        Whether the container is marked as a spoiler
-    """
+    """ Represents a container component in a message. """
 
     __slots__ = (
         "colour",
@@ -2229,8 +2008,13 @@ class ContainerComponent(Item):
         super().__init__(type=ComponentType.container)
 
         self.items: list[Item] = list(items)
+        """ The items contained within the container. """
+
         self.colour: Colour | int | None = colour
+        """ The colour of the container, can be a Colour object or an integer. """
+
         self.spoiler: bool | None = spoiler
+        """ Whether the container is marked as a spoiler. """
 
     def __repr__(self) -> str:
         return f"<ContainerComponent items={self.items}>"
@@ -2303,14 +2087,7 @@ class ContainerComponent(Item):
 
 
 class View(InteractionStorage):
-    """
-    Represents a view component in a message.
-
-    Attributes
-    ----------
-    items: Item
-        The items contained within the view, can be buttons, selects, links, etc.
-    """
+    """ Represents a view component in a message. """
 
     __slots__ = ("items",)
 
@@ -2318,6 +2095,7 @@ class View(InteractionStorage):
         super().__init__()
 
         self.items: list[Item] = list(items)
+        """ The items contained within the view, can be buttons, selects, links, etc. """
 
     def __repr__(self) -> str:
         return f"<View items={list(self.items)}>"
@@ -2537,18 +2315,7 @@ class View(InteractionStorage):
 
 
 class LabelComponent(Item):
-    """
-    Represents a label component in a modal.
-
-    Attributes
-    ----------
-    label: str
-        The label of the component
-    description: str | None
-        The description of the component
-    component: TextInputComponent | Select | FileUploadComponent | RadioComponent | CheckboxGroupComponent | CheckboxComponent
-        The component contained within the label
-    """
+    """ Represents a label component in a modal. """
 
     __slots__ = (
         "component",
@@ -2570,8 +2337,13 @@ class LabelComponent(Item):
         super().__init__(type=ComponentType.label)
 
         self.component = component
+        """ The component contained within the label. """
+
         self.label: str | None = self.component.label or label
+        """ The label of the component. """
+
         self.description: str | None = self.component.description or description
+        """ The description of the component. """
 
     def __repr__(self) -> str:
         return f"<LabelComponent label='{self.label}' component={self.component}>"
@@ -2608,16 +2380,7 @@ class LabelComponent(Item):
 
 
 class Modal(InteractionStorage):
-    """
-    Represents a modal component in a message.
-
-    Attributes
-    ----------
-    title: str
-        The title of the modal
-    custom_id: str | None
-        The custom ID of the modal
-    """
+    """ Represents a modal component in a message. """
 
     __slots__ = (
         "custom_id",
@@ -2634,12 +2397,16 @@ class Modal(InteractionStorage):
         super().__init__()
 
         self.title: str = title
+        """ The title of the modal. """
+
         self.custom_id: str = (
             str(custom_id)
             if custom_id else _garbage_id()
         )
+        """ The custom ID of the modal. """
 
         self.items: list[TextDisplayComponent | LabelComponent | FileUploadComponent] = []
+        """ The items contained within the modal. """
 
     def add_item(
         self,
