@@ -1,8 +1,9 @@
-import random
 import numbers
+import operator
+import random
 
-from typing import Self
 from enum import Enum as _Enum
+from typing import Self
 
 __all__ = (
     "ApplicationCommandType",
@@ -51,12 +52,108 @@ __all__ = (
 
 
 class BaseEnum(_Enum):
-    """ Enum, but with more comparison operators to make life easier. """
+    """
+    Enum, but with more comparison operators to make life easier.
+
+    This allows you to compare enums with their values or names directly, example:
+
+    .. code-block:: python
+
+        IntegrationType.guild == 0  # True
+        IntegrationType.guild == "guild"  # True
+        IntegrationType.guild > 0  # False
+        IntegrationType.guild < "huh"  # True (because "guild" < "huh")
+
+    Honestly.. I just wanted it to be more convenient to compare enums
+    without having to convert them first, lol.
+    """
+
+    def _dispatch(self, other: Self | str | int, op_name: str) -> bool:
+        """
+        Internal helper to handle comparisons.
+
+        Parameters
+        ----------
+        other:
+            The value to compare against, which can be an enum member, its name, or its value.
+        op_name:
+            The name of the operator to use for comparison (e.g., "gt" for greater than).
+
+        Returns
+        -------
+            The result of the comparison if the types are compatible, otherwise NotImplemented.
+        """
+        operator_table = {
+            "gt": operator.gt,
+            "lt": operator.lt,
+            "ge": operator.ge,
+            "le": operator.le,
+            "eq": operator.eq,
+        }
+
+        op = operator_table.get(op_name)
+        if op is None:
+            raise ValueError(f"Invalid operator name: '{op_name}'")
+
+        if isinstance(other, str):
+            try:
+                other = self.__class__[other]
+            except KeyError:
+                valid = ", ".join(self.__class__.__members__.keys())
+                raise ValueError(
+                    f"Invalid string: '{other}' is not a valid {self.__class__.__name__}. "
+                    f"Expected one of: {valid}"
+                ) from None
+
+        if isinstance(other, self.__class__):
+            return op(self.value, other.value)
+        if isinstance(other, numbers.Real):
+            return op(self.value, other)
+
+        return NotImplemented
 
     @classmethod
     def random(cls) -> Self:
         """ Return a random enum. """
         return random.choice(list(cls))
+
+    @classmethod
+    def try_get(cls, key: str | int | None, default: Self | None = None) -> Self | None:
+        """
+        Try to get an enum member by name or value, returning a default if not found.
+
+        Parameters
+        ----------
+        key:
+            The name or value of the enum member to retrieve.
+        default:
+            The value to return if the key is not found.
+
+        Returns
+        -------
+            The enum member if found, otherwise the default value.
+        """
+        if key is None:
+            return default
+        try:
+            return cls[key] if isinstance(key, str) else cls(key)
+        except (KeyError, ValueError):
+            return default
+
+    @classmethod
+    def names(cls) -> list[str]:
+        """ Return a list of all enum names. """
+        return [m.name for m in cls]
+
+    @classmethod
+    def values(cls) -> list[int | str]:
+        """ Return a list of all enum values. """
+        return [m.value for m in cls]
+
+    @classmethod
+    def to_dict(cls) -> dict[str, int | str]:
+        """ Return a dictionary mapping names to values. """
+        return {m.name: m.value for m in cls}
 
     def __str__(self) -> str:
         """ Return the name of the enum. """
@@ -70,78 +167,26 @@ class BaseEnum(_Enum):
         """ Return the hash of the enum. """
         return hash(self.value)
 
-    def __gt__(self, other: Self) -> bool:
+    def __gt__(self, other: Self | str | int) -> bool:
         """ Greater than. """
-        try:
-            return self.value > other.value
-        except Exception:
-            pass
-        try:
-            if isinstance(other, numbers.Real):
-                return self.value > other
-        except Exception:
-            pass
-        return NotImplemented
+        return self._dispatch(other, "gt")
 
-    def __lt__(self, other: Self) -> bool:
+    def __lt__(self, other: Self | str | int) -> bool:
         """ Less than.  """
-        try:
-            return self.value < other.value
-        except Exception:
-            pass
-        try:
-            if isinstance(other, numbers.Real):
-                return self.value < other
-        except Exception:
-            pass
-        return NotImplemented
+        return self._dispatch(other, "lt")
 
-    def __ge__(self, other: Self) -> bool:
+    def __ge__(self, other: Self | str | int) -> bool:
         """ Greater than or equal to. """
-        try:
-            return self.value >= other.value
-        except Exception:
-            pass
-        try:
-            if isinstance(other, numbers.Real):
-                return self.value >= other
-            if isinstance(other, str):
-                return self.name == other
-        except Exception:
-            pass
-        return NotImplemented
+        return self._dispatch(other, "ge")
 
-    def __le__(self, other: Self) -> bool:
+    def __le__(self, other: Self | str | int) -> bool:
         """ Less than or equal to. """
-        try:
-            return self.value <= other.value
-        except Exception:
-            pass
-        try:
-            if isinstance(other, numbers.Real):
-                return self.value <= other
-            if isinstance(other, str):
-                return self.name == other
-        except Exception:
-            pass
-        return NotImplemented
+        return self._dispatch(other, "le")
 
-    def __eq__(self, other: Self) -> bool:
+    def __eq__(self, other: Self | str | int) -> bool:
         """ Equal to. """
-        if self.__class__ is other.__class__:
-            return self.value == other.value
-        try:
-            return self.value == other.value
-        except Exception:
-            pass
-        try:
-            if isinstance(other, numbers.Real):
-                return self.value == other
-            if isinstance(other, str):
-                return self.name == other
-        except Exception:
-            pass
-        return NotImplemented
+        res = self._dispatch(other, "eq")
+        return res if res is not NotImplemented else False
 
 
 class IntegrationType(BaseEnum):
