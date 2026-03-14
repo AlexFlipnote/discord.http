@@ -40,6 +40,13 @@ client.start()
 Need further help on how to make Discord API able to send requests to your bot?
 Check out [the documentation](https://discordhttp.alexflipnote.dev/pages/getting_started.html) for more detailed information.
 
+## Running tests
+Automated tests use Python's built-in `unittest` module.
+
+Run all tests from the project root:
+- `make test`
+- or `python -m unittest discover -s tests -p "test_*.py"`
+
 ## Resources
 - Documentations
   - [Library documentation](https://discordhttp.alexflipnote.dev)

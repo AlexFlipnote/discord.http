@@ -2,7 +2,7 @@
 *.config.json
 v2_testing.py
 config.json
-tests/*.json
+tests/**/*.json
 uv.lock
 
 # Byte-compiled / optimized / DLL files
