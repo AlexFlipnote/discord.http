@@ -192,7 +192,7 @@ class BenchmarkEntry:
 
     def format(self) -> str:
         """ Get the elapsed time as a human-readable string. """
-        return Benchmark.format_time(self.elapsed)
+        return format_small_unit(self.elapsed)
 
     def to_dict(self) -> dict[str, Any]:
         """ Converts the data into a dictionary. """
@@ -218,19 +218,6 @@ class Benchmark:
         """ A dictionary of benchmark entries, where the key is the name of the benchmark and the value is the BenchmarkEntry object. """
 
         self._overall_start = time.perf_counter()
-
-    @staticmethod
-    def format_time(seconds: float) -> str:
-        """ Returns a human-readable string (e.g., '150ms', '2s'). """
-        if seconds == 0:
-            return "0ns"
-        if seconds < 0.000001:  # Nanoseconds
-            return f"{seconds * 1e9:.0f}ns"
-        if seconds < 0.001:  # Microseconds
-            return f"{seconds * 1e6:.0f}µs"  # noqa: RUF001
-        if seconds < 1:  # Milliseconds
-            return f"{seconds * 1e3:.0f}ms"
-        return f"{seconds:.2f}s"
 
     def measure(self, name: str, *, internal: bool = False) -> BenchmarkEntry:
         """
@@ -295,7 +282,7 @@ class Benchmark:
             for name, time in container["external"] + container["internal"]
         ]
 
-        formatted_lines.append(f"Total internal: ` {self.format_time(total)} `")
+        formatted_lines.append(f"Total internal: ` {format_small_unit(total)} `")
 
         return "\n".join(formatted_lines)
 
@@ -305,6 +292,30 @@ class Benchmark:
             name: entry.elapsed
             for name, entry in self.results.items()
         }
+
+
+def format_small_unit(seconds: float) -> str:
+    """
+    Helper to scale sub-second values to the appropriate unit.
+
+    Parameters
+    ----------
+    seconds: float
+        The duration in seconds.
+
+    Returns
+    -------
+        A human-readable string representing the duration.
+    """
+    if seconds == 0:
+        return "0ns"
+    if seconds < 0.000001:  # Nanoseconds
+        return f"{seconds * 1e9:.0f}ns"
+    if seconds < 0.001:  # Microseconds
+        return f"{seconds * 1e6:.0f}µs"  # noqa: RUF001
+    if seconds < 1:  # Milliseconds
+        return f"{seconds * 1e3:.0f}ms"
+    return f"{seconds:.2f}s"
 
 
 def create_missing_texture(*, size: int = 256, tiles: int = 8) -> bytes:
@@ -354,6 +365,42 @@ def create_missing_texture(*, size: int = 256, tiles: int = 8) -> bytes:
         chunk(b"IDAT", compressed) +
         chunk(b"IEND", b"")
     )
+
+
+def find_longest(*string: str) -> int:
+    """
+    Find the length of the longest string.
+
+    Parameters
+    ----------
+    *string:
+        The strings to find the longest from
+
+    Returns
+    -------
+        The length of the longest string
+    """
+    return max(len(s) for s in string) if string else 0
+
+
+def shortener(text: str, *, length: int = 64) -> str:
+    """
+    Shorten a string to a specified length, adding ellipsis if necessary.
+
+    Parameters
+    ----------
+    text:
+        The string to shorten.
+    length:
+        The maximum length of the shortened string.
+
+    Returns
+    -------
+        The shortened string.
+    """
+    if len(text) <= length:
+        return text
+    return text[:length - 3] + "..."
 
 
 def traceback_maker(
