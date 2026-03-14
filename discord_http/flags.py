@@ -149,7 +149,7 @@ class BaseFlag(_FlagPyMeta):
                 continue
 
             member_flag = self.__class__.__members__.get(p)
-            if member_flag and member_flag in self:
+            if member_flag and member_flag not in self:
                 continue
 
             try:

@@ -50,6 +50,7 @@ class File:
         """ The waveform data for the file, if applicable. """
 
         self._filename = filename
+        self._owner = False
 
         if isinstance(data, (str, Path)):
             self._filename = filename or Path(data).name
@@ -66,7 +67,6 @@ class File:
 
             self._filename = filename
             self.data = data
-            self._owner = False
             self._original_pos = data.tell()
         else:
             raise TypeError(f"Expected str, Path, or IO object, got {type(data).__name__}")
