@@ -371,6 +371,9 @@ class AuditChange:
             if self.old_value is not None:
                 self.old_value = translator(self.entry, self.old_value)
 
+    def __repr__(self) -> str:
+        return f"<AuditChange key={self.key} old_value={self.old_value} new_value={self.new_value}>"
+
     def _handle_partial_role(self, data: dict) -> list[PartialRole]:
         return [
             PartialRole(
@@ -476,6 +479,21 @@ class AuditLogEntry(Snowflake):
             return Snowflake(id=self.target_id)
         else:
             return converter(self.target_id)
+
+    def get_change(self, key: str) -> AuditChange | None:
+        """
+        Returns the change with the given key, if it exists.
+
+        Parameters
+        ----------
+        key:
+            The key of the change to retrieve.
+
+        Returns
+        -------
+            The change with the given key, or None if no such change exists.
+        """
+        return next((g for g in self.changes if g.key == key), None)
 
     def _convert_target_guild(self, guild_id: int) -> PartialGuild:
         return PartialGuild(
