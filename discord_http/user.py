@@ -447,9 +447,9 @@ class User(PartialUser):
         "banner_colour",
         "bot",
         "discriminator",
-        "display_name_styles",
         "global_name",
         "name",
+        "name_style",
         "nameplate",
         "primary_guild",
         "public_flags",
@@ -512,7 +512,7 @@ class User(PartialUser):
         self.nameplate: Nameplate | None = None
         """ The nameplate of the member, if available. """
 
-        self.display_name_styles: DisplayNameStyles | None = None
+        self.name_style: DisplayNameStyles | None = None
         """ The display name style of the user, if any. """
 
         self._from_data(data)
@@ -543,7 +543,7 @@ class User(PartialUser):
             )
 
         if data.get("display_name_styles"):
-            self.display_name_styles = DisplayNameStyles(
+            self.name_style = DisplayNameStyles(
                 data=data["display_name_styles"]
             )
 
@@ -596,6 +596,11 @@ class User(PartialUser):
     def display_banner(self) -> Asset | None:
         """ An alias to merge with `Member.display_banner`. """
         return self.banner
+
+    @property
+    def display_name_style(self) -> DisplayNameStyles | None:
+        """ An alias to merge with `Member.display_name_style`. """
+        return self.name_style
 
     @property
     def display_avatar_decoration(self) -> AvatarDecoration | None:

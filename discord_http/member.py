@@ -433,6 +433,7 @@ class Member(PartialMember):
         "communication_disabled_until",
         "flags",
         "joined_at",
+        "name_style",
         "nameplate",
         "nick",
         "pending",
@@ -490,6 +491,9 @@ class Member(PartialMember):
         self.primary_guild: PrimaryGuild | None = self._user.primary_guild
         """ The primary guild of the member, if available. """
 
+        self.name_style: DisplayNameStyles | None = None
+        """ The display name style of the member, if any. """
+
         self._from_data(data)
 
     def __repr__(self) -> str:
@@ -525,6 +529,11 @@ class Member(PartialMember):
         if data.get("premium_since"):
             self.premium_since = utils.parse_time(
                 data["premium_since"]
+            )
+
+        if data.get("display_name_styles"):
+            self.name_style = DisplayNameStyles(
+                data=data["display_name_styles"]
             )
 
     @property
@@ -701,6 +710,11 @@ class Member(PartialMember):
     def display_name(self) -> str:
         """ Returns the display name of the member. """
         return self.nick or self.global_name or self.name
+
+    @property
+    def display_name_style(self) -> DisplayNameStyles | None:
+        """ Returns the currently displayed name style of the member. """
+        return self.name_style or self._user.name_style
 
     @property
     def display_banner(self) -> Asset | None:
