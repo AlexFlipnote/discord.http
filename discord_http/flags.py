@@ -33,42 +33,12 @@ class BaseFlag(_FlagPyMeta):
     def __int__(self) -> int:
         return self.value
 
-    @classmethod
-    def all(cls) -> Self:
-        """ Returns a flag with all the flags. """
-        if not hasattr(cls, "_ALL_VALUE"):
-            val = 0
-            for m in cls.__members__.values():
-                val |= m.value
-            cls._ALL_VALUE = val
-        return cls(cls._ALL_VALUE)
-
-    @classmethod
-    def none(cls) -> Self:
-        """ Returns a flag with no flags. """
-        return cls(0)
-
-    @classmethod
-    def from_names(cls, *args: str) -> Self:
-        """
-        Create a flag from names.
-
-        Parameters
-        ----------
-        *args:
-            The names of the flags to create
-
-        Returns
-        -------
-            The flag with the added flags
-
-        Raises
-        ------
-        `ValueError`
-            The flag name is not a valid flag
-        """
-        value = cls.none()
-        return value.add_flags(*args)
+    @property
+    def pretty_name(self) -> str:
+        """ Returns a pretty name for the flag. """
+        if not self.name:
+            return "Unknown"
+        return self.name.replace("_", " ").capitalize()
 
     @property
     def list_names(self) -> list[str]:
@@ -165,6 +135,43 @@ class BaseFlag(_FlagPyMeta):
     def copy(self) -> Self:
         """ Returns a copy of the flag. """
         return self.__class__(self.value)
+
+    @classmethod
+    def all(cls) -> Self:
+        """ Returns a flag with all the flags. """
+        if not hasattr(cls, "_ALL_VALUE"):
+            val = 0
+            for m in cls.__members__.values():
+                val |= m.value
+            cls._ALL_VALUE = val
+        return cls(cls._ALL_VALUE)
+
+    @classmethod
+    def none(cls) -> Self:
+        """ Returns a flag with no flags. """
+        return cls(0)
+
+    @classmethod
+    def from_names(cls, *args: str) -> Self:
+        """
+        Create a flag from names.
+
+        Parameters
+        ----------
+        *args:
+            The names of the flags to create
+
+        Returns
+        -------
+            The flag with the added flags
+
+        Raises
+        ------
+        `ValueError`
+            The flag name is not a valid flag
+        """
+        value = cls.none()
+        return value.add_flags(*args)
 
 
 class MessageFlags(BaseFlag):
