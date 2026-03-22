@@ -994,6 +994,7 @@ class PartialChannel(PartialBase):
         view: View | None = None,
         auto_archive_duration: int | None = 4320,
         rate_limit_per_user: int | None = None,
+        flags: MessageFlags | None = None,
         applied_tags: list["ForumTag | int"] | None = None
     ) -> "ForumThread":
         """
@@ -1057,6 +1058,9 @@ class PartialChannel(PartialBase):
 
         if view is not None:
             payload["message"]["components"] = view.to_dict()
+
+        if flags is not None:
+            payload["message"]["flags"] = int(flags)
 
         if temp_msg.embeds is not None:
             payload["message"]["embeds"] = [
