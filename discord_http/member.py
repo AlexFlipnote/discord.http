@@ -13,7 +13,10 @@ from .mentions import AllowedMentions
 from .object import PartialBase, Snowflake
 from .response import ResponseType
 from .role import PartialRole, Role
-from .user import User, PartialUser, PrimaryGuild, AvatarDecoration, Nameplate
+from .user import (
+    User, PartialUser, PrimaryGuild, AvatarDecoration,
+    Nameplate, DisplayNameStyles
+)
 from .view import View
 
 _log = logging.getLogger(__name__)
@@ -243,8 +246,9 @@ class PartialMember(PartialBase):
         channel_id: int | None = MISSING,
         banner: File | bytes | None = MISSING,
         avatar: File | bytes | None = MISSING,
+        display_name: DisplayNameStyles | None = MISSING,
         bio: str | None = MISSING,
-        reason: str | None = None
+        reason: str | None = None,
     ) -> "Member":
         """
         Edit the member.
@@ -271,6 +275,8 @@ class PartialMember(PartialBase):
             The new avatar for the bot (Application only).
         bio:
             The new bio for the bot (Application only).
+        display_name:
+            The new display name style for the bot (Application only).
 
         Returns
         -------
@@ -320,6 +326,15 @@ class PartialMember(PartialBase):
             )
         if bio is not MISSING:
             self_payload["bio"] = bio
+
+        if display_name is not MISSING:
+            self_payload["display_name_font_id"] = None
+            self_payload["display_name_effect_id"] = None
+            self_payload["display_name_colors"] = None
+            if isinstance(display_name, DisplayNameStyles):
+                self_payload["display_name_font_id"] = int(display_name.font)
+                self_payload["display_name_effect_id"] = int(display_name.effect)
+                self_payload["display_name_colors"] = [int(c) for c in display_name.colours]
 
         if payload:
             if self_payload:

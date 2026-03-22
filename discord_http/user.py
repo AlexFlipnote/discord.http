@@ -47,43 +47,43 @@ class DisplayNameStyles:
 
     __slots__ = (
         "colours",
-        "effect_id",
-        "font_id",
+        "effect",
+        "font",
     )
 
     def __init__(self, data: dict):
         self.colours: list[Colour] = [Colour(g) for g in data.get("colors", [])]
         """ The colors of the display name, if any. """
 
-        self.font_id: DisplayNameFontType = DisplayNameFontType(
+        self.font: DisplayNameFontType = DisplayNameFontType(
             data.get("font_id", int(DisplayNameFontType.default))
         )
         """ The font of the display name, if any. """
 
-        self.effect_id: DisplayNameEffectType = DisplayNameEffectType(
+        self.effect: DisplayNameEffectType = DisplayNameEffectType(
             data.get("effect_id", int(DisplayNameEffectType.solid))
         )
         """ The effect of the display name, if any. """
 
     def __repr__(self) -> str:
         return (
-            f"<DisplayNameStyles colours={self.colours} font={self.font_id} "
-            f"effect={self.effect_id}>"
+            f"<DisplayNameStyles colours={self.colours} font={self.font} "
+            f"effect={self.effect}>"
         )
 
     def to_dict(self) -> dict:
         """ Converts the display name style to a dictionary. """
         return {
             "colors": [int(c) for c in self.colours],
-            "font_id": int(self.font_id),
-            "effect_id": int(self.effect_id)
+            "font_id": int(self.font),
+            "effect_id": int(self.effect)
         }
 
     @classmethod
     def create(
         cls,
         *,
-        colours: list[Colour],
+        colours: list[Colour] | Colour,
         font: DisplayNameFontType,
         effect: DisplayNameEffectType,
     ) -> "DisplayNameStyles":
@@ -106,6 +106,9 @@ class DisplayNameStyles:
         -------
             The display name style object.
         """
+        if not isinstance(colours, list):
+            colours = [colours]
+
         return cls(data={
             "colors": [int(c) for c in colours],
             "font_id": int(font),

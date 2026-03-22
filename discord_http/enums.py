@@ -112,6 +112,11 @@ class BaseEnum(_Enum):
 
         return NotImplemented
 
+    @property
+    def pretty_name(self) -> str:
+        """ Return a prettified version of the enum name. """
+        return self.name.replace("_", " ").capitalize()
+
     @classmethod
     def random(cls) -> Self:
         """ Return a random enum. """
