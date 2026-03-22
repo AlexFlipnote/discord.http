@@ -38,33 +38,79 @@ __all__ = (
 
 
 class DisplayNameStyles:
-    """ Represents the display name style of a user. """
+    """
+    Represents the display name style of a user.
+
+    .. warning::
+        This is not officially documented by Discord, things can change.
+    """
 
     __slots__ = (
         "colours",
-        "effect",
-        "font",
+        "effect_id",
+        "font_id",
     )
 
     def __init__(self, data: dict):
         self.colours: list[Colour] = [Colour(g) for g in data.get("colors", [])]
         """ The colors of the display name, if any. """
 
-        self.font: DisplayNameFontType = DisplayNameFontType(
-            data.get("font", int(DisplayNameFontType.default))
+        self.font_id: DisplayNameFontType = DisplayNameFontType(
+            data.get("font_id", int(DisplayNameFontType.default))
         )
         """ The font of the display name, if any. """
 
-        self.effect: DisplayNameEffectType = DisplayNameEffectType(
-            data.get("effect", int(DisplayNameEffectType.solid))
+        self.effect_id: DisplayNameEffectType = DisplayNameEffectType(
+            data.get("effect_id", int(DisplayNameEffectType.solid))
         )
         """ The effect of the display name, if any. """
 
     def __repr__(self) -> str:
         return (
-            f"<DisplayNameStyles colours={self.colours} font={self.font} "
-            f"effect={self.effect}>"
+            f"<DisplayNameStyles colours={self.colours} font={self.font_id} "
+            f"effect={self.effect_id}>"
         )
+
+    def to_dict(self) -> dict:
+        """ Converts the display name style to a dictionary. """
+        return {
+            "colors": [int(c) for c in self.colours],
+            "font_id": int(self.font_id),
+            "effect_id": int(self.effect_id)
+        }
+
+    @classmethod
+    def create(
+        cls,
+        *,
+        colours: list[Colour],
+        font: DisplayNameFontType,
+        effect: DisplayNameEffectType,
+    ) -> "DisplayNameStyles":
+        """
+        Creates a display name style object.
+
+        Used to easily have an object to pass to the API when
+        editing the application's display name style.
+
+        Parameters
+        ----------
+        colours:
+            The colors of the display name, if any.
+        font:
+            The font of the display name, if any.
+        effect:
+            The effect of the display name, if any.
+
+        Returns
+        -------
+            The display name style object.
+        """
+        return cls(data={
+            "colors": [int(c) for c in colours],
+            "font_id": int(font),
+            "effect_id": int(effect)
+        })
 
 
 class Nameplate:

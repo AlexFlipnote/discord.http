@@ -1,10 +1,11 @@
+import asyncio
 import sys
 
 from base64 import b64encode
 from collections.abc import AsyncIterator, Callable
 from dataclasses import dataclass
 from datetime import datetime, timedelta
-from typing import TYPE_CHECKING, NamedTuple, ClassVar
+from typing import TYPE_CHECKING, NamedTuple, ClassVar, Literal, Any, get_args
 
 from . import utils
 from .asset import Asset
@@ -25,6 +26,7 @@ from .file import File
 from .flags import Permissions, SystemChannelFlags, PermissionOverwrite
 from .object import PartialBase, Snowflake
 from .role import Role, PartialRole
+from .message import Message
 from .soundboard import SoundboardSound, PartialSoundboardSound
 from .sticker import Sticker, PartialSticker
 from .voice import VoiceState, PartialVoiceState
@@ -52,6 +54,22 @@ __all__ = (
     "PartialScheduledEvent",
     "ScheduledEvent",
 )
+
+SearchSortByType = Literal["timestamp", "relevance"]
+SearchSortOrderType = Literal["asc", "desc"]
+SearchAuthorType = Literal[
+    "user", "bot", "webhook",
+    "-user", "-bot", "-webhook"
+]
+
+SearchHasType = Literal[
+    "image", "sound", "video", "file", "sticker", "embed", "link", "poll", "snapshot",
+    "-image", "-sound", "-video", "-file", "-sticker", "-embed", "-link", "-poll", "-snapshot"
+]
+
+SearchEmbedType = Literal[
+    "image", "video", "gif", "sound", "article"
+]
 
 
 @dataclass
@@ -786,6 +804,219 @@ class PartialGuild(PartialBase):
             id=automod_id,
             guild_id=self.id
         )
+
+    async def search_messages(
+        self,
+        *,
+        query: str | None = None,
+        limit: int | None = 25,
+        offset: int = 0,
+        max_id: "Snowflake | int | None" = None,
+        min_id: "Snowflake | int | None" = None,
+        slop: int | None = None,
+        channel_id: "list[Snowflake | int] | Snowflake | int | None" = None,
+        author_type: list[SearchAuthorType] | SearchAuthorType | None = None,
+        author_id: "list[Snowflake | int] | Snowflake | int | None" = None,
+        mentions: "list[Snowflake | int] | Snowflake | int | None" = None,
+        mentions_role_id: "list[Snowflake | int] | Snowflake | int | None" = None,
+        mention_everyone: bool | None = None,
+        replied_to_user_id: "list[Snowflake | int] | Snowflake | int | None" = None,
+        replied_to_message_id: "list[Snowflake | int] | Snowflake | int | None" = None,
+        pinned: bool | None = None,
+        has: list[SearchHasType] | SearchHasType | None = None,
+        embed_type: list[SearchEmbedType] | SearchEmbedType | None = None,
+        embed_provider: list[str] | str | None = None,
+        link_hostname: list[str] | str | None = None,
+        attachment_filename: list[str] | str | None = None,
+        attachment_extension: list[str] | str | None = None,
+        sort_by: SearchSortByType = "timestamp",
+        sort_order: SearchSortOrderType = "desc",
+        include_nsfw: bool | None = None,
+    ) -> AsyncIterator[Message]:
+        """
+        Search for messages within the guild.
+
+        Parameters
+        ----------
+        query:
+            The content to search for (max 1024 characters).
+        limit:
+            The maximum amount of messages to yield.
+        offset:
+            Number of messages to skip (max 9975).
+        max_id:
+            Get messages before this message ID.
+        min_id:
+            Get messages after this message ID.
+        slop:
+            The max number of words to skip between matching tokens in the search (default 2, max 100).
+        channel_id:
+            Filter messages by these channels (max 500).
+        author_type:
+            Filter messages by author type (e.g. 'user', 'bot', 'webhook'). Negate with '-'.
+        author_id:
+            Filter messages by these authors (max 100).
+        mentions:
+            Filter messages that mention these users (max 100).
+        mentions_role_id:
+            Filter messages that mention these roles (max 100).
+        mention_everyone:
+            Filter messages that do or do not mention @everyone.
+        replied_to_user_id:
+            Filter messages that reply to these users (max 100).
+        replied_to_message_id:
+            Filter messages that reply to these messages (max 100).
+        pinned:
+            Filter messages by whether they are or are not pinned.
+        has:
+            Filter messages by whether or not they have specific things (e.g. 'image', 'embed').
+        embed_type:
+            Filter messages by embed type (e.g. 'image', 'video').
+        embed_provider:
+            Filter messages by embed provider (case-sensitive, e.g. 'Tenor') (max 100).
+        link_hostname:
+            Filter messages by link hostname (e.g. 'discord.com') (max 100).
+        attachment_filename:
+            Filter messages by attachment filename (max 100).
+        attachment_extension:
+            Filter messages by attachment extension (e.g. 'txt') (max 100).
+        sort_by:
+            The sorting algorithm to use ("timestamp" or "relevance").
+        sort_order:
+            The direction to sort ("asc" or "desc").
+        include_nsfw:
+            Whether to include results from age-restricted channels (default False).
+
+        Yields
+        ------
+        `Message`
+            The message object matching the search.
+        """
+        base_params: dict = {
+            "sort_by": sort_by,
+            "sort_order": sort_order
+        }
+
+        def _listify(
+            val: "list | Snowflake | str | int",
+            _type: str,
+            *,
+            literal_type: Any | None = None  # noqa: ANN401
+        ) -> list[str]:
+            if not isinstance(val, (list, tuple, set)):
+                val = [val]
+
+            result = []
+            for v in val:
+                item = str(int(v)) if _type == "int" else str(v)
+
+                if literal_type is not None:
+                    valid_options = get_args(literal_type)
+                    if item not in valid_options:
+                        raise ValueError(f"Invalid option '{item}'. Valid options are: {', '.join(valid_options)}")
+
+                result.append(item)
+
+            return result
+
+        # String / Int parameters
+        if query is not None:
+            base_params["query"] = query
+        if min_id is not None:
+            base_params["min_id"] = str(int(min_id))
+        if max_id is not None:
+            base_params["max_id"] = str(int(max_id))
+        if slop is not None:
+            base_params["slop"] = min(100, max(0, slop))
+
+        # Boolean parameters
+        if mention_everyone is not None:
+            base_params["mention_everyone"] = bool(mention_everyone)
+        if pinned is not None:
+            base_params["pinned"] = bool(pinned)
+        if include_nsfw is not None:
+            base_params["include_nsfw"] = bool(include_nsfw)
+
+        # Array parameters
+        if channel_id is not None:
+            base_params["channel_id"] = _listify(channel_id, "int")
+        if author_type is not None:
+            base_params["author_type"] = _listify(author_type, "str", literal_type=SearchAuthorType)
+        if author_id is not None:
+            base_params["author_id"] = _listify(author_id, "int")
+        if mentions is not None:
+            base_params["mentions"] = _listify(mentions, "int")
+        if mentions_role_id is not None:
+            base_params["mentions_role_id"] = _listify(mentions_role_id, "int")
+        if replied_to_user_id is not None:
+            base_params["replied_to_user_id"] = _listify(replied_to_user_id, "int")
+        if replied_to_message_id is not None:
+            base_params["replied_to_message_id"] = _listify(replied_to_message_id, "int")
+        if has is not None:
+            base_params["has"] = _listify(has, "str", literal_type=SearchHasType)
+        if embed_type is not None:
+            base_params["embed_type"] = _listify(embed_type, "str", literal_type=SearchEmbedType)
+        if embed_provider is not None:
+            base_params["embed_provider"] = _listify(embed_provider, "str")
+        if link_hostname is not None:
+            base_params["link_hostname"] = _listify(link_hostname, "str")
+        if attachment_filename is not None:
+            base_params["attachment_filename"] = _listify(attachment_filename, "str")
+        if attachment_extension is not None:
+            base_params["attachment_extension"] = _listify(attachment_extension, "str")
+
+        yielded = 0
+        current_offset = offset
+
+        while True:
+            fetch_limit = 25
+            if limit is not None:
+                fetch_limit = min(25, limit - yielded)
+                if fetch_limit <= 0:
+                    break
+
+            if current_offset > 9975:
+                break
+
+            params = base_params.copy()
+            params["limit"] = fetch_limit
+            params["offset"] = current_offset
+
+            r = await self._state.query(
+                "GET",
+                f"/guilds/{self.id}/messages/search",
+                params=params
+            )
+
+            if r.status == 202:
+                retry_after = r.response.get("retry_after", 2)
+                await asyncio.sleep(retry_after if retry_after > 0 else 1)
+                continue
+
+            messages = r.response.get("messages", [])
+            if not messages:
+                break
+
+            for msg_group in messages:
+                if not msg_group:
+                    continue
+
+                target_msg = msg_group[0]
+
+                yield Message(
+                    state=self._state,
+                    data=target_msg,
+                    guild=self
+                )
+
+                yielded += 1
+                if limit is not None and yielded >= limit:
+                    break
+
+            if len(messages) < fetch_limit:
+                break
+
+            current_offset += fetch_limit
 
     async def fetch_automod_rule(self, automod_id: int) -> AutoModRule:
         """ Fetches a automod rule from the guild. """
