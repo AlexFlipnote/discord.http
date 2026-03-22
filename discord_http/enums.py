@@ -500,6 +500,7 @@ class DisplayNameEffectType(BaseEnum):
     neon = 3
     toon = 4
     pop = 5
+    glow = 6
 
 
 class VerificationLevel(BaseEnum):
