@@ -26,7 +26,6 @@ class PartialVoiceState(PartialBase):
         "_state",
         "channel_id",
         "guild_id",
-        "id",
     )
 
     def __init__(

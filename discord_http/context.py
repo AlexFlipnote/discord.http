@@ -87,7 +87,7 @@ class _ResolveParser:
         self._parsed_data["strings"] = data.get("data", {}).get("values", [])
 
         resolved = data.get("data", {}).get("resolved", {})
-        data_to_resolve = ["members", "users", "channels", "roles", "attachments"]
+        data_to_resolve = ("members", "users", "channels", "roles", "attachments")
 
         for key in data_to_resolve:
             self._parse_resolved(ctx, key, resolved)

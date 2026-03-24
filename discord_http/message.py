@@ -100,9 +100,6 @@ class MessageReaction:
         self.count: int = int(data["count"])
         """ The number of users that reacted with this emoji. """
 
-        self.burst_count: int = int(data["burst_count"])
-        """ The number of users that reacted with this emoji in burst mode. """
-
         self.me: bool = data.get("me", False)
         """ Whether the bot has reacted with this emoji. """
 

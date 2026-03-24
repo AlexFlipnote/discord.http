@@ -33,14 +33,28 @@ ResponseT = TypeVar("ResponseT")
 
 _log = logging.getLogger(__name__)
 
-ratelimit_bucket_re = re.compile(
-    r"/(messages|members|roles|emojis|stickers|permissions|reactions|interactions)/([^/]+)"
-)
-
 __all__ = (
     "DiscordAPI",
     "HTTPResponse",
 )
+
+_HTTP_400_ERROR_TABLE: dict[int, type[HTTPException]] = {
+    200000: AutomodBlock,
+    200001: AutomodBlock,
+}
+
+ratelimit_bucket_re = re.compile(
+    r"/(messages|members|roles|emojis|stickers|permissions|reactions|interactions)/([^/]+)"
+)
+
+
+def _try_json(data: str) -> dict | str:
+    if isinstance(data, str):
+        try:
+            return orjson.loads(data)
+        except orjson.JSONDecodeError:
+            pass
+    return data
 
 
 class HTTPSession(aiohttp.ClientSession):
@@ -438,10 +452,6 @@ class DiscordAPI:
             self._clear_old_ratelimits()
 
     def _clear_old_ratelimits(self) -> None:
-        if len(self._buckets) <= 256:
-            _log.debug(f"Ratelimit buckets: {len(self._buckets)}, no cleanup needed.")
-            return
-
         to_remove = [
             key for key, bucket in self._buckets.items()
             if bucket.is_inactive()
@@ -613,22 +623,8 @@ class DiscordAPI:
             self._get_bucket_key(method, path)
         )
 
-        http_400_error_table: dict[int, type[HTTPException]] = {
-            200000: AutomodBlock,
-            200001: AutomodBlock,
-        }
-
         async def _sleep(tries: int) -> None:
             await asyncio.sleep(1 + (tries * 2) + self.create_jitter())
-
-        def _try_json(data: str) -> dict | str:
-            response = data
-            if isinstance(data, str):
-                try:
-                    response = orjson.loads(data)
-                except orjson.JSONDecodeError:
-                    pass
-            return response
 
         for tries in range(5):
             async with ratelimit:
@@ -685,8 +681,8 @@ class DiscordAPI:
                         case 400:
                             response = _try_json(r.response)
                             if isinstance(response, str):
-                                raise http_400_error_table.get(400, HTTPException)(r)
-                            raise http_400_error_table.get(
+                                raise _HTTP_400_ERROR_TABLE.get(400, HTTPException)(r)
+                            raise _HTTP_400_ERROR_TABLE.get(
                                 response.get("code", 0),
                                 HTTPException
                             )(r)

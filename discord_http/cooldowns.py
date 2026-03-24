@@ -128,11 +128,9 @@ class CooldownCache:
             Current time to check the cache for.
         """
         current = current or time.time()
-        any(
-            self._cache.pop(k)
-            for k, v in self._cache.items()
-            if current > v._last + v.per
-        )
+        expired = [k for k, v in self._cache.items() if current > v._last + v.per]
+        for k in expired:
+            del self._cache[k]
 
     def create_bucket(self) -> "Cooldown":
         """ Creates a new cooldown bucket. """

@@ -2,8 +2,9 @@ import numbers
 import operator
 import random
 
+from collections.abc import Callable
 from enum import Enum as _Enum
-from typing import Self
+from typing import Any, Self
 
 __all__ = (
     "ApplicationCommandType",
@@ -50,6 +51,14 @@ __all__ = (
     "WebhookType",
 )
 
+_OPERATOR_TABLE: dict[str, Callable[[Any, Any], bool]] = {
+    "gt": operator.gt,
+    "lt": operator.lt,
+    "ge": operator.ge,
+    "le": operator.le,
+    "eq": operator.eq,
+}
+
 
 class BaseEnum(_Enum):
     """
@@ -83,15 +92,7 @@ class BaseEnum(_Enum):
         -------
             The result of the comparison if the types are compatible, otherwise NotImplemented.
         """
-        operator_table = {
-            "gt": operator.gt,
-            "lt": operator.lt,
-            "ge": operator.ge,
-            "le": operator.le,
-            "eq": operator.eq,
-        }
-
-        op = operator_table.get(op_name)
+        op = _OPERATOR_TABLE.get(op_name)
         if op is None:
             raise ValueError(f"Invalid operator name: '{op_name}'")
 

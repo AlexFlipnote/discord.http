@@ -189,9 +189,10 @@ class Status:
         self.latency: float = float("inf")
         """ The latency of the shard, in seconds. """
 
-        self._last_ack: float = time.perf_counter()
-        self._last_send: float = time.perf_counter()
-        self._last_recv: float = time.perf_counter()
+        now = time.perf_counter()
+        self._last_ack: float = now
+        self._last_send: float = now
+        self._last_recv: float = now
         self._last_heartbeat: float | None = None
 
     @property
@@ -206,9 +207,11 @@ class Status:
         self.gateway = DEFAULT_GATEWAY
 
         self.latency = float("inf")
-        self._last_ack = time.perf_counter()
-        self._last_send = time.perf_counter()
-        self._last_recv = time.perf_counter()
+
+        now = time.perf_counter()
+        self._last_ack = now
+        self._last_send = now
+        self._last_recv = now
         self._last_heartbeat = None
 
     def can_resume(self) -> bool:
@@ -621,7 +624,7 @@ class Shard:
             if len(nonce_) > 32:
                 _log.warning("Nonce is probably too long, it might be ignored by Discord")
 
-            payload["nonce"] = str(nonce)
+            payload["nonce"] = nonce_
 
         await self.send_message(
             {"op": int(PayloadType.request_guild_members), "d": payload},

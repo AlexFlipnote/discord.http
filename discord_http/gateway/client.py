@@ -80,7 +80,7 @@ class GatewayClient:
         -------
             The shard object with the specified ID, or `None` if not found.
         """
-        return self.__shards.get(shard_id, None)
+        return self.__shards.get(shard_id)
 
     async def change_presence(self, status: PlayingStatus) -> None:
         """
@@ -234,17 +234,10 @@ class GatewayClient:
 
     async def close(self) -> None:
         """ Close the gateway client. """
-        async def _close() -> None:
-            to_close = [
-                asyncio.ensure_future(shard.close(kill=True))
-                for shard in self.__shards.values()
-            ]
+        to_close = [
+            asyncio.ensure_future(shard.close(kill=True))
+            for shard in self.__shards.values()
+        ]
 
-            if to_close:
-                await asyncio.wait(to_close)
-
-        task = asyncio.create_task(
-            _close(),
-            name="discord.http/gateway/close_all_shards"
-        )
-        await task
+        if to_close:
+            await asyncio.wait(to_close)

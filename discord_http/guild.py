@@ -337,10 +337,10 @@ class ScheduledEvent(PartialScheduledEvent):
         if data.get("scheduled_end_time"):
             self.end_time = utils.parse_time(data["scheduled_end_time"])
 
-        if data.get("entity_id") in [
+        if data.get("entity_id") in (
             ScheduledEventEntityType.stage_instance,
             ScheduledEventEntityType.voice
-        ]:
+        ):
             from .channel import PartialChannel
             self.channel = PartialChannel(
                 state=self._state,
