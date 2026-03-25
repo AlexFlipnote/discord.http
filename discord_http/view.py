@@ -1937,13 +1937,13 @@ class FileComponent(Item):
 
     def __init__(
         self,
-        file: Asset | AttachmentComponent | str,
+        file: File | Asset | AttachmentComponent | str,
         *,
         spoiler: bool = False
     ):
         super().__init__(type=ComponentType.file)
 
-        self.file: Asset | AttachmentComponent | str = file
+        self.file: File | Asset | AttachmentComponent | str = file
         """ The file to be sent. """
 
         self.spoiler: bool = spoiler
@@ -1954,11 +1954,13 @@ class FileComponent(Item):
 
     def to_dict(self) -> dict:
         """ Returns a dict representation of the file component. """
+        url = str(self.file)
+        if isinstance(self.file, File):
+            url = f"attachment://{self.file.filename}"
+
         return {
             "type": int(self.type),
-            "file": {
-                "url": str(self.file)
-            },
+            "file": {"url": url},
             "spoiler": self.spoiler
         }
 
