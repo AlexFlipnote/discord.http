@@ -149,6 +149,9 @@ class PartialIntegration(PartialBase):
         )
         """ The ID of the application associated with this integration. """
 
+    def __str__(self) -> str:
+        return "PartialIntegration"
+
     @property
     def guild(self) -> "PartialGuild | Guild":
         """:class:`PartialGuild` | :class:`Guild`: The guild associated with this integration."""

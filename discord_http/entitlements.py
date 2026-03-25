@@ -36,6 +36,9 @@ class PartialSKU(PartialBase):
     def __repr__(self) -> str:
         return f"<PartialSKU id={self.id}>"
 
+    def __str__(self) -> str:
+        return "PartialSKU"
+
     async def create_test_entitlement(
         self,
         *,
@@ -139,6 +142,9 @@ class PartialEntitlements(PartialBase):
 
     def __repr__(self) -> str:
         return f"<PartialEntitlements id={self.id}>"
+
+    def __str__(self) -> str:
+        return "PartialEntitlements"
 
     async def fetch(self) -> "Entitlements":
         """ Fetches the entitlement. """

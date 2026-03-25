@@ -66,6 +66,9 @@ class PartialMember(PartialBase):
     def __repr__(self) -> str:
         return f"<PartialMember id={self.id} guild_id={self.guild_id}>"
 
+    def __str__(self) -> str:
+        return "PartialMember"
+
     def _update_presence(self, obj: "Presence | None") -> None:
         self.presence = obj
 

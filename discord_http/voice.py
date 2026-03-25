@@ -50,6 +50,9 @@ class PartialVoiceState(PartialBase):
     def __repr__(self) -> str:
         return f"<PartialVoiceState id={self.id} guild_id={self.guild_id}>"
 
+    def __str__(self) -> str:
+        return "PartialVoiceState"
+
     async def fetch(self) -> "VoiceState":
         """
         Fetches the voice state of the member.

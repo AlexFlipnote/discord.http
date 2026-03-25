@@ -45,6 +45,9 @@ class PartialSticker(PartialBase):
     def __repr__(self) -> str:
         return f"<PartialSticker id={self.id}>"
 
+    def __str__(self) -> str:
+        return "PartialSticker"
+
     async def fetch(self) -> "Sticker":
         """ Returns the sticker data. """
         r = await self._state.query(

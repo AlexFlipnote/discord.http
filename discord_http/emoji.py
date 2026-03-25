@@ -167,6 +167,9 @@ class PartialEmoji(PartialBase):
     def __repr__(self) -> str:
         return f"<PartialEmoji id={self.id}>"
 
+    def __str__(self) -> str:
+        return "PartialEmoji"
+
     @property
     def guild(self) -> "Guild | PartialGuild | None":
         """ The guild of the member. """

@@ -292,6 +292,9 @@ class PartialAutoModRule(PartialBase):
     def __repr__(self) -> str:
         return f"<PartialAutoModRule id={self.id}>"
 
+    def __str__(self) -> str:
+        return "PartialAutoModRule"
+
     @property
     def guild(self) -> "Guild | PartialGuild | None":
         """ The guild object this event is in. """

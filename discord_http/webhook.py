@@ -52,6 +52,9 @@ class PartialWebhook(PartialBase):
     def __repr__(self) -> str:
         return f"<PartialWebhook id={self.id}>"
 
+    def __str__(self) -> str:
+        return "PartialWebhook"
+
     async def fetch(self) -> "Webhook":
         """ Fetch the webhook. """
         r = await self._state.query(

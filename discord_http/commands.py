@@ -176,11 +176,11 @@ class PartialCommand(PartialBase):
         self.guild_id: int | None = utils.get_int(data, "guild_id")
         """ The ID of the guild this command is in, or None if it's a global command. """
 
-    def __str__(self) -> str:
-        return self.name
-
     def __repr__(self):
         return f"<PartialCommand id={self.id} name={self.name}>"
+
+    def __str__(self) -> str:
+        return self.name
 
 
 class LocaleContainer:

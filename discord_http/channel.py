@@ -150,6 +150,9 @@ class PartialChannel(PartialBase):
     def __repr__(self) -> str:
         return f"<PartialChannel id={self.id}>"
 
+    def __str__(self) -> str:
+        return "PartialChannel"
+
     @property
     def type(self) -> ChannelType:
         """ Returns the channel's type. """
@@ -2516,6 +2519,9 @@ class StageInstance(PartialBase):
         self._guild: "PartialGuild | None" = guild
         self._from_data(data)
 
+    def __repr__(self) -> str:
+        return f"<StageInstance id={self.id!r} topic={self.topic!r}>"
+
     def _from_data(self, data: dict) -> None:
         self.channel_id: int = int(data["channel_id"])
         """ The ID of the stage channel. """
@@ -2561,9 +2567,6 @@ class StageInstance(PartialBase):
             id=self.guild_scheduled_event_id,
             guild_id=self.guild_id
         )
-
-    def __repr__(self) -> str:
-        return f"<StageInstance id={self.id!r} topic={self.topic!r}>"
 
     async def edit(
         self,

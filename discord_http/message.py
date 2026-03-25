@@ -956,6 +956,9 @@ class PartialMessage(PartialBase):
     def __repr__(self) -> str:
         return f"<PartialMessage id={self.id}>"
 
+    def __str__(self) -> str:
+        return "PartialMessage"
+
     @property
     def channel(self) -> "BaseChannel | PartialChannel":
         """ Returns the channel the message was sent in. """

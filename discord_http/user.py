@@ -255,6 +255,9 @@ class PartialUser(PartialBase):
     def __repr__(self) -> str:
         return f"<PartialUser id={self.id}>"
 
+    def __str__(self) -> str:
+        return "PartialUser"
+
     @property
     def mention(self) -> str:
         """ Returns a string that allows you to mention the user. """
@@ -744,6 +747,9 @@ class Application(PartialBase):
 
     def __repr__(self) -> str:
         return f"<Application id={self.id} name='{self.name}'>"
+
+    def __str__(self) -> str:
+        return self.name
 
     def _from_data(self, data: dict) -> None:
         if data.get("owner"):

@@ -106,6 +106,9 @@ class PartialScheduledEvent(PartialBase):
     def __repr__(self) -> str:
         return f"<PartialScheduledEvent id={self.id}>"
 
+    def __str__(self) -> str:
+        return "PartialScheduledEvent"
+
     @property
     def guild(self) -> "Guild | PartialGuild":
         """ The guild object this event is in. """
@@ -402,6 +405,9 @@ class PartialGuild(PartialBase):
 
     def __repr__(self) -> str:
         return f"<PartialGuild id={self.id}>"
+
+    def __str__(self) -> str:
+        return "PartialGuild"
 
     def _populate_internal_cache(self, data: dict) -> None:
         flags = self._state.bot._gateway_cache

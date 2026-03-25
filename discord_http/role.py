@@ -47,6 +47,9 @@ class PartialRole(PartialBase):
     def __repr__(self) -> str:
         return f"<PartialRole id={self.id} guild_id={self.guild_id}>"
 
+    def __str__(self) -> str:
+        return "PartialRole"
+
     @property
     def guild(self) -> "Guild | PartialGuild":
         """ Returns the guild this role is in. """
