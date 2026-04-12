@@ -476,8 +476,8 @@ class Member(PartialMember):
         self.nick: str | None = data.get("nick")
         """ The nickname of the member, if available. """
 
-        self.joined_at: datetime = utils.parse_time(data["joined_at"])
-        """ The time the member joined the guild. """
+        self.joined_at: datetime | None = None
+        """ The time the member joined the guild, if None, Discord failed to provide data. """
 
         self.communication_disabled_until: datetime | None = None
         """ The time until the member is communication disabled (timeout). """
@@ -509,6 +509,9 @@ class Member(PartialMember):
         return str(self._user)
 
     def _from_data(self, data: dict) -> None:
+        if data.get("joined_at"):
+            self.joined_at = utils.parse_time(data["joined_at"])
+
         if data.get("avatar"):
             self.avatar = Asset._from_guild_avatar(
                 self._state, self.guild.id, self.id, data["avatar"]

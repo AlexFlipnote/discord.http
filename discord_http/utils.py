@@ -588,7 +588,7 @@ def parse_time(ts: str | int) -> datetime:
     if isinstance(ts, str):
         return datetime.fromisoformat(ts)
 
-    raise TypeError("ts must be a str or int")
+    raise TypeError(f"ts must be a str or int, not {type(ts)}")
 
 
 def normalize_entity_id(
