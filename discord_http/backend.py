@@ -406,7 +406,7 @@ class DiscordHTTP(web.Application):
 
     def jsonify(
         self,
-        data: dict,
+        data: dict | list,
         *,
         status: int = 200
     ) -> web.Response:
