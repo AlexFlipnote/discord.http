@@ -101,10 +101,10 @@ class DeferResponse(BaseResponse):
 
     Parameters
     ----------
-    ephemeral: bool
-        Whether the response is ephemeral or not.
     thinking: bool
         Whether the response is thinking or not.
+    ephemeral: bool
+        Whether the response is ephemeral or not.
     flags: MessageFlags
         The flags for the response.
     """
@@ -118,8 +118,8 @@ class DeferResponse(BaseResponse):
     def __init__(
         self,
         *,
+        thinking: bool = True,
         ephemeral: bool = False,
-        thinking: bool = False,
         flags: MessageFlags | None = None,
     ):
         self.ephemeral = ephemeral

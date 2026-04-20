@@ -1,3 +1,4 @@
+import asyncio
 import copy
 import inspect
 import logging
@@ -330,25 +331,44 @@ class DiscordHTTP(web.Application):
 
             case InteractionType.application_command:
                 with context.benchmark.measure("start_end:application_command"):
-                    return await self._handle_application_command(
-                        context, data
-                    )
+                    response = await self._handle_application_command(context, data)
 
             case InteractionType.message_component | InteractionType.modal_submit:
                 with context.benchmark.measure(f"start_end:{InteractionType(data_type).name}"):
-                    return await self._handle_interaction(
-                        context, data
-                    )
+                    response = await self._handle_interaction(context, data)
 
             case InteractionType.application_command_autocomplete:
                 with context.benchmark.measure("start_end:autocomplete"):
-                    return await self._handle_autocomplete(
-                        context, data
-                    )
+                    return await self._handle_autocomplete(context, data)
 
             case _:  # Unknown
                 _log.debug(f"Unhandled interaction recieved (type: {data_type})")
                 return self.jsonify({"error": "invalid request body"}, status=400)
+
+        self._attach_tracking(response, context._response_sent)
+        return response
+
+    def _attach_tracking(self, response: web.Response, event: asyncio.Event) -> None:
+        """
+        Patches `write_eof` on a response to set an event once the bytes are flushed.
+
+        This lets `call_after` wait on the event rather than sleeping a fixed delay,
+        so it runs as soon as the HTTP response is actually sent to Discord.
+
+        Parameters
+        ----------
+        response:
+            The aiohttp response to patch
+        event:
+            The event to set when `write_eof` completes
+        """
+        original_write_eof = response.write_eof
+
+        async def _tracked(data: bytes = b"") -> None:
+            await original_write_eof(data)
+            event.set()
+
+        response.write_eof = _tracked
 
     def error_messages(self, ctx: "Context", e: Exception) -> MessageResponse | None:
         """

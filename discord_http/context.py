@@ -222,8 +222,8 @@ class InteractionResponse:
 
     def defer(
         self,
+        thinking: bool = True,
         ephemeral: bool = False,
-        thinking: bool = False,
         flags: MessageFlags | None = MISSING,
         call_after: Callable | None = None
     ) -> DeferResponse:
@@ -232,10 +232,10 @@ class InteractionResponse:
 
         Parameters
         ----------
-        ephemeral:
-            If the response should be ephemeral (show only to the user)
         thinking:
             If the response should show the "thinking" status
+        ephemeral:
+            If the response should be ephemeral (show only to the user)
         flags:
             The flags of the message (overrides ephemeral)
         call_after:
@@ -512,6 +512,7 @@ class Context:
         "_original_response",
         "_raw_resolved",
         "_raw_type",
+        "_response_sent",
         "app_permissions",
         "author",
         "benchmark",
@@ -541,6 +542,7 @@ class Context:
     ):
         self._guild: PartialGuild | None = None
         self._channel: BaseChannel | None = None
+        self._response_sent: asyncio.Event = asyncio.Event()
 
         self.bot: "Client" = bot
         """ The bot/client instance that the interaction belongs to. """
@@ -732,10 +734,10 @@ class Context:
 
     async def _background_task_manager(self, call_after: Callable) -> None:
         try:
-            if isinstance(self.bot.call_after_delay, int | float):
-                await asyncio.sleep(self.bot.call_after_delay)
-                # Somehow, Discord thinks @original messages is HTTP 404
-                # Give them a smaaaall chance to fix it
+            try:
+                await asyncio.wait_for(self._response_sent.wait(), timeout=5.0)
+            except TimeoutError:
+                pass
             await call_after()
         except Exception as e:
             if self.bot.has_any_dispatch("interaction_error"):
@@ -840,18 +842,18 @@ class Context:
     async def defer(
         self,
         *,
+        thinking: bool = True,
         ephemeral: bool = False,
-        thinking: bool = False,
     ) -> WebhookMessage:
         """
         Defer the interaction after responding with an empty response in the initial interaction.
 
         Parameters
         ----------
-        ephemeral:
-            Whether the deferred message should be ephemeral
         thinking:
             Whether the deferred message should show the "thinking" status
+        ephemeral:
+            Whether the deferred message should be ephemeral
 
         Returns
         -------
