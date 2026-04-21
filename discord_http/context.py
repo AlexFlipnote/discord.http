@@ -1116,8 +1116,7 @@ class Context:
 
         r = await self.bot.state.query(
             "GET",
-            f"/webhooks/{self.bot.application_id}/{self._followup_token}/messages/@original",
-            retry_codes=[404]
+            f"/webhooks/{self.bot.application_id}/{self._followup_token}/messages/@original"
         )
 
         msg = WebhookMessage(
@@ -1161,8 +1160,7 @@ class Context:
             "PATCH",
             f"/webhooks/{self.bot.application_id}/{self._followup_token}/messages/@original",
             headers={"Content-Type": payload.content_type},
-            data=payload.to_multipart(is_request=True),
-            retry_codes=[404]
+            data=payload.to_multipart(is_request=True)
         )
 
         msg = WebhookMessage(
@@ -1179,8 +1177,7 @@ class Context:
         """ Delete the original response to the interaction. """
         await self.bot.state.query(
             "DELETE",
-            f"/webhooks/{self.bot.application_id}/{self._followup_token}/messages/@original",
-            retry_codes=[404]
+            f"/webhooks/{self.bot.application_id}/{self._followup_token}/messages/@original"
         )
 
     async def _create_args(self) -> tuple[list[Member | User | Message | None], dict]:
