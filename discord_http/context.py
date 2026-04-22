@@ -222,7 +222,7 @@ class InteractionResponse:
 
     def defer(
         self,
-        thinking: bool = True,
+        thinking: bool = False,
         ephemeral: bool = False,
         flags: MessageFlags | None = MISSING,
         call_after: Callable | None = None
@@ -842,7 +842,7 @@ class Context:
     async def defer(
         self,
         *,
-        thinking: bool = True,
+        thinking: bool = False,
         ephemeral: bool = False,
     ) -> WebhookMessage:
         """

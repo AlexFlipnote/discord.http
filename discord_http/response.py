@@ -118,7 +118,7 @@ class DeferResponse(BaseResponse):
     def __init__(
         self,
         *,
-        thinking: bool = True,
+        thinking: bool = False,
         ephemeral: bool = False,
         flags: MessageFlags | None = None,
     ):
