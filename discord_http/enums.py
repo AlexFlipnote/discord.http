@@ -77,41 +77,46 @@ class BaseEnum(_Enum):
     without having to convert them first, lol.
     """
 
-    def _dispatch(self, other: Self | str | int, op_name: str) -> bool:
-        """
-        Internal helper to handle comparisons.
+    def __str__(self) -> str:
+        """ Return the name of the enum. """
+        return self.name
 
-        Parameters
-        ----------
-        other:
-            The value to compare against, which can be an enum member, its name, or its value.
-        op_name:
-            The name of the operator to use for comparison (e.g., "gt" for greater than).
+    def __int__(self) -> int:
+        """ Return the value of the enum. """
+        return self.value
 
-        Returns
-        -------
-            The result of the comparison if the types are compatible, otherwise NotImplemented.
-        """
-        op = _OPERATOR_TABLE.get(op_name)
-        if op is None:
-            raise ValueError(f"Invalid operator name: '{op_name}'")
+    def __hash__(self) -> int:
+        """ Return the hash of the enum. """
+        return hash(self.value)
 
-        if isinstance(other, str):
-            try:
-                other = self.__class__[other]
-            except KeyError:
-                valid = ", ".join(self.__class__.__members__.keys())
-                raise ValueError(
-                    f"Invalid string: '{other}' is not a valid {self.__class__.__name__}. "
-                    f"Expected one of: {valid}"
-                ) from None
+    def __gt__(self, other: Self | str | int) -> bool:
+        """ Greater than. """
+        return self._dispatch(other, "gt")
 
-        if isinstance(other, self.__class__):
-            return op(self.value, other.value)
-        if isinstance(other, numbers.Real):
-            return op(self.value, other)
+    def __lt__(self, other: Self | str | int) -> bool:
+        """ Less than.  """
+        return self._dispatch(other, "lt")
 
-        return NotImplemented
+    def __ge__(self, other: Self | str | int) -> bool:
+        """ Greater than or equal to. """
+        return self._dispatch(other, "ge")
+
+    def __le__(self, other: Self | str | int) -> bool:
+        """ Less than or equal to. """
+        return self._dispatch(other, "le")
+
+    def __eq__(self, other: Self | str | int) -> bool:
+        """ Equal to. """
+        res = self._dispatch(other, "eq")
+        return res if res is not NotImplemented else False
+
+    @classmethod
+    def _missing_(cls, _value: object) -> "BaseEnum":
+        """ If an invalid enum is provided, return `unknown = -1` """
+        obj = object.__new__(cls)
+        obj._name_ = "unknown"
+        obj._value_ = -1
+        return obj
 
     @property
     def pretty_name(self) -> str:
@@ -161,38 +166,41 @@ class BaseEnum(_Enum):
         """ Return a dictionary mapping names to values. """
         return {m.name: m.value for m in cls}
 
-    def __str__(self) -> str:
-        """ Return the name of the enum. """
-        return self.name
+    def _dispatch(self, other: Self | str | int, op_name: str) -> bool:
+        """
+        Internal helper to handle comparisons.
 
-    def __int__(self) -> int:
-        """ Return the value of the enum. """
-        return self.value
+        Parameters
+        ----------
+        other:
+            The value to compare against, which can be an enum member, its name, or its value.
+        op_name:
+            The name of the operator to use for comparison (e.g., "gt" for greater than).
 
-    def __hash__(self) -> int:
-        """ Return the hash of the enum. """
-        return hash(self.value)
+        Returns
+        -------
+            The result of the comparison if the types are compatible, otherwise NotImplemented.
+        """
+        op = _OPERATOR_TABLE.get(op_name)
+        if op is None:
+            raise ValueError(f"Invalid operator name: '{op_name}'")
 
-    def __gt__(self, other: Self | str | int) -> bool:
-        """ Greater than. """
-        return self._dispatch(other, "gt")
+        if isinstance(other, str):
+            try:
+                other = self.__class__[other]
+            except KeyError:
+                valid = ", ".join(self.__class__.__members__.keys())
+                raise ValueError(
+                    f"Invalid string: '{other}' is not a valid {self.__class__.__name__}. "
+                    f"Expected one of: {valid}"
+                ) from None
 
-    def __lt__(self, other: Self | str | int) -> bool:
-        """ Less than.  """
-        return self._dispatch(other, "lt")
+        if isinstance(other, self.__class__):
+            return op(self.value, other.value)
+        if isinstance(other, numbers.Real):
+            return op(self.value, other)
 
-    def __ge__(self, other: Self | str | int) -> bool:
-        """ Greater than or equal to. """
-        return self._dispatch(other, "ge")
-
-    def __le__(self, other: Self | str | int) -> bool:
-        """ Less than or equal to. """
-        return self._dispatch(other, "le")
-
-    def __eq__(self, other: Self | str | int) -> bool:
-        """ Equal to. """
-        res = self._dispatch(other, "eq")
-        return res if res is not NotImplemented else False
+        return NotImplemented
 
 
 class IntegrationType(BaseEnum):
