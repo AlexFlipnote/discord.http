@@ -217,7 +217,6 @@ class Integration(PartialIntegration):
         self._application: dict | None = data.get("application")
         self._state: "DiscordAPI" = state
         self._user: dict | None = data.get("user")
-        self._bot: dict | None = data.get("bot")
         self._account: dict | None = data.get("account")
 
         self.name: str = data["name"]
@@ -278,12 +277,14 @@ class Integration(PartialIntegration):
     @property
     def bot(self) -> User | None:
         """ The bot associated with this integration, if available."""
-        if not self._bot:
+        if not self._application:
+            return None
+        if not self._application.get("bot"):
             return None
 
         return User(
             state=self._state,
-            data=self._bot
+            data=self._application["bot"]
         )
 
     @property
