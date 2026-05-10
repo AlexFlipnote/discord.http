@@ -46,76 +46,6 @@ class IntegrationAccount:
         return self.id
 
 
-class IntegrationApplication(PartialBase):
-    """ Represents a bot/OAuth2 application for integrations. """
-
-    __slots__ = (
-        "_bot",
-        "_icon",
-        "_state",
-        "description",
-        "is_discoverable",
-        "is_monetized",
-        "is_verified",
-        "name",
-        "summary",
-    )
-
-    def __init__(
-        self,
-        *,
-        state: "DiscordAPI",
-        data: dict,
-    ) -> None:
-        super().__init__(id=int(data["id"]))
-
-        self._state: "DiscordAPI" = state
-        self._icon: str | None = data["icon"]
-        self._bot: dict | None = data.get("bot")
-
-        self.name: str = data["name"]
-        """ The name of the application. """
-
-        self.description: str = data["description"]
-        """ The description of the application. """
-
-        self.summary: str = data.get("summary", "")
-        """ The summary of the application. """
-
-        self.is_monetized: bool = data.get("is_monetized", False)
-        """ Whether the application is monetized. """
-
-        self.is_verified: bool = data.get("is_verified", False)
-        """ Whether the application is verified. """
-
-        self.is_discoverable: bool = data.get("is_discoverable", False)
-        """ Whether the application is discoverable. """
-
-    @property
-    def icon(self) -> Asset | None:
-        """ The icon of the application, if available."""
-        if not self._icon:
-            return None
-
-        return Asset._from_icon(
-            state=self._state,
-            object_id=self.id,
-            icon_hash=self._icon,
-            path="app"
-        )
-
-    @property
-    def bot(self) -> User | None:
-        """ The bot associated with this application, if available. """
-        if not self._bot:
-            return None
-
-        return User(
-            state=self._state,
-            data=self._bot
-        )
-
-
 class PartialIntegration(PartialBase):
     """
     Represents a partial integration object.
@@ -152,6 +82,9 @@ class PartialIntegration(PartialBase):
     def __str__(self) -> str:
         return "PartialIntegration"
 
+    def __repr__(self) -> str:
+        return f"<PartialIntegration id={self.id} guild_id={self.guild_id} application_id={self.application_id}>"
+
     @property
     def guild(self) -> "PartialGuild | Guild":
         """:class:`PartialGuild` | :class:`Guild`: The guild associated with this integration."""
@@ -182,10 +115,8 @@ class Integration(PartialIntegration):
     """ Represents a guild integration. """
 
     __slots__ = (
-        "_account",
-        "_application",
-        "_bot",
-        "_user",
+        "account",
+        "application",
         "enable_emoticons",
         "enabled",
         "expire_behavior",
@@ -198,6 +129,7 @@ class Integration(PartialIntegration):
         "synced_at",
         "syncing",
         "type",
+        "user",
     )
 
     def __init__(
@@ -214,10 +146,7 @@ class Integration(PartialIntegration):
             application_id=utils.get_int(data.get("application", {}), "id")
         )
 
-        self._application: dict | None = data.get("application")
         self._state: "DiscordAPI" = state
-        self._user: dict | None = data.get("user")
-        self._account: dict | None = data.get("account")
 
         self.name: str = data["name"]
         """ The name of the integration. """
@@ -263,48 +192,109 @@ class Integration(PartialIntegration):
         self.scopes: list[str] = data.get("scopes", [])
         """ The scopes of the application has been granted. """
 
-    @property
-    def user(self) -> User | None:
-        """ The user associated with this integration, if available."""
-        if not self._user:
-            return None
+        self.user: User | None = None
+        """ The user associated with this integration, if available. """
 
-        return User(
-            state=self._state,
-            data=self._user
-        )
+        self.account: IntegrationAccount | None = None
+        """ The account associated with this integration, if available. """
+
+        self.application: IntegrationApplication | None = None
+        """ The bot/OAuth2 application for discord integrations, if available. """
+
+        self._from_data(data)
+
+    def __repr__(self) -> str:
+        return f"<Integration id={self.id} name={self.name} type={self.type}>"
+
+    def _from_data(self, data: dict) -> None:
+        if data.get("user"):
+            self.user = User(state=self._state, data=data["user"])
+
+        if data.get("account"):
+            self.account = IntegrationAccount(state=self._state, data=data["account"])
+
+        if data.get("application"):
+            self.application = IntegrationApplication(state=self._state, data=data["application"])
 
     @property
     def bot(self) -> User | None:
-        """ The bot associated with this integration, if available."""
-        if not self._application:
-            return None
-        if not self._application.get("bot"):
-            return None
+        """
+        Alias for `application.bot`.
 
-        return User(
-            state=self._state,
-            data=self._application["bot"]
-        )
+        The bot user associated with this integration, if available.
+        """
+        return self.application.bot if self.application else None
 
-    @property
-    def account(self) -> IntegrationAccount | dict | None:
-        """ The account associated with this integration, if available."""
-        if not self._account:
-            return None
 
-        return IntegrationAccount(
-            state=self._state,
-            data=self._account
-        )
+class IntegrationApplication(PartialBase):
+    """ Represents a bot/OAuth2 application for integrations. """
 
-    @property
-    def application(self) -> IntegrationApplication | None:
-        """ The bot/OAuth2 application for discord integrations, if available."""
-        if not self._application:
-            return None
+    __slots__ = (
+        "_state",
+        "bot",
+        "description",
+        "icon",
+        "is_discoverable",
+        "is_monetized",
+        "is_verified",
+        "name",
+        "summary",
+    )
 
-        return IntegrationApplication(
-            state=self._state,
-            data=self._application
-        )
+    def __init__(
+        self,
+        *,
+        state: "DiscordAPI",
+        data: dict,
+    ) -> None:
+        super().__init__(id=int(data["id"]))
+
+        self._state: "DiscordAPI" = state
+
+        self.name: str = data["name"]
+        """ The name of the application. """
+
+        self.description: str = data["description"]
+        """ The description of the application. """
+
+        self.summary: str = data.get("summary", "")
+        """ The summary of the application. """
+
+        self.is_monetized: bool = data.get("is_monetized", False)
+        """ Whether the application is monetized. """
+
+        self.is_verified: bool = data.get("is_verified", False)
+        """ Whether the application is verified. """
+
+        self.is_discoverable: bool = data.get("is_discoverable", False)
+        """ Whether the application is discoverable. """
+
+        self.bot: User | None = None
+        """ The bot associated with this application, if available. """
+
+        self.icon: Asset | None = None
+        """ The icon of the application, if available. """
+
+        self._from_data(data)
+
+    def __str__(self) -> str:
+        return self.name
+
+    def __repr__(self) -> str:
+        return f"<IntegrationApplication id={self.id} name={self.name}>"
+
+    def _from_data(self, data: dict) -> None:
+        """ Update the application with new data. """
+        if data.get("bot"):
+            self.bot = User(
+                state=self._state,
+                data=data["bot"]
+            )
+
+        if data.get("icon"):
+            self.icon = Asset._from_icon(
+                state=self._state,
+                object_id=self.id,
+                icon_hash=data["icon"],
+                path="app"
+            )
