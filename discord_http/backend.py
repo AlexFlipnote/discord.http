@@ -1,6 +1,5 @@
 import asyncio
 import copy
-import inspect
 import logging
 import orjson
 import time
@@ -146,10 +145,8 @@ class DiscordHTTP(web.Application):
         if self.bot._before_invoke is None:
             return True
 
-        if inspect.iscoroutinefunction(self.bot._before_invoke):
-            result = await self.bot._before_invoke(ctx)
-        else:
-            result = self.bot._before_invoke(ctx)
+        func, is_coro = self.bot._before_invoke
+        result = await func(ctx) if is_coro else func(ctx)
 
         if result is not True:
             raise CheckFailed("Global before invoke failed.")
@@ -161,11 +158,12 @@ class DiscordHTTP(web.Application):
             return
 
         async def _run_background() -> None:
+            if self.bot._after_invoke is None:
+                return  # This was added only to make linter happy
+
+            func, is_coro = self.bot._after_invoke
             with ctx.benchmark.measure("global:after_invoke"):
-                if inspect.iscoroutinefunction(self.bot._after_invoke):
-                    await self.bot._after_invoke(ctx)
-                else:
-                    self.bot._after_invoke(ctx)  # type: ignore
+                await func(ctx) if is_coro else func(ctx)
 
         task = self.bot.loop.create_task(
             _run_background(),

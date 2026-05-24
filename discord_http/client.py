@@ -170,8 +170,8 @@ class Client:
         self.commands: dict[str, Command] = {}
         """ The commands registered to the client. """
 
-        self.listeners: list[Listener] = []
-        """ The listeners registered to the client. """
+        self.listeners: dict[str, list[Listener]] = {}
+        """ The listeners registered to the client, keyed by event name. """
 
         self.interactions: dict[str, Interaction] = {}
         """ The interactions registered to the client. """
@@ -179,7 +179,7 @@ class Client:
         self.interactions_regex: dict[str, Interaction] = {}
         """ The interactions registered to the client with regex. """
 
-        self._global_cmd_checks: list[Callable] = []
+        self._global_cmd_checks: list[tuple[Callable, bool]] = []
         self._gateway_cache: "GatewayCacheFlags | None" = gateway_cache
         self._ready: asyncio.Event | None = asyncio.Event()
         self._shards_ready: asyncio.Event | None = asyncio.Event()
@@ -199,8 +199,8 @@ class Client:
 
         self._cogs: dict[str, list[Cog]] = {}
 
-        self._before_invoke: Callable | None = None
-        self._after_invoke: Callable | None = None
+        self._before_invoke: tuple[Callable, bool] | None = None
+        self._after_invoke: tuple[Callable, bool] | None = None
         self._waiting_listeners: dict[str, list[tuple[asyncio.Future, Callable]]] = {}
         self._background_tasks: set[asyncio.Task] = set()
 
@@ -216,9 +216,9 @@ class Client:
             pass
 
     async def _run_global_checks(self, ctx: Context) -> bool:
-        for g in self._global_cmd_checks:
+        for g, is_coro in self._global_cmd_checks:
             with ctx.benchmark.measure(f"global:check:{g.__name__}", internal=True):
-                if inspect.iscoroutinefunction(g):
+                if is_coro:
                     result = await g(ctx)
                 else:
                     result = g(ctx)
@@ -295,7 +295,7 @@ class Client:
         _log.debug("Shutting down discord.http...")
 
         if self.gateway:
-            _log.debug("Closing discord.http/gateway...")
+            _log.debug("Shutting down discord.http/gateway...")
             await self.gateway.close()
 
         await self.state.http._close_session()
@@ -466,7 +466,7 @@ class Client:
                 data=[
                     v.to_dict()
                     for v in self.commands.values()
-                    if g in [int(x) for x in v.guild_ids] and
+                    if g in {int(x) for x in v.guild_ids} and
                     v.parent is None
                 ],
                 guild_id=g
@@ -670,7 +670,7 @@ class Client:
         port:
             Port to use, if not provided, it will use `8080`
         """
-        _log.info(f"Starting discord.http v{__version__}...")
+        _log.info(f"Starting discord.http (v{__version__})")
         self.backend.on_startup.append(self._prepare_bot)
         self.backend.on_cleanup.append(self.__cleanup)
         self.backend.start(host=host, port=port)
@@ -715,10 +715,7 @@ class Client:
         """
         method = f"on_{event_name.lower()}"
 
-        for listener in self.listeners:
-            if listener.name != method:
-                continue
-
+        for listener in self.listeners.get(method, []):
             self._schedule_event(
                 listener,
                 event_name,
@@ -773,12 +770,7 @@ class Client:
         -------
             Whether the bot has any listeners for the event.
         """
-        event = next((
-            x for x in self.listeners
-            if x.name == f"on_{event_name}"
-        ), None)
-
-        return event is not None
+        return bool(self.listeners.get(f"on_{event_name}"))
 
     async def load_extension(
         self,
@@ -1099,7 +1091,7 @@ class Client:
             The function to be called before the command is invoked.
         """
         def decorator(func: Callable) -> Callable:
-            self._before_invoke = func
+            self._before_invoke = (func, inspect.iscoroutinefunction(func))
             return func
 
         return decorator
@@ -1116,7 +1108,7 @@ class Client:
             The function to be called after the command is invoked.
         """
         def decorator(func: Callable) -> Callable:
-            self._after_invoke = func
+            self._after_invoke = (func, inspect.iscoroutinefunction(func))
             return func
 
         return decorator
@@ -2256,7 +2248,7 @@ class Client:
         func:
             The listener to add to the bot.
         """
-        self.listeners.append(func)
+        self.listeners.setdefault(func.name, []).append(func)
         return func
 
     def remove_listener(
@@ -2271,10 +2263,14 @@ class Client:
         func:
             The listener to remove from the bot.
         """
-        try:
-            self.listeners.remove(func)
-        except ValueError:
-            pass
+        bucket = self.listeners.get(func.name)
+        if bucket:
+            try:
+                bucket.remove(func)
+            except ValueError:
+                pass
+            if not bucket:
+                del self.listeners[func.name]
 
     def add_command(
         self,
@@ -2317,7 +2313,7 @@ class Client:
         func:
             The function to add
         """
-        self._global_cmd_checks.append(func)
+        self._global_cmd_checks.append((func, inspect.iscoroutinefunction(func)))
 
         return func
 

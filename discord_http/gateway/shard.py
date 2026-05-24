@@ -336,10 +336,10 @@ class Shard:
         self._last_activity: datetime = utils.utcnow()
 
         self._parser_cache = {}
-        self._special_handlers = {
-            "GUILD_CREATE": self._parse_guild_create,
-            "GUILD_DELETE": self._parse_guild_delete,
-            "GUILD_MEMBERS_CHUNK": self._parse_guild_members_chunk,
+        self._special_handlers: dict[str, tuple[Callable, bool]] = {
+            "GUILD_CREATE": (self._parse_guild_create, True),
+            "GUILD_DELETE": (self._parse_guild_delete, False),
+            "GUILD_MEMBERS_CHUNK": (self._parse_guild_members_chunk, True),
         }
 
     @property
@@ -965,7 +965,7 @@ class Shard:
         event:
             The event data
         """
-        data: dict = event.get("d", {})
+        data = event.get("d")
         new_name = name.lower()
 
         if not data:
@@ -976,11 +976,8 @@ class Shard:
 
         # First check special shard-level overrides
         if name in self._special_handlers:
-            handler = self._special_handlers[name]
-            if asyncio.iscoroutinefunction(handler):
-                await handler(data)
-            else:
-                handler(data)
+            handler, is_coro = self._special_handlers[name]
+            await handler(data) if is_coro else handler(data)
             return
 
         # Check if parser has the method cached

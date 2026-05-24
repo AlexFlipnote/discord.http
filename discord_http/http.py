@@ -5,6 +5,7 @@ import logging
 import orjson
 import random
 import re
+import ssl
 import sys
 
 from aiohttp.client_exceptions import ContentTypeError
@@ -116,11 +117,14 @@ class HTTPClient:
     Can be used to make requests outside of the usual Discord API
     """
 
-    __slots__ = ("session",)
+    __slots__ = ("_timeout", "session",)
 
     def __init__(self):
         self.session: HTTPSession | None = None
         """ The aiohttp session used for making requests. """
+
+        self._timeout: int = 60
+        """ The timeout for HTTP requests, in seconds. """
 
     async def _create_session(self) -> None:
         """ Creates a new session for the library. """
@@ -128,10 +132,13 @@ class HTTPClient:
             await self.session.close()
 
         self.session = HTTPSession(
-            connector=aiohttp.TCPConnector(limit=0),
-            timeout=aiohttp.ClientTimeout(total=60),
+            connector=aiohttp.TCPConnector(
+                limit=0,
+                ssl=ssl.create_default_context(),
+                keepalive_timeout=self._timeout,
+            ),
+            timeout=aiohttp.ClientTimeout(total=self._timeout),
             cookie_jar=aiohttp.DummyCookieJar(),
-            # orjson.dumps returns bytes, but aiohttp expects str
             json_serialize=lambda obj: orjson.dumps(obj).decode("utf-8")
         )
 

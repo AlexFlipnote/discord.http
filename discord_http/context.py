@@ -531,6 +531,7 @@ class Context:
         "options",
         "recipients",
         "resolved",
+        "response",
         "select_values",
         "user",
     )
@@ -552,8 +553,10 @@ class Context:
 
         self._raw_type: int = data["type"]
 
+        data_payload: dict = data.get("data") or {}
+
         self.command_type: ApplicationCommandType = ApplicationCommandType(
-            data.get("data", {}).get("type", ApplicationCommandType.chat_input)
+            data_payload.get("type", ApplicationCommandType.chat_input)
         )
         """ The type of the command, if any. """
 
@@ -568,7 +571,7 @@ class Context:
         self.app_permissions: Permissions = Permissions(int(data.get("app_permissions", 0)))
         """ The permissions of the application in the guild. """
 
-        self.custom_id: str | None = data.get("data", {}).get("custom_id", None)
+        self.custom_id: str | None = data_payload.get("custom_id")
         """ The custom ID of the interaction, if any. """
 
         self.resolved: ResolvedValues = ResolvedValues.none(self)
@@ -580,13 +583,13 @@ class Context:
         self.modal_values: dict[str, str | list[Member | Role | BaseChannel | Attachment | str]] = {}
         """ The values of the modal, if any. """
 
-        self.options: list[dict] = data.get("data", {}).get("options", [])
+        self.options: list[dict] = data_payload.get("options", [])
         """ The options of the interaction, if any. """
 
         self._followup_token: str = data.get("token", "")
 
         self._original_response: WebhookMessage | None = None
-        self._raw_resolved: dict = data.get("data", {}).get("resolved", {})
+        self._raw_resolved: dict = data_payload.get("resolved", {})
 
         self.entitlements: list[Entitlements] = [
             Entitlements(state=self.bot.state, data=g)
@@ -597,12 +600,14 @@ class Context:
         self.last_message_id: int | None = None
         """ The ID of the last message in the channel, if any. """
 
-        if data.get("channel", {}).get("last_message_id", None):
-            self.last_message_id = int(data["channel"]["last_message_id"])
+        channel_payload: dict = data.get("channel") or {}
+
+        if channel_payload.get("last_message_id"):
+            self.last_message_id = int(channel_payload["last_message_id"])
 
         self.recipients: list[User] = [
             User(state=self.bot.state, data=g)
-            for g in data.get("channel", {}).get("recipients", [])
+            for g in channel_payload.get("recipients", [])
         ]
         """ The recipients of the interaction, if any. """
 
@@ -629,6 +634,9 @@ class Context:
 
         self.user: Member | User = self._parse_user(data)
         """ The user who initiated the interaction. """
+
+        self.response: InteractionResponse = InteractionResponse(self)
+        """ The response helper for this interaction. """
 
     def _from_data(self, data: dict) -> None:
         if data.get("channel_id"):
@@ -826,11 +834,6 @@ class Context:
     def is_expired(self) -> bool:
         """ Returns whether the interaction is expired. """
         return utils.utcnow() >= self.expires_at
-
-    @property
-    def response(self) -> InteractionResponse:
-        """ Returns the response to the interaction. """
-        return InteractionResponse(self)
 
     def is_bot_dm(self) -> bool:
         """ Returns a boolean of whether the interaction was in the bot's DM channel. """
