@@ -294,19 +294,22 @@ class Benchmark:
         }
 
 
-def format_small_unit(seconds: float) -> str:
+def format_small_unit(seconds: float | timedelta) -> str:
     """
     Helper to scale sub-second values to the appropriate unit.
 
     Parameters
     ----------
-    seconds: float
-        The duration in seconds.
+    seconds: float | timedelta
+        The duration in seconds, or a timedelta.
 
     Returns
     -------
         A human-readable string representing the duration.
     """
+    if isinstance(seconds, timedelta):
+        seconds = seconds.total_seconds()
+
     if seconds == 0:
         return "0ns"
     if seconds < 0.000001:  # Nanoseconds

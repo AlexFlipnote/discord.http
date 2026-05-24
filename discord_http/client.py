@@ -276,7 +276,7 @@ class Client:
         if self.has_any_dispatch("ready"):
             self.dispatch("ready", client)
         else:
-            _log.info(f"discord.http v{__version__} is now ready")
+            _log.info("discord.http is now ready")
 
         if self.enable_gateway:
             # To avoid circular import, import here
@@ -670,6 +670,7 @@ class Client:
         port:
             Port to use, if not provided, it will use `8080`
         """
+        _log.info(f"Starting discord.http v{__version__}...")
         self.backend.on_startup.append(self._prepare_bot)
         self.backend.on_cleanup.append(self.__cleanup)
         self.backend.start(host=host, port=port)

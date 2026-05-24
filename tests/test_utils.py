@@ -244,5 +244,204 @@ class TestDiscordTimestampAndMissing(unittest.TestCase):
         self.assertIsNone(next(iter(MISSING)))
 
 
+class TestBenchmarkEntry(unittest.TestCase):
+    def test_initial_state(self):
+        entry = utils.BenchmarkEntry()
+        self.assertFalse(entry.internal)
+        self.assertIsNone(entry.created_at)
+        self.assertIsNone(entry.finished_at)
+        self.assertIsNone(entry._start_perf)
+        self.assertIsNone(entry._end_perf)
+
+    def test_internal_flag(self):
+        entry = utils.BenchmarkEntry(internal=True)
+        self.assertTrue(entry.internal)
+
+    def test_elapsed_before_start_returns_zero(self):
+        entry = utils.BenchmarkEntry()
+        self.assertEqual(entry.elapsed, 0.0)
+
+    def test_elapsed_after_start_is_positive(self):
+        entry = utils.BenchmarkEntry()
+        entry.start()
+        self.assertGreater(entry.elapsed, 0.0)
+        self.assertIsNone(entry._end_perf)
+
+    def test_elapsed_after_stop_is_fixed(self):
+        entry = utils.BenchmarkEntry()
+        entry.start()
+        entry.stop()
+        first = entry.elapsed
+        second = entry.elapsed
+        self.assertEqual(first, second)
+        self.assertGreater(first, 0.0)
+
+    def test_is_complete(self):
+        entry = utils.BenchmarkEntry()
+        self.assertFalse(entry.is_complete())
+        entry.start()
+        self.assertFalse(entry.is_complete())
+        entry.stop()
+        self.assertTrue(entry.is_complete())
+
+    def test_start_sets_created_at(self):
+        entry = utils.BenchmarkEntry()
+        entry.start()
+        self.assertIsNotNone(entry.created_at)
+
+    def test_stop_sets_finished_at(self):
+        entry = utils.BenchmarkEntry()
+        entry.start()
+        entry.stop()
+        self.assertIsNotNone(entry.finished_at)
+
+    def test_context_manager_completes_entry(self):
+        entry = utils.BenchmarkEntry()
+        with entry:
+            pass
+        self.assertTrue(entry.is_complete())
+
+    def test_context_manager_returns_self(self):
+        entry = utils.BenchmarkEntry()
+        with entry as e:
+            self.assertIs(e, entry)
+
+    def test_repr_contains_internal_and_elapsed(self):
+        entry = utils.BenchmarkEntry(internal=True)
+        r = repr(entry)
+        self.assertIn("internal=True", r)
+        self.assertIn("elapsed=", r)
+
+    def test_format_returns_string(self):
+        entry = utils.BenchmarkEntry()
+        with entry:
+            pass
+        self.assertIsInstance(entry.format(), str)
+
+    def test_to_dict_before_start(self):
+        entry = utils.BenchmarkEntry()
+        d = entry.to_dict()
+        self.assertEqual(d["elapsed"], 0.0)
+        self.assertIsNone(d["start_iso"])
+        self.assertIsNone(d["end_iso"])
+        self.assertIsInstance(d["human"], str)
+
+    def test_to_dict_after_complete(self):
+        entry = utils.BenchmarkEntry()
+        with entry:
+            pass
+        d = entry.to_dict()
+        self.assertGreater(d["elapsed"], 0.0)
+        self.assertIsNotNone(d["start_iso"])
+        self.assertIsNotNone(d["end_iso"])
+
+    def test_stop_called_even_when_exception_propagates(self):
+        entry = utils.BenchmarkEntry()
+        with self.assertRaises(RuntimeError):
+            with entry:
+                raise RuntimeError("boom")
+        self.assertTrue(entry.is_complete())
+        self.assertGreater(entry.elapsed, 0.0)
+
+
+class TestBenchmark(unittest.TestCase):
+    def test_measure_stores_entry(self):
+        bm = utils.Benchmark()
+        entry = bm.measure("step")
+        self.assertIn("step", bm.results)
+        self.assertIs(bm.results["step"], entry)
+
+    def test_measure_internal_flag(self):
+        bm = utils.Benchmark()
+        entry = bm.measure("internal_step", internal=True)
+        self.assertTrue(entry.internal)
+
+    def test_measure_external_flag(self):
+        bm = utils.Benchmark()
+        entry = bm.measure("external_step")
+        self.assertFalse(entry.internal)
+
+    def test_measure_as_context_manager(self):
+        bm = utils.Benchmark()
+        with bm.measure("step"):
+            pass
+        self.assertTrue(bm.results["step"].is_complete())
+
+    def test_multiple_entries(self):
+        bm = utils.Benchmark()
+        with bm.measure("a"):
+            pass
+        with bm.measure("b"):
+            pass
+        self.assertIn("a", bm.results)
+        self.assertIn("b", bm.results)
+        self.assertTrue(bm.results["a"].is_complete())
+        self.assertTrue(bm.results["b"].is_complete())
+
+    def test_to_dict_returns_elapsed_values(self):
+        bm = utils.Benchmark()
+        with bm.measure("x"):
+            pass
+        d = bm.to_dict()
+        self.assertIn("x", d)
+        self.assertIsInstance(d["x"], float)
+        self.assertGreater(d["x"], 0.0)
+
+    def test_to_dict_empty(self):
+        bm = utils.Benchmark()
+        self.assertEqual(bm.to_dict(), {})
+
+    def test_create_summary_contains_entry_name(self):
+        bm = utils.Benchmark()
+        with bm.measure("my_step"):
+            pass
+        summary = bm.create_summary()
+        self.assertIn("my_step", summary)
+        self.assertIn("Total internal:", summary)
+
+    def test_create_summary_internal_bold(self):
+        bm = utils.Benchmark()
+        with bm.measure("inner", internal=True):
+            pass
+        summary = bm.create_summary()
+        self.assertIn("**inner**", summary)
+
+    def test_create_summary_custom_prefix(self):
+        bm = utils.Benchmark()
+        with bm.measure("step"):
+            pass
+        summary = bm.create_summary(prefix=">>")
+        self.assertTrue(any(line.startswith(">>") for line in summary.splitlines()))
+
+    def test_create_summary_default_prefix(self):
+        bm = utils.Benchmark()
+        with bm.measure("step"):
+            pass
+        summary = bm.create_summary()
+        self.assertTrue(any(line.startswith("➜") for line in summary.splitlines()))
+
+    def test_create_summary_internal_total_only_counts_internal(self):
+        bm = utils.Benchmark()
+        with bm.measure("ext"):
+            pass
+        with bm.measure("inn", internal=True):
+            pass
+        summary = bm.create_summary()
+        # external elapsed must NOT appear in "Total internal" value
+        self.assertIn("Total internal:", summary)
+
+    def test_create_summary_empty(self):
+        bm = utils.Benchmark()
+        summary = bm.create_summary()
+        self.assertIn("Total internal:", summary)
+
+    def test_measure_overwrites_same_name(self):
+        bm = utils.Benchmark()
+        first = bm.measure("dup")
+        second = bm.measure("dup")
+        self.assertIsNot(first, second)
+        self.assertIs(bm.results["dup"], second)
+
+
 if __name__ == "__main__":
     unittest.main()
