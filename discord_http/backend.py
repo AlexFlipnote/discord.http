@@ -6,8 +6,8 @@ import orjson
 import time
 
 from datetime import datetime
-from nacl.exceptions import BadSignatureError
-from nacl.signing import VerifyKey
+from cryptography.exceptions import InvalidSignature
+from cryptography.hazmat.primitives.asymmetric.ed25519 import Ed25519PublicKey
 from typing import TYPE_CHECKING
 
 from aiohttp import web
@@ -35,7 +35,7 @@ __all__ = (
 
 class DiscordHTTP(web.Application):
     """
-    Serves as the fundemental HTTP server for Discord Interactions.
+    Serves as the fundamental HTTP server for Discord Interactions.
 
     We recommend to not touch this class, unless you know what you're doing
     """
@@ -53,11 +53,11 @@ class DiscordHTTP(web.Application):
         super().__init__(client_max_size=10 * 1024 * 1024)
 
         # Static values
-        self.verify_key: VerifyKey | None = None
+        self.verify_key: Ed25519PublicKey | None = None
         """ The verify key used to validate incoming requests, if not set, it will try to fetch from the bot's public key. """
 
         if self.bot.public_key:
-            self.verify_key = VerifyKey(bytes.fromhex(self.bot.public_key))
+            self.verify_key = Ed25519PublicKey.from_public_bytes(bytes.fromhex(self.bot.public_key))
 
         # Silence aiohttp access logs
         logging.getLogger("aiohttp.server").setLevel(logging.ERROR)
@@ -77,7 +77,7 @@ class DiscordHTTP(web.Application):
 
             # Feed the public key
             _log.debug("Saved public key from bot to cache for request verification")
-            self.verify_key = VerifyKey(bytes.fromhex(self.bot.public_key))
+            self.verify_key = Ed25519PublicKey.from_public_bytes(bytes.fromhex(self.bot.public_key))
 
         signature: str = request.headers.get("X-Signature-Ed25519", "")
         timestamp: str = request.headers.get("X-Signature-Timestamp", "")
@@ -85,17 +85,19 @@ class DiscordHTTP(web.Application):
         try:
             data = await request.read()
             self.verify_key.verify(
-                timestamp.encode() + data,
-                bytes.fromhex(signature)
+                bytes.fromhex(signature),
+                timestamp.encode() + data
             )
-        except BadSignatureError:
+        except InvalidSignature as e:
+            _log.debug("Invalid request signature, rejecting request", exc_info=e)
             raise HTTPUnauthorized(text="invalid request signature")
-        except Exception:
+        except Exception as e:
+            _log.debug("Failed to read request body for signature verification", exc_info=e)
             raise HTTPBadRequest(text="invalid request body")
 
     def _dig_subcommand(
         self,
-        cmd: Command | SubGroup,
+        cmd: Command | SubGroup | None,
         data: dict
     ) -> tuple[Command | None, list[dict]]:
         """ Used to dig through subcommands to execute correct command/autocomplete. """
@@ -113,14 +115,14 @@ class DiscordHTTP(web.Application):
             if not find_next_step:
                 raise HTTPBadRequest(text="invalid command")
 
-            cmd = cmd.subcommands.get(find_next_step["name"], None)  # type: ignore
+            cmd = cmd.subcommands.get(find_next_step["name"], None)
 
             if not cmd:
                 _log.warning(
                     f"Unhandled subcommand: {find_next_step['name']} "
                     "(not found in local command list)"
                 )
-                return self.jsonify({"error": "command not found"}, status=404)
+                raise HTTPBadRequest(text="command not found")
 
             data_options = find_next_step.get("options", [])
 
@@ -236,10 +238,10 @@ class DiscordHTTP(web.Application):
         try:
             local_view = None
 
-            if (local_view is None and ctx.custom_id):
+            if ctx.custom_id:
                 local_view = self.bot._view_storage.get(ctx.custom_id, None)
 
-            if (local_view is None and ctx.message):
+            if local_view is None and ctx.message:
                 local_view = self.bot._view_storage.get(ctx.message.id, None)
 
                 if not local_view and ctx.message.interaction:
@@ -342,7 +344,7 @@ class DiscordHTTP(web.Application):
                     return await self._handle_autocomplete(context, data)
 
             case _:  # Unknown
-                _log.debug(f"Unhandled interaction recieved (type: {data_type})")
+                _log.debug(f"Unhandled interaction received (type: {data_type})")
                 return self.jsonify({"error": "invalid request body"}, status=400)
 
         self._attach_tracking(response, context._response_sent)

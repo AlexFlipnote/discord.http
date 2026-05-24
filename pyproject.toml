@@ -18,8 +18,8 @@ keywords = ["discord", "http", "api", "interaction", "aiohttp", "webhook", "slas
 authors = [{name = "AlexFlipnote", email = "root@alexflipnote.dev"}]
 
 dependencies = [
-  "PyNaCl>=1.5.0,<2",
   "aiohttp>=3.12.7,<4",
+  "cryptography>=44.0.0,<45",
   "orjson>=3.10.18,<4",
 ]
 
