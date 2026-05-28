@@ -21,9 +21,9 @@ class PartialSticker(PartialBase):
 
     __slots__ = (
         "_state",
+        "format_type",
         "guild_id",
-        "name",
-        "format_type"
+        "name"
     )
 
     def __init__(
