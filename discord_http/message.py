@@ -1542,7 +1542,7 @@ class MessageSnapshot:
         """ The attachments of the message. """
 
         self.stickers: list[PartialSticker] = [
-            PartialSticker(state=state, id=int(s["id"]), name=s["name"])
+            PartialSticker(state=state, id=int(s["id"]), name=s["name"], format_type=s["format_type"])
             for s in data.get("sticker_items", [])
         ]
         """ The stickers of the message. """
@@ -1650,7 +1650,7 @@ class Message(PartialMessage):
         """ The attachments of the message. """
 
         self.stickers: list[PartialSticker] = [
-            PartialSticker(state=state, id=int(s["id"]), name=s["name"])
+            PartialSticker(state=state, id=int(s["id"]), name=s["name"], format_type=s["format_type"])
             for s in data.get("sticker_items", [])
         ]
         """ The stickers of the message. """
