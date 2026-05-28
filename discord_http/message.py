@@ -1510,6 +1510,7 @@ class MessageSnapshot:
         "content",
         "edited_timestamp",
         "embeds",
+        "stickers",
         "timestamp",
         "type",
     )
@@ -1540,6 +1541,9 @@ class MessageSnapshot:
         self.attachments: list[Attachment] = []
         """ The attachments of the message. """
 
+        self.stickers: list[PartialSticker] = []
+        """ The stickers of the message. """
+
         self._from_data(data)
 
     def _from_data(self, data: dict) -> None:
@@ -1568,6 +1572,12 @@ class MessageSnapshot:
             self.attachments = [
                 Attachment(state=self._state, data=a)
                 for a in message["attachments"]
+            ]
+
+        if message.get("sticker_items", None):
+            self.stickers = [
+                PartialSticker(state=self._state, id=int(s["id"]), name=s["name"], format_type=s["format_type"])
+                for s in message["sticker_items"]
             ]
 
 
@@ -1643,7 +1653,7 @@ class Message(PartialMessage):
         """ The attachments of the message. """
 
         self.stickers: list[PartialSticker] = [
-            PartialSticker(state=state, id=int(s["id"]), name=s["name"])
+            PartialSticker(state=state, id=int(s["id"]), name=s["name"], format_type=s["format_type"])
             for s in data.get("sticker_items", [])
         ]
         """ The stickers of the message. """

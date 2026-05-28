@@ -21,8 +21,9 @@ class PartialSticker(PartialBase):
 
     __slots__ = (
         "_state",
+        "format_type",
         "guild_id",
-        "name",
+        "name"
     )
 
     def __init__(
@@ -31,7 +32,8 @@ class PartialSticker(PartialBase):
         state: "DiscordAPI",
         id: int,  # noqa: A002
         name: str | None = None,
-        guild_id: int | None = None
+        guild_id: int | None = None,
+        format_type: int | None = 1
     ):
         super().__init__(id=int(id))
         self._state = state
@@ -41,6 +43,9 @@ class PartialSticker(PartialBase):
 
         self.guild_id: int | None = guild_id
         """ The ID of the guild this sticker is in, if any. """
+
+        self.format_type: StickerFormatType = StickerFormatType(format_type)
+        """ The format type of the sticker. """
 
     def __repr__(self) -> str:
         return f"<PartialSticker id={self.id}>"
@@ -187,7 +192,13 @@ class PartialSticker(PartialBase):
     @property
     def url(self) -> str:
         """ Returns the sticker's URL. """
-        return f"https://media.discordapp.net/stickers/{self.id}.png"
+        img_format = "png"
+        if self.format_type == StickerFormatType.gif:
+            img_format = "gif"
+        if self.format_type == StickerFormatType.lottie:
+            img_format = "json"
+
+        return f"https://media.discordapp.net/stickers/{self.id}.{img_format}"
 
 
 class Sticker(PartialSticker):
@@ -197,7 +208,6 @@ class Sticker(PartialSticker):
         "_raw_type",
         "available",
         "description",
-        "format_type",
         "pack_id",
         "sort_value",
         "tags",
@@ -214,7 +224,8 @@ class Sticker(PartialSticker):
             state=state,
             id=int(data["id"]),
             name=data["name"],
-            guild_id=guild.id if guild else None
+            guild_id=guild.id if guild else None,
+            format_type=data["format_type"]
         )
 
         self._raw_type: int = data["type"]
@@ -224,9 +235,6 @@ class Sticker(PartialSticker):
 
         self.description: str = data["description"]
         """ The description of the sticker. """
-
-        self.format_type: StickerFormatType = StickerFormatType(data["format_type"])
-        """ The format type of the sticker. """
 
         self.pack_id: int | None = utils.get_int(data, "pack_id")
         """ The ID of the sticker pack this sticker belongs to, if any. """
@@ -250,15 +258,6 @@ class Sticker(PartialSticker):
     def type(self) -> StickerType:
         """ The type of the sticker. """
         return StickerType(self._raw_type)
-
-    @property
-    def url(self) -> str:
-        """ Returns the sticker's URL. """
-        img_format = "png"
-        if self.format_type == StickerFormatType.gif:
-            img_format = "gif"
-
-        return f"https://media.discordapp.net/stickers/{self.id}.{img_format}"
 
     async def edit(
         self,
