@@ -208,7 +208,6 @@ class Sticker(PartialSticker):
         "_raw_type",
         "available",
         "description",
-        "format_type",
         "pack_id",
         "sort_value",
         "tags",
