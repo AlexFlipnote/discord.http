@@ -478,13 +478,7 @@ class Shard:
             # There has been times it keeps in memory
             # Thanks Python, very cool...
             del decompressed_bytes
-
-            if len(self._buffer) > 1024 * 512:  # 512 KB
-                # Prevent memory leak if something goes wrong with decompression
-                self._buffer = bytearray()
-            else:
-                # Clear the buffer after successful decompression
-                self._buffer.clear()
+            self._buffer = bytearray()
         else:
             msg: dict = orjson.loads(raw_msg)
 
@@ -735,7 +729,10 @@ class Shard:
         )
 
         if wait:
-            return await chunker.wait()
+            try:
+                return await chunker.wait()
+            finally:
+                self.parser._chunk_requests.pop(chunker.nonce, None)
         return chunker.get_future()
 
     def _dispatch_close_reason(

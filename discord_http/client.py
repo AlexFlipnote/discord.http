@@ -3,6 +3,7 @@ import importlib
 import inspect
 import logging
 import sys
+import time
 
 from aiohttp import web
 from collections.abc import Callable, AsyncIterator, Coroutine
@@ -215,6 +216,16 @@ class Client:
         except Exception:
             pass
 
+    async def _cooldown_cleanup_loop(self) -> None:
+        """ Periodically sweeps expired cooldown buckets that accumulate between invocations. """
+        while True:
+            await asyncio.sleep(300)
+            now = time.time()
+            for cmd in self.commands.values():
+                if cmd.cooldown is None:
+                    continue
+                cmd.cooldown._cleanup_cache(now)
+
     async def _run_global_checks(self, ctx: Context) -> bool:
         for g, is_coro in self._global_cmd_checks:
             with ctx.benchmark.measure(f"global:check:{g.__name__}", internal=True):
@@ -270,6 +281,11 @@ class Client:
 
         await self.setup_hook()
         await self._prepare_commands()
+
+        self.loop.create_task(
+            self._cooldown_cleanup_loop(),
+            name="discord.http/cooldown_cleanup_loop"
+        )
 
         self._ready.set()
 
@@ -948,6 +964,8 @@ class Client:
         finally:
             try:
                 self._waiting_listeners[ev].remove((future, check))
+                if not self._waiting_listeners[ev]:
+                    del self._waiting_listeners[ev]
             except (ValueError, KeyError):
                 pass
 

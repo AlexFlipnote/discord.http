@@ -1359,6 +1359,7 @@ class InteractionStorage:
         "_timeout",
         "_timeout_bool",
         "_timeout_expiry",
+        "_timeout_task",
         "_users",
         "loop",
     )
@@ -1374,6 +1375,7 @@ class InteractionStorage:
         self._timeout: float | None = None
         self._timeout_expiry: float | None = None
         self._msg_cache: str | int | None = None
+        self._timeout_task: asyncio.Task | None = None
 
     def __repr__(self) -> str:
         return (
@@ -1414,10 +1416,12 @@ class InteractionStorage:
         if self._event_wait.is_set():
             return
 
-        asyncio.create_task(  # noqa: RUF006
-            self.on_timeout(),
-            name=f"discord.http/view-timeout-{int(time.time())}"
-        )
+        try:
+            await self.on_timeout()
+        except Exception:
+            _log.exception("View on_timeout raised an exception")
+        finally:
+            self._update_event(True)
 
     async def on_timeout(self) -> None:
         """ Called when the view times out. """
@@ -1506,7 +1510,7 @@ class InteractionStorage:
         self._call_after = call_after
         self._timeout = timeout
         self._timeout_expiry = time.monotonic() + timeout
-        self.loop.create_task(
+        self._timeout_task = self.loop.create_task(
             self._timeout_watcher(),
             name=f"discord.http/view-timeout-watcher-{int(time.time())}"
         )
@@ -1545,6 +1549,9 @@ class InteractionStorage:
 
         ctx.bot._view_storage[self._msg_cache] = self
         await self._event_wait.wait()
+
+        if self._timeout_task and not self._timeout_task.done():
+            self._timeout_task.cancel()
 
         try:
             del ctx.bot._view_storage[self._msg_cache]
