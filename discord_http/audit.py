@@ -2,7 +2,7 @@ import logging
 
 from collections.abc import Callable
 from datetime import datetime
-from typing import TYPE_CHECKING, Any, TypeVar, ClassVar
+from typing import TYPE_CHECKING, Any, Generic, Literal, TypeVar, ClassVar, overload
 
 from . import utils, enums, flags
 from .asset import Asset
@@ -20,13 +20,17 @@ if TYPE_CHECKING:
 
 _log = logging.getLogger(__name__)
 
+_AuditChangeT = TypeVar("_AuditChangeT")
+E = TypeVar("E", bound=enums.BaseEnum)
+F = TypeVar("F", bound=flags.BaseFlag)
+
 __all__ = (
     "AuditChange",
     "AuditLogEntry",
 )
 
 
-def _handle_snowflake(entry: "AuditLogEntry", data: int) -> Snowflake:  # noqa: ARG001
+def _handle_snowflake(_entry: "AuditLogEntry", data: int) -> Snowflake:
     return Snowflake(id=int(data))
 
 
@@ -62,7 +66,7 @@ def _handle_overloaded_flags(entry: "AuditLogEntry", data: int) -> flags.BaseFla
 
 
 def _handle_default_reaction(
-    entry: "AuditLogEntry",  # noqa: ARG001
+    _entry: "AuditLogEntry",
     data: dict | None
 ) -> EmojiParser | None:
     if not data:
@@ -110,7 +114,7 @@ def _handle_guild_id(entry: "AuditLogEntry", data: str | None) -> PartialGuild |
 
 
 def _handle_timestamp(
-    entry: "AuditLogEntry",  # noqa: ARG001
+    _entry: "AuditLogEntry",
     data: str | None
 ) -> datetime | None:
     if not data:
@@ -119,7 +123,7 @@ def _handle_timestamp(
 
 
 def _handle_applied_tags(
-    entry: "AuditLogEntry",  # noqa: ARG001
+    _entry: "AuditLogEntry",
     data: list[str]
 ) -> list[Snowflake]:
     return [
@@ -129,7 +133,7 @@ def _handle_applied_tags(
 
 
 def _handle_forum_tags(
-    entry: "AuditLogEntry",  # noqa: ARG001
+    _entry: "AuditLogEntry",
     data: list[dict]
 ) -> list[ForumTag]:
     return [
@@ -204,21 +208,21 @@ def _handle_overwrites(entry: "AuditLogEntry", data: dict) -> list[tuple[
 
 
 def _handle_colour(
-    entry: "AuditLogEntry",  # noqa: ARG001
+    _entry: "AuditLogEntry",
     data: int
 ) -> Colour:
     return Colour(int(data))
 
 
 def _handle_automod_triggers(
-    entry: "AuditLogEntry",  # noqa: ARG001
+    _entry: "AuditLogEntry",
     data: dict
 ) -> AutoModRuleTriggers:
     return AutoModRuleTriggers.from_dict(data)
 
 
 def _handle_automod_actions(
-    entry: "AuditLogEntry",  # noqa: ARG001
+    _entry: "AuditLogEntry",
     data: list[dict]
 ) -> list[AutoModRuleAction]:
     return [
@@ -253,12 +257,9 @@ def _handle_role(entry: "AuditLogEntry", data: str) -> PartialRole:
     return entry._convert_target_role(int(data))
 
 
-E = TypeVar("E", bound=enums.BaseEnum)
-
-
 def _handle_enum(cls: type[E]) -> Callable[["AuditLogEntry", str | int], E]:
     def _handler(
-        entry: "AuditLogEntry",  # noqa: ARG001
+        _entry: "AuditLogEntry",
         data: str | int
     ) -> E:
         return cls(int(data))
@@ -266,12 +267,9 @@ def _handle_enum(cls: type[E]) -> Callable[["AuditLogEntry", str | int], E]:
     return _handler
 
 
-F = TypeVar("F", bound=flags.BaseFlag)
-
-
 def _handle_flags(cls: type[F]) -> Callable[["AuditLogEntry", str | int], F]:
     def _handler(
-        entry: "AuditLogEntry",  # noqa: ARG001
+        _entry: "AuditLogEntry",
         data: str | int
     ) -> F:
         return cls(int(data))
@@ -279,7 +277,7 @@ def _handle_flags(cls: type[F]) -> Callable[["AuditLogEntry", str | int], F]:
     return _handler
 
 
-class AuditChange:
+class AuditChange(Generic[_AuditChangeT]):
     """ Represents a change in an audit log entry. """
 
     _translaters: ClassVar[dict[str, Callable[["AuditLogEntry", Any], Any] | None]] = {
@@ -340,6 +338,11 @@ class AuditChange:
         "old_value",
     )
 
+    entry: "AuditLogEntry"
+    key: str
+    old_value: _AuditChangeT | None
+    new_value: _AuditChangeT | None
+
     def __init__(
         self,
         *,
@@ -352,14 +355,14 @@ class AuditChange:
         self.key: str = data["key"]
         """ The key of the change. """
 
-        self.old_value: Any | None = data.get("old_value")
+        self.old_value = data.get("old_value")
         """ The old value of the change, if applicable. """
 
-        self.new_value: Any | None = data.get("new_value")
+        self.new_value = data.get("new_value")
         """ The new value of the change, if applicable. """
 
         if self.key in ("$add", "$remove"):
-            self.new_value = self._handle_partial_role(data)
+            self.new_value = self._handle_partial_role(data)  # type: ignore[assignment]
             return
 
         translator: Callable[["AuditLogEntry", Any], Any] | None = self._translaters.get(self.key, None)
@@ -480,9 +483,87 @@ class AuditLogEntry(Snowflake):
         else:
             return converter(self.target_id)
 
-    def get_change(self, key: str) -> AuditChange | None:
+    @overload
+    def get_change(self, key: Literal["verification_level"]) -> AuditChange[enums.VerificationLevel] | None: ...
+    @overload
+    def get_change(self, key: Literal["explicit_content_filter"]) -> AuditChange[enums.ContentFilterLevel] | None: ...
+    @overload
+    def get_change(self, key: Literal["allow", "deny", "permissions"]) -> AuditChange[flags.Permissions] | None: ...
+    @overload
+    def get_change(self, key: Literal["id"]) -> AuditChange[Snowflake] | None: ...
+    @overload
+    def get_change(self, key: Literal["color"]) -> AuditChange[Colour] | None: ...
+    @overload
+    def get_change(self, key: Literal["owner_id", "inviter_id"]) -> AuditChange[User | PartialUser] | None: ...
+    @overload
+    def get_change(self, key: Literal[
+        "channel_id", "afk_channel_id", "system_channel_id",
+        "widget_channel_id", "rules_channel_id", "public_updates_channel_id",
+    ]) -> AuditChange[PartialChannel] | None: ...
+    @overload
+    def get_change(self, key: Literal["system_channel_flags"]) -> AuditChange[flags.SystemChannelFlags] | None: ...
+    @overload
+    def get_change(self, key: Literal["permission_overwrites"]) -> AuditChange[list[tuple[PartialUser | PartialRole, flags.PermissionOverwrite]]] | None: ...
+    @overload
+    def get_change(self, key: Literal["splash_hash", "banner_hash", "discovery_splash_hash", "icon_hash", "avatar_hash", "image_hash"]) -> AuditChange[Asset | None] | None: ...
+    @overload
+    def get_change(self, key: Literal["rate_limit_per_user", "default_thread_rate_limit_per_user"]) -> AuditChange[int] | None: ...
+    @overload
+    def get_change(self, key: Literal["guild_id"]) -> AuditChange[PartialGuild | None] | None: ...
+    @overload
+    def get_change(self, key: Literal["default_message_notifications"]) -> AuditChange[enums.DefaultNotificationLevel] | None: ...
+    @overload
+    def get_change(self, key: Literal["video_quality_mode"]) -> AuditChange[enums.VideoQualityType] | None: ...
+    @overload
+    def get_change(self, key: Literal["privacy_level"]) -> AuditChange[enums.PrivacyLevelType] | None: ...
+    @overload
+    def get_change(self, key: Literal["format_type"]) -> AuditChange[enums.StickerFormatType] | None: ...
+    @overload
+    def get_change(self, key: Literal["type"]) -> AuditChange[enums.ChannelType | enums.StickerType | enums.WebhookType | enums.PermissionType | str] | None: ...
+    @overload
+    def get_change(self, key: Literal["communication_disabled_until"]) -> AuditChange[datetime | None] | None: ...
+    @overload
+    def get_change(self, key: Literal["expire_behavior"]) -> AuditChange[enums.ExpireBehaviour] | None: ...
+    @overload
+    def get_change(self, key: Literal["mfa_level"]) -> AuditChange[enums.MFALevel] | None: ...
+    @overload
+    def get_change(self, key: Literal["status"]) -> AuditChange[enums.ScheduledEventStatusType] | None: ...
+    @overload
+    def get_change(self, key: Literal["entity_type"]) -> AuditChange[enums.ScheduledEventEntityType] | None: ...
+    @overload
+    def get_change(self, key: Literal["preferred_locale"]) -> AuditChange[enums.Locale] | None: ...
+    @overload
+    def get_change(self, key: Literal["trigger_type"]) -> AuditChange[enums.AutoModRuleTriggerType] | None: ...
+    @overload
+    def get_change(self, key: Literal["trigger_metadata"]) -> AuditChange[AutoModRuleTriggers] | None: ...
+    @overload
+    def get_change(self, key: Literal["event_type"]) -> AuditChange[enums.AutoModRuleEventType] | None: ...
+    @overload
+    def get_change(self, key: Literal["actions"]) -> AuditChange[list[AutoModRuleAction]] | None: ...
+    @overload
+    def get_change(self, key: Literal["exempt_channels"]) -> AuditChange[list[PartialChannel]] | None: ...
+    @overload
+    def get_change(self, key: Literal["exempt_roles"]) -> AuditChange[list[PartialRole]] | None: ...
+    @overload
+    def get_change(self, key: Literal["applied_tags"]) -> AuditChange[list[Snowflake]] | None: ...
+    @overload
+    def get_change(self, key: Literal["available_tags"]) -> AuditChange[list[ForumTag]] | None: ...
+    @overload
+    def get_change(self, key: Literal["flags"]) -> AuditChange[flags.BaseFlag | int] | None: ...
+    @overload
+    def get_change(self, key: Literal["default_reaction_emoji"]) -> AuditChange[EmojiParser | None] | None: ...
+    @overload
+    def get_change(self, key: Literal["$add", "$remove"]) -> AuditChange[list[PartialRole]] | None: ...
+    @overload
+    def get_change(self, key: str) -> AuditChange[Any] | None: ...
+    def get_change(self, key: str) -> AuditChange[Any] | None:
         """
         Returns the change with the given key, if it exists.
+
+        When called with a known string literal (e.g. `color`), the return
+        type is narrowed via overloads so that `old_value` and `new_value`
+        carry the correct type (e.g. `AuditChange[Colour]`). Unknown keys
+        fall back to `AuditChange[Any]`.
 
         Parameters
         ----------
