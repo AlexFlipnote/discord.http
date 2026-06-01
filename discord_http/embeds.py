@@ -16,11 +16,13 @@ EmbedTypes = Literal["rich", "image", "video", "gifv", "article", "link", "poll_
 
 @dataclass(slots=True)
 class EmbedAuthor:
+    """ Represents the author section of an embed. """
     name: str
     url: str | None = None
     icon_url: str | None = None
 
     def to_dict(self) -> dict:
+        """ Returns a dict representation of the embed author. """
         data = {"name": self.name}
         if self.url:
             data["url"] = self.url
@@ -30,6 +32,7 @@ class EmbedAuthor:
 
     @classmethod
     def from_dict(cls, data: dict) -> Self:
+        """ Creates an EmbedAuthor from a dict provided by Discord. """
         return cls(
             name=data["name"],
             url=data.get("url"),
@@ -39,36 +42,40 @@ class EmbedAuthor:
 
 @dataclass(slots=True)
 class EmbedFooter:
-    text: str | None
-    icon_url: str | None
+    """ Represents the footer section of an embed. """
+    text: str
+    icon_url: str | None = None
 
     def to_dict(self) -> dict:
-        data = {}
-        if self.text is not None:
-            data["text"] = self.text
+        """ Returns a dict representation of the embed footer. """
+        data: dict = {"text": self.text}
         if self.icon_url is not None:
             data["icon_url"] = self.icon_url
         return data
 
     @classmethod
     def from_dict(cls, data: dict) -> Self:
+        """ Creates an EmbedFooter from a dict provided by Discord. """
         return cls(
-            text=data.get("text"),
+            text=data["text"],
             icon_url=data.get("icon_url")
         )
 
 
 @dataclass(slots=True)
 class EmbedField:
+    """ Represents a field entry in an embed. """
     name: str
     value: str
     inline: bool = True
 
     def to_dict(self) -> dict:
+        """ Returns a dict representation of the embed field. """
         return {"name": self.name, "value": self.value, "inline": self.inline}
 
     @classmethod
     def from_dict(cls, data: dict) -> Self:
+        """ Creates an EmbedField from a dict provided by Discord. """
         return cls(
             name=data["name"],
             value=data["value"],
@@ -78,13 +85,16 @@ class EmbedField:
 
 @dataclass(slots=True)
 class EmbedMedia:
+    """ Represents a media entry (image, thumbnail, or video) in an embed. """
     url: str
 
     def to_dict(self) -> dict:
+        """ Returns a dict representation of the embed media. """
         return {"url": self.url}
 
     @classmethod
     def from_dict(cls, data: dict) -> Self:
+        """ Creates an EmbedMedia from a dict provided by Discord. """
         return cls(url=data["url"])
 
 
@@ -170,9 +180,9 @@ class Embed:
     def __len__(self) -> int:
         total = len(self.title or "") + len(self.description or "")
         if self.footer:
-            total += len(self.footer.text or "")
+            total += len(self.footer.text)
         if self.author:
-            total += len(self.author.name or "")
+            total += len(self.author.name)
         for field in self.fields:
             total += len(field.name) + len(field.value)
         return total
@@ -232,12 +242,15 @@ class Embed:
         -------
             Returns the embed you are editing
         """
-        if not any((text, icon_url)):
+        if text is None and icon_url is None:
             self.footer = None
             return self
 
+        if text is None:
+            raise ValueError("text is required when setting a footer")
+
         self.footer = EmbedFooter(
-            text=str(text) if text else None,
+            text=str(text),
             icon_url=str(icon_url) if icon_url else None
         )
 
