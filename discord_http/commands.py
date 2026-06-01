@@ -1188,8 +1188,13 @@ class Choice(Generic[ChoiceT], metaclass=ChoiceMeta):
     """
     def __init__(self, key: ChoiceT, value: ChoiceT):
         self.key: ChoiceT = key
+        """ The key of the choice (the internal value sent to the command). """
+
         self.value: ChoiceT = value
+        """ The value of the choice (the label shown to the user). """
+
         self.type: CommandOptionType = CommandOptionType.string
+        """ The option type of the choice, inferred from the key type. """
 
         if isinstance(key, str):
             self.type = CommandOptionType.string
@@ -1239,7 +1244,21 @@ else:
             return _Range
 
     class Range(metaclass=RangeMeta):
-        pass
+        """
+        Constrains a command option to a specific type and value range.
+
+        Used as a type annotation for command parameters, e.g. ``Range[int, 1, 10]``
+        to require an integer between 1 and 10.
+
+        Parameters
+        ----------
+        type:
+            The type of the option (str, int, or float)
+        min:
+            The minimum value (or minimum length for str)
+        max:
+            The maximum value (or maximum length for str), optional
+        """
 
 
 def command(

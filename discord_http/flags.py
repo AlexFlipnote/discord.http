@@ -175,6 +175,7 @@ class BaseFlag(_FlagPyMeta):
 
 
 class MessageFlags(BaseFlag):
+    """ Represents the flags of a Discord message. """
     crossposted = 1 << 0
     is_crosspost = 1 << 1
     suppress_embeds = 1 << 2
@@ -190,16 +191,19 @@ class MessageFlags(BaseFlag):
 
 
 class SKUFlags(BaseFlag):
+    """ Represents the flags of an application SKU. """
     available = 1 << 2
     guild_subscription = 1 << 7
     user_subscription = 1 << 8
 
 
 class GuildInviteFlags(BaseFlag):
+    """ Represents the flags of a guild invite. """
     is_guest_invite = 1 << 0
 
 
 class GuildMemberFlags(BaseFlag):
+    """ Represents the flags of a guild member. """
     did_rejoin = 1 << 0
     completed_onboarding = 1 << 1
     bypasses_verification = 1 << 2
@@ -212,12 +216,14 @@ class GuildMemberFlags(BaseFlag):
 
 
 class ChannelFlags(BaseFlag):
+    """ Represents the flags of a Discord channel. """
     pinned = 1 << 1
     require_tag = 1 << 4
     hide_media_download_options = 1 << 15
 
 
 class UserFlags(BaseFlag):
+    """ Represents the public flags on a user's account. """
     staff = 1 << 0
     partner = 1 << 1
     hypesquad = 1 << 2
@@ -238,12 +244,14 @@ class UserFlags(BaseFlag):
 
 
 class AttachmentFlags(BaseFlag):
+    """ Represents the flags of a message attachment. """
     clip = 1 << 0
     thumbnail = 1 << 1
     remix = 1 << 2
 
 
 class ApplicationFlags(BaseFlag):
+    """ Represents the flags of a Discord application. """
     application_auto_moderation_rule_create_badge = 1 << 6
     gateway_presence = 1 << 12
     gateway_presence_limited = 1 << 13
@@ -257,6 +265,7 @@ class ApplicationFlags(BaseFlag):
 
 
 class SystemChannelFlags(BaseFlag):
+    """ Represents the system channel flags for a guild. """
     suppress_join_notifications = 1 << 0
     suppress_premium_subscriptions = 1 << 1
     suppress_guild_reminder_notifications = 1 << 2
@@ -266,6 +275,7 @@ class SystemChannelFlags(BaseFlag):
 
 
 class Permissions(BaseFlag):
+    """ Represents the permission flags for a guild member or role. """
     create_instant_invite = 1 << 0
     kick_members = 1 << 1
     ban_members = 1 << 2
@@ -337,6 +347,8 @@ class Permissions(BaseFlag):
 
 
 class PermissionOverwrite:
+    """ Represents a permission overwrite for a channel target (member or role). """
+
     __slots__ = (
         "allow",
         "deny",
@@ -352,8 +364,11 @@ class PermissionOverwrite:
         deny: Permissions | None = None,
         target_type: PermissionType | None = None
     ):
-        self.allow = allow or Permissions.none()
-        self.deny = deny or Permissions.none()
+        self.allow: Permissions = allow or Permissions.none()
+        """ The permissions that are explicitly allowed for the target. """
+
+        self.deny: Permissions = deny or Permissions.none()
+        """ The permissions that are explicitly denied for the target. """
 
         if not isinstance(self.allow, Permissions):
             raise TypeError(
@@ -369,11 +384,14 @@ class PermissionOverwrite:
         if isinstance(target, int):
             target = Snowflake(id=target)
 
-        self.target = target
-        self.target_type = (
+        self.target: Snowflake = target
+        """ The target of the permission overwrite (member or role). """
+
+        self.target_type: PermissionType = (
             target_type or
             PermissionType.member
         )
+        """ The type of the overwrite target, either member or role. """
 
         if getattr(self.target, "_target_type", None) == PermissionType.role:
             self.target_type = PermissionType.role

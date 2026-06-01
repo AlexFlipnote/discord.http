@@ -82,6 +82,7 @@ class _GuildLimits:
 
 
 class BanEntry(NamedTuple):
+    """ Represents a ban entry for a guild member. """
     user: "User"
     reason: str | None
 

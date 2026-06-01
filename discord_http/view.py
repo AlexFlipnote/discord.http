@@ -274,7 +274,7 @@ class AttachmentComponent:
         )
 
     def to_dict(self) -> dict:
-        """The attachment as a dictionary. """
+        """ Returns a dict representation of the attachment. """
         data = {
             "filename": self.filename,
             "size": self.size,

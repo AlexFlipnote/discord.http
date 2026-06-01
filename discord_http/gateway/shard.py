@@ -127,12 +127,14 @@ class GatewayRatelimiter:
         self.window = 0.0
 
     def is_ratelimited(self) -> bool:
+        """ Returns whether the shard is currently ratelimited. """
         current = time.monotonic()
         if current > self.window + self.per:
             return False
         return self.remaining == 0
 
     def get_delay(self) -> float:
+        """ Returns the number of seconds to wait before the next send, or 0.0 if not ratelimited. """
         current = time.monotonic()
 
         # Reset the window if the period has passed
@@ -148,6 +150,7 @@ class GatewayRatelimiter:
         return self.per - (current - self.window)
 
     async def block(self) -> None:
+        """ Acquires the lock and sleeps if the shard is ratelimited. """
         async with self.lock:
             retry_after = self.get_delay()
             if retry_after:
@@ -197,11 +200,13 @@ class Status:
 
     @property
     def ping(self) -> float:
+        """ Returns the round-trip latency between the last send and receive, or 0.0 if not connected. """
         if not self.can_resume():
             return 0.0
         return self._last_recv - self._last_send
 
     def reset(self) -> None:
+        """ Resets the shard status, clearing the session and sequence. """
         self.sequence = None
         self.session_id = None
         self.gateway = DEFAULT_GATEWAY
@@ -215,12 +220,15 @@ class Status:
         self._last_heartbeat = None
 
     def can_resume(self) -> bool:
+        """ Returns whether the shard can resume its session. """
         return self.session_id is not None
 
     def update_sequence(self, sequence: int) -> None:
+        """ Updates the last received sequence number. """
         self.sequence = sequence
 
     def update_ready_data(self, data: dict | None) -> None:
+        """ Updates the session ID and resume gateway URL from a READY payload. """
         if data is None:
             # This should never really happen
             return
@@ -229,18 +237,22 @@ class Status:
         self.gateway = utils.URL(data["resume_gateway_url"])
 
     def get_payload(self) -> dict:
+        """ Returns the heartbeat payload to send to the gateway. """
         return {
             "op": int(PayloadType.heartbeat),
             "d": self.sequence
         }
 
     def update_send(self) -> None:
+        """ Records the current time as the last send timestamp. """
         self._last_send = time.perf_counter()
 
     def update_heartbeat(self) -> None:
+        """ Records the current time as the last heartbeat timestamp. """
         self._last_heartbeat = time.perf_counter()
 
     def tick(self) -> None:
+        """ Records the current time as the last receive timestamp. """
         self._last_recv = time.perf_counter()
 
     def ack(

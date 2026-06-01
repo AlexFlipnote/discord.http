@@ -204,11 +204,13 @@ class BaseEnum(_Enum):
 
 
 class IntegrationType(BaseEnum):
+    """ Represents the integration type of a command. """
     guild = 0
     user = 1
 
 
 class DefaultAvatarType(BaseEnum):
+    """ Represents the default avatar types for users. """
     blurple = 0
     grey = 1
     gray = 1
@@ -219,6 +221,7 @@ class DefaultAvatarType(BaseEnum):
 
 
 class InviteType(BaseEnum):
+    """ Represents the type of a Discord invite. """
     guild = 0
     group = 1
     dm = 2
@@ -226,38 +229,45 @@ class InviteType(BaseEnum):
 
 
 class InviteTargetType(BaseEnum):
+    """ Represents the target type of a voice channel invite. """
     stream = 1
     embedded_application = 2
 
 
 class ApplicationCommandType(BaseEnum):
+    """ Represents the type of an application command. """
     chat_input = 1
     user = 2
     message = 3
 
 
 class ApplicationEventWebhookStatus(BaseEnum):
+    """ Represents the status of an application's event webhooks. """
     disabled = 1
     enabled = 2
     disabled_by_discord = 3
 
 
 class ReactionType(BaseEnum):
+    """ Represents the type of a message reaction. """
     normal = 0
     burst = 1
 
 
 class DefaultNotificationLevel(BaseEnum):
+    """ Represents the default notification level for a guild. """
     all_messages = 0
     only_mentions = 1
 
 
 class MFALevel(BaseEnum):
+    """ Represents the multi-factor authentication level for a guild. """
     none = 0
     elevated = 1
 
 
 class MessageType(BaseEnum):
+    """ Represents the type of a Discord message. """
     default = 0
     recipient_add = 1
     recipient_remove = 2
@@ -317,17 +327,20 @@ class MessageType(BaseEnum):
 
 
 class MessageReferenceType(BaseEnum):
+    """ Represents the type of a message reference. """
     default = 0
     forward = 1
 
 
 class ContentFilterLevel(BaseEnum):
+    """ Represents the explicit content filter level for a guild. """
     disabled = 0
     members_without_roles = 1
     all_members = 2
 
 
 class AuditLogType(BaseEnum):
+    """ Represents the type of an audit log entry. """
     # Unknown value is only here because Discord
     # might add new audit log without documenting it
     unknown = -1
@@ -441,6 +454,7 @@ class AuditLogType(BaseEnum):
 
 
 class Locale(BaseEnum):
+    """ Represents a Discord-supported locale. """
     american_english = "en-US"
     british_english = "en-GB"
     bulgarian = "bg"
@@ -476,12 +490,14 @@ class Locale(BaseEnum):
 
 
 class ScheduledEventEntityType(BaseEnum):
+    """ Represents the entity type of a scheduled event. """
     stage_instance = 1
     voice = 2
     external = 3
 
 
 class ScheduledEventStatusType(BaseEnum):
+    """ Represents the status of a scheduled event. """
     scheduled = 1
     active = 2
     completed = 3
@@ -489,6 +505,7 @@ class ScheduledEventStatusType(BaseEnum):
 
 
 class DisplayNameFontType(BaseEnum):
+    """ Represents the font type of a user's display name style. """
     default = 11  # Why is this 11? We'll never know...
     bangers = 1
     bio_rhyme = 2
@@ -504,6 +521,7 @@ class DisplayNameFontType(BaseEnum):
 
 
 class DisplayNameEffectType(BaseEnum):
+    """ Represents the effect type of a user's display name style. """
     solid = 1
     gradient = 2
     neon = 3
@@ -513,6 +531,7 @@ class DisplayNameEffectType(BaseEnum):
 
 
 class VerificationLevel(BaseEnum):
+    """ Represents the verification level required for a guild. """
     none = 0
     low = 1
     medium = 2
@@ -521,11 +540,13 @@ class VerificationLevel(BaseEnum):
 
 
 class ExpireBehaviour(BaseEnum):
+    """ Represents the behaviour when an integration subscription expires. """
     remove_role = 0
     kick = 1
 
 
 class ChannelType(BaseEnum):
+    """ Represents the type of a Discord channel. """
     unknown = -1
     guild_text = 0
     dm = 1
@@ -544,6 +565,7 @@ class ChannelType(BaseEnum):
 
 
 class CommandOptionType(BaseEnum):
+    """ Represents the type of a command option. """
     sub_command = 1
     sub_command_group = 2
     string = 3
@@ -558,12 +580,14 @@ class CommandOptionType(BaseEnum):
 
 
 class WebhookType(BaseEnum):
+    """ Represents the type of a webhook. """
     incoming = 1
     channel_follower = 2
     application = 3
 
 
 class ResponseType(BaseEnum):
+    """ Represents the type of an interaction response. """
     pong = 1
     channel_message_with_source = 4
     deferred_channel_message_with_source = 5
@@ -576,22 +600,26 @@ class ResponseType(BaseEnum):
 
 
 class VideoQualityType(BaseEnum):
+    """ Represents the video quality mode of a voice channel. """
     auto = 1
     full = 2
 
 
 class ForumLayoutType(BaseEnum):
+    """ Represents the default layout type for a forum channel. """
     not_set = 0
     list_view = 1
     gallery_view = 2
 
 
 class SortOrderType(BaseEnum):
+    """ Represents the default sort order for posts in a forum channel. """
     latest_activity = 0
     creation_date = 1
 
 
 class EntitlementType(BaseEnum):
+    """ Represents the type of an entitlement. """
     purchase = 1
     premium_subscription = 2
     developer_gift = 3
@@ -608,6 +636,7 @@ class EntitlementType(BaseEnum):
 
 
 class AutoModRuleTriggerType(BaseEnum):
+    """ Represents the trigger type for an AutoMod rule. """
     keyword = 1
     harmful_link = 2
     spam = 3
@@ -617,11 +646,13 @@ class AutoModRuleTriggerType(BaseEnum):
 
 
 class AutoModRuleEventType(BaseEnum):
+    """ Represents the event type that triggers an AutoMod rule. """
     message_send = 1
     member_update = 2
 
 
 class AutoModRuleActionType(BaseEnum):
+    """ Represents the action type taken when an AutoMod rule is triggered. """
     block_message = 1
     send_alert_message = 2
     timeout = 3
@@ -629,17 +660,20 @@ class AutoModRuleActionType(BaseEnum):
 
 
 class AutoModRulePresetType(BaseEnum):
+    """ Represents the preset keyword filter type for an AutoMod rule. """
     profanity = 1
     sexual_content = 2
     slurs = 3
 
 
 class EntitlementOwnerType(BaseEnum):
+    """ Represents who owns an entitlement. """
     guild = 1
     user = 2
 
 
 class SKUType(BaseEnum):
+    """ Represents the type of an application SKU. """
     durable = 2
     consumable = 3
     subscription = 5
@@ -647,6 +681,7 @@ class SKUType(BaseEnum):
 
 
 class InteractionType(BaseEnum):
+    """ Represents the type of a Discord interaction. """
     ping = 1
     application_command = 2
     message_component = 3
@@ -655,11 +690,13 @@ class InteractionType(BaseEnum):
 
 
 class StickerType(BaseEnum):
+    """ Represents the type of a sticker. """
     standard = 1
     guild = 2
 
 
 class StickerFormatType(BaseEnum):
+    """ Represents the format type of a sticker. """
     png = 1
     apng = 2
     lottie = 3
@@ -667,6 +704,7 @@ class StickerFormatType(BaseEnum):
 
 
 class ComponentType(BaseEnum):
+    """ Represents the type of a message component. """
     action_row = 1
 
     # Components v1
@@ -698,11 +736,13 @@ class ComponentType(BaseEnum):
 
 
 class SeparatorSpacingType(BaseEnum):
+    """ Represents the spacing size of a separator component. """
     small = 1
     large = 2
 
 
 class ButtonStyles(BaseEnum):
+    """ Represents the visual style of a button component. """
     # Original names
     primary = 1
     secondary = 2
@@ -722,15 +762,18 @@ class ButtonStyles(BaseEnum):
 
 
 class TextStyles(BaseEnum):
+    """ Represents the style of a text input component. """
     short = 1
     paragraph = 2
 
 
 class PermissionType(BaseEnum):
+    """ Represents the type of a permission overwrite target. """
     role = 0
     member = 1
 
 
 class PrivacyLevelType(BaseEnum):
+    """ Represents the privacy level of a stage instance or scheduled event. """
     public = 1
     guild_only = 2

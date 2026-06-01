@@ -111,6 +111,7 @@ class Typing:
         )
 
     async def do_typing_loop(self) -> None:
+        """ Continuously sends the typing indicator every 8 seconds until cancelled. """
         try:
             while True:
                 await asyncio.sleep(8)
@@ -2540,6 +2541,7 @@ class StageInstance(PartialBase):
 
     @property
     def guild(self) -> "Guild | PartialGuild | None":
+        """ Returns the guild this stage instance belongs to, or `None` if unknown. """
         if not self.guild_id:
             return None
 
@@ -2552,12 +2554,14 @@ class StageInstance(PartialBase):
 
     @property
     def channel(self) -> "PartialChannel | StageChannel":
+        """ Returns the stage channel this instance is associated with. """
         return self.guild.get_channel(self.channel_id) or (
             PartialChannel(state=self._state, id=self.channel_id)
         )
 
     @property
     def scheduled_event(self) -> "PartialScheduledEvent | None":
+        """ Returns the scheduled event linked to this stage instance, if any. """
         if not self.guild_scheduled_event_id:
             return None
 

@@ -8,6 +8,7 @@ __all__ = (
 
 
 class ActivityFlags(BaseFlag):
+    """ Represents the flags of a gateway presence activity. """
     instance = 1 << 0
     join = 1 << 1
     spectate = 1 << 2
@@ -20,6 +21,7 @@ class ActivityFlags(BaseFlag):
 
 
 class Intents(BaseFlag):
+    """ Represents the gateway intents for the bot. """
     guilds = 1 << 0
     guild_members = 1 << 1
     guild_moderation = 1 << 2
@@ -44,6 +46,7 @@ class Intents(BaseFlag):
 
 
 class GatewayCacheFlags(BaseFlag):
+    """ Represents what the gateway should cache. """
     partial_guilds = 1 << 0
     partial_members = 1 << 1
     partial_channels = 1 << 2

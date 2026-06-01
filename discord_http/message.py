@@ -427,6 +427,7 @@ class PollAnswer:
         return self.text or str(self.emoji)
 
     def to_dict(self) -> dict:
+        """ Returns a dict representation of the poll answer. """
         data = {
             "answer_id": self.id,
             "poll_media": {}
@@ -441,6 +442,7 @@ class PollAnswer:
 
     @classmethod
     def from_dict(cls, data: dict) -> Self:
+        """ Creates a PollAnswer from a dict provided by Discord. """
         emoji = data["poll_media"].get("emoji", None)
         if emoji:
             emoji = EmojiParser.from_dict(emoji)
