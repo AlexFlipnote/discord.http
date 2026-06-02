@@ -148,6 +148,7 @@ ignore = [
   "FURB103",  # write-whole-file
 
   # Pylint Warnings
+  "PLW0717",  # Try clause contains too many statements
   "PLW2901",  # Overwrite loop control variable
 
   # Type hints
