@@ -12,6 +12,7 @@ from .socket import VoiceCloseCode, VoiceSocket
 
 if TYPE_CHECKING:
     from ..channel import PartialChannel
+    from ..client import Client
     from .client import VoiceClient
 
 __all__ = ("VoiceConnection",)
@@ -108,6 +109,11 @@ class VoiceConnection:
         self._backoff: ExponentialBackoff = ExponentialBackoff(base=1.0, max_delay=30.0)
 
     @property
+    def client(self) -> "Client":
+        """ The bot client that owns this voice connection. """
+        return self.voice_client.client
+
+    @property
     def latency(self) -> float:
         """ The latency of the most recent voice heartbeat, in seconds. """
         if self.socket is None:
@@ -161,7 +167,7 @@ class VoiceConnection:
         TimeoutError
             If the handshake does not complete within ``timeout``.
         """
-        client = self.voice_client.client
+        client = self.client
 
         shard_id = client.get_shard_by_guild_id(self.guild_id)
         if shard_id is None:
@@ -292,7 +298,7 @@ class VoiceConnection:
 
         self._backoff.reset()
 
-        max_attempts = self.voice_client.client.voice_reconnect_attempts
+        max_attempts = self.client.voice_reconnect_attempts
 
         for attempt in range(1, max_attempts + 1):
             if self._closing:
@@ -544,7 +550,7 @@ class VoiceConnection:
         if self.socket is not None:
             self.socket._request_close()
 
-        client = self.voice_client.client
+        client = self.client
         try:
             shard_id = client.get_shard_by_guild_id(self.guild_id)
             shard = client.gateway.get_shard(shard_id) if (client.gateway and shard_id is not None) else None
@@ -608,7 +614,7 @@ class VoiceConnection:
         channel:
             The channel to move to.
         """
-        client = self.voice_client.client
+        client = self.client
 
         shard_id = client.get_shard_by_guild_id(self.guild_id)
         shard = client.gateway.get_shard(shard_id) if (client.gateway and shard_id is not None) else None
