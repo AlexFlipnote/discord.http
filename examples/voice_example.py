@@ -6,11 +6,14 @@ from discord_http.gateway import GatewayCacheFlags, Intents
 # Voice requires a gateway connection (to send the voice-state update) and the
 # guild_voice_states intent (so the bot receives its own voice server/state updates).
 #
-# To follow whoever ran a command, the bot also needs to *cache* voice states: the
-# guild_voice_states intent only makes Discord SEND the updates, while gateway_cache
-# decides what the library keeps. Without GatewayCacheFlags.voice_states (and a guild
-# cache to hang them on), get_member_voice_state() is always empty and the bot will
-# think nobody is in a channel.
+# To follow whoever ran a command, the bot must *cache* voice states, which needs:
+#   * Intents.guilds          -> so GUILD_CREATE fires and guilds get cached (voice
+#                                states are stored on the guild; without it ctx.guild
+#                                is an empty stub and nothing is ever kept)
+#   * Intents.guild_voice_states -> so Discord actually SENDS voice state updates
+#   * GatewayCacheFlags.guilds | .voice_states -> so the library keeps both
+# Miss any of these and get_member_voice_state() stays empty -> the bot thinks nobody
+# is in a channel.
 #
 # Codec notes:
 #   * Passing an ``.mp3``/``.opus`` file plays through ffmpeg -> Ogg/Opus and needs
@@ -22,6 +25,7 @@ client = Client(
     token="BOT_TOKEN",
     enable_gateway=True,
     intents=(
+        Intents.guilds |
         Intents.guild_messages |
         Intents.guild_voice_states
     ),
@@ -40,10 +44,10 @@ def caller_voice_channel(ctx: Context) -> "BaseChannel | PartialChannel | None":
     guild_voice_states intent) instead of relying on a hard-coded channel id, so the
     bot always follows whoever ran the command.
     """
-    if ctx.guild is None or ctx.author is None:
+    if ctx.guild is None or ctx.user is None:
         return None
 
-    voice_state = ctx.guild.get_member_voice_state(ctx.author.id)
+    voice_state = ctx.guild.get_member_voice_state(ctx.user.id)
     if voice_state is None or voice_state.channel_id is None:
         return None
 
