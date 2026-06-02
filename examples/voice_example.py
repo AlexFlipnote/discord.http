@@ -1,10 +1,16 @@
 import asyncio
 
 from discord_http import BaseChannel, Client, Context, PartialChannel, VoiceClient, WaveSink
-from discord_http.gateway import Intents
+from discord_http.gateway import GatewayCacheFlags, Intents
 
 # Voice requires a gateway connection (to send the voice-state update) and the
 # guild_voice_states intent (so the bot receives its own voice server/state updates).
+#
+# To follow whoever ran a command, the bot also needs to *cache* voice states: the
+# guild_voice_states intent only makes Discord SEND the updates, while gateway_cache
+# decides what the library keeps. Without GatewayCacheFlags.voice_states (and a guild
+# cache to hang them on), get_member_voice_state() is always empty and the bot will
+# think nobody is in a channel.
 #
 # Codec notes:
 #   * Passing an ``.mp3``/``.opus`` file plays through ffmpeg -> Ogg/Opus and needs
@@ -18,6 +24,10 @@ client = Client(
     intents=(
         Intents.guild_messages |
         Intents.guild_voice_states
+    ),
+    gateway_cache=(
+        GatewayCacheFlags.guilds |
+        GatewayCacheFlags.voice_states
     )
 )
 
