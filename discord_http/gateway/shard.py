@@ -352,6 +352,8 @@ class Shard:
             "GUILD_CREATE": (self._parse_guild_create, True),
             "GUILD_DELETE": (self._parse_guild_delete, False),
             "GUILD_MEMBERS_CHUNK": (self._parse_guild_members_chunk, True),
+            "VOICE_STATE_UPDATE": (self._parse_voice_state_update, False),
+            "VOICE_SERVER_UPDATE": (self._parse_voice_server_update, False),
         }
 
     @property
@@ -370,31 +372,7 @@ class Shard:
         self._buffer = bytearray()
         self._zlib = zlib.decompressobj()
 
-    def _revive_voice_clients(self) -> None:
-        """ Schedule revival of remembered voice clients after READY/RESUMED. """
-        if not self.bot._voice_clients:
-            return
-        task = asyncio.create_task(
-            self.bot._revive_voice_clients(self.shard_id),
-            name=f"discord.http/gateway/shard-{self.shard_id}/revive_voice"
-        )
-        self.bot._background_tasks.add(task)
-        task.add_done_callback(self.bot._cleanup_task)
-
-    def _teardown_voice_clients(self) -> None:
-        """ Insta-leave any voice clients on this shard unless persistence is on. """
-        if self.bot.resume_voice or not self.bot._voice_clients:
-            return
-        task = asyncio.create_task(
-            self.bot._teardown_voice_clients_for_shard(self.shard_id),
-            name=f"discord.http/gateway/shard-{self.shard_id}/teardown_voice"
-        )
-        self.bot._background_tasks.add(task)
-        task.add_done_callback(self.bot._cleanup_task)
-
     def _reset_instance(self) -> None:
-        self._teardown_voice_clients()
-
         self._reset_buffer()
         self.status.reset()
 
@@ -593,11 +571,7 @@ class Shard:
                     name=f"discord.http/gateway/shard-{self.shard_id}/delay_ready"
                 )
 
-                self._revive_voice_clients()
-
             case "RESUMED":
-                self._revive_voice_clients()
-
                 if self.bot.has_any_dispatch("shard_resumed"):
                     self.bot.dispatch(
                         "shard_resumed",
@@ -1083,6 +1057,32 @@ class Shard:
             event_name = "guild_delete"
 
         self._send_dispatch(event_name, guild)
+
+    def _parse_voice_state_update(self, data: dict) -> None:
+        payload = self.parser.voice_state_update(data)
+
+        bot_user = self.bot.application.bot if self.bot.application else None
+        if (
+            bot_user is not None
+            and data.get("guild_id") is not None
+            and int(data["user_id"]) == bot_user.id
+        ):
+            vc = self.bot._get_voice_client(int(data["guild_id"]))
+            if vc is not None:
+                vc.on_voice_state_update(data)
+
+        if self.bot.has_any_dispatch("voice_state_update"):
+            self._send_dispatch("voice_state_update", *payload)
+
+    def _parse_voice_server_update(self, data: dict) -> None:
+        (payload,) = self.parser.voice_server_update(data)
+
+        vc = self.bot._get_voice_client(int(data["guild_id"]))
+        if vc is not None:
+            vc.on_voice_server_update(data)
+
+        if self.bot.has_any_dispatch("voice_server_update"):
+            self._send_dispatch("voice_server_update", payload)
 
     async def _parse_guild_members_chunk(self, data: dict) -> None:
         result = self.parser.guild_members_chunk(data)

@@ -18,6 +18,7 @@ if TYPE_CHECKING:
 __all__ = (
     "AudioPlayer",
     "AudioSource",
+    "AudioSourceInput",
     "FFmpegOpusAudio",
     "FFmpegPCMAudio",
     "PCMAudio",
@@ -648,6 +649,10 @@ class AudioPlayer:
         self.source.cleanup()
         self.source = source
         self.resume()
+
+
+AudioSourceInput = AudioSource | str | os.PathLike | bytes | bytearray | memoryview | io.IOBase | AsyncIterable[bytes]
+""" The set of inputs accepted as audio sources by :meth:`VoiceClient.play`. """
 
 
 def _resolve_source(audio: object) -> AudioSource:

@@ -3,7 +3,7 @@ import logging
 import struct
 
 from collections.abc import Callable
-from typing import TYPE_CHECKING, Any
+from typing import TYPE_CHECKING
 
 from .connection import VoiceConnection
 
@@ -11,7 +11,7 @@ if TYPE_CHECKING:
     from ..channel import PartialChannel
     from ..client import Client
     from .opus import Encoder
-    from .player import AudioPlayer
+    from .player import AudioPlayer, AudioSourceInput
     from .receiver import VoiceReceiver
     from .sinks import AudioSink
 
@@ -176,19 +176,21 @@ class VoiceClient:
         await self.connection.close_transport()
         self.client._remove_voice_client(self.guild_id)
 
-    async def move_to(self, channel: "PartialChannel") -> None:
+    async def move_to(self, channel: "PartialChannel | int") -> None:
         """
         Move to a different voice channel.
 
         Parameters
         ----------
         channel:
-            The channel to move to.
+            The channel to move to, either a channel object or its ID.
         """
+        if isinstance(channel, int):
+            channel = self.client.get_partial_channel(channel, guild_id=self.guild_id)
         await self.connection.move_to(channel)
         self.channel = channel
 
-    async def on_voice_state_update(self, data: dict) -> None:
+    def on_voice_state_update(self, data: dict) -> None:
         """
         Forward a VOICE_STATE_UPDATE to the connection.
 
@@ -199,7 +201,7 @@ class VoiceClient:
         """
         self.connection.on_voice_state_update(data)
 
-    async def on_voice_server_update(self, data: dict) -> None:
+    def on_voice_server_update(self, data: dict) -> None:
         """
         Forward a VOICE_SERVER_UPDATE to the connection.
 
@@ -270,11 +272,11 @@ class VoiceClient:
         try:
             connection.transport.sendto(packet)
         except OSError:
-            _log.debug("Failed to send audio packet for guild %s", self.guild_id)
+            _log.debug(f"Failed to send audio packet for guild {self.guild_id}")
 
     def play(
         self,
-        audio: Any,  # noqa: ANN401
+        audio: "AudioSourceInput",
         *,
         after: Callable[[Exception | None], object] | None = None
     ) -> None:
