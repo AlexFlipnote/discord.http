@@ -260,9 +260,7 @@ class DaveManager:
         if transition_id == 0:
             await self._execute_transition(transition_id, version)
         else:
-            await self._connection.socket.send_binary(
-                int(VoiceOpType.dave_transition_ready), self._encode_transition_id(transition_id)
-            )
+            await self._connection.socket.send_transition_ready(transition_id)
 
     async def _handle_execute_transition(self, payload: bytes) -> None:
         """ Handle EXECUTE_TRANSITION (22): apply the pending version and passthrough state. """
@@ -297,20 +295,33 @@ class DaveManager:
                 pass
 
     async def _handle_proposals(self, payload: bytes) -> None:
-        """ Handle MLS_PROPOSALS (27): process proposals and forward any commit/welcome. """
-        if self._session is None:
+        """
+        Handle MLS_PROPOSALS (27): process proposals and forward any commit/welcome.
+
+        The payload is ``operation_type(1B) + proposals``: the first byte selects
+        append (``0``) vs revoke, and the remainder is the serialized proposals.
+        """
+        if self._session is None or davey is None:
             return
 
+        if len(payload) < 1:
+            return
+
+        optype = payload[0]
+        proposals = payload[1:]
+        operation_type = (
+            davey.ProposalsOperationType.append
+            if optype == 0
+            else davey.ProposalsOperationType.revoke
+        )
+
         try:
-            result = self._session.process_proposals(payload)
+            result = self._session.process_proposals(operation_type, proposals)
         except AttributeError:
             return
         except Exception as exc:
             _log.warning(f"Failed to process MLS proposals: {exc}")
             await self._recover_from_invalid_commit()
-            return
-
-        if result is None:
             return
 
         commit_welcome = self._extract_commit_welcome(result)
@@ -320,30 +331,54 @@ class DaveManager:
             )
 
     async def _handle_commit(self, payload: bytes) -> None:
-        """ Handle MLS_ANNOUNCE_COMMIT_TRANSITION (29): apply the announced commit. """
+        """
+        Handle MLS_ANNOUNCE_COMMIT_TRANSITION (29): apply the announced commit.
+
+        The payload is ``transition_id(2B big-endian) + commit``.
+        """
         if self._session is None:
             return
 
+        transition_id = int.from_bytes(payload[:2], "big") if len(payload) >= 2 else 0
+        commit = payload[2:]
+
         try:
-            self._session.process_commit(payload)
+            self._session.process_commit(commit)
         except AttributeError:
             return
         except Exception as exc:
             _log.warning(f"Failed to process MLS commit: {exc}")
             await self._recover_from_invalid_commit()
+            return
+
+        if transition_id != 0:
+            self._pending_transition = (transition_id, self._version)
+            await self._connection.socket.send_transition_ready(transition_id)
 
     async def _handle_welcome(self, payload: bytes) -> None:
-        """ Handle MLS_WELCOME (30): join the group from the received welcome message. """
+        """
+        Handle MLS_WELCOME (30): join the group from the received welcome message.
+
+        The payload is ``transition_id(2B big-endian) + welcome``.
+        """
         if self._session is None:
             return
 
+        transition_id = int.from_bytes(payload[:2], "big") if len(payload) >= 2 else 0
+        welcome = payload[2:]
+
         try:
-            self._session.process_welcome(payload)
+            self._session.process_welcome(welcome)
         except AttributeError:
             return
         except Exception as exc:
             _log.warning(f"Failed to process MLS welcome: {exc}")
             await self._recover_from_invalid_commit()
+            return
+
+        if transition_id != 0:
+            self._pending_transition = (transition_id, self._version)
+            await self._connection.socket.send_transition_ready(transition_id)
 
     async def _recover_from_invalid_commit(self) -> None:
         """ Notify the gateway of an invalid commit/welcome and reinitialise the session. """
@@ -355,10 +390,12 @@ class DaveManager:
     @staticmethod
     def _extract_commit_welcome(result: _Session) -> bytes | None:
         """
-        Extract serialized commit/welcome bytes from a ``davey.CommitWelcome`` result.
+        Extract the bytes to send for a ``davey.CommitWelcome`` result.
 
-        The exact ``davey`` API may differ; this tolerates a serialize method, raw bytes,
-        or a ``None`` result.
+        ``davey``'s ``process_proposals`` returns a ``CommitWelcome`` carrying a
+        ``commit`` and an optional ``welcome``. Discord expects them concatenated
+        as ``commit + welcome`` (commit alone when there is no welcome). This also
+        tolerates raw bytes or a ``None`` result.
 
         Parameters
         ----------
@@ -373,6 +410,14 @@ class DaveManager:
             return None
         if isinstance(result, (bytes, bytearray)):
             return bytes(result)
+
+        commit = getattr(result, "commit", None)
+        if commit is not None:
+            welcome = getattr(result, "welcome", None)
+            if welcome:
+                return bytes(commit) + bytes(welcome)
+            return bytes(commit)
+
         if hasattr(result, "serialize"):
             try:
                 return bytes(result.serialize())
@@ -391,8 +436,3 @@ class DaveManager:
         transition_id = int.from_bytes(payload[:2], "big") if len(payload) >= 2 else 0
         version = payload[2] if len(payload) >= 3 else 0
         return transition_id, version
-
-    @staticmethod
-    def _encode_transition_id(transition_id: int) -> bytes:
-        """ Encode a transition id as a 2-byte big-endian payload for TRANSITION_READY. """
-        return transition_id.to_bytes(2, "big")

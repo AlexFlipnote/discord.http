@@ -3,7 +3,7 @@ import logging
 
 from typing import TYPE_CHECKING, Any
 
-from ..utils import URL, ExponentialBackoff
+from ..utils import ExponentialBackoff
 from .dave import DaveManager, has_dave
 from .encryptor import Encryptor
 from .enums import SUPPORTED_MODES
@@ -358,9 +358,15 @@ class VoiceConnection:
 
         endpoint = data.get("endpoint")
         if endpoint:
-            # Discord sends the endpoint without a scheme (e.g. "host.discord.media:443");
-            # the URL helper cleanly extracts the host without the port for us.
-            self.endpoint = URL(f"wss://{endpoint}").host or endpoint
+            # Discord sends the endpoint as "host:port" without a scheme, and the
+            # port is NOT always 443 (e.g. "c-ams20-....discord.media:2053"). The
+            # token/session are bound to that specific host:port, so we MUST keep
+            # the port intact -- connecting to host:443 instead reaches a
+            # different voice server instance and Discord closes the socket with
+            # 4006 "Session is no longer valid". Only strip a scheme if present.
+            if endpoint.startswith("wss://"):
+                endpoint = endpoint[len("wss://"):]
+            self.endpoint = endpoint.rstrip("/")
 
         server_id = data.get("guild_id") or data.get("server_id")
         self.server_id = int(server_id) if server_id is not None else None

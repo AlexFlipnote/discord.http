@@ -60,7 +60,6 @@ class VoiceSocket:
         self._heartbeat_task: asyncio.Task | None = None
         self._receive_task: asyncio.Task | None = None
 
-        self._out_seq: int = 0
         self._last_send: float = 0.0
         self._latencies: deque[float] = deque(maxlen=20)
 
@@ -125,7 +124,9 @@ class VoiceSocket:
         close_code: int | None = None
 
         try:
-            async for msg in ws:
+            while True:
+                msg = await ws.receive()
+
                 if msg.type is WSMsgType.TEXT:
                     self._dispatch_text(msg.data)
 
@@ -133,7 +134,13 @@ class VoiceSocket:
                     self._dispatch_binary(msg.data)
 
                 elif msg.type in (WSMsgType.CLOSE, WSMsgType.CLOSING, WSMsgType.CLOSED):
-                    _log.debug(f"Voice socket for guild {self.connection.guild_id} received close frame")
+                    # Discord's close reason (msg.extra) is invaluable for diagnosing
+                    # voice failures (e.g. "E2EE/DAVE protocol required" for 4017),
+                    # so surface it alongside the code.
+                    _log.debug(
+                        f"Voice socket for guild {self.connection.guild_id} received close frame "
+                        f"(code={msg.data!r}, reason={msg.extra!r})"
+                    )
                     break
 
                 elif msg.type is WSMsgType.ERROR:
@@ -182,11 +189,7 @@ class VoiceSocket:
         match voice_op:
             case VoiceOpType.hello:
                 self._heartbeat_interval = float(data["heartbeat_interval"]) / 1000
-                self._start_heartbeat()
-                if self._resuming:
-                    self._schedule(self.send_resume())
-                else:
-                    self._schedule(self.send_identify())
+                self._schedule(self._handle_hello())
 
             case VoiceOpType.ready:
                 self._schedule(self.connection.on_ready(data))
@@ -254,6 +257,23 @@ class VoiceSocket:
         except Exception as exc:
             _log.error(f"Error in voice socket handler for guild {self.connection.guild_id}", exc_info=exc)
 
+    async def _handle_hello(self) -> None:
+        """
+        React to HELLO (op 8): authenticate, then start heartbeating.
+
+        IDENTIFY/RESUME MUST be the first payload sent on the voice gateway.
+        The heartbeat loop emits a heartbeat (op 3) immediately, so it can only
+        be started *after* authentication has been sent; otherwise Discord sees
+        a payload before IDENTIFY and closes the socket with code 4003
+        ("Not authenticated").
+        """
+        if self._resuming:
+            await self.send_resume()
+        else:
+            await self.send_identify()
+
+        self._start_heartbeat()
+
     def _start_heartbeat(self) -> None:
         """ (Re)start the heartbeat task using the negotiated interval. """
         if self._heartbeat_task is not None and not self._heartbeat_task.done():
@@ -268,8 +288,13 @@ class VoiceSocket:
         """ Send a heartbeat (op 3) every interval until cancelled. """
         try:
             while True:
-                await self._send_heartbeat()
+                # Sleep *before* the first beat: the voice gateway must complete
+                # the IDENTIFY -> READY -> SESSION_DESCRIPTION handshake without
+                # any heartbeat interleaved. Sending op 3 before READY makes
+                # Discord invalidate the session (close code 4006). This mirrors
+                # discord.py's voice keep-alive, which also waits one interval.
                 await asyncio.sleep(self._heartbeat_interval)
+                await self._send_heartbeat()
         except asyncio.CancelledError:
             pass
         except Exception as exc:
@@ -298,7 +323,12 @@ class VoiceSocket:
         """
         if self.ws is None or self.ws.closed:
             return
-        await self.ws.send_bytes(orjson.dumps(payload))
+        # JSON control frames MUST be sent as text frames: the voice gateway
+        # reserves binary frames for DAVE/E2EE opcodes (see ``send_binary`` and
+        # ``_dispatch_binary``). Sending JSON via ``send_bytes`` makes Discord
+        # treat IDENTIFY as a malformed DAVE frame, so it never replies with
+        # READY/SESSION_DESCRIPTION and the handshake times out.
+        await self.ws.send_str(orjson.dumps(payload).decode("utf-8"))
 
     async def send_identify(self) -> None:
         """ Send the IDENTIFY (op 0) frame, advertising DAVE support. """
@@ -374,9 +404,36 @@ class VoiceSocket:
             }
         })
 
+    async def send_transition_ready(self, transition_id: int) -> None:
+        """
+        Send the DAVE TRANSITION_READY (op 23) acknowledgement.
+
+        This is a JSON control frame (not a binary DAVE frame): it carries the
+        ``transition_id`` as JSON, matching the voice gateway protocol.
+
+        Parameters
+        ----------
+        transition_id:
+            The id of the transition being acknowledged.
+        """
+        await self._send_json({
+            "op": int(VoiceOpType.dave_transition_ready),
+            "d": {
+                "transition_id": transition_id,
+            }
+        })
+
     async def send_binary(self, opcode: int, payload: bytes) -> None:
         """
         Send a binary DAVE frame.
+
+        Outbound binary frames are framed as ``opcode(1B) + payload`` with NO
+        sequence prefix. This is asymmetric with *inbound* binary frames, which
+        Discord prefixes with a 2-byte sequence number (``seq(2B) + opcode(1B) +
+        payload``, handled in :meth:`_dispatch_binary`). Prefixing outbound
+        frames with the 2-byte sequence makes Discord read the leading ``0x00``
+        byte as opcode 0 (IDENTIFY) and close the socket with 4005
+        ("Already authenticated").
 
         Parameters
         ----------
@@ -388,8 +445,7 @@ class VoiceSocket:
         if self.ws is None or self.ws.closed:
             return
 
-        self._out_seq = (self._out_seq + 1) & 0xFFFF
-        frame = struct.pack(">H", 0) + bytes([opcode & 0xFF]) + payload
+        frame = bytes([opcode & 0xFF]) + payload
         await self.ws.send_bytes(frame)
 
     async def close(self) -> None:
