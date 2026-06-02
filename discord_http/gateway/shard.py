@@ -370,7 +370,31 @@ class Shard:
         self._buffer = bytearray()
         self._zlib = zlib.decompressobj()
 
+    def _revive_voice_clients(self) -> None:
+        """ Schedule revival of remembered voice clients after READY/RESUMED. """
+        if not self.bot._voice_clients:
+            return
+        task = asyncio.create_task(
+            self.bot._revive_voice_clients(self.shard_id),
+            name=f"discord.http/gateway/shard-{self.shard_id}/revive_voice"
+        )
+        self.bot._background_tasks.add(task)
+        task.add_done_callback(self.bot._cleanup_task)
+
+    def _teardown_voice_clients(self) -> None:
+        """ Insta-leave any voice clients on this shard unless persistence is on. """
+        if self.bot.resume_voice or not self.bot._voice_clients:
+            return
+        task = asyncio.create_task(
+            self.bot._teardown_voice_clients_for_shard(self.shard_id),
+            name=f"discord.http/gateway/shard-{self.shard_id}/teardown_voice"
+        )
+        self.bot._background_tasks.add(task)
+        task.add_done_callback(self.bot._cleanup_task)
+
     def _reset_instance(self) -> None:
+        self._teardown_voice_clients()
+
         self._reset_buffer()
         self.status.reset()
 
@@ -569,7 +593,11 @@ class Shard:
                     name=f"discord.http/gateway/shard-{self.shard_id}/delay_ready"
                 )
 
+                self._revive_voice_clients()
+
             case "RESUMED":
+                self._revive_voice_clients()
+
                 if self.bot.has_any_dispatch("shard_resumed"):
                     self.bot.dispatch(
                         "shard_resumed",
@@ -1082,6 +1110,39 @@ class Shard:
         await self.send_message({
             "op": int(PayloadType.presence),
             "d": status.to_dict()
+        })
+
+    async def change_voice_state(
+        self,
+        *,
+        guild_id: int,
+        channel_id: int | None,
+        self_mute: bool = False,
+        self_deaf: bool = False
+    ) -> None:
+        """
+        Changes the voice state of the shard for the specified guild.
+
+        Parameters
+        ----------
+        guild_id:
+            The guild to change the voice state in.
+        channel_id:
+            The voice channel to connect to, or ``None`` to disconnect.
+        self_mute:
+            Whether the bot is self-muted.
+        self_deaf:
+            Whether the bot is self-deafened.
+        """
+        _log.debug(f"Changing voice state in Shard {self.shard_id} for guild {guild_id} to channel {channel_id}")
+        await self.send_message({
+            "op": int(PayloadType.voice_state),
+            "d": {
+                "guild_id": str(guild_id),
+                "channel_id": str(channel_id) if channel_id is not None else None,
+                "self_mute": bool(self_mute),
+                "self_deaf": bool(self_deaf)
+            }
         })
 
     def payload(self, op: PayloadType) -> dict:
