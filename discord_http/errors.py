@@ -20,6 +20,8 @@ __all__ = (
     "HTTPException",
     "InvalidMember",
     "NotFound",
+    "OpusError",
+    "OpusNotLoaded",
     "Ratelimited",
     "UserMissingPermissions",
 )
@@ -27,6 +29,14 @@ __all__ = (
 
 class DiscordException(Exception):  # noqa: N818
     """ Base exception for discord_http. """
+
+
+class OpusError(DiscordException):
+    """ Raised when libopus returns an error code. """
+
+
+class OpusNotLoaded(DiscordException):
+    """ Raised when an Opus operation is attempted but libopus is not available. """
 
 
 class CheckFailed(DiscordException):

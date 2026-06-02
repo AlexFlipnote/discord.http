@@ -1351,10 +1351,6 @@ class Parser:
         -------
             The raw voice server update payload.
         """
-        vc = self.bot._get_voice_client(int(data["guild_id"]))
-        if vc is not None:
-            self.bot.loop.create_task(vc.on_voice_server_update(data))
-
         return (data,)
 
     def voice_state_update(self, data: dict) -> tuple[
@@ -1395,12 +1391,6 @@ class Parser:
         )
 
         self.bot.cache.update_voice_state(vs)
-
-        bot_user = self.bot.application.bot if self.bot.application else None
-        if bot_user is not None and int(data["user_id"]) == bot_user.id:
-            vc = self.bot._get_voice_client(int(data["guild_id"]))
-            if vc is not None:
-                self.bot.loop.create_task(vc.on_voice_state_update(data))
 
         return (before_vs, vs)
 

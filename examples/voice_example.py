@@ -1,6 +1,6 @@
 import asyncio
 
-from discord_http import BaseChannel, Client, Context, VoiceClient, WaveSink
+from discord_http import BaseChannel, Client, Context, PartialChannel, VoiceClient, WaveSink
 from discord_http.gateway import Intents
 
 # Voice requires a gateway connection (to send the voice-state update) and the
@@ -22,21 +22,39 @@ client = Client(
 )
 
 
+def caller_voice_channel(ctx: Context) -> "BaseChannel | PartialChannel | None":
+    """
+    Resolve the voice channel the invoking member is currently sitting in.
+
+    This reads the member's cached voice state (populated from the gateway via the
+    guild_voice_states intent) instead of relying on a hard-coded channel id, so the
+    bot always follows whoever ran the command.
+    """
+    if ctx.guild is None or ctx.author is None:
+        return None
+
+    voice_state = ctx.guild.get_member_voice_state(ctx.author.id)
+    if voice_state is None or voice_state.channel_id is None:
+        return None
+
+    # ``VoiceState`` exposes the resolved ``channel`` directly; the partial variant only
+    # carries the id, so fall back to a partial channel that ``connect()`` can act on.
+    return getattr(voice_state, "channel", None) or client.get_partial_channel(
+        voice_state.channel_id, guild_id=ctx.guild.id
+    )
+
+
 @client.command()
 async def join(ctx: Context):
     """ Join the caller's voice channel and play a song """
-    if ctx.guild is None or ctx.author is None:
-        return ctx.response.send_message("This command can only be used in a guild.")
-
-    # Resolve a voice channel to connect to (here a hard-coded id for brevity).
-    channel = await client.fetch_channel(1234567890, guild_id=ctx.guild.id)
-    if not isinstance(channel, BaseChannel):
-        return ctx.response.send_message("Could not find that channel.")
+    channel = caller_voice_channel(ctx)
+    if channel is None:
+        return ctx.response.send_message("Join a voice channel first, then try again.")
 
     vc: VoiceClient = await channel.connect()
 
     # Play a local file (mp3 -> opus passthrough, ffmpeg only).
-    await vc.play("song.mp3")
+    vc.play("song.mp3")
 
     return ctx.response.send_message(f"Now playing, latency: {vc.latency:.1f}ms")
 
@@ -82,7 +100,7 @@ async def voice_demo(channel: BaseChannel, move_to: BaseChannel) -> None:
     vc: VoiceClient = await channel.connect()
 
     # Playback controls.
-    await vc.play("song.mp3")
+    vc.play("song.mp3")
     vc.pause()
     vc.resume()
 

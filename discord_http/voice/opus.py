@@ -2,6 +2,8 @@ import ctypes
 import ctypes.util
 import logging
 
+from ..errors import OpusError, OpusNotLoaded
+
 __all__ = (
     "OPUS_APPLICATION_AUDIO",
     "OPUS_APPLICATION_LOWDELAY",
@@ -77,22 +79,31 @@ _SIGNALS: dict[str, int] = {
 }
 
 
-class OpusError(Exception):
-    """ Raised when libopus returns an error code. """
-
-
-class OpusNotLoaded(Exception):  # noqa: N818
-    """ Raised when an Opus operation is attempted but libopus is not available. """
-
-
 # Opaque handle types. libopus only ever hands these back as pointers.
 EncoderStruct = ctypes.c_void_p
 DecoderStruct = ctypes.c_void_p
 
-# Module-level loader state. ``_lib`` is the loaded CDLL or None, and
-# ``_loaded`` is a sentinel so a failed/empty lazy search is not repeated.
-_lib: ctypes.CDLL | None = None
-_loaded: bool = False
+
+class _OpusLoader:
+    """
+    Holds the lazily-loaded libopus handle and its load state.
+
+    Encapsulating the state on an instance avoids module-level ``global``
+    statements: :func:`load_opus` mutates the attributes of this singleton
+    instead of rebinding module globals.
+    """
+
+    __slots__ = ("attempted", "lib")
+
+    def __init__(self) -> None:
+        self.lib: ctypes.CDLL | None = None
+        """ The loaded libopus shared library, or ``None`` if unavailable. """
+
+        self.attempted: bool = False
+        """ Whether a load has been attempted (so it is not retried endlessly). """
+
+
+_loader = _OpusLoader()
 
 
 def _configure_lib(lib: ctypes.CDLL) -> None:
@@ -181,9 +192,7 @@ def load_opus(name: str | None = None) -> None:
     OpusError
         If an explicit ``name`` was given but the library could not be loaded.
     """
-    global _lib, _loaded  # noqa: PLW0603
-
-    _loaded = True
+    _loader.attempted = True
 
     location = name
     if location is None:
@@ -192,7 +201,7 @@ def load_opus(name: str | None = None) -> None:
     if location is None:
         # No library on the system; this is not fatal. The passthrough/E2EE
         # paths can still operate without libopus present.
-        _lib = None
+        _loader.lib = None
         _log.debug("libopus could not be located; Opus encode/decode is unavailable")
         return
 
@@ -200,15 +209,15 @@ def load_opus(name: str | None = None) -> None:
         lib = ctypes.CDLL(location)
         _configure_lib(lib)
     except (OSError, AttributeError) as exc:
-        _lib = None
+        _loader.lib = None
         if name is not None:
             # The caller explicitly asked for this library, so surface failure.
             raise OpusError(f"Could not load libopus from {location!r}") from exc
-        _log.warning("Found libopus at %r but failed to load it: %s", location, exc)
+        _log.warning(f"Found libopus at {location!r} but failed to load it: {exc}")
         return
 
-    _lib = lib
-    _log.debug("Successfully loaded libopus from %r", location)
+    _loader.lib = lib
+    _log.debug(f"Successfully loaded libopus from {location!r}")
 
 
 def is_loaded() -> bool:
@@ -223,10 +232,10 @@ def is_loaded() -> bool:
     -------
         ``True`` if libopus is loaded and ready, ``False`` otherwise.
     """
-    if not _loaded:
+    if not _loader.attempted:
         load_opus()
 
-    return _lib is not None
+    return _loader.lib is not None
 
 
 def _get_lib() -> ctypes.CDLL:
@@ -242,13 +251,13 @@ def _get_lib() -> ctypes.CDLL:
     OpusNotLoaded
         If libopus could not be found or loaded.
     """
-    if not _loaded:
+    if not _loader.attempted:
         load_opus()
 
-    if _lib is None:
+    if _loader.lib is None:
         raise OpusNotLoaded("libopus is not loaded; install the Opus shared library to use voice encode/decode")
 
-    return _lib
+    return _loader.lib
 
 
 def _strerror(code: int) -> str:
@@ -264,7 +273,7 @@ def _strerror(code: int) -> str:
     -------
         The decoded error string.
     """
-    lib = _lib
+    lib = _loader.lib
     if lib is None:
         return f"error code {code}"
 

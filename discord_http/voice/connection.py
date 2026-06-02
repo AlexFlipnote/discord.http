@@ -3,7 +3,8 @@ import logging
 
 from typing import TYPE_CHECKING, Any
 
-from ..utils import ExponentialBackoff
+from ..utils import URL, ExponentialBackoff
+from .dave import DaveManager, has_dave
 from .encryptor import Encryptor
 from .enums import SUPPORTED_MODES
 from .gateway_udp import VoiceUDPProtocol, create_udp
@@ -12,14 +13,10 @@ from .socket import VoiceCloseCode, VoiceSocket
 if TYPE_CHECKING:
     from ..channel import PartialChannel
     from .client import VoiceClient
-    from .dave import DaveManager
 
 __all__ = ("VoiceConnection",)
 
 _log = logging.getLogger(__name__)
-
-#: The maximum number of full-reconnect attempts before giving up.
-MAX_RECONNECT_ATTEMPTS = 5
 
 
 class VoiceConnection:
@@ -234,27 +231,27 @@ class VoiceConnection:
             The websocket close code, if one was reported.
         """
         if close_code in (VoiceCloseCode.disconnected, VoiceCloseCode.call_terminated):
-            _log.info("Voice connection for guild %s disconnected (code %s); tearing down", self.guild_id, close_code)
+            _log.info(f"Voice connection for guild {self.guild_id} disconnected (code {close_code}); tearing down")
             await self._teardown_and_remove()
             return
 
         if close_code == VoiceCloseCode.rate_limited:
-            _log.warning("Voice connection for guild %s was rate limited (code %s); not reconnecting", self.guild_id, close_code)
+            _log.warning(f"Voice connection for guild {self.guild_id} was rate limited (code {close_code}); not reconnecting")
             await self._teardown_and_remove()
             return
 
         if close_code == VoiceCloseCode.voice_server_crashed:
-            _log.info("Voice server for guild %s crashed (code %s); resuming", self.guild_id, close_code)
+            _log.info(f"Voice server for guild {self.guild_id} crashed (code {close_code}); resuming")
             await self._resume()
             return
 
         if close_code in (VoiceCloseCode.normal, VoiceCloseCode.going_away):
-            _log.debug("Voice connection for guild %s closed cleanly (code %s)", self.guild_id, close_code)
+            _log.debug(f"Voice connection for guild {self.guild_id} closed cleanly (code {close_code})")
             await self._teardown_and_remove()
             return
 
         if not self._reconnect:
-            _log.debug("Voice connection for guild %s closed (code %s); reconnect disabled", self.guild_id, close_code)
+            _log.debug(f"Voice connection for guild {self.guild_id} closed (code {close_code}); reconnect disabled")
             await self._teardown_and_remove()
             return
 
@@ -271,8 +268,8 @@ class VoiceConnection:
             self.socket = VoiceSocket(self)
             await self.socket.connect(resume=True)
         except Exception as exc:
-            _log.warning("Voice resume for guild %s failed; falling back to full reconnect", self.guild_id, exc_info=exc)
-            await self._full_reconnect(VoiceCloseCode.voice_server_crashed)
+            _log.warning(f"Voice resume for guild {self.guild_id} failed; falling back to full reconnect", exc_info=exc)
+            await self._full_reconnect(int(VoiceCloseCode.voice_server_crashed))
 
     async def _full_reconnect(self, close_code: int | None) -> None:
         """
@@ -295,14 +292,16 @@ class VoiceConnection:
 
         self._backoff.reset()
 
-        for attempt in range(1, MAX_RECONNECT_ATTEMPTS + 1):
+        max_attempts = self.voice_client.client.voice_reconnect_attempts
+
+        for attempt in range(1, max_attempts + 1):
             if self._closing:
                 return
 
             delay = self._backoff.delay()
             _log.info(
-                "Reconnecting voice for guild %s (close code %s), attempt %s/%s in %.2fs",
-                self.guild_id, close_code, attempt, MAX_RECONNECT_ATTEMPTS, delay
+                f"Reconnecting voice for guild {self.guild_id} (close code {close_code}), "
+                f"attempt {attempt}/{max_attempts} in {delay:.2f}s"
             )
             await asyncio.sleep(delay)
 
@@ -313,13 +312,13 @@ class VoiceConnection:
                     self_mute=self._self_mute,
                 )
             except Exception as exc:
-                _log.warning("Voice reconnect attempt %s for guild %s failed", attempt, self.guild_id, exc_info=exc)
+                _log.warning(f"Voice reconnect attempt {attempt} for guild {self.guild_id} failed", exc_info=exc)
                 continue
             else:
-                _log.info("Voice connection for guild %s reconnected", self.guild_id)
+                _log.info(f"Voice connection for guild {self.guild_id} reconnected")
                 return
 
-        _log.error("Voice connection for guild %s could not reconnect after %s attempts; tearing down", self.guild_id, MAX_RECONNECT_ATTEMPTS)
+        _log.error(f"Voice connection for guild {self.guild_id} could not reconnect after {max_attempts} attempts; tearing down")
         await self._teardown_and_remove()
 
     async def _teardown_and_remove(self) -> None:
@@ -327,7 +326,7 @@ class VoiceConnection:
         try:
             await self.voice_client.disconnect(force=True)
         except Exception as exc:
-            _log.debug("Error during voice teardown for guild %s", self.guild_id, exc_info=exc)
+            _log.debug(f"Error during voice teardown for guild {self.guild_id}", exc_info=exc)
 
     def on_voice_state_update(self, data: dict) -> None:
         """
@@ -359,10 +358,9 @@ class VoiceConnection:
 
         endpoint = data.get("endpoint")
         if endpoint:
-            endpoint = endpoint.removeprefix("wss://").removeprefix("ws://")
-            endpoint = endpoint.split("/", 1)[0]
-            endpoint = endpoint.rsplit(":", 1)[0]
-            self.endpoint = endpoint
+            # Discord sends the endpoint without a scheme (e.g. "host.discord.media:443");
+            # the URL helper cleanly extracts the host without the port for us.
+            self.endpoint = URL(f"wss://{endpoint}").host or endpoint
 
         server_id = data.get("guild_id") or data.get("server_id")
         self.server_id = int(server_id) if server_id is not None else None
@@ -445,7 +443,7 @@ class VoiceConnection:
         data:
             The resumed payload.
         """
-        _log.debug("Voice connection for guild %s resumed", self.guild_id)
+        _log.debug(f"Voice connection for guild {self.guild_id} resumed")
 
     async def on_dave_binary(self, opcode: int, payload: bytes) -> None:
         """
@@ -458,10 +456,8 @@ class VoiceConnection:
         payload:
             The binary payload following the opcode.
         """
-        from .dave import has_dave
-
         if not has_dave:
-            _log.warning("Received DAVE binary op %s but the davey library is not available", opcode)
+            _log.warning(f"Received DAVE binary op {opcode} but the davey library is not available")
             return
 
         if self.dave_session is None:
@@ -472,8 +468,6 @@ class VoiceConnection:
 
     async def reinit_dave_session(self) -> None:
         """ Create or reset the DAVE session for the negotiated protocol version. """
-        from .dave import DaveManager, has_dave
-
         if not has_dave:
             if self.dave_protocol_version > 0:
                 raise RuntimeError(
@@ -553,7 +547,7 @@ class VoiceConnection:
         except Exception as exc:
             if not force:
                 raise
-            _log.debug("Failed to send voice disconnect for guild %s", self.guild_id, exc_info=exc)
+            _log.debug(f"Failed to send voice disconnect for guild {self.guild_id}", exc_info=exc)
 
         if self.socket is not None:
             await self.socket.close()

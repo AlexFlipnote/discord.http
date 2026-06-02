@@ -2,13 +2,13 @@ from ..enums import BaseEnum
 
 __all__ = (
     "SUPPORTED_MODES",
-    "VoiceOp",
+    "VoiceOpType",
 )
 
 SUPPORTED_MODES: tuple[str, ...] = ("aead_aes256_gcm_rtpsize",)
 
 
-class VoiceOp(BaseEnum):
+class VoiceOpType(BaseEnum):
     """ Represents the opcode type of a voice gateway payload. """
     identify = 0
     select_protocol = 1

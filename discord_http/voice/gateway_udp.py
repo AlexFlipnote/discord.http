@@ -38,7 +38,10 @@ class VoiceUDPProtocol(asyncio.DatagramProtocol):
         transport:
             The datagram transport for this protocol.
         """
-        self.transport = transport  # type: ignore[assignment]
+        # A DatagramProtocol is only ever driven by a DatagramTransport; the
+        # isinstance check narrows the BaseTransport type without a cast.
+        if isinstance(transport, asyncio.DatagramTransport):
+            self.transport = transport
 
     def error_received(self, exc: Exception) -> None:
         """
@@ -49,7 +52,7 @@ class VoiceUDPProtocol(asyncio.DatagramProtocol):
         exc:
             The exception reported by the transport.
         """
-        _log.warning("Voice UDP error for guild %s: %s", self.connection.guild_id, exc)
+        _log.warning(f"Voice UDP error for guild {self.connection.guild_id}: {exc}")
 
     def connection_lost(self, exc: Exception | None) -> None:
         """
@@ -61,7 +64,7 @@ class VoiceUDPProtocol(asyncio.DatagramProtocol):
             The exception that caused the loss, if any.
         """
         if exc is not None:
-            _log.debug("Voice UDP connection lost for guild %s", self.connection.guild_id, exc_info=exc)
+            _log.debug(f"Voice UDP connection lost for guild {self.connection.guild_id}", exc_info=exc)
         self.transport = None
 
     def datagram_received(self, data: bytes, addr: tuple) -> None:  # noqa: ARG002

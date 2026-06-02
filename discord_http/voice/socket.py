@@ -10,9 +10,8 @@ from collections import deque
 from collections.abc import Coroutine
 from typing import TYPE_CHECKING, Any
 
-from enum import IntEnum
-
-from .enums import VoiceOp
+from ..enums import BaseEnum
+from .enums import VoiceOpType
 
 if TYPE_CHECKING:
     from .connection import VoiceConnection
@@ -22,7 +21,7 @@ __all__ = ("VoiceCloseCode", "VoiceSocket")
 _log = logging.getLogger(__name__)
 
 
-class VoiceCloseCode(IntEnum):
+class VoiceCloseCode(BaseEnum):
     """ The voice gateway websocket close codes that govern reconnect behaviour. """
 
     normal = 1000
@@ -56,8 +55,6 @@ class VoiceSocket:
 
         self._closing: bool = False
         self._resuming: bool = False
-        self._own_session: bool = False
-        self._session: ClientSession | None = None
 
         self._heartbeat_interval: float = 0.0
         self._heartbeat_task: asyncio.Task | None = None
@@ -81,25 +78,24 @@ class VoiceSocket:
             return float("inf")
         return sum(self._latencies) / len(self._latencies)
 
-    def _get_session(self) -> ClientSession:
+    @property
+    def session(self) -> ClientSession:
         """
-        Return a usable aiohttp session, reusing the bot's if reachable.
+        The shared aiohttp session from the bot's HTTP client.
 
         Returns
         -------
-            The shared HTTP session, or a freshly created one owned by this socket.
+            The bot's HTTP session, reused for the voice websocket.
+
+        Raises
+        ------
+        RuntimeError
+            If the HTTP session is not available (the client is not running).
         """
-        try:
-            session = self.connection.voice_client.client.state.http.session
-        except AttributeError:
-            session = None
-
-        if session is not None:
-            return session
-
-        self._own_session = True
-        self._session = ClientSession()
-        return self._session
+        session = self.connection.voice_client.client.state.http.session
+        if session is None:
+            raise RuntimeError("HTTP session is not available; the client must be running to open a voice socket")
+        return session
 
     async def connect(self, *, resume: bool = False) -> None:
         """
@@ -112,9 +108,8 @@ class VoiceSocket:
         """
         self._closing = False
         self._resuming = resume
-        session = self._get_session()
         endpoint = self.connection.endpoint
-        self.ws = await session.ws_connect(f"wss://{endpoint}/?v=8")
+        self.ws = await self.session.ws_connect(f"wss://{endpoint}/?v=8")
 
         self._receive_task = asyncio.create_task(
             self._receive_loop(),
@@ -138,18 +133,18 @@ class VoiceSocket:
                     self._dispatch_binary(msg.data)
 
                 elif msg.type in (WSMsgType.CLOSE, WSMsgType.CLOSING, WSMsgType.CLOSED):
-                    _log.debug("Voice socket for guild %s received close frame", self.connection.guild_id)
+                    _log.debug(f"Voice socket for guild {self.connection.guild_id} received close frame")
                     break
 
                 elif msg.type is WSMsgType.ERROR:
-                    _log.warning("Voice socket for guild %s received error: %s", self.connection.guild_id, msg.data)
+                    _log.warning(f"Voice socket for guild {self.connection.guild_id} received error: {msg.data}")
                     break
 
         except asyncio.CancelledError:
             raise
 
         except Exception as exc:
-            _log.debug("Voice socket for guild %s receive loop ended", self.connection.guild_id, exc_info=exc)
+            _log.debug(f"Voice socket for guild {self.connection.guild_id} receive loop ended", exc_info=exc)
 
         close_code = ws.close_code
 
@@ -179,13 +174,13 @@ class VoiceSocket:
         data: dict = payload.get("d") or {}
 
         try:
-            voice_op = VoiceOp(op)
+            voice_op = VoiceOpType(op)
         except ValueError:
-            _log.debug("Voice socket for guild %s received unknown op %s", self.connection.guild_id, op)
+            _log.debug(f"Voice socket for guild {self.connection.guild_id} received unknown op {op}")
             return
 
         match voice_op:
-            case VoiceOp.hello:
+            case VoiceOpType.hello:
                 self._heartbeat_interval = float(data["heartbeat_interval"]) / 1000
                 self._start_heartbeat()
                 if self._resuming:
@@ -193,24 +188,24 @@ class VoiceSocket:
                 else:
                     self._schedule(self.send_identify())
 
-            case VoiceOp.ready:
+            case VoiceOpType.ready:
                 self._schedule(self.connection.on_ready(data))
 
-            case VoiceOp.session_description:
+            case VoiceOpType.session_description:
                 self._schedule(self.connection.on_session_description(data))
 
-            case VoiceOp.speaking:
+            case VoiceOpType.speaking:
                 self._schedule(self.connection.on_speaking(data))
 
-            case VoiceOp.heartbeat_ack:
+            case VoiceOpType.heartbeat_ack:
                 if self._last_send:
                     self._latencies.append(time.perf_counter() - self._last_send)
 
-            case VoiceOp.resumed:
+            case VoiceOpType.resumed:
                 self._schedule(self.connection.on_resumed(data))
 
             case _:
-                _log.debug("Voice socket for guild %s received unhandled op %s", self.connection.guild_id, voice_op)
+                _log.debug(f"Voice socket for guild {self.connection.guild_id} received unhandled op {voice_op}")
 
     def _dispatch_binary(self, raw: bytes) -> None:
         """
@@ -257,7 +252,7 @@ class VoiceSocket:
         try:
             await coro
         except Exception as exc:
-            _log.error("Error in voice socket handler for guild %s", self.connection.guild_id, exc_info=exc)
+            _log.error(f"Error in voice socket handler for guild {self.connection.guild_id}", exc_info=exc)
 
     def _start_heartbeat(self) -> None:
         """ (Re)start the heartbeat task using the negotiated interval. """
@@ -278,14 +273,14 @@ class VoiceSocket:
         except asyncio.CancelledError:
             pass
         except Exception as exc:
-            _log.debug("Voice heartbeat for guild %s stopped", self.connection.guild_id, exc_info=exc)
+            _log.debug(f"Voice heartbeat for guild {self.connection.guild_id} stopped", exc_info=exc)
 
     async def _send_heartbeat(self) -> None:
         """ Send a single heartbeat frame, recording the send time for latency. """
         self._last_send = time.perf_counter()
         nonce = int(time.time() * 1000)
         await self._send_json({
-            "op": int(VoiceOp.heartbeat),
+            "op": int(VoiceOpType.heartbeat),
             "d": {
                 "t": nonce,
                 "seq_ack": self.seq_ack,
@@ -310,7 +305,7 @@ class VoiceSocket:
         from .dave import max_protocol_version
 
         await self._send_json({
-            "op": int(VoiceOp.identify),
+            "op": int(VoiceOpType.identify),
             "d": {
                 "server_id": str(self.connection.guild_id),
                 "user_id": str(self.connection.user_id),
@@ -334,7 +329,7 @@ class VoiceSocket:
             The negotiated encryption mode.
         """
         await self._send_json({
-            "op": int(VoiceOp.select_protocol),
+            "op": int(VoiceOpType.select_protocol),
             "d": {
                 "protocol": "udp",
                 "data": {
@@ -359,7 +354,7 @@ class VoiceSocket:
             The voice delay, in milliseconds.
         """
         await self._send_json({
-            "op": int(VoiceOp.speaking),
+            "op": int(VoiceOpType.speaking),
             "d": {
                 "speaking": int(speaking),
                 "delay": int(delay),
@@ -370,7 +365,7 @@ class VoiceSocket:
     async def send_resume(self) -> None:
         """ Send the RESUME (op 7) frame to resume an interrupted session. """
         await self._send_json({
-            "op": int(VoiceOp.resume),
+            "op": int(VoiceOpType.resume),
             "d": {
                 "server_id": str(self.connection.guild_id),
                 "session_id": self.connection.session_id,
@@ -412,8 +407,3 @@ class VoiceSocket:
         if self.ws is not None and not self.ws.closed:
             await self.ws.close()
         self.ws = None
-
-        if self._own_session and self._session is not None:
-            await self._session.close()
-            self._session = None
-            self._own_session = False

@@ -102,9 +102,9 @@ class Client:
         Whether to disable the default GET path or not, if not provided, it will use `False`.
         The default GET path only provides information about the bot and when it was last rebooted.
         Usually a great tool to just validate that your bot is online.
-    resume_voice: bool
-        Whether to remember and revive voice clients across shard reboots, if not provided, it will use `False`.
-        Requires the `guild_voice_states` intent; otherwise voice clients are torn down on shard reset.
+    voice_reconnect_attempts: int
+        How many times a voice connection will try to fully reconnect after an
+        unexpected close before giving up, if not provided, it will use `5`.
     """
     def __init__(
         self,
@@ -130,7 +130,7 @@ class Client:
         logging_level: int = logging.INFO,
         disable_default_get_path: bool = False,
         debug_events: bool = False,
-        resume_voice: bool = False
+        voice_reconnect_attempts: int = 5
     ):
         if application_id is not None:
             _log.warning(
@@ -153,7 +153,11 @@ class Client:
         self.logging_level: int = logging_level
         self.debug_events: bool = debug_events
         self.enable_gateway: bool = enable_gateway
-        self.resume_voice: bool = resume_voice
+        self.voice_reconnect_attempts: int = voice_reconnect_attempts
+        """
+        How many times a voice connection will try to fully reconnect after an
+        unexpected close before giving up.
+        """
         self.playing_status: "PlayingStatus | None" = playing_status
         self.guild_ready_timeout: float = guild_ready_timeout
         self.chunk_guilds_on_startup: bool = chunk_guilds_on_startup
@@ -260,110 +264,6 @@ class Client:
             The guild to remove the voice client for.
         """
         self._voice_clients.pop(guild_id, None)
-
-    def _voice_clients_for_shard(self, shard_id: int) -> "list[VoiceClient]":
-        """
-        Return the registered voice clients whose guilds belong to a shard.
-
-        Parameters
-        ----------
-        shard_id:
-            The shard to enumerate voice clients for.
-
-        Returns
-        -------
-            The voice clients belonging to the shard's guilds.
-        """
-        if not self.gateway:
-            return []
-
-        return [
-            vc for guild_id, vc in list(self._voice_clients.items())
-            if self.get_shard_by_guild_id(guild_id) == shard_id
-        ]
-
-    def _has_voice_states_intent(self, shard_id: int) -> bool:
-        """
-        Whether the ``guild_voice_states`` intent is enabled for a shard.
-
-        Parameters
-        ----------
-        shard_id:
-            The shard to check the intents of.
-
-        Returns
-        -------
-            ``True`` if the intent is available, otherwise ``False``.
-        """
-        from .gateway.flags import Intents
-
-        if not self.gateway:
-            return False
-
-        shard = self.gateway.get_shard(shard_id)
-        if shard is None:
-            return False
-
-        return Intents.guild_voice_states in shard.intents
-
-    async def _revive_voice_clients(self, shard_id: int) -> None:
-        """
-        Re-establish remembered voice clients after a shard READY/RESUMED.
-
-        This is a no-op unless :attr:`resume_voice` is enabled, the
-        ``guild_voice_states`` intent is available, and there are voice clients
-        belonging to the shard. Each remembered client re-issues op4 and runs a
-        fresh handshake, resuming playback where possible.
-
-        Parameters
-        ----------
-        shard_id:
-            The shard that just became ready or resumed.
-        """
-        if not self.resume_voice:
-            return
-
-        voice_clients = self._voice_clients_for_shard(shard_id)
-        if not voice_clients:
-            return
-
-        if not self._has_voice_states_intent(shard_id):
-            _log.warning(
-                "resume_voice is enabled but the guild_voice_states intent is missing; "
-                "tearing down voice clients for shard %s",
-                shard_id
-            )
-            await self._teardown_voice_clients_for_shard(shard_id)
-            return
-
-        for vc in voice_clients:
-            if vc.is_connected():
-                # Still alive (e.g. a RESUMED where nothing was torn down).
-                continue
-            try:
-                await vc.connect(
-                    self_deaf=vc.connection._self_deaf,
-                    self_mute=vc.connection._self_mute,
-                )
-            except Exception as exc:
-                _log.warning("Failed to revive voice client for guild %s", vc.guild_id, exc_info=exc)
-                await vc._cleanup()
-
-    async def _teardown_voice_clients_for_shard(self, shard_id: int) -> None:
-        """
-        Tear down every voice client belonging to a shard's guilds.
-
-        Stops playback, closes the websocket and UDP transport, and removes the
-        client from the registry. Used when a shard is reset or killed and the
-        connections should not survive.
-
-        Parameters
-        ----------
-        shard_id:
-            The shard whose voice clients should be torn down.
-        """
-        for vc in self._voice_clients_for_shard(shard_id):
-            await vc._cleanup()
 
     async def _cooldown_cleanup_loop(self) -> None:
         """ Periodically sweeps expired cooldown buckets that accumulate between invocations. """

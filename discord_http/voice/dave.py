@@ -9,7 +9,7 @@ except ImportError:
     davey = None
     has_dave = False
 
-from .enums import VoiceOp
+from .enums import VoiceOpType
 
 if TYPE_CHECKING:
     from .connection import VoiceConnection
@@ -141,7 +141,7 @@ class DaveManager:
                 self._connection.channel_id,
             )
         except Exception as exc:
-            _log.warning("Failed to initialise DAVE session: %s", exc)
+            _log.warning(f"Failed to initialise DAVE session: {exc}")
             self._session = None
             return
 
@@ -158,7 +158,7 @@ class DaveManager:
             return
 
         await self._connection.socket.send_binary(
-            int(VoiceOp.dave_mls_key_package), key_package
+            int(VoiceOpType.dave_mls_key_package), key_package
         )
 
     def set_passthrough_mode(self, enabled: bool) -> None:
@@ -173,11 +173,13 @@ class DaveManager:
         enabled:
             ``True`` to pass media through unchanged, ``False`` to resume encryption.
         """
-        if self._session is not None:
-            try:
-                self._session.set_passthrough_mode(enabled)
-            except AttributeError:
-                pass
+        if self._session is None:
+            return
+
+        try:
+            self._session.set_passthrough_mode(enabled)
+        except AttributeError:
+            pass
 
     def encrypt_opus(self, opus: bytes) -> bytes:
         """
@@ -232,22 +234,23 @@ class DaveManager:
         payload:
             The raw binary payload following the opcode.
         """
-        if opcode == VoiceOp.dave_prepare_transition:
-            await self._handle_prepare_transition(payload)
-        elif opcode == VoiceOp.dave_execute_transition:
-            await self._handle_execute_transition(payload)
-        elif opcode == VoiceOp.dave_prepare_epoch:
-            await self._handle_prepare_epoch(payload)
-        elif opcode == VoiceOp.dave_mls_external_sender:
-            self._handle_external_sender(payload)
-        elif opcode == VoiceOp.dave_mls_proposals:
-            await self._handle_proposals(payload)
-        elif opcode == VoiceOp.dave_mls_announce_commit_transition:
-            await self._handle_commit(payload)
-        elif opcode == VoiceOp.dave_mls_welcome:
-            await self._handle_welcome(payload)
-        else:
-            _log.debug("Unhandled DAVE binary opcode %s", opcode)
+        match opcode:
+            case VoiceOpType.dave_prepare_transition:
+                await self._handle_prepare_transition(payload)
+            case VoiceOpType.dave_execute_transition:
+                await self._handle_execute_transition(payload)
+            case VoiceOpType.dave_prepare_epoch:
+                await self._handle_prepare_epoch(payload)
+            case VoiceOpType.dave_mls_external_sender:
+                self._handle_external_sender(payload)
+            case VoiceOpType.dave_mls_proposals:
+                await self._handle_proposals(payload)
+            case VoiceOpType.dave_mls_announce_commit_transition:
+                await self._handle_commit(payload)
+            case VoiceOpType.dave_mls_welcome:
+                await self._handle_welcome(payload)
+            case _:
+                _log.debug(f"Unhandled DAVE binary opcode {opcode}")
 
     async def _handle_prepare_transition(self, payload: bytes) -> None:
         """ Handle PREPARE_TRANSITION (21): record the pending transition and acknowledge. """
@@ -258,7 +261,7 @@ class DaveManager:
             await self._execute_transition(transition_id, version)
         else:
             await self._connection.socket.send_binary(
-                int(VoiceOp.dave_transition_ready), self._encode_transition_id(transition_id)
+                int(VoiceOpType.dave_transition_ready), self._encode_transition_id(transition_id)
             )
 
     async def _handle_execute_transition(self, payload: bytes) -> None:
@@ -271,14 +274,14 @@ class DaveManager:
                 await self._execute_transition(transition_id, version)
                 return
 
-        _log.debug("Received EXECUTE_TRANSITION for unknown transition %s", transition_id)
+        _log.debug(f"Received EXECUTE_TRANSITION for unknown transition {transition_id}")
 
     async def _execute_transition(self, transition_id: int, version: int) -> None:
         """ Apply a transition: switch protocol version and update passthrough mode. """
         self._version = version
         self.set_passthrough_mode(version == 0)
         self._pending_transition = None
-        _log.debug("Executed DAVE transition %s to version %s", transition_id, version)
+        _log.debug(f"Executed DAVE transition {transition_id} to version {version}")
 
     async def _handle_prepare_epoch(self, payload: bytes) -> None:
         """ Handle PREPARE_EPOCH (24): reinitialise the session for a new MLS epoch. """
@@ -303,7 +306,7 @@ class DaveManager:
         except AttributeError:
             return
         except Exception as exc:
-            _log.warning("Failed to process MLS proposals: %s", exc)
+            _log.warning(f"Failed to process MLS proposals: {exc}")
             await self._recover_from_invalid_commit()
             return
 
@@ -313,7 +316,7 @@ class DaveManager:
         commit_welcome = self._extract_commit_welcome(result)
         if commit_welcome is not None:
             await self._connection.socket.send_binary(
-                int(VoiceOp.dave_mls_commit_welcome), commit_welcome
+                int(VoiceOpType.dave_mls_commit_welcome), commit_welcome
             )
 
     async def _handle_commit(self, payload: bytes) -> None:
@@ -326,7 +329,7 @@ class DaveManager:
         except AttributeError:
             return
         except Exception as exc:
-            _log.warning("Failed to process MLS commit: %s", exc)
+            _log.warning(f"Failed to process MLS commit: {exc}")
             await self._recover_from_invalid_commit()
 
     async def _handle_welcome(self, payload: bytes) -> None:
@@ -339,13 +342,13 @@ class DaveManager:
         except AttributeError:
             return
         except Exception as exc:
-            _log.warning("Failed to process MLS welcome: %s", exc)
+            _log.warning(f"Failed to process MLS welcome: {exc}")
             await self._recover_from_invalid_commit()
 
     async def _recover_from_invalid_commit(self) -> None:
         """ Notify the gateway of an invalid commit/welcome and reinitialise the session. """
         await self._connection.socket.send_binary(
-            int(VoiceOp.dave_mls_invalid_commit_welcome), b""
+            int(VoiceOpType.dave_mls_invalid_commit_welcome), b""
         )
         await self.reinit(self._version)
 
