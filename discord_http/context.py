@@ -743,9 +743,15 @@ class Context:
     async def _background_task_manager(self, call_after: Callable) -> None:
         try:
             try:
+                # Give Discord enough time to close their connection
                 await asyncio.wait_for(self._response_sent.wait(), timeout=5.0)
             except TimeoutError:
-                pass
+                self._response_sent.set()
+                _log.error(
+                    f"call_after:{call_after} refused: no response confirmation from Discord within 5s (connection likely dropped)"
+                )
+                return
+
             await call_after()
         except Exception as e:
             if self.bot.has_any_dispatch("interaction_error"):
