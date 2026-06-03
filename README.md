@@ -1,12 +1,18 @@
-# discord.http
-Python library that handles interactions from Discord POST requests.
+![discord.http](https://raw.githubusercontent.com/AlexFlipnote/discord.http/master/.github/branding/banner.png)
 
-## Supported installs
-- [Guild application (normal bot)](/examples/ping_cmd_example.py)
-- [User application (bots on user accounts)](/examples/user_command_example.py)
+A Python library for Discord bots using HTTP interactions, with optional WebSocket support and full cache control.
 
-## Installing
-> You need **Python >=3.11** to use this library.
+- Lightweight and fully customisable, no bloat or forced abstractions
+- HTTP-first with optional WebSocket support when you need it
+- Full cache control, you decide what gets stored and what does not
+- Barebone and developer-first, designed to get out of your way
+- Supports both guild install and user install bot types
+
+The API is designed to feel familiar if you are coming from [discord.py](https://github.com/Rapptz/discord.py), so switching between the two should not require much relearning.
+
+## Requirements & Installing
+- Python 3.11 or newer
+- A web server to receive HTTP requests from Discord (nginx, Apache, etc.)
 
 Install by using `pip install discord.http` in the terminal.
 If `pip` does not work, there are other ways to install as well, most commonly:
@@ -37,6 +43,8 @@ async def ping(ctx: Context):
 client.start()
 ```
 
+Want to also listen to gateway events? Pass `enable_gateway=True` to the client along with your desired `intents`.
+
 Need further help on how to make Discord API able to send requests to your bot?
 Check out [the documentation](https://discordhttp.alexflipnote.dev/pages/getting_started.html) for more detailed information.
 
@@ -53,10 +61,3 @@ Run all tests from the project root:
   - [Discord API documentation](https://discord.com/developers/docs/intro)
 - [Discord server](https://discord.gg/yqb7vATbjH)
 - [discord.http Bot example](https://github.com/AlexFlipnote/discord_bot.http)
-
-
-## Acknowledgements
-This library was inspired by [discord.py](https://github.com/Rapptz/discord.py), developed by [Rapptz](https://github.com/Rapptz).
-We would like to express our gratitude for their amazing work, which has served as a foundation for this project.
-
-The project is also a fork of [joyn-gg/discord.http](https://github.com/joyn-gg/discord.http)
