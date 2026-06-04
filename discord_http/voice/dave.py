@@ -372,7 +372,8 @@ class DaveManager:
             return
 
         if transition_id != 0:
-            self._pending_transition = (transition_id, self._version)
+            version = self._pending_transition_version(transition_id)
+            self._pending_transition = (transition_id, version)
             await self._connection.socket.send_transition_ready(transition_id)
 
     async def _handle_welcome(self, payload: bytes) -> None:
@@ -397,8 +398,27 @@ class DaveManager:
             return
 
         if transition_id != 0:
-            self._pending_transition = (transition_id, self._version)
+            version = self._pending_transition_version(transition_id)
+            self._pending_transition = (transition_id, version)
             await self._connection.socket.send_transition_ready(transition_id)
+
+    def _pending_transition_version(self, transition_id: int) -> int:
+        """
+        Resolve the protocol version to record for a transition driven by an
+        incoming commit/welcome.
+
+        When ``DAVE_PREPARE_TRANSITION`` already recorded the negotiated target
+        version for this ``transition_id``, preserve it so the later
+        ``EXECUTE_TRANSITION`` applies the negotiated epoch rather than the
+        current version. Otherwise (no matching pending transition, e.g. the
+        commit/welcome arrived first) fall back to the current version.
+        """
+        if (
+            self._pending_transition is not None
+            and self._pending_transition[0] == transition_id
+        ):
+            return self._pending_transition[1]
+        return self._version
 
     async def _recover_from_invalid_commit(self) -> None:
         """ Notify the gateway of an invalid commit/welcome and reinitialise the session. """

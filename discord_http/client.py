@@ -153,6 +153,8 @@ class Client:
         self.logging_level: int = logging_level
         self.debug_events: bool = debug_events
         self.enable_gateway: bool = enable_gateway
+        if voice_reconnect_attempts < 0:
+            raise ValueError("voice_reconnect_attempts must be >= 0")
         self.voice_reconnect_attempts: int = voice_reconnect_attempts
         """
         How many times a voice connection will try to fully reconnect after an
