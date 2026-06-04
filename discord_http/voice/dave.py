@@ -235,12 +235,6 @@ class DaveManager:
             The raw binary payload following the opcode.
         """
         match opcode:
-            case VoiceOpType.dave_prepare_transition:
-                await self._handle_prepare_transition(payload)
-            case VoiceOpType.dave_execute_transition:
-                await self._handle_execute_transition(payload)
-            case VoiceOpType.dave_prepare_epoch:
-                await self._handle_prepare_epoch(payload)
             case VoiceOpType.dave_mls_external_sender:
                 self._handle_external_sender(payload)
             case VoiceOpType.dave_mls_proposals:
@@ -252,9 +246,35 @@ class DaveManager:
             case _:
                 _log.debug(f"Unhandled DAVE binary opcode {opcode}")
 
-    async def _handle_prepare_transition(self, payload: bytes) -> None:
+    async def handle_json(self, opcode: int, data: dict) -> None:
+        """
+        Dispatch a JSON DAVE control op (21, 22, 24) received from the gateway.
+
+        Unlike the MLS data ops (25-31), the transition/epoch control ops arrive as
+        regular JSON text frames rather than binary frames, so they are routed here
+        with the decoded ``d`` payload instead of raw bytes.
+
+        Parameters
+        ----------
+        opcode:
+            The voice opcode, expected to be one of 21, 22 or 24.
+        data:
+            The decoded JSON ``d`` payload of the frame.
+        """
+        match opcode:
+            case VoiceOpType.dave_prepare_transition:
+                await self._handle_prepare_transition(data)
+            case VoiceOpType.dave_execute_transition:
+                await self._handle_execute_transition(data)
+            case VoiceOpType.dave_prepare_epoch:
+                await self._handle_prepare_epoch(data)
+            case _:
+                _log.debug(f"Unhandled DAVE JSON opcode {opcode}")
+
+    async def _handle_prepare_transition(self, data: dict) -> None:
         """ Handle PREPARE_TRANSITION (21): record the pending transition and acknowledge. """
-        transition_id, version = self._parse_transition(payload)
+        transition_id = int(data.get("transition_id", 0) or 0)
+        version = int(data.get("protocol_version", 0) or 0)
         self._pending_transition = (transition_id, version)
 
         if transition_id == 0:
@@ -262,9 +282,9 @@ class DaveManager:
         else:
             await self._connection.socket.send_transition_ready(transition_id)
 
-    async def _handle_execute_transition(self, payload: bytes) -> None:
+    async def _handle_execute_transition(self, data: dict) -> None:
         """ Handle EXECUTE_TRANSITION (22): apply the pending version and passthrough state. """
-        transition_id, _ = self._parse_transition(payload)
+        transition_id = int(data.get("transition_id", 0) or 0)
 
         if self._pending_transition is not None:
             pending_id, version = self._pending_transition
@@ -281,9 +301,9 @@ class DaveManager:
         self._pending_transition = None
         _log.debug(f"Executed DAVE transition {transition_id} to version {version}")
 
-    async def _handle_prepare_epoch(self, payload: bytes) -> None:
+    async def _handle_prepare_epoch(self, data: dict) -> None:
         """ Handle PREPARE_EPOCH (24): reinitialise the session for a new MLS epoch. """
-        _epoch, version = self._parse_transition(payload)
+        version = int(data.get("protocol_version", 0) or 0)
         await self.reinit(version)
 
     def _handle_external_sender(self, payload: bytes) -> None:
@@ -424,15 +444,3 @@ class DaveManager:
             except Exception:
                 return None
         return None
-
-    @staticmethod
-    def _parse_transition(payload: bytes) -> tuple[int, int]:
-        """
-        Parse a transition payload into ``(transition_id, version)``.
-
-        Transition payloads carry a 2-byte big-endian transition id optionally followed by
-        a 1-byte protocol version. Missing fields default to ``0``.
-        """
-        transition_id = int.from_bytes(payload[:2], "big") if len(payload) >= 2 else 0
-        version = payload[2] if len(payload) >= 3 else 0
-        return transition_id, version

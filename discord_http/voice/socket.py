@@ -26,6 +26,7 @@ class VoiceCloseCode(BaseEnum):
 
     normal = 1000
     going_away = 1001
+    session_invalid = 4006
     disconnected = 4014
     voice_server_crashed = 4015
     unknown_encryption_mode = 4016
@@ -206,6 +207,18 @@ class VoiceSocket:
 
             case VoiceOpType.resumed:
                 self._schedule(self.connection.on_resumed(data))
+
+            case (
+                VoiceOpType.dave_prepare_transition
+                | VoiceOpType.dave_execute_transition
+                | VoiceOpType.dave_prepare_epoch
+            ):
+                # The DAVE transition/epoch control ops arrive as JSON text frames
+                # (only the MLS data ops 25-31 are binary), so route them with the
+                # decoded payload. Handling these keeps the local MLS session in
+                # step with the gateway's epoch; ignoring them desyncs the epoch and
+                # leads to MLS WrongEpoch errors and a 4006 close on rejoin.
+                self._schedule(self.connection.on_dave_json(int(voice_op), data))
 
             case _:
                 _log.debug(f"Voice socket for guild {self.connection.guild_id} received unhandled op {voice_op}")

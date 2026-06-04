@@ -48,14 +48,13 @@ def caller_voice_channel(ctx: Context) -> "BaseChannel | PartialChannel | None":
         return None
 
     voice_state = ctx.guild.get_member_voice_state(ctx.user.id)
-    if voice_state is None or voice_state.channel_id is None:
+    if voice_state is None:
         return None
 
-    # ``VoiceState`` exposes the resolved ``channel`` directly; the partial variant only
-    # carries the id, so fall back to a partial channel that ``connect()`` can act on.
-    return getattr(voice_state, "channel", None) or client.get_partial_channel(
-        voice_state.channel_id, guild_id=ctx.guild.id
-    )
+    # ``channel`` is available on both ``VoiceState`` and ``PartialVoiceState`` and
+    # always returns something ``connect()`` can act on (a partial channel when the
+    # full object is not cached), or ``None`` when the user is not in a channel.
+    return voice_state.channel
 
 
 @client.command()
@@ -76,7 +75,7 @@ async def join(ctx: Context):
 @client.command()
 async def pause(ctx: Context):
     """ Pause / resume the current track """
-    vc = client._get_voice_client(ctx.guild.id) if ctx.guild else None
+    vc = client.get_voice_client(ctx.guild.id) if ctx.guild else None
     if vc is None:
         return ctx.response.send_message("Not connected.")
 
@@ -91,7 +90,7 @@ async def pause(ctx: Context):
 @client.command()
 async def leave(ctx: Context):
     """ Stop playback and disconnect """
-    vc = client._get_voice_client(ctx.guild.id) if ctx.guild else None
+    vc = client.get_voice_client(ctx.guild.id) if ctx.guild else None
     if vc is None:
         return ctx.response.send_message("Not connected.")
 

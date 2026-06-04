@@ -105,6 +105,7 @@ class VoiceClient:
         *,
         timeout: float = 30.0,
         reconnect: bool = True,
+        reconnect_on_session_invalid: bool = False,
         self_deaf: bool = False,
         self_mute: bool = False
     ) -> None:
@@ -117,6 +118,10 @@ class VoiceClient:
             The maximum time to wait for the handshake, in seconds.
         reconnect:
             Whether to attempt reconnection on failure.
+        reconnect_on_session_invalid:
+            Whether to reconnect when Discord invalidates the session (close code
+            4006), e.g. after the channel empties and the DAVE session is torn
+            down. Defaults to ``False`` (disconnect instead of reconnecting).
         self_deaf:
             Whether to join self-deafened.
         self_mute:
@@ -125,6 +130,7 @@ class VoiceClient:
         await self.connection.connect(
             timeout=timeout,
             reconnect=reconnect,
+            reconnect_on_session_invalid=reconnect_on_session_invalid,
             self_deaf=self_deaf,
             self_mute=self_mute,
         )
