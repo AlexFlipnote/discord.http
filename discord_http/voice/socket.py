@@ -30,6 +30,7 @@ class VoiceCloseCode(BaseEnum):
     disconnected = 4014
     voice_server_crashed = 4015
     unknown_encryption_mode = 4016
+    dave_e2ee_required = 4017
     bad_request = 4020
     rate_limited = 4021
     call_terminated = 4022
@@ -60,6 +61,7 @@ class VoiceSocket:
         self._heartbeat_interval: float = 0.0
         self._heartbeat_task: asyncio.Task | None = None
         self._receive_task: asyncio.Task | None = None
+        self._dispatch_tasks: set[asyncio.Task] = set()
 
         self._last_send: float = 0.0
         self._latencies: deque[float] = deque(maxlen=20)
@@ -92,7 +94,7 @@ class VoiceSocket:
         RuntimeError
             If the HTTP session is not available (the client is not running).
         """
-        session = self.connection.voice_client.client.state.http.session
+        session = self.connection.voice_client.bot.state.http.session
         if session is None:
             raise RuntimeError("HTTP session is not available; the client must be running to open a voice socket")
         return session
@@ -251,10 +253,12 @@ class VoiceSocket:
         coro:
             The coroutine to run independently of the receive loop.
         """
-        asyncio.create_task(  # noqa: RUF006
+        task = asyncio.create_task(
             self._guard(coro),
             name=f"discord.http/voice/socket-{self.connection.guild_id}/dispatch"
         )
+        self._dispatch_tasks.add(task)
+        task.add_done_callback(self._dispatch_tasks.discard)
 
     async def _guard(self, coro: Coroutine[Any, Any, Any]) -> None:
         """

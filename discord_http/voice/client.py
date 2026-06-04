@@ -29,11 +29,8 @@ class VoiceClient:
     """
 
     def __init__(self, client: "Client", channel: "PartialChannel"):
-        self.client: "Client" = client
-        """ The bot client that owns this voice client. """
-
         self.bot: "Client" = client
-        """ Alias of :attr:`client`. """
+        """ The bot client that owns this voice client. """
 
         self.channel: "PartialChannel" = channel
         """ The voice channel this client is connected to. """
@@ -54,12 +51,12 @@ class VoiceClient:
     @property
     def loop(self) -> asyncio.AbstractEventLoop:
         """ The event loop the client runs on. """
-        return self.client.loop
+        return self.bot.loop
 
     @property
     def user_id(self) -> int:
         """ The ID of the bot user. """
-        return self.client.user.id
+        return self.bot.user.id
 
     @property
     def ssrc(self) -> int | None:
@@ -157,7 +154,7 @@ class VoiceClient:
             self._encoder = None
 
         await self.connection.disconnect(force=force)
-        self.client._remove_voice_client(self.guild_id)
+        self.bot._remove_voice_client(self.guild_id)
 
     async def _cleanup(self) -> None:
         """
@@ -180,7 +177,7 @@ class VoiceClient:
             self._encoder = None
 
         await self.connection.close_transport()
-        self.client._remove_voice_client(self.guild_id)
+        self.bot._remove_voice_client(self.guild_id)
 
     async def move_to(self, channel: "PartialChannel | int") -> None:
         """
@@ -192,7 +189,7 @@ class VoiceClient:
             The channel to move to, either a channel object or its ID.
         """
         if isinstance(channel, int):
-            channel = self.client.get_partial_channel(channel, guild_id=self.guild_id)
+            channel = self.bot.get_partial_channel(channel, guild_id=self.guild_id)
         await self.connection.move_to(channel)
         self.channel = channel
 

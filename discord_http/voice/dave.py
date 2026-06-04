@@ -404,10 +404,10 @@ class DaveManager:
 
     def _pending_transition_version(self, transition_id: int) -> int:
         """
-        Resolve the protocol version to record for a transition driven by an
-        incoming commit/welcome.
+        Resolve the protocol version to record for a transition.
 
-        When ``DAVE_PREPARE_TRANSITION`` already recorded the negotiated target
+        The transition is driven by an incoming commit/welcome. When
+        ``DAVE_PREPARE_TRANSITION`` already recorded the negotiated target
         version for this ``transition_id``, preserve it so the later
         ``EXECUTE_TRANSITION`` applies the negotiated epoch rather than the
         current version. Otherwise (no matching pending transition, e.g. the
