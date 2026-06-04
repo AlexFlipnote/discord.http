@@ -73,6 +73,11 @@ class VoiceReceiver:
         sink:
             The sink to receive decoded PCM or raw Opus audio.
         """
+        # Tear down any in-progress session so its sink is cleaned up and stale
+        # per-SSRC decoder/sequence state does not leak into the new sink.
+        if self.sink is not None:
+            self.stop()
+
         self.sink = sink
 
     def stop(self) -> None:

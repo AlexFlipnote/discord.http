@@ -69,7 +69,7 @@ async def join(ctx: Context):
     # Play a local file (mp3 -> opus passthrough, ffmpeg only).
     vc.play("song.mp3")
 
-    return ctx.response.send_message(f"Now playing, latency: {vc.latency:.1f}ms")
+    return ctx.response.send_message(f"Now playing, latency: {vc.latency * 1000:.1f}ms")
 
 
 @client.command()
@@ -126,7 +126,7 @@ async def voice_demo(channel: BaseChannel, move_to: BaseChannel) -> None:
     await asyncio.sleep(10)
     vc.stop_listening()
 
-    print(f"voice latency: {vc.latency:.1f}ms (avg {vc.average_latency:.1f}ms)")
+    print(f"voice latency: {vc.latency * 1000:.1f}ms (avg {vc.average_latency * 1000:.1f}ms)")
 
     vc.stop()
     await vc.disconnect()

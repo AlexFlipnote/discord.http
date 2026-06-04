@@ -3,6 +3,7 @@ import asyncio
 import io
 import logging
 import os
+import shlex
 import shutil
 
 from array import array
@@ -329,8 +330,8 @@ class FFmpegPCMAudio(_FFmpegAudio):
 
     ffmpeg decodes the input to signed 16-bit little-endian PCM at 48kHz in
     stereo, and :meth:`read` returns one 3840-byte frame per call via
-    :meth:`asyncio.StreamReader.readexactly`. The final, possibly short frame is
-    returned once before end of stream is signalled with empty bytes.
+    :meth:`asyncio.StreamReader.readexactly`. Any trailing partial frame at the
+    end of stream is discarded and end of stream is signalled with empty bytes.
 
     Because the output is PCM, libopus is required to encode it before sending.
 
@@ -358,11 +359,11 @@ class FFmpegPCMAudio(_FFmpegAudio):
         pipe: bool = False,
         executable: str = "ffmpeg",
     ) -> None:
-        before_args = before_options.split() if before_options is not None else None
+        before_args = shlex.split(before_options) if before_options is not None else None
 
         args = ["-f", "s16le", "-ar", "48000", "-ac", "2", "-loglevel", "warning"]
         if options is not None:
-            args.extend(options.split())
+            args.extend(shlex.split(options))
         args.append("pipe:1")
 
         super().__init__(source, args=args, before_args=before_args, executable=executable, pipe=pipe)
@@ -375,9 +376,11 @@ class FFmpegPCMAudio(_FFmpegAudio):
         assert self._stdout is not None
         try:
             return await self._stdout.readexactly(FRAME_SIZE)
-        except asyncio.IncompleteReadError as exc:
-            # End of stream: return the trailing partial frame, then b"".
-            return bytes(exc.partial)
+        except asyncio.IncompleteReadError:
+            # End of stream: discard any trailing partial frame and signal EOF.
+            # The contract requires exactly FRAME_SIZE bytes or empty bytes; a
+            # short PCM frame would be mis-encoded by libopus downstream.
+            return b""
 
 
 class FFmpegOpusAudio(_FFmpegAudio):
@@ -436,7 +439,7 @@ class FFmpegOpusAudio(_FFmpegAudio):
         pipe: bool = False,
         executable: str = "ffmpeg",
     ) -> None:
-        before_args = before_options.split() if before_options is not None else None
+        before_args = shlex.split(before_options) if before_options is not None else None
 
         args = [
             "-c:a", "libopus",
@@ -447,7 +450,7 @@ class FFmpegOpusAudio(_FFmpegAudio):
             "-loglevel", "warning",
         ]
         if options is not None:
-            args.extend(options.split())
+            args.extend(shlex.split(options))
         args.append("pipe:1")
 
         super().__init__(source, args=args, before_args=before_args, executable=executable, pipe=pipe)
@@ -613,6 +616,10 @@ class AudioPlayer:
 
     async def _cleanup(self) -> None:
         """ Flush silence, stop speaking, clean up and invoke ``after``. """
+        # Mark the player as finished so ``is_playing()``/``is_paused()`` report
+        # correctly after natural EOF. Idempotent: ``stop()`` may have set it.
+        self._end.set()
+
         try:
             for _ in range(5):
                 self.voice_client.send_audio_packet(OPUS_SILENCE, encode=False)
