@@ -119,7 +119,12 @@ class CallbackSink(AudioSink):
 
 
 class WaveSink(AudioSink):
-    """ Audio sink that writes received PCM to a single 48kHz 16-bit stereo WAV file. """
+    """
+    Audio sink that writes received PCM to a single 48kHz 16-bit stereo WAV file.
+
+    All speakers are mixed into a single stream; the ``user`` argument to
+    :meth:`write` is ignored, so per-speaker separation is not preserved.
+    """
 
     def __init__(self, destination: str | os.PathLike | io.IOBase) -> None:
         """
@@ -161,7 +166,8 @@ class WaveSink(AudioSink):
         Parameters
         ----------
         user:
-            The user ID the audio belongs to, or ``None`` if unknown (unused)
+            The user ID the audio belongs to, or ``None`` if unknown (unused;
+            all speakers are mixed into the same WAV stream)
         data:
             The voice data container holding the PCM payload
         """

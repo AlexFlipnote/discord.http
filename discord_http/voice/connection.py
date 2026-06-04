@@ -100,6 +100,10 @@ class VoiceConnection:
         self._server_event: asyncio.Event = asyncio.Event()
         self._ready_event: asyncio.Event = asyncio.Event()
         self._connected_event: asyncio.Event = asyncio.Event()
+        # Set when the gateway acknowledges the bot leaving the channel
+        # (VOICE_STATE_UPDATE with channel_id=None); used by the reconnect
+        # bounce to confirm the leave before rejoining.
+        self._left_event: asyncio.Event = asyncio.Event()
 
         self._reconnect: bool = True
         self._reconnect_on_session_invalid: bool = False
@@ -112,7 +116,7 @@ class VoiceConnection:
     @property
     def client(self) -> "Client":
         """ The bot client that owns this voice connection. """
-        return self.voice_client.client
+        return self.voice_client.bot
 
     @property
     def latency(self) -> float:
@@ -203,9 +207,13 @@ class VoiceConnection:
         self._ready_event.clear()
         self._connected_event.clear()
 
+        # Join the voice client's channel, which is the authoritative target.
+        # Do NOT use self.channel_id here: the reconnect bounce sends op4 with
+        # channel_id=None and the gateway echoes a VOICE_STATE_UPDATE that
+        # clears self.channel_id, so reading it could rejoin the wrong channel.
         await shard.change_voice_state(
             guild_id=self.guild_id,
-            channel_id=self.channel_id,
+            channel_id=self.voice_client.channel.id,
             self_mute=self_mute,
             self_deaf=self_deaf,
         )
@@ -267,16 +275,28 @@ class VoiceConnection:
             return
 
         if close_code == VoiceCloseCode.session_invalid:
-            # Discord invalidates the session (4006) most commonly when the channel
-            # empties out and the DAVE/MLS session is torn down. The session is gone
-            # for good, so reconnecting only helps if the caller explicitly opted in;
-            # otherwise we disconnect rather than retry-and-time-out.
-            if self._reconnect and self._reconnect_on_session_invalid:
-                _log.info(f"Voice session for guild {self.guild_id} invalidated (code {close_code}); reconnecting")
-                await self._full_reconnect(close_code)
-            else:
+            # Discord invalidates the session (4006) most commonly when another
+            # member leaves/rejoins and the DAVE/MLS group is rebuilt. The bot is
+            # still in the channel, so reconnecting only helps if the caller opted
+            # in; otherwise we disconnect rather than retry-and-time-out.
+            if not (self._reconnect and self._reconnect_on_session_invalid):
                 _log.info(f"Voice session for guild {self.guild_id} invalidated (code {close_code}); disconnecting")
                 await self._teardown_and_remove()
+                return
+
+            # Try a soft reconnect first: re-open the voice websocket and
+            # re-IDENTIFY with the existing token/session, WITHOUT leaving the
+            # channel. This avoids a visible disconnect/rejoin blip when the
+            # credentials are still usable.
+            _log.info(f"Voice session for guild {self.guild_id} invalidated (code {close_code}); attempting soft reconnect")
+            if await self._soft_reconnect():
+                _log.info(f"Voice connection for guild {self.guild_id} recovered without rejoining")
+                return
+
+            # The existing credentials are no longer usable; fall back to a full
+            # reconnect that drops and re-acquires the gateway voice state.
+            _log.info(f"Soft reconnect for guild {self.guild_id} failed; falling back to rejoin")
+            await self._full_reconnect(close_code, force_refresh=True)
             return
 
         if close_code in (VoiceCloseCode.normal, VoiceCloseCode.going_away):
@@ -305,7 +325,52 @@ class VoiceConnection:
             _log.warning(f"Voice resume for guild {self.guild_id} failed; falling back to full reconnect", exc_info=exc)
             await self._full_reconnect(int(VoiceCloseCode.voice_server_crashed))
 
-    async def _full_reconnect(self, close_code: int | None) -> None:
+    async def _soft_reconnect(self, timeout: float = 10.0) -> bool:
+        """
+        Re-open the voice websocket and re-IDENTIFY without leaving the channel.
+
+        On a 4006 the gateway voice state (session id) and the voice server
+        token/endpoint are often still valid; the bot never left the channel.
+        Opening a fresh socket and sending IDENTIFY (op 0) with those existing
+        credentials can recover the session with no user-visible blip. Returns
+        ``True`` on a successful handshake, ``False`` if the credentials are
+        missing or the handshake does not complete in time (the caller then
+        falls back to a full leave/rejoin reconnect).
+
+        Parameters
+        ----------
+        timeout:
+            How long to wait for the re-handshake to complete, in seconds.
+        """
+        if not (self.session_id and self.token and self.endpoint):
+            return False
+
+        # Tear down the old socket/UDP locally WITHOUT sending op4, so the gateway
+        # keeps our voice state and we can reuse the session id and token.
+        if self.socket is not None:
+            self.socket._request_close()
+            await self.socket.close()
+            self.socket = None
+
+        if self.transport is not None:
+            self.transport.close()
+            self.transport = None
+        self.udp = None
+
+        self._ready_event.clear()
+        self._connected_event.clear()
+
+        try:
+            self.socket = VoiceSocket(self)
+            await self.socket.connect()
+            await asyncio.wait_for(self._connected_event.wait(), timeout)
+        except Exception as exc:
+            _log.debug(f"Soft reconnect for guild {self.guild_id} did not complete", exc_info=exc)
+            return False
+
+        return True
+
+    async def _full_reconnect(self, close_code: int | None, *, force_refresh: bool = False) -> None:
         """
         Re-issue op4 and run a fresh handshake, retrying with exponential backoff.
 
@@ -313,6 +378,12 @@ class VoiceConnection:
         ----------
         close_code:
             The close code that triggered the reconnect, for logging.
+        force_refresh:
+            When ``True``, drop and re-acquire the gateway voice state (leave and
+            rejoin the channel) before each attempt. Needed for a 4006 where the
+            bot is still in the channel, so re-issuing op4 with the same channel
+            would be a no-op and yield no fresh VOICE_SERVER_UPDATE. Defaults to
+            ``False`` so unrelated reconnects do not cause a visible leave/rejoin.
         """
         if self.socket is not None:
             self.socket._request_close()
@@ -324,6 +395,9 @@ class VoiceConnection:
             self.transport = None
         self.udp = None
 
+        # Each attempt below deliberately re-issues op4 (change_voice_state) via
+        # connect(..., _internal_reconnect=True). The backoff is reset once here
+        # and then grows across attempts (connect() skips resetting it).
         self._backoff.reset()
 
         max_attempts = self.client.voice_reconnect_attempts
@@ -340,6 +414,10 @@ class VoiceConnection:
             await asyncio.sleep(delay)
 
             try:
+                if force_refresh:
+                    # Force Discord to allocate a fresh voice server before
+                    # rejoining (only needed for the 4006 leave/rejoin fallback).
+                    await self._force_voice_refresh()
                 await self.connect(
                     reconnect=self._reconnect,
                     reconnect_on_session_invalid=self._reconnect_on_session_invalid,
@@ -357,6 +435,41 @@ class VoiceConnection:
 
         _log.error(f"Voice connection for guild {self.guild_id} could not reconnect after {max_attempts} attempts; tearing down")
         await self._teardown_and_remove()
+
+    async def _force_voice_refresh(self) -> None:
+        """
+        Drop the gateway voice state so Discord re-allocates a fresh voice server.
+
+        On a 4006 ("session no longer valid") the voice session is dead but the
+        bot is still in the channel at the gateway level. Re-issuing op4 with the
+        same ``channel_id`` is then a no-op for the voice server: no new
+        VOICE_SERVER_UPDATE arrives and the handshake times out waiting for it.
+
+        Sending ``channel_id=None`` first makes the gateway drop the voice state,
+        so the subsequent rejoin in :meth:`connect` is a genuine state change and
+        yields a fresh token/endpoint. We wait for the gateway to acknowledge the
+        leave (via :attr:`_left_event`) so it does not coalesce the leave and the
+        immediate rejoin into a single no-op.
+        """
+        client = self.client
+        shard_id = client.get_shard_by_guild_id(self.guild_id)
+        shard = client.gateway.get_shard(shard_id) if (client.gateway and shard_id is not None) else None
+        if shard is None:
+            return
+
+        self._left_event.clear()
+        try:
+            await shard.change_voice_state(guild_id=self.guild_id, channel_id=None)
+        except Exception as exc:
+            _log.debug(f"Failed to send voice-state reset for guild {self.guild_id}", exc_info=exc)
+            return
+
+        try:
+            await asyncio.wait_for(self._left_event.wait(), timeout=5.0)
+        except TimeoutError:
+            # No leave ack arrived (e.g. the bot was already out); a short settle
+            # still lets the gateway register the reset before we rejoin.
+            await asyncio.sleep(0.25)
 
     async def _teardown_and_remove(self) -> None:
         """ Tear down the connection and remove the voice client from the registry. """
@@ -378,6 +491,12 @@ class VoiceConnection:
 
         channel_id = data.get("channel_id")
         self.channel_id = int(channel_id) if channel_id is not None else None
+
+        # Track leave/rejoin so the reconnect bounce can await the leave ack.
+        if self.channel_id is None:
+            self._left_event.set()
+        else:
+            self._left_event.clear()
 
         if self.session_id is not None:
             self._state_event.set()
@@ -407,9 +526,9 @@ class VoiceConnection:
             # and prepending "wss://" before parsing, then reconstruct the
             # schemeless host[:port] string that self.endpoint is meant to hold.
             host_port = endpoint.rstrip("/")
-            for _scheme in ("wss://", "https://"):
-                if host_port.startswith(_scheme):
-                    host_port = host_port[len(_scheme):]
+            for scheme in ("wss://", "https://"):
+                if host_port.startswith(scheme):
+                    host_port = host_port[len(scheme):]
                     break
 
             url = URL("wss://" + host_port)

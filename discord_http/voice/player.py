@@ -7,6 +7,7 @@ import shlex
 import shutil
 
 from array import array
+from collections import deque
 from collections.abc import AsyncIterable, Callable
 from typing import TYPE_CHECKING
 
@@ -457,7 +458,7 @@ class FFmpegOpusAudio(_FFmpegAudio):
 
         self._buffer = bytearray()
         self._partial = bytearray()
-        self._packets: list[bytes] = []
+        self._packets: deque[bytes] = deque()
         self._eof = False
 
     async def _fill_buffer(self) -> bool:
@@ -527,7 +528,7 @@ class FFmpegOpusAudio(_FFmpegAudio):
                 return b""
             await self._fill_buffer()
 
-        return self._packets.pop(0)
+        return self._packets.popleft()
 
     def is_opus(self) -> bool:
         """ Whether frames are Opus packets (always ``True`` for this source). """
@@ -612,7 +613,14 @@ class AudioPlayer:
         except Exception as exc:
             self._error = exc
         finally:
-            await self._cleanup()
+            try:
+                await self._cleanup()
+            except asyncio.CancelledError:
+                _log.warning(
+                    f"Audio player cleanup for guild {self.voice_client.guild_id} "
+                    "was interrupted; trailing silence and speaking-off may be skipped"
+                )
+                raise
 
     async def _cleanup(self) -> None:
         """ Flush silence, stop speaking, clean up and invoke ``after``. """

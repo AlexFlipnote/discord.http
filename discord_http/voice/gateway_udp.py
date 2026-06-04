@@ -81,8 +81,16 @@ class VoiceUDPProtocol(asyncio.DatagramProtocol):
         if len(data) < 2:
             return
 
-        # IP discovery response (type 0x0002 in the second byte).
-        if data[1] == 0x02 and self._discovery_future is not None and not self._discovery_future.done():
+        # IP discovery response: 2-byte big-endian type 0x0002 (bytes 0-1) and a
+        # fixed 74-byte length. Checking all three avoids matching a coincidental
+        # RTP packet whose second byte happens to be 0x02.
+        if (
+            data[0] == 0x00
+            and data[1] == 0x02
+            and len(data) >= 74
+            and self._discovery_future is not None
+            and not self._discovery_future.done()
+        ):
             self._discovery_future.set_result(data)
             return
 

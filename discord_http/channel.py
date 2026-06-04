@@ -554,7 +554,11 @@ class PartialChannel(PartialBase):
                 self_deaf=self_deaf,
                 self_mute=self_mute
             )
-        except Exception:
+        except BaseException:
+            # Catch BaseException, not just Exception: a timeout or a cancelled
+            # connect (asyncio.CancelledError is a BaseException on 3.11+) must
+            # still remove the half-registered voice client, otherwise the stale
+            # entry blocks future connect attempts in this guild.
             client._remove_voice_client(self.guild_id)
             raise
 
