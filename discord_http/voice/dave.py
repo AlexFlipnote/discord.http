@@ -340,7 +340,7 @@ class DaveManager:
         except AttributeError:
             return
         except Exception as exc:
-            _log.warning(f"Failed to process MLS proposals: {exc}")
+            _log.debug(f"Failed to process MLS proposals: {exc}")
             await self._recover_from_invalid_commit()
             return
 
@@ -367,7 +367,7 @@ class DaveManager:
         except AttributeError:
             return
         except Exception as exc:
-            _log.warning(f"Failed to process MLS commit: {exc}")
+            _log.debug(f"Failed to process MLS commit: {exc}")
             await self._recover_from_invalid_commit()
             return
 
@@ -393,7 +393,7 @@ class DaveManager:
         except AttributeError:
             return
         except Exception as exc:
-            _log.warning(f"Failed to process MLS welcome: {exc}")
+            _log.debug(f"Failed to process MLS welcome: {exc}")
             await self._recover_from_invalid_commit()
             return
 

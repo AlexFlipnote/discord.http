@@ -260,7 +260,7 @@ class VoiceConnection:
             The websocket close code, if one was reported.
         """
         if close_code in (VoiceCloseCode.disconnected, VoiceCloseCode.call_terminated):
-            _log.info(f"Voice connection for guild {self.guild_id} disconnected (code {close_code}); tearing down")
+            _log.debug(f"Voice connection for guild {self.guild_id} disconnected (code {close_code}); tearing down")
             await self._teardown_and_remove()
             return
 
@@ -270,7 +270,7 @@ class VoiceConnection:
             return
 
         if close_code == VoiceCloseCode.voice_server_crashed:
-            _log.info(f"Voice server for guild {self.guild_id} crashed (code {close_code}); resuming")
+            _log.debug(f"Voice server for guild {self.guild_id} crashed (code {close_code}); resuming")
             await self._resume()
             return
 
@@ -280,7 +280,7 @@ class VoiceConnection:
             # still in the channel, so reconnecting only helps if the caller opted
             # in; otherwise we disconnect rather than retry-and-time-out.
             if not (self._reconnect and self._reconnect_on_session_invalid):
-                _log.info(f"Voice session for guild {self.guild_id} invalidated (code {close_code}); disconnecting")
+                _log.debug(f"Voice session for guild {self.guild_id} invalidated (code {close_code}); disconnecting")
                 await self._teardown_and_remove()
                 return
 
@@ -288,14 +288,14 @@ class VoiceConnection:
             # re-IDENTIFY with the existing token/session, WITHOUT leaving the
             # channel. This avoids a visible disconnect/rejoin blip when the
             # credentials are still usable.
-            _log.info(f"Voice session for guild {self.guild_id} invalidated (code {close_code}); attempting soft reconnect")
+            _log.debug(f"Voice session for guild {self.guild_id} invalidated (code {close_code}); attempting soft reconnect")
             if await self._soft_reconnect():
-                _log.info(f"Voice connection for guild {self.guild_id} recovered without rejoining")
+                _log.debug(f"Voice connection for guild {self.guild_id} recovered without rejoining")
                 return
 
             # The existing credentials are no longer usable; fall back to a full
             # reconnect that drops and re-acquires the gateway voice state.
-            _log.info(f"Soft reconnect for guild {self.guild_id} failed; falling back to rejoin")
+            _log.debug(f"Soft reconnect for guild {self.guild_id} failed; falling back to rejoin")
             await self._full_reconnect(close_code, force_refresh=True)
             return
 
@@ -322,7 +322,7 @@ class VoiceConnection:
             self.socket = VoiceSocket(self)
             await self.socket.connect(resume=True)
         except Exception as exc:
-            _log.warning(f"Voice resume for guild {self.guild_id} failed; falling back to full reconnect", exc_info=exc)
+            _log.debug(f"Voice resume for guild {self.guild_id} failed; falling back to full reconnect", exc_info=exc)
             await self._full_reconnect(int(VoiceCloseCode.voice_server_crashed))
 
     async def _soft_reconnect(self, timeout: float = 10.0) -> bool:
@@ -407,7 +407,7 @@ class VoiceConnection:
                 return
 
             delay = self._backoff.delay()
-            _log.info(
+            _log.debug(
                 f"Reconnecting voice for guild {self.guild_id} (close code {close_code}), "
                 f"attempt {attempt}/{max_attempts} in {delay:.2f}s"
             )
@@ -427,10 +427,10 @@ class VoiceConnection:
                     _internal_reconnect=True,
                 )
             except Exception as exc:
-                _log.warning(f"Voice reconnect attempt {attempt} for guild {self.guild_id} failed", exc_info=exc)
+                _log.debug(f"Voice reconnect attempt {attempt} for guild {self.guild_id} failed", exc_info=exc)
                 continue
             else:
-                _log.info(f"Voice connection for guild {self.guild_id} reconnected")
+                _log.debug(f"Voice connection for guild {self.guild_id} reconnected")
                 return
 
         _log.error(f"Voice connection for guild {self.guild_id} could not reconnect after {max_attempts} attempts; tearing down")

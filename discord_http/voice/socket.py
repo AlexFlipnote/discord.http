@@ -147,7 +147,7 @@ class VoiceSocket:
                     break
 
                 elif msg.type is WSMsgType.ERROR:
-                    _log.warning(f"Voice socket for guild {self.connection.guild_id} received error: {msg.data}")
+                    _log.debug(f"Voice socket for guild {self.connection.guild_id} received error: {msg.data}")
                     break
 
         except asyncio.CancelledError:
