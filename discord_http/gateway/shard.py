@@ -1067,7 +1067,7 @@ class Shard:
             and data.get("guild_id") is not None
             and int(data["user_id"]) == bot_user.id
         ):
-            vc = self.bot._get_voice_client(int(data["guild_id"]))
+            vc = self.bot.get_voice_client(int(data["guild_id"]))
             if vc is not None:
                 vc.on_voice_state_update(data)
 
@@ -1077,7 +1077,7 @@ class Shard:
     def _parse_voice_server_update(self, data: dict) -> None:
         (payload,) = self.parser.voice_server_update(data)
 
-        vc = self.bot._get_voice_client(int(data["guild_id"]))
+        vc = self.bot.get_voice_client(int(data["guild_id"]))
         if vc is not None:
             vc.on_voice_server_update(data)
 

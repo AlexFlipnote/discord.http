@@ -102,6 +102,7 @@ class VoiceConnection:
         self._connected_event: asyncio.Event = asyncio.Event()
 
         self._reconnect: bool = True
+        self._reconnect_on_session_invalid: bool = False
         self._self_mute: bool = False
         self._self_deaf: bool = False
         self._closing: bool = False
@@ -143,6 +144,7 @@ class VoiceConnection:
         *,
         timeout: float = 30.0,
         reconnect: bool = True,
+        reconnect_on_session_invalid: bool = False,
         self_deaf: bool = False,
         self_mute: bool = False
     ) -> None:
@@ -155,6 +157,10 @@ class VoiceConnection:
             The maximum time to wait for the handshake, in seconds.
         reconnect:
             Whether to attempt reconnection on failure.
+        reconnect_on_session_invalid:
+            Whether to reconnect when Discord invalidates the session (close code
+            4006), e.g. after the channel empties and the DAVE session is torn
+            down. Defaults to ``False`` (disconnect instead of reconnecting).
         self_deaf:
             Whether to join self-deafened.
         self_mute:
@@ -178,6 +184,7 @@ class VoiceConnection:
             raise RuntimeError(f"Could not resolve shard {shard_id} for guild {self.guild_id}")
 
         self._reconnect = reconnect
+        self._reconnect_on_session_invalid = reconnect_on_session_invalid
         self._self_mute = self_mute
         self._self_deaf = self_deaf
         self._closing = False
@@ -251,6 +258,19 @@ class VoiceConnection:
             await self._resume()
             return
 
+        if close_code == VoiceCloseCode.session_invalid:
+            # Discord invalidates the session (4006) most commonly when the channel
+            # empties out and the DAVE/MLS session is torn down. The session is gone
+            # for good, so reconnecting only helps if the caller explicitly opted in;
+            # otherwise we disconnect rather than retry-and-time-out.
+            if self._reconnect and self._reconnect_on_session_invalid:
+                _log.info(f"Voice session for guild {self.guild_id} invalidated (code {close_code}); reconnecting")
+                await self._full_reconnect(close_code)
+            else:
+                _log.info(f"Voice session for guild {self.guild_id} invalidated (code {close_code}); disconnecting")
+                await self._teardown_and_remove()
+            return
+
         if close_code in (VoiceCloseCode.normal, VoiceCloseCode.going_away):
             _log.debug(f"Voice connection for guild {self.guild_id} closed cleanly (code {close_code})")
             await self._teardown_and_remove()
@@ -314,6 +334,7 @@ class VoiceConnection:
             try:
                 await self.connect(
                     reconnect=self._reconnect,
+                    reconnect_on_session_invalid=self._reconnect_on_session_invalid,
                     self_deaf=self._self_deaf,
                     self_mute=self._self_mute,
                 )
@@ -477,6 +498,30 @@ class VoiceConnection:
 
         if self.dave_session is not None:
             await self.dave_session.handle_binary(opcode, payload)
+
+    async def on_dave_json(self, opcode: int, data: dict) -> None:
+        """
+        Handle an inbound JSON DAVE control op (transition/epoch, ops 21/22/24).
+
+        These ops arrive as JSON text frames rather than binary DAVE frames, so
+        they carry the decoded ``d`` payload instead of raw bytes.
+
+        Parameters
+        ----------
+        opcode:
+            The voice opcode of the control frame.
+        data:
+            The decoded JSON ``d`` payload.
+        """
+        if not has_dave:
+            _log.warning(f"Received DAVE JSON op {opcode} but the davey library is not available")
+            return
+
+        if self.dave_session is None:
+            await self.reinit_dave_session()
+
+        if self.dave_session is not None:
+            await self.dave_session.handle_json(opcode, data)
 
     async def reinit_dave_session(self) -> None:
         """ Create or reset the DAVE session for the negotiated protocol version. """

@@ -486,6 +486,7 @@ class PartialChannel(PartialBase):
         *,
         timeout: float = 30.0,
         reconnect: bool = True,
+        reconnect_on_session_invalid: bool = False,
         self_deaf: bool = False,
         self_mute: bool = False
     ) -> "VoiceClient":
@@ -498,6 +499,11 @@ class PartialChannel(PartialBase):
             How long to wait, in seconds, for the voice handshake to complete.
         reconnect:
             Whether to automatically reconnect if the voice connection drops.
+        reconnect_on_session_invalid:
+            What to do when Discord invalidates the voice session (close code
+            4006), which most commonly happens when the channel empties out and
+            Discord tears down the DAVE/MLS session. By default (``False``) the
+            bot disconnects; set to ``True`` to attempt a full reconnect instead.
         self_deaf:
             Whether the bot should be self-deafened.
         self_mute:
@@ -533,7 +539,7 @@ class PartialChannel(PartialBase):
         if not client.gateway:
             raise NotImplementedError("gateway is not available")
 
-        if client._get_voice_client(self.guild_id) is not None:
+        if client.get_voice_client(self.guild_id) is not None:
             raise RuntimeError("Already connected to a voice channel in this guild")
 
         from .voice.client import VoiceClient
@@ -543,6 +549,7 @@ class PartialChannel(PartialBase):
         await vc.connect(
             timeout=timeout,
             reconnect=reconnect,
+            reconnect_on_session_invalid=reconnect_on_session_invalid,
             self_deaf=self_deaf,
             self_mute=self_mute
         )
@@ -2839,6 +2846,21 @@ class PartialVoiceState(PartialBase):
     def __str__(self) -> str:
         return "PartialVoiceState"
 
+    @property
+    def channel(self) -> "BaseChannel | PartialChannel | None":
+        """
+        The voice channel this user is in, if any.
+
+        Returns a `PartialChannel` built from `channel_id` so it can be used
+        directly (e.g. ``await voice_state.channel.connect()``) even when the
+        full channel object is not cached.
+        """
+        if self.channel_id is None:
+            return None
+        return self._state.bot.get_partial_channel(
+            self.channel_id, guild_id=self.guild_id
+        )
+
     async def fetch(self) -> "VoiceState":
         """
         Fetches the voice state of the member.
@@ -2906,7 +2928,7 @@ class VoiceState(PartialVoiceState):
     """ Represents a voice state object. """
 
     __slots__ = (
-        "channel",
+        "_channel",
         "deaf",
         "guild",
         "member",
@@ -2947,8 +2969,7 @@ class VoiceState(PartialVoiceState):
         self.member: "Member | None" = None
         """ The member this voice state belongs to, if any. """
 
-        self.channel: "BaseChannel | PartialChannel | None" = channel
-        """ The voice channel this user is in, if any. """
+        self._channel: "BaseChannel | PartialChannel | None" = channel
 
         self.guild: "PartialGuild | None" = guild
         """ The guild this voice state is in, if any. """
@@ -2981,6 +3002,18 @@ class VoiceState(PartialVoiceState):
 
     def __repr__(self) -> str:
         return f"<VoiceState id={self.user} session_id='{self.session_id}'>"
+
+    @property
+    def channel(self) -> "BaseChannel | PartialChannel | None":
+        """
+        The voice channel this user is in, if any.
+
+        Prefers the resolved channel object (when cached); otherwise falls back
+        to a `PartialChannel` built from `channel_id` so it remains usable.
+        """
+        if self._channel is not None:
+            return self._channel
+        return super().channel
 
     def _from_data(self, data: dict) -> None:
         if data.get("member") and self.guild:

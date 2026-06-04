@@ -218,6 +218,7 @@ class _FFmpegAudio(AudioSource):
         self._process: asyncio.subprocess.Process | None = None
         self._stdin_task: asyncio.Task[None] | None = None
         self._stdout: asyncio.StreamReader | None = None
+        self._reap_task: asyncio.Task[None] | None = None
 
     async def _spawn(self) -> None:
         """ Launch the ffmpeg subprocess and start the stdin pump if piping. """
@@ -278,14 +279,48 @@ class _FFmpegAudio(AudioSource):
             self._stdin_task = None
 
         process = self._process
-        if process is not None and process.returncode is None:
+        if process is not None:
+            if process.returncode is None:
+                try:
+                    process.kill()
+                except ProcessLookupError:
+                    pass
+
+            # Close the subprocess transport so its stdio pipe transports are
+            # released deterministically. On the Windows Proactor event loop an
+            # unclosed pipe transport otherwise triggers a ResourceWarning
+            # ("unclosed transport" / "I/O operation on closed pipe") when it is
+            # finalized by the garbage collector.
+            transport = getattr(process, "_transport", None)
+            if transport is not None:
+                try:
+                    transport.close()
+                except Exception:
+                    pass
+
+            # Reap the process so the OS releases it and the pipe transports
+            # finish closing. ``cleanup`` is synchronous, so schedule the wait on
+            # the running loop when there is one (there is none during a hard
+            # interpreter shutdown, where closing the transport above suffices).
             try:
-                process.kill()
-            except ProcessLookupError:
-                pass
+                loop = asyncio.get_running_loop()
+            except RuntimeError:
+                loop = None
+            if loop is not None:
+                # Keep a reference so the fire-and-forget reaping task is not
+                # garbage-collected before it completes.
+                self._reap_task = loop.create_task(self._reap_process(process))
 
         self._process = None
         self._stdout = None
+
+    @staticmethod
+    async def _reap_process(process: "asyncio.subprocess.Process") -> None:
+        """ Await the ffmpeg subprocess so it is fully reaped after termination. """
+        try:
+            await process.wait()
+        except Exception:
+            pass
 
 
 class FFmpegPCMAudio(_FFmpegAudio):

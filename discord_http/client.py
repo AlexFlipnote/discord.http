@@ -226,7 +226,7 @@ class Client:
         except Exception:
             pass
 
-    def _get_voice_client(self, guild_id: int) -> "VoiceClient | None":
+    def get_voice_client(self, guild_id: int) -> "VoiceClient | None":
         """
         Get the voice client for a guild, if one is registered.
 
