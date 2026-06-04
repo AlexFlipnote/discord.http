@@ -546,13 +546,17 @@ class PartialChannel(PartialBase):
 
         vc = VoiceClient(client, self)
         client._add_voice_client(self.guild_id, vc)
-        await vc.connect(
-            timeout=timeout,
-            reconnect=reconnect,
-            reconnect_on_session_invalid=reconnect_on_session_invalid,
-            self_deaf=self_deaf,
-            self_mute=self_mute
-        )
+        try:
+            await vc.connect(
+                timeout=timeout,
+                reconnect=reconnect,
+                reconnect_on_session_invalid=reconnect_on_session_invalid,
+                self_deaf=self_deaf,
+                self_mute=self_mute
+            )
+        except Exception:
+            client._remove_voice_client(self.guild_id)
+            raise
 
         return vc
 
@@ -2885,8 +2889,9 @@ class PartialVoiceState(PartialBase):
 
         guild = self._state.cache.get_guild(self.guild_id)
         channel = None
-        if self.channel_id is not None:
-            channel = self._state.cache.get_channel(self.guild_id, self.channel_id)
+        channel_id = utils.get_int(r.response, "channel_id")
+        if channel_id is not None:
+            channel = self._state.cache.get_channel(self.guild_id, channel_id)
 
         return VoiceState(
             state=self._state,

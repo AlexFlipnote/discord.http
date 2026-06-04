@@ -3,7 +3,7 @@ import logging
 
 from typing import TYPE_CHECKING, Any
 
-from ..utils import ExponentialBackoff
+from ..utils import URL, ExponentialBackoff
 from .dave import DaveManager, has_dave
 from .encryptor import Encryptor
 from .enums import SUPPORTED_MODES
@@ -146,7 +146,8 @@ class VoiceConnection:
         reconnect: bool = True,
         reconnect_on_session_invalid: bool = False,
         self_deaf: bool = False,
-        self_mute: bool = False
+        self_mute: bool = False,
+        _internal_reconnect: bool = False
     ) -> None:
         """
         Establish the full voice connection.
@@ -188,7 +189,14 @@ class VoiceConnection:
         self._self_mute = self_mute
         self._self_deaf = self_deaf
         self._closing = False
-        self._backoff.reset()
+
+        # Only reset the exponential backoff on a genuinely fresh/initial
+        # connect. The reconnect loop in _full_reconnect() drives its own
+        # backoff and passes _internal_reconnect=True so that each retry's
+        # connect() call does NOT reset it -- otherwise the delay would never
+        # grow and every attempt would sleep the base delay.
+        if not _internal_reconnect:
+            self._backoff.reset()
 
         self._state_event.clear()
         self._server_event.clear()
@@ -337,6 +345,8 @@ class VoiceConnection:
                     reconnect_on_session_invalid=self._reconnect_on_session_invalid,
                     self_deaf=self._self_deaf,
                     self_mute=self._self_mute,
+                    # Preserve the growing backoff across reconnect attempts.
+                    _internal_reconnect=True,
                 )
             except Exception as exc:
                 _log.warning(f"Voice reconnect attempt {attempt} for guild {self.guild_id} failed", exc_info=exc)
@@ -390,10 +400,23 @@ class VoiceConnection:
             # token/session are bound to that specific host:port, so we MUST keep
             # the port intact -- connecting to host:443 instead reaches a
             # different voice server instance and Discord closes the socket with
-            # 4006 "Session is no longer valid". Only strip a scheme if present.
-            if endpoint.startswith("wss://"):
-                endpoint = endpoint[len("wss://"):]
-            self.endpoint = endpoint.rstrip("/")
+            # 4006 "Session is no longer valid".
+            #
+            # ``urlparse`` (which ``utils.URL`` wraps) treats a bare "host:port"
+            # as scheme:path, so we normalise by stripping any existing scheme
+            # and prepending "wss://" before parsing, then reconstruct the
+            # schemeless host[:port] string that self.endpoint is meant to hold.
+            host_port = endpoint.rstrip("/")
+            for _scheme in ("wss://", "https://"):
+                if host_port.startswith(_scheme):
+                    host_port = host_port[len(_scheme):]
+                    break
+
+            url = URL("wss://" + host_port)
+            if url.port is not None:
+                self.endpoint = f"{url.host}:{url.port}"
+            else:
+                self.endpoint = url.host or host_port
 
         server_id = data.get("guild_id") or data.get("server_id")
         self.server_id = int(server_id) if server_id is not None else None
@@ -446,6 +469,14 @@ class VoiceConnection:
         self.dave_protocol_version = dave_version
         if dave_version > 0:
             await self.reinit_dave_session()
+        elif self.dave_session is not None:
+            # DAVE was negotiated off (version 0) but a prior connection left a
+            # session behind. Tear down the MLS session so can_encrypt() and the
+            # opus wrappers don't keep using stale E2EE state. DaveManager has no
+            # dedicated close/cleanup; reinit(0) clears its internal session, then
+            # we drop the reference.
+            await self.dave_session.reinit(0)
+            self.dave_session = None
 
         self._connected_event.set()
 
@@ -477,6 +508,10 @@ class VoiceConnection:
             The resumed payload.
         """
         _log.debug(f"Voice connection for guild {self.guild_id} resumed")
+        # A successful RESUMED frame means the connection is live again. _resume()
+        # cleared _connected_event when re-opening the socket, so re-set it here;
+        # otherwise is_connected() would stay False forever after a server crash.
+        self._connected_event.set()
 
     async def on_dave_binary(self, opcode: int, payload: bytes) -> None:
         """
