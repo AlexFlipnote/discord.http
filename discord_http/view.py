@@ -934,6 +934,7 @@ class FileUploadComponent(Item):
     __slots__ = (
         "custom_id",
         "description",
+        "file_types",
         "label",
         "max_values",
         "min_values",
@@ -949,6 +950,7 @@ class FileUploadComponent(Item):
         label: str | None = None,
         description: str | None = None,
         required: bool = True,
+        file_types: list[str] | None = None,
     ):
         super().__init__(
             type=ComponentType.file_upload
@@ -975,6 +977,9 @@ class FileUploadComponent(Item):
         self.description: str | None = description
         """ The description of the file upload component. """
 
+        self.file_types: list[str] | None = file_types
+        """ List of allowed extensions, can be `image`, `video`, `audio` or any dot-prefixed extensions such as `.pdf` """
+
     def __repr__(self) -> str:
         return f"<FileUploadComponent custom_id='{self.custom_id}'>"
 
@@ -998,6 +1003,11 @@ class FileUploadComponent(Item):
             if not (1 <= self.max_values <= 10):
                 raise ValueError("max_values must be between 1 and 10")
             payload["max_values"] = int(self.max_values)
+
+        if self.file_types is not None:
+            if not (1 <= len(self.file_types) <= 10):
+                raise ValueError("file_types must be a range between 1 and 10")
+            payload["file_types"] = [str(g) for g in self.file_types]
 
         return payload
 

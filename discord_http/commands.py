@@ -758,6 +758,7 @@ class Command:
         extra_locale = getattr(self.command, "__locales__", {})
         extra_params = getattr(self.command, "__describe_params__", {})
         extra_choices = getattr(self.command, "__choices_params__", {})
+        extra_file_types = getattr(self.command, "__file_types__", {})
         default_permissions_: Permissions | None = getattr(
             self.command, "__default_permissions__", None
         )
@@ -807,6 +808,12 @@ class Command:
 
         if default_permissions_:
             data["default_member_permissions"] = str(default_permissions_.value)
+
+        for key, value in extra_file_types.items():
+            opt = self._find_option(key)
+            if not opt:
+                continue
+            opt["file_types"] = [str(g) for g in value]
 
         for key, value in extra_params.items():
             opt = self._find_option(key)
@@ -1597,6 +1604,28 @@ def describe(**kwargs: str) -> Callable:
     """
     def decorator(func: Callable) -> Callable:
         func.__describe_params__ = kwargs
+        return func
+
+    return decorator
+
+
+def file_types(**kwargs: list[str]) -> Callable:
+    """
+    Decorator to set the allowed file types for uploads.
+
+    The list can be `image`, `video`, `audio` or any dot-prefixed extensions such as `.pdf`
+
+    Example usage:
+
+    .. code-block:: python
+
+        @commands.command()
+        @commands.file_types(file=[".png", ".jpeg", ".jpg", "audio"])
+        async def upload(ctx, file: Attachment):
+            ...
+    """
+    def decorator(func: Callable) -> Callable:
+        func.__file_types__ = kwargs
         return func
 
     return decorator
