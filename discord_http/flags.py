@@ -245,9 +245,11 @@ class UserFlags(BaseFlag):
 
 class AttachmentFlags(BaseFlag):
     """ Represents the flags of a message attachment. """
-    clip = 1 << 0
-    thumbnail = 1 << 1
-    remix = 1 << 2
+    is_clip = 1 << 0
+    is_thumbnail = 1 << 1
+    is_remix = 1 << 2
+    is_spoiler = 1 << 3
+    is_animated = 1 << 5
 
 
 class ApplicationFlags(BaseFlag):
