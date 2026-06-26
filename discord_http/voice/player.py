@@ -48,37 +48,15 @@ _INT16_MAX = 32767
 
 
 class AudioSource(abc.ABC):
-    """
-    An abstract base class for an audio source.
-
-    A source yields raw audio one 20ms frame at a time via :meth:`read`. When
-    :meth:`is_opus` returns ``True`` each frame is a complete Opus packet ready
-    to be sent on the wire; otherwise each frame is 3840 bytes of signed 16-bit
-    little-endian PCM (48kHz, stereo) which the player encodes before sending.
-    """
+    """ An abstract audio source yielding one 20ms frame per :meth:`read` (Opus packet or 3840-byte s16le PCM). """
 
     @abc.abstractmethod
     async def read(self) -> bytes:
-        """
-        Read the next 20ms frame of audio.
-
-        Returns
-        -------
-        bytes
-            A single Opus packet when :meth:`is_opus` is ``True``, otherwise
-            exactly 3840 bytes of s16le PCM. Empty bytes signal end of stream.
-        """
+        """ Read the next 20ms frame (Opus packet or 3840-byte PCM), or empty bytes at end of stream. """
         raise NotImplementedError
 
     def is_opus(self) -> bool:
-        """
-        Whether :meth:`read` yields pre-encoded Opus packets.
-
-        Returns
-        -------
-        bool
-            ``True`` if frames are Opus packets, ``False`` if they are PCM.
-        """
+        """ Whether :meth:`read` yields pre-encoded Opus packets rather than PCM. """
         return False
 
     def cleanup(self) -> None:
@@ -87,16 +65,7 @@ class AudioSource(abc.ABC):
 
 
 class PCMAudio(AudioSource):
-    """
-    An audio source that reads raw PCM frames from a binary stream.
-
-    The stream must contain signed 16-bit little-endian PCM at 48kHz in stereo.
-
-    Parameters
-    ----------
-    stream:
-        A readable binary stream of s16le PCM data.
-    """
+    """ An audio source that reads raw s16le 48kHz stereo PCM frames from a binary stream. """
 
     def __init__(self, stream: io.IOBase) -> None:
         self.stream = stream
@@ -110,27 +79,7 @@ class PCMAudio(AudioSource):
 
 
 class PCMVolumeTransformer(AudioSource):
-    """
-    A wrapper that scales the volume of a PCM (non-Opus) audio source.
-
-    Samples are scaled with the stdlib :mod:`array` module because ``audioop``
-    is removed in Python 3.13. Each signed 16-bit sample is multiplied by the
-    volume factor and clamped back into the int16 range.
-
-    Parameters
-    ----------
-    original:
-        The PCM source to wrap. Its :meth:`AudioSource.is_opus` must be ``False``.
-    volume:
-        The initial volume multiplier, where ``1.0`` is unchanged.
-
-    Raises
-    ------
-    TypeError
-        If ``original`` is not an :class:`AudioSource`.
-    ValueError
-        If ``original`` yields Opus packets rather than PCM.
-    """
+    """ A wrapper that scales the volume of a PCM (non-Opus) audio source using the stdlib :mod:`array` module. """
 
     def __init__(self, original: AudioSource, volume: float = 1.0) -> None:
         if not isinstance(original, AudioSource):
@@ -170,34 +119,7 @@ class PCMVolumeTransformer(AudioSource):
 
 
 class _FFmpegAudio(AudioSource):
-    """
-    A base audio source backed by an ``ffmpeg`` subprocess.
-
-    The subprocess is launched lazily on the first :meth:`read` via
-    :func:`asyncio.create_subprocess_exec`, so no blocking thread is ever used.
-    When ``pipe`` is set the ``source`` is streamed into ffmpeg's stdin: a small
-    pump task copies bytes from a readable stream (or an async iterable) into
-    stdin and closes it at end of input.
-
-    Parameters
-    ----------
-    source:
-        A path/URL (when ``pipe`` is ``False``) or a readable stream / async
-        iterable of bytes (when ``pipe`` is ``True``).
-    args:
-        The ffmpeg output argument list following the ``-i`` input specifier.
-    before_args:
-        The ffmpeg input argument list placed before the ``-i`` input specifier.
-    executable:
-        The ffmpeg executable name or path.
-    pipe:
-        Whether ``source`` is piped to ffmpeg stdin rather than read as input.
-
-    Raises
-    ------
-    FileNotFoundError
-        If the ffmpeg executable cannot be located on ``PATH``.
-    """
+    """ A base audio source backed by an ``ffmpeg`` subprocess launched lazily on first :meth:`read`. """
 
     def __init__(
         self,
@@ -326,30 +248,7 @@ class _FFmpegAudio(AudioSource):
 
 
 class FFmpegPCMAudio(_FFmpegAudio):
-    """
-    An audio source that transcodes input to PCM with ``ffmpeg``.
-
-    ffmpeg decodes the input to signed 16-bit little-endian PCM at 48kHz in
-    stereo, and :meth:`read` returns one 3840-byte frame per call via
-    :meth:`asyncio.StreamReader.readexactly`. Any trailing partial frame at the
-    end of stream is discarded and end of stream is signalled with empty bytes.
-
-    Because the output is PCM, libopus is required to encode it before sending.
-
-    Parameters
-    ----------
-    source:
-        A path/URL, or (when ``pipe`` is ``True``) a readable stream / async
-        iterable of bytes fed to ffmpeg stdin.
-    before_options:
-        Extra ffmpeg arguments placed before ``-i`` (e.g. seek options).
-    options:
-        Extra ffmpeg output arguments placed after the format flags.
-    pipe:
-        Whether ``source`` is piped to ffmpeg stdin.
-    executable:
-        The ffmpeg executable name or path.
-    """
+    """ An audio source that transcodes input to s16le 48kHz stereo PCM with ``ffmpeg`` (libopus needed to encode). """
 
     def __init__(
         self,
@@ -385,50 +284,7 @@ class FFmpegPCMAudio(_FFmpegAudio):
 
 
 class FFmpegOpusAudio(_FFmpegAudio):
-    """
-    An audio source that encodes input to Opus with ``ffmpeg``.
-
-    ffmpeg produces an Ogg/Opus stream on stdout and this class extracts raw
-    Opus packets from it, so no libopus binding is needed on the Python side.
-
-    Approach for async Ogg parsing
-    -------------------------------
-    :class:`~discord_http.voice.oggparse.OggPage` parses synchronously from a
-    file-like ``read`` and raises ``ValueError`` if a page is truncated. To keep
-    the event loop unblocked we never hand it ffmpeg's pipe directly. Instead
-    bytes are accumulated in a :class:`bytearray` and parsed one *complete page
-    at a time*:
-
-    1. Chunks are read from ffmpeg stdout with ``await stdout.read(n)`` and
-       appended to the buffer.
-    2. The buffer is scanned for the ``b"OggS"`` capture pattern. Using only the
-       fixed header and segment table, the full byte length of the page is
-       computed up front; parsing is deferred until that many bytes are present,
-       so :class:`OggPage` never sees a truncated page. Each fully-parsed page is
-       removed from the front of the buffer.
-    3. Packets are reassembled across pages (a trailing ``255`` lacing value
-       continues a packet into the next page), with the ``OpusHead``/``OpusTags``
-       header packets skipped.
-
-    More bytes are read and the pass retried until at least one packet is ready.
-    Empty bytes are returned once stdout is exhausted and the buffer drained.
-
-    Parameters
-    ----------
-    source:
-        A path/URL, or (when ``pipe`` is ``True``) a readable stream / async
-        iterable of bytes fed to ffmpeg stdin.
-    bitrate:
-        The target Opus bitrate in kilobits per second.
-    before_options:
-        Extra ffmpeg arguments placed before ``-i`` (e.g. seek options).
-    options:
-        Extra ffmpeg output arguments placed after the format flags.
-    pipe:
-        Whether ``source`` is piped to ffmpeg stdin.
-    executable:
-        The ffmpeg executable name or path.
-    """
+    """ An audio source that encodes input to Opus with ``ffmpeg``, extracting raw packets from its Ogg/Opus stream. """
 
     def __init__(
         self,
@@ -462,14 +318,7 @@ class FFmpegOpusAudio(_FFmpegAudio):
         self._eof = False
 
     async def _fill_buffer(self) -> bool:
-        """
-        Read one chunk from ffmpeg stdout into the buffer.
-
-        Returns
-        -------
-        bool
-            ``True`` if data was read, ``False`` at end of stdout.
-        """
+        """ Read one chunk from ffmpeg stdout into the buffer, returning ``False`` at end of stdout. """
         assert self._stdout is not None
         chunk = await self._stdout.read(_OGG_READ_CHUNK)
         if not chunk:
@@ -536,29 +385,7 @@ class FFmpegOpusAudio(_FFmpegAudio):
 
 
 class AudioPlayer:
-    """
-    A paced player that streams an :class:`AudioSource` to a voice client.
-
-    The player runs as an :class:`asyncio.Task`. Frames are read and sent every
-    :attr:`DELAY` seconds with drift correction: each frame's deadline is
-    computed from a fixed start time so transient delays do not accumulate.
-
-    Pause, resume and stop are controlled by :class:`asyncio.Event` flags, and
-    the source can be hot-swapped mid-playback via :meth:`set_source`. When the
-    stream ends, five :data:`~discord_http.voice.opus.OPUS_SILENCE` frames are
-    sent, speaking is disabled, and the optional ``after`` callback is invoked.
-
-    Parameters
-    ----------
-    source:
-        The audio source to play.
-    voice_client:
-        The voice client used to speak and send packets.
-    after:
-        An optional callable invoked with an exception (or ``None`` on success)
-        once playback ends. It is called synchronously and may not be a
-        coroutine; exceptions raised by it are logged and swallowed.
-    """
+    """ A drift-corrected :class:`asyncio.Task` player that streams an :class:`AudioSource` to a voice client. """
 
     DELAY: float = 0.02
 
@@ -665,36 +492,15 @@ class AudioPlayer:
         self._resumed.set()
 
     def is_playing(self) -> bool:
-        """
-        Whether audio is currently playing.
-
-        Returns
-        -------
-        bool
-            ``True`` if the loop is running and not paused.
-        """
+        """ Whether audio is currently playing (running and not paused). """
         return not self._end.is_set() and self._resumed.is_set()
 
     def is_paused(self) -> bool:
-        """
-        Whether playback is paused.
-
-        Returns
-        -------
-        bool
-            ``True`` if the loop is running but paused.
-        """
+        """ Whether playback is paused (running but paused). """
         return not self._end.is_set() and not self._resumed.is_set()
 
     def set_source(self, source: AudioSource) -> None:
-        """
-        Hot-swap the audio source without interrupting the player task.
-
-        Parameters
-        ----------
-        source:
-            The new audio source to read from.
-        """
+        """ Hot-swap the audio source without interrupting the player task. """
         self.pause()
         self.source.cleanup()
         self.source = source
@@ -706,29 +512,7 @@ AudioSourceInput = AudioSource | str | os.PathLike | bytes | bytearray | memoryv
 
 
 def _resolve_source(audio: object) -> AudioSource:
-    """
-    Coerce arbitrary audio input into an :class:`AudioSource`.
-
-    Parameters
-    ----------
-    audio:
-        One of: an :class:`AudioSource` (returned as-is); a ``str`` or
-        :class:`os.PathLike` path/URL; raw ``bytes``/``bytearray``/``memoryview``;
-        a readable :class:`io.IOBase` stream; or an :class:`~collections.abc.AsyncIterable`
-        of ``bytes``. The latter four are decoded by ffmpeg into Opus.
-
-    Returns
-    -------
-    AudioSource
-        A source ready to be played.
-
-    Raises
-    ------
-    TypeError
-        If ``audio`` is not a supported type.
-    FileNotFoundError
-        If ffmpeg is required but not found on ``PATH``.
-    """
+    """ Coerce arbitrary audio input (source, path/URL, bytes, stream, or async iterable) into an :class:`AudioSource`. """
     if isinstance(audio, AudioSource):
         return audio
 

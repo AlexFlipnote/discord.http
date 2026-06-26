@@ -2852,7 +2852,7 @@ class PartialVoiceState(PartialBase):
         return f"<PartialVoiceState id={self.id} guild_id={self.guild_id}>"
 
     def __str__(self) -> str:
-        return "PartialVoiceState"
+        return str(self.id)
 
     @property
     def channel(self) -> "BaseChannel | PartialChannel | None":
@@ -3010,7 +3010,7 @@ class VoiceState(PartialVoiceState):
         self._from_data(data)
 
     def __repr__(self) -> str:
-        return f"<VoiceState id={self.user} session_id='{self.session_id}'>"
+        return f"<VoiceState id={self.user.id} session_id='{self.session_id}'>"
 
     @property
     def channel(self) -> "BaseChannel | PartialChannel | None":

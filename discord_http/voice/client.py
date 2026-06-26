@@ -21,12 +21,7 @@ _log = logging.getLogger(__name__)
 
 
 class VoiceClient:
-    """
-    The public handle for an active voice connection in a guild.
-
-    Wraps the lower-level :class:`VoiceConnection` and exposes playback,
-    receiving, and RTP transmission helpers.
-    """
+    """ The public handle for an active voice connection in a guild. """
 
     def __init__(self, client: "Client", channel: "PartialChannel"):
         self.bot: "Client" = client
@@ -106,24 +101,7 @@ class VoiceClient:
         self_deaf: bool = False,
         self_mute: bool = False
     ) -> None:
-        """
-        Connect to the voice channel.
-
-        Parameters
-        ----------
-        timeout:
-            The maximum time to wait for the handshake, in seconds.
-        reconnect:
-            Whether to attempt reconnection on failure.
-        reconnect_on_session_invalid:
-            Whether to reconnect when Discord invalidates the session (close code
-            4006), e.g. after the channel empties and the DAVE session is torn
-            down. Defaults to ``False`` (disconnect instead of reconnecting).
-        self_deaf:
-            Whether to join self-deafened.
-        self_mute:
-            Whether to join self-muted.
-        """
+        """ Connect to the voice channel. """
         await self.connection.connect(
             timeout=timeout,
             reconnect=reconnect,
@@ -132,15 +110,8 @@ class VoiceClient:
             self_mute=self_mute,
         )
 
-    async def disconnect(self, *, force: bool = True) -> None:
-        """
-        Disconnect from the voice channel and clean up.
-
-        Parameters
-        ----------
-        force:
-            Whether to force the disconnect even on error.
-        """
+    def _stop_media(self) -> None:
+        """ Stop and discard the player, receiver, and encoder. """
         if self._player is not None:
             self._player.stop()
             self._player = None
@@ -153,89 +124,41 @@ class VoiceClient:
             self._encoder.cleanup()
             self._encoder = None
 
+    async def disconnect(self, *, force: bool = True) -> None:
+        """ Disconnect from the voice channel and clean up. """
+        self._stop_media()
         await self.connection.disconnect(force=force)
         self.bot._remove_voice_client(self.guild_id)
 
     async def _cleanup(self) -> None:
-        """
-        Tear down the voice client locally without relying on the gateway.
-
-        Stops the player and receiver, closes the websocket and UDP transport,
-        and removes the client from the registry. Safe to call when the owning
-        shard has been reset or killed and op4 can no longer be sent.
-        """
-        if self._player is not None:
-            self._player.stop()
-            self._player = None
-
-        if self._receiver is not None:
-            self._receiver.stop()
-            self._receiver = None
-
-        if self._encoder is not None:
-            self._encoder.cleanup()
-            self._encoder = None
-
+        """ Tear down the voice client locally without relying on the gateway. """
+        self._stop_media()
         await self.connection.close_transport()
         self.bot._remove_voice_client(self.guild_id)
 
     async def move_to(self, channel: "PartialChannel | int") -> None:
-        """
-        Move to a different voice channel.
-
-        Parameters
-        ----------
-        channel:
-            The channel to move to, either a channel object or its ID.
-        """
+        """ Move to a different voice channel. """
         if isinstance(channel, int):
             channel = self.bot.get_partial_channel(channel, guild_id=self.guild_id)
         await self.connection.move_to(channel)
         self.channel = channel
 
     def on_voice_state_update(self, data: dict) -> None:
-        """
-        Forward a VOICE_STATE_UPDATE to the connection.
-
-        Parameters
-        ----------
-        data:
-            The raw voice state update payload.
-        """
+        """ Forward a VOICE_STATE_UPDATE to the connection. """
         self.connection.on_voice_state_update(data)
 
     def on_voice_server_update(self, data: dict) -> None:
-        """
-        Forward a VOICE_SERVER_UPDATE to the connection.
-
-        Parameters
-        ----------
-        data:
-            The raw voice server update payload.
-        """
+        """ Forward a VOICE_SERVER_UPDATE to the connection. """
         self.connection.on_voice_server_update(data)
 
     async def speak(self, speaking: bool = True) -> None:
-        """
-        Send the SPEAKING frame to the voice gateway.
-
-        Parameters
-        ----------
-        speaking:
-            Whether the bot is speaking.
-        """
+        """ Send the SPEAKING frame to the voice gateway. """
         if self.connection.socket is None or self.connection.ssrc is None:
             return
         await self.connection.socket.send_speaking(1 if speaking else 0, ssrc=self.connection.ssrc)
 
     def _get_encoder(self) -> "Encoder":
-        """
-        Return the cached Opus encoder, creating it on first use.
-
-        Returns
-        -------
-            The Opus encoder for this client.
-        """
+        """ Return the cached Opus encoder, creating it on first use. """
         if self._encoder is None:
             from .opus import Encoder
 
@@ -243,16 +166,7 @@ class VoiceClient:
         return self._encoder
 
     def send_audio_packet(self, data: bytes, *, encode: bool = True) -> None:
-        """
-        Frame, encrypt, and transmit a single audio packet over UDP.
-
-        Parameters
-        ----------
-        data:
-            The audio payload: PCM when ``encode`` is ``True`` else a raw Opus packet.
-        encode:
-            Whether ``data`` is PCM that must be Opus-encoded first.
-        """
+        """ Frame, encrypt, and transmit a single audio packet over UDP. """
         connection = self.connection
         if connection.encryptor is None or connection.transport is None or connection.ssrc is None:
             return
@@ -283,16 +197,7 @@ class VoiceClient:
         *,
         after: Callable[[Exception | None], object] | None = None
     ) -> None:
-        """
-        Play an audio source over the connection.
-
-        Parameters
-        ----------
-        audio:
-            The audio source, path, bytes, or stream to play.
-        after:
-            A callback invoked with any error once playback finishes.
-        """
+        """ Play an audio source over the connection. """
         from .player import AudioPlayer, _resolve_source
 
         if self._player is not None:
@@ -328,14 +233,7 @@ class VoiceClient:
         return self._player is not None and self._player.is_paused()
 
     def listen(self, sink: "AudioSink") -> None:
-        """
-        Start receiving voice into the given sink.
-
-        Parameters
-        ----------
-        sink:
-            The audio sink to write received audio into.
-        """
+        """ Start receiving voice into the given sink. """
         from .receiver import VoiceReceiver
 
         if self._receiver is None:

@@ -105,6 +105,12 @@ class Client:
     voice_reconnect_attempts: int
         How many times a voice connection will try to fully reconnect after an
         unexpected close before giving up, if not provided, it will use `5`.
+    voice_reconnect_base: float
+        The base delay, in seconds, for the voice reconnect exponential backoff,
+        if not provided, it will use `1.0`.
+    voice_reconnect_max_delay: float
+        The maximum delay, in seconds, for the voice reconnect exponential
+        backoff, if not provided, it will use `30.0`.
     """
     def __init__(
         self,
@@ -130,7 +136,9 @@ class Client:
         logging_level: int = logging.INFO,
         disable_default_get_path: bool = False,
         debug_events: bool = False,
-        voice_reconnect_attempts: int = 5
+        voice_reconnect_attempts: int = 5,
+        voice_reconnect_base: float = 1.0,
+        voice_reconnect_max_delay: float = 30.0
     ):
         if application_id is not None:
             _log.warning(
@@ -160,6 +168,14 @@ class Client:
         How many times a voice connection will try to fully reconnect after an
         unexpected close before giving up.
         """
+        if voice_reconnect_base <= 0:
+            raise ValueError("voice_reconnect_base must be > 0")
+        self.voice_reconnect_base: float = voice_reconnect_base
+        """ The base delay, in seconds, for the voice reconnect exponential backoff. """
+        if voice_reconnect_max_delay <= 0:
+            raise ValueError("voice_reconnect_max_delay must be > 0")
+        self.voice_reconnect_max_delay: float = voice_reconnect_max_delay
+        """ The maximum delay, in seconds, for the voice reconnect exponential backoff. """
         self.playing_status: "PlayingStatus | None" = playing_status
         self.guild_ready_timeout: float = guild_ready_timeout
         self.chunk_guilds_on_startup: bool = chunk_guilds_on_startup

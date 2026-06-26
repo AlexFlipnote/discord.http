@@ -1,7 +1,7 @@
 import asyncio
 import logging
 
-from typing import TYPE_CHECKING, Any
+from typing import TYPE_CHECKING
 
 from ..utils import URL, ExponentialBackoff
 from .dave import DaveManager, has_dave
@@ -21,13 +21,7 @@ _log = logging.getLogger(__name__)
 
 
 class VoiceConnection:
-    """
-    The transport and control-plane state machine for a voice connection.
-
-    Coordinates the gateway voice-state/voice-server handshake, the voice
-    websocket, UDP IP discovery, and the encryption handshake to reach a
-    fully connected state.
-    """
+    """ The transport and control-plane state machine for a voice connection. """
 
     def __init__(self, voice_client: "VoiceClient"):
         self.voice_client: "VoiceClient" = voice_client
@@ -93,9 +87,6 @@ class VoiceConnection:
         self.dave_protocol_version: int = 0
         """ The negotiated DAVE protocol version (0 if not in use). """
 
-        self.pending_transitions: dict[int, Any] = {}
-        """ Pending DAVE protocol transitions, keyed by transition ID. """
-
         self._state_event: asyncio.Event = asyncio.Event()
         self._server_event: asyncio.Event = asyncio.Event()
         self._ready_event: asyncio.Event = asyncio.Event()
@@ -111,7 +102,19 @@ class VoiceConnection:
         self._self_deaf: bool = False
         self._closing: bool = False
         self._reconnect_task: asyncio.Task | None = None
-        self._backoff: ExponentialBackoff = ExponentialBackoff(base=1.0, max_delay=30.0)
+        # Built lazily on first use so the backoff base/max_delay can be read
+        # from the client (mirroring how voice_reconnect_attempts is read).
+        self._backoff: ExponentialBackoff | None = None
+
+    @property
+    def backoff(self) -> ExponentialBackoff:
+        """ The exponential backoff for reconnects, built lazily from client settings. """
+        if self._backoff is None:
+            self._backoff = ExponentialBackoff(
+                base=self.client.voice_reconnect_base,
+                max_delay=self.client.voice_reconnect_max_delay,
+            )
+        return self._backoff
 
     @property
     def client(self) -> "Client":
@@ -150,34 +153,28 @@ class VoiceConnection:
         reconnect: bool = True,
         reconnect_on_session_invalid: bool = False,
         self_deaf: bool = False,
-        self_mute: bool = False,
-        _internal_reconnect: bool = False
+        self_mute: bool = False
     ) -> None:
-        """
-        Establish the full voice connection.
+        """ Establish the full voice connection, resetting the reconnect backoff. """
+        await self._connect(
+            timeout=timeout,
+            reconnect=reconnect,
+            reconnect_on_session_invalid=reconnect_on_session_invalid,
+            self_deaf=self_deaf,
+            self_mute=self_mute,
+        )
 
-        Parameters
-        ----------
-        timeout:
-            The maximum time to wait for the handshake, in seconds.
-        reconnect:
-            Whether to attempt reconnection on failure.
-        reconnect_on_session_invalid:
-            Whether to reconnect when Discord invalidates the session (close code
-            4006), e.g. after the channel empties and the DAVE session is torn
-            down. Defaults to ``False`` (disconnect instead of reconnecting).
-        self_deaf:
-            Whether to join self-deafened.
-        self_mute:
-            Whether to join self-muted.
-
-        Raises
-        ------
-        RuntimeError
-            If no shard can be resolved for the guild.
-        TimeoutError
-            If the handshake does not complete within ``timeout``.
-        """
+    async def _connect(
+        self,
+        *,
+        timeout: float = 30.0,
+        reconnect: bool = True,
+        reconnect_on_session_invalid: bool = False,
+        self_deaf: bool = False,
+        self_mute: bool = False,
+        preserve_backoff: bool = False
+    ) -> None:
+        """ Drive the full handshake, optionally preserving the reconnect backoff. """
         client = self.client
 
         shard_id = client.get_shard_by_guild_id(self.guild_id)
@@ -196,11 +193,11 @@ class VoiceConnection:
 
         # Only reset the exponential backoff on a genuinely fresh/initial
         # connect. The reconnect loop in _full_reconnect() drives its own
-        # backoff and passes _internal_reconnect=True so that each retry's
-        # connect() call does NOT reset it -- otherwise the delay would never
+        # backoff and passes preserve_backoff=True so that each retry's
+        # _connect() call does NOT reset it -- otherwise the delay would never
         # grow and every attempt would sleep the base delay.
-        if not _internal_reconnect:
-            self._backoff.reset()
+        if not preserve_backoff:
+            self.backoff.reset()
 
         self._state_event.clear()
         self._server_event.clear()
@@ -231,14 +228,7 @@ class VoiceConnection:
         await self._connected_event.wait()
 
     def _on_socket_closed(self, close_code: int | None) -> None:
-        """
-        React to the voice websocket closing by deciding whether to reconnect.
-
-        Parameters
-        ----------
-        close_code:
-            The websocket close code, if one was reported.
-        """
+        """ React to the voice websocket closing by deciding whether to reconnect. """
         if self._closing:
             return
 
@@ -251,14 +241,7 @@ class VoiceConnection:
         )
 
     async def _handle_close(self, close_code: int | None) -> None:
-        """
-        Drive reconnect/resume logic based on the voice gateway close code.
-
-        Parameters
-        ----------
-        close_code:
-            The websocket close code, if one was reported.
-        """
+        """ Drive reconnect/resume logic based on the voice gateway close code. """
         if close_code in (VoiceCloseCode.disconnected, VoiceCloseCode.call_terminated):
             _log.debug(f"Voice connection for guild {self.guild_id} disconnected (code {close_code}); tearing down")
             await self._teardown_and_remove()
@@ -326,22 +309,7 @@ class VoiceConnection:
             await self._full_reconnect(int(VoiceCloseCode.voice_server_crashed))
 
     async def _soft_reconnect(self, timeout: float = 10.0) -> bool:
-        """
-        Re-open the voice websocket and re-IDENTIFY without leaving the channel.
-
-        On a 4006 the gateway voice state (session id) and the voice server
-        token/endpoint are often still valid; the bot never left the channel.
-        Opening a fresh socket and sending IDENTIFY (op 0) with those existing
-        credentials can recover the session with no user-visible blip. Returns
-        ``True`` on a successful handshake, ``False`` if the credentials are
-        missing or the handshake does not complete in time (the caller then
-        falls back to a full leave/rejoin reconnect).
-
-        Parameters
-        ----------
-        timeout:
-            How long to wait for the re-handshake to complete, in seconds.
-        """
+        """ Re-open the voice websocket and re-IDENTIFY without leaving the channel. """
         if not (self.session_id and self.token and self.endpoint):
             return False
 
@@ -371,20 +339,7 @@ class VoiceConnection:
         return True
 
     async def _full_reconnect(self, close_code: int | None, *, force_refresh: bool = False) -> None:
-        """
-        Re-issue op4 and run a fresh handshake, retrying with exponential backoff.
-
-        Parameters
-        ----------
-        close_code:
-            The close code that triggered the reconnect, for logging.
-        force_refresh:
-            When ``True``, drop and re-acquire the gateway voice state (leave and
-            rejoin the channel) before each attempt. Needed for a 4006 where the
-            bot is still in the channel, so re-issuing op4 with the same channel
-            would be a no-op and yield no fresh VOICE_SERVER_UPDATE. Defaults to
-            ``False`` so unrelated reconnects do not cause a visible leave/rejoin.
-        """
+        """ Re-issue op4 and run a fresh handshake, retrying with exponential backoff. """
         if self.socket is not None:
             self.socket._request_close()
             await self.socket.close()
@@ -396,9 +351,9 @@ class VoiceConnection:
         self.udp = None
 
         # Each attempt below deliberately re-issues op4 (change_voice_state) via
-        # connect(..., _internal_reconnect=True). The backoff is reset once here
-        # and then grows across attempts (connect() skips resetting it).
-        self._backoff.reset()
+        # _connect(..., preserve_backoff=True). The backoff is reset once here
+        # and then grows across attempts (_connect() skips resetting it).
+        self.backoff.reset()
 
         max_attempts = self.client.voice_reconnect_attempts
 
@@ -406,7 +361,7 @@ class VoiceConnection:
             if self._closing:
                 return
 
-            delay = self._backoff.delay()
+            delay = self.backoff.delay()
             _log.debug(
                 f"Reconnecting voice for guild {self.guild_id} (close code {close_code}), "
                 f"attempt {attempt}/{max_attempts} in {delay:.2f}s"
@@ -418,13 +373,13 @@ class VoiceConnection:
                     # Force Discord to allocate a fresh voice server before
                     # rejoining (only needed for the 4006 leave/rejoin fallback).
                     await self._force_voice_refresh()
-                await self.connect(
+                await self._connect(
                     reconnect=self._reconnect,
                     reconnect_on_session_invalid=self._reconnect_on_session_invalid,
                     self_deaf=self._self_deaf,
                     self_mute=self._self_mute,
                     # Preserve the growing backoff across reconnect attempts.
-                    _internal_reconnect=True,
+                    preserve_backoff=True,
                 )
             except Exception as exc:
                 _log.debug(f"Voice reconnect attempt {attempt} for guild {self.guild_id} failed", exc_info=exc)
@@ -437,20 +392,7 @@ class VoiceConnection:
         await self._teardown_and_remove()
 
     async def _force_voice_refresh(self) -> None:
-        """
-        Drop the gateway voice state so Discord re-allocates a fresh voice server.
-
-        On a 4006 ("session no longer valid") the voice session is dead but the
-        bot is still in the channel at the gateway level. Re-issuing op4 with the
-        same ``channel_id`` is then a no-op for the voice server: no new
-        VOICE_SERVER_UPDATE arrives and the handshake times out waiting for it.
-
-        Sending ``channel_id=None`` first makes the gateway drop the voice state,
-        so the subsequent rejoin in :meth:`connect` is a genuine state change and
-        yields a fresh token/endpoint. We wait for the gateway to acknowledge the
-        leave (via :attr:`_left_event`) so it does not coalesce the leave and the
-        immediate rejoin into a single no-op.
-        """
+        """ Drop the gateway voice state so Discord re-allocates a fresh voice server. """
         client = self.client
         shard_id = client.get_shard_by_guild_id(self.guild_id)
         shard = client.gateway.get_shard(shard_id) if (client.gateway and shard_id is not None) else None
@@ -479,14 +421,7 @@ class VoiceConnection:
             _log.debug(f"Error during voice teardown for guild {self.guild_id}", exc_info=exc)
 
     def on_voice_state_update(self, data: dict) -> None:
-        """
-        Handle a VOICE_STATE_UPDATE for the bot.
-
-        Parameters
-        ----------
-        data:
-            The raw voice state update payload.
-        """
+        """ Handle a VOICE_STATE_UPDATE for the bot. """
         self.session_id = data.get("session_id") or self.session_id
 
         channel_id = data.get("channel_id")
@@ -502,14 +437,7 @@ class VoiceConnection:
             self._state_event.set()
 
     def on_voice_server_update(self, data: dict) -> None:
-        """
-        Handle a VOICE_SERVER_UPDATE for the guild.
-
-        Parameters
-        ----------
-        data:
-            The raw voice server update payload.
-        """
+        """ Handle a VOICE_SERVER_UPDATE for the guild. """
         self.token = data.get("token")
 
         endpoint = data.get("endpoint")
@@ -544,20 +472,18 @@ class VoiceConnection:
             self._server_event.set()
 
     async def on_ready(self, data: dict) -> None:
-        """
-        Handle the voice READY (op 2): set up UDP and select the protocol.
-
-        Parameters
-        ----------
-        data:
-            The READY payload containing ssrc, ip, port and modes.
-        """
+        """ Handle the voice READY (op 2): set up UDP and select the protocol. """
         self.ssrc = int(data["ssrc"])
         ip = data["ip"]
         port = int(data["port"])
         modes = data.get("modes", [])
 
-        self.mode = next((m for m in SUPPORTED_MODES if m in modes), SUPPORTED_MODES[0])
+        self.mode = next((m for m in SUPPORTED_MODES if m in modes), None)
+        if self.mode is None:
+            raise RuntimeError(
+                "Discord advertised no encryption mode supported by this library; "
+                f"offered {modes}, supported {list(SUPPORTED_MODES)}"
+            )
 
         self.transport, self.udp = await create_udp(self, ip, port)
 
@@ -571,14 +497,7 @@ class VoiceConnection:
             await self.socket.send_select_protocol(discovered_ip, discovered_port, self.mode)
 
     async def on_session_description(self, data: dict) -> None:
-        """
-        Handle the SESSION_DESCRIPTION (op 4): build the encryptor.
-
-        Parameters
-        ----------
-        data:
-            The session description payload with the secret key and mode.
-        """
+        """ Handle the SESSION_DESCRIPTION (op 4): build the encryptor. """
         secret_key = bytes(data["secret_key"])
         self.secret_key = secret_key
         self.mode = data.get("mode", self.mode)
@@ -600,14 +519,7 @@ class VoiceConnection:
         self._connected_event.set()
 
     async def on_speaking(self, data: dict) -> None:
-        """
-        Handle a SPEAKING (op 5) frame from another user.
-
-        Parameters
-        ----------
-        data:
-            The speaking payload with ssrc, user_id and speaking flags.
-        """
+        """ Handle a SPEAKING (op 5) frame from another user. """
         receiver = self.voice_client._receiver
         if receiver is None:
             return
@@ -618,14 +530,7 @@ class VoiceConnection:
             receiver.add_ssrc(int(ssrc), int(user_id))
 
     async def on_resumed(self, data: dict) -> None:  # noqa: ARG002
-        """
-        Handle the RESUMED (op 9) frame.
-
-        Parameters
-        ----------
-        data:
-            The resumed payload.
-        """
+        """ Handle the RESUMED (op 9) frame. """
         _log.debug(f"Voice connection for guild {self.guild_id} resumed")
         # A successful RESUMED frame means the connection is live again. _resume()
         # cleared _connected_event when re-opening the socket, so re-set it here;
@@ -633,16 +538,7 @@ class VoiceConnection:
         self._connected_event.set()
 
     async def on_dave_binary(self, opcode: int, payload: bytes) -> None:
-        """
-        Handle an inbound binary DAVE frame.
-
-        Parameters
-        ----------
-        opcode:
-            The voice opcode of the binary frame.
-        payload:
-            The binary payload following the opcode.
-        """
+        """ Handle an inbound binary DAVE frame. """
         if not has_dave:
             _log.warning(f"Received DAVE binary op {opcode} but the davey library is not available")
             return
@@ -654,19 +550,7 @@ class VoiceConnection:
             await self.dave_session.handle_binary(opcode, payload)
 
     async def on_dave_json(self, opcode: int, data: dict) -> None:
-        """
-        Handle an inbound JSON DAVE control op (transition/epoch, ops 21/22/24).
-
-        These ops arrive as JSON text frames rather than binary DAVE frames, so
-        they carry the decoded ``d`` payload instead of raw bytes.
-
-        Parameters
-        ----------
-        opcode:
-            The voice opcode of the control frame.
-        data:
-            The decoded JSON ``d`` payload.
-        """
+        """ Handle an inbound JSON DAVE control op (transition/epoch, ops 21/22/24). """
         if not has_dave:
             _log.warning(f"Received DAVE JSON op {opcode} but the davey library is not available")
             return
@@ -696,56 +580,43 @@ class VoiceConnection:
         return self.dave_session is not None and self.dave_session.ready
 
     def dave_encrypt_opus(self, opus: bytes) -> bytes:
-        """
-        Encrypt an Opus payload through the DAVE session, if active.
-
-        Parameters
-        ----------
-        opus:
-            The Opus payload to encrypt.
-
-        Returns
-        -------
-            The DAVE-encrypted Opus payload, or the input unchanged when inactive.
-        """
+        """ Encrypt an Opus payload through the DAVE session, or return it unchanged when inactive. """
         if self.dave_session is None or not self.dave_session.ready:
             return opus
         return self.dave_session.encrypt_opus(opus)
 
     def dave_decrypt_opus(self, user_id: int, opus: bytes) -> bytes:
-        """
-        Decrypt an Opus payload through the DAVE session, if active.
-
-        Parameters
-        ----------
-        user_id:
-            The user ID the payload was received from.
-        opus:
-            The Opus payload to decrypt.
-
-        Returns
-        -------
-            The decrypted Opus payload, or the input unchanged when inactive.
-        """
+        """ Decrypt an Opus payload through the DAVE session, or return it unchanged when inactive. """
         if self.dave_session is None or not self.dave_session.ready:
             return opus
         return self.dave_session.decrypt_opus(user_id, opus)
 
-    async def disconnect(self, *, force: bool = True) -> None:
-        """
-        Tear down the voice connection.
-
-        Parameters
-        ----------
-        force:
-            Whether to force the disconnect even if the gateway update fails.
-        """
-        self._closing = True
-
+    def _cancel_reconnect_task(self) -> None:
+        """ Cancel any pending reconnect task, unless it is the current task. """
         if self._reconnect_task is not None and self._reconnect_task is not asyncio.current_task():
             self._reconnect_task.cancel()
             self._reconnect_task = None
 
+    def _clear_transport_state(self) -> None:
+        """ Drop the transport/UDP/encryption state and clear the ready/connected events. """
+        if self.transport is not None:
+            self.transport.close()
+            self.transport = None
+
+        self.udp = None
+        self.encryptor = None
+        self.secret_key = None
+        self.ssrc = None
+        self._connected_event.clear()
+        self._ready_event.clear()
+
+    async def disconnect(self, *, force: bool = True) -> None:
+        """ Tear down the voice connection, notifying the gateway via op4. """
+        self._closing = True
+        self._cancel_reconnect_task()
+
+        # Request the close before sending op4 so the close handler does not
+        # treat the impending socket close as an unexpected disconnect.
         if self.socket is not None:
             self.socket._request_close()
 
@@ -764,55 +635,24 @@ class VoiceConnection:
             await self.socket.close()
             self.socket = None
 
-        if self.transport is not None:
-            self.transport.close()
-            self.transport = None
-
-        self.udp = None
-        self.encryptor = None
-        self.secret_key = None
-        self.ssrc = None
-        self._connected_event.clear()
-        self._ready_event.clear()
+        self._clear_transport_state()
 
     async def close_transport(self) -> None:
-        """
-        Close the websocket and UDP transport without notifying the gateway.
-
-        Used when the owning shard has been reset or killed, so op4 can no
-        longer be sent. Cancels any pending reconnect and clears local state.
-        """
+        """ Close the websocket and UDP transport without notifying the gateway. """
+        # Used when the owning shard has been reset or killed, so op4 can no
+        # longer be sent. Cancels any pending reconnect and clears local state.
         self._closing = True
-
-        if self._reconnect_task is not None and self._reconnect_task is not asyncio.current_task():
-            self._reconnect_task.cancel()
-            self._reconnect_task = None
+        self._cancel_reconnect_task()
 
         if self.socket is not None:
             self.socket._request_close()
             await self.socket.close()
             self.socket = None
 
-        if self.transport is not None:
-            self.transport.close()
-            self.transport = None
-
-        self.udp = None
-        self.encryptor = None
-        self.secret_key = None
-        self.ssrc = None
-        self._connected_event.clear()
-        self._ready_event.clear()
+        self._clear_transport_state()
 
     async def move_to(self, channel: "PartialChannel") -> None:
-        """
-        Move the connection to a different voice channel.
-
-        Parameters
-        ----------
-        channel:
-            The channel to move to.
-        """
+        """ Move the connection to a different voice channel. """
         client = self.client
 
         shard_id = client.get_shard_by_guild_id(self.guild_id)
