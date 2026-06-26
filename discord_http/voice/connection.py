@@ -155,7 +155,31 @@ class VoiceConnection:
         self_deaf: bool = False,
         self_mute: bool = False
     ) -> None:
-        """ Establish the full voice connection, resetting the reconnect backoff. """
+        """
+        Establish the full voice connection.
+
+        Parameters
+        ----------
+        timeout:
+            The maximum time to wait for the handshake, in seconds.
+        reconnect:
+            Whether to attempt reconnection on failure.
+        reconnect_on_session_invalid:
+            Whether to reconnect when Discord invalidates the session (close code
+            4006), e.g. after the channel empties and the DAVE session is torn
+            down. Defaults to ``False`` (disconnect instead of reconnecting).
+        self_deaf:
+            Whether to join self-deafened.
+        self_mute:
+            Whether to join self-muted.
+
+        Raises
+        ------
+        RuntimeError
+            If no shard can be resolved for the guild.
+        TimeoutError
+            If the handshake does not complete within ``timeout``.
+        """
         await self._connect(
             timeout=timeout,
             reconnect=reconnect,
@@ -174,7 +198,35 @@ class VoiceConnection:
         self_mute: bool = False,
         preserve_backoff: bool = False
     ) -> None:
-        """ Drive the full handshake, optionally preserving the reconnect backoff. """
+        """
+        Drive the full voice connection handshake.
+
+        Parameters
+        ----------
+        timeout:
+            The maximum time to wait for the handshake, in seconds.
+        reconnect:
+            Whether to attempt reconnection on failure.
+        reconnect_on_session_invalid:
+            Whether to reconnect when Discord invalidates the session (close code
+            4006), e.g. after the channel empties and the DAVE session is torn
+            down. Defaults to ``False`` (disconnect instead of reconnecting).
+        self_deaf:
+            Whether to join self-deafened.
+        self_mute:
+            Whether to join self-muted.
+        preserve_backoff:
+            Whether to keep the current exponential backoff instead of resetting
+            it. ``_full_reconnect`` passes ``True`` so the delay keeps growing
+            across retry attempts; a fresh connect resets it.
+
+        Raises
+        ------
+        RuntimeError
+            If no shard can be resolved for the guild.
+        TimeoutError
+            If the handshake does not complete within ``timeout``.
+        """
         client = self.client
 
         shard_id = client.get_shard_by_guild_id(self.guild_id)
@@ -228,7 +280,14 @@ class VoiceConnection:
         await self._connected_event.wait()
 
     def _on_socket_closed(self, close_code: int | None) -> None:
-        """ React to the voice websocket closing by deciding whether to reconnect. """
+        """
+        React to the voice websocket closing by deciding whether to reconnect.
+
+        Parameters
+        ----------
+        close_code:
+            The websocket close code, if one was reported.
+        """
         if self._closing:
             return
 
@@ -241,7 +300,14 @@ class VoiceConnection:
         )
 
     async def _handle_close(self, close_code: int | None) -> None:
-        """ Drive reconnect/resume logic based on the voice gateway close code. """
+        """
+        Drive reconnect/resume logic based on the voice gateway close code.
+
+        Parameters
+        ----------
+        close_code:
+            The websocket close code, if one was reported.
+        """
         if close_code in (VoiceCloseCode.disconnected, VoiceCloseCode.call_terminated):
             _log.debug(f"Voice connection for guild {self.guild_id} disconnected (code {close_code}); tearing down")
             await self._teardown_and_remove()
@@ -309,7 +375,22 @@ class VoiceConnection:
             await self._full_reconnect(int(VoiceCloseCode.voice_server_crashed))
 
     async def _soft_reconnect(self, timeout: float = 10.0) -> bool:
-        """ Re-open the voice websocket and re-IDENTIFY without leaving the channel. """
+        """
+        Re-open the voice websocket and re-IDENTIFY without leaving the channel.
+
+        On a 4006 the gateway voice state (session id) and the voice server
+        token/endpoint are often still valid; the bot never left the channel.
+        Opening a fresh socket and sending IDENTIFY (op 0) with those existing
+        credentials can recover the session with no user-visible blip. Returns
+        ``True`` on a successful handshake, ``False`` if the credentials are
+        missing or the handshake does not complete in time (the caller then
+        falls back to a full leave/rejoin reconnect).
+
+        Parameters
+        ----------
+        timeout:
+            How long to wait for the re-handshake to complete, in seconds.
+        """
         if not (self.session_id and self.token and self.endpoint):
             return False
 
@@ -339,7 +420,20 @@ class VoiceConnection:
         return True
 
     async def _full_reconnect(self, close_code: int | None, *, force_refresh: bool = False) -> None:
-        """ Re-issue op4 and run a fresh handshake, retrying with exponential backoff. """
+        """
+        Re-issue op4 and run a fresh handshake, retrying with exponential backoff.
+
+        Parameters
+        ----------
+        close_code:
+            The close code that triggered the reconnect, for logging.
+        force_refresh:
+            When ``True``, drop and re-acquire the gateway voice state (leave and
+            rejoin the channel) before each attempt. Needed for a 4006 where the
+            bot is still in the channel, so re-issuing op4 with the same channel
+            would be a no-op and yield no fresh VOICE_SERVER_UPDATE. Defaults to
+            ``False`` so unrelated reconnects do not cause a visible leave/rejoin.
+        """
         if self.socket is not None:
             self.socket._request_close()
             await self.socket.close()
@@ -421,7 +515,14 @@ class VoiceConnection:
             _log.debug(f"Error during voice teardown for guild {self.guild_id}", exc_info=exc)
 
     def on_voice_state_update(self, data: dict) -> None:
-        """ Handle a VOICE_STATE_UPDATE for the bot. """
+        """
+        Handle a VOICE_STATE_UPDATE for the bot.
+
+        Parameters
+        ----------
+        data:
+            The raw voice state update payload.
+        """
         self.session_id = data.get("session_id") or self.session_id
 
         channel_id = data.get("channel_id")
@@ -437,7 +538,14 @@ class VoiceConnection:
             self._state_event.set()
 
     def on_voice_server_update(self, data: dict) -> None:
-        """ Handle a VOICE_SERVER_UPDATE for the guild. """
+        """
+        Handle a VOICE_SERVER_UPDATE for the guild.
+
+        Parameters
+        ----------
+        data:
+            The raw voice server update payload.
+        """
         self.token = data.get("token")
 
         endpoint = data.get("endpoint")
@@ -472,7 +580,14 @@ class VoiceConnection:
             self._server_event.set()
 
     async def on_ready(self, data: dict) -> None:
-        """ Handle the voice READY (op 2): set up UDP and select the protocol. """
+        """
+        Handle the voice READY (op 2): set up UDP and select the protocol.
+
+        Parameters
+        ----------
+        data:
+            The READY payload containing ssrc, ip, port and modes.
+        """
         self.ssrc = int(data["ssrc"])
         ip = data["ip"]
         port = int(data["port"])
@@ -497,7 +612,14 @@ class VoiceConnection:
             await self.socket.send_select_protocol(discovered_ip, discovered_port, self.mode)
 
     async def on_session_description(self, data: dict) -> None:
-        """ Handle the SESSION_DESCRIPTION (op 4): build the encryptor. """
+        """
+        Handle the SESSION_DESCRIPTION (op 4): build the encryptor.
+
+        Parameters
+        ----------
+        data:
+            The session description payload with the secret key and mode.
+        """
         secret_key = bytes(data["secret_key"])
         self.secret_key = secret_key
         self.mode = data.get("mode", self.mode)
@@ -519,7 +641,14 @@ class VoiceConnection:
         self._connected_event.set()
 
     async def on_speaking(self, data: dict) -> None:
-        """ Handle a SPEAKING (op 5) frame from another user. """
+        """
+        Handle a SPEAKING (op 5) frame from another user.
+
+        Parameters
+        ----------
+        data:
+            The speaking payload with ssrc, user_id and speaking flags.
+        """
         receiver = self.voice_client._receiver
         if receiver is None:
             return
@@ -530,7 +659,14 @@ class VoiceConnection:
             receiver.add_ssrc(int(ssrc), int(user_id))
 
     async def on_resumed(self, data: dict) -> None:  # noqa: ARG002
-        """ Handle the RESUMED (op 9) frame. """
+        """
+        Handle the RESUMED (op 9) frame.
+
+        Parameters
+        ----------
+        data:
+            The resumed payload.
+        """
         _log.debug(f"Voice connection for guild {self.guild_id} resumed")
         # A successful RESUMED frame means the connection is live again. _resume()
         # cleared _connected_event when re-opening the socket, so re-set it here;
@@ -538,7 +674,16 @@ class VoiceConnection:
         self._connected_event.set()
 
     async def on_dave_binary(self, opcode: int, payload: bytes) -> None:
-        """ Handle an inbound binary DAVE frame. """
+        """
+        Handle an inbound binary DAVE frame.
+
+        Parameters
+        ----------
+        opcode:
+            The voice opcode of the binary frame.
+        payload:
+            The binary payload following the opcode.
+        """
         if not has_dave:
             _log.warning(f"Received DAVE binary op {opcode} but the davey library is not available")
             return
@@ -550,7 +695,19 @@ class VoiceConnection:
             await self.dave_session.handle_binary(opcode, payload)
 
     async def on_dave_json(self, opcode: int, data: dict) -> None:
-        """ Handle an inbound JSON DAVE control op (transition/epoch, ops 21/22/24). """
+        """
+        Handle an inbound JSON DAVE control op (transition/epoch, ops 21/22/24).
+
+        These ops arrive as JSON text frames rather than binary DAVE frames, so
+        they carry the decoded ``d`` payload instead of raw bytes.
+
+        Parameters
+        ----------
+        opcode:
+            The voice opcode of the control frame.
+        data:
+            The decoded JSON ``d`` payload.
+        """
         if not has_dave:
             _log.warning(f"Received DAVE JSON op {opcode} but the davey library is not available")
             return
@@ -580,13 +737,37 @@ class VoiceConnection:
         return self.dave_session is not None and self.dave_session.ready
 
     def dave_encrypt_opus(self, opus: bytes) -> bytes:
-        """ Encrypt an Opus payload through the DAVE session, or return it unchanged when inactive. """
+        """
+        Encrypt an Opus payload through the DAVE session, if active.
+
+        Parameters
+        ----------
+        opus:
+            The Opus payload to encrypt.
+
+        Returns
+        -------
+            The DAVE-encrypted Opus payload, or the input unchanged when inactive.
+        """
         if self.dave_session is None or not self.dave_session.ready:
             return opus
         return self.dave_session.encrypt_opus(opus)
 
     def dave_decrypt_opus(self, user_id: int, opus: bytes) -> bytes:
-        """ Decrypt an Opus payload through the DAVE session, or return it unchanged when inactive. """
+        """
+        Decrypt an Opus payload through the DAVE session, if active.
+
+        Parameters
+        ----------
+        user_id:
+            The user ID the payload was received from.
+        opus:
+            The Opus payload to decrypt.
+
+        Returns
+        -------
+            The decrypted Opus payload, or the input unchanged when inactive.
+        """
         if self.dave_session is None or not self.dave_session.ready:
             return opus
         return self.dave_session.decrypt_opus(user_id, opus)
@@ -611,7 +792,14 @@ class VoiceConnection:
         self._ready_event.clear()
 
     async def disconnect(self, *, force: bool = True) -> None:
-        """ Tear down the voice connection, notifying the gateway via op4. """
+        """
+        Tear down the voice connection.
+
+        Parameters
+        ----------
+        force:
+            Whether to force the disconnect even if the gateway update fails.
+        """
         self._closing = True
         self._cancel_reconnect_task()
 
@@ -652,7 +840,14 @@ class VoiceConnection:
         self._clear_transport_state()
 
     async def move_to(self, channel: "PartialChannel") -> None:
-        """ Move the connection to a different voice channel. """
+        """
+        Move the connection to a different voice channel.
+
+        Parameters
+        ----------
+        channel:
+            The channel to move to.
+        """
         client = self.client
 
         shard_id = client.get_shard_by_guild_id(self.guild_id)

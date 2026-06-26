@@ -500,7 +500,14 @@ class AudioPlayer:
         return not self._end.is_set() and not self._resumed.is_set()
 
     def set_source(self, source: AudioSource) -> None:
-        """ Hot-swap the audio source without interrupting the player task. """
+        """
+        Hot-swap the audio source without interrupting the player task.
+
+        Parameters
+        ----------
+        source:
+            The new audio source to read from.
+        """
         self.pause()
         self.source.cleanup()
         self.source = source
@@ -512,7 +519,29 @@ AudioSourceInput = AudioSource | str | os.PathLike | bytes | bytearray | memoryv
 
 
 def _resolve_source(audio: object) -> AudioSource:
-    """ Coerce arbitrary audio input (source, path/URL, bytes, stream, or async iterable) into an :class:`AudioSource`. """
+    """
+    Coerce arbitrary audio input into an :class:`AudioSource`.
+
+    Parameters
+    ----------
+    audio:
+        One of: an :class:`AudioSource` (returned as-is); a ``str`` or
+        :class:`os.PathLike` path/URL; raw ``bytes``/``bytearray``/``memoryview``;
+        a readable :class:`io.IOBase` stream; or an :class:`~collections.abc.AsyncIterable`
+        of ``bytes``. The latter four are decoded by ffmpeg into Opus.
+
+    Returns
+    -------
+    AudioSource
+        A source ready to be played.
+
+    Raises
+    ------
+    TypeError
+        If ``audio`` is not a supported type.
+    FileNotFoundError
+        If ffmpeg is required but not found on ``PATH``.
+    """
     if isinstance(audio, AudioSource):
         return audio
 

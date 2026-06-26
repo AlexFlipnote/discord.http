@@ -25,24 +25,54 @@ class VoiceUDPProtocol(asyncio.DatagramProtocol):
         self._discovery_future: asyncio.Future[bytes] | None = None
 
     def connection_made(self, transport: asyncio.BaseTransport) -> None:
-        """ Store the transport once the endpoint is created. """
+        """
+        Store the transport once the endpoint is created.
+
+        Parameters
+        ----------
+        transport:
+            The datagram transport for this protocol.
+        """
         # A DatagramProtocol is only ever driven by a DatagramTransport; the
         # isinstance check narrows the BaseTransport type without a cast.
         if isinstance(transport, asyncio.DatagramTransport):
             self.transport = transport
 
     def error_received(self, exc: Exception) -> None:
-        """ Log a transport-level error. """
+        """
+        Log a transport-level error.
+
+        Parameters
+        ----------
+        exc:
+            The exception reported by the transport.
+        """
         _log.warning(f"Voice UDP error for guild {self.connection.guild_id}: {exc}")
 
     def connection_lost(self, exc: Exception | None) -> None:
-        """ Handle the transport being closed. """
+        """
+        Handle the transport being closed.
+
+        Parameters
+        ----------
+        exc:
+            The exception that caused the loss, if any.
+        """
         if exc is not None:
             _log.debug(f"Voice UDP connection lost for guild {self.connection.guild_id}", exc_info=exc)
         self.transport = None
 
     def datagram_received(self, data: bytes, addr: tuple) -> None:  # noqa: ARG002
-        """ Route an inbound datagram to the right consumer. """
+        """
+        Route an inbound datagram to the right consumer.
+
+        Parameters
+        ----------
+        data:
+            The raw datagram payload.
+        addr:
+            The source address of the datagram.
+        """
         if len(data) < 2:
             return
 
@@ -71,7 +101,23 @@ class VoiceUDPProtocol(asyncio.DatagramProtocol):
             receiver.unpack(data)
 
     async def discover_ip(self, ssrc: int) -> tuple[str, int]:
-        """ Perform IP discovery to learn this client's external IP address and UDP port. """
+        """
+        Perform IP discovery to learn this client's external address.
+
+        Parameters
+        ----------
+        ssrc:
+            The SSRC assigned by the voice gateway.
+
+        Returns
+        -------
+            The externally visible IP address and UDP port.
+
+        Raises
+        ------
+        RuntimeError
+            If the transport is not available.
+        """
         if self.transport is None:
             raise RuntimeError("UDP transport is not available for IP discovery")
 
@@ -99,7 +145,22 @@ async def create_udp(
     ip: str,
     port: int
 ) -> tuple[asyncio.DatagramTransport, VoiceUDPProtocol]:
-    """ Create a connected UDP datagram endpoint for voice. """
+    """
+    Create a connected UDP datagram endpoint for voice.
+
+    Parameters
+    ----------
+    connection:
+        The voice connection that owns the new protocol.
+    ip:
+        The voice server IP address to connect to.
+    port:
+        The voice server UDP port to connect to.
+
+    Returns
+    -------
+        The datagram transport and its protocol.
+    """
     loop = asyncio.get_running_loop()
     transport, protocol = await loop.create_datagram_endpoint(
         lambda: VoiceUDPProtocol(connection),
