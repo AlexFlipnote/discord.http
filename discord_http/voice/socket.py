@@ -83,7 +83,14 @@ class VoiceSocket:
         return session
 
     async def connect(self, *, resume: bool = False) -> None:
-        """ Open the voice websocket and start the receive loop, resuming (op 7) instead of identifying (op 0) if requested. """
+        """
+        Open the voice websocket and start the receive loop.
+
+        Parameters
+        ----------
+        resume:
+            Whether to RESUME (op 7) an existing session rather than IDENTIFY (op 0).
+        """
         self._closing = False
         self._resuming = resume
         endpoint = self.connection.endpoint
@@ -142,7 +149,14 @@ class VoiceSocket:
         self._closing = True
 
     def _dispatch_text(self, raw: str | bytes) -> None:
-        """ Parse and dispatch a text frame by its voice opcode. """
+        """
+        Parse and dispatch a text frame by its voice opcode.
+
+        Parameters
+        ----------
+        raw:
+            The raw JSON text frame received from the voice gateway.
+        """
         payload: dict = orjson.loads(raw)
 
         seq = payload.get("seq")
@@ -195,7 +209,14 @@ class VoiceSocket:
                 _log.debug(f"Voice socket for guild {self.connection.guild_id} received unhandled op {voice_op}")
 
     def _dispatch_binary(self, raw: bytes) -> None:
-        """ Parse and dispatch a binary DAVE frame (``seq(2B >H) + opcode(1B) + payload``). """
+        """
+        Parse and dispatch a binary DAVE frame.
+
+        Parameters
+        ----------
+        raw:
+            The raw binary frame: ``seq(2B >H) + opcode(1B) + payload``.
+        """
         if len(raw) < 3:
             return
 
@@ -207,7 +228,14 @@ class VoiceSocket:
         self._schedule(self.connection.on_dave_binary(opcode, payload))
 
     def _schedule(self, coro: Coroutine[Any, Any, Any]) -> None:
-        """ Schedule a coroutine as a task so the receive loop never blocks. """
+        """
+        Schedule a coroutine as a task so the receive loop never blocks.
+
+        Parameters
+        ----------
+        coro:
+            The coroutine to run independently of the receive loop.
+        """
         task = asyncio.create_task(
             self._guard(coro),
             name=f"discord.http/voice/socket-{self.connection.guild_id}/dispatch"
@@ -216,7 +244,14 @@ class VoiceSocket:
         task.add_done_callback(self._dispatch_tasks.discard)
 
     async def _guard(self, coro: Coroutine[Any, Any, Any]) -> None:
-        """ Run a scheduled coroutine, logging any exception it raises. """
+        """
+        Run a scheduled coroutine, logging any exception it raises.
+
+        Parameters
+        ----------
+        coro:
+            The coroutine to await.
+        """
         try:
             await coro
         except Exception as exc:
@@ -275,7 +310,14 @@ class VoiceSocket:
         })
 
     async def _send_json(self, payload: dict) -> None:
-        """ Send a JSON frame over the websocket. """
+        """
+        Send a JSON frame over the websocket.
+
+        Parameters
+        ----------
+        payload:
+            The payload to serialise and send.
+        """
         if self.ws is None or self.ws.closed:
             return
         # JSON control frames MUST be sent as text frames: the voice gateway
@@ -301,7 +343,18 @@ class VoiceSocket:
         })
 
     async def send_select_protocol(self, ip: str, port: int, mode: str) -> None:
-        """ Send the SELECT_PROTOCOL (op 1) frame after IP discovery. """
+        """
+        Send the SELECT_PROTOCOL (op 1) frame after IP discovery.
+
+        Parameters
+        ----------
+        ip:
+            The externally discovered IP address.
+        port:
+            The externally discovered UDP port.
+        mode:
+            The negotiated encryption mode.
+        """
         await self._send_json({
             "op": int(VoiceOpType.select_protocol),
             "d": {
@@ -315,7 +368,18 @@ class VoiceSocket:
         })
 
     async def send_speaking(self, speaking: int, *, ssrc: int, delay: int = 0) -> None:
-        """ Send the SPEAKING (op 5) frame. """
+        """
+        Send the SPEAKING (op 5) frame.
+
+        Parameters
+        ----------
+        speaking:
+            The speaking bitflag (1 to indicate microphone audio).
+        ssrc:
+            The SSRC of the connection.
+        delay:
+            The voice delay, in milliseconds.
+        """
         await self._send_json({
             "op": int(VoiceOpType.speaking),
             "d": {
@@ -338,7 +402,17 @@ class VoiceSocket:
         })
 
     async def send_transition_ready(self, transition_id: int) -> None:
-        """ Send the DAVE TRANSITION_READY (op 23) acknowledgement as a JSON control frame. """
+        """
+        Send the DAVE TRANSITION_READY (op 23) acknowledgement.
+
+        This is a JSON control frame (not a binary DAVE frame): it carries the
+        ``transition_id`` as JSON, matching the voice gateway protocol.
+
+        Parameters
+        ----------
+        transition_id:
+            The id of the transition being acknowledged.
+        """
         await self._send_json({
             "op": int(VoiceOpType.dave_transition_ready),
             "d": {
@@ -347,7 +421,24 @@ class VoiceSocket:
         })
 
     async def send_binary(self, opcode: int, payload: bytes) -> None:
-        """ Send a binary DAVE frame, framed as ``opcode(1B) + payload`` with no sequence prefix. """
+        """
+        Send a binary DAVE frame.
+
+        Outbound binary frames are framed as ``opcode(1B) + payload`` with NO
+        sequence prefix. This is asymmetric with *inbound* binary frames, which
+        Discord prefixes with a 2-byte sequence number (``seq(2B) + opcode(1B) +
+        payload``, handled in :meth:`_dispatch_binary`). Prefixing outbound
+        frames with the 2-byte sequence makes Discord read the leading ``0x00``
+        byte as opcode 0 (IDENTIFY) and close the socket with 4005
+        ("Already authenticated").
+
+        Parameters
+        ----------
+        opcode:
+            The voice opcode for the binary frame.
+        payload:
+            The binary payload to send after the opcode.
+        """
         if self.ws is None or self.ws.closed:
             return
 
