@@ -85,13 +85,7 @@ DecoderStruct = ctypes.c_void_p
 
 
 class _OpusLoader:
-    """
-    Holds the lazily-loaded libopus handle and its load state.
-
-    Encapsulating the state on an instance avoids module-level ``global``
-    statements: :func:`load_opus` mutates the attributes of this singleton
-    instead of rebinding module globals.
-    """
+    """ Holds the lazily-loaded libopus handle and its load state on an instance to avoid module-level ``global``. """
 
     __slots__ = ("attempted", "lib")
 
@@ -107,14 +101,7 @@ _loader = _OpusLoader()
 
 
 def _configure_lib(lib: ctypes.CDLL) -> None:
-    """
-    Configure the ``argtypes`` and ``restype`` of every function we bind.
-
-    Parameters
-    ----------
-    lib:
-        The freshly loaded libopus shared library.
-    """
+    """ Configure the ``argtypes`` and ``restype`` of every function we bind. """
     lib.opus_strerror.argtypes = [ctypes.c_int]
     lib.opus_strerror.restype = ctypes.c_char_p
 
@@ -178,20 +165,7 @@ def _configure_lib(lib: ctypes.CDLL) -> None:
 
 
 def load_opus(name: str | None = None) -> None:
-    """
-    Load libopus and configure all of its bindings.
-
-    Parameters
-    ----------
-    name:
-        An explicit path or library name to load. When omitted, the system
-        library is located with :func:`ctypes.util.find_library`.
-
-    Raises
-    ------
-    OpusError
-        If an explicit ``name`` was given but the library could not be loaded.
-    """
+    """ Load libopus and configure all of its bindings. """
     _loader.attempted = True
 
     location = name
@@ -221,17 +195,7 @@ def load_opus(name: str | None = None) -> None:
 
 
 def is_loaded() -> bool:
-    """
-    Whether libopus is currently loaded.
-
-    A lazy :func:`load_opus` is attempted once if loading has not yet been
-    attempted. A missing system library results in ``False`` rather than an
-    exception.
-
-    Returns
-    -------
-        ``True`` if libopus is loaded and ready, ``False`` otherwise.
-    """
+    """ Whether libopus is currently loaded, attempting a lazy load once if not yet tried. """
     if not _loader.attempted:
         load_opus()
 
@@ -239,18 +203,7 @@ def is_loaded() -> bool:
 
 
 def _get_lib() -> ctypes.CDLL:
-    """
-    Return the loaded libopus library, loading it lazily if needed.
-
-    Returns
-    -------
-        The loaded libopus shared library.
-
-    Raises
-    ------
-    OpusNotLoaded
-        If libopus could not be found or loaded.
-    """
+    """ Return the loaded libopus library, loading it lazily if needed. """
     if not _loader.attempted:
         load_opus()
 
@@ -261,18 +214,7 @@ def _get_lib() -> ctypes.CDLL:
 
 
 def _strerror(code: int) -> str:
-    """
-    Resolve a libopus error code into a human-readable string.
-
-    Parameters
-    ----------
-    code:
-        The negative error code returned by a libopus call.
-
-    Returns
-    -------
-        The decoded error string.
-    """
+    """ Resolve a libopus error code into a human-readable string. """
     lib = _loader.lib
     if lib is None:
         return f"error code {code}"
@@ -285,60 +227,19 @@ def _strerror(code: int) -> str:
 
 
 def _as_ubyte_ptr(data: bytes) -> "ctypes._Pointer[ctypes.c_ubyte]":
-    """
-    Copy ``data`` into a ctypes buffer and return a ``c_ubyte`` pointer to it.
-
-    The caller must keep a reference to ``data`` alive only for the duration of
-    the libopus call; libopus does not retain the pointer.
-
-    Parameters
-    ----------
-    data:
-        The bytes to expose to libopus.
-
-    Returns
-    -------
-        A pointer to the start of a mutable copy of ``data``.
-    """
+    """ Copy ``data`` into a ctypes buffer and return a ``c_ubyte`` pointer to it. """
     buffer = ctypes.create_string_buffer(bytes(data), len(data))
     return ctypes.cast(buffer, ctypes.POINTER(ctypes.c_ubyte))
 
 
 def _as_int16_ptr(data: bytes) -> "ctypes._Pointer[ctypes.c_int16]":
-    """
-    Copy ``data`` into a ctypes buffer and return a ``c_int16`` pointer to it.
-
-    Parameters
-    ----------
-    data:
-        The raw PCM bytes to expose to libopus.
-
-    Returns
-    -------
-        A pointer to the start of a mutable copy of ``data``.
-    """
+    """ Copy ``data`` into a ctypes buffer and return a ``c_int16`` pointer to it. """
     buffer = ctypes.create_string_buffer(bytes(data), len(data))
     return ctypes.cast(buffer, ctypes.POINTER(ctypes.c_int16))
 
 
 def _check(code: int) -> int:
-    """
-    Raise :class:`OpusError` if ``code`` indicates a libopus failure.
-
-    Parameters
-    ----------
-    code:
-        The integer return value of a libopus call.
-
-    Returns
-    -------
-        The original ``code`` when it is non-negative.
-
-    Raises
-    ------
-    OpusError
-        If ``code`` is negative.
-    """
+    """ Raise :class:`OpusError` if ``code`` indicates a libopus failure, else return ``code``. """
     if code < OPUS_OK:
         raise OpusError(_strerror(code))
 
@@ -370,109 +271,33 @@ class Encoder:
         self.cleanup()
 
     def _ctl(self, request: int, value: int) -> int:
-        """
-        Issue a CTL request to the encoder.
-
-        Parameters
-        ----------
-        request:
-            The CTL request constant.
-        value:
-            The integer value to set.
-
-        Returns
-        -------
-            The libopus return code.
-        """
+        """ Issue a CTL request to the encoder. """
         return _check(self._lib.opus_encoder_ctl(self._state, ctypes.c_int(request), ctypes.c_int(value)))
 
     def set_bitrate(self, kbps: int) -> None:
-        """
-        Set the target bitrate.
-
-        Parameters
-        ----------
-        kbps:
-            The target bitrate in kilobits per second.
-        """
+        """ Set the target bitrate, in kilobits per second. """
         clamped = min(512, max(16, kbps))
         self._ctl(OPUS_SET_BITRATE_REQUEST, clamped * 1024)
 
     def set_fec(self, enabled: bool) -> None:
-        """
-        Enable or disable in-band forward error correction.
-
-        Parameters
-        ----------
-        enabled:
-            Whether FEC should be enabled.
-        """
+        """ Enable or disable in-band forward error correction. """
         self._ctl(OPUS_SET_INBAND_FEC_REQUEST, 1 if enabled else 0)
 
     def set_expected_packet_loss_percent(self, pct: float) -> None:
-        """
-        Set the expected packet-loss percentage used to tune FEC.
-
-        Parameters
-        ----------
-        pct:
-            The expected packet loss, as a fraction between 0 and 1.
-        """
+        """ Set the expected packet-loss percentage (as a fraction between 0 and 1) used to tune FEC. """
         value = min(100, max(0, int(pct * 100)))
         self._ctl(OPUS_SET_PACKET_LOSS_PERC_REQUEST, value)
 
     def set_bandwidth(self, name: str) -> None:
-        """
-        Set the encoder bandwidth.
-
-        Parameters
-        ----------
-        name:
-            The bandwidth name, one of ``auto`` or ``fullband``.
-
-        Raises
-        ------
-        KeyError
-            If ``name`` is not a recognised bandwidth.
-        """
+        """ Set the encoder bandwidth, one of ``auto`` or ``fullband``. """
         self._ctl(OPUS_SET_BANDWIDTH_REQUEST, _BANDWIDTHS[name])
 
     def set_signal_type(self, name: str) -> None:
-        """
-        Set the signal type hint.
-
-        Parameters
-        ----------
-        name:
-            The signal type name, one of ``auto``, ``voice`` or ``music``.
-
-        Raises
-        ------
-        KeyError
-            If ``name`` is not a recognised signal type.
-        """
+        """ Set the signal type hint, one of ``auto``, ``voice`` or ``music``. """
         self._ctl(OPUS_SET_SIGNAL_REQUEST, _SIGNALS[name])
 
     def encode(self, pcm: bytes, frame_size: int = SAMPLES_PER_FRAME) -> bytes:
-        """
-        Encode a single frame of PCM audio into an Opus packet.
-
-        Parameters
-        ----------
-        pcm:
-            The raw signed 16-bit little-endian stereo PCM data.
-        frame_size:
-            The number of samples per channel in the frame.
-
-        Returns
-        -------
-            The encoded Opus packet.
-
-        Raises
-        ------
-        OpusError
-            If libopus fails to encode the frame.
-        """
+        """ Encode a single frame of s16le stereo PCM audio into an Opus packet. """
         max_data_bytes = len(pcm)
         pcm_ptr = _as_int16_ptr(pcm)
         output = (ctypes.c_ubyte * max_data_bytes)()
@@ -519,61 +344,20 @@ class Decoder:
 
     @staticmethod
     def packet_get_nb_frames(data: bytes) -> int:
-        """
-        Return the number of frames in an Opus packet.
-
-        Parameters
-        ----------
-        data:
-            The Opus packet to inspect.
-
-        Returns
-        -------
-            The number of frames the packet contains.
-        """
+        """ Return the number of frames in an Opus packet. """
         lib = _get_lib()
         data_ptr = _as_ubyte_ptr(data)
         return _check(lib.opus_packet_get_nb_frames(data_ptr, ctypes.c_int(len(data))))
 
     @staticmethod
     def packet_get_samples_per_frame(data: bytes) -> int:
-        """
-        Return the number of samples per frame for an Opus packet.
-
-        Parameters
-        ----------
-        data:
-            The Opus packet to inspect.
-
-        Returns
-        -------
-            The number of samples per channel in each frame.
-        """
+        """ Return the number of samples per channel in each frame of an Opus packet. """
         lib = _get_lib()
         data_ptr = _as_ubyte_ptr(data)
         return _check(lib.opus_packet_get_samples_per_frame(data_ptr, ctypes.c_int(SAMPLE_RATE)))
 
     def decode(self, data: bytes | None, *, fec: bool = False) -> bytes:
-        """
-        Decode an Opus packet into PCM audio.
-
-        Parameters
-        ----------
-        data:
-            The Opus packet to decode, or ``None`` to perform packet-loss
-            concealment for a single 20ms frame.
-        fec:
-            Whether to decode using forward error correction.
-
-        Returns
-        -------
-            The decoded signed 16-bit little-endian stereo PCM data.
-
-        Raises
-        ------
-        OpusError
-            If libopus fails to decode the packet.
-        """
+        """ Decode an Opus packet into s16le stereo PCM, or ``None`` for packet-loss concealment. """
         if data is None:
             frame_size = SAMPLES_PER_FRAME
             data_ptr: "ctypes._Pointer[ctypes.c_ubyte] | None" = None
