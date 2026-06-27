@@ -807,7 +807,10 @@ class Attachment:
 
     def is_spoiler(self) -> bool:
         """ Whether the attachment is a spoiler or not. """
-        return self.filename.startswith("SPOILER_")
+        return (
+            AttachmentFlags.is_spoiler in self.flags or
+            self.filename.startswith("SPOILER_")
+        )
 
     def is_voice_message(self) -> bool:
         """:class:`bool`: Whether this attachment is a voice message."""
