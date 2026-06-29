@@ -234,6 +234,17 @@ class GatewayClient:
 
     async def close(self) -> None:
         """ Close the gateway client. """
+        # Tear down any active voice connections first. Each voice websocket is a
+        # separate connection to Discord; once the gateway drops, Discord closes
+        # them abnormally (code 1006) and the voice socket would otherwise try to
+        # reconnect mid-shutdown. ``_cleanup`` closes them locally (no op4) and
+        # marks them as intentionally closing so no reconnect is scheduled.
+        for vc in list(self.bot._voice_clients.values()):
+            try:
+                await vc._cleanup()
+            except Exception as exc:
+                _log.debug("Error cleaning up voice client during shutdown", exc_info=exc)
+
         to_close = [
             asyncio.ensure_future(shard.close(kill=True))
             for shard in self.__shards.values()

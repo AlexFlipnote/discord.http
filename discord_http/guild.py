@@ -29,7 +29,7 @@ from .role import Role, PartialRole
 from .message import Message
 from .soundboard import SoundboardSound, PartialSoundboardSound
 from .sticker import Sticker, PartialSticker
-from .voice import VoiceState, PartialVoiceState
+from .channel import VoiceState, PartialVoiceState
 
 if TYPE_CHECKING:
     from .audit import AuditLogEntry

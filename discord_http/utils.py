@@ -3,6 +3,7 @@ import io
 import logging
 import orjson
 import posixpath
+import random
 import re
 import struct
 import sys
@@ -292,6 +293,60 @@ class Benchmark:
             name: entry.elapsed
             for name, entry in self.results.items()
         }
+
+
+class ExponentialBackoff:
+    """
+    A small helper that produces exponentially increasing delays.
+
+    Each call to :meth:`delay` returns ``base * 2 ** exp`` (capped at
+    ``max_delay``), incrementing an internal exponent so successive calls grow
+    geometrically. Optional jitter spreads retries out to avoid thundering-herd
+    reconnect storms. Calling :meth:`reset` returns the backoff to its initial
+    state, e.g. after a successful reconnect.
+
+    Parameters
+    ----------
+    base:
+        The base delay, in seconds, used as the multiplier for the exponent.
+    max_delay:
+        The maximum delay, in seconds, that any single call may return.
+    jitter:
+        Whether to apply random jitter to each returned delay.
+    """
+
+    def __init__(self, base: float = 1.0, *, max_delay: float = 60.0, jitter: bool = True):
+        self.base: float = base
+        """ The base delay, in seconds. """
+
+        self.max_delay: float = max_delay
+        """ The maximum delay, in seconds, returned by :meth:`delay`. """
+
+        self.jitter: bool = jitter
+        """ Whether random jitter is applied to each delay. """
+
+        self._exp: int = 0
+
+    def delay(self) -> float:
+        """
+        Return the next backoff delay and advance the internal exponent.
+
+        Returns
+        -------
+            The next delay, in seconds, capped at :attr:`max_delay` and
+            optionally jittered.
+        """
+        self._exp += 1
+        value = min(self.base * (2 ** (self._exp - 1)), self.max_delay)
+
+        if self.jitter:
+            value *= random.uniform(0.5, 1.0)
+
+        return value
+
+    def reset(self) -> None:
+        """ Reset the internal exponent so the next delay starts from the base. """
+        self._exp = 0
 
 
 def format_small_unit(seconds: float | timedelta) -> str:

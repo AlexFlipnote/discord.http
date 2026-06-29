@@ -43,11 +43,15 @@ docs = [
     "sphinx>=8.2.3",
     "sphinx-autodoc-typehints>=3.2.0",
 ]
+voice = [
+    "davey>=0.1.0",
+]
 
 [tool.setuptools]
 packages = [
   "discord_http",
   "discord_http.gateway",
+  "discord_http.voice",
 ]
 
 [tool.setuptools.dynamic]
@@ -64,6 +68,7 @@ output-format = "concise"
 include = [
   "discord_http/*.py",
   "discord_http/gateway/*.py",
+  "discord_http/voice/*.py",
 ]
 
 exclude = [
@@ -184,6 +189,7 @@ pythonVersion = "3.11"
 include = [
   "discord_http",
   "discord_http.gateway",
+  "discord_http.voice",
 ]
 
 exclude = [

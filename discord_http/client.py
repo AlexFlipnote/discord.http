@@ -13,7 +13,7 @@ from typing import Any, TYPE_CHECKING, TypeVar
 from . import utils, __version__
 from .automod import PartialAutoModRule, AutoModRule
 from .backend import DiscordHTTP
-from .channel import PartialChannel, BaseChannel
+from .channel import PartialChannel, BaseChannel, PartialVoiceState, VoiceState
 from .commands import Command, Interaction, Listener, Cog, SubGroup
 from .context import Context
 from .emoji import PartialEmoji, Emoji
@@ -34,13 +34,13 @@ from .soundboard import SoundboardSound, PartialSoundboardSound
 from .sticker import PartialSticker, Sticker
 from .user import User, PartialUser, Application
 from .view import InteractionStorage
-from .voice import PartialVoiceState, VoiceState
 from .webhook import PartialWebhook, Webhook
 
 if TYPE_CHECKING:
     from .gateway.client import GatewayClient
     from .gateway.flags import GatewayCacheFlags, Intents
     from .gateway.object import PlayingStatus
+    from .voice.client import VoiceClient
 
 _log = logging.getLogger(__name__)
 
@@ -102,6 +102,15 @@ class Client:
         Whether to disable the default GET path or not, if not provided, it will use `False`.
         The default GET path only provides information about the bot and when it was last rebooted.
         Usually a great tool to just validate that your bot is online.
+    voice_reconnect_attempts: int
+        How many times a voice connection will try to fully reconnect after an
+        unexpected close before giving up, if not provided, it will use `5`.
+    voice_reconnect_base: float
+        The base delay, in seconds, for the voice reconnect exponential backoff,
+        if not provided, it will use `1.0`.
+    voice_reconnect_max_delay: float
+        The maximum delay, in seconds, for the voice reconnect exponential
+        backoff, if not provided, it will use `30.0`.
     """
     def __init__(
         self,
@@ -126,7 +135,10 @@ class Client:
         intents: "Intents | None" = None,
         logging_level: int = logging.INFO,
         disable_default_get_path: bool = False,
-        debug_events: bool = False
+        debug_events: bool = False,
+        voice_reconnect_attempts: int = 5,
+        voice_reconnect_base: float = 1.0,
+        voice_reconnect_max_delay: float = 30.0
     ):
         if application_id is not None:
             _log.warning(
@@ -149,6 +161,21 @@ class Client:
         self.logging_level: int = logging_level
         self.debug_events: bool = debug_events
         self.enable_gateway: bool = enable_gateway
+        if voice_reconnect_attempts < 0:
+            raise ValueError("voice_reconnect_attempts must be >= 0")
+        self.voice_reconnect_attempts: int = voice_reconnect_attempts
+        """
+        How many times a voice connection will try to fully reconnect after an
+        unexpected close before giving up.
+        """
+        if voice_reconnect_base <= 0:
+            raise ValueError("voice_reconnect_base must be > 0")
+        self.voice_reconnect_base: float = voice_reconnect_base
+        """ The base delay, in seconds, for the voice reconnect exponential backoff. """
+        if voice_reconnect_max_delay <= 0:
+            raise ValueError("voice_reconnect_max_delay must be > 0")
+        self.voice_reconnect_max_delay: float = voice_reconnect_max_delay
+        """ The maximum delay, in seconds, for the voice reconnect exponential backoff. """
         self.playing_status: "PlayingStatus | None" = playing_status
         self.guild_ready_timeout: float = guild_ready_timeout
         self.chunk_guilds_on_startup: bool = chunk_guilds_on_startup
@@ -204,6 +231,7 @@ class Client:
         self._after_invoke: tuple[Callable, bool] | None = None
         self._waiting_listeners: dict[str, list[tuple[asyncio.Future, Callable]]] = {}
         self._background_tasks: set[asyncio.Task] = set()
+        self._voice_clients: dict[int, "VoiceClient"] = {}
 
         utils.setup_logger(level=self.logging_level)
 
@@ -215,6 +243,45 @@ class Client:
                 _log.error(f"Task failed: {task.get_name()}", exc_info=task.exception())
         except Exception:
             pass
+
+    def get_voice_client(self, guild_id: int) -> "VoiceClient | None":
+        """
+        Get the voice client for a guild, if one is registered.
+
+        Parameters
+        ----------
+        guild_id:
+            The guild to get the voice client for.
+
+        Returns
+        -------
+            The voice client, or ``None`` if none is registered.
+        """
+        return self._voice_clients.get(guild_id)
+
+    def _add_voice_client(self, guild_id: int, voice_client: "VoiceClient") -> None:
+        """
+        Register a voice client for a guild.
+
+        Parameters
+        ----------
+        guild_id:
+            The guild to register the voice client for.
+        voice_client:
+            The voice client to register.
+        """
+        self._voice_clients[guild_id] = voice_client
+
+    def _remove_voice_client(self, guild_id: int) -> None:
+        """
+        Remove the voice client for a guild, if one is registered.
+
+        Parameters
+        ----------
+        guild_id:
+            The guild to remove the voice client for.
+        """
+        self._voice_clients.pop(guild_id, None)
 
     async def _cooldown_cleanup_loop(self) -> None:
         """ Periodically sweeps expired cooldown buckets that accumulate between invocations. """
@@ -513,6 +580,11 @@ class Client:
             )
 
         return self.application.bot
+
+    @property
+    def voice_clients(self) -> list["VoiceClient"]:
+        """ Returns a list of all the voice clients the bot is connected to. """
+        return list(self._voice_clients.values())
 
     @property
     def guilds(self) -> list[Guild | PartialGuild]:

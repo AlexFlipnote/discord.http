@@ -352,6 +352,8 @@ class Shard:
             "GUILD_CREATE": (self._parse_guild_create, True),
             "GUILD_DELETE": (self._parse_guild_delete, False),
             "GUILD_MEMBERS_CHUNK": (self._parse_guild_members_chunk, True),
+            "VOICE_STATE_UPDATE": (self._parse_voice_state_update, False),
+            "VOICE_SERVER_UPDATE": (self._parse_voice_server_update, False),
         }
 
     @property
@@ -1056,6 +1058,32 @@ class Shard:
 
         self._send_dispatch(event_name, guild)
 
+    def _parse_voice_state_update(self, data: dict) -> None:
+        payload = self.parser.voice_state_update(data)
+
+        bot_user = self.bot.application.bot if self.bot.application else None
+        if (
+            bot_user is not None
+            and data.get("guild_id") is not None
+            and int(data["user_id"]) == bot_user.id
+        ):
+            vc = self.bot.get_voice_client(int(data["guild_id"]))
+            if vc is not None:
+                vc.on_voice_state_update(data)
+
+        if self.bot.has_any_dispatch("voice_state_update"):
+            self._send_dispatch("voice_state_update", *payload)
+
+    def _parse_voice_server_update(self, data: dict) -> None:
+        (payload,) = self.parser.voice_server_update(data)
+
+        vc = self.bot.get_voice_client(int(data["guild_id"]))
+        if vc is not None:
+            vc.on_voice_server_update(data)
+
+        if self.bot.has_any_dispatch("voice_server_update"):
+            self._send_dispatch("voice_server_update", payload)
+
     async def _parse_guild_members_chunk(self, data: dict) -> None:
         result = self.parser.guild_members_chunk(data)
 
@@ -1082,6 +1110,39 @@ class Shard:
         await self.send_message({
             "op": int(PayloadType.presence),
             "d": status.to_dict()
+        })
+
+    async def change_voice_state(
+        self,
+        *,
+        guild_id: int,
+        channel_id: int | None,
+        self_mute: bool = False,
+        self_deaf: bool = False
+    ) -> None:
+        """
+        Changes the voice state of the shard for the specified guild.
+
+        Parameters
+        ----------
+        guild_id:
+            The guild to change the voice state in.
+        channel_id:
+            The voice channel to connect to, or ``None`` to disconnect.
+        self_mute:
+            Whether the bot is self-muted.
+        self_deaf:
+            Whether the bot is self-deafened.
+        """
+        _log.debug(f"Changing voice state in Shard {self.shard_id} for guild {guild_id} to channel {channel_id}")
+        await self.send_message({
+            "op": int(PayloadType.voice_state),
+            "d": {
+                "guild_id": str(guild_id),
+                "channel_id": str(channel_id) if channel_id is not None else None,
+                "self_mute": bool(self_mute),
+                "self_deaf": bool(self_deaf)
+            }
         })
 
     def payload(self, op: PayloadType) -> dict:
