@@ -482,7 +482,10 @@ class VoiceConnection:
                 _log.debug(f"Voice connection for guild {self.guild_id} reconnected")
                 return
 
-        _log.error(f"Voice connection for guild {self.guild_id} could not reconnect after {max_attempts} attempts; tearing down")
+        _log.error(
+            f"Voice connection for guild {self.guild_id} could not reconnect "
+            f"after {max_attempts} attempts; tearing down"
+        )
         await self._teardown_and_remove()
 
     async def _force_voice_refresh(self) -> None:

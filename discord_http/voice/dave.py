@@ -50,7 +50,7 @@ def max_protocol_version() -> int:
 
 
 class DaveManager:
-    """ Manages DAVE (Discord Audio/Video End-to-end Encryption) for a voice connection, degrading to a no-op when davey is absent. """
+    """ Manages DAVE (E2EE) for a voice connection, degrading to a no-op when davey is absent. """
 
     __slots__ = (
         "_connection",

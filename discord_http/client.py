@@ -583,7 +583,7 @@ class Client:
 
     @property
     def voice_clients(self) -> list["VoiceClient"]:
-        """ Returns a list of all the voice clients the bot is connected to. """
+        """ A list of all the voice clients the bot is connected to. """
         return list(self._voice_clients.values())
 
     @property
