@@ -54,7 +54,7 @@ class DaveManager:
 
     __slots__ = (
         "_connection",
-        "_pending_transition",
+        "_pending_transitions",
         "_session",
         "_version",
     )
@@ -63,7 +63,10 @@ class DaveManager:
         self._connection: "VoiceConnection" = connection
         self._session: "DaveSession | None" = None
         self._version: int = 0
-        self._pending_transition: tuple[int, int] | None = None
+        # transition_id -> protocol version. A dict rather than a single slot so
+        # overlapping transitions (e.g. during member churn) cannot clobber each
+        # other before their EXECUTE_TRANSITION arrives.
+        self._pending_transitions: dict[int, int] = {}
 
     @property
     def ready(self) -> bool:
@@ -110,6 +113,8 @@ class DaveManager:
             If a non-zero DAVE version is requested but ``davey`` is not installed.
         """
         self._version = version
+        # Any pending transitions belong to the previous session; drop them.
+        self._pending_transitions.clear()
 
         if version <= 0:
             self._session = None
@@ -268,7 +273,7 @@ class DaveManager:
         """ Handle PREPARE_TRANSITION (21): record the pending transition and acknowledge. """
         transition_id = int(data.get("transition_id", 0) or 0)
         version = int(data.get("protocol_version", 0) or 0)
-        self._pending_transition = (transition_id, version)
+        self._pending_transitions[transition_id] = version
 
         if transition_id == 0:
             await self._execute_transition(transition_id, version)
@@ -279,11 +284,10 @@ class DaveManager:
         """ Handle EXECUTE_TRANSITION (22): apply the pending version and passthrough state. """
         transition_id = int(data.get("transition_id", 0) or 0)
 
-        if self._pending_transition is not None:
-            pending_id, version = self._pending_transition
-            if pending_id == transition_id:
-                await self._execute_transition(transition_id, version)
-                return
+        version = self._pending_transitions.get(transition_id)
+        if version is not None:
+            await self._execute_transition(transition_id, version)
+            return
 
         _log.debug(f"Received EXECUTE_TRANSITION for unknown transition {transition_id}")
 
@@ -291,7 +295,7 @@ class DaveManager:
         """ Apply a transition: switch protocol version and update passthrough mode. """
         self._version = version
         self.set_passthrough_mode(version == 0)
-        self._pending_transition = None
+        self._pending_transitions.pop(transition_id, None)
         _log.debug(f"Executed DAVE transition {transition_id} to version {version}")
 
     async def _handle_prepare_epoch(self, data: dict) -> None:
@@ -369,8 +373,7 @@ class DaveManager:
             return
 
         if transition_id != 0:
-            version = self._pending_transition_version(transition_id)
-            self._pending_transition = (transition_id, version)
+            self._pending_transitions[transition_id] = self._pending_transition_version(transition_id)
             await self._connection.socket.send_transition_ready(transition_id)
 
     async def _handle_welcome(self, payload: bytes) -> None:
@@ -396,8 +399,7 @@ class DaveManager:
             return
 
         if transition_id != 0:
-            version = self._pending_transition_version(transition_id)
-            self._pending_transition = (transition_id, version)
+            self._pending_transitions[transition_id] = self._pending_transition_version(transition_id)
             await self._connection.socket.send_transition_ready(transition_id)
 
     def _pending_transition_version(self, transition_id: int) -> int:
@@ -411,12 +413,7 @@ class DaveManager:
         current version. Otherwise (no matching pending transition, e.g. the
         commit/welcome arrived first) fall back to the current version.
         """
-        if (
-            self._pending_transition is not None
-            and self._pending_transition[0] == transition_id
-        ):
-            return self._pending_transition[1]
-        return self._version
+        return self._pending_transitions.get(transition_id, self._version)
 
     async def _recover_from_invalid_commit(self) -> None:
         """ Notify the gateway of an invalid commit/welcome and reinitialise the session. """

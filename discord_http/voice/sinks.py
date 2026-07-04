@@ -122,8 +122,12 @@ class WaveSink(AudioSink):
     """
     Audio sink that writes received PCM to a single 48kHz 16-bit stereo WAV file.
 
-    All speakers are mixed into a single stream; the ``user`` argument to
-    :meth:`write` is ignored, so per-speaker separation is not preserved.
+    Audio from all speakers is appended to the one stream in arrival order; it
+    is **not** mixed. With a single speaker this produces a normal recording,
+    but simultaneous speakers will have their chunks interleaved back-to-back
+    and sound garbled. To handle overlapping speakers, separate the audio per
+    user first (for example with a :class:`CallbackSink` that routes each
+    ``user`` to its own file) and mix the results afterwards.
     """
 
     def __init__(self, destination: str | os.PathLike | io.IOBase) -> None:
@@ -167,7 +171,8 @@ class WaveSink(AudioSink):
         ----------
         user:
             The user ID the audio belongs to, or ``None`` if unknown (unused;
-            all speakers are mixed into the same WAV stream)
+            chunks from all speakers are appended to the same WAV stream in
+            arrival order, without mixing)
         data:
             The voice data container holding the PCM payload
         """

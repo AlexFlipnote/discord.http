@@ -45,11 +45,20 @@ class Encryptor:
         -------
             The packet, consisting of the header, the ciphertext, and the 4-byte big-endian nonce counter.
         """
+        # Reusing a (key, nonce) pair with AES-GCM breaks the encryption entirely,
+        # so refuse to wrap the 4-byte counter back to 0. At ~50 packets/sec this
+        # takes ~2.7 years of one connection staying open, so a loud failure that
+        # forces a reconnect (which rotates the secret key) is sufficient.
+        if self._nonce >= 2 ** 32:
+            raise RuntimeError(
+                "voice nonce counter exhausted; reconnect to rotate the secret key"
+            )
+
         nonce = self._nonce
         nonce_bytes = struct.pack(">I", nonce) + b"\x00" * 8
         ciphertext = self._aead.encrypt(nonce_bytes, plaintext, header)
 
-        self._nonce = (self._nonce + 1) & 0xFFFFFFFF
+        self._nonce += 1
 
         return header + ciphertext + struct.pack(">I", nonce)
 

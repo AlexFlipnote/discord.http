@@ -64,6 +64,10 @@ class VoiceReceiver:
         # synchronous UDP callback does not spam the log on every packet.
         self._warned_no_opus = False
 
+        # Count of packets dropped because DAVE was active but the SSRC was
+        # not yet mapped to a user, used to rate-limit the debug log.
+        self._dave_unmapped_drops = 0
+
     def start(self, sink: "AudioSink") -> None:
         """
         Begin listening, dispatching received audio to ``sink``.
@@ -196,9 +200,22 @@ class VoiceReceiver:
             _log.exception("Failed to transport-decrypt incoming voice packet")
             return
 
-        # DAVE end-to-end decryption, applied only when a session is active and
-        # we know who the sender is. Tolerant: skip silently when inactive.
-        if user_id is not None and connection.can_encrypt():
+        # DAVE end-to-end decryption, applied whenever a session is active.
+        # Decrypting requires knowing who the sender is, and RTP (UDP) has no
+        # ordering guarantee against the SPEAKING event (voice websocket) that
+        # maps the SSRC to a user. If the mapping has not arrived yet, drop the
+        # packet rather than passing the still-encrypted payload along as if it
+        # were plain Opus; losing a few leading frames is acceptable.
+        if connection.can_encrypt():
+            if user_id is None:
+                self._dave_unmapped_drops += 1
+                if self._dave_unmapped_drops == 1 or self._dave_unmapped_drops % 100 == 0:
+                    _log.debug(
+                        f"Dropped {self._dave_unmapped_drops} DAVE-encrypted packet(s) "
+                        f"from not-yet-mapped SSRC(s), latest ssrc={ssrc}"
+                    )
+                return
+
             try:
                 payload = connection.dave_decrypt_opus(user_id, payload)
             except Exception:

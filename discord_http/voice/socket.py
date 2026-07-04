@@ -464,6 +464,15 @@ class VoiceSocket:
             self._receive_task.cancel()
             self._receive_task = None
 
+        # close() can be awaited *from* a dispatch task (e.g. a handler that
+        # ends up driving a disconnect), so never cancel the current task:
+        # doing so would raise CancelledError inside this very call. The tasks
+        # discard themselves from the set via their done-callback.
+        current = asyncio.current_task()
+        for task in list(self._dispatch_tasks):
+            if task is not current:
+                task.cancel()
+
         if self.ws is not None and not self.ws.closed:
             await self.ws.close()
         self.ws = None

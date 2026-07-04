@@ -428,11 +428,22 @@ class AudioPlayer:
                     start = self._loop.time()
                     count = 0
 
-                data = await self.source.read()
+                source = self.source
+                data = await source.read()
+
+                if source is not self.source:
+                    # set_source() swapped the source while this read was in
+                    # flight; the old source may have been torn down mid-read,
+                    # making a truncated read look like EOF. Discard the stale
+                    # result and re-anchor pacing on the new source instead.
+                    start = self._loop.time()
+                    count = 0
+                    continue
+
                 if not data:
                     break
 
-                self.voice_client.send_audio_packet(data, encode=not self.source.is_opus())
+                self.voice_client.send_audio_packet(data, encode=not source.is_opus())
 
                 count += 1
                 deadline = start + count * self.DELAY
@@ -455,16 +466,23 @@ class AudioPlayer:
         # correctly after natural EOF. Idempotent: ``stop()`` may have set it.
         self._end.set()
 
-        try:
-            for _ in range(5):
-                self.voice_client.send_audio_packet(OPUS_SILENCE, encode=False)
-        except Exception:
-            _log.exception("Failed to send trailing silence frames")
+        # Only flush silence and clear the speaking flag while this player is
+        # still the client's current player (or the client has none). When
+        # ``play()`` replaced us with a new player, our teardown runs
+        # concurrently with its startup; sending speaking-off here would race
+        # the new player's speaking-on and could leave the indicator stuck off.
+        current = self.voice_client._player
+        if current is self or current is None:
+            try:
+                for _ in range(5):
+                    self.voice_client.send_audio_packet(OPUS_SILENCE, encode=False)
+            except Exception:
+                _log.exception("Failed to send trailing silence frames")
 
-        try:
-            await self.voice_client.speak(False)
-        except Exception:
-            _log.exception("Failed to disable speaking")
+            try:
+                await self.voice_client.speak(False)
+            except Exception:
+                _log.exception("Failed to disable speaking")
 
         self.source.cleanup()
 

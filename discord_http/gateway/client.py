@@ -242,7 +242,12 @@ class GatewayClient:
         for vc in list(self.bot._voice_clients.values()):
             try:
                 await vc._cleanup()
-            except Exception as exc:
+            except BaseException as exc:
+                # Catch BaseException, not just Exception: if close() is cancelled
+                # mid-loop (asyncio.CancelledError is a BaseException on 3.11+),
+                # the remaining voice clients and the shard closes below must
+                # still run to completion. Swallowing the cancellation here is
+                # deliberate; do not narrow this back to ``Exception``.
                 _log.debug("Error cleaning up voice client during shutdown", exc_info=exc)
 
         to_close = [
