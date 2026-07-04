@@ -145,7 +145,7 @@ class Embed:
         """ The URL of the embed, if any. """
 
         self.type: EmbedTypes = "rich"
-        """ The type of the embed, which can be "rich", "image", "video", "gifv", "article", "link", or "poll_result". Defaults to "rich". """
+        """ The type of the embed. Defaults to "rich". See `EmbedTypes` for all options. """
 
         self.footer: EmbedFooter | None = None
         """ The footer of the embed, if any. """

@@ -260,12 +260,12 @@ class PartialUser(PartialBase):
 
     @property
     def mention(self) -> str:
-        """ Returns a string that allows you to mention the user. """
+        """ A string that allows you to mention the user. """
         return f"<@!{self.id}>"
 
     @property
     def default_avatar(self) -> Asset:
-        """ Returns the default avatar of the user. """
+        """ The default avatar of the user. """
         return Asset._from_default_avatar(
             self._state,
             (self.id >> 22) % len(DefaultAvatarType)
@@ -587,12 +587,12 @@ class User(PartialUser):
 
     @property
     def display_name(self) -> str:
-        """ Returns the user's display name. """
+        """ The user's display name. """
         return self.global_name or self.name
 
     @property
     def display_avatar(self) -> Asset:
-        """ Returns the display avatar of the member. """
+        """ The display avatar of the member. """
         return self.avatar or self.default_avatar
 
     @property
@@ -715,10 +715,10 @@ class Application(PartialBase):
         """ The approximate number of guilds the application is in, if the application is a game sold on Discord. """
 
         self.approximate_user_install_count: int | None = data.get("approximate_user_install_count")
-        """ The approximate number of users that have the application installed, if the application is a game sold on Discord. """
+        """ The approximate number of users that have the application installed. """
 
         self.approximate_user_authorization_count: int | None = data.get("approximate_user_authorization_count")
-        """ The approximate number of users that have authorized the application, if the application is a game sold on Discord. """
+        """ The approximate number of users that have authorized the application. """
 
         self.redirect_uris: list[str] = data.get("redirect_uris", [])
         """ The redirect URIs of the application, if any. """

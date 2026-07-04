@@ -316,12 +316,12 @@ class Loop:
 
     @property
     def loop_count(self) -> int:
-        """ Returns the number of times the loop has been run. """
+        """ The number of times the loop has been run. """
         return self._loop_count
 
     @property
     def failed(self) -> bool:
-        """ Returns whether the loop has failed or not. """
+        """ Whether the loop has failed or not. """
         return self._has_faild
 
     def _is_relative_time(self) -> bool:

@@ -461,7 +461,7 @@ class AuditLogEntry(Snowflake):
 
     @property
     def user(self) -> User | PartialUser | None:
-        """ Returns the user object of the audit log if available. """
+        """ The user object of the audit log if available. """
         if not self.user_id:
             return None
         return self._convert_target_user(self.user_id)
@@ -469,7 +469,7 @@ class AuditLogEntry(Snowflake):
     @property
     def target(self) -> Snowflake | None:
         """
-        Returns the target object of the audit log.
+        The target object of the audit log.
 
         The Snowflake can be a PartialChannel, User, PartialRole, etc
         """
@@ -503,15 +503,24 @@ class AuditLogEntry(Snowflake):
     @overload
     def get_change(self, key: Literal["system_channel_flags"]) -> AuditChange[flags.SystemChannelFlags] | None: ...
     @overload
-    def get_change(self, key: Literal["permission_overwrites"]) -> AuditChange[list[tuple[PartialUser | PartialRole, flags.PermissionOverwrite]]] | None: ...
+    def get_change(
+        self, key: Literal["permission_overwrites"]
+    ) -> AuditChange[list[tuple[PartialUser | PartialRole, flags.PermissionOverwrite]]] | None: ...
     @overload
-    def get_change(self, key: Literal["splash_hash", "banner_hash", "discovery_splash_hash", "icon_hash", "avatar_hash", "image_hash"]) -> AuditChange[Asset | None] | None: ...
+    def get_change(self, key: Literal[
+        "splash_hash", "banner_hash", "discovery_splash_hash",
+        "icon_hash", "avatar_hash", "image_hash",
+    ]) -> AuditChange[Asset | None] | None: ...
     @overload
-    def get_change(self, key: Literal["rate_limit_per_user", "default_thread_rate_limit_per_user"]) -> AuditChange[int] | None: ...
+    def get_change(
+        self, key: Literal["rate_limit_per_user", "default_thread_rate_limit_per_user"]
+    ) -> AuditChange[int] | None: ...
     @overload
     def get_change(self, key: Literal["guild_id"]) -> AuditChange[PartialGuild | None] | None: ...
     @overload
-    def get_change(self, key: Literal["default_message_notifications"]) -> AuditChange[enums.DefaultNotificationLevel] | None: ...
+    def get_change(
+        self, key: Literal["default_message_notifications"]
+    ) -> AuditChange[enums.DefaultNotificationLevel] | None: ...
     @overload
     def get_change(self, key: Literal["video_quality_mode"]) -> AuditChange[enums.VideoQualityType] | None: ...
     @overload
@@ -519,7 +528,11 @@ class AuditLogEntry(Snowflake):
     @overload
     def get_change(self, key: Literal["format_type"]) -> AuditChange[enums.StickerFormatType] | None: ...
     @overload
-    def get_change(self, key: Literal["type"]) -> AuditChange[enums.ChannelType | enums.StickerType | enums.WebhookType | enums.PermissionType | str] | None: ...
+    def get_change(
+        self, key: Literal["type"]
+    ) -> AuditChange[
+        enums.ChannelType | enums.StickerType | enums.WebhookType | enums.PermissionType | str
+    ] | None: ...
     @overload
     def get_change(self, key: Literal["communication_disabled_until"]) -> AuditChange[datetime | None] | None: ...
     @overload

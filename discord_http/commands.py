@@ -473,14 +473,14 @@ class Command:
 
     @property
     def mention(self) -> str:
-        """ Returns a mentionable string for the command. """
+        """ A mentionable string for the command. """
         if self.id:
             return f"</{self.name}:{self.id}>"
         return f"`/{self.name}`"
 
     @property
     def cooldown(self) -> CooldownCache | None:
-        """ Returns the cooldown rule of the command if available. """
+        """ The cooldown rule of the command if available. """
         return getattr(self.command, "__cooldown__", None)
 
     def mention_sub(self, suffix: str) -> str:
@@ -1031,7 +1031,7 @@ class SubGroup(Command):
 
     @property
     def options(self) -> list[dict]:
-        """ Returns the options of the subcommand group. """
+        """ The options of the subcommand group. """
         def build_options(subcommands: dict) -> list[dict]:
             options = []
             for cmd in subcommands.values():

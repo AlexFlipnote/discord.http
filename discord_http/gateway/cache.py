@@ -41,7 +41,7 @@ class Cache:
 
     @property
     def guilds(self) -> list["PartialGuild | Guild"]:
-        """ Returns a list of all the guilds in the cache. """
+        """ A list of all the guilds in the cache. """
         return list(self.__guilds.values())
 
     def get_guild(self, guild_id: int | None) -> "PartialGuild | Guild | None":

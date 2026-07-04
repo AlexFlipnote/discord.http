@@ -403,7 +403,7 @@ class Webhook(PartialWebhook):
 
     @property
     def guild(self) -> "Guild | PartialGuild | None":
-        """ Returns the guild the webhook is in. """
+        """ The guild the webhook is in. """
         if not self.guild_id:
             return None
 
@@ -416,7 +416,7 @@ class Webhook(PartialWebhook):
 
     @property
     def channel(self) -> "PartialChannel | None":
-        """ Returns the channel the webhook is in. """
+        """ The channel the webhook is in. """
         if self.channel_id:
             from .channel import PartialChannel
             return PartialChannel(

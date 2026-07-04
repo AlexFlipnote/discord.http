@@ -26,6 +26,8 @@ dependencies = [
   "aiohttp>=3.12.7,<4",
   "cryptography>=49.0.0,<50",
   "orjson>=3.10.18,<4",
+  "pyright>=1.1.411",
+  "ruff>=0.15.20",
 ]
 
 [project.urls]
@@ -57,7 +59,7 @@ readme = {file = ["README.md"]}
 [tool.ruff]
 target-version = "py311"
 indent-width = 4
-line-length = 256  # Debating to change this.. not sure yet
+line-length = 128
 output-format = "concise"
 
 # Files to include/exclude

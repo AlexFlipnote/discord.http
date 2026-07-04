@@ -580,7 +580,7 @@ class PartialGuild(PartialBase):
     @property
     def me(self) -> "Member | PartialMember | None":
         """
-        Returns the bot's member object.
+        The bot's member object.
 
         Only useable if you are using gateway and caching
         """
@@ -714,42 +714,42 @@ class PartialGuild(PartialBase):
 
     @property
     def members(self) -> list["Member | PartialMember"]:
-        """ Returns a list of all the members in the guild if they are cached. """
+        """ A list of all the members in the guild if they are cached. """
         return list(self._cache_members.values())
 
     @property
     def channels(self) -> list["BaseChannel | PartialChannel"]:
-        """ Returns a list of all the channels in the guild if they are cached. """
+        """ A list of all the channels in the guild if they are cached. """
         return list(self._cache_channels.values())
 
     @property
     def threads(self) -> list["BaseChannel | PartialChannel"]:
-        """ Returns a list of all the threads in the guild if they are cached. """
+        """ A list of all the threads in the guild if they are cached. """
         return list(self._cache_threads.values())
 
     @property
     def roles(self) -> list["Role | PartialRole"]:
-        """ Returns a list of all the roles in the guild if they are cached or if the guild was fetched. """
+        """ A list of all the roles in the guild if they are cached or if the guild was fetched. """
         return list(self._cache_roles.values())
 
     @property
     def emojis(self) -> list["Emoji | PartialEmoji"]:
-        """ Returns a list of all the emojis in the guild if they are cached. """
+        """ A list of all the emojis in the guild if they are cached. """
         return list(self._cache_emojis.values())
 
     @property
     def soundboard_sounds(self) -> list["SoundboardSound | PartialSoundboardSound"]:
-        """ Returns a list of all the soundboard sounds in the guild if they are cached. """
+        """ A list of all the soundboard sounds in the guild if they are cached. """
         return list(self._cache_soundboard_sounds.values())
 
     @property
     def stickers(self) -> list["Sticker | PartialSticker"]:
-        """ Returns a list of all the stickers in the guild if they are cached. """
+        """ A list of all the stickers in the guild if they are cached. """
         return list(self._cache_stickers.values())
 
     @property
     def text_channels(self) -> list["TextChannel"]:
-        """ Returns a list of all the text channels in the guild if they are cached. """
+        """ A list of all the text channels in the guild if they are cached. """
         return [
             channel  # type: ignore
             for channel in self.channels
@@ -759,7 +759,7 @@ class PartialGuild(PartialBase):
 
     @property
     def voice_channels(self) -> list["VoiceChannel"]:
-        """ Returns a list of all the voice channels in the guild if they are cached. """
+        """ A list of all the voice channels in the guild if they are cached. """
         return [
             channel  # type: ignore
             for channel in self.channels
@@ -768,7 +768,7 @@ class PartialGuild(PartialBase):
 
     @property
     def categories(self) -> list["CategoryChannel"]:
-        """ Returns a list of all the category channels in the guild if they are cached. """
+        """ A list of all the category channels in the guild if they are cached. """
         return [
             channel  # type: ignore
             for channel in self.channels
@@ -777,7 +777,7 @@ class PartialGuild(PartialBase):
 
     @property
     def default_role(self) -> PartialRole:
-        """ Returns the default role, but as a partial role object. """
+        """ The default role, but as a partial role object. """
         return PartialRole(
             state=self._state,
             id=self.id,

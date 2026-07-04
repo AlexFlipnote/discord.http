@@ -40,22 +40,22 @@ class Colour:
 
     @property
     def r(self) -> int:
-        """ Returns the red component of the colour. """
+        """ The red component of the colour. """
         return (self.value >> 16) & 0xFF
 
     @property
     def g(self) -> int:
-        """ Returns the green component of the colour. """
+        """ The green component of the colour. """
         return (self.value >> 8) & 0xFF
 
     @property
     def b(self) -> int:
-        """ Returns the blue component of the colour. """
+        """ The blue component of the colour. """
         return self.value & 0xFF
 
     @property
     def brightness(self) -> int:
-        """ Returns the perceived brightness of the colour (0-255). """
+        """ The perceived brightness of the colour (0-255). """
         return (self.r + self.g + self.b) // 3
 
     def is_dark(self) -> bool:

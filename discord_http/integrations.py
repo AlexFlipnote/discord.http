@@ -164,7 +164,7 @@ class Integration(PartialIntegration):
         """ ID of the role that the integration uses for "subscribers". TThis is not applicable to bot integrations. """
 
         self.enable_emoticons: bool = data.get("enable_emoticons", False)
-        """ Whether emoticons should be synced for this integration (twitch only currently) This is not applicable to bot integrations. """
+        """ Whether emoticons should be synced for this integration (Twitch only). Not applicable to bot integrations. """
 
         self.expire_behavior: ExpireBehaviour | None = (
             ExpireBehaviour(expire_behavior)

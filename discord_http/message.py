@@ -322,7 +322,7 @@ class JumpURL:
     @property
     def channel(self) -> "BaseChannel | PartialChannel | None":
         """
-        Returns the channel the message was sent in.
+        The channel the message was sent in.
 
         If guild and channel cache is enabled, it can also return full channel object.
         """
@@ -351,7 +351,7 @@ class JumpURL:
 
     @property
     def message(self) -> "PartialMessage | None":
-        """ Returns the message if a message_id is available. """
+        """ The message if a message_id is available. """
         if not self.channel_id or not self.message_id:
             return None
 
@@ -371,7 +371,7 @@ class JumpURL:
 
     @property
     def url(self) -> str:
-        """ Returns the jump URL. """
+        """ The jump URL. """
         if self.channel_id and self.message_id:
             return f"https://discord.com/channels/{self.guild_id or '@me'}/{self.channel_id}/{self.message_id}"
         return f"https://discord.com/channels/{self.guild_id or '@me'}/{self.channel_id}"
@@ -676,7 +676,7 @@ class MessageReference:
 
     @property
     def channel(self) -> "PartialChannel | None":
-        """ Returns the channel the message was sent in. """
+        """ The channel the message was sent in. """
         if not self.channel_id:
             return None
 
@@ -698,7 +698,7 @@ class MessageReference:
 
     @property
     def message(self) -> "PartialMessage | None":
-        """ Returns the message if a message_id and channel_id is available. """
+        """ The message if a message_id and channel_id is available. """
         if not self.channel_id or not self.message_id:
             return None
 
@@ -966,7 +966,7 @@ class PartialMessage(PartialBase):
 
     @property
     def channel(self) -> "BaseChannel | PartialChannel":
-        """ Returns the channel the message was sent in. """
+        """ The channel the message was sent in. """
         if self.guild_id:
             cache = self._state.cache.get_channel_thread(
                 guild_id=self.guild_id,
@@ -985,7 +985,7 @@ class PartialMessage(PartialBase):
 
     @property
     def guild(self) -> "Guild | PartialGuild | None":
-        """ Returns the guild the message was sent in. """
+        """ The guild the message was sent in. """
         if not self.guild_id:
             return None
 
@@ -998,7 +998,7 @@ class PartialMessage(PartialBase):
 
     @property
     def jump_url(self) -> JumpURL:
-        """ Returns the jump URL of the message, GuildID will always be @me. """
+        """ The jump URL of the message, GuildID will always be @me. """
         return JumpURL(
             state=self._state,
             url=f"https://discord.com/channels/@me/{self.channel_id}/{self.id}"
@@ -1783,7 +1783,7 @@ class Message(PartialMessage):
 
     @property
     def emojis(self) -> list[EmojiParser]:
-        """ Returns the emojis in the message. """
+        """ The emojis in the message. """
         return [
             EmojiParser(f"<{e[0]}:{e[1]}:{e[2]}>")
             for e in utils.re_emoji.findall(self.content)
@@ -1791,7 +1791,7 @@ class Message(PartialMessage):
 
     @property
     def jump_url(self) -> JumpURL:
-        """ Returns the jump URL of the message. """
+        """ The jump URL of the message. """
         return JumpURL(
             state=self._state,
             url=f"https://discord.com/channels/{self.guild_id or '@me'}/{self.channel_id}/{self.id}"
@@ -1800,7 +1800,7 @@ class Message(PartialMessage):
     @property
     def role_mentions(self) -> list[Role | PartialRole]:
         """
-        Returns the role mentions in the message.
+        The role mentions in the message.
 
         Can return full role object if guild and role cache is enabled
         """
@@ -1820,7 +1820,7 @@ class Message(PartialMessage):
     @property
     def channel_mentions(self) -> list["BaseChannel | PartialChannel"]:
         """
-        Returns the channel mentions in the message.
+        The channel mentions in the message.
 
         Can return full role object if guild and channel cache is enabled
         """
@@ -1834,7 +1834,7 @@ class Message(PartialMessage):
 
     @property
     def jump_urls(self) -> list[JumpURL]:
-        """ Returns the jump URLs in the message. """
+        """ The jump URLs in the message. """
         return [
             JumpURL(
                 state=self._state,

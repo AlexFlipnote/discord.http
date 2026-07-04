@@ -111,7 +111,7 @@ class EmojiParser:
 
     @property
     def url(self) -> str | None:
-        """ Returns the URL of the emoji if it's a Discord emoji. """
+        """ The URL of the emoji if it's a Discord emoji. """
         if self.discord_emoji:
             return f"{Asset.BASE}/emojis/{self.id}.{'gif' if self.animated else 'png'}"
         return None
@@ -384,5 +384,5 @@ class Emoji(PartialEmoji):
 
     @property
     def url(self) -> str:
-        """ Returns the URL of the emoji. """
+        """ The URL of the emoji. """
         return f"{Asset.BASE}/emojis/{self.id}.{'gif' if self.animated else 'png'}"

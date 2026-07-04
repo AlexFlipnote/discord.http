@@ -50,7 +50,7 @@ class PartialSoundboardSound(PartialBase):
     @property
     def guild(self) -> "Guild | PartialGuild | None":
         """
-        Returns the guild this soundboard sound is in.
+        The guild this soundboard sound is in.
 
         Returns
         -------

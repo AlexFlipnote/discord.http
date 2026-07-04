@@ -183,7 +183,7 @@ class BenchmarkEntry:
 
     @property
     def elapsed(self) -> float:
-        """ Get the elapsed time in seconds. """
+        """ The elapsed time in seconds. """
         if self._start_perf is None:
             return 0.0
         if self._end_perf is None:
@@ -215,7 +215,7 @@ class Benchmark:
 
     def __init__(self):
         self.results: dict[str, BenchmarkEntry] = {}
-        """ A dictionary of benchmark entries, where the key is the name of the benchmark and the value is the BenchmarkEntry object. """
+        """ A dictionary of benchmark entries, keyed by benchmark name. """
 
         self._overall_start = time.perf_counter()
 
@@ -970,37 +970,37 @@ class URL:
     # Properties
     @property
     def url(self) -> str:
-        """ Returns the full URL as a string. """
+        """ The full URL as a string. """
         return urlunparse(self._parsed)
 
     @property
     def scheme(self) -> str:
-        """ Returns the scheme of the URL (e.g., 'https'). """
+        """ The scheme of the URL (e.g., 'https'). """
         return self._parsed.scheme
 
     @property
     def netloc(self) -> str:
-        """ Returns the network location part (e.g., 'user:pass@host:port'). """
+        """ The network location part (e.g., 'user:pass@host:port'). """
         return self._parsed.netloc
 
     @property
     def host(self) -> str | None:
-        """ Returns the hostname (netloc without port or auth). """
+        """ The hostname (netloc without port or auth). """
         return self._parsed.hostname
 
     @property
     def port(self) -> int | None:
-        """ Returns the port if specified. """
+        """ The port if specified. """
         return self._parsed.port
 
     @property
     def path(self) -> str:
-        """ Returns the path of the URL. """
+        """ The path of the URL. """
         return self._parsed.path
 
     @property
     def query(self) -> dict[str, str | list[str]]:
-        """ Returns the query parameters as a dictionary. """
+        """ The query parameters as a dictionary. """
         return {
             k: v[0] if len(v) == 1 else v
             for k, v in parse_qs(self._parsed.query, keep_blank_values=True).items()
@@ -1008,50 +1008,50 @@ class URL:
 
     @property
     def fragment(self) -> str:
-        """ Returns the fragment (the part after #). """
+        """ The fragment (the part after #). """
         return self._parsed.fragment
 
     @property
     def user(self) -> str | None:
-        """ Returns the username if specified. """
+        """ The username if specified. """
         return self._parsed.username
 
     @property
     def password(self) -> str | None:
-        """ Returns the password if specified. """
+        """ The password if specified. """
         return self._parsed.password
 
     # Path-specific Properties (Pathlib style)
     @property
     def name(self) -> str:
-        """ Returns the last part of the path (e.g., 'bar' or 'image.png'). """
+        """ The last part of the path (e.g., 'bar' or 'image.png'). """
         return posixpath.basename(self.path.rstrip("/"))
 
     @property
     def stem(self) -> str:
-        """ Returns the name without the extension (e.g., 'image'). """
+        """ The name without the extension (e.g., 'image'). """
         return posixpath.splitext(self.name)[0]
 
     @property
     def suffix(self) -> str:
-        """ Returns the file extension including the dot (e.g., '.png'). """
+        """ The file extension including the dot (e.g., '.png'). """
         return posixpath.splitext(self.name)[1]
 
     @property
     def parent(self) -> "URL":
-        """ Returns the URL with the last segment of the path removed. """
+        """ The URL with the last segment of the path removed. """
         new_path = posixpath.dirname(self.path.rstrip("/"))
         return self.update_path(new_path or "/")
 
     # Web-specific Properties
     @property
     def origin(self) -> str:
-        """ Returns scheme + netloc (e.g., https://example.com). """
+        """ Scheme + netloc (e.g., https://example.com). """
         return f"{self.scheme}://{self.netloc}"
 
     @property
     def request_uri(self) -> str:
-        """ Returns the path, query, and fragment (e.g., /test?v=1#hello). """
+        """ The path, query, and fragment (e.g., /test?v=1#hello). """
         uri = self.path
         if self._parsed.query:
             uri += f"?{self._parsed.query}"

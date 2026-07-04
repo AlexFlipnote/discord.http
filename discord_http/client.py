@@ -493,7 +493,7 @@ class Client:
     @property
     def user(self) -> User:
         """
-        Returns the bot's user object.
+        The bot's user object.
 
         Raises
         ------
@@ -517,7 +517,7 @@ class Client:
     @property
     def guilds(self) -> list[Guild | PartialGuild]:
         """
-        Returns a list of all the guilds the bot is in.
+        A list of all the guilds the bot is in.
 
         Only useable if you are using gateway and caching
         """

@@ -71,7 +71,7 @@ class PartialSticker(PartialBase):
     @property
     def guild(self) -> "Guild | PartialGuild | None":
         """
-        Returns the guild this sticker is in.
+        The guild this sticker is in.
 
         Returns
         -------
@@ -191,7 +191,7 @@ class PartialSticker(PartialBase):
 
     @property
     def url(self) -> str:
-        """ Returns the sticker's URL. """
+        """ The sticker's URL. """
         img_format = "png"
         if self.format_type == StickerFormatType.gif:
             img_format = "gif"

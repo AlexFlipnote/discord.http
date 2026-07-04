@@ -146,27 +146,27 @@ class ResolvedValues(_ResolveParser):
 
     @property
     def members(self) -> list[Member]:
-        """ Returns the resolved members if any. """
+        """ The resolved members if any. """
         return self._parsed_data["members"]
 
     @property
     def users(self) -> list[User]:
-        """ Returns the resolved users if any. """
+        """ The resolved users if any. """
         return self._parsed_data["users"]
 
     @property
     def channels(self) -> list[BaseChannel]:
-        """ Returns the resolved channels if any. """
+        """ The resolved channels if any. """
         return self._parsed_data["channels"]
 
     @property
     def roles(self) -> list[Role]:
-        """ Returns the resolved roles if any. """
+        """ The resolved roles if any. """
         return self._parsed_data["roles"]
 
     @property
     def attachments(self) -> list[Attachment]:
-        """ Returns the resolved attachments if any. """
+        """ The resolved attachments if any. """
         return self._parsed_data["attachments"]
 
 
@@ -748,7 +748,8 @@ class Context:
             except TimeoutError:
                 self._response_sent.set()
                 _log.error(
-                    f"call_after:{call_after} refused: no response confirmation from Discord within 5s (connection likely dropped)"
+                    f"call_after:{call_after} refused: no response confirmation "
+                    "from Discord within 5s (connection likely dropped)"
                 )
                 return
 
@@ -764,13 +765,13 @@ class Context:
 
     @property
     def type(self) -> InteractionType:
-        """ Returns the type of the interaction. """
+        """ The type of the interaction. """
         return InteractionType(self._raw_type)
 
     @property
     def guild(self) -> Guild | PartialGuild | None:
         """
-        Returns the guild the interaction was made in.
+        The guild the interaction was made in.
 
         If you are using gateway cache, it can return full object too
         """
@@ -785,7 +786,7 @@ class Context:
 
     @property
     def channel(self) -> "BaseChannel | PartialChannel | None":
-        """ Returns the channel the interaction was made in. """
+        """ The channel the interaction was made in. """
         if not self.channel_id:
             return None
 
@@ -810,19 +811,19 @@ class Context:
 
     @property
     def channel_type(self) -> ChannelType:
-        """ Returns the type of the channel. """
+        """ The type of the channel. """
         if self._channel:
             return self._channel.type
         return ChannelType.unknown
 
     @property
     def created_at(self) -> datetime:
-        """ Returns the time the interaction was created. """
+        """ The time the interaction was created. """
         return utils.snowflake_time(self.id)
 
     @property
     def cooldown(self) -> Cooldown | None:
-        """ Returns the context cooldown. """
+        """ The context cooldown. """
         cooldown = self.command.cooldown
 
         if cooldown is None:
@@ -834,7 +835,7 @@ class Context:
 
     @property
     def expires_at(self) -> datetime:
-        """ Returns the time the interaction expires. """
+        """ The time the interaction expires. """
         return self.created_at + timedelta(minutes=15)
 
     def is_expired(self) -> bool:

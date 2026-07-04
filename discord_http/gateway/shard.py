@@ -200,7 +200,7 @@ class Status:
 
     @property
     def ping(self) -> float:
-        """ Returns the round-trip latency between the last send and receive, or 0.0 if not connected. """
+        """ The round-trip latency between the last send and receive, or 0.0 if not connected. """
         if not self.can_resume():
             return 0.0
         return self._last_recv - self._last_send
@@ -356,7 +356,7 @@ class Shard:
 
     @property
     def url(self) -> str:
-        """ Returns the websocket url for the client. """
+        """ The websocket url for the client. """
         if not isinstance(self.api_version, int):
             raise TypeError("api_version must be of type int")
 
@@ -814,7 +814,9 @@ class Shard:
 
                                 case WSMsgType.CLOSE | WSMsgType.CLOSED | WSMsgType.CLOSING:
                                     self._close_code = evt.data
-                                    raise ConnectionAbortedError(f"Shard {self.shard_id} received close frame with code {evt.data}")
+                                    raise ConnectionAbortedError(
+                                        f"Shard {self.shard_id} received close frame with code {evt.data}"
+                                    )
 
                                 case WSMsgType.ERROR:
                                     raise ConnectionError(f"Shard {self.shard_id} received websocket error: {evt.data}")
@@ -828,7 +830,7 @@ class Shard:
                         return
 
                     if self._is_fatal_close():
-                        # The shard received a fatal close code, this means we should not attempt to reconnect and just shutdown the shard
+                        # Fatal close code received, do not attempt to reconnect, just shutdown the shard
                         self._dispatch_close_reason(
                             f"Shard {self.shard_id} received fatal close code {self._close_code}, shutting down.",
                             ShardCloseType.hard_crash,

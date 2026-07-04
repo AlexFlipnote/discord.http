@@ -61,13 +61,13 @@ class Ping(Snowflake):
 
     @property
     def application(self) -> "PartialUser":
-        """ Returns the partial user object of the application. """
+        """ The partial user object of the application. """
         from .user import PartialUser
         return PartialUser(state=self._state, id=self.application_id)
 
     @property
     def user(self) -> "User":
-        """ Returns the user object of the bot. """
+        """ The user object of the bot. """
         from .user import User
         return User(state=self._state, data=self._raw_user)
 
@@ -82,7 +82,7 @@ class BaseResponse:
 
     @property
     def content_type(self) -> str:
-        """ Returns the content type of the response. """
+        """ The content type of the response. """
         multidata = utils.MultipartData()
         return multidata.content_type
 

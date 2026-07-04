@@ -6,7 +6,7 @@ This document outlines the coding standards for the ``discord_http`` library. Al
 General Guidelines
 ------------------
 - **Indentation:** Use 4 spaces per level.
-- **Line Length:** Maximum 256 characters.
+- **Line Length:** Maximum 128 characters.
 - **Python Version:** 3.11 or higher.
 - **Quotes:** Use double quotes (``"``) by default. Use single quotes (``'``) only to avoid escaping internal double quotes.
 - **Files:** Must always end with a single newline.

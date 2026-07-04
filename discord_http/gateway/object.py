@@ -372,7 +372,7 @@ class AutomodExecution:
 
     @property
     def rule(self) -> PartialAutoModRule:
-        """ Returns a partial object of automod rule. """
+        """ A partial object of automod rule. """
         return PartialAutoModRule(
             state=self._state,
             id=self.rule_id,
@@ -469,7 +469,7 @@ class Reaction:
         """ The ID of the guild the reaction was made in, or `None` if the reaction was made in a DM channel. """
 
         self.message_author_id: int | None = utils.get_int(data, "message_author_id")
-        """ The ID of the user that authored the message the reaction was made to, or `None` if the message author is not available. """
+        """ The ID of the user that authored the message, or `None` if not available. """
 
         self.member: "Member | None" = None
         """ The member that made the reaction, or `None` if the member is not available. """
@@ -522,7 +522,7 @@ class Reaction:
     @property
     def channel(self) -> "PartialChannel | None":
         """
-        Returns the channel the message was sent in.
+        The channel the message was sent in.
 
         If guild and channel cache is enabled, it can also return full channel object.
         """
@@ -547,7 +547,7 @@ class Reaction:
 
     @property
     def message(self) -> "PartialMessage | None":
-        """ Returns the message if a message_id is available. """
+        """ The message if a message_id is available. """
         if not self.channel_id or not self.message_id:
             return None
 

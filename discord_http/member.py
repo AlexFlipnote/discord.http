@@ -544,7 +544,7 @@ class Member(PartialMember):
 
     @property
     def roles(self) -> list[Role | PartialRole]:
-        """ Returns the roles of the member. """
+        """ The roles of the member. """
         guild = self.guild
         return [
             guild.get_role(r_id) or
@@ -586,7 +586,7 @@ class Member(PartialMember):
     @property
     def guild_permissions(self) -> Permissions:
         """
-        Returns the guild permissions of the member.
+        The guild permissions of the member.
 
         This is only available if you are using gateway with guild cache.
         """
@@ -657,17 +657,17 @@ class Member(PartialMember):
 
     @property
     def name(self) -> str:
-        """ Returns the username of the member. """
+        """ The username of the member. """
         return self._user.name
 
     @property
     def bot(self) -> bool:
-        """ Returns whether the member is a bot. """
+        """ Whether the member is a bot. """
         return self._user.bot
 
     @property
     def system(self) -> bool:
-        """ Returns whether the member is a system user. """
+        """ Whether the member is a system user. """
         return self._user.system
 
     @property
@@ -684,12 +684,12 @@ class Member(PartialMember):
 
     @property
     def public_flags(self) -> UserFlags:
-        """ Returns the public flags of the member. """
+        """ The public flags of the member. """
         return self._user.public_flags or UserFlags(0)
 
     @property
     def display_avatar_decoration(self) -> AvatarDecoration | None:
-        """ Returns the display avatar decoration of the member. """
+        """ The display avatar decoration of the member. """
         return self.avatar_decoration or self._user.avatar_decoration
 
     @property
@@ -714,17 +714,17 @@ class Member(PartialMember):
 
     @property
     def display_name(self) -> str:
-        """ Returns the display name of the member. """
+        """ The display name of the member. """
         return self.nick or self.global_name or self.name
 
     @property
     def display_name_style(self) -> DisplayNameStyles | None:
-        """ Returns the currently displayed name style of the member. """
+        """ The currently displayed name style of the member. """
         return self.name_style or self._user.name_style
 
     @property
     def display_banner(self) -> Asset | None:
-        """ Returns the display banner of the member. """
+        """ The display banner of the member. """
         return (
             self.banner or
             self.global_banner
@@ -732,7 +732,7 @@ class Member(PartialMember):
 
     @property
     def display_avatar(self) -> Asset:
-        """ Returns the display avatar of the member. """
+        """ The display avatar of the member. """
         return (
             self.avatar or
             self.global_avatar or
@@ -742,7 +742,7 @@ class Member(PartialMember):
     @property
     def top_role(self) -> PartialRole | Role | None:
         """
-        Returns the top role of the member.
+        The top role of the member.
 
         Only usable if you are using gateway and caching
         """

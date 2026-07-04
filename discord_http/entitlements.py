@@ -252,7 +252,7 @@ class Entitlements(PartialEntitlements):
 
     @property
     def guild(self) -> Guild | PartialGuild | None:
-        """ Returns the guild the entitlement is in. """
+        """ The guild the entitlement is in. """
         if not self.guild_id:
             return None
 

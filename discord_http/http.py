@@ -411,7 +411,7 @@ class DiscordAPI:
 
     def __init__(self, *, client: "Client"):
         self.bot: "Client" = client
-        """ The client instance that owns this HTTP client. cache: A reference to the client's cache for easy access within HTTP methods. """
+        """ The client instance that owns this HTTP client. """
 
         self.cache = self.bot.cache
 

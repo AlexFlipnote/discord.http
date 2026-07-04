@@ -35,14 +35,14 @@ class BaseFlag(_FlagPyMeta):
 
     @property
     def pretty_name(self) -> str:
-        """ Returns a pretty name for the flag. """
+        """ A pretty name for the flag. """
         if not self.name:
             return "Unknown"
         return self.name.replace("_", " ").capitalize()
 
     @property
     def list_names(self) -> list[str]:
-        """ Returns a list of all the names of the flag. """
+        """ A list of all the names of the flag. """
         return [
             g.name or "UNKNOWN"
             for g in self
