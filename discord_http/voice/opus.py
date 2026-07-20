@@ -50,33 +50,8 @@ OPUS_APPLICATION_VOIP = 2048
 OPUS_APPLICATION_AUDIO = 2049
 OPUS_APPLICATION_LOWDELAY = 2051
 
-# Opus CTL request constants.
-OPUS_SET_BITRATE_REQUEST = 4002
-OPUS_SET_BANDWIDTH_REQUEST = 4008
-OPUS_SET_INBAND_FEC_REQUEST = 4012
-OPUS_SET_PACKET_LOSS_PERC_REQUEST = 4014
-OPUS_SET_SIGNAL_REQUEST = 4024
-
-# Opus value constants for CTL requests.
-OPUS_AUTO = -1000
-OPUS_SIGNAL_VOICE = 3001
-OPUS_SIGNAL_MUSIC = 3002
-OPUS_BANDWIDTH_FULLBAND = 1105
-
 # Opus error codes (used when raising OpusError).
 OPUS_OK = 0
-
-# Named aliases that the public set_* helpers accept.
-_BANDWIDTHS: dict[str, int] = {
-    "auto": OPUS_AUTO,
-    "fullband": OPUS_BANDWIDTH_FULLBAND,
-}
-
-_SIGNALS: dict[str, int] = {
-    "auto": OPUS_AUTO,
-    "voice": OPUS_SIGNAL_VOICE,
-    "music": OPUS_SIGNAL_MUSIC,
-}
 
 
 # Opaque handle types. libopus only ever hands these back as pointers.
@@ -123,9 +98,6 @@ def _configure_lib(lib: ctypes.CDLL) -> None:
     ]
     lib.opus_encoder_create.restype = EncoderStruct
 
-    # ``opus_encoder_ctl`` is variadic; arguments are supplied per-call.
-    lib.opus_encoder_ctl.restype = ctypes.c_int
-
     lib.opus_encode.argtypes = [
         EncoderStruct,
         ctypes.POINTER(ctypes.c_int16),
@@ -147,9 +119,6 @@ def _configure_lib(lib: ctypes.CDLL) -> None:
         ctypes.POINTER(ctypes.c_int),
     ]
     lib.opus_decoder_create.restype = DecoderStruct
-
-    # ``opus_decoder_ctl`` is variadic; arguments are supplied per-call.
-    lib.opus_decoder_ctl.restype = ctypes.c_int
 
     lib.opus_decode.argtypes = [
         DecoderStruct,
@@ -341,90 +310,6 @@ class Encoder:
 
     def __del__(self) -> None:
         self.cleanup()
-
-    def _ctl(self, request: int, value: int) -> int:
-        """
-        Issue a CTL request to the encoder.
-
-        Parameters
-        ----------
-        request:
-            The CTL request constant.
-        value:
-            The integer value to set.
-
-        Returns
-        -------
-            The libopus return code.
-        """
-        return _check(self._lib.opus_encoder_ctl(self._state, ctypes.c_int(request), ctypes.c_int(value)))
-
-    def set_bitrate(self, kbps: int) -> None:
-        """
-        Set the target bitrate.
-
-        Parameters
-        ----------
-        kbps:
-            The target bitrate in kilobits per second.
-        """
-        clamped = min(512, max(16, kbps))
-        self._ctl(OPUS_SET_BITRATE_REQUEST, clamped * 1024)
-
-    def set_fec(self, enabled: bool) -> None:
-        """
-        Enable or disable in-band forward error correction.
-
-        Parameters
-        ----------
-        enabled:
-            Whether FEC should be enabled.
-        """
-        self._ctl(OPUS_SET_INBAND_FEC_REQUEST, 1 if enabled else 0)
-
-    def set_expected_packet_loss_percent(self, pct: float) -> None:
-        """
-        Set the expected packet-loss percentage used to tune FEC.
-
-        Parameters
-        ----------
-        pct:
-            The expected packet loss, as a fraction between 0 and 1.
-        """
-        value = min(100, max(0, int(pct * 100)))
-        self._ctl(OPUS_SET_PACKET_LOSS_PERC_REQUEST, value)
-
-    def set_bandwidth(self, name: str) -> None:
-        """
-        Set the encoder bandwidth.
-
-        Parameters
-        ----------
-        name:
-            The bandwidth name, one of ``auto`` or ``fullband``.
-
-        Raises
-        ------
-        KeyError
-            If ``name`` is not a recognised bandwidth.
-        """
-        self._ctl(OPUS_SET_BANDWIDTH_REQUEST, _BANDWIDTHS[name])
-
-    def set_signal_type(self, name: str) -> None:
-        """
-        Set the signal type hint.
-
-        Parameters
-        ----------
-        name:
-            The signal type name, one of ``auto``, ``voice`` or ``music``.
-
-        Raises
-        ------
-        KeyError
-            If ``name`` is not a recognised signal type.
-        """
-        self._ctl(OPUS_SET_SIGNAL_REQUEST, _SIGNALS[name])
 
     def encode(self, pcm: bytes, frame_size: int = SAMPLES_PER_FRAME) -> bytes:
         """

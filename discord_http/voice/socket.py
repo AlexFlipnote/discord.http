@@ -29,9 +29,6 @@ class VoiceCloseCode(BaseEnum):
     session_invalid = 4006
     disconnected = 4014
     voice_server_crashed = 4015
-    unknown_encryption_mode = 4016
-    dave_e2ee_required = 4017
-    bad_request = 4020
     rate_limited = 4021
     call_terminated = 4022
 
@@ -442,13 +439,6 @@ class VoiceSocket:
         if self.ws is None or self.ws.closed:
             return
 
-        # Outbound binary frames are framed as ``opcode(1B) + payload`` with NO
-        # sequence prefix. This is asymmetric with *inbound* binary frames, which
-        # Discord prefixes with a 2-byte sequence number (``seq(2B) + opcode(1B) +
-        # payload``, handled in :meth:`_dispatch_binary`). Prefixing outbound
-        # frames with the 2-byte sequence makes Discord read the leading ``0x00``
-        # byte as opcode 0 (IDENTIFY) and close the socket with 4005
-        # ("Already authenticated").
         frame = bytes([opcode & 0xFF]) + payload
         await self.ws.send_bytes(frame)
 

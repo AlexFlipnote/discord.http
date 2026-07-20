@@ -5,7 +5,6 @@ from typing import IO
 
 __all__ = (
     "OggPage",
-    "OggStream",
 )
 
 # 4-byte capture pattern that begins every Ogg page.
@@ -32,8 +31,8 @@ class OggPage:
     via :class:`struct.Struct`, followed by the ``page_segments`` segment table
     and the page body.
 
-    Reassembly of packets that may span pages is left to :class:`OggStream`;
-    this class only exposes the raw segment table and body, plus a convenience
+    Reassembly of packets that may span pages is left to the caller; this
+    class only exposes the raw segment table and body, plus a convenience
     :meth:`iter_packets` that walks the lacing values for a single page.
 
     Attributes
@@ -117,89 +116,3 @@ class OggPage:
         # A trailing run of 255s means the packet spills into the next page.
         if partial:
             yield bytes(partial), False
-
-
-class OggStream:
-    """
-    A reader that extracts raw Opus packets from an Ogg/Opus byte stream.
-
-    The stream is scanned for ``b"OggS"`` capture patterns; each page is parsed
-    into an :class:`OggPage` and packets are reassembled across page boundaries
-    according to the Ogg lacing rules (a trailing lacing value of ``255``
-    continues a packet into the following page).
-
-    Notes
-    -----
-    The first two packets of a standard Ogg/Opus stream are the ``OpusHead`` and
-    ``OpusTags`` metadata headers. They are yielded as-is; consumers that only
-    want audio frames should skip any packet starting with ``b"OpusHead"`` or
-    ``b"OpusTags"``. They are never silently dropped.
-    """
-
-    __slots__ = ("stream",)
-
-    def __init__(self, stream: IO[bytes]) -> None:
-        self.stream = stream
-
-    def _find_next_page(self) -> bool:
-        """
-        Advance the stream to just after the next ``b"OggS"`` capture pattern.
-
-        Returns
-        -------
-        bool
-            ``True`` if a capture pattern was found, ``False`` at end of stream.
-        """
-        head = self.stream.read(4)
-        if head == _OGG_MAGIC:
-            return True
-
-        # Slide a 4-byte window forward one byte at a time until the magic is
-        # found or the stream is exhausted.
-        while True:
-            byte = self.stream.read(1)
-            if not byte:
-                return False
-
-            head = head[1:] + byte
-            if head == _OGG_MAGIC:
-                return True
-
-    def iter_pages(self) -> Iterator[OggPage]:
-        """
-        Yield each :class:`OggPage` found in the stream, in order.
-
-        Yields
-        ------
-        OggPage
-            The next parsed page.
-        """
-        while self._find_next_page():
-            yield OggPage(self.stream)
-
-    def iter_packets(self) -> Iterator[bytes]:
-        """
-        Yield fully reassembled Opus packets across page boundaries.
-
-        Packets split by ``255`` lacing values, both within a page and across
-        pages, are concatenated before being yielded.
-
-        Yields
-        ------
-        bytes
-            A complete Opus packet, including the ``OpusHead``/``OpusTags``
-            header packets at the start of the stream.
-        """
-        partial = bytearray()
-
-        for page in self.iter_pages():
-            for chunk, complete in page.iter_packets():
-                partial += chunk
-                if complete:
-                    yield bytes(partial)
-                    partial = bytearray()
-
-        # A stream that ends on a 255-run is malformed, but flush whatever we
-        # accumulated rather than silently discarding trailing data.
-        if partial:
-            yield bytes(partial)

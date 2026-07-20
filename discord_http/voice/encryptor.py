@@ -25,11 +25,6 @@ class Encryptor:
         self._aead = AESGCM(bytes(secret_key))
         self._nonce = 0
 
-    @property
-    def mode(self) -> str:
-        """ The encryption mode implemented by this encryptor. """
-        return "aead_aes256_gcm_rtpsize"
-
     def encrypt(self, header: bytes, plaintext: bytes) -> bytes:
         """
         Encrypt an RTP payload.

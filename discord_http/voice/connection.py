@@ -13,6 +13,7 @@ from .socket import VoiceCloseCode, VoiceSocket
 if TYPE_CHECKING:
     from ..channel import PartialChannel
     from ..client import Client
+    from ..gateway.shard import Shard
     from .client import VoiceClient
 
 __all__ = ("VoiceConnection",)
@@ -146,6 +147,14 @@ class VoiceConnection:
         """ Whether the connection has completed its handshake. """
         return self._connected_event.is_set()
 
+    def _get_shard(self) -> "Shard | None":
+        """ Resolve the gateway shard that owns this connection's guild, if any. """
+        client = self.client
+        shard_id = client.get_shard_by_guild_id(self.guild_id)
+        if client.gateway is None or shard_id is None:
+            return None
+        return client.gateway.get_shard(shard_id)
+
     async def connect(
         self,
         *,
@@ -227,15 +236,9 @@ class VoiceConnection:
         TimeoutError
             If the handshake does not complete within ``timeout``.
         """
-        client = self.client
-
-        shard_id = client.get_shard_by_guild_id(self.guild_id)
-        if shard_id is None:
-            raise RuntimeError(f"Could not resolve a shard for guild {self.guild_id}")
-
-        shard = client.gateway.get_shard(shard_id) if client.gateway else None
+        shard = self._get_shard()
         if shard is None:
-            raise RuntimeError(f"Could not resolve shard {shard_id} for guild {self.guild_id}")
+            raise RuntimeError(f"Could not resolve a shard for guild {self.guild_id}")
 
         self._reconnect = reconnect
         self._reconnect_on_session_invalid = reconnect_on_session_invalid
@@ -490,9 +493,7 @@ class VoiceConnection:
 
     async def _force_voice_refresh(self) -> None:
         """ Drop the gateway voice state so Discord re-allocates a fresh voice server. """
-        client = self.client
-        shard_id = client.get_shard_by_guild_id(self.guild_id)
-        shard = client.gateway.get_shard(shard_id) if (client.gateway and shard_id is not None) else None
+        shard = self._get_shard()
         if shard is None:
             return
 
@@ -752,7 +753,7 @@ class VoiceConnection:
         -------
             The DAVE-encrypted Opus payload, or the input unchanged when inactive.
         """
-        if self.dave_session is None or not self.dave_session.ready:
+        if self.dave_session is None:
             return opus
         return self.dave_session.encrypt_opus(opus)
 
@@ -771,7 +772,7 @@ class VoiceConnection:
         -------
             The decrypted Opus payload, or the input unchanged when inactive.
         """
-        if self.dave_session is None or not self.dave_session.ready:
+        if self.dave_session is None:
             return opus
         return self.dave_session.decrypt_opus(user_id, opus)
 
@@ -811,10 +812,8 @@ class VoiceConnection:
         if self.socket is not None:
             self.socket._request_close()
 
-        client = self.client
         try:
-            shard_id = client.get_shard_by_guild_id(self.guild_id)
-            shard = client.gateway.get_shard(shard_id) if (client.gateway and shard_id is not None) else None
+            shard = self._get_shard()
             if shard is not None:
                 await shard.change_voice_state(guild_id=self.guild_id, channel_id=None)
         except Exception as exc:
@@ -851,10 +850,7 @@ class VoiceConnection:
         channel:
             The channel to move to.
         """
-        client = self.client
-
-        shard_id = client.get_shard_by_guild_id(self.guild_id)
-        shard = client.gateway.get_shard(shard_id) if (client.gateway and shard_id is not None) else None
+        shard = self._get_shard()
         if shard is None:
             raise RuntimeError(f"Could not resolve a shard for guild {self.guild_id}")
 

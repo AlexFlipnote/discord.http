@@ -6,11 +6,6 @@ from discord_http.voice.encryptor import Encryptor
 
 
 class TestVoiceEncryptor(unittest.TestCase):
-    def test_mode(self) -> None:
-        key = b"\x00" * 32
-        enc = Encryptor(key)
-        self.assertEqual(enc.mode, "aead_aes256_gcm_rtpsize")
-
     def test_roundtrip_basic_header(self) -> None:
         key = os.urandom(32)
         header = struct.pack(">BBHII", 0x80, 0x78, 1, 2, 3)

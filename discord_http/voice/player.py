@@ -11,7 +11,7 @@ from collections import deque
 from collections.abc import AsyncIterable, Callable
 from typing import TYPE_CHECKING
 
-from .oggparse import OggPage
+from .oggparse import _HEADER_STRUCT, _OGG_MAGIC, OggPage
 from .opus import OPUS_SILENCE
 
 if TYPE_CHECKING:
@@ -35,12 +35,6 @@ FRAME_SIZE = 3840
 
 # The number of bytes pulled from ffmpeg stdout per read when parsing Ogg/Opus.
 _OGG_READ_CHUNK = 8192
-
-# The 4-byte capture pattern that begins every Ogg page.
-_OGG_MAGIC = b"OggS"
-
-# The fixed-size Ogg page header that follows the capture pattern (see oggparse).
-_OGG_HEADER_SIZE = 23
 
 # The signed 16-bit value range, used when clamping scaled PCM samples.
 _INT16_MIN = -32768
@@ -335,25 +329,16 @@ class FFmpegOpusAudio(_FFmpegAudio):
             if index < 0:
                 break
 
-            # An Ogg page is: magic (4) + fixed header (23) + segment table
-            # (page_segments) + body (sum of lacing values). Bail until the full
-            # page has arrived so OggPage never reads a truncated header/body.
-            header_end = index + 4 + _OGG_HEADER_SIZE
-            if len(self._buffer) < header_end:
+            try:
+                # The slice starts just after the magic, matching what OggPage
+                # expects. OggPage raises ValueError while the page is still
+                # truncated, in which case we wait for more ffmpeg output.
+                page = OggPage(io.BytesIO(self._buffer[index + 4:]))
+            except ValueError:
                 break
 
-            page_segments = self._buffer[header_end - 1]
-            table_end = header_end + page_segments
-            if len(self._buffer) < table_end:
-                break
+            page_end = index + 4 + _HEADER_STRUCT.size + len(page.segtable) + len(page.data)
 
-            body_size = sum(self._buffer[header_end:table_end])
-            page_end = table_end + body_size
-            if len(self._buffer) < page_end:
-                break
-
-            # The slice starts just after the magic, matching what OggPage expects.
-            page = OggPage(io.BytesIO(self._buffer[index + 4:page_end]))
             for chunk, complete in page.iter_packets():
                 self._partial.extend(chunk)
                 if complete:

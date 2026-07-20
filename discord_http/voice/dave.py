@@ -18,16 +18,15 @@ if TYPE_CHECKING:
 
     # ``davey`` is an optional C-extension that is absent in the type-check environment,
     # so this Protocol declares exactly the session surface this file uses (removing the
-    # need for a blanket ``Any``). Every access below is still guarded at runtime with
-    # ``try/except AttributeError`` because the installed davey build may differ.
+    # need for a blanket ``Any``). It mirrors the davey 0.1.5 stubs.
     class DaveSession(Protocol):
         ready: bool
         voice_privacy_code: str | None
 
         def get_serialized_key_package(self) -> bytes: ...
-        def set_passthrough_mode(self, enabled: bool) -> None: ...
-        def encrypt_opus(self, opus: bytes) -> bytes: ...
-        def decrypt_opus(self, user_id: int, opus: bytes) -> bytes: ...
+        def set_passthrough_mode(self, passthrough_mode: bool, transition_expiry: int | None = None) -> None: ...
+        def encrypt_opus(self, packet: bytes) -> bytes: ...
+        def decrypt(self, user_id: int, media_type: object, packet: bytes) -> bytes: ...
         def set_external_sender(self, payload: bytes) -> None: ...
         def process_proposals(self, operation_type: object, proposals: bytes) -> object: ...
         def process_commit(self, commit: bytes) -> None: ...
@@ -71,22 +70,14 @@ class DaveManager:
     @property
     def ready(self) -> bool:
         """ Whether the underlying MLS session has completed its handshake. """
-        if self._session is None:
-            return False
-        try:
-            return bool(self._session.ready)
-        except AttributeError:
-            return False
+        return self._session is not None and bool(self._session.ready)
 
     @property
     def voice_privacy_code(self) -> str | None:
         """ The privacy code users can compare out-of-band to verify the E2EE session, if any. """
         if self._session is None:
             return None
-        try:
-            code = self._session.voice_privacy_code
-        except AttributeError:
-            return None
+        code = self._session.voice_privacy_code
         return str(code) if code is not None else None
 
     def can_encrypt(self) -> bool:
@@ -150,11 +141,7 @@ class DaveManager:
         if self._session is None:
             return
 
-        try:
-            key_package = self._session.get_serialized_key_package()
-        except AttributeError:
-            return
-
+        key_package = self._session.get_serialized_key_package()
         await self._connection.socket.send_binary(
             int(VoiceOpType.dave_mls_key_package), key_package
         )
@@ -174,10 +161,7 @@ class DaveManager:
         if self._session is None:
             return
 
-        try:
-            self._session.set_passthrough_mode(enabled)
-        except AttributeError:
-            pass
+        self._session.set_passthrough_mode(enabled)
 
     def encrypt_opus(self, opus: bytes) -> bytes:
         """
@@ -194,10 +178,7 @@ class DaveManager:
         """
         if not self.can_encrypt() or self._session is None:
             return opus
-        try:
-            return bytes(self._session.encrypt_opus(opus))
-        except AttributeError:
-            return opus
+        return bytes(self._session.encrypt_opus(opus))
 
     def decrypt_opus(self, user_id: int, opus: bytes) -> bytes:
         """
@@ -214,12 +195,9 @@ class DaveManager:
         -------
             The decrypted frame, or the input unchanged when E2EE is not active.
         """
-        if not self.can_encrypt() or self._session is None:
+        if not self.can_encrypt() or self._session is None or davey is None:
             return opus
-        try:
-            return bytes(self._session.decrypt_opus(user_id, opus))
-        except AttributeError:
-            return opus
+        return bytes(self._session.decrypt(user_id, davey.MediaType.audio, opus))
 
     async def handle_binary(self, opcode: int, payload: bytes) -> None:
         """
@@ -308,10 +286,7 @@ class DaveManager:
         if self._session is None:
             return
 
-        try:
-            self._session.set_external_sender(payload)
-        except AttributeError:
-            pass
+        self._session.set_external_sender(payload)
 
     async def _handle_proposals(self, payload: bytes) -> None:
         """
@@ -337,8 +312,6 @@ class DaveManager:
 
         try:
             result = self._session.process_proposals(operation_type, proposals)
-        except AttributeError:
-            return
         except Exception as exc:
             _log.debug(f"Failed to process MLS proposals: {exc}")
             await self._recover_from_invalid_commit()
@@ -365,8 +338,6 @@ class DaveManager:
 
         try:
             self._session.process_commit(commit)
-        except AttributeError:
-            return
         except Exception as exc:
             _log.debug(f"Failed to process MLS commit: {exc}")
             await self._recover_from_invalid_commit()
@@ -391,8 +362,6 @@ class DaveManager:
 
         try:
             self._session.process_welcome(welcome)
-        except AttributeError:
-            return
         except Exception as exc:
             _log.debug(f"Failed to process MLS welcome: {exc}")
             await self._recover_from_invalid_commit()
@@ -427,36 +396,24 @@ class DaveManager:
         """
         Extract the bytes to send for a ``davey.CommitWelcome`` result.
 
-        ``davey``'s ``process_proposals`` returns a ``CommitWelcome`` carrying a
-        ``commit`` and an optional ``welcome``. Discord expects them concatenated
-        as ``commit + welcome`` (commit alone when there is no welcome). This also
-        tolerates raw bytes or a ``None`` result.
+        ``davey``'s ``process_proposals`` returns ``None`` or a ``CommitWelcome``
+        carrying a ``commit`` and an optional ``welcome``. Discord expects them
+        concatenated as ``commit + welcome`` (commit alone when there is no welcome).
 
         Parameters
         ----------
         result:
-            The (dynamically typed) value returned by ``davey``'s proposal processing.
+            The value returned by ``davey``'s proposal processing.
 
         Returns
         -------
             The serialized commit/welcome bytes, or ``None`` when there is nothing to send.
         """
-        if result is None:
-            return None
-        if isinstance(result, (bytes, bytearray)):
-            return bytes(result)
-
         commit = getattr(result, "commit", None)
-        if commit is not None:
-            welcome = getattr(result, "welcome", None)
-            if welcome:
-                return bytes(commit) + bytes(welcome)
-            return bytes(commit)
+        if commit is None:
+            return None
 
-        serialize = getattr(result, "serialize", None)
-        if serialize is not None:
-            try:
-                return bytes(serialize())
-            except Exception:
-                return None
-        return None
+        welcome = getattr(result, "welcome", None)
+        if welcome:
+            return bytes(commit) + bytes(welcome)
+        return bytes(commit)
