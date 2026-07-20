@@ -40,8 +40,15 @@ class VoiceClient:
         """ The underlying voice connection state machine. """
 
         self._player: "AudioPlayer | None" = None
-        self._receiver: "VoiceReceiver | None" = None
         self._encoder: "Encoder | None" = None
+
+        # Built eagerly rather than in listen(): Discord only sends SPEAKING on
+        # the leading edge of speech, so a receiver created later would miss the
+        # SSRC mapping for anyone already talking, and they would stay unmapped
+        # until they stopped and started again. It allocates nothing until a
+        # sink is attached, and unpack() returns early while sink is None.
+        from .receiver import VoiceReceiver
+        self._receiver: "VoiceReceiver" = VoiceReceiver(self)
 
     @property
     def loop(self) -> asyncio.AbstractEventLoop:
@@ -133,9 +140,7 @@ class VoiceClient:
             self._player.stop()
             self._player = None
 
-        if self._receiver is not None:
-            self._receiver.stop()
-            self._receiver = None
+        self._receiver.stop()
 
         if self._encoder is not None:
             self._encoder.cleanup()
@@ -311,17 +316,12 @@ class VoiceClient:
         sink:
             The audio sink to write received audio into.
         """
-        from .receiver import VoiceReceiver
-
-        if self._receiver is None:
-            self._receiver = VoiceReceiver(self)
         self._receiver.start(sink)
 
     def stop_listening(self) -> None:
         """ Stop receiving voice. """
-        if self._receiver is not None:
-            self._receiver.stop()
+        self._receiver.stop()
 
     def is_listening(self) -> bool:
         """ Whether the client is currently receiving voice. """
-        return self._receiver is not None and self._receiver.is_listening()
+        return self._receiver.is_listening()

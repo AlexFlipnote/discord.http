@@ -95,10 +95,9 @@ class VoiceUDPProtocol(asyncio.DatagramProtocol):
         if 200 <= data[1] <= 204:
             return
 
-        # Otherwise treat it as RTP and hand it to the receiver, if any.
-        receiver = self.connection.voice_client._receiver
-        if receiver is not None:
-            receiver.unpack(data)
+        # Otherwise treat it as RTP and hand it to the receiver, which ignores
+        # the packet while no sink is attached.
+        self.connection.voice_client._receiver.unpack(data)
 
     async def discover_ip(self, ssrc: int) -> tuple[str, int]:
         """

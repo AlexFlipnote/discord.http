@@ -653,14 +653,12 @@ class VoiceConnection:
         data:
             The speaking payload with ssrc, user_id and speaking flags.
         """
-        receiver = self.voice_client._receiver
-        if receiver is None:
-            return
-
         ssrc = data.get("ssrc")
         user_id = data.get("user_id")
         if ssrc is not None and user_id is not None:
-            receiver.add_ssrc(int(ssrc), int(user_id))
+            # Mapped even when not listening: SPEAKING only fires on the leading
+            # edge of speech, so a sink attached later still needs this mapping.
+            self.voice_client._receiver.add_ssrc(int(ssrc), int(user_id))
 
     async def on_client_disconnect(self, data: dict) -> None:
         """
@@ -675,13 +673,9 @@ class VoiceConnection:
         data:
             The client disconnect payload with the user_id that left.
         """
-        receiver = self.voice_client._receiver
-        if receiver is None:
-            return
-
         user_id = data.get("user_id")
         if user_id is not None:
-            receiver.remove_user(int(user_id))
+            self.voice_client._receiver.remove_user(int(user_id))
 
     async def on_resumed(self, data: dict) -> None:  # noqa: ARG002
         """
@@ -759,7 +753,12 @@ class VoiceConnection:
 
     def can_encrypt(self) -> bool:
         """ Whether a DAVE session is ready to encrypt Opus payloads. """
-        return self.dave_session is not None and self.dave_session.ready
+        # Delegate rather than re-deriving: DaveManager also requires a non-zero
+        # protocol version, so after an EXECUTE_TRANSITION down to version 0 the
+        # session is still alive and ready but nothing is being encrypted. The
+        # receiver drops unmapped-SSRC packets based on this, so disagreeing here
+        # would drop plain Opus.
+        return self.dave_session is not None and self.dave_session.can_encrypt()
 
     def dave_encrypt_opus(self, opus: bytes) -> bytes:
         """

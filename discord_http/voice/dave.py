@@ -108,6 +108,7 @@ class DaveManager:
         channel_id = self._connection.channel_id
         if channel_id is None:
             self._session = None
+            self._version = 0
             return
 
         try:
@@ -117,8 +118,13 @@ class DaveManager:
                 channel_id,
             )
         except Exception as exc:
+            # Reset the version too: leaving it non-zero would make can_encrypt()
+            # depend solely on a session that does not exist, and the encrypt
+            # helpers would silently pass plaintext into a channel Discord
+            # believes is end-to-end encrypted.
             _log.warning(f"Failed to initialise DAVE session: {exc}")
             self._session = None
+            self._version = 0
             return
 
         await self._send_key_package()

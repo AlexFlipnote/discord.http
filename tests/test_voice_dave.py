@@ -14,15 +14,28 @@ class _FakeSocket:
         self.ready_ids.append(transition_id)
 
 
+class _FakeSession:
+    """A stand-in for davey.DaveSession that reports itself ready."""
+
+    def __init__(self) -> None:
+        self.ready = True
+        self.passthrough: bool | None = None
+
+    def set_passthrough_mode(self, passthrough_mode: bool) -> None:
+        self.passthrough = passthrough_mode
+
+
 class _FakeConnection:
     """The minimal connection surface DaveManager's transition handling touches."""
 
-    def __init__(self) -> None:
+    def __init__(self, channel_id: int | None = 1234) -> None:
         self.socket = _FakeSocket()
+        self.channel_id = channel_id
+        self.user_id = 5678
 
 
-def _manager() -> tuple[DaveManager, _FakeSocket]:
-    connection = _FakeConnection()
+def _manager(channel_id: int | None = 1234) -> tuple[DaveManager, _FakeSocket]:
+    connection = _FakeConnection(channel_id)
     manager = DaveManager(connection)  # type: ignore[arg-type]
     return manager, connection.socket
 
@@ -78,6 +91,33 @@ class TestDaveTransitions(unittest.TestCase):
 
         self.assertEqual(manager._pending_transitions, {})
         self.assertEqual(socket.ready_ids, [])
+
+    def test_downgrade_to_version_zero_disables_encryption(self) -> None:
+        # A live, ready session is not enough: after transitioning down to
+        # protocol version 0 nothing is encrypted any more, and can_encrypt()
+        # must say so or the receiver drops plain Opus packets.
+        manager, _ = _manager()
+        manager._session = _FakeSession()  # type: ignore[assignment]
+        manager._version = 1
+        self.assertTrue(manager.can_encrypt())
+
+        asyncio.run(manager._handle_prepare_transition({"transition_id": 3, "protocol_version": 0}))
+        asyncio.run(manager._handle_execute_transition({"transition_id": 3}))
+
+        self.assertEqual(manager._version, 0)
+        self.assertTrue(manager.ready)
+        self.assertFalse(manager.can_encrypt())
+
+    def test_reinit_without_channel_resets_version(self) -> None:
+        # No channel means no session; the version must not stay non-zero, or
+        # encrypt_opus would pass plaintext into a channel Discord treats as E2EE.
+        manager, _ = _manager(channel_id=None)
+
+        asyncio.run(manager.reinit(1))
+
+        self.assertIsNone(manager._session)
+        self.assertEqual(manager._version, 0)
+        self.assertFalse(manager.can_encrypt())
 
     def test_reinit_clears_pending_transitions(self) -> None:
         manager, _ = _manager()
