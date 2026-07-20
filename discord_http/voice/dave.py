@@ -98,18 +98,20 @@ class DaveManager:
             self._session = None
             return
 
+        # Checked before davey: with no channel there is nothing to encrypt for,
+        # whether or not the optional package is installed.
+        channel_id = self._connection.channel_id
+        if channel_id is None:
+            self._session = None
+            self._version = 0
+            return
+
         if not has_dave or davey is None:
             raise RuntimeError(
                 "Discord negotiated DAVE end-to-end encryption "
                 f"(protocol version {version}), but the optional 'davey' package is not "
                 'installed. Install it with: pip install "discord.http[voice]"'
             )
-
-        channel_id = self._connection.channel_id
-        if channel_id is None:
-            self._session = None
-            self._version = 0
-            return
 
         try:
             self._session = davey.DaveSession(

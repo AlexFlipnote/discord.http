@@ -140,7 +140,7 @@ class VoiceClient:
             self._player.stop()
             self._player = None
 
-        self._receiver.stop()
+        self._receiver.reset()
 
         if self._encoder is not None:
             self._encoder.cleanup()

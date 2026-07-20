@@ -101,6 +101,20 @@ class VoiceReceiver:
             except Exception:
                 _log.exception("Error while cleaning up audio sink")
 
+    def reset(self) -> None:
+        """
+        Stop listening and drop all per-connection state.
+
+        Separate from :meth:`stop` because ``stop()`` also runs when a sink is
+        swapped, and the SSRC map is collected from SPEAKING frames before any
+        sink is attached. Discord reassigns SSRCs across sessions, so the map
+        must be dropped on teardown or a reused SSRC is attributed to whoever
+        held it last.
+        """
+        self.stop()
+        self._ssrc_map.clear()
+        self._dave_unmapped_drops = 0
+
     def is_listening(self) -> bool:
         """
         Whether a sink is currently attached.
