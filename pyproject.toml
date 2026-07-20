@@ -163,6 +163,9 @@ ignore = [
 
   # Variable shadowing
   "A005",  # Files
+
+  # Ruff-specific
+  "RUF105",  # Preview, stylistic: wants `ruff:ignore` comments instead of `noqa`
 ]
 
 [tool.ruff.lint.isort]

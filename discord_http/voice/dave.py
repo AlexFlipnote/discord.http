@@ -3,34 +3,21 @@ import logging
 from typing import TYPE_CHECKING
 
 try:
-    import davey  # type: ignore[import-not-found]
+    import davey
     has_dave = True
 except ImportError:
     davey = None
     has_dave = False
 
-from .enums import VoiceOpType
-
 if TYPE_CHECKING:
-    from typing import Protocol
+    # ``davey`` is an optional runtime dependency, but it is always present in
+    # the type-check environments (it is part of ``--all-extras``), so its own
+    # type stubs are the authority on the session API.
+    from davey import DaveSession
 
     from .connection import VoiceConnection
 
-    # ``davey`` is an optional C-extension that is absent in the type-check environment,
-    # so this Protocol declares exactly the session surface this file uses (removing the
-    # need for a blanket ``Any``). It mirrors the davey 0.1.5 stubs.
-    class DaveSession(Protocol):
-        ready: bool
-        voice_privacy_code: str | None
-
-        def get_serialized_key_package(self) -> bytes: ...
-        def set_passthrough_mode(self, passthrough_mode: bool, transition_expiry: int | None = None) -> None: ...
-        def encrypt_opus(self, packet: bytes) -> bytes: ...
-        def decrypt(self, user_id: int, media_type: object, packet: bytes) -> bytes: ...
-        def set_external_sender(self, payload: bytes) -> None: ...
-        def process_proposals(self, operation_type: object, proposals: bytes) -> object: ...
-        def process_commit(self, commit: bytes) -> None: ...
-        def process_welcome(self, welcome: bytes) -> None: ...
+from .enums import VoiceOpType
 
 __all__ = (
     "DaveManager",
