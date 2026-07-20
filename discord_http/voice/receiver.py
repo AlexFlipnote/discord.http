@@ -124,6 +124,25 @@ class VoiceReceiver:
         """
         self._ssrc_map[ssrc] = user_id
 
+    def remove_user(self, user_id: int) -> None:
+        """
+        Remove every SSRC mapping and decoder belonging to a user.
+
+        Parameters
+        ----------
+        user_id:
+            The user ID to forget.
+        """
+        stale = [ssrc for ssrc, uid in self._ssrc_map.items() if uid == user_id]
+
+        for ssrc in stale:
+            del self._ssrc_map[ssrc]
+            self._last_seq.pop(ssrc, None)
+
+            decoder = self._decoders.pop(ssrc, None)
+            if decoder is not None:
+                decoder.cleanup()
+
     def _get_decoder(self, ssrc: int) -> Decoder:
         """
         Return the per-SSRC decoder, creating it on first use.

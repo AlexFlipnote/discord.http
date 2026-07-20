@@ -190,6 +190,9 @@ class VoiceSocket:
             case VoiceOpType.resumed:
                 self._schedule(self.connection.on_resumed(data))
 
+            case VoiceOpType.client_disconnect:
+                self._schedule(self.connection.on_client_disconnect(data))
+
             case (
                 VoiceOpType.dave_prepare_transition
                 | VoiceOpType.dave_execute_transition

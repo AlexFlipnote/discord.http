@@ -662,6 +662,27 @@ class VoiceConnection:
         if ssrc is not None and user_id is not None:
             receiver.add_ssrc(int(ssrc), int(user_id))
 
+    async def on_client_disconnect(self, data: dict) -> None:
+        """
+        Handle a CLIENT_DISCONNECT (op 13) frame: forget the user's receive state.
+
+        Frees the SSRC mappings and per-SSRC Opus decoder held for the user, so
+        a long-lived connection in a busy channel does not accumulate state for
+        users who have left.
+
+        Parameters
+        ----------
+        data:
+            The client disconnect payload with the user_id that left.
+        """
+        receiver = self.voice_client._receiver
+        if receiver is None:
+            return
+
+        user_id = data.get("user_id")
+        if user_id is not None:
+            receiver.remove_user(int(user_id))
+
     async def on_resumed(self, data: dict) -> None:  # noqa: ARG002
         """
         Handle the RESUMED (op 9) frame.

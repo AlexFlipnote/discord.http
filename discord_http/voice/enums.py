@@ -20,6 +20,7 @@ class VoiceOpType(BaseEnum):
     resume = 7
     hello = 8
     resumed = 9
+    client_disconnect = 13
     dave_prepare_transition = 21
     dave_execute_transition = 22
     dave_transition_ready = 23

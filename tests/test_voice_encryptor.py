@@ -49,6 +49,20 @@ class TestVoiceEncryptor(unittest.TestCase):
         self.assertEqual(first[-4:], struct.pack(">I", 0))
         self.assertEqual(second[-4:], struct.pack(">I", 1))
 
+    def test_nonce_exhaustion_raises(self) -> None:
+        # Reusing a (key, nonce) pair with AES-GCM is catastrophic, so the
+        # counter must refuse to wrap back to 0 instead of silently reusing.
+        key = os.urandom(32)
+        header = struct.pack(">BBHII", 0x80, 0x78, 1, 2, 3)
+
+        sender = Encryptor(key)
+        sender._nonce = 2 ** 32 - 1
+        packet = sender.encrypt(header, b"a")
+        self.assertEqual(packet[-4:], struct.pack(">I", 2 ** 32 - 1))
+
+        with self.assertRaises(RuntimeError):
+            sender.encrypt(header, b"a")
+
 
 if __name__ == "__main__":
     unittest.main()
