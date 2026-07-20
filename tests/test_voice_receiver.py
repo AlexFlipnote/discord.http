@@ -1,11 +1,11 @@
 import unittest
 
 from discord_http.voice.receiver import VoiceReceiver
-from discord_http.voice.sinks import AudioSink
+from discord_http.voice.sinks import AudioSink, VoiceData
 
 
 class _Sink(AudioSink):
-    def write(self, data) -> None:  # noqa: ANN001
+    def write(self, user: int | None, data: VoiceData) -> None:
         pass
 
 

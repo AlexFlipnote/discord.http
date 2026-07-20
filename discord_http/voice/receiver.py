@@ -105,10 +105,11 @@ class VoiceReceiver:
         """
         Stop listening and drop all per-connection state.
 
-        Separate from :meth:`stop` because ``stop()`` also runs when a sink is
-        swapped, and the SSRC map is collected from SPEAKING frames before any
-        sink is attached. Discord reassigns SSRCs across sessions, so the map
-        must be dropped on teardown or a reused SSRC is attributed to whoever
+        Called on voice READY, where a fresh session has just allocated new
+        SSRCs. Separate from :meth:`stop` because ``stop()`` also runs when a
+        sink is swapped, and the SSRC map is collected from SPEAKING frames
+        before any sink is attached. Discord reassigns SSRCs across sessions,
+        so the map must be dropped or a reused SSRC is attributed to whoever
         held it last.
         """
         self.stop()

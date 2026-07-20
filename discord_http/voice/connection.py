@@ -592,6 +592,11 @@ class VoiceConnection:
         data:
             The READY payload containing ssrc, ip, port and modes.
         """
+        # A READY means a fresh session, so every SSRC is newly allocated and the
+        # old mappings are stale. Not done on RESUMED (op 9), which continues the
+        # same session with the same SSRCs.
+        self.voice_client._receiver.reset()
+
         self.ssrc = int(data["ssrc"])
         ip = data["ip"]
         port = int(data["port"])
