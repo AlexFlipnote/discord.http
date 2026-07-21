@@ -272,8 +272,15 @@ class DaveManager:
         _log.debug(f"Executed DAVE transition {transition_id} to version {version}")
 
     async def _handle_prepare_epoch(self, data: dict) -> None:
-        """ Handle PREPARE_EPOCH (24): reinitialise the session for a new MLS epoch. """
+        """ Handle PREPARE_EPOCH (24), creating a session only for a new MLS group. """
+        # Epoch 1 is the server's explicit signal that this is a new MLS group.
+        # Later epochs are normal membership transitions within the same group and
+        # must not discard the current session or send a replacement key package.
+        if int(data.get("epoch", 0) or 0) != 1:
+            return
+
         version = int(data.get("protocol_version", 0) or 0)
+        self._connection.dave_protocol_version = version
         await self.reinit(version)
 
     def _handle_external_sender(self, payload: bytes) -> None:

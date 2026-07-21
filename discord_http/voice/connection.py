@@ -103,6 +103,11 @@ class VoiceConnection:
         self._self_deaf: bool = False
         self._closing: bool = False
         self._reconnect_task: asyncio.Task | None = None
+        # Channel moves yield both VOICE_STATE_UPDATE and VOICE_SERVER_UPDATE.
+        # Keep the requested target until both have arrived so a replacement
+        # voice session never identifies with the previous channel's session ID.
+        self._move_target_channel_id: int | None = None
+        self._move_server_update_received = False
         # Built lazily on first use so the backoff base/max_delay can be read
         # from the client (mirroring how voice_reconnect_attempts is read).
         self._backoff: ExponentialBackoff | None = None
@@ -539,6 +544,16 @@ class VoiceConnection:
         if previous_channel_id is not None and self.channel_id is not None and previous_channel_id != self.channel_id:
             self.voice_client._receiver.reset()
 
+        # Discord issues a new token for channel moves even when the endpoint is
+        # unchanged, and the old voice session cannot be reused. If the server
+        # update arrived first, wait until this state update supplies the new
+        # channel/session before opening the replacement voice socket. Its fresh
+        # SESSION_DESCRIPTION will then initialise DAVE for the new MLS group.
+        if self.channel_id == self._move_target_channel_id and self._move_server_update_received:
+            self._move_target_channel_id = None
+            self._move_server_update_received = False
+            self._schedule_server_migration()
+
         # Track leave/rejoin so the reconnect bounce can await the leave ack.
         if self.channel_id is None:
             self._left_event.set()
@@ -595,19 +610,27 @@ class VoiceConnection:
             self._server_event.set()
 
         credentials_changed = self.token != previous_token or self.endpoint != previous_endpoint
+        if not (was_connected and credentials_changed):
+            return
+
+        if self._move_target_channel_id is not None and self.channel_id != self._move_target_channel_id:
+            self._move_server_update_received = True
+            return
+
+        self._move_target_channel_id = None
+        self._move_server_update_received = False
+        self._schedule_server_migration()
+
+    def _schedule_server_migration(self) -> None:
+        """ Schedule one reconnect after a mid-session server or channel migration. """
         reconnecting = self._reconnect_task is not None and not self._reconnect_task.done()
-        if (
-            was_connected
-            and self.token is not None
-            and self.endpoint is not None
-            and credentials_changed
-            and not self._closing
-            and not reconnecting
-        ):
-            self._reconnect_task = asyncio.create_task(
-                self._migrate_voice_server(),
-                name=f"discord.http/voice/connection-{self.guild_id}/migration"
-            )
+        if self.token is None or self.endpoint is None or self._closing or reconnecting:
+            return
+
+        self._reconnect_task = asyncio.create_task(
+            self._migrate_voice_server(),
+            name=f"discord.http/voice/connection-{self.guild_id}/migration"
+        )
 
     async def _migrate_voice_server(self) -> None:
         """ Reconnect to credentials supplied by a mid-session voice server update. """
@@ -914,4 +937,10 @@ class VoiceConnection:
         if shard is None:
             raise RuntimeError(f"Could not resolve a shard for guild {self.guild_id}")
 
-        await shard.change_voice_state(guild_id=self.guild_id, channel_id=channel.id)
+        self._move_target_channel_id = channel.id
+        self._move_server_update_received = False
+        try:
+            await shard.change_voice_state(guild_id=self.guild_id, channel_id=channel.id)
+        except Exception:
+            self._move_target_channel_id = None
+            raise

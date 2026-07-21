@@ -1,8 +1,9 @@
 import asyncio
 import unittest
 
-from discord_http.voice.dave import DaveManager
+from unittest.mock import AsyncMock, patch
 
+from discord_http.voice.dave import DaveManager
 
 class _FakeSocket:
     """Records the transition ids acknowledged with TRANSITION_READY."""
@@ -32,6 +33,7 @@ class _FakeConnection:
         self.socket = _FakeSocket()
         self.channel_id = channel_id
         self.user_id = 5678
+        self.dave_protocol_version = 0
 
 
 def _manager(channel_id: int | None = 1234) -> tuple[DaveManager, _FakeSocket]:
@@ -107,6 +109,26 @@ class TestDaveTransitions(unittest.TestCase):
         self.assertEqual(manager._version, 0)
         self.assertTrue(manager.ready)
         self.assertFalse(manager.can_encrypt())
+
+    def test_prepare_epoch_one_reinitializes_new_group(self) -> None:
+        """ Reinitialize DAVE when epoch one announces a new MLS group. """
+        manager, _ = _manager()
+
+        with patch.object(DaveManager, "reinit", new_callable=AsyncMock) as reinit:
+            asyncio.run(manager._handle_prepare_epoch({"epoch": 1, "protocol_version": 1}))
+
+        self.assertEqual(manager._connection.dave_protocol_version, 1)
+        reinit.assert_awaited_once_with(1)
+
+    def test_later_prepare_epoch_keeps_current_group(self) -> None:
+        """ Keep the current DAVE session for later epochs in the same MLS group. """
+        manager, _ = _manager()
+
+        with patch.object(DaveManager, "reinit", new_callable=AsyncMock) as reinit:
+            asyncio.run(manager._handle_prepare_epoch({"epoch": 2, "protocol_version": 1}))
+
+        self.assertEqual(manager._connection.dave_protocol_version, 0)
+        reinit.assert_not_awaited()
 
     def test_reinit_without_channel_resets_version(self) -> None:
         # No channel means no session; the version must not stay non-zero, or

@@ -18,6 +18,8 @@ class TestVoiceServerMigration(unittest.IsolatedAsyncioTestCase):
         connection._connected_event.set()
         connection._closing = False
         connection._reconnect_task = None
+        connection._move_target_channel_id = None
+        connection._move_server_update_received = False
         return connection
 
     async def test_changed_server_credentials_schedule_migration(self) -> None:
@@ -55,6 +57,67 @@ class TestVoiceServerMigration(unittest.IsolatedAsyncioTestCase):
 
         self.assertIsNone(connection._reconnect_task)
         connection._migrate_voice_server.assert_not_awaited()
+
+    async def test_move_waits_for_state_update_when_server_update_arrives_first(self) -> None:
+        """ Pair move updates before identifying a replacement voice session. """
+        connection = self._connection()
+        shard = SimpleNamespace(change_voice_state=AsyncMock())
+        receiver = SimpleNamespace(reset=Mock())
+        connection.voice_client = SimpleNamespace(_receiver=receiver)
+        connection._get_shard = Mock(return_value=shard)  # type: ignore[method-assign]
+        connection._migrate_voice_server = AsyncMock()  # type: ignore[method-assign]
+        connection.channel_id = 123
+        connection.session_id = "old-session"
+        connection._left_event = asyncio.Event()
+        connection._state_event = asyncio.Event()
+
+        await connection.move_to(SimpleNamespace(id=456))  # type: ignore[arg-type]
+        connection.on_voice_server_update({
+            "token": "new-token",
+            "endpoint": "old.discord.media:443",
+            "guild_id": "1",
+        })
+
+        self.assertIsNone(connection._reconnect_task)
+        self.assertTrue(connection._move_server_update_received)
+
+        connection.on_voice_state_update({"session_id": "new-session", "channel_id": "456"})
+        task = connection._reconnect_task
+        self.assertIsNotNone(task)
+        await task
+
+        connection._migrate_voice_server.assert_awaited_once()
+        self.assertEqual(connection.session_id, "new-session")
+
+    async def test_move_waits_for_server_update_when_state_update_arrives_first(self) -> None:
+        """ Do not reuse old credentials after the gateway acknowledges a move first. """
+        connection = self._connection()
+        shard = SimpleNamespace(change_voice_state=AsyncMock())
+        receiver = SimpleNamespace(reset=Mock())
+        connection.voice_client = SimpleNamespace(_receiver=receiver)
+        connection._get_shard = Mock(return_value=shard)  # type: ignore[method-assign]
+        connection._migrate_voice_server = AsyncMock()  # type: ignore[method-assign]
+        connection.channel_id = 123
+        connection.session_id = "old-session"
+        connection._left_event = asyncio.Event()
+        connection._state_event = asyncio.Event()
+
+        await connection.move_to(SimpleNamespace(id=456))  # type: ignore[arg-type]
+        connection.on_voice_state_update({"session_id": "new-session", "channel_id": "456"})
+
+        self.assertIsNone(connection._reconnect_task)
+
+        connection.on_voice_server_update({
+            "token": "new-token",
+            "endpoint": "old.discord.media:443",
+            "guild_id": "1",
+        })
+        task = connection._reconnect_task
+        self.assertIsNotNone(task)
+        await task
+
+        connection._migrate_voice_server.assert_awaited_once()
+        receiver.reset.assert_called_once_with()
 
     async def test_failed_soft_migration_forces_voice_refresh(self) -> None:
         """ Refresh gateway voice state when direct migration fails. """
