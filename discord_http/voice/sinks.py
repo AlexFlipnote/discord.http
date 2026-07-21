@@ -141,6 +141,7 @@ class WaveSink(AudioSink):
         """
         self.destination = destination
         self._file: wave.Wave_write | None = None
+        self._finalized = False
 
     def wants_opus(self) -> bool:
         """
@@ -154,9 +155,13 @@ class WaveSink(AudioSink):
 
     def _ensure_open(self) -> wave.Wave_write:
         """ Open the wave file lazily, configuring it for 48kHz 16-bit stereo. """
+        if self._finalized:
+            raise RuntimeError("Cannot write to a WaveSink after it has been finalized")
+
         file = self._file
         if file is None:
-            file = wave.open(self.destination, "wb")  # type: ignore[arg-type]  # noqa: SIM115
+            destination = os.fspath(self.destination) if isinstance(self.destination, os.PathLike) else self.destination
+            file = wave.open(destination, "wb")  # type: ignore[arg-type]  # noqa: SIM115
             file.setnchannels(2)
             file.setsampwidth(2)
             file.setframerate(48000)
@@ -182,6 +187,10 @@ class WaveSink(AudioSink):
 
     def cleanup(self) -> None:
         """ Finalize the WAV file, writing headers and closing the stream. """
+        if self._finalized:
+            return
+
+        self._finalized = True
         if self._file is not None:
             self._file.close()
             self._file = None

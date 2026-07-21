@@ -529,8 +529,15 @@ class VoiceConnection:
         """
         self.session_id = data.get("session_id") or self.session_id
 
+        previous_channel_id = self.channel_id
         channel_id = data.get("channel_id")
         self.channel_id = int(channel_id) if channel_id is not None else None
+
+        # Same-server moves do not produce a fresh voice READY. Use the gateway's
+        # state acknowledgement as the authoritative move boundary and clear the
+        # old channel's SSRC ownership without detaching the active sink.
+        if previous_channel_id is not None and self.channel_id is not None and previous_channel_id != self.channel_id:
+            self.voice_client._receiver.reset()
 
         # Track leave/rejoin so the reconnect bounce can await the leave ack.
         if self.channel_id is None:
@@ -550,6 +557,10 @@ class VoiceConnection:
         data:
             The raw voice server update payload.
         """
+        previous_token = self.token
+        previous_endpoint = self.endpoint
+        was_connected = self.is_connected()
+
         self.token = data.get("token")
 
         endpoint = data.get("endpoint")
@@ -582,6 +593,30 @@ class VoiceConnection:
 
         if self.token is not None and self.endpoint is not None:
             self._server_event.set()
+
+        credentials_changed = self.token != previous_token or self.endpoint != previous_endpoint
+        reconnecting = self._reconnect_task is not None and not self._reconnect_task.done()
+        if (
+            was_connected
+            and self.token is not None
+            and self.endpoint is not None
+            and credentials_changed
+            and not self._closing
+            and not reconnecting
+        ):
+            self._reconnect_task = asyncio.create_task(
+                self._migrate_voice_server(),
+                name=f"discord.http/voice/connection-{self.guild_id}/migration"
+            )
+
+    async def _migrate_voice_server(self) -> None:
+        """ Reconnect to credentials supplied by a mid-session voice server update. """
+        _log.debug(f"Voice server for guild {self.guild_id} changed; reconnecting to the new endpoint")
+        if await self._soft_reconnect():
+            return
+
+        _log.debug(f"Voice server migration for guild {self.guild_id} failed; refreshing voice state")
+        await self._full_reconnect(None, force_refresh=True)
 
     async def on_ready(self, data: dict) -> None:
         """
@@ -879,5 +914,4 @@ class VoiceConnection:
         if shard is None:
             raise RuntimeError(f"Could not resolve a shard for guild {self.guild_id}")
 
-        self.channel_id = channel.id
         await shard.change_voice_state(guild_id=self.guild_id, channel_id=channel.id)

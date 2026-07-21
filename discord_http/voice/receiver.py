@@ -103,17 +103,20 @@ class VoiceReceiver:
 
     def reset(self) -> None:
         """
-        Stop listening and drop all per-connection state.
+        Drop all SSRC-keyed state for a fresh voice session.
 
         Called on voice READY, where a fresh session has just allocated new
-        SSRCs. Separate from :meth:`stop` because ``stop()`` also runs when a
-        sink is swapped, and the SSRC map is collected from SPEAKING frames
-        before any sink is attached. Discord reassigns SSRCs across sessions,
-        so the map must be dropped or a reused SSRC is attributed to whoever
-        held it last.
+        SSRCs. Separate from :meth:`stop` because ``stop()`` also detaches and
+        finalizes the sink. A reconnect must keep listening with the existing
+        sink while forgetting mappings, decoders and sequence state tied to
+        SSRCs from the previous session.
         """
-        self.stop()
+        for decoder in self._decoders.values():
+            decoder.cleanup()
+
         self._ssrc_map.clear()
+        self._decoders.clear()
+        self._last_seq.clear()
         self._dave_unmapped_drops = 0
 
     def is_listening(self) -> bool:

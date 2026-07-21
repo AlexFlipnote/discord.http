@@ -55,6 +55,7 @@ class VoiceSocket:
         self._dispatch_tasks: set[asyncio.Task] = set()
 
         self._last_send: float = 0.0
+        self._heartbeat_ack_pending = False
         self._latencies: deque[float] = deque(maxlen=20)
 
     @property
@@ -184,6 +185,7 @@ class VoiceSocket:
                 self._schedule(self.connection.on_speaking(data))
 
             case VoiceOpType.heartbeat_ack:
+                self._heartbeat_ack_pending = False
                 if self._last_send:
                     self._latencies.append(time.perf_counter() - self._last_send)
 
@@ -276,13 +278,14 @@ class VoiceSocket:
         if self._heartbeat_task is not None and not self._heartbeat_task.done():
             self._heartbeat_task.cancel()
 
+        self._heartbeat_ack_pending = False
         self._heartbeat_task = asyncio.create_task(
             self._heartbeat_loop(),
             name=f"discord.http/voice/socket-{self.connection.guild_id}/heartbeat"
         )
 
     async def _heartbeat_loop(self) -> None:
-        """ Send a heartbeat (op 3) every interval until cancelled. """
+        """ Send heartbeats until cancelled or the gateway stops acknowledging them. """
         try:
             while True:
                 # Sleep *before* the first beat: the voice gateway must complete
@@ -291,15 +294,29 @@ class VoiceSocket:
                 # Discord invalidate the session (close code 4006). This mirrors
                 # discord.py's voice keep-alive, which also waits one interval.
                 await asyncio.sleep(self._heartbeat_interval)
+
+                # Only one heartbeat may be outstanding. If the previous one was
+                # not acknowledged within a full interval, the websocket can be
+                # half-open even though no close frame arrived. Hand ownership to
+                # the connection's existing reconnect path rather than silently
+                # leaving a dead heartbeat task behind.
+                if self._heartbeat_ack_pending:
+                    _log.debug(f"Voice heartbeat for guild {self.connection.guild_id} was not acknowledged; reconnecting")
+                    self.connection._on_socket_closed(None)
+                    return
+
                 await self._send_heartbeat()
         except asyncio.CancelledError:
             pass
         except Exception as exc:
             _log.debug(f"Voice heartbeat for guild {self.connection.guild_id} stopped", exc_info=exc)
+            if not self._closing:
+                self.connection._on_socket_closed(None)
 
     async def _send_heartbeat(self) -> None:
         """ Send a single heartbeat frame, recording the send time for latency. """
         self._last_send = time.perf_counter()
+        self._heartbeat_ack_pending = True
         nonce = int(time.time() * 1000)
         await self._send_json({
             "op": int(VoiceOpType.heartbeat),
