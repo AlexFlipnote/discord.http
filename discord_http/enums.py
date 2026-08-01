@@ -506,6 +506,17 @@ class ScheduledEventStatusType(BaseEnum):
 
 class DisplayNameFontType(BaseEnum):
     """ Represents the font type of a user's display name style. """
+    # Aliases
+    gg_sans = 11
+    tempo = 12
+    sakura = 3
+    jellybean = 4
+    modern = 6
+    medieval = 7
+    _8bit = 8  # Underscore is only there to be valid
+    eightbit = 8
+    vampyre = 10
+
     # Code names
     default = 11  # Why is this 11? We'll never know...
     bangers = 1
@@ -519,17 +530,6 @@ class DisplayNameFontType(BaseEnum):
     ribes = 9
     sinistre = 10
     zilla_slab = 12
-
-    # Aliases
-    gg_sans = 11
-    tempo = 12
-    sakura = 3
-    jellybean = 4
-    modern = 6
-    medieval = 7
-    eightbit = 8
-    _8bit = 8  # Underscore is only there to be valid
-    vampyre = 10
 
 
 class DisplayNameEffectType(BaseEnum):
