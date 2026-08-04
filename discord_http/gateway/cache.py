@@ -1,7 +1,6 @@
 from typing import TYPE_CHECKING
 
-from ..channel import BaseChannel
-from ..voice import VoiceState, PartialVoiceState
+from ..channel import BaseChannel, PartialVoiceState, VoiceState
 
 from .flags import GatewayCacheFlags
 

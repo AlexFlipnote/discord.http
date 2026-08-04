@@ -5,7 +5,7 @@ import time
 
 from collections.abc import AsyncIterator, Callable, Generator
 from datetime import datetime, timedelta
-from typing import TYPE_CHECKING, Self, overload, Literal
+from typing import TYPE_CHECKING, Any, Self, overload, Literal
 
 from . import utils
 from .embeds import Embed
@@ -32,6 +32,7 @@ if TYPE_CHECKING:
     from .member import ThreadMember
     from .message import PartialMessage, Message, Poll
     from .user import PartialUser, User
+    from .voice.client import VoiceClient
 
 MISSING = utils.MISSING
 
@@ -48,6 +49,7 @@ __all__ = (
     "NewsThread",
     "PartialChannel",
     "PartialThread",
+    "PartialVoiceState",
     "PrivateThread",
     "PublicThread",
     "StageChannel",
@@ -56,6 +58,7 @@ __all__ = (
     "Thread",
     "VoiceChannel",
     "VoiceRegion",
+    "VoiceState",
 )
 
 
@@ -477,6 +480,89 @@ class PartialChannel(PartialBase):
             state=self._state,
             data=r.response
         )
+
+    async def connect(
+        self,
+        *,
+        timeout: float = 30.0,
+        reconnect: bool = True,
+        reconnect_on_session_invalid: bool = False,
+        self_deaf: bool = False,
+        self_mute: bool = False
+    ) -> "VoiceClient":
+        """
+        Connect to this voice channel.
+
+        Parameters
+        ----------
+        timeout:
+            How long to wait, in seconds, for the voice handshake to complete.
+        reconnect:
+            Whether to automatically reconnect if the voice connection drops.
+        reconnect_on_session_invalid:
+            What to do when Discord invalidates the voice session (close code
+            4006), which most commonly happens when the channel empties out and
+            Discord tears down the DAVE/MLS session. By default (``False``) the
+            bot disconnects; set to ``True`` to attempt a full reconnect instead.
+        self_deaf:
+            Whether the bot should be self-deafened.
+        self_mute:
+            Whether the bot should be self-muted.
+
+        Returns
+        -------
+            The voice client for the connection.
+
+        Raises
+        ------
+        `TypeError`
+            If the channel is not a voice or stage channel.
+        `ValueError`
+            If the channel is not associated with a guild.
+        `NotImplementedError`
+            If the gateway is not available.
+        `RuntimeError`
+            If the bot is already connected to a voice channel in this guild.
+        """
+        if self.type not in (
+            ChannelType.unknown,
+            ChannelType.guild_voice,
+            ChannelType.guild_stage_voice
+        ):
+            raise TypeError("Cannot connect to a non-voice channel")
+
+        if not self.guild_id:
+            raise ValueError("Cannot connect to a voice channel without a guild")
+
+        client = self._state.bot
+
+        if not client.gateway:
+            raise NotImplementedError("gateway is not available")
+
+        if client.get_voice_client(self.guild_id) is not None:
+            raise RuntimeError("Already connected to a voice channel in this guild")
+
+        from .voice.client import VoiceClient
+
+        vc = VoiceClient(client, self)
+        client._add_voice_client(self.guild_id, vc)
+        try:
+            await vc.connect(
+                timeout=timeout,
+                reconnect=reconnect,
+                reconnect_on_session_invalid=reconnect_on_session_invalid,
+                self_deaf=self_deaf,
+                self_mute=self_mute
+            )
+        except BaseException:
+            # Catch BaseException, not just Exception: a timeout or a cancelled
+            # connect (asyncio.CancelledError is a BaseException on 3.11+) must
+            # still remove the half-registered voice client, otherwise the stale
+            # entry blocks future connect attempts in this guild.
+            client._remove_voice_client(self.guild_id)
+            raise
+
+        return vc
 
     async def send(
         self,
@@ -2732,3 +2818,222 @@ class StageChannel(VoiceChannel):
             guild=self.guild
         )
         return self._stage_instance
+
+
+class PartialVoiceState(PartialBase):
+    """ Represents a partial voice state object. """
+
+    __slots__ = (
+        "_state",
+        "channel_id",
+        "guild_id",
+    )
+
+    def __init__(
+        self,
+        *,
+        state: "DiscordAPI",
+        id: int,  # noqa: A002
+        channel_id: int | None = None,
+        guild_id: int | None = None,
+    ):
+        self._state = state
+
+        self.id: int = int(id)
+        """ The ID of the user this voice state belongs to. """
+
+        self.channel_id: int | None = channel_id
+        """ The ID of the voice channel this user is in, if any. """
+
+        self.guild_id: int | None = guild_id
+        """ The ID of the guild this voice state is in, if any. """
+
+    def __repr__(self) -> str:
+        return f"<PartialVoiceState id={self.id} guild_id={self.guild_id}>"
+
+    def __str__(self) -> str:
+        return str(self.id)
+
+    @property
+    def channel(self) -> "BaseChannel | PartialChannel | None":
+        """
+        The voice channel this user is in, if any.
+
+        Returns a `PartialChannel` built from `channel_id` so it can be used
+        directly (e.g. ``await voice_state.channel.connect()``) even when the
+        full channel object is not cached.
+        """
+        if self.channel_id is None:
+            return None
+        return self._state.bot.get_partial_channel(
+            self.channel_id, guild_id=self.guild_id
+        )
+
+    async def fetch(self) -> "VoiceState":
+        """
+        Fetches the voice state of the member.
+
+        Returns
+        -------
+            The voice state of the member
+
+        Raises
+        ------
+        `NotFound`
+            - If the member is not in the guild
+            - If the member is not in a voice channel
+        """
+        if not self.guild_id:
+            raise ValueError("Cannot fetch voice state without guild_id")
+
+        r = await self._state.query(
+            "GET",
+            f"/guilds/{self.guild_id}/voice-states/{self.id}"
+        )
+
+        guild = self._state.cache.get_guild(self.guild_id)
+        channel = None
+        channel_id = utils.get_int(r.response, "channel_id")
+        if channel_id is not None:
+            channel = self._state.cache.get_channel(self.guild_id, channel_id)
+
+        return VoiceState(
+            state=self._state,
+            data=r.response,
+            guild=guild,
+            channel=channel
+        )
+
+    async def edit(
+        self,
+        *,
+        suppress: bool = MISSING,
+    ) -> None:
+        """
+        Updates the voice state of the member.
+
+        Parameters
+        ----------
+        suppress:
+            Whether to suppress the user
+        """
+        if not self.guild_id:
+            raise ValueError("Cannot update voice state without guild_id")
+
+        data: dict[str, Any] = {}
+
+        if suppress is not MISSING:
+            data["suppress"] = bool(suppress)
+
+        await self._state.query(
+            "PATCH",
+            f"/guilds/{self.guild_id}/voice-states/{int(self.id)}",
+            json=data,
+            res_method="text"
+        )
+
+
+class VoiceState(PartialVoiceState):
+    """ Represents a voice state object. """
+
+    __slots__ = (
+        "_channel",
+        "deaf",
+        "guild",
+        "member",
+        "mute",
+        "request_to_speak_timestamp",
+        "self_deaf",
+        "self_mute",
+        "self_stream",
+        "self_video",
+        "session_id",
+        "suppress",
+        "user",
+    )
+
+    def __init__(
+        self,
+        *,
+        state: "DiscordAPI",
+        data: dict,
+        guild: "PartialGuild | None",
+        channel: "BaseChannel | PartialChannel | None"
+    ):
+        from .user import PartialUser
+
+        super().__init__(
+            state=state,
+            id=int(data["user_id"]),
+            guild_id=utils.get_int(data, "guild_id"),
+            channel_id=utils.get_int(data, "channel_id")
+        )
+
+        self.session_id: str = data["session_id"]
+        """ The session ID of the voice state. """
+
+        self.user: PartialUser = PartialUser(state=state, id=int(data["user_id"]))
+        """ The user this voice state belongs to. """
+
+        self.member: "Member | None" = None
+        """ The member this voice state belongs to, if any. """
+
+        self._channel: "BaseChannel | PartialChannel | None" = channel
+
+        self.guild: "PartialGuild | None" = guild
+        """ The guild this voice state is in, if any. """
+
+        self.deaf: bool = data["deaf"]
+        """ Whether the user is deafened by the server. """
+
+        self.mute: bool = data["mute"]
+        """ Whether the user is muted by the server. """
+
+        self.self_deaf: bool = data["self_deaf"]
+        """ Whether the user is deafened by themselves. """
+
+        self.self_mute: bool = data["self_mute"]
+        """ Whether the user is muted by themselves. """
+
+        self.self_stream: bool = data.get("self_stream", False)
+        """ Whether the user is streaming. """
+
+        self.self_video: bool = data["self_video"]
+        """ Whether the user is using video. """
+
+        self.suppress: bool = data["suppress"]
+        """ Whether the user is suppressed by the server. """
+
+        self.request_to_speak_timestamp: datetime | None = None
+        """ The timestamp when the user requested to speak, if any. """
+
+        self._from_data(data)
+
+    def __repr__(self) -> str:
+        return f"<VoiceState id={self.user.id} session_id='{self.session_id}'>"
+
+    @property
+    def channel(self) -> "BaseChannel | PartialChannel | None":
+        """
+        The voice channel this user is in, if any.
+
+        Prefers the resolved channel object (when cached); otherwise falls back
+        to a `PartialChannel` built from `channel_id` so it remains usable.
+        """
+        if self._channel is not None:
+            return self._channel
+        return super().channel
+
+    def _from_data(self, data: dict) -> None:
+        if data.get("member") and self.guild:
+            from .member import Member
+            self.member = Member(
+                state=self._state,
+                guild=self.guild,
+                data=data["member"]
+            )
+
+        if data.get("request_to_speak_timestamp"):
+            self.request_to_speak_timestamp = utils.parse_time(
+                data["request_to_speak_timestamp"]
+            )

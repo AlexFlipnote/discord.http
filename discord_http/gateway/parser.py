@@ -7,7 +7,10 @@ from typing import TYPE_CHECKING, overload
 from .. import utils
 from ..audit import AuditLogEntry
 from ..automod import AutoModRule
-from ..channel import BaseChannel, PartialChannel, StageInstance, PartialThread
+from ..channel import (
+    BaseChannel, PartialChannel, PartialThread,
+    PartialVoiceState, StageInstance, VoiceState
+)
 from ..emoji import Emoji, EmojiParser
 from ..entitlements import Entitlements
 from ..enums import ChannelType
@@ -20,7 +23,6 @@ from ..role import Role, PartialRole
 from ..soundboard import PartialSoundboardSound, SoundboardSound
 from ..sticker import Sticker
 from ..user import User, PartialUser
-from ..voice import VoiceState, PartialVoiceState
 
 from .enums import PollVoteActionType
 from .flags import GatewayCacheFlags
@@ -1336,16 +1338,20 @@ class Parser:
             ),
         )
 
-    """
-    This is just a placeholder for now.
-    I am unsure if I ever will handle voice communication with discord.http/gateway
-    Let this be a reminder for myself in later time
+    def voice_server_update(self, data: dict) -> tuple[dict]:
+        """
+        Voice server update event.
 
-    - AlexFlipnote, 9. October 2024
+        Parameters
+        ----------
+        data:
+            Data received from the event.
 
-    def voice_channel_effect_send(self, data: dict) -> tuple[None]:
-        return (None,)
-    """
+        Returns
+        -------
+            The raw voice server update payload.
+        """
+        return (data,)
 
     def voice_state_update(self, data: dict) -> tuple[
         VoiceState | PartialVoiceState | None,
@@ -1385,6 +1391,7 @@ class Parser:
         )
 
         self.bot.cache.update_voice_state(vs)
+
         return (before_vs, vs)
 
     def typing_start(self, data: dict) -> tuple[TypingStartEvent]:
