@@ -302,7 +302,7 @@ class Item:
     def __init__(
         self,
         *,
-        type: ComponentType  # noqa: A002
+        type: ComponentType  # ruff: ignore[builtin-argument-shadowing]
     ):
         self.type: ComponentType = type
         """ The type of the component. """
@@ -320,7 +320,7 @@ class LockedItem(Item):
 
     __slots__ = ("_data",)
 
-    def __init__(self, *, type: ComponentType, **kwargs: dict):  # noqa: A002
+    def __init__(self, *, type: ComponentType, **kwargs: dict):  # ruff: ignore[builtin-argument-shadowing]
         self.type: ComponentType = type
         self._data: dict = kwargs
 
@@ -1911,7 +1911,10 @@ class MediaGalleryComponent(Item):
 
     def add_item(
         self,
-        item: MediaGalleryItem | File | Asset | str
+        item: MediaGalleryItem | AttachmentComponent | File | Asset | str,
+        *,
+        description: str | None = None,
+        spoiler: bool = False
     ) -> None:
         """
         Add items to the media gallery.
@@ -1920,9 +1923,16 @@ class MediaGalleryComponent(Item):
         ----------
         item:
             Items to add to the media gallery
+        description:
+            The description of this media
+        spoiler:
+            If the media should be marked as spoiler or not
         """
         if len(self.items) >= 10:
             raise ValueError("Cannot have more than 10 items in a media gallery component")
+
+        if not isinstance(item, MediaGalleryItem):
+            item = MediaGalleryItem(item, spoiler=spoiler, description=description)
 
         self.items.append(item)
 
@@ -1934,6 +1944,7 @@ class MediaGalleryComponent(Item):
         payload: list[MediaGalleryItem] = []
 
         for g in self.items:
+            # This is probably useless, will re-check later
             if isinstance(g, File | Asset):
                 payload.append(MediaGalleryItem(g))
             elif isinstance(g, str):
