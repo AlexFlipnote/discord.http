@@ -128,6 +128,23 @@ class Client:
         disable_default_get_path: bool = False,
         debug_events: bool = False
     ):
+        # Cache level, keep them at top
+        self._view_storage: dict[str | int, InteractionStorage] = {}
+        self._default_allowed_mentions = allowed_mentions or AllowedMentions.all()
+
+        self._cogs: dict[str, list[Cog]] = {}
+
+        self._before_invoke: tuple[Callable, bool] | None = None
+        self._after_invoke: tuple[Callable, bool] | None = None
+        self._waiting_listeners: dict[str, list[tuple[asyncio.Future, Callable]]] = {}
+        self._background_tasks: set[asyncio.Task] = set()
+
+        self._global_cmd_checks: list[tuple[Callable, bool]] = []
+        self._gateway_cache: "GatewayCacheFlags | None" = gateway_cache
+        self._ready: asyncio.Event | None = asyncio.Event()
+        self._shards_ready: asyncio.Event | None = asyncio.Event()
+        self._context: Callable[["Client", dict], Context] = Context
+
         if application_id is not None:
             _log.warning(
                 "application_id parameter is no longer needed, it will be fetched automatically."
@@ -180,12 +197,6 @@ class Client:
         self.interactions_regex: dict[str, Interaction] = {}
         """ The interactions registered to the client with regex. """
 
-        self._global_cmd_checks: list[tuple[Callable, bool]] = []
-        self._gateway_cache: "GatewayCacheFlags | None" = gateway_cache
-        self._ready: asyncio.Event | None = asyncio.Event()
-        self._shards_ready: asyncio.Event | None = asyncio.Event()
-        self._context: Callable[["Client", dict], Context] = Context
-
         self.cache: Cache = Cache(client=self)
         """ The cache for the client, used for caching guilds, users, etc. """
 
@@ -194,16 +205,6 @@ class Client:
 
         self.backend: DiscordHTTP = DiscordHTTP(client=self)
         """ The backend for the client, used for serving HTTP requests. """
-
-        self._view_storage: dict[str | int, InteractionStorage] = {}
-        self._default_allowed_mentions = allowed_mentions or AllowedMentions.all()
-
-        self._cogs: dict[str, list[Cog]] = {}
-
-        self._before_invoke: tuple[Callable, bool] | None = None
-        self._after_invoke: tuple[Callable, bool] | None = None
-        self._waiting_listeners: dict[str, list[tuple[asyncio.Future, Callable]]] = {}
-        self._background_tasks: set[asyncio.Task] = set()
 
         utils.setup_logger(level=self.logging_level)
 
