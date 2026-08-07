@@ -308,7 +308,7 @@ class MessageResponse(BaseResponse):
         allowed_mentions: AllowedMentions | None = MISSING,
         message_reference: "MessageReference | None" = MISSING,
         poll: "Poll | None" = MISSING,
-        type: ResponseType | int = 4,  # noqa: A002
+        type: ResponseType | int = 4,  # ruff: ignore[builtin-argument-shadowing]
         ephemeral: bool | None = False,
         flags: MessageFlags | None = MISSING,
     ):

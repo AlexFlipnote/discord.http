@@ -25,7 +25,7 @@ __all__ = (
 )
 
 
-class DiscordException(Exception):  # noqa: N818
+class DiscordException(Exception):  # ruff: ignore[error-suffix-on-exception-name]
     """ Base exception for discord_http. """
 
 

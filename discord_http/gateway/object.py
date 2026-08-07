@@ -51,7 +51,7 @@ class PlayingStatus:
         *,
         name: str | None = None,
         status: StatusType | str | int | None = None,
-        type: ActivityType | str | int | None = None,  # noqa: A002
+        type: ActivityType | str | int | None = None,  # ruff: ignore[builtin-argument-shadowing]
         url: str | None = None,
     ):
         self.since: int | None = None
@@ -400,7 +400,7 @@ class PollVoteEvent:
         user: "Member | PartialMember | PartialUser",
         channel: "PartialChannel",
         guild: "PartialGuild | None",
-        type: PollVoteActionType,  # noqa: A002
+        type: PollVoteActionType,  # ruff: ignore[builtin-argument-shadowing]
         data: dict
     ):
         self._state = state

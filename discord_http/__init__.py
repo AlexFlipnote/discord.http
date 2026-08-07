@@ -1,4 +1,4 @@
-# ruff: noqa: F403, F401
+# ruff: file-ignore[undefined-local-with-import-star, unused-import]
 __version__ = "3.1.5"
 
 from .asset import *

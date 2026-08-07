@@ -28,7 +28,7 @@ class PartialSKU(PartialBase):
         self,
         *,
         state: "DiscordAPI",
-        id: int  # noqa: A002
+        id: int  # ruff: ignore[builtin-argument-shadowing]
     ):
         super().__init__(id=int(id))
         self._state = state
@@ -135,7 +135,7 @@ class PartialEntitlements(PartialBase):
         self,
         *,
         state: "DiscordAPI",
-        id: int  # noqa: A002
+        id: int  # ruff: ignore[builtin-argument-shadowing]
     ):
         super().__init__(id=int(id))
         self._state = state

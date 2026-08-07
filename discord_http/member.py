@@ -49,7 +49,7 @@ class PartialMember(PartialBase):
         self,
         *,
         state: "DiscordAPI",
-        id: int,  # noqa: A002
+        id: int,  # ruff: ignore[builtin-argument-shadowing]
         guild_id: int,
     ):
         super().__init__(id=int(id))
@@ -114,7 +114,7 @@ class PartialMember(PartialBase):
         files: list[File] | None = MISSING,
         view: View | None = MISSING,
         tts: bool | None = False,
-        type: ResponseType | int = 4,  # noqa: A002
+        type: ResponseType | int = 4,  # ruff: ignore[builtin-argument-shadowing]
         flags: MessageFlags | None = MISSING,
         allowed_mentions: AllowedMentions | None = MISSING,
         delete_after: float | None = None

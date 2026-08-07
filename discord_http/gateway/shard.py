@@ -1011,7 +1011,7 @@ class Shard:
                 except Exception as e:
                     _log.error(f"Error while parsing event {new_name}", exc_info=e)
 
-    def _send_dispatch(self, name: str, *args: Any) -> None:  # noqa: ANN401
+    def _send_dispatch(self, name: str, *args: Any) -> None:  # ruff: ignore[any-type]
         try:
             self.bot.dispatch(name, *args)
         except Exception as e:
@@ -1038,10 +1038,12 @@ class Shard:
             return
 
         if self._guild_needs_chunking(guild):
-            asyncio.create_task(  # noqa: RUF006
+            task = asyncio.create_task(
                 self._chunk_and_dispatch(data, event_name),
                 name=f"discord.http/gateway/shard-{self.shard_id}/chunk-{guild.id}"
             )
+            self.bot._background_tasks.add(task)
+            task.add_done_callback(self.bot._cleanup_task)
             return
 
         self._send_dispatch(event_name, guild)
@@ -1067,7 +1069,12 @@ class Shard:
 
     def connect(self) -> None:
         """ Connect the websocket. """
-        if self._connection and not self._connection.done():
+        current_task = asyncio.current_task()
+        if (
+            self._connection is not None and
+            self._connection is not current_task and
+            not self._connection.done()
+        ):
             self._connection.cancel()
         self._connection = asyncio.ensure_future(self._socket_manager())
 

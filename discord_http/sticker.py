@@ -30,7 +30,7 @@ class PartialSticker(PartialBase):
         self,
         *,
         state: "DiscordAPI",
-        id: int,  # noqa: A002
+        id: int,  # ruff: ignore[builtin-argument-shadowing]
         name: str | None = None,
         guild_id: int | None = None,
         format_type: int | None = 1

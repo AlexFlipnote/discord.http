@@ -102,6 +102,7 @@ class Loop:
             raise ValueError("count must be greater than 0 or None")
 
         self._task: asyncio.Task | None = None
+        self._handle: Sleeper | None = None
         self._injected = None
 
         self._error: Callable = self._default_error
@@ -129,7 +130,7 @@ class Loop:
         self._next_loop: datetime | None = None
         self._loop_count: int = 0
 
-    async def __call__(self, *args, **kwargs) -> Callable:  # noqa: ANN002
+    async def __call__(self, *args, **kwargs) -> Callable:  # ruff: ignore[missing-type-args]
         """ Calls the loop. """
         if self._injected is not None:
             args = (self._injected, *args)
@@ -175,7 +176,7 @@ class Loop:
     async def _default_after_loop(self) -> None:
         """ The default after_loop handler for the loop. """
 
-    async def _looper(self, *args, **kwargs) -> None:  # noqa: ANN002
+    async def _looper(self, *args, **kwargs) -> None:  # ruff: ignore[missing-type-args]
         """ Internal looper that handles the behaviour of the loop. """
         await self._before_loop()
         self._last_loop_failed = False
@@ -241,11 +242,12 @@ class Loop:
             await self._after_loop()
             if self._handle:
                 self._handle.cancel()
+                self._handle = None
             self._will_cancel = False
             self._loop_count = 0
             self._should_stop = False
 
-    def start(self, *args, **kwargs) -> asyncio.Task:  # noqa: ANN002
+    def start(self, *args, **kwargs) -> asyncio.Task:  # ruff: ignore[missing-type-args]
         """ Starts the loop. """
         if self._task and not self._task.done():
             raise RuntimeError("The loop is already running")
@@ -355,7 +357,7 @@ class Loop:
                 )
                 continue
 
-            self._whitelist_exceptions += (e,)  # type: ignore
+            self._whitelist_exceptions += (e,)
 
     def remove_exception(self, *exceptions: Exception) -> None:
         """ Removes exceptions from the whitelist of exceptions that are ignored. """

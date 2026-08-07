@@ -1,4 +1,5 @@
 import binascii
+import functools
 import io
 import logging
 import orjson
@@ -161,7 +162,7 @@ class BenchmarkEntry:
         self.start()
         return self
 
-    def __exit__(self, *args) -> None:  # noqa: ANN002
+    def __exit__(self, *args) -> None:  # ruff: ignore[missing-type-args]
         self.stop()
 
     def __repr__(self) -> str:
@@ -315,12 +316,13 @@ def format_small_unit(seconds: float | timedelta) -> str:
     if seconds < 0.000001:  # Nanoseconds
         return f"{seconds * 1e9:.0f}ns"
     if seconds < 0.001:  # Microseconds
-        return f"{seconds * 1e6:.0f}µs"  # noqa: RUF001
+        return f"{seconds * 1e6:.0f}µs"  # ruff: ignore[ambiguous-unicode-character-string]
     if seconds < 1:  # Milliseconds
         return f"{seconds * 1e3:.0f}ms"
     return f"{seconds:.2f}s"
 
 
+@functools.cache
 def create_missing_texture(*, size: int = 256, tiles: int = 8) -> bytes:
     """
     Generate a PNG image of the classic magenta and black checkerboard pattern.
@@ -510,7 +512,7 @@ def unwrap_optional(annotation: type) -> type:
 
 
 def snowflake_time(
-    id: "Snowflake | int"  # noqa: A002
+    id: "Snowflake | int"  # ruff: ignore[builtin-argument-shadowing]
 ) -> datetime:
     """
     Get the datetime from a discord snowflak.
@@ -890,7 +892,7 @@ def get_int(
     data: dict,
     key: str,
     *,
-    default: Any | None = None  # noqa: ANN401
+    default: Any | None = None  # ruff: ignore[any-type]
 ) -> int | None:
     """
     Get an integer from a dictionary, similar to `dict.get`.
@@ -1117,7 +1119,7 @@ class URL:
 
     def update_query(
         self,
-        **params: Any | list[Any] | tuple[Any, ...] | None  # noqa: ANN401
+        **params: Any | list[Any] | tuple[Any, ...] | None  # ruff: ignore[any-type]
     ) -> "URL":
         """
         Updates query parameters to the URL.
@@ -1357,7 +1359,7 @@ class _MissingType:
     def __bytes__(self) -> bytes:
         return b""
 
-    def __eq__(self, other) -> bool:  # noqa: ANN001
+    def __eq__(self, other) -> bool:  # ruff: ignore[missing-type-function-argument]
         return isinstance(other, _MissingType)
 
     def __bool__(self) -> bool:

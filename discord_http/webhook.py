@@ -38,7 +38,7 @@ class PartialWebhook(PartialBase):
         self,
         *,
         state: "DiscordAPI",
-        id: int,  # noqa: A002
+        id: int,  # ruff: ignore[builtin-argument-shadowing]
         token: str | None = None
     ):
         super().__init__(id=int(id))
@@ -121,7 +121,7 @@ class PartialWebhook(PartialBase):
         files: list[File] | None = MISSING,
         ephemeral: bool | None = False,
         view: View | None = MISSING,
-        type: ResponseType | int = 4,  # noqa: A002
+        type: ResponseType | int = 4,  # ruff: ignore[builtin-argument-shadowing]
         allowed_mentions: AllowedMentions | None = MISSING,
         wait: bool = True,
         flags: MessageFlags | None = MISSING,

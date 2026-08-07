@@ -129,28 +129,32 @@ class GatewayClient:
         shard_id:
             The shard ID to launch
         """
-        try:
-            shard = Shard(
-                bot=self.bot,
-                intents=self.intents,
-                cache_flags=self.cache_flags,
-                shard_id=shard_id,
-                shard_count=self.shard_count,
-                api_version=self.bot.api_version,
-                debug_events=self.bot.debug_events
-            )
+        while True:
+            shard = None
+            try:
+                shard = Shard(
+                    bot=self.bot,
+                    intents=self.intents,
+                    cache_flags=self.cache_flags,
+                    shard_id=shard_id,
+                    shard_count=self.shard_count,
+                    api_version=self.bot.api_version,
+                    debug_events=self.bot.debug_events
+                )
 
-            shard.connect()
+                shard.connect()
 
-            while not shard.status.session_id:
-                await asyncio.sleep(0.5)
+                while not shard.status.session_id:
+                    await asyncio.sleep(0.5)
 
-        except Exception as e:
-            _log.error("Error launching shard, trying again...", exc_info=e)
-            return await self._launch_shard(shard_id)
+            except Exception as e:
+                _log.error("Error launching shard, trying again...", exc_info=e)
+                if shard is not None and shard._connection is not None:
+                    shard._connection.cancel()
+                continue
 
-        self.__shards[shard_id] = shard
-        return None
+            self.__shards[shard_id] = shard
+            return
 
     def shard_by_guild_id(self, guild_id: "Snowflake | int") -> int:
         """
@@ -208,10 +212,12 @@ class GatewayClient:
 
             _log.debug(f"All {len(chunks)} bucket(s) have launched a total of {self.shard_count} shard(s)")
 
-        asyncio.create_task(  # noqa: RUF006
+        task = asyncio.create_task(
             self._delay_full_ready(),
             name="discord.http/gateway/delay_full_ready"
         )
+        self.bot._background_tasks.add(task)
+        task.add_done_callback(self.bot._cleanup_task)
 
     async def _delay_full_ready(self) -> None:
         waiting: list[Coroutine] = [

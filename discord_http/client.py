@@ -216,15 +216,22 @@ class Client:
         except Exception:
             pass
 
+    def _sweep_command_cooldown(self, cmd: Command, now: float) -> None:
+        """ Sweeps the cooldown cache of a command and its subcommands, if any. """
+        if cmd.cooldown is not None:
+            cmd.cooldown._cleanup_cache(now)
+
+        if isinstance(cmd, SubGroup):
+            for subcmd in cmd.subcommands.values():
+                self._sweep_command_cooldown(subcmd, now)
+
     async def _cooldown_cleanup_loop(self) -> None:
         """ Periodically sweeps expired cooldown buckets that accumulate between invocations. """
         while True:
             await asyncio.sleep(300)
             now = time.time()
             for cmd in self.commands.values():
-                if cmd.cooldown is None:
-                    continue
-                cmd.cooldown._cleanup_cache(now)
+                self._sweep_command_cooldown(cmd, now)
 
     async def _run_global_checks(self, ctx: Context) -> bool:
         for g, is_coro in self._global_cmd_checks:
@@ -243,7 +250,7 @@ class Client:
         self,
         listener: "Listener",
         event_name: str,
-        *args, **kwargs,  # noqa: ANN002
+        *args, **kwargs,  # ruff: ignore[missing-type-args]
     ) -> None:
         try:
             if listener.cog is not None:
@@ -282,10 +289,12 @@ class Client:
         await self.setup_hook()
         await self._prepare_commands()
 
-        self.loop.create_task(
+        task = self.loop.create_task(
             self._cooldown_cleanup_loop(),
             name="discord.http/cooldown_cleanup_loop"
         )
+        self._background_tasks.add(task)
+        task.add_done_callback(self._cleanup_task)
 
         self._ready.set()
 
@@ -327,7 +336,7 @@ class Client:
         self,
         listener: "Listener",
         event_name: str,
-        *args, **kwargs  # noqa: ANN002
+        *args, **kwargs  # ruff: ignore[missing-type-args]
     ) -> asyncio.Task:
         """ Schedules an event to be dispatched. """
         wrapped = self._run_event(
@@ -715,7 +724,7 @@ class Client:
         self,
         event_name: str,
         /,
-        *args, **kwargs  # noqa: ANN002
+        *args, **kwargs  # ruff: ignore[missing-type-args]
     ) -> None:
         """
         Dispatches an event to all listeners of that event.
@@ -944,7 +953,7 @@ class Client:
         future = self.loop.create_future()
 
         if check is None:
-            def _check(*_) -> bool:  # noqa: ANN002
+            def _check(*_) -> bool:  # ruff: ignore[missing-type-args]
                 return True
             check = _check
 

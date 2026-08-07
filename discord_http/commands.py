@@ -87,7 +87,7 @@ __all__ = (
 
 class Cog:
     """ Represents a cog, a collection of commands, listeners, and interactions. """
-    def __new__(cls, *args, **kwargs):  # noqa: ANN002, ARG004
+    def __new__(cls, *args, **kwargs):  # ruff: ignore[missing-type-args, unused-static-method-argument]
         """ Create a new cog. """
         commands = {}
         listeners = {}
@@ -320,7 +320,7 @@ class Command:
                 channel_options: list[ChannelType] = []
 
                 # Check if there are multiple types, looking for:
-                # - Union[Any, ...] / Optional[Any] / type | None  # noqa: ERA001
+                # - Union[Any, ...] / Optional[Any] / type | None  # ruff: ignore[commented-out-code]
 
                 if get_origin(annotation) is Union:
                     # Example: Optional[int] -> Union[int, NoneType]
@@ -645,7 +645,7 @@ class Command:
     async def run(
         self,
         context: "Context",
-        *args,  # noqa: ANN002
+        *args,  # ruff: ignore[missing-type-args]
         **kwargs
     ) -> BaseResponse:
         """
@@ -1156,7 +1156,7 @@ class Listener:
     def __repr__(self) -> str:
         return f"<Listener name='{self.name}'>"
 
-    async def run(self, *args, **kwargs) -> None:  # noqa: ANN002
+    async def run(self, *args, **kwargs) -> None:  # ruff: ignore[missing-type-args]
         """ Runs the listener. """
         if self.cog is not None:
             await self.coro(self.cog, *args, **kwargs)
@@ -1351,7 +1351,7 @@ def cooldown(
     rate: int,
     per: float,
     *,
-    type: BucketType | None = None  # noqa: A002
+    type: BucketType | None = None  # ruff: ignore[builtin-argument-shadowing]
 ) -> Callable[[Callable], Callable]:
     """
     Decorator to set a cooldown for a command.
@@ -1376,7 +1376,7 @@ def cooldown(
         If not set, it will be using default, which is a global cooldown
     """
     if type is None:
-        type = BucketType.default  # noqa: A001
+        type = BucketType.default  # ruff: ignore[builtin-variable-shadowing]
     if not isinstance(type, BucketType):
         raise TypeError("Key must be a BucketType")
 

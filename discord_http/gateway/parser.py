@@ -1860,7 +1860,7 @@ class Parser:
     def _message_poll_vote(
         self,
         data: dict,
-        type: PollVoteActionType  # noqa: A002
+        type: PollVoteActionType  # ruff: ignore[builtin-argument-shadowing]
     ) -> PollVoteEvent:
         guild = None
         user = PartialUser(

@@ -183,7 +183,7 @@ class Colour:
             raise ValueError(f"Invalid hex colour {hex_value!r}")
 
     @classmethod
-    def from_hsl(cls, h: int, s: int, l: int) -> Self:  # noqa: E741
+    def from_hsl(cls, h: int, s: int, l: int) -> Self:  # ruff: ignore[ambiguous-variable-name]
         """
         Creates a Colour object from HSL values.
 

@@ -316,7 +316,7 @@ class InteractionResponse:
         ephemeral: bool | None = False,
         view: View | None = MISSING,
         tts: bool | None = False,
-        type: ResponseType | int = 4,  # noqa: A002
+        type: ResponseType | int = 4,  # ruff: ignore[builtin-argument-shadowing]
         allowed_mentions: AllowedMentions | None = MISSING,
         poll: Poll | None = MISSING,
         flags: MessageFlags | None = MISSING,
@@ -842,6 +842,13 @@ class Context:
         """ Returns whether the interaction is expired. """
         return utils.utcnow() >= self.expires_at
 
+    def _warn_if_expired(self) -> None:
+        if self.is_expired():
+            _log.warning(
+                f"Interaction {self.id} token expired at {self.expires_at} (15 minutes after creation). "
+                "Discord will likely respond with 404 Unknown Webhook to this request."
+            )
+
     def is_bot_dm(self) -> bool:
         """ Returns a boolean of whether the interaction was in the bot's DM channel. """
         return (
@@ -899,7 +906,7 @@ class Context:
         ephemeral: bool | None = False,
         view: View | None = MISSING,
         tts: bool | None = False,
-        type: ResponseType | int = 4,  # noqa: A002
+        type: ResponseType | int = 4,  # ruff: ignore[builtin-argument-shadowing]
         allowed_mentions: AllowedMentions | None = MISSING,
         poll: Poll | None = MISSING,
         flags: MessageFlags | None = MISSING,
@@ -1034,7 +1041,7 @@ class Context:
         ephemeral: bool | None = False,
         view: View | None = MISSING,
         tts: bool | None = False,
-        type: ResponseType | int = 4,  # noqa: A002
+        type: ResponseType | int = 4,  # ruff: ignore[builtin-argument-shadowing]
         allowed_mentions: AllowedMentions | None = MISSING,
         poll: Poll | None = MISSING,
         flags: MessageFlags | None = MISSING,
@@ -1101,6 +1108,7 @@ class Context:
             )
         )
 
+        self._warn_if_expired()
         r = await self.bot.state.query(
             "POST",
             f"/webhooks/{self.bot.application_id}/{self._followup_token}",
@@ -1124,6 +1132,7 @@ class Context:
         if self._original_response is not None:
             return self._original_response
 
+        self._warn_if_expired()
         r = await self.bot.state.query(
             "GET",
             f"/webhooks/{self.bot.application_id}/{self._followup_token}/messages/@original"
@@ -1166,6 +1175,7 @@ class Context:
             )
         )
 
+        self._warn_if_expired()
         r = await self.bot.state.query(
             "PATCH",
             f"/webhooks/{self.bot.application_id}/{self._followup_token}/messages/@original",
@@ -1185,6 +1195,7 @@ class Context:
 
     async def delete_original_response(self) -> None:
         """ Delete the original response to the interaction. """
+        self._warn_if_expired()
         await self.bot.state.query(
             "DELETE",
             f"/webhooks/{self.bot.application_id}/{self._followup_token}/messages/@original"

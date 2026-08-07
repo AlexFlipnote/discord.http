@@ -63,7 +63,7 @@ class HTTPSession(aiohttp.ClientSession):
 
     __slots__ = ()
 
-    async def __aexit__(self, *args) -> None:  # noqa: ANN002
+    async def __aexit__(self, *args) -> None:  # ruff: ignore[missing-type-args]
         if not self.closed:
             await self.close()
 
@@ -253,7 +253,7 @@ class HTTPClient:
         method: str,
         url: str,
         *,
-        chunk_size: int = 8192,
+        chunk_size: int = 65536,
         **kwargs
     ) -> AsyncIterator[bytes]:
         """
@@ -268,7 +268,7 @@ class HTTPClient:
         url:
             The URL to make the request to
         chunk_size:
-            The amount of bytes to yield at a time. Defaults to 8KB.
+            The amount of bytes to yield at a time. Defaults to 64KB.
         **kwargs:
             The keyword arguments to pass to the aiohttp.ClientSession.request method
 
@@ -337,8 +337,8 @@ class Ratelimit:
         )
 
     def is_inactive(self) -> bool:
-        """ Check if the ratelimit is inactive (5 minutes). """
-        return (self._loop.time() - self._last_request) >= 300
+        """ Check if the ratelimit is inactive. """
+        return (self._loop.time() - self._last_request) >= 60
 
     def update(self, response: HTTPResponse) -> None:
         """
@@ -400,7 +400,7 @@ class Ratelimit:
             # Sleep outside the lock so others can at least check the state
             await asyncio.sleep(max(wait_time, 0.1) + 0.1)
 
-    async def __aexit__(self, *args) -> None:  # noqa: ANN002
+    async def __aexit__(self, *args) -> None:  # ruff: ignore[missing-type-args]
         """ When a request is done, decrease the in-flight count. """
         async with self._lock:
             self.in_flight -= 1
@@ -447,15 +447,17 @@ class DiscordAPI:
         }
 
         # Background tasks
-        self.bot.loop.create_task(
+        task = self.bot.loop.create_task(
             self._cleanup_loop(),
             name="discord.http/cleanup_http_loop"
         )
+        self.bot._background_tasks.add(task)
+        task.add_done_callback(self.bot._cleanup_task)
 
     async def _cleanup_loop(self) -> None:
-        """ A loop that runs every 5 minutes to clean up old ratelimits. """
+        """ A loop that runs periodically to clean up old ratelimits. """
         while True:
-            await asyncio.sleep(300)
+            await asyncio.sleep(60)
             self._clear_old_ratelimits()
 
     def _clear_old_ratelimits(self) -> None:

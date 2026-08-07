@@ -160,7 +160,7 @@ class MessageReaction:
     async def fetch_users(
         self,
         *,
-        type: ReactionType | int = ReactionType.normal,  # noqa: A002
+        type: ReactionType | int = ReactionType.normal,  # ruff: ignore[builtin-argument-shadowing]
         after: Snowflake | int | None = None,
         limit: int | None = 100
     ) -> AsyncIterator[User]:
@@ -391,7 +391,7 @@ class PollAnswer:
     def __init__(
         self,
         *,
-        id: int,  # noqa: A002
+        id: int,  # ruff: ignore[builtin-argument-shadowing]
         text: str | None = None,
         emoji: EmojiParser | str | None = None
     ):
@@ -945,7 +945,7 @@ class PartialMessage(PartialBase):
         self,
         *,
         state: "DiscordAPI",
-        id: int,  # noqa: A002
+        id: int,  # ruff: ignore[builtin-argument-shadowing]
         channel_id: int,
         guild_id: int | None = None
     ):

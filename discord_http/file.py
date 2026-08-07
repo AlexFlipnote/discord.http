@@ -54,7 +54,7 @@ class File:
 
         if isinstance(data, (str, Path)):
             self._filename = filename or Path(data).name
-            self.data = open(data, "rb")  # noqa: SIM115
+            self.data = open(data, "rb")  # ruff: ignore[open-file-with-context-handler]
             """ The file data as a file-like object. """
 
             self._owner = True
@@ -80,7 +80,7 @@ class File:
     def __enter__(self) -> "File":
         return self
 
-    def __exit__(self, *args) -> None:  # noqa: ANN002
+    def __exit__(self, *args) -> None:  # ruff: ignore[missing-type-args]
         self.close()
 
     def __del__(self) -> None:

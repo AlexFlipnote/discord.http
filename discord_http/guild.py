@@ -95,7 +95,7 @@ class PartialScheduledEvent(PartialBase):
         self,
         *,
         state: "DiscordAPI",
-        id: int,  # noqa: A002
+        id: int,  # ruff: ignore[builtin-argument-shadowing]
         guild_id: int
     ):
         super().__init__(id=int(id))
@@ -376,7 +376,7 @@ class PartialGuild(PartialBase):
         self,
         *,
         state: "DiscordAPI",
-        id: int  # noqa: A002
+        id: int  # ruff: ignore[builtin-argument-shadowing]
     ):
         super().__init__(id=int(id))
         self._state = state
@@ -566,8 +566,8 @@ class PartialGuild(PartialBase):
         if self._large is None:
             if self.member_count is not None:
                 return self.member_count >= 250
-            return len(self.members) >= 250
-        return self.large
+            return len(self._cache_members) >= 250
+        return self._large
 
     @property
     def chunked(self) -> bool:
@@ -752,7 +752,7 @@ class PartialGuild(PartialBase):
         """ A list of all the text channels in the guild if they are cached. """
         return [
             channel  # type: ignore
-            for channel in self.channels
+            for channel in self._cache_channels.values()
             if channel.type == ChannelType.guild_text or
             channel.type == ChannelType.guild_news
         ]
@@ -762,7 +762,7 @@ class PartialGuild(PartialBase):
         """ A list of all the voice channels in the guild if they are cached. """
         return [
             channel  # type: ignore
-            for channel in self.channels
+            for channel in self._cache_channels.values()
             if channel.type == ChannelType.guild_voice
         ]
 
@@ -771,7 +771,7 @@ class PartialGuild(PartialBase):
         """ A list of all the category channels in the guild if they are cached. """
         return [
             channel  # type: ignore
-            for channel in self.channels
+            for channel in self._cache_channels.values()
             if channel.type == ChannelType.guild_category
         ]
 
@@ -908,7 +908,7 @@ class PartialGuild(PartialBase):
             val: "list | Snowflake | str | int",
             _type: str,
             *,
-            literal_type: Any | None = None  # noqa: ANN401
+            literal_type: Any | None = None  # ruff: ignore[any-type]
         ) -> list[str]:
             if not isinstance(val, (list, tuple, set)):
                 val = [val]
@@ -2110,7 +2110,7 @@ class PartialGuild(PartialBase):
 
     def get_partial_scheduled_event(
         self,
-        id: int  # noqa: A002
+        id: int  # ruff: ignore[builtin-argument-shadowing]
     ) -> PartialScheduledEvent:
         """
         Creates a partial scheduled event object.
@@ -2132,7 +2132,7 @@ class PartialGuild(PartialBase):
 
     async def fetch_scheduled_event(
         self,
-        id: int  # noqa: A002
+        id: int  # ruff: ignore[builtin-argument-shadowing]
     ) -> ScheduledEvent:
         """
         Fetches a scheduled event object.
@@ -3238,7 +3238,10 @@ class Guild(PartialGuild):
     def premium_subscriber_role(self) -> Role | None:
         """ The guild's premium subscriber role if available. """
         return next(
-            (r for r in self.roles if isinstance(r, Role) and r.is_premium_subscriber()),
+            (
+                r for r in self._cache_roles.values()
+                if isinstance(r, Role) and r.is_premium_subscriber()
+            ),
             None
         )
 
@@ -3247,7 +3250,7 @@ class Guild(PartialGuild):
         """ The guild's bot role if available. """
         return next(
             (
-                r for r in self.roles
+                r for r in self._cache_roles.values()
                 if isinstance(r, Role) and
                 r.bot_id and
                 r.bot_id == self._state.bot.application_id
@@ -3270,11 +3273,8 @@ class Guild(PartialGuild):
         -------
             The role with the given ID, if it exists.
         """
-        return next((
-            r for r in self.roles
-            if isinstance(r, Role) and
-            r.id == role_id
-        ), None)
+        role = self._cache_roles.get(role_id)
+        return role if isinstance(role, Role) else None
 
     def get_role_by_name(self, role_name: str) -> Role | None:
         """
@@ -3290,7 +3290,7 @@ class Guild(PartialGuild):
             The role with the given name, if it exists.
         """
         return next((
-            r for r in self.roles
+            r for r in self._cache_roles.values()
             if isinstance(r, Role) and
             r.name == role_name
         ), None)
@@ -3312,7 +3312,7 @@ class Guild(PartialGuild):
             return None
 
         roles_sorted = sorted(
-            [r for r in self.roles if isinstance(r, Role)],
+            (r for r in self._cache_roles.values() if isinstance(r, Role)),
             key=lambda r: r.position,
             reverse=True
         )

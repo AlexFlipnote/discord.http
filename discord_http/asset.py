@@ -89,7 +89,7 @@ class Asset:
         self,
         path: str,
         *,
-        chunk_size: int = 8192
+        chunk_size: int = 65536
     ) -> int:
         """
         Fetches the file from the attachment URL and saves it locally to the path.
@@ -100,7 +100,7 @@ class Asset:
             Path to save the file to, which includes the filename and extension.
             Example: `./path/to/file.png`
         chunk_size:
-            The amount of bytes to read at a time. Defaults to 8KB.
+            The amount of bytes to read at a time. Defaults to 64KB.
 
         Returns
         -------
@@ -130,7 +130,7 @@ class Asset:
         self,
         *,
         size: int = MISSING,
-        format: AssetFormatTypes = MISSING  # noqa: A002
+        format: AssetFormatTypes = MISSING  # ruff: ignore[builtin-argument-shadowing]
     ) -> Self:
         """
         Replace the asset with new values.
@@ -174,7 +174,7 @@ class Asset:
 
     def with_static_format(
         self,
-        format: StaticFormatTypes  # noqa: A002
+        format: StaticFormatTypes  # ruff: ignore[builtin-argument-shadowing]
     ) -> Self:
         """
         Replace the asset with a static format.

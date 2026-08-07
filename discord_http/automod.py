@@ -138,7 +138,7 @@ class AutoModRuleAction:
     def __init__(
         self,
         *,
-        type: AutoModRuleActionType,  # noqa: A002
+        type: AutoModRuleActionType,  # ruff: ignore[builtin-argument-shadowing]
         channel_id: Snowflake | int | None = None,
         duration_seconds: int | None = None,
         custom_message: str | None = None,
@@ -280,7 +280,7 @@ class PartialAutoModRule(PartialBase):
         self,
         *,
         state: "DiscordAPI",
-        id: int,  # noqa: A002
+        id: int,  # ruff: ignore[builtin-argument-shadowing]
         guild_id: int
     ):
         super().__init__(id=int(id))

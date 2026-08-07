@@ -38,7 +38,7 @@ def show_version() -> None:
         f"system_info  {platform.system()} {platform.release()} ({platform.version()})",
     ]
 
-    print("\n".join(container))  # noqa: T201
+    print("\n".join(container))  # ruff: ignore[print]
 
 
 def main() -> None:

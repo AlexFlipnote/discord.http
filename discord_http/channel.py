@@ -99,7 +99,7 @@ class Typing:
         )
         self.task.add_done_callback(_typing_done_callback)
 
-    async def __aexit__(self, *args) -> None:  # noqa: ANN002
+    async def __aexit__(self, *args) -> None:  # ruff: ignore[missing-type-args]
         if self.task:
             self.task.cancel()
 
@@ -134,7 +134,7 @@ class PartialChannel(PartialBase):
         self,
         *,
         state: "DiscordAPI",
-        id: int,  # noqa: A002
+        id: int,  # ruff: ignore[builtin-argument-shadowing]
         guild_id: int | None = None
     ):
         super().__init__(id=int(id))
@@ -230,7 +230,7 @@ class PartialChannel(PartialBase):
             guild_id=self.guild_id
         )
 
-    def permissions_for(self, member: "Member") -> Permissions:  # noqa: ARG002
+    def permissions_for(self, member: "Member") -> Permissions:  # ruff: ignore[unused-method-argument]
         """
         Returns the permissions for a member in the channel.
 
@@ -488,7 +488,7 @@ class PartialChannel(PartialBase):
         files: list[File] | None = MISSING,
         view: View | None = MISSING,
         tts: bool | None = False,
-        type: ResponseType | int = 4,  # noqa: A002
+        type: ResponseType | int = 4,  # ruff: ignore[builtin-argument-shadowing]
         poll: "Poll | None" = MISSING,
         flags: MessageFlags | None = MISSING,
         allowed_mentions: AllowedMentions | None = MISSING,
@@ -648,7 +648,7 @@ class PartialChannel(PartialBase):
         self,
         *,
         name: str | None = MISSING,
-        type: ChannelType | int | None = MISSING,  # noqa: A002
+        type: ChannelType | int | None = MISSING,  # ruff: ignore[builtin-argument-shadowing]
         position: int | None = MISSING,
         topic: str | None = MISSING,
         nsfw: bool | None = MISSING,
@@ -907,7 +907,7 @@ class PartialChannel(PartialBase):
 
     async def delete_permission(
         self,
-        id: Snowflake | int,  # noqa: A002
+        id: Snowflake | int,  # ruff: ignore[builtin-argument-shadowing]
         *,
         reason: str | None = None
     ) -> None:
@@ -1105,7 +1105,7 @@ class PartialChannel(PartialBase):
         self,
         name: str,
         *,
-        type: ChannelType | int = ChannelType.guild_private_thread,  # noqa: A002
+        type: ChannelType | int = ChannelType.guild_private_thread,  # ruff: ignore[builtin-argument-shadowing]
         auto_archive_duration: int | None = 4320,
         invitable: bool = True,
         rate_limit_per_user: timedelta | int | None = None,
@@ -1806,7 +1806,7 @@ class DMChannel(BaseChannel):
         """ The channel's mention. """
         return f"<@{self.id}>"
 
-    async def edit(self, *args, **kwargs) -> None:  # noqa: ANN002, ARG002
+    async def edit(self, *args, **kwargs) -> None:  # ruff: ignore[missing-type-args, unused-method-argument]
         """
         Only here to prevent errors.
 
@@ -2059,10 +2059,10 @@ class PartialThread(PartialChannel):
         self,
         *,
         state: "DiscordAPI",
-        id: int,  # noqa: A002
+        id: int,  # ruff: ignore[builtin-argument-shadowing]
         guild_id: int,
         parent_id: int,
-        type: ChannelType | int  # noqa: A002
+        type: ChannelType | int  # ruff: ignore[builtin-argument-shadowing]
     ):
         super().__init__(state=state, id=int(id), guild_id=int(guild_id))
 

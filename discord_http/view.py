@@ -1558,15 +1558,12 @@ class InteractionStorage:
                 return None
 
         ctx.bot._view_storage[self._msg_cache] = self
-        await self._event_wait.wait()
-
-        if self._timeout_task and not self._timeout_task.done():
-            self._timeout_task.cancel()
-
         try:
-            del ctx.bot._view_storage[self._msg_cache]
-        except KeyError:
-            pass
+            await self._event_wait.wait()
+        finally:
+            if self._timeout_task and not self._timeout_task.done():
+                self._timeout_task.cancel()
+            ctx.bot._view_storage.pop(self._msg_cache, None)
 
         if self.is_timeout():
             return None

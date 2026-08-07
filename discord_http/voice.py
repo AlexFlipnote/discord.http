@@ -32,7 +32,7 @@ class PartialVoiceState(PartialBase):
         self,
         *,
         state: "DiscordAPI",
-        id: int,  # noqa: A002
+        id: int,  # ruff: ignore[builtin-argument-shadowing]
         channel_id: int | None = None,
         guild_id: int | None = None,
     ):

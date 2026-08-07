@@ -7,7 +7,7 @@ it was later expanded to also handle the gateway events.
 To get it working, you will need to use the `enable_gateway` parameter in the Client().
 """
 
-# ruff: noqa: F403
+# ruff: file-ignore[undefined-local-with-import-star]
 from .activity import *
 from .cache import *
 from .client import *

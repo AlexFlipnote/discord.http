@@ -87,7 +87,7 @@ class CooldownCache:
     def __init__(
         self,
         original: "Cooldown",
-        type: BucketType  # noqa: A002
+        type: BucketType  # ruff: ignore[builtin-argument-shadowing]
     ):
         self._cache: dict[int | tuple[int, int], Cooldown] = {}
         self._cooldown: Cooldown = original

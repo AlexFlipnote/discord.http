@@ -155,7 +155,7 @@ class PartialEmoji(PartialBase):
         self,
         *,
         state: "DiscordAPI",
-        id: int,  # noqa: A002
+        id: int,  # ruff: ignore[builtin-argument-shadowing]
         guild_id: int | None = None
     ):
         super().__init__(id=int(id))
