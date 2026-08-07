@@ -178,7 +178,8 @@ class DiscordHTTP(web.Application):
         data: dict
     ) -> web.Response:
         """ Used to handle application commands. """
-        await self._run_before_invoke(ctx)
+        with ctx.benchmark.measure("backend:before_invoke", internal=True):
+            await self._run_before_invoke(ctx)
 
         _log.debug("Received slash command, processing...")
 

@@ -504,7 +504,8 @@ class Command:
         self,
         context: "Context"
     ) -> BaseResponse:
-        args, kwargs = await context._create_args()
+        with context.benchmark.measure("command:create_args", internal=True):
+            args, kwargs = await context._create_args()
 
         for name, values in getattr(self.command, "__choices_params__", {}).items():
             if name not in kwargs:
