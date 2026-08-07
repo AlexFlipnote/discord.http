@@ -744,7 +744,8 @@ class Context:
         try:
             try:
                 # Give Discord enough time to close their connection
-                await asyncio.wait_for(self._response_sent.wait(), timeout=5.0)
+                with self.benchmark.measure("call_after:ack_flush_wait", internal=True):
+                    await asyncio.wait_for(self._response_sent.wait(), timeout=5.0)
             except TimeoutError:
                 self._response_sent.set()
                 _log.error(
@@ -753,7 +754,8 @@ class Context:
                 )
                 return
 
-            await call_after()
+            with self.benchmark.measure("call_after:execution", internal=True):
+                await call_after()
         except Exception as e:
             if self.bot.has_any_dispatch("interaction_error"):
                 self.bot.dispatch("interaction_error", self, e)
