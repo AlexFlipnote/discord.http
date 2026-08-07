@@ -24,7 +24,7 @@ authors = [{name = "AlexFlipnote", email = "root@alexflipnote.dev"}]
 
 dependencies = [
   "aiohttp>=3.12.7,<4",
-  "cryptography>=49.0.0,<50",
+  "cryptography>=50.0.0,<51",
   "orjson>=3.10.18,<4",
   "pyright>=1.1.411",
   "ruff>=0.15.20",
