@@ -1612,7 +1612,7 @@ def describe(**kwargs: str) -> Callable:
 
 def file_types(**kwargs: list[str]) -> Callable:
     """
-    Decorator to set the allowed file types for uploads.
+    Decorator to set the allowed file types for attachments added to commands.
 
     The list can be `image`, `video`, `audio` or any dot-prefixed extensions such as `.pdf`
 
