@@ -296,6 +296,7 @@
 <dt class="sig sig-object py" id="discord_http.flags.ApplicationFlags">
 <span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">discord_http.flags.</span></span><span class="sig-name descname"><span class="pre">ApplicationFlags</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#discord_http.flags.ApplicationFlags" title="Link to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#discord_http.flags.BaseFlag" title="discord_http.flags.BaseFlag"><code class="xref py py-class docutils literal notranslate"><span class="pre">BaseFlag</span></code></a></p>
+<p>Represents the flags of a Discord application.</p>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="discord_http.flags.ApplicationFlags.application_auto_moderation_rule_create_badge">
 <span class="sig-name descname"><span class="pre">application_auto_moderation_rule_create_badge</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">64</span></span><a class="headerlink" href="#discord_http.flags.ApplicationFlags.application_auto_moderation_rule_create_badge" title="Link to this definition">¶</a></dt>
@@ -346,52 +347,16 @@
 <span class="sig-name descname"><span class="pre">application_command_badge</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">8388608</span></span><a class="headerlink" href="#discord_http.flags.ApplicationFlags.application_command_badge" title="Link to this definition">¶</a></dt>
 <dd></dd></dl>
 
-<dl class="py method">
-<dt class="sig sig-object py" id="discord_http.flags.ApplicationFlags.all">
-<span class="property"><span class="k"><span class="pre">classmethod</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">all</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Self" title="(in Python v3.14)"><span class="pre">Self</span></a></span></span><a class="headerlink" href="#discord_http.flags.ApplicationFlags.all" title="Link to this definition">¶</a></dt>
-<dd><p>Returns a flag with all the flags.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">Self</span></code></span></p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="discord_http.flags.ApplicationFlags.none">
-<span class="property"><span class="k"><span class="pre">classmethod</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">none</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Self" title="(in Python v3.14)"><span class="pre">Self</span></a></span></span><a class="headerlink" href="#discord_http.flags.ApplicationFlags.none" title="Link to this definition">¶</a></dt>
-<dd><p>Returns a flag with no flags.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">Self</span></code></span></p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="discord_http.flags.ApplicationFlags.from_names">
-<span class="property"><span class="k"><span class="pre">classmethod</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">from_names</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Self" title="(in Python v3.14)"><span class="pre">Self</span></a></span></span><a class="headerlink" href="#discord_http.flags.ApplicationFlags.from_names" title="Link to this definition">¶</a></dt>
-<dd><p>Create a flag from names.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>*args</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></span>) – The names of the flags to create</p>
-</dd>
-<dt class="field-even">Return type<span class="colon">:</span></dt>
-<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">Self</span></code></span></p>
-</dd>
-<dt class="field-odd">Returns<span class="colon">:</span></dt>
-<dd class="field-odd"><p>The flag with the added flags</p>
-</dd>
-<dt class="field-even">Raises<span class="colon">:</span></dt>
-<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#ValueError" title="(in Python v3.14)"><strong>ValueError</strong></a> – The flag name is not a valid flag</p>
-</dd>
-</dl>
+<dl class="py property">
+<dt class="sig sig-object py" id="discord_http.flags.ApplicationFlags.pretty_name">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">pretty_name</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></span><a class="headerlink" href="#discord_http.flags.ApplicationFlags.pretty_name" title="Link to this definition">¶</a></dt>
+<dd><p>A pretty name for the flag.</p>
 </dd></dl>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="discord_http.flags.ApplicationFlags.list_names">
 <span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">list_names</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.14)"><span class="pre">list</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a><span class="p"><span class="pre">]</span></span></span><a class="headerlink" href="#discord_http.flags.ApplicationFlags.list_names" title="Link to this definition">¶</a></dt>
-<dd><p>Returns a list of all the names of the flag.</p>
+<dd><p>A list of all the names of the flag.</p>
 </dd></dl>
 
 <dl class="py method">
@@ -456,30 +421,9 @@
 </dl>
 </dd></dl>
 
-</dd></dl>
-
-<dl class="py class">
-<dt class="sig sig-object py" id="discord_http.flags.AttachmentFlags">
-<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">discord_http.flags.</span></span><span class="sig-name descname"><span class="pre">AttachmentFlags</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#discord_http.flags.AttachmentFlags" title="Link to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference internal" href="#discord_http.flags.BaseFlag" title="discord_http.flags.BaseFlag"><code class="xref py py-class docutils literal notranslate"><span class="pre">BaseFlag</span></code></a></p>
-<dl class="py attribute">
-<dt class="sig sig-object py" id="discord_http.flags.AttachmentFlags.clip">
-<span class="sig-name descname"><span class="pre">clip</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">1</span></span><a class="headerlink" href="#discord_http.flags.AttachmentFlags.clip" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="discord_http.flags.AttachmentFlags.thumbnail">
-<span class="sig-name descname"><span class="pre">thumbnail</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">2</span></span><a class="headerlink" href="#discord_http.flags.AttachmentFlags.thumbnail" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="discord_http.flags.AttachmentFlags.remix">
-<span class="sig-name descname"><span class="pre">remix</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">4</span></span><a class="headerlink" href="#discord_http.flags.AttachmentFlags.remix" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
-
 <dl class="py method">
-<dt class="sig sig-object py" id="discord_http.flags.AttachmentFlags.all">
-<span class="property"><span class="k"><span class="pre">classmethod</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">all</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Self" title="(in Python v3.14)"><span class="pre">Self</span></a></span></span><a class="headerlink" href="#discord_http.flags.AttachmentFlags.all" title="Link to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="discord_http.flags.ApplicationFlags.all">
+<span class="property"><span class="k"><span class="pre">classmethod</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">all</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Self" title="(in Python v3.14)"><span class="pre">Self</span></a></span></span><a class="headerlink" href="#discord_http.flags.ApplicationFlags.all" title="Link to this definition">¶</a></dt>
 <dd><p>Returns a flag with all the flags.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
@@ -489,8 +433,8 @@
 </dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="discord_http.flags.AttachmentFlags.none">
-<span class="property"><span class="k"><span class="pre">classmethod</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">none</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Self" title="(in Python v3.14)"><span class="pre">Self</span></a></span></span><a class="headerlink" href="#discord_http.flags.AttachmentFlags.none" title="Link to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="discord_http.flags.ApplicationFlags.none">
+<span class="property"><span class="k"><span class="pre">classmethod</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">none</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Self" title="(in Python v3.14)"><span class="pre">Self</span></a></span></span><a class="headerlink" href="#discord_http.flags.ApplicationFlags.none" title="Link to this definition">¶</a></dt>
 <dd><p>Returns a flag with no flags.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
@@ -500,8 +444,8 @@
 </dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="discord_http.flags.AttachmentFlags.from_names">
-<span class="property"><span class="k"><span class="pre">classmethod</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">from_names</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Self" title="(in Python v3.14)"><span class="pre">Self</span></a></span></span><a class="headerlink" href="#discord_http.flags.AttachmentFlags.from_names" title="Link to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="discord_http.flags.ApplicationFlags.from_names">
+<span class="property"><span class="k"><span class="pre">classmethod</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">from_names</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Self" title="(in Python v3.14)"><span class="pre">Self</span></a></span></span><a class="headerlink" href="#discord_http.flags.ApplicationFlags.from_names" title="Link to this definition">¶</a></dt>
 <dd><p>Create a flag from names.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -519,10 +463,48 @@
 </dl>
 </dd></dl>
 
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="discord_http.flags.AttachmentFlags">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">discord_http.flags.</span></span><span class="sig-name descname"><span class="pre">AttachmentFlags</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#discord_http.flags.AttachmentFlags" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#discord_http.flags.BaseFlag" title="discord_http.flags.BaseFlag"><code class="xref py py-class docutils literal notranslate"><span class="pre">BaseFlag</span></code></a></p>
+<p>Represents the flags of a message attachment.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.flags.AttachmentFlags.is_clip">
+<span class="sig-name descname"><span class="pre">is_clip</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">1</span></span><a class="headerlink" href="#discord_http.flags.AttachmentFlags.is_clip" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.flags.AttachmentFlags.is_thumbnail">
+<span class="sig-name descname"><span class="pre">is_thumbnail</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">2</span></span><a class="headerlink" href="#discord_http.flags.AttachmentFlags.is_thumbnail" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.flags.AttachmentFlags.is_remix">
+<span class="sig-name descname"><span class="pre">is_remix</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">4</span></span><a class="headerlink" href="#discord_http.flags.AttachmentFlags.is_remix" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.flags.AttachmentFlags.is_spoiler">
+<span class="sig-name descname"><span class="pre">is_spoiler</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">8</span></span><a class="headerlink" href="#discord_http.flags.AttachmentFlags.is_spoiler" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.flags.AttachmentFlags.is_animated">
+<span class="sig-name descname"><span class="pre">is_animated</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">32</span></span><a class="headerlink" href="#discord_http.flags.AttachmentFlags.is_animated" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="discord_http.flags.AttachmentFlags.pretty_name">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">pretty_name</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></span><a class="headerlink" href="#discord_http.flags.AttachmentFlags.pretty_name" title="Link to this definition">¶</a></dt>
+<dd><p>A pretty name for the flag.</p>
+</dd></dl>
+
 <dl class="py property">
 <dt class="sig sig-object py" id="discord_http.flags.AttachmentFlags.list_names">
 <span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">list_names</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.14)"><span class="pre">list</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a><span class="p"><span class="pre">]</span></span></span><a class="headerlink" href="#discord_http.flags.AttachmentFlags.list_names" title="Link to this definition">¶</a></dt>
-<dd><p>Returns a list of all the names of the flag.</p>
+<dd><p>A list of all the names of the flag.</p>
 </dd></dl>
 
 <dl class="py method">
@@ -587,16 +569,9 @@
 </dl>
 </dd></dl>
 
-</dd></dl>
-
-<dl class="py class">
-<dt class="sig sig-object py" id="discord_http.flags.BaseFlag">
-<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">discord_http.flags.</span></span><span class="sig-name descname"><span class="pre">BaseFlag</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#discord_http.flags.BaseFlag" title="Link to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">_FlagPyMeta</span></code></p>
-<p>Base class for all flags.</p>
 <dl class="py method">
-<dt class="sig sig-object py" id="discord_http.flags.BaseFlag.all">
-<span class="property"><span class="k"><span class="pre">classmethod</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">all</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Self" title="(in Python v3.14)"><span class="pre">Self</span></a></span></span><a class="headerlink" href="#discord_http.flags.BaseFlag.all" title="Link to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="discord_http.flags.AttachmentFlags.all">
+<span class="property"><span class="k"><span class="pre">classmethod</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">all</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Self" title="(in Python v3.14)"><span class="pre">Self</span></a></span></span><a class="headerlink" href="#discord_http.flags.AttachmentFlags.all" title="Link to this definition">¶</a></dt>
 <dd><p>Returns a flag with all the flags.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
@@ -606,8 +581,8 @@
 </dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="discord_http.flags.BaseFlag.none">
-<span class="property"><span class="k"><span class="pre">classmethod</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">none</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Self" title="(in Python v3.14)"><span class="pre">Self</span></a></span></span><a class="headerlink" href="#discord_http.flags.BaseFlag.none" title="Link to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="discord_http.flags.AttachmentFlags.none">
+<span class="property"><span class="k"><span class="pre">classmethod</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">none</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Self" title="(in Python v3.14)"><span class="pre">Self</span></a></span></span><a class="headerlink" href="#discord_http.flags.AttachmentFlags.none" title="Link to this definition">¶</a></dt>
 <dd><p>Returns a flag with no flags.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
@@ -617,8 +592,8 @@
 </dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="discord_http.flags.BaseFlag.from_names">
-<span class="property"><span class="k"><span class="pre">classmethod</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">from_names</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Self" title="(in Python v3.14)"><span class="pre">Self</span></a></span></span><a class="headerlink" href="#discord_http.flags.BaseFlag.from_names" title="Link to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="discord_http.flags.AttachmentFlags.from_names">
+<span class="property"><span class="k"><span class="pre">classmethod</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">from_names</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Self" title="(in Python v3.14)"><span class="pre">Self</span></a></span></span><a class="headerlink" href="#discord_http.flags.AttachmentFlags.from_names" title="Link to this definition">¶</a></dt>
 <dd><p>Create a flag from names.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -636,10 +611,23 @@
 </dl>
 </dd></dl>
 
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="discord_http.flags.BaseFlag">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">discord_http.flags.</span></span><span class="sig-name descname"><span class="pre">BaseFlag</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#discord_http.flags.BaseFlag" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">_FlagPyMeta</span></code></p>
+<p>Base class for all flags.</p>
+<dl class="py property">
+<dt class="sig sig-object py" id="discord_http.flags.BaseFlag.pretty_name">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">pretty_name</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></span><a class="headerlink" href="#discord_http.flags.BaseFlag.pretty_name" title="Link to this definition">¶</a></dt>
+<dd><p>A pretty name for the flag.</p>
+</dd></dl>
+
 <dl class="py property">
 <dt class="sig sig-object py" id="discord_http.flags.BaseFlag.list_names">
 <span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">list_names</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.14)"><span class="pre">list</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a><span class="p"><span class="pre">]</span></span></span><a class="headerlink" href="#discord_http.flags.BaseFlag.list_names" title="Link to this definition">¶</a></dt>
-<dd><p>Returns a list of all the names of the flag.</p>
+<dd><p>A list of all the names of the flag.</p>
 </dd></dl>
 
 <dl class="py method">
@@ -704,30 +692,9 @@
 </dl>
 </dd></dl>
 
-</dd></dl>
-
-<dl class="py class">
-<dt class="sig sig-object py" id="discord_http.flags.ChannelFlags">
-<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">discord_http.flags.</span></span><span class="sig-name descname"><span class="pre">ChannelFlags</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#discord_http.flags.ChannelFlags" title="Link to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference internal" href="#discord_http.flags.BaseFlag" title="discord_http.flags.BaseFlag"><code class="xref py py-class docutils literal notranslate"><span class="pre">BaseFlag</span></code></a></p>
-<dl class="py attribute">
-<dt class="sig sig-object py" id="discord_http.flags.ChannelFlags.pinned">
-<span class="sig-name descname"><span class="pre">pinned</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">2</span></span><a class="headerlink" href="#discord_http.flags.ChannelFlags.pinned" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="discord_http.flags.ChannelFlags.require_tag">
-<span class="sig-name descname"><span class="pre">require_tag</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">16</span></span><a class="headerlink" href="#discord_http.flags.ChannelFlags.require_tag" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="discord_http.flags.ChannelFlags.hide_media_download_options">
-<span class="sig-name descname"><span class="pre">hide_media_download_options</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">32768</span></span><a class="headerlink" href="#discord_http.flags.ChannelFlags.hide_media_download_options" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
-
 <dl class="py method">
-<dt class="sig sig-object py" id="discord_http.flags.ChannelFlags.all">
-<span class="property"><span class="k"><span class="pre">classmethod</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">all</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Self" title="(in Python v3.14)"><span class="pre">Self</span></a></span></span><a class="headerlink" href="#discord_http.flags.ChannelFlags.all" title="Link to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="discord_http.flags.BaseFlag.all">
+<span class="property"><span class="k"><span class="pre">classmethod</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">all</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Self" title="(in Python v3.14)"><span class="pre">Self</span></a></span></span><a class="headerlink" href="#discord_http.flags.BaseFlag.all" title="Link to this definition">¶</a></dt>
 <dd><p>Returns a flag with all the flags.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
@@ -737,8 +704,8 @@
 </dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="discord_http.flags.ChannelFlags.none">
-<span class="property"><span class="k"><span class="pre">classmethod</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">none</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Self" title="(in Python v3.14)"><span class="pre">Self</span></a></span></span><a class="headerlink" href="#discord_http.flags.ChannelFlags.none" title="Link to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="discord_http.flags.BaseFlag.none">
+<span class="property"><span class="k"><span class="pre">classmethod</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">none</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Self" title="(in Python v3.14)"><span class="pre">Self</span></a></span></span><a class="headerlink" href="#discord_http.flags.BaseFlag.none" title="Link to this definition">¶</a></dt>
 <dd><p>Returns a flag with no flags.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
@@ -748,8 +715,8 @@
 </dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="discord_http.flags.ChannelFlags.from_names">
-<span class="property"><span class="k"><span class="pre">classmethod</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">from_names</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Self" title="(in Python v3.14)"><span class="pre">Self</span></a></span></span><a class="headerlink" href="#discord_http.flags.ChannelFlags.from_names" title="Link to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="discord_http.flags.BaseFlag.from_names">
+<span class="property"><span class="k"><span class="pre">classmethod</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">from_names</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Self" title="(in Python v3.14)"><span class="pre">Self</span></a></span></span><a class="headerlink" href="#discord_http.flags.BaseFlag.from_names" title="Link to this definition">¶</a></dt>
 <dd><p>Create a flag from names.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -767,10 +734,38 @@
 </dl>
 </dd></dl>
 
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="discord_http.flags.ChannelFlags">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">discord_http.flags.</span></span><span class="sig-name descname"><span class="pre">ChannelFlags</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#discord_http.flags.ChannelFlags" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#discord_http.flags.BaseFlag" title="discord_http.flags.BaseFlag"><code class="xref py py-class docutils literal notranslate"><span class="pre">BaseFlag</span></code></a></p>
+<p>Represents the flags of a Discord channel.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.flags.ChannelFlags.pinned">
+<span class="sig-name descname"><span class="pre">pinned</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">2</span></span><a class="headerlink" href="#discord_http.flags.ChannelFlags.pinned" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.flags.ChannelFlags.require_tag">
+<span class="sig-name descname"><span class="pre">require_tag</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">16</span></span><a class="headerlink" href="#discord_http.flags.ChannelFlags.require_tag" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.flags.ChannelFlags.hide_media_download_options">
+<span class="sig-name descname"><span class="pre">hide_media_download_options</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">32768</span></span><a class="headerlink" href="#discord_http.flags.ChannelFlags.hide_media_download_options" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="discord_http.flags.ChannelFlags.pretty_name">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">pretty_name</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></span><a class="headerlink" href="#discord_http.flags.ChannelFlags.pretty_name" title="Link to this definition">¶</a></dt>
+<dd><p>A pretty name for the flag.</p>
+</dd></dl>
+
 <dl class="py property">
 <dt class="sig sig-object py" id="discord_http.flags.ChannelFlags.list_names">
 <span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">list_names</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.14)"><span class="pre">list</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a><span class="p"><span class="pre">]</span></span></span><a class="headerlink" href="#discord_http.flags.ChannelFlags.list_names" title="Link to this definition">¶</a></dt>
-<dd><p>Returns a list of all the names of the flag.</p>
+<dd><p>A list of all the names of the flag.</p>
 </dd></dl>
 
 <dl class="py method">
@@ -835,20 +830,9 @@
 </dl>
 </dd></dl>
 
-</dd></dl>
-
-<dl class="py class">
-<dt class="sig sig-object py" id="discord_http.flags.GuildInviteFlags">
-<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">discord_http.flags.</span></span><span class="sig-name descname"><span class="pre">GuildInviteFlags</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#discord_http.flags.GuildInviteFlags" title="Link to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference internal" href="#discord_http.flags.BaseFlag" title="discord_http.flags.BaseFlag"><code class="xref py py-class docutils literal notranslate"><span class="pre">BaseFlag</span></code></a></p>
-<dl class="py attribute">
-<dt class="sig sig-object py" id="discord_http.flags.GuildInviteFlags.is_guest_invite">
-<span class="sig-name descname"><span class="pre">is_guest_invite</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">1</span></span><a class="headerlink" href="#discord_http.flags.GuildInviteFlags.is_guest_invite" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
-
 <dl class="py method">
-<dt class="sig sig-object py" id="discord_http.flags.GuildInviteFlags.all">
-<span class="property"><span class="k"><span class="pre">classmethod</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">all</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Self" title="(in Python v3.14)"><span class="pre">Self</span></a></span></span><a class="headerlink" href="#discord_http.flags.GuildInviteFlags.all" title="Link to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="discord_http.flags.ChannelFlags.all">
+<span class="property"><span class="k"><span class="pre">classmethod</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">all</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Self" title="(in Python v3.14)"><span class="pre">Self</span></a></span></span><a class="headerlink" href="#discord_http.flags.ChannelFlags.all" title="Link to this definition">¶</a></dt>
 <dd><p>Returns a flag with all the flags.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
@@ -858,8 +842,8 @@
 </dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="discord_http.flags.GuildInviteFlags.none">
-<span class="property"><span class="k"><span class="pre">classmethod</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">none</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Self" title="(in Python v3.14)"><span class="pre">Self</span></a></span></span><a class="headerlink" href="#discord_http.flags.GuildInviteFlags.none" title="Link to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="discord_http.flags.ChannelFlags.none">
+<span class="property"><span class="k"><span class="pre">classmethod</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">none</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Self" title="(in Python v3.14)"><span class="pre">Self</span></a></span></span><a class="headerlink" href="#discord_http.flags.ChannelFlags.none" title="Link to this definition">¶</a></dt>
 <dd><p>Returns a flag with no flags.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
@@ -869,8 +853,8 @@
 </dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="discord_http.flags.GuildInviteFlags.from_names">
-<span class="property"><span class="k"><span class="pre">classmethod</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">from_names</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Self" title="(in Python v3.14)"><span class="pre">Self</span></a></span></span><a class="headerlink" href="#discord_http.flags.GuildInviteFlags.from_names" title="Link to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="discord_http.flags.ChannelFlags.from_names">
+<span class="property"><span class="k"><span class="pre">classmethod</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">from_names</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Self" title="(in Python v3.14)"><span class="pre">Self</span></a></span></span><a class="headerlink" href="#discord_http.flags.ChannelFlags.from_names" title="Link to this definition">¶</a></dt>
 <dd><p>Create a flag from names.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -888,10 +872,28 @@
 </dl>
 </dd></dl>
 
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="discord_http.flags.GuildInviteFlags">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">discord_http.flags.</span></span><span class="sig-name descname"><span class="pre">GuildInviteFlags</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#discord_http.flags.GuildInviteFlags" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#discord_http.flags.BaseFlag" title="discord_http.flags.BaseFlag"><code class="xref py py-class docutils literal notranslate"><span class="pre">BaseFlag</span></code></a></p>
+<p>Represents the flags of a guild invite.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.flags.GuildInviteFlags.is_guest_invite">
+<span class="sig-name descname"><span class="pre">is_guest_invite</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">1</span></span><a class="headerlink" href="#discord_http.flags.GuildInviteFlags.is_guest_invite" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="discord_http.flags.GuildInviteFlags.pretty_name">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">pretty_name</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></span><a class="headerlink" href="#discord_http.flags.GuildInviteFlags.pretty_name" title="Link to this definition">¶</a></dt>
+<dd><p>A pretty name for the flag.</p>
+</dd></dl>
+
 <dl class="py property">
 <dt class="sig sig-object py" id="discord_http.flags.GuildInviteFlags.list_names">
 <span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">list_names</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.14)"><span class="pre">list</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a><span class="p"><span class="pre">]</span></span></span><a class="headerlink" href="#discord_http.flags.GuildInviteFlags.list_names" title="Link to this definition">¶</a></dt>
-<dd><p>Returns a list of all the names of the flag.</p>
+<dd><p>A list of all the names of the flag.</p>
 </dd></dl>
 
 <dl class="py method">
@@ -956,12 +958,55 @@
 </dl>
 </dd></dl>
 
+<dl class="py method">
+<dt class="sig sig-object py" id="discord_http.flags.GuildInviteFlags.all">
+<span class="property"><span class="k"><span class="pre">classmethod</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">all</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Self" title="(in Python v3.14)"><span class="pre">Self</span></a></span></span><a class="headerlink" href="#discord_http.flags.GuildInviteFlags.all" title="Link to this definition">¶</a></dt>
+<dd><p>Returns a flag with all the flags.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">Self</span></code></span></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="discord_http.flags.GuildInviteFlags.none">
+<span class="property"><span class="k"><span class="pre">classmethod</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">none</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Self" title="(in Python v3.14)"><span class="pre">Self</span></a></span></span><a class="headerlink" href="#discord_http.flags.GuildInviteFlags.none" title="Link to this definition">¶</a></dt>
+<dd><p>Returns a flag with no flags.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">Self</span></code></span></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="discord_http.flags.GuildInviteFlags.from_names">
+<span class="property"><span class="k"><span class="pre">classmethod</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">from_names</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Self" title="(in Python v3.14)"><span class="pre">Self</span></a></span></span><a class="headerlink" href="#discord_http.flags.GuildInviteFlags.from_names" title="Link to this definition">¶</a></dt>
+<dd><p>Create a flag from names.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>*args</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></span>) – The names of the flags to create</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">Self</span></code></span></p>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The flag with the added flags</p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#ValueError" title="(in Python v3.14)"><strong>ValueError</strong></a> – The flag name is not a valid flag</p>
+</dd>
+</dl>
+</dd></dl>
+
 </dd></dl>
 
 <dl class="py class">
 <dt class="sig sig-object py" id="discord_http.flags.GuildMemberFlags">
 <span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">discord_http.flags.</span></span><span class="sig-name descname"><span class="pre">GuildMemberFlags</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#discord_http.flags.GuildMemberFlags" title="Link to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#discord_http.flags.BaseFlag" title="discord_http.flags.BaseFlag"><code class="xref py py-class docutils literal notranslate"><span class="pre">BaseFlag</span></code></a></p>
+<p>Represents the flags of a guild member.</p>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="discord_http.flags.GuildMemberFlags.did_rejoin">
 <span class="sig-name descname"><span class="pre">did_rejoin</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">1</span></span><a class="headerlink" href="#discord_http.flags.GuildMemberFlags.did_rejoin" title="Link to this definition">¶</a></dt>
@@ -1007,52 +1052,16 @@
 <span class="sig-name descname"><span class="pre">dm_settings_upsell_acknowledged</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">512</span></span><a class="headerlink" href="#discord_http.flags.GuildMemberFlags.dm_settings_upsell_acknowledged" title="Link to this definition">¶</a></dt>
 <dd></dd></dl>
 
-<dl class="py method">
-<dt class="sig sig-object py" id="discord_http.flags.GuildMemberFlags.all">
-<span class="property"><span class="k"><span class="pre">classmethod</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">all</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Self" title="(in Python v3.14)"><span class="pre">Self</span></a></span></span><a class="headerlink" href="#discord_http.flags.GuildMemberFlags.all" title="Link to this definition">¶</a></dt>
-<dd><p>Returns a flag with all the flags.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">Self</span></code></span></p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="discord_http.flags.GuildMemberFlags.none">
-<span class="property"><span class="k"><span class="pre">classmethod</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">none</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Self" title="(in Python v3.14)"><span class="pre">Self</span></a></span></span><a class="headerlink" href="#discord_http.flags.GuildMemberFlags.none" title="Link to this definition">¶</a></dt>
-<dd><p>Returns a flag with no flags.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">Self</span></code></span></p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="discord_http.flags.GuildMemberFlags.from_names">
-<span class="property"><span class="k"><span class="pre">classmethod</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">from_names</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Self" title="(in Python v3.14)"><span class="pre">Self</span></a></span></span><a class="headerlink" href="#discord_http.flags.GuildMemberFlags.from_names" title="Link to this definition">¶</a></dt>
-<dd><p>Create a flag from names.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>*args</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></span>) – The names of the flags to create</p>
-</dd>
-<dt class="field-even">Return type<span class="colon">:</span></dt>
-<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">Self</span></code></span></p>
-</dd>
-<dt class="field-odd">Returns<span class="colon">:</span></dt>
-<dd class="field-odd"><p>The flag with the added flags</p>
-</dd>
-<dt class="field-even">Raises<span class="colon">:</span></dt>
-<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#ValueError" title="(in Python v3.14)"><strong>ValueError</strong></a> – The flag name is not a valid flag</p>
-</dd>
-</dl>
+<dl class="py property">
+<dt class="sig sig-object py" id="discord_http.flags.GuildMemberFlags.pretty_name">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">pretty_name</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></span><a class="headerlink" href="#discord_http.flags.GuildMemberFlags.pretty_name" title="Link to this definition">¶</a></dt>
+<dd><p>A pretty name for the flag.</p>
 </dd></dl>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="discord_http.flags.GuildMemberFlags.list_names">
 <span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">list_names</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.14)"><span class="pre">list</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a><span class="p"><span class="pre">]</span></span></span><a class="headerlink" href="#discord_http.flags.GuildMemberFlags.list_names" title="Link to this definition">¶</a></dt>
-<dd><p>Returns a list of all the names of the flag.</p>
+<dd><p>A list of all the names of the flag.</p>
 </dd></dl>
 
 <dl class="py method">
@@ -1117,12 +1126,55 @@
 </dl>
 </dd></dl>
 
+<dl class="py method">
+<dt class="sig sig-object py" id="discord_http.flags.GuildMemberFlags.all">
+<span class="property"><span class="k"><span class="pre">classmethod</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">all</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Self" title="(in Python v3.14)"><span class="pre">Self</span></a></span></span><a class="headerlink" href="#discord_http.flags.GuildMemberFlags.all" title="Link to this definition">¶</a></dt>
+<dd><p>Returns a flag with all the flags.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">Self</span></code></span></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="discord_http.flags.GuildMemberFlags.none">
+<span class="property"><span class="k"><span class="pre">classmethod</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">none</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Self" title="(in Python v3.14)"><span class="pre">Self</span></a></span></span><a class="headerlink" href="#discord_http.flags.GuildMemberFlags.none" title="Link to this definition">¶</a></dt>
+<dd><p>Returns a flag with no flags.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">Self</span></code></span></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="discord_http.flags.GuildMemberFlags.from_names">
+<span class="property"><span class="k"><span class="pre">classmethod</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">from_names</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Self" title="(in Python v3.14)"><span class="pre">Self</span></a></span></span><a class="headerlink" href="#discord_http.flags.GuildMemberFlags.from_names" title="Link to this definition">¶</a></dt>
+<dd><p>Create a flag from names.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>*args</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></span>) – The names of the flags to create</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">Self</span></code></span></p>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The flag with the added flags</p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#ValueError" title="(in Python v3.14)"><strong>ValueError</strong></a> – The flag name is not a valid flag</p>
+</dd>
+</dl>
+</dd></dl>
+
 </dd></dl>
 
 <dl class="py class">
 <dt class="sig sig-object py" id="discord_http.flags.MessageFlags">
 <span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">discord_http.flags.</span></span><span class="sig-name descname"><span class="pre">MessageFlags</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#discord_http.flags.MessageFlags" title="Link to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#discord_http.flags.BaseFlag" title="discord_http.flags.BaseFlag"><code class="xref py py-class docutils literal notranslate"><span class="pre">BaseFlag</span></code></a></p>
+<p>Represents the flags of a Discord message.</p>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="discord_http.flags.MessageFlags.crossposted">
 <span class="sig-name descname"><span class="pre">crossposted</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">1</span></span><a class="headerlink" href="#discord_http.flags.MessageFlags.crossposted" title="Link to this definition">¶</a></dt>
@@ -1183,52 +1235,16 @@
 <span class="sig-name descname"><span class="pre">is_components_v2</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">32768</span></span><a class="headerlink" href="#discord_http.flags.MessageFlags.is_components_v2" title="Link to this definition">¶</a></dt>
 <dd></dd></dl>
 
-<dl class="py method">
-<dt class="sig sig-object py" id="discord_http.flags.MessageFlags.all">
-<span class="property"><span class="k"><span class="pre">classmethod</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">all</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Self" title="(in Python v3.14)"><span class="pre">Self</span></a></span></span><a class="headerlink" href="#discord_http.flags.MessageFlags.all" title="Link to this definition">¶</a></dt>
-<dd><p>Returns a flag with all the flags.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">Self</span></code></span></p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="discord_http.flags.MessageFlags.none">
-<span class="property"><span class="k"><span class="pre">classmethod</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">none</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Self" title="(in Python v3.14)"><span class="pre">Self</span></a></span></span><a class="headerlink" href="#discord_http.flags.MessageFlags.none" title="Link to this definition">¶</a></dt>
-<dd><p>Returns a flag with no flags.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">Self</span></code></span></p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="discord_http.flags.MessageFlags.from_names">
-<span class="property"><span class="k"><span class="pre">classmethod</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">from_names</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Self" title="(in Python v3.14)"><span class="pre">Self</span></a></span></span><a class="headerlink" href="#discord_http.flags.MessageFlags.from_names" title="Link to this definition">¶</a></dt>
-<dd><p>Create a flag from names.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>*args</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></span>) – The names of the flags to create</p>
-</dd>
-<dt class="field-even">Return type<span class="colon">:</span></dt>
-<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">Self</span></code></span></p>
-</dd>
-<dt class="field-odd">Returns<span class="colon">:</span></dt>
-<dd class="field-odd"><p>The flag with the added flags</p>
-</dd>
-<dt class="field-even">Raises<span class="colon">:</span></dt>
-<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#ValueError" title="(in Python v3.14)"><strong>ValueError</strong></a> – The flag name is not a valid flag</p>
-</dd>
-</dl>
+<dl class="py property">
+<dt class="sig sig-object py" id="discord_http.flags.MessageFlags.pretty_name">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">pretty_name</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></span><a class="headerlink" href="#discord_http.flags.MessageFlags.pretty_name" title="Link to this definition">¶</a></dt>
+<dd><p>A pretty name for the flag.</p>
 </dd></dl>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="discord_http.flags.MessageFlags.list_names">
 <span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">list_names</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.14)"><span class="pre">list</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a><span class="p"><span class="pre">]</span></span></span><a class="headerlink" href="#discord_http.flags.MessageFlags.list_names" title="Link to this definition">¶</a></dt>
-<dd><p>Returns a list of all the names of the flag.</p>
+<dd><p>A list of all the names of the flag.</p>
 </dd></dl>
 
 <dl class="py method">
@@ -1293,12 +1309,55 @@
 </dl>
 </dd></dl>
 
+<dl class="py method">
+<dt class="sig sig-object py" id="discord_http.flags.MessageFlags.all">
+<span class="property"><span class="k"><span class="pre">classmethod</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">all</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Self" title="(in Python v3.14)"><span class="pre">Self</span></a></span></span><a class="headerlink" href="#discord_http.flags.MessageFlags.all" title="Link to this definition">¶</a></dt>
+<dd><p>Returns a flag with all the flags.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">Self</span></code></span></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="discord_http.flags.MessageFlags.none">
+<span class="property"><span class="k"><span class="pre">classmethod</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">none</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Self" title="(in Python v3.14)"><span class="pre">Self</span></a></span></span><a class="headerlink" href="#discord_http.flags.MessageFlags.none" title="Link to this definition">¶</a></dt>
+<dd><p>Returns a flag with no flags.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">Self</span></code></span></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="discord_http.flags.MessageFlags.from_names">
+<span class="property"><span class="k"><span class="pre">classmethod</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">from_names</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Self" title="(in Python v3.14)"><span class="pre">Self</span></a></span></span><a class="headerlink" href="#discord_http.flags.MessageFlags.from_names" title="Link to this definition">¶</a></dt>
+<dd><p>Create a flag from names.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>*args</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></span>) – The names of the flags to create</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">Self</span></code></span></p>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The flag with the added flags</p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#ValueError" title="(in Python v3.14)"><strong>ValueError</strong></a> – The flag name is not a valid flag</p>
+</dd>
+</dl>
+</dd></dl>
+
 </dd></dl>
 
 <dl class="py class">
 <dt class="sig sig-object py" id="discord_http.flags.PermissionOverwrite">
 <span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">discord_http.flags.</span></span><span class="sig-name descname"><span class="pre">PermissionOverwrite</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">target</span></span></em>, <em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">allow</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">deny</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">target_type</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#discord_http.flags.PermissionOverwrite" title="Link to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<p>Represents a permission overwrite for a channel target (member or role).</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
@@ -1311,23 +1370,27 @@
 </dl>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="discord_http.flags.PermissionOverwrite.allow">
-<span class="sig-name descname"><span class="pre">allow</span></span><a class="headerlink" href="#discord_http.flags.PermissionOverwrite.allow" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
+<span class="sig-name descname"><span class="pre">allow</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="#discord_http.flags.Permissions" title="discord_http.flags.Permissions"><span class="pre">Permissions</span></a></span><a class="headerlink" href="#discord_http.flags.PermissionOverwrite.allow" title="Link to this definition">¶</a></dt>
+<dd><p>The permissions that are explicitly allowed for the target.</p>
+</dd></dl>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="discord_http.flags.PermissionOverwrite.deny">
-<span class="sig-name descname"><span class="pre">deny</span></span><a class="headerlink" href="#discord_http.flags.PermissionOverwrite.deny" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
+<span class="sig-name descname"><span class="pre">deny</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="#discord_http.flags.Permissions" title="discord_http.flags.Permissions"><span class="pre">Permissions</span></a></span><a class="headerlink" href="#discord_http.flags.PermissionOverwrite.deny" title="Link to this definition">¶</a></dt>
+<dd><p>The permissions that are explicitly denied for the target.</p>
+</dd></dl>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="discord_http.flags.PermissionOverwrite.target">
-<span class="sig-name descname"><span class="pre">target</span></span><a class="headerlink" href="#discord_http.flags.PermissionOverwrite.target" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
+<span class="sig-name descname"><span class="pre">target</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="object.html#discord_http.object.Snowflake" title="discord_http.object.Snowflake"><span class="pre">Snowflake</span></a></span><a class="headerlink" href="#discord_http.flags.PermissionOverwrite.target" title="Link to this definition">¶</a></dt>
+<dd><p>The target of the permission overwrite (member or role).</p>
+</dd></dl>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="discord_http.flags.PermissionOverwrite.target_type">
-<span class="sig-name descname"><span class="pre">target_type</span></span><a class="headerlink" href="#discord_http.flags.PermissionOverwrite.target_type" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
+<span class="sig-name descname"><span class="pre">target_type</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="enums.html#discord_http.enums.PermissionType" title="discord_http.enums.PermissionType"><span class="pre">PermissionType</span></a></span><a class="headerlink" href="#discord_http.flags.PermissionOverwrite.target_type" title="Link to this definition">¶</a></dt>
+<dd><p>The type of the overwrite target, either member or role.</p>
+</dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="discord_http.flags.PermissionOverwrite.is_role">
@@ -1396,6 +1459,7 @@
 <dt class="sig sig-object py" id="discord_http.flags.Permissions">
 <span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">discord_http.flags.</span></span><span class="sig-name descname"><span class="pre">Permissions</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#discord_http.flags.Permissions" title="Link to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#discord_http.flags.BaseFlag" title="discord_http.flags.BaseFlag"><code class="xref py py-class docutils literal notranslate"><span class="pre">BaseFlag</span></code></a></p>
+<p>Represents the permission flags for a guild member or role.</p>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="discord_http.flags.Permissions.create_instant_invite">
 <span class="sig-name descname"><span class="pre">create_instant_invite</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">1</span></span><a class="headerlink" href="#discord_http.flags.Permissions.create_instant_invite" title="Link to this definition">¶</a></dt>
@@ -1666,52 +1730,16 @@
 </dl>
 </dd></dl>
 
-<dl class="py method">
-<dt class="sig sig-object py" id="discord_http.flags.Permissions.all">
-<span class="property"><span class="k"><span class="pre">classmethod</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">all</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Self" title="(in Python v3.14)"><span class="pre">Self</span></a></span></span><a class="headerlink" href="#discord_http.flags.Permissions.all" title="Link to this definition">¶</a></dt>
-<dd><p>Returns a flag with all the flags.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">Self</span></code></span></p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="discord_http.flags.Permissions.none">
-<span class="property"><span class="k"><span class="pre">classmethod</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">none</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Self" title="(in Python v3.14)"><span class="pre">Self</span></a></span></span><a class="headerlink" href="#discord_http.flags.Permissions.none" title="Link to this definition">¶</a></dt>
-<dd><p>Returns a flag with no flags.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">Self</span></code></span></p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="discord_http.flags.Permissions.from_names">
-<span class="property"><span class="k"><span class="pre">classmethod</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">from_names</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Self" title="(in Python v3.14)"><span class="pre">Self</span></a></span></span><a class="headerlink" href="#discord_http.flags.Permissions.from_names" title="Link to this definition">¶</a></dt>
-<dd><p>Create a flag from names.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>*args</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></span>) – The names of the flags to create</p>
-</dd>
-<dt class="field-even">Return type<span class="colon">:</span></dt>
-<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">Self</span></code></span></p>
-</dd>
-<dt class="field-odd">Returns<span class="colon">:</span></dt>
-<dd class="field-odd"><p>The flag with the added flags</p>
-</dd>
-<dt class="field-even">Raises<span class="colon">:</span></dt>
-<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#ValueError" title="(in Python v3.14)"><strong>ValueError</strong></a> – The flag name is not a valid flag</p>
-</dd>
-</dl>
+<dl class="py property">
+<dt class="sig sig-object py" id="discord_http.flags.Permissions.pretty_name">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">pretty_name</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></span><a class="headerlink" href="#discord_http.flags.Permissions.pretty_name" title="Link to this definition">¶</a></dt>
+<dd><p>A pretty name for the flag.</p>
 </dd></dl>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="discord_http.flags.Permissions.list_names">
 <span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">list_names</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.14)"><span class="pre">list</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a><span class="p"><span class="pre">]</span></span></span><a class="headerlink" href="#discord_http.flags.Permissions.list_names" title="Link to this definition">¶</a></dt>
-<dd><p>Returns a list of all the names of the flag.</p>
+<dd><p>A list of all the names of the flag.</p>
 </dd></dl>
 
 <dl class="py method">
@@ -1776,30 +1804,9 @@
 </dl>
 </dd></dl>
 
-</dd></dl>
-
-<dl class="py class">
-<dt class="sig sig-object py" id="discord_http.flags.SKUFlags">
-<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">discord_http.flags.</span></span><span class="sig-name descname"><span class="pre">SKUFlags</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#discord_http.flags.SKUFlags" title="Link to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference internal" href="#discord_http.flags.BaseFlag" title="discord_http.flags.BaseFlag"><code class="xref py py-class docutils literal notranslate"><span class="pre">BaseFlag</span></code></a></p>
-<dl class="py attribute">
-<dt class="sig sig-object py" id="discord_http.flags.SKUFlags.available">
-<span class="sig-name descname"><span class="pre">available</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">4</span></span><a class="headerlink" href="#discord_http.flags.SKUFlags.available" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="discord_http.flags.SKUFlags.guild_subscription">
-<span class="sig-name descname"><span class="pre">guild_subscription</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">128</span></span><a class="headerlink" href="#discord_http.flags.SKUFlags.guild_subscription" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="discord_http.flags.SKUFlags.user_subscription">
-<span class="sig-name descname"><span class="pre">user_subscription</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">256</span></span><a class="headerlink" href="#discord_http.flags.SKUFlags.user_subscription" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
-
 <dl class="py method">
-<dt class="sig sig-object py" id="discord_http.flags.SKUFlags.all">
-<span class="property"><span class="k"><span class="pre">classmethod</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">all</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Self" title="(in Python v3.14)"><span class="pre">Self</span></a></span></span><a class="headerlink" href="#discord_http.flags.SKUFlags.all" title="Link to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="discord_http.flags.Permissions.all">
+<span class="property"><span class="k"><span class="pre">classmethod</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">all</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Self" title="(in Python v3.14)"><span class="pre">Self</span></a></span></span><a class="headerlink" href="#discord_http.flags.Permissions.all" title="Link to this definition">¶</a></dt>
 <dd><p>Returns a flag with all the flags.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
@@ -1809,8 +1816,8 @@
 </dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="discord_http.flags.SKUFlags.none">
-<span class="property"><span class="k"><span class="pre">classmethod</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">none</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Self" title="(in Python v3.14)"><span class="pre">Self</span></a></span></span><a class="headerlink" href="#discord_http.flags.SKUFlags.none" title="Link to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="discord_http.flags.Permissions.none">
+<span class="property"><span class="k"><span class="pre">classmethod</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">none</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Self" title="(in Python v3.14)"><span class="pre">Self</span></a></span></span><a class="headerlink" href="#discord_http.flags.Permissions.none" title="Link to this definition">¶</a></dt>
 <dd><p>Returns a flag with no flags.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
@@ -1820,8 +1827,8 @@
 </dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="discord_http.flags.SKUFlags.from_names">
-<span class="property"><span class="k"><span class="pre">classmethod</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">from_names</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Self" title="(in Python v3.14)"><span class="pre">Self</span></a></span></span><a class="headerlink" href="#discord_http.flags.SKUFlags.from_names" title="Link to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="discord_http.flags.Permissions.from_names">
+<span class="property"><span class="k"><span class="pre">classmethod</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">from_names</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Self" title="(in Python v3.14)"><span class="pre">Self</span></a></span></span><a class="headerlink" href="#discord_http.flags.Permissions.from_names" title="Link to this definition">¶</a></dt>
 <dd><p>Create a flag from names.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -1839,10 +1846,38 @@
 </dl>
 </dd></dl>
 
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="discord_http.flags.SKUFlags">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">discord_http.flags.</span></span><span class="sig-name descname"><span class="pre">SKUFlags</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#discord_http.flags.SKUFlags" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#discord_http.flags.BaseFlag" title="discord_http.flags.BaseFlag"><code class="xref py py-class docutils literal notranslate"><span class="pre">BaseFlag</span></code></a></p>
+<p>Represents the flags of an application SKU.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.flags.SKUFlags.available">
+<span class="sig-name descname"><span class="pre">available</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">4</span></span><a class="headerlink" href="#discord_http.flags.SKUFlags.available" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.flags.SKUFlags.guild_subscription">
+<span class="sig-name descname"><span class="pre">guild_subscription</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">128</span></span><a class="headerlink" href="#discord_http.flags.SKUFlags.guild_subscription" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.flags.SKUFlags.user_subscription">
+<span class="sig-name descname"><span class="pre">user_subscription</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">256</span></span><a class="headerlink" href="#discord_http.flags.SKUFlags.user_subscription" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="discord_http.flags.SKUFlags.pretty_name">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">pretty_name</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></span><a class="headerlink" href="#discord_http.flags.SKUFlags.pretty_name" title="Link to this definition">¶</a></dt>
+<dd><p>A pretty name for the flag.</p>
+</dd></dl>
+
 <dl class="py property">
 <dt class="sig sig-object py" id="discord_http.flags.SKUFlags.list_names">
 <span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">list_names</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.14)"><span class="pre">list</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a><span class="p"><span class="pre">]</span></span></span><a class="headerlink" href="#discord_http.flags.SKUFlags.list_names" title="Link to this definition">¶</a></dt>
-<dd><p>Returns a list of all the names of the flag.</p>
+<dd><p>A list of all the names of the flag.</p>
 </dd></dl>
 
 <dl class="py method">
@@ -1907,12 +1942,55 @@
 </dl>
 </dd></dl>
 
+<dl class="py method">
+<dt class="sig sig-object py" id="discord_http.flags.SKUFlags.all">
+<span class="property"><span class="k"><span class="pre">classmethod</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">all</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Self" title="(in Python v3.14)"><span class="pre">Self</span></a></span></span><a class="headerlink" href="#discord_http.flags.SKUFlags.all" title="Link to this definition">¶</a></dt>
+<dd><p>Returns a flag with all the flags.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">Self</span></code></span></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="discord_http.flags.SKUFlags.none">
+<span class="property"><span class="k"><span class="pre">classmethod</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">none</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Self" title="(in Python v3.14)"><span class="pre">Self</span></a></span></span><a class="headerlink" href="#discord_http.flags.SKUFlags.none" title="Link to this definition">¶</a></dt>
+<dd><p>Returns a flag with no flags.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">Self</span></code></span></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="discord_http.flags.SKUFlags.from_names">
+<span class="property"><span class="k"><span class="pre">classmethod</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">from_names</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Self" title="(in Python v3.14)"><span class="pre">Self</span></a></span></span><a class="headerlink" href="#discord_http.flags.SKUFlags.from_names" title="Link to this definition">¶</a></dt>
+<dd><p>Create a flag from names.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>*args</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></span>) – The names of the flags to create</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">Self</span></code></span></p>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The flag with the added flags</p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#ValueError" title="(in Python v3.14)"><strong>ValueError</strong></a> – The flag name is not a valid flag</p>
+</dd>
+</dl>
+</dd></dl>
+
 </dd></dl>
 
 <dl class="py class">
 <dt class="sig sig-object py" id="discord_http.flags.SystemChannelFlags">
 <span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">discord_http.flags.</span></span><span class="sig-name descname"><span class="pre">SystemChannelFlags</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#discord_http.flags.SystemChannelFlags" title="Link to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#discord_http.flags.BaseFlag" title="discord_http.flags.BaseFlag"><code class="xref py py-class docutils literal notranslate"><span class="pre">BaseFlag</span></code></a></p>
+<p>Represents the system channel flags for a guild.</p>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="discord_http.flags.SystemChannelFlags.suppress_join_notifications">
 <span class="sig-name descname"><span class="pre">suppress_join_notifications</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">1</span></span><a class="headerlink" href="#discord_http.flags.SystemChannelFlags.suppress_join_notifications" title="Link to this definition">¶</a></dt>
@@ -1943,52 +2021,16 @@
 <span class="sig-name descname"><span class="pre">suppress_role_subscription_purchase_notifications_replies</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">32</span></span><a class="headerlink" href="#discord_http.flags.SystemChannelFlags.suppress_role_subscription_purchase_notifications_replies" title="Link to this definition">¶</a></dt>
 <dd></dd></dl>
 
-<dl class="py method">
-<dt class="sig sig-object py" id="discord_http.flags.SystemChannelFlags.all">
-<span class="property"><span class="k"><span class="pre">classmethod</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">all</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Self" title="(in Python v3.14)"><span class="pre">Self</span></a></span></span><a class="headerlink" href="#discord_http.flags.SystemChannelFlags.all" title="Link to this definition">¶</a></dt>
-<dd><p>Returns a flag with all the flags.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">Self</span></code></span></p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="discord_http.flags.SystemChannelFlags.none">
-<span class="property"><span class="k"><span class="pre">classmethod</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">none</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Self" title="(in Python v3.14)"><span class="pre">Self</span></a></span></span><a class="headerlink" href="#discord_http.flags.SystemChannelFlags.none" title="Link to this definition">¶</a></dt>
-<dd><p>Returns a flag with no flags.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">Self</span></code></span></p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="discord_http.flags.SystemChannelFlags.from_names">
-<span class="property"><span class="k"><span class="pre">classmethod</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">from_names</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Self" title="(in Python v3.14)"><span class="pre">Self</span></a></span></span><a class="headerlink" href="#discord_http.flags.SystemChannelFlags.from_names" title="Link to this definition">¶</a></dt>
-<dd><p>Create a flag from names.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>*args</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></span>) – The names of the flags to create</p>
-</dd>
-<dt class="field-even">Return type<span class="colon">:</span></dt>
-<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">Self</span></code></span></p>
-</dd>
-<dt class="field-odd">Returns<span class="colon">:</span></dt>
-<dd class="field-odd"><p>The flag with the added flags</p>
-</dd>
-<dt class="field-even">Raises<span class="colon">:</span></dt>
-<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#ValueError" title="(in Python v3.14)"><strong>ValueError</strong></a> – The flag name is not a valid flag</p>
-</dd>
-</dl>
+<dl class="py property">
+<dt class="sig sig-object py" id="discord_http.flags.SystemChannelFlags.pretty_name">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">pretty_name</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></span><a class="headerlink" href="#discord_http.flags.SystemChannelFlags.pretty_name" title="Link to this definition">¶</a></dt>
+<dd><p>A pretty name for the flag.</p>
 </dd></dl>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="discord_http.flags.SystemChannelFlags.list_names">
 <span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">list_names</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.14)"><span class="pre">list</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a><span class="p"><span class="pre">]</span></span></span><a class="headerlink" href="#discord_http.flags.SystemChannelFlags.list_names" title="Link to this definition">¶</a></dt>
-<dd><p>Returns a list of all the names of the flag.</p>
+<dd><p>A list of all the names of the flag.</p>
 </dd></dl>
 
 <dl class="py method">
@@ -2053,12 +2095,55 @@
 </dl>
 </dd></dl>
 
+<dl class="py method">
+<dt class="sig sig-object py" id="discord_http.flags.SystemChannelFlags.all">
+<span class="property"><span class="k"><span class="pre">classmethod</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">all</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Self" title="(in Python v3.14)"><span class="pre">Self</span></a></span></span><a class="headerlink" href="#discord_http.flags.SystemChannelFlags.all" title="Link to this definition">¶</a></dt>
+<dd><p>Returns a flag with all the flags.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">Self</span></code></span></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="discord_http.flags.SystemChannelFlags.none">
+<span class="property"><span class="k"><span class="pre">classmethod</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">none</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Self" title="(in Python v3.14)"><span class="pre">Self</span></a></span></span><a class="headerlink" href="#discord_http.flags.SystemChannelFlags.none" title="Link to this definition">¶</a></dt>
+<dd><p>Returns a flag with no flags.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">Self</span></code></span></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="discord_http.flags.SystemChannelFlags.from_names">
+<span class="property"><span class="k"><span class="pre">classmethod</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">from_names</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Self" title="(in Python v3.14)"><span class="pre">Self</span></a></span></span><a class="headerlink" href="#discord_http.flags.SystemChannelFlags.from_names" title="Link to this definition">¶</a></dt>
+<dd><p>Create a flag from names.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>*args</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></span>) – The names of the flags to create</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">Self</span></code></span></p>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The flag with the added flags</p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#ValueError" title="(in Python v3.14)"><strong>ValueError</strong></a> – The flag name is not a valid flag</p>
+</dd>
+</dl>
+</dd></dl>
+
 </dd></dl>
 
 <dl class="py class">
 <dt class="sig sig-object py" id="discord_http.flags.UserFlags">
 <span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">discord_http.flags.</span></span><span class="sig-name descname"><span class="pre">UserFlags</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#discord_http.flags.UserFlags" title="Link to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#discord_http.flags.BaseFlag" title="discord_http.flags.BaseFlag"><code class="xref py py-class docutils literal notranslate"><span class="pre">BaseFlag</span></code></a></p>
+<p>Represents the public flags on a user’s account.</p>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="discord_http.flags.UserFlags.staff">
 <span class="sig-name descname"><span class="pre">staff</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">1</span></span><a class="headerlink" href="#discord_http.flags.UserFlags.staff" title="Link to this definition">¶</a></dt>
@@ -2144,52 +2229,16 @@
 <span class="sig-name descname"><span class="pre">provisional_account</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">8388608</span></span><a class="headerlink" href="#discord_http.flags.UserFlags.provisional_account" title="Link to this definition">¶</a></dt>
 <dd></dd></dl>
 
-<dl class="py method">
-<dt class="sig sig-object py" id="discord_http.flags.UserFlags.all">
-<span class="property"><span class="k"><span class="pre">classmethod</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">all</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Self" title="(in Python v3.14)"><span class="pre">Self</span></a></span></span><a class="headerlink" href="#discord_http.flags.UserFlags.all" title="Link to this definition">¶</a></dt>
-<dd><p>Returns a flag with all the flags.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">Self</span></code></span></p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="discord_http.flags.UserFlags.none">
-<span class="property"><span class="k"><span class="pre">classmethod</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">none</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Self" title="(in Python v3.14)"><span class="pre">Self</span></a></span></span><a class="headerlink" href="#discord_http.flags.UserFlags.none" title="Link to this definition">¶</a></dt>
-<dd><p>Returns a flag with no flags.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">Self</span></code></span></p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="discord_http.flags.UserFlags.from_names">
-<span class="property"><span class="k"><span class="pre">classmethod</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">from_names</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Self" title="(in Python v3.14)"><span class="pre">Self</span></a></span></span><a class="headerlink" href="#discord_http.flags.UserFlags.from_names" title="Link to this definition">¶</a></dt>
-<dd><p>Create a flag from names.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>*args</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></span>) – The names of the flags to create</p>
-</dd>
-<dt class="field-even">Return type<span class="colon">:</span></dt>
-<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">Self</span></code></span></p>
-</dd>
-<dt class="field-odd">Returns<span class="colon">:</span></dt>
-<dd class="field-odd"><p>The flag with the added flags</p>
-</dd>
-<dt class="field-even">Raises<span class="colon">:</span></dt>
-<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#ValueError" title="(in Python v3.14)"><strong>ValueError</strong></a> – The flag name is not a valid flag</p>
-</dd>
-</dl>
+<dl class="py property">
+<dt class="sig sig-object py" id="discord_http.flags.UserFlags.pretty_name">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">pretty_name</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></span><a class="headerlink" href="#discord_http.flags.UserFlags.pretty_name" title="Link to this definition">¶</a></dt>
+<dd><p>A pretty name for the flag.</p>
 </dd></dl>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="discord_http.flags.UserFlags.list_names">
 <span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">list_names</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.14)"><span class="pre">list</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a><span class="p"><span class="pre">]</span></span></span><a class="headerlink" href="#discord_http.flags.UserFlags.list_names" title="Link to this definition">¶</a></dt>
-<dd><p>Returns a list of all the names of the flag.</p>
+<dd><p>A list of all the names of the flag.</p>
 </dd></dl>
 
 <dl class="py method">
@@ -2250,6 +2299,48 @@
 <dl class="field-list simple">
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">Self</span></code></span></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="discord_http.flags.UserFlags.all">
+<span class="property"><span class="k"><span class="pre">classmethod</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">all</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Self" title="(in Python v3.14)"><span class="pre">Self</span></a></span></span><a class="headerlink" href="#discord_http.flags.UserFlags.all" title="Link to this definition">¶</a></dt>
+<dd><p>Returns a flag with all the flags.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">Self</span></code></span></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="discord_http.flags.UserFlags.none">
+<span class="property"><span class="k"><span class="pre">classmethod</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">none</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Self" title="(in Python v3.14)"><span class="pre">Self</span></a></span></span><a class="headerlink" href="#discord_http.flags.UserFlags.none" title="Link to this definition">¶</a></dt>
+<dd><p>Returns a flag with no flags.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">Self</span></code></span></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="discord_http.flags.UserFlags.from_names">
+<span class="property"><span class="k"><span class="pre">classmethod</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">from_names</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Self" title="(in Python v3.14)"><span class="pre">Self</span></a></span></span><a class="headerlink" href="#discord_http.flags.UserFlags.from_names" title="Link to this definition">¶</a></dt>
+<dd><p>Create a flag from names.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>*args</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></span>) – The names of the flags to create</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">Self</span></code></span></p>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The flag with the added flags</p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#ValueError" title="(in Python v3.14)"><strong>ValueError</strong></a> – The flag name is not a valid flag</p>
 </dd>
 </dl>
 </dd></dl>
@@ -2327,65 +2418,72 @@
 <li><a class="reference internal" href="#discord_http.flags.ApplicationFlags.gateway_message_content"><code class="docutils literal notranslate"><span class="pre">ApplicationFlags.gateway_message_content</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.flags.ApplicationFlags.gateway_message_content_limited"><code class="docutils literal notranslate"><span class="pre">ApplicationFlags.gateway_message_content_limited</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.flags.ApplicationFlags.application_command_badge"><code class="docutils literal notranslate"><span class="pre">ApplicationFlags.application_command_badge</span></code></a></li>
-<li><a class="reference internal" href="#discord_http.flags.ApplicationFlags.all"><code class="docutils literal notranslate"><span class="pre">ApplicationFlags.all()</span></code></a></li>
-<li><a class="reference internal" href="#discord_http.flags.ApplicationFlags.none"><code class="docutils literal notranslate"><span class="pre">ApplicationFlags.none()</span></code></a></li>
-<li><a class="reference internal" href="#discord_http.flags.ApplicationFlags.from_names"><code class="docutils literal notranslate"><span class="pre">ApplicationFlags.from_names()</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.flags.ApplicationFlags.pretty_name"><code class="docutils literal notranslate"><span class="pre">ApplicationFlags.pretty_name</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.flags.ApplicationFlags.list_names"><code class="docutils literal notranslate"><span class="pre">ApplicationFlags.list_names</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.flags.ApplicationFlags.to_names"><code class="docutils literal notranslate"><span class="pre">ApplicationFlags.to_names()</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.flags.ApplicationFlags.add_flags"><code class="docutils literal notranslate"><span class="pre">ApplicationFlags.add_flags()</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.flags.ApplicationFlags.remove_flags"><code class="docutils literal notranslate"><span class="pre">ApplicationFlags.remove_flags()</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.flags.ApplicationFlags.copy"><code class="docutils literal notranslate"><span class="pre">ApplicationFlags.copy()</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.flags.ApplicationFlags.all"><code class="docutils literal notranslate"><span class="pre">ApplicationFlags.all()</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.flags.ApplicationFlags.none"><code class="docutils literal notranslate"><span class="pre">ApplicationFlags.none()</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.flags.ApplicationFlags.from_names"><code class="docutils literal notranslate"><span class="pre">ApplicationFlags.from_names()</span></code></a></li>
 </ul>
 </li>
 <li><a class="reference internal" href="#discord_http.flags.AttachmentFlags"><code class="docutils literal notranslate"><span class="pre">AttachmentFlags</span></code></a><ul>
-<li><a class="reference internal" href="#discord_http.flags.AttachmentFlags.clip"><code class="docutils literal notranslate"><span class="pre">AttachmentFlags.clip</span></code></a></li>
-<li><a class="reference internal" href="#discord_http.flags.AttachmentFlags.thumbnail"><code class="docutils literal notranslate"><span class="pre">AttachmentFlags.thumbnail</span></code></a></li>
-<li><a class="reference internal" href="#discord_http.flags.AttachmentFlags.remix"><code class="docutils literal notranslate"><span class="pre">AttachmentFlags.remix</span></code></a></li>
-<li><a class="reference internal" href="#discord_http.flags.AttachmentFlags.all"><code class="docutils literal notranslate"><span class="pre">AttachmentFlags.all()</span></code></a></li>
-<li><a class="reference internal" href="#discord_http.flags.AttachmentFlags.none"><code class="docutils literal notranslate"><span class="pre">AttachmentFlags.none()</span></code></a></li>
-<li><a class="reference internal" href="#discord_http.flags.AttachmentFlags.from_names"><code class="docutils literal notranslate"><span class="pre">AttachmentFlags.from_names()</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.flags.AttachmentFlags.is_clip"><code class="docutils literal notranslate"><span class="pre">AttachmentFlags.is_clip</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.flags.AttachmentFlags.is_thumbnail"><code class="docutils literal notranslate"><span class="pre">AttachmentFlags.is_thumbnail</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.flags.AttachmentFlags.is_remix"><code class="docutils literal notranslate"><span class="pre">AttachmentFlags.is_remix</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.flags.AttachmentFlags.is_spoiler"><code class="docutils literal notranslate"><span class="pre">AttachmentFlags.is_spoiler</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.flags.AttachmentFlags.is_animated"><code class="docutils literal notranslate"><span class="pre">AttachmentFlags.is_animated</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.flags.AttachmentFlags.pretty_name"><code class="docutils literal notranslate"><span class="pre">AttachmentFlags.pretty_name</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.flags.AttachmentFlags.list_names"><code class="docutils literal notranslate"><span class="pre">AttachmentFlags.list_names</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.flags.AttachmentFlags.to_names"><code class="docutils literal notranslate"><span class="pre">AttachmentFlags.to_names()</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.flags.AttachmentFlags.add_flags"><code class="docutils literal notranslate"><span class="pre">AttachmentFlags.add_flags()</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.flags.AttachmentFlags.remove_flags"><code class="docutils literal notranslate"><span class="pre">AttachmentFlags.remove_flags()</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.flags.AttachmentFlags.copy"><code class="docutils literal notranslate"><span class="pre">AttachmentFlags.copy()</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.flags.AttachmentFlags.all"><code class="docutils literal notranslate"><span class="pre">AttachmentFlags.all()</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.flags.AttachmentFlags.none"><code class="docutils literal notranslate"><span class="pre">AttachmentFlags.none()</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.flags.AttachmentFlags.from_names"><code class="docutils literal notranslate"><span class="pre">AttachmentFlags.from_names()</span></code></a></li>
 </ul>
 </li>
 <li><a class="reference internal" href="#discord_http.flags.BaseFlag"><code class="docutils literal notranslate"><span class="pre">BaseFlag</span></code></a><ul>
-<li><a class="reference internal" href="#discord_http.flags.BaseFlag.all"><code class="docutils literal notranslate"><span class="pre">BaseFlag.all()</span></code></a></li>
-<li><a class="reference internal" href="#discord_http.flags.BaseFlag.none"><code class="docutils literal notranslate"><span class="pre">BaseFlag.none()</span></code></a></li>
-<li><a class="reference internal" href="#discord_http.flags.BaseFlag.from_names"><code class="docutils literal notranslate"><span class="pre">BaseFlag.from_names()</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.flags.BaseFlag.pretty_name"><code class="docutils literal notranslate"><span class="pre">BaseFlag.pretty_name</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.flags.BaseFlag.list_names"><code class="docutils literal notranslate"><span class="pre">BaseFlag.list_names</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.flags.BaseFlag.to_names"><code class="docutils literal notranslate"><span class="pre">BaseFlag.to_names()</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.flags.BaseFlag.add_flags"><code class="docutils literal notranslate"><span class="pre">BaseFlag.add_flags()</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.flags.BaseFlag.remove_flags"><code class="docutils literal notranslate"><span class="pre">BaseFlag.remove_flags()</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.flags.BaseFlag.copy"><code class="docutils literal notranslate"><span class="pre">BaseFlag.copy()</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.flags.BaseFlag.all"><code class="docutils literal notranslate"><span class="pre">BaseFlag.all()</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.flags.BaseFlag.none"><code class="docutils literal notranslate"><span class="pre">BaseFlag.none()</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.flags.BaseFlag.from_names"><code class="docutils literal notranslate"><span class="pre">BaseFlag.from_names()</span></code></a></li>
 </ul>
 </li>
 <li><a class="reference internal" href="#discord_http.flags.ChannelFlags"><code class="docutils literal notranslate"><span class="pre">ChannelFlags</span></code></a><ul>
 <li><a class="reference internal" href="#discord_http.flags.ChannelFlags.pinned"><code class="docutils literal notranslate"><span class="pre">ChannelFlags.pinned</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.flags.ChannelFlags.require_tag"><code class="docutils literal notranslate"><span class="pre">ChannelFlags.require_tag</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.flags.ChannelFlags.hide_media_download_options"><code class="docutils literal notranslate"><span class="pre">ChannelFlags.hide_media_download_options</span></code></a></li>
-<li><a class="reference internal" href="#discord_http.flags.ChannelFlags.all"><code class="docutils literal notranslate"><span class="pre">ChannelFlags.all()</span></code></a></li>
-<li><a class="reference internal" href="#discord_http.flags.ChannelFlags.none"><code class="docutils literal notranslate"><span class="pre">ChannelFlags.none()</span></code></a></li>
-<li><a class="reference internal" href="#discord_http.flags.ChannelFlags.from_names"><code class="docutils literal notranslate"><span class="pre">ChannelFlags.from_names()</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.flags.ChannelFlags.pretty_name"><code class="docutils literal notranslate"><span class="pre">ChannelFlags.pretty_name</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.flags.ChannelFlags.list_names"><code class="docutils literal notranslate"><span class="pre">ChannelFlags.list_names</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.flags.ChannelFlags.to_names"><code class="docutils literal notranslate"><span class="pre">ChannelFlags.to_names()</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.flags.ChannelFlags.add_flags"><code class="docutils literal notranslate"><span class="pre">ChannelFlags.add_flags()</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.flags.ChannelFlags.remove_flags"><code class="docutils literal notranslate"><span class="pre">ChannelFlags.remove_flags()</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.flags.ChannelFlags.copy"><code class="docutils literal notranslate"><span class="pre">ChannelFlags.copy()</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.flags.ChannelFlags.all"><code class="docutils literal notranslate"><span class="pre">ChannelFlags.all()</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.flags.ChannelFlags.none"><code class="docutils literal notranslate"><span class="pre">ChannelFlags.none()</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.flags.ChannelFlags.from_names"><code class="docutils literal notranslate"><span class="pre">ChannelFlags.from_names()</span></code></a></li>
 </ul>
 </li>
 <li><a class="reference internal" href="#discord_http.flags.GuildInviteFlags"><code class="docutils literal notranslate"><span class="pre">GuildInviteFlags</span></code></a><ul>
 <li><a class="reference internal" href="#discord_http.flags.GuildInviteFlags.is_guest_invite"><code class="docutils literal notranslate"><span class="pre">GuildInviteFlags.is_guest_invite</span></code></a></li>
-<li><a class="reference internal" href="#discord_http.flags.GuildInviteFlags.all"><code class="docutils literal notranslate"><span class="pre">GuildInviteFlags.all()</span></code></a></li>
-<li><a class="reference internal" href="#discord_http.flags.GuildInviteFlags.none"><code class="docutils literal notranslate"><span class="pre">GuildInviteFlags.none()</span></code></a></li>
-<li><a class="reference internal" href="#discord_http.flags.GuildInviteFlags.from_names"><code class="docutils literal notranslate"><span class="pre">GuildInviteFlags.from_names()</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.flags.GuildInviteFlags.pretty_name"><code class="docutils literal notranslate"><span class="pre">GuildInviteFlags.pretty_name</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.flags.GuildInviteFlags.list_names"><code class="docutils literal notranslate"><span class="pre">GuildInviteFlags.list_names</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.flags.GuildInviteFlags.to_names"><code class="docutils literal notranslate"><span class="pre">GuildInviteFlags.to_names()</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.flags.GuildInviteFlags.add_flags"><code class="docutils literal notranslate"><span class="pre">GuildInviteFlags.add_flags()</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.flags.GuildInviteFlags.remove_flags"><code class="docutils literal notranslate"><span class="pre">GuildInviteFlags.remove_flags()</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.flags.GuildInviteFlags.copy"><code class="docutils literal notranslate"><span class="pre">GuildInviteFlags.copy()</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.flags.GuildInviteFlags.all"><code class="docutils literal notranslate"><span class="pre">GuildInviteFlags.all()</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.flags.GuildInviteFlags.none"><code class="docutils literal notranslate"><span class="pre">GuildInviteFlags.none()</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.flags.GuildInviteFlags.from_names"><code class="docutils literal notranslate"><span class="pre">GuildInviteFlags.from_names()</span></code></a></li>
 </ul>
 </li>
 <li><a class="reference internal" href="#discord_http.flags.GuildMemberFlags"><code class="docutils literal notranslate"><span class="pre">GuildMemberFlags</span></code></a><ul>
@@ -2398,14 +2496,15 @@
 <li><a class="reference internal" href="#discord_http.flags.GuildMemberFlags.completed_home_actions"><code class="docutils literal notranslate"><span class="pre">GuildMemberFlags.completed_home_actions</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.flags.GuildMemberFlags.automod_quarantined_username"><code class="docutils literal notranslate"><span class="pre">GuildMemberFlags.automod_quarantined_username</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.flags.GuildMemberFlags.dm_settings_upsell_acknowledged"><code class="docutils literal notranslate"><span class="pre">GuildMemberFlags.dm_settings_upsell_acknowledged</span></code></a></li>
-<li><a class="reference internal" href="#discord_http.flags.GuildMemberFlags.all"><code class="docutils literal notranslate"><span class="pre">GuildMemberFlags.all()</span></code></a></li>
-<li><a class="reference internal" href="#discord_http.flags.GuildMemberFlags.none"><code class="docutils literal notranslate"><span class="pre">GuildMemberFlags.none()</span></code></a></li>
-<li><a class="reference internal" href="#discord_http.flags.GuildMemberFlags.from_names"><code class="docutils literal notranslate"><span class="pre">GuildMemberFlags.from_names()</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.flags.GuildMemberFlags.pretty_name"><code class="docutils literal notranslate"><span class="pre">GuildMemberFlags.pretty_name</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.flags.GuildMemberFlags.list_names"><code class="docutils literal notranslate"><span class="pre">GuildMemberFlags.list_names</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.flags.GuildMemberFlags.to_names"><code class="docutils literal notranslate"><span class="pre">GuildMemberFlags.to_names()</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.flags.GuildMemberFlags.add_flags"><code class="docutils literal notranslate"><span class="pre">GuildMemberFlags.add_flags()</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.flags.GuildMemberFlags.remove_flags"><code class="docutils literal notranslate"><span class="pre">GuildMemberFlags.remove_flags()</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.flags.GuildMemberFlags.copy"><code class="docutils literal notranslate"><span class="pre">GuildMemberFlags.copy()</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.flags.GuildMemberFlags.all"><code class="docutils literal notranslate"><span class="pre">GuildMemberFlags.all()</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.flags.GuildMemberFlags.none"><code class="docutils literal notranslate"><span class="pre">GuildMemberFlags.none()</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.flags.GuildMemberFlags.from_names"><code class="docutils literal notranslate"><span class="pre">GuildMemberFlags.from_names()</span></code></a></li>
 </ul>
 </li>
 <li><a class="reference internal" href="#discord_http.flags.MessageFlags"><code class="docutils literal notranslate"><span class="pre">MessageFlags</span></code></a><ul>
@@ -2421,14 +2520,15 @@
 <li><a class="reference internal" href="#discord_http.flags.MessageFlags.suppress_notifications"><code class="docutils literal notranslate"><span class="pre">MessageFlags.suppress_notifications</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.flags.MessageFlags.is_voice_message"><code class="docutils literal notranslate"><span class="pre">MessageFlags.is_voice_message</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.flags.MessageFlags.is_components_v2"><code class="docutils literal notranslate"><span class="pre">MessageFlags.is_components_v2</span></code></a></li>
-<li><a class="reference internal" href="#discord_http.flags.MessageFlags.all"><code class="docutils literal notranslate"><span class="pre">MessageFlags.all()</span></code></a></li>
-<li><a class="reference internal" href="#discord_http.flags.MessageFlags.none"><code class="docutils literal notranslate"><span class="pre">MessageFlags.none()</span></code></a></li>
-<li><a class="reference internal" href="#discord_http.flags.MessageFlags.from_names"><code class="docutils literal notranslate"><span class="pre">MessageFlags.from_names()</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.flags.MessageFlags.pretty_name"><code class="docutils literal notranslate"><span class="pre">MessageFlags.pretty_name</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.flags.MessageFlags.list_names"><code class="docutils literal notranslate"><span class="pre">MessageFlags.list_names</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.flags.MessageFlags.to_names"><code class="docutils literal notranslate"><span class="pre">MessageFlags.to_names()</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.flags.MessageFlags.add_flags"><code class="docutils literal notranslate"><span class="pre">MessageFlags.add_flags()</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.flags.MessageFlags.remove_flags"><code class="docutils literal notranslate"><span class="pre">MessageFlags.remove_flags()</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.flags.MessageFlags.copy"><code class="docutils literal notranslate"><span class="pre">MessageFlags.copy()</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.flags.MessageFlags.all"><code class="docutils literal notranslate"><span class="pre">MessageFlags.all()</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.flags.MessageFlags.none"><code class="docutils literal notranslate"><span class="pre">MessageFlags.none()</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.flags.MessageFlags.from_names"><code class="docutils literal notranslate"><span class="pre">MessageFlags.from_names()</span></code></a></li>
 </ul>
 </li>
 <li><a class="reference internal" href="#discord_http.flags.PermissionOverwrite"><code class="docutils literal notranslate"><span class="pre">PermissionOverwrite</span></code></a><ul>
@@ -2495,28 +2595,30 @@
 <li><a class="reference internal" href="#discord_http.flags.Permissions.send_polls"><code class="docutils literal notranslate"><span class="pre">Permissions.send_polls</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.flags.Permissions.use_external_apps"><code class="docutils literal notranslate"><span class="pre">Permissions.use_external_apps</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.flags.Permissions.handle_overwrite"><code class="docutils literal notranslate"><span class="pre">Permissions.handle_overwrite()</span></code></a></li>
-<li><a class="reference internal" href="#discord_http.flags.Permissions.all"><code class="docutils literal notranslate"><span class="pre">Permissions.all()</span></code></a></li>
-<li><a class="reference internal" href="#discord_http.flags.Permissions.none"><code class="docutils literal notranslate"><span class="pre">Permissions.none()</span></code></a></li>
-<li><a class="reference internal" href="#discord_http.flags.Permissions.from_names"><code class="docutils literal notranslate"><span class="pre">Permissions.from_names()</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.flags.Permissions.pretty_name"><code class="docutils literal notranslate"><span class="pre">Permissions.pretty_name</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.flags.Permissions.list_names"><code class="docutils literal notranslate"><span class="pre">Permissions.list_names</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.flags.Permissions.to_names"><code class="docutils literal notranslate"><span class="pre">Permissions.to_names()</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.flags.Permissions.add_flags"><code class="docutils literal notranslate"><span class="pre">Permissions.add_flags()</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.flags.Permissions.remove_flags"><code class="docutils literal notranslate"><span class="pre">Permissions.remove_flags()</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.flags.Permissions.copy"><code class="docutils literal notranslate"><span class="pre">Permissions.copy()</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.flags.Permissions.all"><code class="docutils literal notranslate"><span class="pre">Permissions.all()</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.flags.Permissions.none"><code class="docutils literal notranslate"><span class="pre">Permissions.none()</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.flags.Permissions.from_names"><code class="docutils literal notranslate"><span class="pre">Permissions.from_names()</span></code></a></li>
 </ul>
 </li>
 <li><a class="reference internal" href="#discord_http.flags.SKUFlags"><code class="docutils literal notranslate"><span class="pre">SKUFlags</span></code></a><ul>
 <li><a class="reference internal" href="#discord_http.flags.SKUFlags.available"><code class="docutils literal notranslate"><span class="pre">SKUFlags.available</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.flags.SKUFlags.guild_subscription"><code class="docutils literal notranslate"><span class="pre">SKUFlags.guild_subscription</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.flags.SKUFlags.user_subscription"><code class="docutils literal notranslate"><span class="pre">SKUFlags.user_subscription</span></code></a></li>
-<li><a class="reference internal" href="#discord_http.flags.SKUFlags.all"><code class="docutils literal notranslate"><span class="pre">SKUFlags.all()</span></code></a></li>
-<li><a class="reference internal" href="#discord_http.flags.SKUFlags.none"><code class="docutils literal notranslate"><span class="pre">SKUFlags.none()</span></code></a></li>
-<li><a class="reference internal" href="#discord_http.flags.SKUFlags.from_names"><code class="docutils literal notranslate"><span class="pre">SKUFlags.from_names()</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.flags.SKUFlags.pretty_name"><code class="docutils literal notranslate"><span class="pre">SKUFlags.pretty_name</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.flags.SKUFlags.list_names"><code class="docutils literal notranslate"><span class="pre">SKUFlags.list_names</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.flags.SKUFlags.to_names"><code class="docutils literal notranslate"><span class="pre">SKUFlags.to_names()</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.flags.SKUFlags.add_flags"><code class="docutils literal notranslate"><span class="pre">SKUFlags.add_flags()</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.flags.SKUFlags.remove_flags"><code class="docutils literal notranslate"><span class="pre">SKUFlags.remove_flags()</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.flags.SKUFlags.copy"><code class="docutils literal notranslate"><span class="pre">SKUFlags.copy()</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.flags.SKUFlags.all"><code class="docutils literal notranslate"><span class="pre">SKUFlags.all()</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.flags.SKUFlags.none"><code class="docutils literal notranslate"><span class="pre">SKUFlags.none()</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.flags.SKUFlags.from_names"><code class="docutils literal notranslate"><span class="pre">SKUFlags.from_names()</span></code></a></li>
 </ul>
 </li>
 <li><a class="reference internal" href="#discord_http.flags.SystemChannelFlags"><code class="docutils literal notranslate"><span class="pre">SystemChannelFlags</span></code></a><ul>
@@ -2526,14 +2628,15 @@
 <li><a class="reference internal" href="#discord_http.flags.SystemChannelFlags.suppress_join_notification_replies"><code class="docutils literal notranslate"><span class="pre">SystemChannelFlags.suppress_join_notification_replies</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.flags.SystemChannelFlags.suppress_role_subscription_purchase_notifications"><code class="docutils literal notranslate"><span class="pre">SystemChannelFlags.suppress_role_subscription_purchase_notifications</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.flags.SystemChannelFlags.suppress_role_subscription_purchase_notifications_replies"><code class="docutils literal notranslate"><span class="pre">SystemChannelFlags.suppress_role_subscription_purchase_notifications_replies</span></code></a></li>
-<li><a class="reference internal" href="#discord_http.flags.SystemChannelFlags.all"><code class="docutils literal notranslate"><span class="pre">SystemChannelFlags.all()</span></code></a></li>
-<li><a class="reference internal" href="#discord_http.flags.SystemChannelFlags.none"><code class="docutils literal notranslate"><span class="pre">SystemChannelFlags.none()</span></code></a></li>
-<li><a class="reference internal" href="#discord_http.flags.SystemChannelFlags.from_names"><code class="docutils literal notranslate"><span class="pre">SystemChannelFlags.from_names()</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.flags.SystemChannelFlags.pretty_name"><code class="docutils literal notranslate"><span class="pre">SystemChannelFlags.pretty_name</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.flags.SystemChannelFlags.list_names"><code class="docutils literal notranslate"><span class="pre">SystemChannelFlags.list_names</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.flags.SystemChannelFlags.to_names"><code class="docutils literal notranslate"><span class="pre">SystemChannelFlags.to_names()</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.flags.SystemChannelFlags.add_flags"><code class="docutils literal notranslate"><span class="pre">SystemChannelFlags.add_flags()</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.flags.SystemChannelFlags.remove_flags"><code class="docutils literal notranslate"><span class="pre">SystemChannelFlags.remove_flags()</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.flags.SystemChannelFlags.copy"><code class="docutils literal notranslate"><span class="pre">SystemChannelFlags.copy()</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.flags.SystemChannelFlags.all"><code class="docutils literal notranslate"><span class="pre">SystemChannelFlags.all()</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.flags.SystemChannelFlags.none"><code class="docutils literal notranslate"><span class="pre">SystemChannelFlags.none()</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.flags.SystemChannelFlags.from_names"><code class="docutils literal notranslate"><span class="pre">SystemChannelFlags.from_names()</span></code></a></li>
 </ul>
 </li>
 <li><a class="reference internal" href="#discord_http.flags.UserFlags"><code class="docutils literal notranslate"><span class="pre">UserFlags</span></code></a><ul>
@@ -2554,14 +2657,15 @@
 <li><a class="reference internal" href="#discord_http.flags.UserFlags.spammer"><code class="docutils literal notranslate"><span class="pre">UserFlags.spammer</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.flags.UserFlags.active_developer"><code class="docutils literal notranslate"><span class="pre">UserFlags.active_developer</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.flags.UserFlags.provisional_account"><code class="docutils literal notranslate"><span class="pre">UserFlags.provisional_account</span></code></a></li>
-<li><a class="reference internal" href="#discord_http.flags.UserFlags.all"><code class="docutils literal notranslate"><span class="pre">UserFlags.all()</span></code></a></li>
-<li><a class="reference internal" href="#discord_http.flags.UserFlags.none"><code class="docutils literal notranslate"><span class="pre">UserFlags.none()</span></code></a></li>
-<li><a class="reference internal" href="#discord_http.flags.UserFlags.from_names"><code class="docutils literal notranslate"><span class="pre">UserFlags.from_names()</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.flags.UserFlags.pretty_name"><code class="docutils literal notranslate"><span class="pre">UserFlags.pretty_name</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.flags.UserFlags.list_names"><code class="docutils literal notranslate"><span class="pre">UserFlags.list_names</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.flags.UserFlags.to_names"><code class="docutils literal notranslate"><span class="pre">UserFlags.to_names()</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.flags.UserFlags.add_flags"><code class="docutils literal notranslate"><span class="pre">UserFlags.add_flags()</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.flags.UserFlags.remove_flags"><code class="docutils literal notranslate"><span class="pre">UserFlags.remove_flags()</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.flags.UserFlags.copy"><code class="docutils literal notranslate"><span class="pre">UserFlags.copy()</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.flags.UserFlags.all"><code class="docutils literal notranslate"><span class="pre">UserFlags.all()</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.flags.UserFlags.none"><code class="docutils literal notranslate"><span class="pre">UserFlags.none()</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.flags.UserFlags.from_names"><code class="docutils literal notranslate"><span class="pre">UserFlags.from_names()</span></code></a></li>
 </ul>
 </li>
 </ul>

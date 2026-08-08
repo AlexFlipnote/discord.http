@@ -539,7 +539,7 @@ Example:</p></li>
 <dl class="py property">
 <dt class="sig sig-object py" id="discord_http.message.JumpURL.channel">
 <span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">channel</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="channel.html#discord_http.channel.BaseChannel" title="discord_http.channel.BaseChannel"><span class="pre">BaseChannel</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="channel.html#discord_http.channel.PartialChannel" title="discord_http.channel.PartialChannel"><span class="pre">PartialChannel</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span><a class="headerlink" href="#discord_http.message.JumpURL.channel" title="Link to this definition">¶</a></dt>
-<dd><p>Returns the channel the message was sent in.</p>
+<dd><p>The channel the message was sent in.</p>
 <p>If guild and channel cache is enabled, it can also return full channel object.</p>
 </dd></dl>
 
@@ -557,7 +557,7 @@ Example:</p></li>
 <dl class="py property">
 <dt class="sig sig-object py" id="discord_http.message.JumpURL.message">
 <span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">message</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="#discord_http.message.PartialMessage" title="discord_http.message.PartialMessage"><span class="pre">PartialMessage</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span><a class="headerlink" href="#discord_http.message.JumpURL.message" title="Link to this definition">¶</a></dt>
-<dd><p>Returns the message if a message_id is available.</p>
+<dd><p>The message if a message_id is available.</p>
 </dd></dl>
 
 <dl class="py method">
@@ -574,7 +574,7 @@ Example:</p></li>
 <dl class="py property">
 <dt class="sig sig-object py" id="discord_http.message.JumpURL.url">
 <span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">url</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></span><a class="headerlink" href="#discord_http.message.JumpURL.url" title="Link to this definition">¶</a></dt>
-<dd><p>Returns the jump URL.</p>
+<dd><p>The jump URL.</p>
 </dd></dl>
 
 </dd></dl>
@@ -610,7 +610,7 @@ Example:</p></li>
 <dl class="py property">
 <dt class="sig sig-object py" id="discord_http.message.Message.channel">
 <span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">channel</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="channel.html#discord_http.channel.BaseChannel" title="discord_http.channel.BaseChannel"><span class="pre">BaseChannel</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="channel.html#discord_http.channel.PartialChannel" title="discord_http.channel.PartialChannel"><span class="pre">PartialChannel</span></a></span><a class="headerlink" href="#discord_http.message.Message.channel" title="Link to this definition">¶</a></dt>
-<dd><p>Returns the channel the message was sent in.</p>
+<dd><p>The channel the message was sent in.</p>
 </dd></dl>
 
 <dl class="py attribute">
@@ -767,7 +767,7 @@ Example:</p></li>
 <dl class="py property">
 <dt class="sig sig-object py" id="discord_http.message.Message.guild">
 <span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">guild</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="guild.html#discord_http.guild.Guild" title="discord_http.guild.Guild"><span class="pre">Guild</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="guild.html#discord_http.guild.PartialGuild" title="discord_http.guild.PartialGuild"><span class="pre">PartialGuild</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span><a class="headerlink" href="#discord_http.message.Message.guild" title="Link to this definition">¶</a></dt>
-<dd><p>Returns the guild the message was sent in.</p>
+<dd><p>The guild the message was sent in.</p>
 </dd></dl>
 
 <dl class="py attribute">
@@ -1000,33 +1000,33 @@ Example:</p></li>
 <dl class="py property">
 <dt class="sig sig-object py" id="discord_http.message.Message.emojis">
 <span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">emojis</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.14)"><span class="pre">list</span></a><span class="p"><span class="pre">[</span></span><a class="reference internal" href="emoji.html#discord_http.emoji.EmojiParser" title="discord_http.emoji.EmojiParser"><span class="pre">EmojiParser</span></a><span class="p"><span class="pre">]</span></span></span><a class="headerlink" href="#discord_http.message.Message.emojis" title="Link to this definition">¶</a></dt>
-<dd><p>Returns the emojis in the message.</p>
+<dd><p>The emojis in the message.</p>
 </dd></dl>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="discord_http.message.Message.jump_url">
 <span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">jump_url</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="#discord_http.message.JumpURL" title="discord_http.message.JumpURL"><span class="pre">JumpURL</span></a></span><a class="headerlink" href="#discord_http.message.Message.jump_url" title="Link to this definition">¶</a></dt>
-<dd><p>Returns the jump URL of the message.</p>
+<dd><p>The jump URL of the message.</p>
 </dd></dl>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="discord_http.message.Message.role_mentions">
 <span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">role_mentions</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.14)"><span class="pre">list</span></a><span class="p"><span class="pre">[</span></span><a class="reference internal" href="role.html#discord_http.role.Role" title="discord_http.role.Role"><span class="pre">Role</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="role.html#discord_http.role.PartialRole" title="discord_http.role.PartialRole"><span class="pre">PartialRole</span></a><span class="p"><span class="pre">]</span></span></span><a class="headerlink" href="#discord_http.message.Message.role_mentions" title="Link to this definition">¶</a></dt>
-<dd><p>Returns the role mentions in the message.</p>
+<dd><p>The role mentions in the message.</p>
 <p>Can return full role object if guild and role cache is enabled</p>
 </dd></dl>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="discord_http.message.Message.channel_mentions">
 <span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">channel_mentions</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.14)"><span class="pre">list</span></a><span class="p"><span class="pre">[</span></span><a class="reference internal" href="channel.html#discord_http.channel.BaseChannel" title="discord_http.channel.BaseChannel"><span class="pre">BaseChannel</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="channel.html#discord_http.channel.PartialChannel" title="discord_http.channel.PartialChannel"><span class="pre">PartialChannel</span></a><span class="p"><span class="pre">]</span></span></span><a class="headerlink" href="#discord_http.message.Message.channel_mentions" title="Link to this definition">¶</a></dt>
-<dd><p>Returns the channel mentions in the message.</p>
+<dd><p>The channel mentions in the message.</p>
 <p>Can return full role object if guild and channel cache is enabled</p>
 </dd></dl>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="discord_http.message.Message.jump_urls">
 <span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">jump_urls</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.14)"><span class="pre">list</span></a><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#discord_http.message.JumpURL" title="discord_http.message.JumpURL"><span class="pre">JumpURL</span></a><span class="p"><span class="pre">]</span></span></span><a class="headerlink" href="#discord_http.message.Message.jump_urls" title="Link to this definition">¶</a></dt>
-<dd><p>Returns the jump URLs in the message.</p>
+<dd><p>The jump URLs in the message.</p>
 </dd></dl>
 
 </dd></dl>
@@ -1236,13 +1236,13 @@ If none provided, it will remove the reaction from the bot</p>
 <dl class="py property">
 <dt class="sig sig-object py" id="discord_http.message.MessageReference.channel">
 <span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">channel</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="channel.html#discord_http.channel.PartialChannel" title="discord_http.channel.PartialChannel"><span class="pre">PartialChannel</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span><a class="headerlink" href="#discord_http.message.MessageReference.channel" title="Link to this definition">¶</a></dt>
-<dd><p>Returns the channel the message was sent in.</p>
+<dd><p>The channel the message was sent in.</p>
 </dd></dl>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="discord_http.message.MessageReference.message">
 <span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">message</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="#discord_http.message.PartialMessage" title="discord_http.message.PartialMessage"><span class="pre">PartialMessage</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span><a class="headerlink" href="#discord_http.message.MessageReference.message" title="Link to this definition">¶</a></dt>
-<dd><p>Returns the message if a message_id and channel_id is available.</p>
+<dd><p>The message if a message_id and channel_id is available.</p>
 </dd></dl>
 
 <dl class="py method">
@@ -1288,19 +1288,19 @@ If none provided, it will remove the reaction from the bot</p>
 <dl class="py property">
 <dt class="sig sig-object py" id="discord_http.message.PartialMessage.channel">
 <span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">channel</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="channel.html#discord_http.channel.BaseChannel" title="discord_http.channel.BaseChannel"><span class="pre">BaseChannel</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="channel.html#discord_http.channel.PartialChannel" title="discord_http.channel.PartialChannel"><span class="pre">PartialChannel</span></a></span><a class="headerlink" href="#discord_http.message.PartialMessage.channel" title="Link to this definition">¶</a></dt>
-<dd><p>Returns the channel the message was sent in.</p>
+<dd><p>The channel the message was sent in.</p>
 </dd></dl>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="discord_http.message.PartialMessage.guild">
 <span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">guild</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="guild.html#discord_http.guild.Guild" title="discord_http.guild.Guild"><span class="pre">Guild</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="guild.html#discord_http.guild.PartialGuild" title="discord_http.guild.PartialGuild"><span class="pre">PartialGuild</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span><a class="headerlink" href="#discord_http.message.PartialMessage.guild" title="Link to this definition">¶</a></dt>
-<dd><p>Returns the guild the message was sent in.</p>
+<dd><p>The guild the message was sent in.</p>
 </dd></dl>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="discord_http.message.PartialMessage.jump_url">
 <span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">jump_url</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="#discord_http.message.JumpURL" title="discord_http.message.JumpURL"><span class="pre">JumpURL</span></a></span><a class="headerlink" href="#discord_http.message.PartialMessage.jump_url" title="Link to this definition">¶</a></dt>
-<dd><p>Returns the jump URL of the message, GuildID will always be &#64;me.</p>
+<dd><p>The jump URL of the message, GuildID will always be &#64;me.</p>
 </dd></dl>
 
 <dl class="py method">
@@ -1495,18 +1495,6 @@ If none provided, it will remove the reaction from the bot</p>
 </dl>
 </dd></dl>
 
-<dl class="py property">
-<dt class="sig sig-object py" id="discord_http.message.PartialMessage.created_at">
-<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">created_at</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/datetime.html#datetime.datetime" title="(in Python v3.14)"><span class="pre">datetime</span></a></span><a class="headerlink" href="#discord_http.message.PartialMessage.created_at" title="Link to this definition">¶</a></dt>
-<dd><p>The datetime of the snowflake.</p>
-</dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="discord_http.message.PartialMessage.id">
-<span class="sig-name descname"><span class="pre">id</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><span class="pre">int</span></a></span><a class="headerlink" href="#discord_http.message.PartialMessage.id" title="Link to this definition">¶</a></dt>
-<dd><p>The ID of the snowflake.</p>
-</dd></dl>
-
 <dl class="py method">
 <dt class="sig sig-object py" id="discord_http.message.PartialMessage.remove_reaction">
 <span class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">remove_reaction</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">emoji</span></span></em>, <em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">user_id</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span></span><a class="headerlink" href="#discord_http.message.PartialMessage.remove_reaction" title="Link to this definition">¶</a></dt>
@@ -1562,6 +1550,18 @@ If none provided, it will remove the reaction from the bot</p>
 </p>
 </dd>
 </dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="discord_http.message.PartialMessage.created_at">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">created_at</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/datetime.html#datetime.datetime" title="(in Python v3.14)"><span class="pre">datetime</span></a></span><a class="headerlink" href="#discord_http.message.PartialMessage.created_at" title="Link to this definition">¶</a></dt>
+<dd><p>The datetime of the snowflake.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.message.PartialMessage.id">
+<span class="sig-name descname"><span class="pre">id</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><span class="pre">int</span></a></span><a class="headerlink" href="#discord_http.message.PartialMessage.id" title="Link to this definition">¶</a></dt>
+<dd><p>The ID of the snowflake.</p>
 </dd></dl>
 
 </dd></dl>
@@ -1731,7 +1731,7 @@ If none provided, it will remove the reaction from the bot</p>
 <dl class="py property">
 <dt class="sig sig-object py" id="discord_http.message.WebhookMessage.channel">
 <span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">channel</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="channel.html#discord_http.channel.BaseChannel" title="discord_http.channel.BaseChannel"><span class="pre">BaseChannel</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="channel.html#discord_http.channel.PartialChannel" title="discord_http.channel.PartialChannel"><span class="pre">PartialChannel</span></a></span><a class="headerlink" href="#discord_http.message.WebhookMessage.channel" title="Link to this definition">¶</a></dt>
-<dd><p>Returns the channel the message was sent in.</p>
+<dd><p>The channel the message was sent in.</p>
 </dd></dl>
 
 <dl class="py attribute">
@@ -1743,7 +1743,7 @@ If none provided, it will remove the reaction from the bot</p>
 <dl class="py property">
 <dt class="sig sig-object py" id="discord_http.message.WebhookMessage.channel_mentions">
 <span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">channel_mentions</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.14)"><span class="pre">list</span></a><span class="p"><span class="pre">[</span></span><a class="reference internal" href="channel.html#discord_http.channel.BaseChannel" title="discord_http.channel.BaseChannel"><span class="pre">BaseChannel</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="channel.html#discord_http.channel.PartialChannel" title="discord_http.channel.PartialChannel"><span class="pre">PartialChannel</span></a><span class="p"><span class="pre">]</span></span></span><a class="headerlink" href="#discord_http.message.WebhookMessage.channel_mentions" title="Link to this definition">¶</a></dt>
-<dd><p>Returns the channel mentions in the message.</p>
+<dd><p>The channel mentions in the message.</p>
 <p>Can return full role object if guild and channel cache is enabled</p>
 </dd></dl>
 
@@ -1803,7 +1803,7 @@ If none provided, it will remove the reaction from the bot</p>
 <dl class="py property">
 <dt class="sig sig-object py" id="discord_http.message.WebhookMessage.emojis">
 <span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">emojis</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.14)"><span class="pre">list</span></a><span class="p"><span class="pre">[</span></span><a class="reference internal" href="emoji.html#discord_http.emoji.EmojiParser" title="discord_http.emoji.EmojiParser"><span class="pre">EmojiParser</span></a><span class="p"><span class="pre">]</span></span></span><a class="headerlink" href="#discord_http.message.WebhookMessage.emojis" title="Link to this definition">¶</a></dt>
-<dd><p>Returns the emojis in the message.</p>
+<dd><p>The emojis in the message.</p>
 </dd></dl>
 
 <dl class="py method">
@@ -1875,7 +1875,7 @@ If none provided, it will remove the reaction from the bot</p>
 <dl class="py property">
 <dt class="sig sig-object py" id="discord_http.message.WebhookMessage.guild">
 <span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">guild</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="guild.html#discord_http.guild.Guild" title="discord_http.guild.Guild"><span class="pre">Guild</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="guild.html#discord_http.guild.PartialGuild" title="discord_http.guild.PartialGuild"><span class="pre">PartialGuild</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span><a class="headerlink" href="#discord_http.message.WebhookMessage.guild" title="Link to this definition">¶</a></dt>
-<dd><p>Returns the guild the message was sent in.</p>
+<dd><p>The guild the message was sent in.</p>
 </dd></dl>
 
 <dl class="py attribute">
@@ -1910,13 +1910,13 @@ If none provided, it will remove the reaction from the bot</p>
 <dl class="py property">
 <dt class="sig sig-object py" id="discord_http.message.WebhookMessage.jump_url">
 <span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">jump_url</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="#discord_http.message.JumpURL" title="discord_http.message.JumpURL"><span class="pre">JumpURL</span></a></span><a class="headerlink" href="#discord_http.message.WebhookMessage.jump_url" title="Link to this definition">¶</a></dt>
-<dd><p>Returns the jump URL of the message.</p>
+<dd><p>The jump URL of the message.</p>
 </dd></dl>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="discord_http.message.WebhookMessage.jump_urls">
 <span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">jump_urls</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.14)"><span class="pre">list</span></a><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#discord_http.message.JumpURL" title="discord_http.message.JumpURL"><span class="pre">JumpURL</span></a><span class="p"><span class="pre">]</span></span></span><a class="headerlink" href="#discord_http.message.WebhookMessage.jump_urls" title="Link to this definition">¶</a></dt>
-<dd><p>Returns the jump URLs in the message.</p>
+<dd><p>The jump URLs in the message.</p>
 </dd></dl>
 
 <dl class="py attribute">
@@ -2052,7 +2052,7 @@ If none provided, it will remove the reaction from the bot</p>
 <dl class="py property">
 <dt class="sig sig-object py" id="discord_http.message.WebhookMessage.role_mentions">
 <span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">role_mentions</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.14)"><span class="pre">list</span></a><span class="p"><span class="pre">[</span></span><a class="reference internal" href="role.html#discord_http.role.Role" title="discord_http.role.Role"><span class="pre">Role</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="role.html#discord_http.role.PartialRole" title="discord_http.role.PartialRole"><span class="pre">PartialRole</span></a><span class="p"><span class="pre">]</span></span></span><a class="headerlink" href="#discord_http.message.WebhookMessage.role_mentions" title="Link to this definition">¶</a></dt>
-<dd><p>Returns the role mentions in the message.</p>
+<dd><p>The role mentions in the message.</p>
 <p>Can return full role object if guild and role cache is enabled</p>
 </dd></dl>
 
@@ -2344,11 +2344,11 @@ If none provided, it will remove the reaction from the bot</p>
 <li><a class="reference internal" href="#discord_http.message.PartialMessage.pin"><code class="docutils literal notranslate"><span class="pre">PartialMessage.pin()</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.message.PartialMessage.unpin"><code class="docutils literal notranslate"><span class="pre">PartialMessage.unpin()</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.message.PartialMessage.add_reaction"><code class="docutils literal notranslate"><span class="pre">PartialMessage.add_reaction()</span></code></a></li>
-<li><a class="reference internal" href="#discord_http.message.PartialMessage.created_at"><code class="docutils literal notranslate"><span class="pre">PartialMessage.created_at</span></code></a></li>
-<li><a class="reference internal" href="#discord_http.message.PartialMessage.id"><code class="docutils literal notranslate"><span class="pre">PartialMessage.id</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.message.PartialMessage.remove_reaction"><code class="docutils literal notranslate"><span class="pre">PartialMessage.remove_reaction()</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.message.PartialMessage.remove_all_reactions"><code class="docutils literal notranslate"><span class="pre">PartialMessage.remove_all_reactions()</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.message.PartialMessage.create_public_thread"><code class="docutils literal notranslate"><span class="pre">PartialMessage.create_public_thread()</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.message.PartialMessage.created_at"><code class="docutils literal notranslate"><span class="pre">PartialMessage.created_at</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.message.PartialMessage.id"><code class="docutils literal notranslate"><span class="pre">PartialMessage.id</span></code></a></li>
 </ul>
 </li>
 <li><a class="reference internal" href="#discord_http.message.Poll"><code class="docutils literal notranslate"><span class="pre">Poll</span></code></a><ul>

@@ -306,6 +306,24 @@
 <dt>value:</dt><dd><p>The value of your choice (the one that is shown to public)</p>
 </dd>
 </dl>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.commands.Choice.key">
+<span class="sig-name descname"><span class="pre">key</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ChoiceT</span></span><a class="headerlink" href="#discord_http.commands.Choice.key" title="Link to this definition">¶</a></dt>
+<dd><p>The key of the choice (the internal value sent to the command).</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.commands.Choice.value">
+<span class="sig-name descname"><span class="pre">value</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ChoiceT</span></span><a class="headerlink" href="#discord_http.commands.Choice.value" title="Link to this definition">¶</a></dt>
+<dd><p>The value of the choice (the label shown to the user).</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.commands.Choice.type">
+<span class="sig-name descname"><span class="pre">type</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="enums.html#discord_http.enums.CommandOptionType" title="discord_http.enums.CommandOptionType"><span class="pre">CommandOptionType</span></a></span><a class="headerlink" href="#discord_http.commands.Choice.type" title="Link to this definition">¶</a></dt>
+<dd><p>The option type of the choice, inferred from the key type.</p>
+</dd></dl>
+
 </section>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -440,13 +458,13 @@
 <dl class="py property">
 <dt class="sig sig-object py" id="discord_http.commands.Command.mention">
 <span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">mention</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></span><a class="headerlink" href="#discord_http.commands.Command.mention" title="Link to this definition">¶</a></dt>
-<dd><p>Returns a mentionable string for the command.</p>
+<dd><p>A mentionable string for the command.</p>
 </dd></dl>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="discord_http.commands.Command.cooldown">
 <span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">cooldown</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="cooldowns.html#discord_http.cooldowns.CooldownCache" title="discord_http.cooldowns.CooldownCache"><span class="pre">CooldownCache</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span><a class="headerlink" href="#discord_http.commands.Command.cooldown" title="Link to this definition">¶</a></dt>
-<dd><p>Returns the cooldown rule of the command if available.</p>
+<dd><p>The cooldown rule of the command if available.</p>
 </dd></dl>
 
 <dl class="py method">
@@ -881,7 +899,7 @@ use this to convert the value on runtime, both in sync and async mode.</p>
 <dl class="py property">
 <dt class="sig sig-object py" id="discord_http.commands.SubGroup.options">
 <span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">options</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.14)"><span class="pre">list</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.14)"><span class="pre">dict</span></a><span class="p"><span class="pre">]</span></span></span><a class="headerlink" href="#discord_http.commands.SubGroup.options" title="Link to this definition">¶</a></dt>
-<dd><p>Returns the options of the subcommand group.</p>
+<dd><p>The options of the subcommand group.</p>
 </dd></dl>
 
 <dl class="py method">
@@ -915,13 +933,13 @@ use this to convert the value on runtime, both in sync and async mode.</p>
 <dl class="py property">
 <dt class="sig sig-object py" id="discord_http.commands.SubGroup.cooldown">
 <span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">cooldown</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="cooldowns.html#discord_http.cooldowns.CooldownCache" title="discord_http.cooldowns.CooldownCache"><span class="pre">CooldownCache</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span><a class="headerlink" href="#discord_http.commands.SubGroup.cooldown" title="Link to this definition">¶</a></dt>
-<dd><p>Returns the cooldown rule of the command if available.</p>
+<dd><p>The cooldown rule of the command if available.</p>
 </dd></dl>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="discord_http.commands.SubGroup.mention">
 <span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">mention</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></span><a class="headerlink" href="#discord_http.commands.SubGroup.mention" title="Link to this definition">¶</a></dt>
-<dd><p>Returns a mentionable string for the command.</p>
+<dd><p>A mentionable string for the command.</p>
 </dd></dl>
 
 <dl class="py method">
@@ -1438,7 +1456,12 @@ If not set, it will be using default, which is a global cooldown</p></li>
             <ul>
 <li><a class="reference internal" href="#">Commands</a><ul>
 <li><a class="reference internal" href="#module-discord_http.commands">discord_http.commands module</a><ul>
-<li><a class="reference internal" href="#discord_http.commands.Choice"><code class="docutils literal notranslate"><span class="pre">Choice</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.commands.Choice"><code class="docutils literal notranslate"><span class="pre">Choice</span></code></a><ul>
+<li><a class="reference internal" href="#discord_http.commands.Choice.key"><code class="docutils literal notranslate"><span class="pre">Choice.key</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.commands.Choice.value"><code class="docutils literal notranslate"><span class="pre">Choice.value</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.commands.Choice.type"><code class="docutils literal notranslate"><span class="pre">Choice.type</span></code></a></li>
+</ul>
+</li>
 <li><a class="reference internal" href="#discord_http.commands.Cog"><code class="docutils literal notranslate"><span class="pre">Cog</span></code></a><ul>
 <li><a class="reference internal" href="#discord_http.commands.Cog.cog_load"><code class="docutils literal notranslate"><span class="pre">Cog.cog_load()</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.commands.Cog.cog_unload"><code class="docutils literal notranslate"><span class="pre">Cog.cog_unload()</span></code></a></li>
