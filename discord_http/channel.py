@@ -1704,7 +1704,7 @@ class BaseChannel(PartialChannel):
             overwrites = self.permission_overwrites
 
         allows, denies = 0, 0
-        member_role_ids = {r.id for r in member.roles}
+        member_role_ids = set(member.role_ids)
 
         for ow in overwrites:
             if ow.is_role() and ow.target.id in member_role_ids:

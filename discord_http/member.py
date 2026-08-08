@@ -429,7 +429,6 @@ class Member(PartialMember):
 
     __slots__ = (
         "_raw_permissions",
-        "_role_ids",
         "avatar",
         "avatar_decoration",
         "banner",
@@ -442,6 +441,7 @@ class Member(PartialMember):
         "pending",
         "premium_since",
         "primary_guild",
+        "role_ids",
     )
 
     def __init__(
@@ -459,7 +459,9 @@ class Member(PartialMember):
 
         self._user = User(state=state, data=data["user"])
         self._raw_permissions: int | None = utils.get_int(data, "permissions")
-        self._role_ids: tuple[int, ...] = tuple(int(r) for r in data["roles"])
+
+        self.role_ids: tuple[int, ...] = tuple(int(r) for r in data["roles"])
+        """ The role IDs of the member. """
 
         self.avatar: Asset | None = None
         """ The avatar of the member, if available. """
@@ -549,7 +551,7 @@ class Member(PartialMember):
         return [
             guild.get_role(r_id) or
             PartialRole(state=self._state, id=r_id, guild_id=guild.id)
-            for r_id in self._role_ids
+            for r_id in self.role_ids
         ]
 
     def is_default_avatar(self) -> bool:
