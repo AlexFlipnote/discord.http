@@ -491,7 +491,7 @@ class DiscordAPI:
             The bucket key for the given method and path
         """
         # Remove query parameters
-        base_path = path.split("?")[0]
+        base_path = path.partition("?")[0]
 
         # Replace IDs in the path with :id to create a more general bucket key
         # Each guild has its own bucket, but all channels share the same bucket, etc.
@@ -601,10 +601,12 @@ class DiscordAPI:
         `RuntimeError`
             Unreachable code, reached max tries (5)
         """
-        headers = {
-            **self._default_headers,  # Grab default headers
-            **kwargs.pop("headers", {})  # Merge with extra headers if any
-        }
+        extra_headers = kwargs.pop("headers", None)
+        headers = (
+            {**self._default_headers, **extra_headers}
+            if extra_headers else
+            dict(self._default_headers)
+        )
 
         if res_method != "json":
             headers.pop("Content-Type", None)

@@ -977,7 +977,6 @@ class Shard:
             The event data
         """
         data = event.get("d")
-        new_name = name.lower()
 
         if not data:
             return
@@ -991,14 +990,21 @@ class Shard:
             await handler(data) if is_coro else handler(data)
             return
 
-        # Check if parser has the method cached
-        parser_method: Callable[[dict], tuple[Any, ...]] | Literal[False] | None = self._parser_cache.get(new_name)
+        # Check if parser has the method cached (keyed by the original,
+        # un-lowered name so repeat dispatches skip the .lower() call too)
+        cached: tuple[str, Callable[[dict], tuple[Any, ...]] | Literal[False]] | None = self._parser_cache.get(name)
 
-        if parser_method is None:
+        if cached is None:
             # If not, now use getattr to get it and cache it if found
+            new_name = name.lower()
             # Pyright likes to complain here, but the type above is correct
-            parser_method = getattr(self.parser, new_name, False)  # pyright: ignore[reportAssignmentType]
-            self._parser_cache[new_name] = parser_method
+            parser_method: Callable[[dict], tuple[Any, ...]] | Literal[False] = getattr(  # pyright: ignore[reportAssignmentType]
+                self.parser, new_name, False
+            )
+            cached = (new_name, parser_method)
+            self._parser_cache[name] = cached
+
+        new_name, parser_method = cached
 
         if parser_method:
             # Parse data, this will also cache depending on developer flags

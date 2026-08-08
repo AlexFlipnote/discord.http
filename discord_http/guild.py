@@ -21,6 +21,7 @@ from .enums import (
     ScheduledEventStatusType, VideoQualityType, AuditLogType,
     AutoModRuleEventType, AutoModRuleTriggerType, AutoModRulePresetType
 )
+from .channel import BaseChannel
 from .emoji import Emoji, PartialEmoji
 from .file import File
 from .flags import Permissions, SystemChannelFlags, PermissionOverwrite
@@ -34,8 +35,7 @@ from .voice import VoiceState, PartialVoiceState
 if TYPE_CHECKING:
     from .audit import AuditLogEntry
     from .channel import (
-        TextChannel, VoiceChannel,
-        PartialChannel, BaseChannel,
+        TextChannel, VoiceChannel, PartialChannel,
         CategoryChannel, PublicThread,
         VoiceRegion, StageChannel, PrivateThread
     )
@@ -420,7 +420,6 @@ class PartialGuild(PartialBase):
 
         if data.get("channels"):
             if GatewayCacheFlags.channels in flags:
-                from .channel import BaseChannel
                 self._cache_channels = {
                     int(g["id"]): BaseChannel.from_dict(
                         state=self._state,
@@ -3308,16 +3307,19 @@ class Guild(PartialGuild):
         -------
             The top role of the member
         """
-        if not getattr(member, "roles", None):
+        role_ids = member.role_ids
+        if not role_ids:
             return None
 
-        roles_sorted = sorted(
-            (r for r in self._cache_roles.values() if isinstance(r, Role)),
-            key=lambda r: r.position,
-            reverse=True
-        )
+        role_ids_set = set(role_ids)
+        top_role: Role | None = None
 
-        return next((
-            r for r in roles_sorted
-            if r.id in member.roles
-        ), None)
+        for r in self._cache_roles.values():
+            if (
+                isinstance(r, Role) and
+                r.id in role_ids_set and
+                (top_role is None or r.position > top_role.position)
+            ):
+                top_role = r
+
+        return top_role

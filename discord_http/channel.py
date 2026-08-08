@@ -1689,34 +1689,30 @@ class BaseChannel(PartialChannel):
         if Permissions.administrator in base:
             return Permissions.all()
 
-        everyone = next((
-            g for g in self.permission_overwrites
-            if g.target.id == self.guild.default_role.id
-        ), None)
-
-        if everyone:
-            base = base.handle_overwrite(int(everyone.allow), int(everyone.deny))
-            overwrites = [
-                g for g in self.permission_overwrites
-                if g.target.id != everyone.target.id
-            ]
-        else:
-            overwrites = self.permission_overwrites
-
-        allows, denies = 0, 0
+        everyone_id = self.guild.default_role.id
         member_role_ids = set(member.role_ids)
 
-        for ow in overwrites:
-            if ow.is_role() and ow.target.id in member_role_ids:
+        everyone_ow = None
+        member_ow = None
+        allows, denies = 0, 0
+
+        for ow in self.permission_overwrites:
+            target_id = ow.target.id
+            if target_id == everyone_id:
+                everyone_ow = ow
+            elif ow.is_role() and target_id in member_role_ids:
                 allows |= int(ow.allow)
                 denies |= int(ow.deny)
+            elif member_ow is None and ow.is_member() and target_id == member.id:
+                member_ow = ow
+
+        if everyone_ow:
+            base = base.handle_overwrite(int(everyone_ow.allow), int(everyone_ow.deny))
 
         base = base.handle_overwrite(allows, denies)
 
-        for ow in overwrites:
-            if ow.is_member() and ow.target.id == member.id:
-                base = base.handle_overwrite(int(ow.allow), int(ow.deny))
-                break
+        if member_ow:
+            base = base.handle_overwrite(int(member_ow.allow), int(member_ow.deny))
 
         if member.is_timed_out():
             timeout_perm = (
