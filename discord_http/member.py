@@ -574,10 +574,14 @@ class Member(PartialMember):
         -------
             The role if found, else None
         """
-        return next((
-            r for r in self.roles
-            if r.id == int(role)
-        ), None)
+        role_id = int(role)
+        if role_id not in self.role_ids:
+            return None
+
+        guild = self.guild
+        return guild.get_role(role_id) or PartialRole(
+            state=self._state, id=role_id, guild_id=guild.id
+        )
 
     def is_timed_out(self) -> bool:
         """ Returns whether the member is timed out or not. """
@@ -597,8 +601,9 @@ class Member(PartialMember):
 
         base = Permissions.none()
 
-        for r in self.roles:
-            g_role = self.guild.get_role(r.id)
+        guild = self.guild
+        for r_id in self.role_ids:
+            g_role = guild.get_role(r_id)
             if isinstance(g_role, Role):
                 base |= g_role.permissions
 

@@ -1680,8 +1680,8 @@ class BaseChannel(PartialChannel):
             Permissions.none()
         )
 
-        for r in member.roles:
-            role = self.guild.get_role(r.id)
+        for r_id in member.role_ids:
+            role = self.guild.get_role(r_id)
             if role is None:
                 continue
             base |= getattr(role, "permissions", Permissions.none())
@@ -1897,7 +1897,7 @@ class CategoryChannel(BaseChannel):
             return []
 
         channels: list["BaseChannel | PartialChannel"] = [
-            g for g in guild.channels
+            g for g in guild._cache_channels.values()
             if g.parent_id == self.id
         ]
 
