@@ -335,6 +335,7 @@ class Shard:
 
         self._connection = None
         self._should_kill = False
+        self._reconnect_attempts: int = 0
 
         self._buffer: bytearray = bytearray()
         self._zlib: zlib._Decompress = zlib.decompressobj()
@@ -526,6 +527,8 @@ class Shard:
                     self._heartbeat_interval = (
                         int(data["heartbeat_interval"]) / 1000
                     )
+
+                    self._reconnect_attempts = 0
 
                     if self.status.can_resume():
                         _log.debug(f"Shard {self.shard_id} resuming session")
@@ -868,6 +871,24 @@ class Shard:
                                 ShardCloseType.normal_crash,
                                 exception=e
                             )
+
+                    # Reset back to 0 as soon as HELLO confirms a real connection.
+                    self._reconnect_attempts += 1
+
+                    # First attempt reconnects instantly (the common case: a brief
+                    # blip). Only a second consecutive failure starts backing off.
+                    backoff = (
+                        0.0 if self._reconnect_attempts <= 1
+                        else min(2 ** min(self._reconnect_attempts - 2, 6), 60)
+                    )
+
+                    if backoff:
+                        jitter = backoff * 0.25 * self.bot.state.create_jitter()
+                        _log.debug(
+                            f"Shard {self.shard_id} waiting {backoff + jitter:.2f}s before reconnecting "
+                            f"(attempt {self._reconnect_attempts})"
+                        )
+                        await asyncio.sleep(backoff + jitter)
 
                     self.connect()
 
