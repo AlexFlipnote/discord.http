@@ -16,6 +16,7 @@ from urllib.parse import quote as url_quote
 
 from . import __version__
 from .flags import ApplicationFlags
+from .utils import MultipartData
 from .errors import (
     NotFound, DiscordServerError,
     Forbidden, HTTPException, Ratelimited,
@@ -338,6 +339,13 @@ class Ratelimit:
 
     def is_inactive(self) -> bool:
         """ Check if the ratelimit is inactive. """
+        if self.in_flight > 0:
+            return False
+        if self.expires is not None and self._loop.time() < self.expires:
+            # Still inside a known cooldown window (e.g. a long 429 retry_after) -
+            # evicting now would make the next request start from a fresh,
+            # falsely-optimistic bucket and immediately re-trigger the limit.
+            return False
         return (self._loop.time() - self._last_request) >= 60
 
     def update(self, response: HTTPResponse) -> None:
@@ -630,6 +638,11 @@ class DiscordAPI:
             await asyncio.sleep(1 + (tries * 2) + self.create_jitter())
 
         for tries in range(5):
+            body = kwargs.get("data")
+            if tries > 0 and isinstance(body, MultipartData):
+                # File streams were already consumed by the previous attempt
+                body.reset()
+
             async with ratelimit:
                 try:
                     r: HTTPResponse = await self.http.request(
@@ -664,7 +677,7 @@ class DiscordAPI:
                             continue
 
                         case x if x in (500, 502, 503, 504):
-                            if tries > 4:  # Give up after 5 tries
+                            if tries >= 4:  # Give up after 5 tries
                                 raise DiscordServerError(r)
 
                             # Try again, maybe it will work next time, surely...

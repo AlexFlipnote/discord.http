@@ -126,6 +126,11 @@ class MultipartData(MultipartWriter):
         """ [Legacy] Return the MultipartWriter. """
         return self
 
+    def reset(self) -> None:
+        """ Reset any attached file streams, so this payload can be re-sent after a failed attempt. """
+        for item in self._files_keepalive:
+            item.reset()
+
 
 class BenchmarkEntry:
     """

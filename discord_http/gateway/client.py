@@ -129,6 +129,7 @@ class GatewayClient:
         shard_id:
             The shard ID to launch
         """
+        attempt = 0
         while True:
             shard = None
             try:
@@ -144,13 +145,20 @@ class GatewayClient:
 
                 shard.connect()
 
+                identify_start = self.bot.loop.time()
                 while not shard.status.session_id:
+                    if shard._connection is not None and shard._connection.done():
+                        raise RuntimeError(f"Shard {shard_id} connection ended before it could identify")
+                    if self.bot.loop.time() - identify_start > 30:
+                        raise TimeoutError(f"Shard {shard_id} timed out waiting to identify")
                     await asyncio.sleep(0.5)
 
             except Exception as e:
                 _log.error("Error launching shard, trying again...", exc_info=e)
                 if shard is not None and shard._connection is not None:
                     shard._connection.cancel()
+                attempt += 1
+                await asyncio.sleep(min(2 ** attempt, 30))
                 continue
 
             self.__shards[shard_id] = shard
@@ -226,17 +234,23 @@ class GatewayClient:
         ]
 
         # Gather all shards to now wait until they are ready
-        await asyncio.gather(*waiting)
+        # return_exceptions so a future failure in one shard can't orphan the rest
+        results = await asyncio.gather(*waiting, return_exceptions=True)
+        for result in results:
+            if isinstance(result, BaseException):
+                _log.error("Error while waiting for a shard to become ready", exc_info=result)
 
         self.bot._shards_ready.set()
         _log.info("discord.http/gateway is now ready")
 
     def start(self) -> None:
         """ Start the gateway client. """
-        self.bot.loop.create_task(
+        task = self.bot.loop.create_task(
             self._launch_all_shards(),
             name="discord.http/gateway/launch_all_shards"
         )
+        self.bot._background_tasks.add(task)
+        task.add_done_callback(self.bot._cleanup_task)
 
     async def close(self) -> None:
         """ Close the gateway client. """
@@ -246,4 +260,13 @@ class GatewayClient:
         ]
 
         if to_close:
-            await asyncio.wait(to_close)
+            done, pending = await asyncio.wait(to_close, timeout=10.0)
+
+            for fut in pending:
+                fut.cancel()
+
+            for fut in done:
+                if not fut.cancelled() and (exc := fut.exception()):
+                    _log.error("Error while closing a shard", exc_info=exc)
+
+        self.__shards.clear()

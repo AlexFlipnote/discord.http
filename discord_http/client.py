@@ -260,7 +260,7 @@ class Client:
                 await listener.coro(*args, **kwargs)
 
         except asyncio.CancelledError:
-            pass
+            raise
 
         except Exception as e:
 
@@ -323,6 +323,11 @@ class Client:
         if self.gateway:
             _log.debug("Shutting down discord.http/gateway...")
             await self.gateway.close()
+
+        if self._background_tasks:
+            for task in self._background_tasks:
+                task.cancel()
+            await asyncio.gather(*self._background_tasks, return_exceptions=True)
 
         await self.state.http._close_session()
 

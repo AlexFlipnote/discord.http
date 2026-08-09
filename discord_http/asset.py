@@ -1,3 +1,4 @@
+import asyncio
 import io
 import os
 import sys
@@ -121,7 +122,12 @@ class Asset:
 
         with open(path, "wb") as f:
             async for chunk in self._state.http.stream_request("GET", self.url, chunk_size=chunk_size):
-                await loop.run_in_executor(None, _write_chunk, f, chunk)
+                future = loop.run_in_executor(None, _write_chunk, f, chunk)
+                try:
+                    await asyncio.shield(future)
+                except asyncio.CancelledError:
+                    await asyncio.gather(future, return_exceptions=True)
+                    raise
                 total_bytes += len(chunk)
 
         return total_bytes

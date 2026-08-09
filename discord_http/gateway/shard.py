@@ -75,15 +75,11 @@ class ShardEventPayload:
 
     def reconnect(self) -> None:
         """ Attempt to reconnect the shard. """
-        try:
+        if self.shard._connection is not None and not self.shard._connection.done():
             self.shard._connection.cancel()
-        except AttributeError:
-            pass
-        except asyncio.CancelledError:
-            pass
-        else:
-            _log.debug(f"Shard {self.shard.shard_id} reconnecting")
-            self.shard.connect()
+
+        _log.debug(f"Shard {self.shard.shard_id} reconnecting")
+        self.shard.connect()
 
 
 class GatewayRatelimiter:
@@ -383,9 +379,11 @@ class Shard:
             self._ready_task = None
 
         for chunk_request in self.parser._chunk_requests.values():
-            future = chunk_request.get_future()
-            if not future.done():
-                future.cancel()
+            for future in chunk_request._waiters:
+                if not future.done():
+                    future.set_exception(
+                        ConnectionResetError("Shard connection was reset while waiting for a member chunk")
+                    )
 
         self.parser._chunk_requests.clear()
 
@@ -669,23 +667,24 @@ class Shard:
         chunker = GuildMembersChunk(state=self.bot.state, guild_id=int(guild_id))
         self.parser._chunk_requests[chunker.nonce] = chunker
 
-        await self.send_guild_members_chunk(
-            guild_id=guild_id,
-            query=query,
-            limit=limit,
-            presences=presences,
-            user_ids=user_ids,
-            nonce=chunker.nonce
-        )
-
         try:
-            return await asyncio.wait_for(chunker.wait(), timeout=30.0)
-        except TimeoutError:
-            _log.warning(
-                "Timed out while waiting for guild members chunk "
-                f"(guild_id={guild_id}, query={query}, limit={limit})"
+            await self.send_guild_members_chunk(
+                guild_id=guild_id,
+                query=query,
+                limit=limit,
+                presences=presences,
+                user_ids=user_ids,
+                nonce=chunker.nonce
             )
-            raise
+
+            try:
+                return await asyncio.wait_for(chunker.wait(), timeout=30.0)
+            except TimeoutError:
+                _log.warning(
+                    "Timed out while waiting for guild members chunk "
+                    f"(guild_id={guild_id}, query={query}, limit={limit})"
+                )
+                raise
         finally:
             self.parser._chunk_requests.pop(chunker.nonce, None)
 
@@ -733,12 +732,16 @@ class Shard:
         )
         self.parser._chunk_requests[chunker.nonce] = chunker
 
-        await self.send_guild_members_chunk(
-            guild_id=guild_id,
-            query="",
-            limit=0,
-            nonce=chunker.nonce
-        )
+        try:
+            await self.send_guild_members_chunk(
+                guild_id=guild_id,
+                query="",
+                limit=0,
+                nonce=chunker.nonce
+            )
+        except Exception:
+            self.parser._chunk_requests.pop(chunker.nonce, None)
+            raise
 
         if wait:
             try:
@@ -806,6 +809,7 @@ class Shard:
 
                         except asyncio.CancelledError:
                             await self.ws.ping()
+                            raise
 
                         else:
                             match evt.type:
@@ -945,7 +949,7 @@ class Shard:
                         )
 
         except asyncio.CancelledError:
-            pass
+            return
 
         self._ready.set()
         self.parser._chunk_requests.clear()

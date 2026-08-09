@@ -178,16 +178,16 @@ class Loop:
 
     async def _looper(self, *args, **kwargs) -> None:  # ruff: ignore[missing-type-args]
         """ Internal looper that handles the behaviour of the loop. """
-        await self._before_loop()
-        self._last_loop_failed = False
-
-        if self._is_explicit_time():
-            self._next_loop = self._next_sleep_time()
-        else:
-            self._next_loop = utils.utcnow()
-            await asyncio.sleep(0)
-
         try:
+            await self._before_loop()
+            self._last_loop_failed = False
+
+            if self._is_explicit_time():
+                self._next_loop = self._next_sleep_time()
+            else:
+                self._next_loop = utils.utcnow()
+                await asyncio.sleep(0)
+
             if self._should_stop:
                 return
 
@@ -260,7 +260,20 @@ class Loop:
             self._looper(*args, **kwargs),
             name=f"discord.http/loop:{self.func.__name__}"
         )
+        self._task.add_done_callback(self._on_task_done)
         return self._task
+
+    def _on_task_done(self, task: asyncio.Task) -> None:
+        """ Fallback in case an exception escapes _looper's own handling (e.g. a buggy error handler). """
+        if task.cancelled():
+            return
+
+        exc = task.exception()
+        if exc is not None:
+            _log.error(
+                f"Unhandled exception escaped background loop {self.func.__name__}",
+                exc_info=exc
+            )
 
     def stop(self) -> None:
         """ Stops the loop. """

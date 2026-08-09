@@ -1450,6 +1450,9 @@ class InteractionStorage:
         if not self._call_after:
             return None
 
+        if self.is_timeout():
+            return None
+
         if (
             self._users and
             ctx.user.id not in [g.id for g in self._users]
@@ -1520,6 +1523,10 @@ class InteractionStorage:
         self._call_after = call_after
         self._timeout = timeout
         self._timeout_expiry = time.monotonic() + timeout
+
+        if self._timeout_task and not self._timeout_task.done():
+            self._timeout_task.cancel()
+
         self._timeout_task = self.loop.create_task(
             self._timeout_watcher(),
             name=f"discord.http/view-timeout-watcher-{int(time.time())}"
