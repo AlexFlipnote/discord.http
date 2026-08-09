@@ -414,6 +414,80 @@ class Ratelimit:
             self.in_flight -= 1
 
 
+class GlobalRatelimit:
+    """
+    Enforces Discord's global rate limit (50 requests/second per bot token).
+
+    This is independent of and in addition to the per-route buckets above.
+    Interaction/webhook execution endpoints are exempt from this per Discord's
+    docs, so callers should skip acquiring this for those paths entirely.
+    """
+
+    __slots__ = (
+        "_lock",
+        "_loop",
+        "locked_until",
+        "max",
+        "per",
+        "remaining",
+        "window",
+    )
+
+    def __init__(self, *, max_requests: int = 50, per: float = 1.0):
+        self.max: int = max_requests
+        """ The maximum number of requests allowed per window. """
+
+        self.per: float = per
+        """ The length of the window in seconds. """
+
+        self.remaining: int = max_requests
+        """ The number of requests remaining in the current window. """
+
+        self.window: float = 0.0
+        """ The epoch time when the current window started. """
+
+        self.locked_until: float | None = None
+        """ Set when Discord reports an actual global 429, blocking every request until it passes. """
+
+        self._lock: asyncio.Lock = asyncio.Lock()
+        self._loop: asyncio.AbstractEventLoop | None = None
+
+    def _ensure_loop(self) -> asyncio.AbstractEventLoop:
+        """ Since this class is defined at start, we only fetch it when doing HTTP requests. """
+        if self._loop is None:
+            self._loop = asyncio.get_running_loop()
+        return self._loop
+
+    async def acquire(self) -> None:
+        """ Blocks until a global request slot is available. """
+        loop = self._ensure_loop()
+
+        while True:
+            async with self._lock:
+                now = loop.time()
+
+                if self.locked_until is not None and now < self.locked_until:
+                    wait_time = self.locked_until - now
+                else:
+                    self.locked_until = None
+
+                    if now - self.window >= self.per:
+                        self.remaining = self.max
+                        self.window = now
+
+                    if self.remaining > 0:
+                        self.remaining -= 1
+                        return
+
+                    wait_time = self.per - (now - self.window)
+
+            await asyncio.sleep(max(wait_time, 0.05))
+
+    def lock_for(self, retry_after: float) -> None:
+        """ Called when Discord reports a real global 429, pauses every request until it clears. """
+        self.locked_until = self._ensure_loop().time() + retry_after
+
+
 class DiscordAPI:
     """ The main class for interacting with the Discord API. """
 
@@ -421,9 +495,9 @@ class DiscordAPI:
         self.bot: "Client" = client
         """ The client instance that owns this HTTP client. """
 
+        # Aliases
         self.cache = self.bot.cache
 
-        # Aliases
         self.token: str = self.bot.token
         """ The bot token used for authentication with the Discord API. """
 
@@ -442,8 +516,6 @@ class DiscordAPI:
         self.http: HTTPClient = HTTPClient()
         """ The HTTP client used to make requests to the Discord API. """
 
-        self._buckets: dict[str, Ratelimit] = {}
-
         self._default_headers: dict[str, str] = {
             "User-Agent": "discord.http/{} Python/{} aiohttp/{}".format(
                 __version__,
@@ -453,6 +525,10 @@ class DiscordAPI:
             "Authorization": f"Bot {self.token}",
             "Content-Type": "application/json"
         }
+
+        # Ratelimit handling
+        self._buckets: dict[str, Ratelimit] = {}
+        self._global_ratelimit: GlobalRatelimit = GlobalRatelimit()
 
         # Background tasks
         task = self.bot.loop.create_task(
@@ -634,6 +710,9 @@ class DiscordAPI:
             self._get_bucket_key(method, path)
         )
 
+        base_path = path.split("?")[0]
+        exempt_from_global = base_path.startswith(("/interactions/", "/webhooks/"))
+
         async def _sleep(tries: int) -> None:
             await asyncio.sleep(1 + (tries * 2) + self.create_jitter())
 
@@ -642,6 +721,9 @@ class DiscordAPI:
             if tries > 0 and isinstance(body, MultipartData):
                 # File streams were already consumed by the previous attempt
                 body.reset()
+
+            if not exempt_from_global:
+                await self._global_ratelimit.acquire()
 
             async with ratelimit:
                 try:
@@ -668,11 +750,16 @@ class DiscordAPI:
                                 raise Ratelimited(r)
 
                             retry_after: float = response.get("retry_after", 1.0)
-                            _log.warning(f"Ratelimit hit ({ratelimit.key}), waiting {retry_after}s...")
 
-                            async with ratelimit._lock:
-                                ratelimit.remaining = 0
-                                ratelimit.expires = ratelimit._loop.time() + retry_after
+                            if response.get("global", False):
+                                _log.warning(f"Global ratelimit hit, pausing all requests for {retry_after:.2f}s...")
+                                self._global_ratelimit.lock_for(retry_after)
+                            else:
+                                _log.warning(f"Ratelimit hit ({ratelimit.key}), waiting {retry_after}s...")
+
+                                async with ratelimit._lock:
+                                    ratelimit.remaining = 0
+                                    ratelimit.expires = ratelimit._loop.time() + retry_after
 
                             continue
 
