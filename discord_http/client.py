@@ -1247,7 +1247,9 @@ class Client:
 
     def get_channel(
         self,
-        channel_id: int | None
+        channel_id: int | None,
+        *,
+        guild_id: int | None = None
     ) -> BaseChannel | PartialChannel | None:
         """
         Get a channel object from the cache.
@@ -1256,6 +1258,9 @@ class Client:
         ----------
         channel_id:
             The ID of the channel to get.
+        guild_id:
+            The ID of the guild the channel belongs to, if known.
+            Providing this avoids a linear scan of every cached guild.
 
         Returns
         -------
@@ -1263,6 +1268,9 @@ class Client:
         """
         if channel_id is None:
             return None
+
+        if guild_id is not None:
+            return self.cache.get_channel(guild_id, channel_id)
 
         for guild in self.guilds:
             channel = guild.get_channel(channel_id)

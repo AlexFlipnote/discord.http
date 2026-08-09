@@ -193,17 +193,17 @@ class Parser:
         members: list[Member],
         completed: bool
     ) -> None:
-        to_remove = []
+        if nonce is None:
+            return
 
-        for k, req in self._chunk_requests.items():
-            if req.guild_id == guild_id and req.nonce == nonce:
-                req.add_members(members)
-                if completed:
-                    req.done()
-                    to_remove.append(k)
+        req = self._chunk_requests.get(nonce)
+        if req is None or req.guild_id != guild_id:
+            return
 
-        for k in to_remove:
-            del self._chunk_requests[k]
+        req.add_members(members)
+        if completed:
+            req.done()
+            del self._chunk_requests[nonce]
 
     def _get_channel_or_partial(
         self,
