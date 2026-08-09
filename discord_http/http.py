@@ -20,7 +20,7 @@ from .utils import MultipartData
 from .errors import (
     NotFound, DiscordServerError,
     Forbidden, HTTPException, Ratelimited,
-    AutomodBlock
+    AutomodBlock, Unauthorized
 )
 
 from .gateway.flags import Intents
@@ -529,6 +529,7 @@ class DiscordAPI:
         # Ratelimit handling
         self._buckets: dict[str, Ratelimit] = {}
         self._global_ratelimit: GlobalRatelimit = GlobalRatelimit()
+        self._invalid_token_response: HTTPResponse | None = None
 
         # Background tasks
         task = self.bot.loop.create_task(
@@ -680,11 +681,16 @@ class DiscordAPI:
             You are not allowed to do this
         `NotFound`
             The resource was not found
+        `Unauthorized`
+            The bot token is invalid or has been revoked
         `HTTPException`
             Something went wrong
         `RuntimeError`
             Unreachable code, reached max tries (5)
         """
+        if self._invalid_token_response is not None:
+            raise Unauthorized(self._invalid_token_response)
+
         extra_headers = kwargs.pop("headers", None)
         headers = (
             {**self._default_headers, **extra_headers}
@@ -779,6 +785,14 @@ class DiscordAPI:
                                 response.get("code", 0),
                                 HTTPException
                             )(r)
+
+                        case 401:
+                            self._invalid_token_response = r
+                            _log.error(
+                                "HTTP 401: The bot token is invalid or was revoked, "
+                                "no further requests will be attempted until the process is restarted."
+                            )
+                            raise Unauthorized(r)
 
                         case 403:
                             raise Forbidden(r)

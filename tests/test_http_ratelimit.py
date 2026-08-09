@@ -1,7 +1,8 @@
 import asyncio
 import unittest
 
-from discord_http.http import DiscordAPI, GlobalRatelimit, Ratelimit
+from discord_http.errors import Unauthorized
+from discord_http.http import DiscordAPI, GlobalRatelimit, HTTPResponse, Ratelimit
 from discord_http.utils import MultipartData
 
 
@@ -143,6 +144,25 @@ class TestMultipartDataReset(unittest.TestCase):
 
         multidata.reset()
         self.assertEqual(file.data.read(3), b"abc")
+
+
+class TestInvalidTokenCircuitBreaker(unittest.IsolatedAsyncioTestCase):
+    async def test_query_short_circuits_after_confirmed_401(self) -> None:
+        # Bypass __init__ entirely - if the short-circuit check isn't the very
+        # first thing query() does, this raises AttributeError (missing
+        # self.http/session/etc.) instead of Unauthorized, so the test still
+        # proves the check happens before anything else runs.
+        api = object.__new__(DiscordAPI)
+        api._invalid_token_response = HTTPResponse(
+            status=401,
+            response={"message": "401: Unauthorized", "code": 0},
+            reason="Unauthorized",
+            res_method="json",
+            headers={},  # pyright: ignore[reportArgumentType]
+        )
+
+        with self.assertRaises(Unauthorized):
+            await api.query("GET", "/users/@me")
 
 
 if __name__ == "__main__":

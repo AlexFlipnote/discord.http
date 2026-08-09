@@ -21,6 +21,7 @@ __all__ = (
     "InvalidMember",
     "NotFound",
     "Ratelimited",
+    "Unauthorized",
     "UserMissingPermissions",
 )
 
@@ -109,6 +110,10 @@ class HTTPException(DiscordException):
 
 class NotFound(HTTPException):
     """ Raised whenever a HTTP request returns 404. """
+
+
+class Unauthorized(HTTPException):
+    """ Raised whenever a HTTP request returns 401 (invalid or revoked token). """
 
 
 class Forbidden(HTTPException):
