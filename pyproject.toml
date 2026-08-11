@@ -26,8 +26,7 @@ dependencies = [
   "aiohttp>=3.12.7,<4",
   "cryptography>=50.0.0,<51",
   "orjson>=3.10.18,<4",
-  "pyright>=1.1.411",
-  "ruff>=0.15.20",
+  "uvloop>=0.22.1,<1; sys_platform != 'win32'",
 ]
 
 [project.urls]

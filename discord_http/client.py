@@ -128,6 +128,10 @@ class Client:
         disable_default_get_path: bool = False,
         debug_events: bool = False
     ):
+        # Setup log instantly
+        self.logging_level: int = logging_level
+        utils.setup_logger(level=self.logging_level)
+
         # Cache level, keep them at top
         self._view_storage: dict[str | int, InteractionStorage] = {}
         self._default_allowed_mentions = allowed_mentions or AllowedMentions.all()
@@ -163,7 +167,6 @@ class Client:
         self.automatic_shards: bool = automatic_shards
         self.guild_id: int | None = guild_id
         self.sync: bool = sync
-        self.logging_level: int = logging_level
         self.debug_events: bool = debug_events
         self.enable_gateway: bool = enable_gateway
         self.playing_status: "PlayingStatus | None" = playing_status
@@ -181,8 +184,16 @@ class Client:
 
         try:
             self.loop: asyncio.AbstractEventLoop = loop or asyncio.get_running_loop()
+            _log.info(f"asyncio/uvloop loop found, using it ({self.loop})")
         except RuntimeError:
-            self.loop: asyncio.AbstractEventLoop = asyncio.new_event_loop()
+            if sys.platform != "win32":
+                import uvloop
+                self.loop: asyncio.AbstractEventLoop = uvloop.new_event_loop()
+                _log.info("asyncio/uvloop loop not, creating uvloop...")
+            else:
+                self.loop: asyncio.AbstractEventLoop = asyncio.new_event_loop()
+                _log.info("asyncio loop not found, creating one...")
+
             asyncio.set_event_loop(self.loop)
 
         self.commands: dict[str, Command] = {}
@@ -205,8 +216,6 @@ class Client:
 
         self.backend: DiscordHTTP = DiscordHTTP(client=self)
         """ The backend for the client, used for serving HTTP requests. """
-
-        utils.setup_logger(level=self.logging_level)
 
     def _cleanup_task(self, task: asyncio.Task) -> None:
         """ A helper function to clean up asyncio tasks properly. """
