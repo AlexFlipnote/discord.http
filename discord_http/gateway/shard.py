@@ -219,6 +219,18 @@ class Status:
         """ Returns whether the shard can resume its session. """
         return self.session_id is not None
 
+    def is_zombied(self) -> bool:
+        """ Returns whether the last heartbeat we sent was never acknowledged. """
+        if self._last_heartbeat is None:
+            return False
+        return self._last_ack < self._last_heartbeat
+
+    def reset_heartbeat(self) -> None:
+        """ Clears heartbeat/ack tracking, used when a new physical connection is established. """
+        now = time.perf_counter()
+        self._last_ack = now
+        self._last_heartbeat = None
+
     def update_sequence(self, sequence: int) -> None:
         """ Updates the last received sequence number. """
         self.sequence = sequence
@@ -493,11 +505,6 @@ class Shard:
         else:
             msg: dict = orjson.loads(raw_msg)
 
-        event = msg.get("t")
-
-        if event:
-            await self.on_event(event, msg)
-
         op = msg.get("op")
         data = msg.get("d")
         seq = msg.get("s")
@@ -506,6 +513,11 @@ class Shard:
             self.status.update_sequence(seq)
 
         self.status.tick()
+
+        event = msg.get("t")
+
+        if event:
+            await self.on_event(event, msg)
 
         if op != PayloadType.dispatch:
             match op:
@@ -539,18 +551,17 @@ class Shard:
                         await self.send_message(PayloadType.identify)
 
                 case PayloadType.invalidate_session:
-                    self._reset_instance()
-
                     if data is True:
-                        _log.error(f"Shard {self.shard_id} session invalidated, not attempting reboot...")
-                        # Add a way to kill shard maybe?
-
-                    elif data is False:
+                        # Session is still resumable, keep session_id/sequence intact
+                        _log.warning(f"Shard {self.shard_id} session invalidated, will attempt to resume")
+                    else:
+                        # Session is no longer resumable, must identify fresh
                         _log.warning(f"Shard {self.shard_id} session invalidated, resetting instance")
+                        self._reset_instance()
 
                     _log.debug(f"Shard {self.shard_id} invalidation data: {msg}")
 
-                    await self.close()
+                    await self.close(code=4000)
 
                 case _:
                     pass  # Not handled, pass for now
@@ -789,6 +800,7 @@ class Shard:
 
             async with self.session.ws_connect(self.url, **kwargs) as ws:
                 self.ws = ws
+                self.status.reset_heartbeat()
 
                 try:
                     while keep_waiting:
@@ -796,6 +808,11 @@ class Shard:
                             not self.status._last_heartbeat or
                             time.perf_counter() - self.status._last_heartbeat > self._heartbeat_interval
                         ):
+                            if self.status.is_zombied():
+                                raise ConnectionAbortedError(
+                                    f"Shard {self.shard_id} did not receive a heartbeat ACK, connection is zombied"
+                                )
+
                             _log.debug(f"Shard {self.shard_id} heartbeat from if-case")
                             await self.send_message(PayloadType.heartbeat)
 
@@ -806,6 +823,11 @@ class Shard:
                             )
 
                         except TimeoutError:
+                            if self.status.is_zombied():
+                                raise ConnectionAbortedError(
+                                    f"Shard {self.shard_id} did not receive a heartbeat ACK, connection is zombied"
+                                )
+
                             # No event received, send in case..
                             _log.debug(f"Shard {self.shard_id} heartbeat from except-case")
                             await self.send_message(PayloadType.heartbeat)
@@ -1012,7 +1034,10 @@ class Shard:
         # First check special shard-level overrides
         if name in self._special_handlers:
             handler, is_coro = self._special_handlers[name]
-            await handler(data) if is_coro else handler(data)
+            try:
+                await handler(data) if is_coro else handler(data)
+            except Exception as e:
+                _log.error(f"Error while handling event {name}", exc_info=e)
             return
 
         # Check if parser has the method cached (keyed by the original,
@@ -1033,7 +1058,11 @@ class Shard:
 
         if parser_method:
             # Parse data, this will also cache depending on developer flags
-            payload = parser_method(data)
+            try:
+                payload = parser_method(data)
+            except Exception as e:
+                _log.error(f"Error while parsing payload for event {new_name}", exc_info=e)
+                return
 
             # If the developer is listening to the event, dispatch it
             if self.bot.has_any_dispatch(new_name):

@@ -154,11 +154,21 @@ class GatewayClient:
                     await asyncio.sleep(0.5)
 
             except Exception as e:
+                if shard is not None and shard._is_fatal_close():
+                    _log.error(
+                        f"Shard {shard_id} received a fatal close code "
+                        f"({shard._close_code}), aborting startup",
+                        exc_info=e
+                    )
+                    if shard._connection is not None:
+                        shard._connection.cancel()
+                    raise
+
                 _log.error("Error launching shard, trying again...", exc_info=e)
                 if shard is not None and shard._connection is not None:
                     shard._connection.cancel()
                 attempt += 1
-                await asyncio.sleep(min(2 ** attempt, 30))
+                await asyncio.sleep(min(2 ** attempt, 30) + self.bot.state.create_jitter())
                 continue
 
             self.__shards[shard_id] = shard

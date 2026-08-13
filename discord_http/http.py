@@ -529,7 +529,6 @@ class DiscordAPI:
         # Ratelimit handling
         self._buckets: dict[str, Ratelimit] = {}
         self._global_ratelimit: GlobalRatelimit = GlobalRatelimit()
-        self._invalid_token_response: HTTPResponse | None = None
 
         # Background tasks
         task = self.bot.loop.create_task(
@@ -583,7 +582,7 @@ class DiscordAPI:
         normalized = ratelimit_bucket_re.sub(r"/\1/:id", base_path)
 
         # Special case for message deletion, as it has a separate bucket
-        if method == "DELETE" and "messages" in normalized:
+        if method == "DELETE" and normalized.endswith("/messages/:id"):
             normalized += "-delete"
 
         return f"{method} {normalized}"
@@ -685,12 +684,7 @@ class DiscordAPI:
             The bot token is invalid or has been revoked
         `HTTPException`
             Something went wrong
-        `RuntimeError`
-            Unreachable code, reached max tries (5)
         """
-        if self._invalid_token_response is not None:
-            raise Unauthorized(self._invalid_token_response)
-
         extra_headers = kwargs.pop("headers", None)
         headers = (
             {**self._default_headers, **extra_headers}
@@ -722,9 +716,12 @@ class DiscordAPI:
         async def _sleep(tries: int) -> None:
             await asyncio.sleep(1 + (tries * 2) + self.create_jitter())
 
-        for tries in range(5):
+        error_tries = 0
+        ratelimit_tries = 0
+
+        while True:
             body = kwargs.get("data")
-            if tries > 0 and isinstance(body, MultipartData):
+            if (error_tries or ratelimit_tries) and isinstance(body, MultipartData):
                 # File streams were already consumed by the previous attempt
                 body.reset()
 
@@ -755,11 +752,20 @@ class DiscordAPI:
                                 # For cases where you're ratelimited by CloudFlare
                                 raise Ratelimited(r)
 
+                            ratelimit_tries += 1
+                            if ratelimit_tries > 10:
+                                # something is actually wrong, not just normal throttling
+                                _log.error(f"Ratelimit hit ({ratelimit.key}) 10 times in a row, giving up")
+                                raise Ratelimited(r)
+
                             retry_after: float = response.get("retry_after", 1.0)
 
                             if response.get("global", False):
                                 _log.warning(f"Global ratelimit hit, pausing all requests for {retry_after:.2f}s...")
                                 self._global_ratelimit.lock_for(retry_after)
+
+                                if exempt_from_global:
+                                    await asyncio.sleep(retry_after)
                             else:
                                 _log.warning(f"Ratelimit hit ({ratelimit.key}), waiting {retry_after}s...")
 
@@ -770,11 +776,12 @@ class DiscordAPI:
                             continue
 
                         case x if x in (500, 502, 503, 504):
-                            if tries >= 4:  # Give up after 5 tries
+                            if error_tries >= 4:  # Give up after 5 tries
                                 raise DiscordServerError(r)
 
                             # Try again, maybe it will work next time, surely...
-                            await _sleep(tries)
+                            await _sleep(error_tries)
+                            error_tries += 1
                             continue
 
                         case 400:
@@ -787,11 +794,7 @@ class DiscordAPI:
                             )(r)
 
                         case 401:
-                            self._invalid_token_response = r
-                            _log.error(
-                                "HTTP 401: The bot token is invalid or was revoked, "
-                                "no further requests will be attempted until the process is restarted."
-                            )
+                            _log.error("HTTP 401: The bot token is invalid or was revoked")
                             raise Unauthorized(r)
 
                         case 403:
@@ -804,12 +807,11 @@ class DiscordAPI:
                             raise HTTPException(r)
 
                 except OSError as e:
-                    if tries < 4 and e.errno in (errno.ECONNRESET, errno.ECONNABORTED, 54):
-                        await _sleep(tries)
+                    if error_tries < 4 and e.errno in (errno.ECONNRESET, errno.ECONNABORTED, 54):
+                        await _sleep(error_tries)
+                        error_tries += 1
                         continue
                     raise
-
-        raise RuntimeError("Unreachable code, reached max tries (5)")
 
     async def me(self) -> "Application":
         """
@@ -905,6 +907,8 @@ class DiscordAPI:
 
         try:
             r = await self.query(method, url, res_method="json", **kwargs)
+        except Unauthorized:
+            raise
         except HTTPException as e:
             r = e.request
 
