@@ -146,9 +146,10 @@ class MessageReaction:
             If none provided, it will remove the reaction from the bot
         """
         parsed = self.emoji.to_reaction()
+        target = str(user_id) if user_id is not None else "@me"
         url = (
-            f"/channels/{self._message.channel.id}/messages/{self._message.id}/reactions/{parsed}"
-            f"/{user_id}" if user_id is not None else "/@me"
+            f"/channels/{self._message.channel.id}/messages/{self._message.id}"
+            f"/reactions/{parsed}/{target}"
         )
 
         await self._state.query(
@@ -226,15 +227,13 @@ class MessageReaction:
             strategy: Callable
             users, state, limit = await strategy(http_limit, state, limit)
 
-            i = 0
-            for i, u in enumerate(users, start=1):
+            for u in users:
                 yield User(
                     state=self._state,
                     data=u
                 )
-                i += 1
 
-            if i < 100:
+            if len(users) < 100:
                 break
 
 
@@ -1147,12 +1146,10 @@ class PartialMessage(PartialBase):
             strategy: Callable
             users, state, limit = await strategy(http_limit, state, limit)
 
-            i = 0
-            for i, u in enumerate(users["users"], start=1):
+            for u in users["users"]:
                 yield User(state=self._state, data=u)
-                i += 1
 
-            if i < 100:
+            if len(users["users"]) < 100:
                 break
 
     async def edit(

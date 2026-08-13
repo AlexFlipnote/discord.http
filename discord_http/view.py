@@ -1447,9 +1447,6 @@ class InteractionStorage:
         ctx: "Context"
     ) -> "BaseResponse | None":
         """ Called when the view is interacted with. """
-        if not self._call_after:
-            return None
-
         if self.is_timeout():
             return None
 
@@ -1464,6 +1461,10 @@ class InteractionStorage:
 
         self._store_interaction = ctx
         self._update_event(True)
+
+        if not self._call_after:
+            return None
+
         return await self._call_after(ctx)
 
     async def wait(
@@ -1474,7 +1475,7 @@ class InteractionStorage:
         users: list["Snowflake"] | None = None,
         original_response: bool = False,
         custom_id: str | int | None = None,
-        timeout: float = 60,
+        timeout: float | None = 60,
     ) -> "Context | None":
         """
         Tell the command to wait for an interaction response.
@@ -1505,24 +1506,33 @@ class InteractionStorage:
         custom_id:
             Custom ID of the view, if not provided, it will use Context.id or Context.message
         timeout:
-            How long it should take until the code simply times out
+            How long it should take until the code simply times out.
+            Set to `None` for the view to never time out on its own.
 
         Returns
         -------
             Returns the new context of the interaction, or `None` if timed out
+
+        Raises
+        ------
+        `TypeError`
+            If `call_after` is provided and is not a coroutine function
         """
         users = users or []
 
-        if not inspect.iscoroutinefunction(call_after):
-            _log.warning("call_after is not a coroutine function, ignoring...")
-            return None
+        if call_after is not None and not inspect.iscoroutinefunction(call_after):
+            raise TypeError("call_after must be a coroutine function")
 
         if users and isinstance(users, list):
             self._users = [g for g in users if getattr(g, "id", None)]
 
         self._call_after = call_after
         self._timeout = timeout
-        self._timeout_expiry = time.monotonic() + timeout
+        self._timeout_expiry = (
+            time.monotonic() + timeout
+            if timeout is not None else
+            None
+        )
 
         if self._timeout_task and not self._timeout_task.done():
             self._timeout_task.cancel()

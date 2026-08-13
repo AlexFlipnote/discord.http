@@ -639,7 +639,7 @@ class Command:
             bucket = self.cooldown.get_bucket(ctx, current)
             retry_after = bucket.update_rate_limit(current)
 
-        if not retry_after:
+        if retry_after is None:
             return  # Not rate limited, good to go
         raise CommandOnCooldown(bucket, retry_after)
 
