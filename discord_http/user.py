@@ -190,9 +190,9 @@ class PrimaryGuild:
         return f"<PrimaryGuild guild_id={self.guild_id} tag='{self.tag}'>"
 
     def _from_data(self, data: dict) -> None:
-        if self.guild_id and data.get("badge"):
+        if self.guild_id and (badge := data.get("badge")):
             self.badge = Asset._from_guild_clan_badge(
-                self._state, self.guild_id, data["badge"]
+                self._state, self.guild_id, badge
             )
 
     def guild(self) -> "Guild | PartialGuild | None":
@@ -538,46 +538,46 @@ class User(PartialUser):
     def _from_data(self, data: dict) -> None:
         collectibles = data.get("collectibles", {}) or {}  # Fallback if None
 
-        if data.get("avatar"):
+        if avatar := data.get("avatar"):
             self.avatar = Asset._from_avatar(
-                self._state, self.id, data["avatar"]
+                self._state, self.id, avatar
             )
 
-        if data.get("primary_guild"):
+        if primary_guild := data.get("primary_guild"):
             self.primary_guild = PrimaryGuild(
                 state=self._state,
-                data=data["primary_guild"]
+                data=primary_guild
             )
 
-        if data.get("display_name_styles"):
+        if display_name_styles := data.get("display_name_styles"):
             self.name_style = DisplayNameStyles(
-                data=data["display_name_styles"]
+                data=display_name_styles
             )
 
-        if data.get("banner"):
+        if banner := data.get("banner"):
             self.banner = Asset._from_banner(
-                self._state, self.id, data["banner"]
+                self._state, self.id, banner
             )
 
-        if data.get("accent_color"):
-            self.accent_colour = Colour(data["accent_color"])
+        if accent_color := data.get("accent_color"):
+            self.accent_colour = Colour(accent_color)
 
-        if data.get("banner_color"):
-            self.banner_colour = Colour.from_hex(data["banner_color"])
+        if banner_color := data.get("banner_color"):
+            self.banner_colour = Colour.from_hex(banner_color)
 
-        if data.get("avatar_decoration_data"):
+        if avatar_decoration_data := data.get("avatar_decoration_data"):
             self.avatar_decoration = AvatarDecoration(
-                self._state, data["avatar_decoration_data"]
+                self._state, avatar_decoration_data
             )
 
-        if collectibles.get("nameplate"):
+        if nameplate := collectibles.get("nameplate"):
             self.nameplate = Nameplate(
                 state=self._state,
-                data=collectibles["nameplate"]
+                data=nameplate
             )
 
-        if data.get("public_flags"):
-            self.public_flags = UserFlags(data["public_flags"])
+        if public_flags := data.get("public_flags"):
+            self.public_flags = UserFlags(public_flags)
 
     @property
     def global_avatar(self) -> Asset | None:
@@ -706,11 +706,11 @@ class Team(PartialBase):
         return self.name
 
     def _from_data(self, data: dict) -> None:
-        if data.get("icon"):
+        if icon := data.get("icon"):
             self.icon = Asset._from_icon(
                 state=self._state,
                 object_id=self.id,
-                icon_hash=data["icon"],
+                icon_hash=icon,
                 path="team"
             )
 
@@ -947,50 +947,50 @@ class Application(PartialBase):
         return self.name
 
     def _from_data(self, data: dict) -> None:
-        if data.get("owner"):
+        if owner := data.get("owner"):
             self.owner = PartialUser(
                 state=self._state,
-                id=int(data["owner"]["id"])
+                id=int(owner["id"])
             )
 
-        if data.get("bot"):
+        if bot := data.get("bot"):
             self.bot = User(
                 state=self._state,
-                data=data["bot"]
+                data=bot
             )
 
-        if data.get("guild_id") or data.get("guild"):
+        if (guild_id := data.get("guild_id")) or (guild := data.get("guild")):
             from .guild import PartialGuild
             self.guild = PartialGuild(
                 state=self._state,
-                id=int(data["guild_id"]) if data.get("guild_id") else int(data["guild"]["id"])
+                id=int(guild_id) if guild_id else int(guild["id"])
             )
 
-        if data.get("icon"):
+        if icon := data.get("icon"):
             self.icon = Asset._from_application_image(
                 self._state,
                 self.id,
-                data["icon"]
+                icon
             )
 
-        if data.get("cover_image"):
+        if cover_image := data.get("cover_image"):
             self.cover_image = Asset._from_application_image(
                 self._state,
                 self.id,
-                data["cover_image"]
+                cover_image
             )
 
-        if data.get("primary_sku_id"):
+        if primary_sku_id := data.get("primary_sku_id"):
             from .entitlements import PartialSKU
             self.primary_sku = PartialSKU(
                 state=self._state,
-                id=int(data["primary_sku_id"])
+                id=int(primary_sku_id)
             )
 
-        if data.get("team"):
+        if team := data.get("team"):
             self.team = Team(
                 state=self._state,
-                data=data["team"]
+                data=team
             )
 
     async def edit(

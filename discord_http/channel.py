@@ -1801,21 +1801,21 @@ class DMChannel(BaseChannel):
         return f"<DMChannel id={self.id} name='{self.user}'>"
 
     def _from_data(self, data: dict) -> None:
-        if data.get("recipients"):
+        if recipients := data.get("recipients"):
             from .user import User
-            self.user = User(state=self._state, data=data["recipients"][0])
+            self.user = User(state=self._state, data=recipients[0])
             self.name = self.user.name
 
-        if data.get("last_message_id"):
+        if last_message_id := data.get("last_message_id"):
             from .message import PartialMessage
             self.last_message = PartialMessage(
                 state=self._state,
                 channel_id=self.id,
-                id=int(data["last_message_id"])
+                id=int(last_message_id)
             )
 
-        if data.get("last_pin_timestamp"):
-            self.last_pin_timestamp = utils.parse_time(data["last_pin_timestamp"])
+        if last_pin_timestamp := data.get("last_pin_timestamp"):
+            self.last_pin_timestamp = utils.parse_time(last_pin_timestamp)
 
     @property
     def type(self) -> ChannelType:
@@ -2351,10 +2351,10 @@ class ForumChannel(PublicThread):
         return f"<ForumChannel id={self.id} name='{self.name}'>"
 
     def _from_data(self, data: dict) -> None:
-        if data.get("default_reaction_emoji"):
+        if default_reaction_emoji := data.get("default_reaction_emoji"):
             target = (
-                data["default_reaction_emoji"].get("id", None) or
-                data["default_reaction_emoji"].get("name", None)
+                default_reaction_emoji.get("id", None) or
+                default_reaction_emoji.get("name", None)
             )
 
             if target:
@@ -2579,12 +2579,7 @@ class StageInstance(PartialBase):
 
         self._state: "DiscordAPI" = state
         self._guild: "PartialGuild | None" = guild
-        self._from_data(data)
 
-    def __repr__(self) -> str:
-        return f"<StageInstance id={self.id!r} topic={self.topic!r}>"
-
-    def _from_data(self, data: dict) -> None:
         self.channel_id: int = int(data["channel_id"])
         """ The ID of the stage channel. """
 
@@ -2599,6 +2594,9 @@ class StageInstance(PartialBase):
 
         self.guild_scheduled_event_id: int | None = utils.get_int(data, "guild_scheduled_event_id")
         """ The guild scheduled event ID associated with this stage instance. """
+
+    def __repr__(self) -> str:
+        return f"<StageInstance id={self.id!r} topic={self.topic!r}>"
 
     @property
     def guild(self) -> "Guild | PartialGuild | None":

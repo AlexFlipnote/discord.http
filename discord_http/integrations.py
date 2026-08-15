@@ -207,14 +207,14 @@ class Integration(PartialIntegration):
         return f"<Integration id={self.id} name={self.name} type={self.type}>"
 
     def _from_data(self, data: dict) -> None:
-        if data.get("user"):
-            self.user = User(state=self._state, data=data["user"])
+        if user := data.get("user"):
+            self.user = User(state=self._state, data=user)
 
-        if data.get("account"):
-            self.account = IntegrationAccount(state=self._state, data=data["account"])
+        if account := data.get("account"):
+            self.account = IntegrationAccount(state=self._state, data=account)
 
-        if data.get("application"):
-            self.application = IntegrationApplication(state=self._state, data=data["application"])
+        if application := data.get("application"):
+            self.application = IntegrationApplication(state=self._state, data=application)
 
     @property
     def bot(self) -> User | None:
@@ -285,16 +285,16 @@ class IntegrationApplication(PartialBase):
 
     def _from_data(self, data: dict) -> None:
         """ Update the application with new data. """
-        if data.get("bot"):
+        if bot := data.get("bot"):
             self.bot = User(
                 state=self._state,
-                data=data["bot"]
+                data=bot
             )
 
-        if data.get("icon"):
+        if icon := data.get("icon"):
             self.icon = Asset._from_icon(
                 state=self._state,
                 object_id=self.id,
-                icon_hash=data["icon"],
+                icon_hash=icon,
                 path="app"
             )

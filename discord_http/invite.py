@@ -298,34 +298,34 @@ class Invite(PartialInvite):
         return f"<Invite code='{self.code}' uses='{self.uses}'>"
 
     def _from_data(self, data: dict) -> None:
-        if data.get("expires_at"):
-            self.expires_at = utils.parse_time(data["expires_at"])
+        if expires_at := data.get("expires_at"):
+            self.expires_at = utils.parse_time(expires_at)
 
-        if data.get("created_at"):
-            self.created_at = utils.parse_time(data["created_at"])
+        if created_at := data.get("created_at"):
+            self.created_at = utils.parse_time(created_at)
 
-        if data.get("inviter"):
-            self.inviter = User(state=self._state, data=data["inviter"])
+        if inviter := data.get("inviter"):
+            self.inviter = User(state=self._state, data=inviter)
 
-        if data.get("guild"):
+        if guild := data.get("guild"):
             try:
-                self.guild = Guild(state=self._state, data=data["guild"])
+                self.guild = Guild(state=self._state, data=guild)
             except KeyError:
                 pass
 
-        if data.get("target_type") is not None:
-            self.target_type = InviteTargetType(data["target_type"])
+        if (target_type := data.get("target_type")) is not None:
+            self.target_type = InviteTargetType(target_type)
 
-        if data.get("target_user"):
-            self.target_user = User(state=self._state, data=data["target_user"])
+        if target_user := data.get("target_user"):
+            self.target_user = User(state=self._state, data=target_user)
 
-        if data.get("flags"):
-            self.flags = GuildInviteFlags(data["flags"])
+        if flags := data.get("flags"):
+            self.flags = GuildInviteFlags(flags)
 
-        if data.get("roles") and self.guild:
+        if (roles := data.get("roles")) and self.guild:
             self.roles = [
                 Role(state=self._state, guild=self.guild, data=role_data)
-                for role_data in data["roles"]
+                for role_data in roles
             ]
 
     @property

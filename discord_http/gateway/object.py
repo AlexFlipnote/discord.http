@@ -171,11 +171,11 @@ class GuildJoinRequest:
         if request := data.get("request", {}):
             self.user_id = utils.get_int(request, "user_id")
 
-            if request.get("user", None):
+            if user := request.get("user", None):
                 from ..user import User
                 self.user = User(
                     state=self._state,
-                    data=request["user"]
+                    data=user
                 )
 
             self.rejection_reason = request.get("rejection_reason", None)
@@ -265,14 +265,14 @@ class Presence:
 
     def _from_data(self, data: dict) -> None:
         client_status = data.get("client_status", {})
-        if client_status.get("desktop", None):
-            self.desktop = StatusType[client_status["desktop"]]
+        if desktop := client_status.get("desktop", None):
+            self.desktop = StatusType[desktop]
 
-        if client_status.get("mobile", None):
-            self.mobile = StatusType[client_status["mobile"]]
+        if mobile := client_status.get("mobile", None):
+            self.mobile = StatusType[mobile]
 
-        if client_status.get("web", None):
-            self.web = StatusType[client_status["web"]]
+        if web := client_status.get("web", None):
+            self.web = StatusType[web]
 
 
 class TypingStartEvent:
@@ -500,15 +500,15 @@ class Reaction:
         )
 
     def _from_data(self, data: dict) -> None:
-        if data.get("burst_colour"):
-            self.burst_colour = Colour.from_hex(data["burst_colour"])
+        if burst_colour := data.get("burst_colour"):
+            self.burst_colour = Colour.from_hex(burst_colour)
 
-        if data.get("member"):
+        if member := data.get("member"):
             from ..member import Member
             self.member = Member(
                 state=self._state,
                 guild=self.guild,  # type: ignore
-                data=data["member"]
+                data=member
             )
 
     @property

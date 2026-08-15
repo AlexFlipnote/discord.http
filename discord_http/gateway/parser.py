@@ -1661,22 +1661,16 @@ class Parser:
             The stage instance.
         """
         guild = self.bot.cache.get_guild(int(data["guild_id"]))
-
-        # try updating the existing stage instance from cache if it exists
-        if (
-            guild and
-            (channel := guild.get_channel(int(data["channel_id"]))) and
-            channel._stage_instance is not None  # type: ignore
-        ):
-            channel._stage_instance._from_data(data)  # type: ignore
-
-        return (
-            StageInstance(
-                state=self.bot.state,
-                data=data,
-                guild=guild
-            ),
+        stage_instance = StageInstance(
+            state=self.bot.state,
+            data=data,
+            guild=guild
         )
+
+        if guild and (channel := guild.get_channel(int(data["channel_id"]))):
+            channel._stage_instance = stage_instance  # type: ignore # should be fine?
+
+        return (stage_instance,)
 
     def stage_instance_delete(self, data: dict) -> tuple[StageInstance]:
         """

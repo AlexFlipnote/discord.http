@@ -58,18 +58,18 @@ class ActivityAssets:
         self._from_data(data)
 
     def _from_data(self, data: dict) -> None:
-        if data.get("large_image"):
+        if large_image := data.get("large_image"):
             self.large_image = Asset._from_activity_asset(
                 state=self._state,
                 activity_id=self.application_id,
-                image=data["large_image"]
+                image=large_image
             )
 
-        if data.get("small_image"):
+        if small_image := data.get("small_image"):
             self.small_image = Asset._from_activity_asset(
                 state=self._state,
                 activity_id=self.application_id,
-                image=data["small_image"]
+                image=small_image
             )
 
 
@@ -93,11 +93,11 @@ class ActivityTimestamps:
         return f"<ActivityTimestamps start={self.start} end={self.end}>"
 
     def _from_data(self, data: dict) -> None:
-        if data.get("start"):
-            self.start = utils.parse_time(data["start"])
+        if start := data.get("start"):
+            self.start = utils.parse_time(start)
 
-        if data.get("end"):
-            self.end = utils.parse_time(data["end"])
+        if end := data.get("end"):
+            self.end = utils.parse_time(end)
 
 
 class ActivitySecrets:
@@ -145,9 +145,9 @@ class ActivityParty:
         self.max_size: int | None = None
         """ The maximum size of the party, if any. """
 
-        if data.get("size"):
-            self.current_size = data["size"][0]
-            self.max_size = data["size"][1]
+        if size := data.get("size"):
+            self.current_size = size[0]
+            self.max_size = size[1]
 
 
 class Activity:
@@ -240,26 +240,26 @@ class Activity:
         return f"<Activity name={self.name} type={self.type}>"
 
     def _from_data(self, data: dict) -> None:
-        if data.get("timestamps"):
-            self.timestamps = ActivityTimestamps(data=data["timestamps"])
+        if timestamps := data.get("timestamps"):
+            self.timestamps = ActivityTimestamps(data=timestamps)
 
-        if data.get("secrets"):
-            self.secrets = ActivitySecrets(data=data["secrets"])
+        if secrets := data.get("secrets"):
+            self.secrets = ActivitySecrets(data=secrets)
 
-        if data.get("party"):
-            self.party = ActivityParty(data=data["party"])
+        if party := data.get("party"):
+            self.party = ActivityParty(data=party)
 
-        if data.get("emoji"):
-            self.emoji = EmojiParser.from_dict(data["emoji"])
+        if emoji := data.get("emoji"):
+            self.emoji = EmojiParser.from_dict(emoji)
 
         if (
-            data.get("assets") and
+            (assets := data.get("assets")) and
             self.application_id is not None
         ):
             self.assets = ActivityAssets(
                 state=self._state,
                 application_id=self.application_id,
-                data=data["assets"]
+                data=assets
             )
 
     @property

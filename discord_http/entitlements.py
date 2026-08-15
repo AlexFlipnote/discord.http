@@ -331,14 +331,14 @@ class Entitlements(PartialEntitlements):
         return f"{self.sku}"
 
     def _from_data(self, data: dict) -> None:
-        if data.get("user_id"):
-            self.user = PartialUser(state=self._state, id=int(data["user_id"]))
+        if user_id := data.get("user_id"):
+            self.user = PartialUser(state=self._state, id=int(user_id))
 
-        if data.get("starts_at"):
-            self.starts_at = utils.parse_time(data["starts_at"])
+        if starts_at := data.get("starts_at"):
+            self.starts_at = utils.parse_time(starts_at)
 
-        if data.get("ends_at"):
-            self.ends_at = utils.parse_time(data["ends_at"])
+        if ends_at := data.get("ends_at"):
+            self.ends_at = utils.parse_time(ends_at)
 
     @property
     def guild(self) -> Guild | PartialGuild | None:
@@ -466,11 +466,11 @@ class Subscription(PartialBase):
         return "Subscription"
 
     def _from_data(self, data: dict) -> None:
-        if data.get("renewal_sku_ids") is not None:
-            self.renewal_sku_ids = [int(g) for g in data["renewal_sku_ids"]]
+        if (renewal_sku_ids := data.get("renewal_sku_ids")) is not None:
+            self.renewal_sku_ids = [int(g) for g in renewal_sku_ids]
 
-        if data.get("canceled_at"):
-            self.canceled_at = utils.parse_time(data["canceled_at"])
+        if canceled_at := data.get("canceled_at"):
+            self.canceled_at = utils.parse_time(canceled_at)
 
     @property
     def skus(self) -> list[PartialSKU]:

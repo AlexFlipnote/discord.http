@@ -461,10 +461,10 @@ class Webhook(PartialWebhook):
         return self.name or "Unknown"
 
     def _from_data(self, data: dict) -> None:
-        if data.get("user"):
+        if user := data.get("user"):
             self.user = User(
                 state=self._state,
-                data=data["user"]
+                data=user
             )
 
     @classmethod

@@ -511,37 +511,37 @@ class Member(PartialMember):
         return str(self._user)
 
     def _from_data(self, data: dict) -> None:
-        if data.get("joined_at"):
-            self.joined_at = utils.parse_time(data["joined_at"])
+        if joined_at := data.get("joined_at"):
+            self.joined_at = utils.parse_time(joined_at)
 
-        if data.get("avatar"):
+        if avatar := data.get("avatar"):
             self.avatar = Asset._from_guild_avatar(
-                self._state, self.guild.id, self.id, data["avatar"]
+                self._state, self.guild.id, self.id, avatar
             )
 
-        if data.get("banner"):
+        if banner := data.get("banner"):
             self.banner = Asset._from_guild_banner(
-                self._state, self.guild.id, self.id, data["banner"]
+                self._state, self.guild.id, self.id, banner
             )
 
-        if data.get("avatar_decoration_data"):
+        if avatar_decoration_data := data.get("avatar_decoration_data"):
             self.avatar_decoration = AvatarDecoration(
-                self._state, data["avatar_decoration_data"]
+                self._state, avatar_decoration_data
             )
 
-        if data.get("communication_disabled_until"):
+        if communication_disabled_until := data.get("communication_disabled_until"):
             self.communication_disabled_until = utils.parse_time(
-                data["communication_disabled_until"]
+                communication_disabled_until
             )
 
-        if data.get("premium_since"):
+        if premium_since := data.get("premium_since"):
             self.premium_since = utils.parse_time(
-                data["premium_since"]
+                premium_since
             )
 
-        if data.get("display_name_styles"):
+        if display_name_styles := data.get("display_name_styles"):
             self.name_style = DisplayNameStyles(
-                data=data["display_name_styles"]
+                data=display_name_styles
             )
 
     @property

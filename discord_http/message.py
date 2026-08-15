@@ -1599,32 +1599,28 @@ class MessageSnapshot:
         self.type = MessageType(message.get("type", 0))
         self.content = message.get("content", "")
 
-        if message.get("edited_timestamp", None):
-            self.edited_timestamp = utils.parse_time(
-                message["edited_timestamp"]
-            )
+        if edited_timestamp := message.get("edited_timestamp", None):
+            self.edited_timestamp = utils.parse_time(edited_timestamp)
 
-        if message.get("timestamp", None):
-            self.timestamp = utils.parse_time(
-                message["timestamp"]
-            )
+        if timestamp := message.get("timestamp", None):
+            self.timestamp = utils.parse_time(timestamp)
 
-        if message.get("embeds", None):
+        if embeds := message.get("embeds", None):
             self.embeds = [
                 Embed.from_dict(embed)
-                for embed in message["embeds"]
+                for embed in embeds
             ]
 
-        if message.get("attachments", None):
+        if attachments := message.get("attachments", None):
             self.attachments = [
                 Attachment(state=self._state, data=a)
-                for a in message["attachments"]
+                for a in attachments
             ]
 
-        if message.get("sticker_items", None):
+        if sticker_items := message.get("sticker_items", None):
             self.stickers = [
                 PartialSticker(state=self._state, id=int(s["id"]), name=s["name"], format_type=s["format_type"])
-                for s in message["sticker_items"]
+                for s in sticker_items
             ]
 
 
@@ -1755,23 +1751,23 @@ class Message(PartialMessage):
                 data=data
             )
 
-        if data.get("message_reference"):
+        if message_reference := data.get("message_reference"):
             self.reference = MessageReference(
                 state=self._state,
-                data=data["message_reference"]
+                data=message_reference
             )
 
-        if data.get("referenced_message"):
+        if referenced_message := data.get("referenced_message"):
             self.resolved_reply = Message(
                 state=self._state,
-                data=data["referenced_message"],
+                data=referenced_message,
                 guild=self.guild
             )
 
-        if data.get("interaction_metadata"):
+        if interaction_metadata := data.get("interaction_metadata"):
             self.interaction = MessageInteraction(
                 state=self._state,
-                data=data["interaction_metadata"]
+                data=interaction_metadata
             )
 
         for m in data.get("message_snapshots", []):
@@ -1782,14 +1778,13 @@ class Message(PartialMessage):
                 )
             )
 
-        if data.get("poll"):
-            self.poll = Poll.from_dict(data["poll"])
+        if poll := data.get("poll"):
+            self.poll = Poll.from_dict(poll)
 
-        if data.get("edited_timestamp"):
-            self.edited_timestamp = utils.parse_time(data["edited_timestamp"])
+        if edited_timestamp := data.get("edited_timestamp"):
+            self.edited_timestamp = utils.parse_time(edited_timestamp)
 
-        if data.get("role_subscription_data"):
-            rsd = data["role_subscription_data"]
+        if rsd := data.get("role_subscription_data"):
             self.role_subscription_data = RoleSubscriptionData(
                 role_subscription_listing_id=int(rsd["role_subscription_listing_id"]),
                 tier_name=rsd["tier_name"],
@@ -1797,34 +1792,34 @@ class Message(PartialMessage):
                 is_renewal=rsd["is_renewal"],
             )
 
-        if data.get("call"):
+        if call := data.get("call"):
             self.call = MessageCall(
                 participants=[
                     PartialUser(state=self._state, id=int(g))
-                    for g in data["call"].get("participants", [])
+                    for g in call.get("participants", [])
                 ],
                 ended_timestamp=(
-                    utils.parse_time(data["call"]["ended_timestamp"])
-                    if data["call"].get("ended_timestamp") else None
+                    utils.parse_time(call["ended_timestamp"])
+                    if call.get("ended_timestamp") else None
                 ),
             )
 
-        if data.get("member"):
+        if member := data.get("member"):
             from .member import Member
 
             # Append author data to member data
-            data["member"]["user"] = data["author"]
+            member["user"] = data["author"]
 
             self.author = Member(
                 state=self._state,
                 guild=self.guild,  # type: ignore
-                data=data["member"]
+                data=member
             )
 
-        if data.get("mentions"):
+        if mentions := data.get("mentions"):
             from .member import Member
 
-            for m in data["mentions"]:
+            for m in mentions:
                 if m.get("member", None) and self.guild_id:
                     # This is only done through the gateway
                     fake_member = m["member"]

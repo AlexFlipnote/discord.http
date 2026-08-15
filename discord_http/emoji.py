@@ -378,9 +378,9 @@ class Emoji(PartialEmoji):
         return f"<{'a' if self.animated else ''}:{self.name}:{self.id}>"
 
     def _from_data(self, data: dict) -> None:
-        if data.get("user"):
+        if user := data.get("user"):
             from .user import User
-            self.user = User(state=self._state, data=data["user"])
+            self.user = User(state=self._state, data=user)
 
     @property
     def url(self) -> str:

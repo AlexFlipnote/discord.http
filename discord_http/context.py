@@ -639,29 +639,28 @@ class Context:
         """ The response helper for this interaction. """
 
     def _from_data(self, data: dict) -> None:
-        if data.get("channel_id"):
-            self.channel_id = int(data["channel_id"])
+        if channel_id := data.get("channel_id"):
+            self.channel_id = int(channel_id)
 
-        if data.get("guild_id"):
+        if guild_id := data.get("guild_id"):
             self._guild = PartialGuild(
                 state=self.bot.state,
-                id=int(data["guild_id"])
+                id=int(guild_id)
             )
 
-        if data.get("channel"):
-            channel_data = data["channel"]
+        if channel := data.get("channel"):
             if self._guild:
-                channel_data["guild_id"] = self._guild.id
+                channel["guild_id"] = self._guild.id
 
-            self._channel = channel_types[channel_data["type"]](
+            self._channel = channel_types[channel["type"]](
                 state=self.bot.state,
-                data=channel_data
+                data=channel
             )
 
-        if data.get("message"):
+        if message := data.get("message"):
             self.message = Message(
                 state=self.bot.state,
-                data=data["message"],
+                data=message,
                 guild=self._guild
             )
         elif first_msg := next(iter(self._raw_resolved.get("messages", {}).values()), None):

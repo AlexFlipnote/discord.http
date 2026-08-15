@@ -195,15 +195,15 @@ class VoiceState(PartialVoiceState):
         return f"<VoiceState id={self.user} session_id='{self.session_id}'>"
 
     def _from_data(self, data: dict) -> None:
-        if data.get("member") and self.guild:
+        if self.guild and (member := data.get("member")):
             from .member import Member
             self.member = Member(
                 state=self._state,
                 guild=self.guild,
-                data=data["member"]
+                data=member
             )
 
-        if data.get("request_to_speak_timestamp"):
+        if rts_timestamp := data.get("request_to_speak_timestamp"):
             self.request_to_speak_timestamp = utils.parse_time(
-                data["request_to_speak_timestamp"]
+                rts_timestamp
             )
