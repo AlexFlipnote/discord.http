@@ -80,9 +80,9 @@ class PartialRole(PartialBase):
 
         Parameters
         ----------
-        user_id:
+        user_id
             The user ID to add the role to
-        reason:
+        reason
             The reason for adding the role
         """
         await self._state.query(
@@ -103,9 +103,9 @@ class PartialRole(PartialBase):
 
         Parameters
         ----------
-        user_id:
+        user_id
             The user ID to remove the role from
-        reason:
+        reason
             The reason for removing the role
         """
         await self._state.query(
@@ -125,7 +125,7 @@ class PartialRole(PartialBase):
 
         Parameters
         ----------
-        reason:
+        reason
             The reason for deleting the role
         """
         await self._state.query(
@@ -154,30 +154,30 @@ class PartialRole(PartialBase):
 
         Parameters
         ----------
-        name:
+        name
             The new name of the role
-        color:
+        color
             Alias for colour
-        colour:
+        colour
             The new colour of the role.
             If tuple is provided, it switches to the new gradient role colours.
             The third value must be one of the following:
             - 16761760
             - 11127295
             - 16759788
-        hoist:
+        hoist
             Whether the role should be displayed separately in the sidebar
-        mentionable:
+        mentionable
             Whether the role should be mentionable
-        unicode_emoji:
+        unicode_emoji
             The new unicode emoji of the role
-        positions:
+        positions
             The new position of the role
-        permissions:
+        permissions
             The new permissions for the role
-        icon:
+        icon
             The new icon of the role
-        reason:
+        reason
             The reason for editing the role
 
         Returns
@@ -186,7 +186,7 @@ class PartialRole(PartialBase):
 
         Raises
         ------
-        `ValueError`
+        ValueError
             - If both `unicode_emoji` and `icon` are set
             - If there were no changes applied to the role
             - If position was changed, but Discord API returned invalid data

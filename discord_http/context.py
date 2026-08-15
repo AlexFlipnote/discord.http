@@ -197,7 +197,7 @@ class InteractionResponse:
 
         Parameters
         ----------
-        call_after:
+        call_after
             A coroutine to run after the response is sent
 
         Raises
@@ -232,13 +232,13 @@ class InteractionResponse:
 
         Parameters
         ----------
-        thinking:
+        thinking
             If the response should show the "thinking" status
-        ephemeral:
+        ephemeral
             If the response should be ephemeral (show only to the user)
-        flags:
+        flags
             The flags of the message (overrides ephemeral)
-        call_after:
+        call_after
             A coroutine to run after the response is sent
 
         Returns
@@ -247,7 +247,7 @@ class InteractionResponse:
 
         Raises
         ------
-        `TypeError`
+        TypeError
             If `call_after` is not a coroutine
         """
         self._call_after_generator(call_after)
@@ -264,9 +264,9 @@ class InteractionResponse:
 
         Parameters
         ----------
-        modal:
+        modal
             The modal to send
-        call_after:
+        call_after
             A coroutine to run after the response is sent
 
         Returns
@@ -275,7 +275,7 @@ class InteractionResponse:
 
         Raises
         ------
-        `TypeError`
+        TypeError
             - If `modal` is not a `Modal` instance
             - If `call_after` is not a coroutine
         """
@@ -295,7 +295,7 @@ class InteractionResponse:
 
         Parameters
         ----------
-        call_after:
+        call_after
             A coroutine to run after the response is sent
 
         Returns
@@ -327,31 +327,31 @@ class InteractionResponse:
 
         Parameters
         ----------
-        content:
+        content
             Content of the message
-        embed:
+        embed
             The embed to send
-        embeds:
+        embeds
             Multiple embeds to send
-        file:
+        file
             A file to send
-        files:
+        files
             Multiple files to send
-        ephemeral:
+        ephemeral
             If the message should be ephemeral (show only to the user)
-        view:
+        view
             Components to include in the message
-        tts:
+        tts
             Whether the message should be sent using text-to-speech
-        type:
+        type
             The type of response to send
-        allowed_mentions:
+        allowed_mentions
             Allowed mentions for the message
-        flags:
+        flags
             The flags of the message (overrides ephemeral)
-        poll:
+        poll
             The poll to be sent
-        call_after:
+        call_after
             A coroutine to run after the response is sent
 
         Returns
@@ -360,10 +360,10 @@ class InteractionResponse:
 
         Raises
         ------
-        `ValueError`
+        ValueError
             - If both `embed` and `embeds` are passed
             - If both `file` and `files` are passed
-        `TypeError`
+        TypeError
             If `call_after` is not a coroutine
         """
         self._call_after_generator(call_after)
@@ -404,23 +404,23 @@ class InteractionResponse:
 
         Parameters
         ----------
-        content:
+        content
             Content of the message
-        embed:
+        embed
             Embed to edit the message with
-        embeds:
+        embeds
             Multiple embeds to edit the message with
-        view:
+        view
             Components to include in the message
-        attachment:
+        attachment
             New file to edit the message with
-        attachments:
+        attachments
             Multiple new files to edit the message with
-        allowed_mentions:
+        allowed_mentions
             Allowed mentions for the message
-        flags:
+        flags
             The flags of the message
-        call_after:
+        call_after
             A coroutine to run after the response is sent
 
         Returns
@@ -429,10 +429,10 @@ class InteractionResponse:
 
         Raises
         ------
-        `ValueError`
+        ValueError
             - If both `embed` and `embeds` are passed
             - If both `attachment` and `attachments` are passed
-        `TypeError`
+        TypeError
             If `call_after` is not a coroutine
         """
         self._call_after_generator(call_after)
@@ -461,7 +461,7 @@ class InteractionResponse:
 
         Parameters
         ----------
-        choices:
+        choices
             The choices to send
 
         Returns
@@ -470,7 +470,7 @@ class InteractionResponse:
 
         Raises
         ------
-        `TypeError`
+        TypeError
             - If `choices` is not a `dict`
             - If `choices` is not a `dict[str | int | float, str]`
         """
@@ -865,9 +865,9 @@ class Context:
 
         Parameters
         ----------
-        thinking:
+        thinking
             Whether the deferred message should show the "thinking" status
-        ephemeral:
+        ephemeral
             Whether the deferred message should be ephemeral
 
         Returns
@@ -915,35 +915,35 @@ class Context:
 
         Parameters
         ----------
-        content:
+        content
             Content of the message
-        embed:
+        embed
             Embed of the message
-        embeds:
+        embeds
             Embeds of the message
-        file:
+        file
             File of the message
-        files:
+        files
             Files of the message
-        ephemeral:
+        ephemeral
             Whether the message should be sent as ephemeral
-        view:
+        view
             Components of the message
-        type:
+        type
             Which type of response should be sent
-        allowed_mentions:
+        allowed_mentions
             Allowed mentions of the message
-        wait:
+        wait
             Whether to wait for the message to be sent
-        thread_id:
+        thread_id
             Thread ID to send the message to
-        poll:
+        poll
             Poll to send with the message
-        tts:
+        tts
             Whether the message should be sent as TTS
-        flags:
+        flags
             Flags of the message
-        delete_after:
+        delete_after
             How long to wait before deleting the message
 
         Returns
@@ -1009,12 +1009,12 @@ class Context:
 
         Parameters
         ----------
-        modal:
+        modal
             The modal to send
 
         Raises
         ------
-        `TypeError`
+        TypeError
             If `modal` is not a `Modal` instance
         """
         if not isinstance(modal, Modal):
@@ -1053,35 +1053,35 @@ class Context:
 
         Parameters
         ----------
-        content:
+        content
             Content of the message
-        embed:
+        embed
             Embed of the message
-        embeds:
+        embeds
             Embeds of the message
-        file:
+        file
             File of the message
-        files:
+        files
             Files of the message
-        ephemeral:
+        ephemeral
             Whether the message should be sent as ephemeral
-        view:
+        view
             Components of the message
-        type:
+        type
             Which type of response should be sent
-        allowed_mentions:
+        allowed_mentions
             Allowed mentions of the message
-        wait:
+        wait
             Whether to wait for the message to be sent
-        thread_id:
+        thread_id
             Thread ID to send the message to
-        poll:
+        poll
             Poll to send with the message
-        tts:
+        tts
             Whether the message should be sent as TTS
-        flags:
+        flags
             Flags of the message
-        delete_after:
+        delete_after
             How long to wait before deleting the message
 
         Returns

@@ -149,9 +149,9 @@ class BaseEnum(_Enum):
 
         Parameters
         ----------
-        key:
+        key
             The name or value of the enum member to retrieve.
-        default:
+        default
             The value to return if the key is not found.
 
         Returns
@@ -186,9 +186,9 @@ class BaseEnum(_Enum):
 
         Parameters
         ----------
-        other:
+        other
             The value to compare against, which can be an enum member, its name, or its value.
-        op_name:
+        op_name
             The name of the operator to use for comparison (e.g., "gt" for greater than).
 
         Returns

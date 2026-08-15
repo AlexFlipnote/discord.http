@@ -428,9 +428,9 @@ class DiscordHTTP(web.Application):
 
         Parameters
         ----------
-        response:
+        response
             The aiohttp response to patch
-        event:
+        event
             The event to set when `write_eof` completes
         """
         original_write_eof = response.write_eof
@@ -450,9 +450,9 @@ class DiscordHTTP(web.Application):
 
         Parameters
         ----------
-        ctx:
+        ctx
             The context of the command
-        e:
+        e
             The exception that was raised
 
         Returns
@@ -472,11 +472,6 @@ class DiscordHTTP(web.Application):
 
         You can overwrite this function to return your own data as well.
         Remember that it must return `dict`
-
-        Parameters
-        ----------
-        request:
-            The incoming request object (not used by default)
         """
         if not self.bot.is_ready():
             return self.jsonify({"error": "bot is not ready yet"}, status=503)
@@ -508,9 +503,9 @@ class DiscordHTTP(web.Application):
 
         Parameters
         ----------
-        data:
+        data
             The data to respond with
-        status:
+        status
             The status code to respond with
 
         Returns
@@ -534,9 +529,9 @@ class DiscordHTTP(web.Application):
 
         Parameters
         ----------
-        body:
+        body
             The body to respond with
-        status:
+        status
             The status code to respond with
 
         Returns
@@ -563,9 +558,9 @@ class DiscordHTTP(web.Application):
 
         Parameters
         ----------
-        host:
+        host
             Host to use, if not provided, it will use `127.0.0.1`
-        port:
+        port
             Port to use, if not provided, it will use `8080`
         """
         int_path = str(self.bot.interaction_path)

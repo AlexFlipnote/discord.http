@@ -273,7 +273,7 @@ class Status:
 
         Parameters
         ----------
-        ignore_warning:
+        ignore_warning
             Whether to ignore the warning or not
             (This is only used before the shard is ready)
             ((If I find a way to fix it, I will remove this))
@@ -434,9 +434,9 @@ class Shard:
 
         Parameters
         ----------
-        message:
+        message
             The message to send to the websocket
-        ratelimit:
+        ratelimit
             Whether to ratelimit the message or not
         """
         if isinstance(message, PayloadType):
@@ -468,9 +468,9 @@ class Shard:
 
         Parameters
         ----------
-        code:
+        code
             The close code to use
-        kill:
+        kill
             Whether to kill the shard and never reconnect instance
         """
         code = code or 1000
@@ -484,7 +484,7 @@ class Shard:
 
         Parameters
         ----------
-        raw_msg:
+        raw_msg
             The message to receive
         """
         self._last_activity = utils.utcnow()
@@ -612,17 +612,17 @@ class Shard:
 
         Parameters
         ----------
-        guild_id:
+        guild_id
             The guild id to send the chunk to
-        query:
+        query
             What to query for, by default None
-        limit:
+        limit
             The limit of members to fetch, by default 0
-        presences:
+        presences
             If to fetch presences, by default False
-        user_ids:
+        user_ids
             UserIDs to find, by default None
-        nonce:
+        nonce
             The nonce to use, by default None
         """
         payload: dict[str, str | int | list[str]] = {
@@ -664,15 +664,15 @@ class Shard:
 
         Parameters
         ----------
-        guild_id:
+        guild_id
             The guild id to query
-        query:
+        query
             The query to use, by default None
-        limit:
+        limit
             The limit of members to fetch, by default 0
-        presences:
+        presences
             If to fetch presences, by default False
-        user_ids:
+        user_ids
             UserIDs to find, by default None
 
         Returns
@@ -732,9 +732,9 @@ class Shard:
 
         Parameters
         ----------
-        guild_id:
+        guild_id
             The guild id to chunk
-        wait:
+        wait
             Whether to wait for the chunk to be ready or not
 
         Returns
@@ -1019,9 +1019,9 @@ class Shard:
 
         Parameters
         ----------
-        name:
+        name
             The name of the event
-        event:
+        event
             The event data
         """
         if not (data := event.get("d")):
@@ -1143,7 +1143,7 @@ class Shard:
 
         Parameters
         ----------
-        status:
+        status
             The status to change to.
         """
         _log.debug(f"Changing presence in Shard {self.shard_id} to {status}")
@@ -1158,7 +1158,7 @@ class Shard:
 
         Parameters
         ----------
-        op:
+        op
             The op to get the payload for
 
         Returns

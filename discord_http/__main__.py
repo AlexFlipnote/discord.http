@@ -11,7 +11,7 @@ def get_package_version(name: str) -> str:
 
     Parameters
     ----------
-    name:
+    name
         The name of the package
 
     Returns

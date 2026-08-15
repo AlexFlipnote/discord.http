@@ -197,7 +197,7 @@ class AttachmentComponent:
 
         Parameters
         ----------
-        use_cached:
+        use_cached
             Whether to use the cached URL or not, defaults to `False`
 
         Returns
@@ -206,7 +206,7 @@ class AttachmentComponent:
 
         Raises
         ------
-        `HTTPException`
+        HTTPException
             If the request returned anything other than 2XX
         """
         r = await self._state.http.request(
@@ -231,10 +231,10 @@ class AttachmentComponent:
 
         Parameters
         ----------
-        path:
+        path
             Path to save the file to, which includes the filename and extension.
             Example: `./path/to/file.png`
-        use_cached:
+        use_cached
             Whether to use the cached URL or not, defaults to `False`
 
         Returns
@@ -256,9 +256,9 @@ class AttachmentComponent:
 
         Parameters
         ----------
-        filename:
+        filename
             Filename for the file, if empty, the attachment's filename will be used
-        spoiler:
+        spoiler
             Weather the file should be marked as a spoiler or not, defaults to `False`
 
         Returns
@@ -678,20 +678,20 @@ class Select(Item):
 
         Parameters
         ----------
-        label:
+        label
             Label of the item
-        value:
+        value
             The value of the item, which will be shown on interaction response
-        description:
+        description
             Description of the item
-        emoji:
+        emoji
             Emoji shown on the left side of the item
-        default:
+        default
             Whether the item is selected by default
 
         Raises
         ------
-        `ValueError`
+        ValueError
             If there are more than 25 options
         """
         if len(self._options) >= 25:
@@ -1133,13 +1133,13 @@ class RadioComponent(Item):
 
         Parameters
         ----------
-        value:
+        value
             The value of the option, which will be returned on interaction response
-        label:
+        label
             The label of the option, what the user sees
-        description:
+        description
             The description of the option, additional text shown below the label
-        default:
+        default
             Whether the option is the default selection
         """
         if len(self.options) >= 10:
@@ -1222,13 +1222,13 @@ class CheckboxGroupComponent(Item):
 
         Parameters
         ----------
-        value:
+        value
             The value of the option, which will be returned on interaction response
-        label:
+        label
             The label of the option, what the user sees
-        description:
+        description
             The description of the option, additional text shown below the label
-        default:
+        default
             Whether the option is selected by default
         """
         if len(self.options) >= 10:
@@ -1380,6 +1380,8 @@ class InteractionStorage:
         self._store_interaction: "Context | None" = None
 
         self.loop = asyncio.get_running_loop()
+        """ The event loop this storage was created in. """
+
         self._call_after: Callable | None = None
         self._users: list["Snowflake"] = []
         self._timeout_bool = False
@@ -1400,7 +1402,7 @@ class InteractionStorage:
 
         Parameters
         ----------
-        value:
+        value
             `True` means the event is set
             `False` means the event is cleared
         """
@@ -1485,9 +1487,9 @@ class InteractionStorage:
 
         Parameters
         ----------
-        ctx:
+        ctx
             Passing the current context of the bot
-        call_after:
+        call_after
             Coroutine to call after the view is interacted with (will be ignored if timeout)
             The new context does follow with the call_after function, example:
 
@@ -1500,13 +1502,13 @@ class InteractionStorage:
                 async def call_after(ctx):
                     await ctx.response.edit_message(content="Hello world")
 
-        users:
+        users
             List of users that are allowed to interact with the view
-        original_response:
+        original_response
             Whether to force the original response to be used as the message target
-        custom_id:
+        custom_id
             Custom ID of the view, if not provided, it will use Context.id or Context.message
-        timeout:
+        timeout
             How long it should take until the code simply times out.
             Set to `None` for the view to never time out on its own.
 
@@ -1516,7 +1518,7 @@ class InteractionStorage:
 
         Raises
         ------
-        `TypeError`
+        TypeError
             If `call_after` is provided and is not a coroutine function
         """
         users = users or []
@@ -1749,7 +1751,7 @@ class ActionRow(Item):
 
         Parameters
         ----------
-        item:
+        item
             The item to add to the action row
         """
         self.components.append(item)
@@ -1765,9 +1767,9 @@ class ActionRow(Item):
 
         Parameters
         ----------
-        label:
+        label
             Label of the item
-        custom_id:
+        custom_id
             Custom ID of the item
 
         Returns
@@ -1936,11 +1938,11 @@ class MediaGalleryComponent(Item):
 
         Parameters
         ----------
-        item:
+        item
             Items to add to the media gallery
-        description:
+        description
             The description of this media
-        spoiler:
+        spoiler
             If the media should be marked as spoiler or not
         """
         if len(self.items) >= 10:
@@ -2070,7 +2072,7 @@ class ContainerComponent(Item):
 
         Parameters
         ----------
-        item:
+        item
             The item to add to the container component
 
         Returns
@@ -2095,7 +2097,7 @@ class ContainerComponent(Item):
 
         Parameters
         ----------
-        index:
+        index
             The index of the item to remove
 
         Returns
@@ -2156,9 +2158,9 @@ class View(InteractionStorage):
 
         Parameters
         ----------
-        label:
+        label
             Label of the item
-        custom_id:
+        custom_id
             Custom ID of the item
 
         Returns
@@ -2186,7 +2188,7 @@ class View(InteractionStorage):
 
         Parameters
         ----------
-        item:
+        item
             The item to add to the view
 
         Returns
@@ -2210,9 +2212,9 @@ class View(InteractionStorage):
 
         Parameters
         ----------
-        label:
+        label
             Label of the item
-        custom_id:
+        custom_id
             Custom ID of the item
 
         Returns
@@ -2469,11 +2471,11 @@ class Modal(InteractionStorage):
 
         Parameters
         ----------
-        component:
+        component
             The component to add to the modal.
-        label:
+        label
             The label of the component, overwrites component.label
-        description:
+        description
             The description of the component, overwrites component.description, by default None
 
         Returns

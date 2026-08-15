@@ -306,6 +306,7 @@ class GuildWidgetSettings:
         """ Whether the widget is enabled. """
 
         self.guild_id: int = guild_id
+        """ The ID of the guild this widget belongs to. """
 
         self._from_data(data)
 
@@ -728,9 +729,9 @@ class PartialGuildTemplate:
 
         Parameters
         ----------
-        name:
+        name
             New name of the template
-        description:
+        description
             New description of the template
 
         Returns
@@ -920,29 +921,29 @@ class PartialScheduledEvent(PartialBase):
 
         Parameters
         ----------
-        name:
+        name
             New name of the event
-        description:
+        description
             New description of the event
-        channel:
+        channel
             New channel of the event
-        external_location:
+        external_location
             New external location of the event
-        privacy_level:
+        privacy_level
             New privacy level of the event
-        entity_type:
+        entity_type
             New entity type of the event
-        status:
+        status
             New status of the event
-        start_time:
+        start_time
             New start time of the event
-        end_time:
+        end_time
             New end time of the event (only for external events)
-        image:
+        image
             New image of the event
-        recurrence_rule:
+        recurrence_rule
             New recurrence rule of the event, if any
-        reason:
+        reason
             The reason for editing the event
 
         Returns
@@ -951,7 +952,7 @@ class PartialScheduledEvent(PartialBase):
 
         Raises
         ------
-        `ValueError`
+        ValueError
             If the start_time is None
         """
         payload = {}
@@ -1039,13 +1040,13 @@ class PartialScheduledEvent(PartialBase):
 
         Parameters
         ----------
-        limit:
+        limit
             The maximum amount of users to fetch (1-100)
-        with_member:
+        with_member
             Whether to include guild member data for each user, if available
-        before:
+        before
             Consider only users before given user ID
-        after:
+        after
             Consider only users after given user ID
 
         Returns
@@ -1427,7 +1428,7 @@ class PartialGuild(PartialBase):
 
         Parameters
         ----------
-        member_id:
+        member_id
             The ID of the member to get.
 
         Returns
@@ -1442,7 +1443,7 @@ class PartialGuild(PartialBase):
 
         Parameters
         ----------
-        channel_id:
+        channel_id
             The ID of the channel to get.
 
         Returns
@@ -1457,7 +1458,7 @@ class PartialGuild(PartialBase):
 
         Parameters
         ----------
-        thread_id:
+        thread_id
             The ID of the thread to get.
 
         Returns
@@ -1479,7 +1480,7 @@ class PartialGuild(PartialBase):
 
         Parameters
         ----------
-        channel_id:
+        channel_id
             The ID of the channel to get the voice state of.
 
         Returns
@@ -1501,7 +1502,7 @@ class PartialGuild(PartialBase):
 
         Parameters
         ----------
-        member_id:
+        member_id
             The ID of the member to get the voice state of.
 
         Returns
@@ -1516,7 +1517,7 @@ class PartialGuild(PartialBase):
 
         Parameters
         ----------
-        role_id:
+        role_id
             The ID of the role to get.
 
         Returns
@@ -1534,7 +1535,7 @@ class PartialGuild(PartialBase):
 
         Parameters
         ----------
-        sound_id:
+        sound_id
             The ID of the soundboard sound to get.
 
         Returns
@@ -1629,7 +1630,7 @@ class PartialGuild(PartialBase):
 
         Parameters
         ----------
-        with_counts:
+        with_counts
             Whether to include `approximate_member_count` and `approximate_presence_count` or not
 
         Returns
@@ -1673,10 +1674,10 @@ class PartialGuild(PartialBase):
 
         Parameters
         ----------
-        invites_disabled_until:
+        invites_disabled_until
             When invites should be re-enabled, or `None` to re-enable them immediately.
             Can only be up to 24 hours in the future.
-        dms_disabled_until:
+        dms_disabled_until
             When direct messages should be re-enabled, or `None` to re-enable them immediately.
             Can only be up to 24 hours in the future.
 
@@ -1731,9 +1732,9 @@ class PartialGuild(PartialBase):
 
         Parameters
         ----------
-        name:
+        name
             The name of the template (1-100 characters)
-        description:
+        description
             The description of the template, if any (0-120 characters)
 
         Returns
@@ -1784,13 +1785,13 @@ class PartialGuild(PartialBase):
 
         Parameters
         ----------
-        enabled:
+        enabled
             Whether the welcome screen is enabled
-        description:
+        description
             New description of the welcome screen
-        welcome_channels:
+        welcome_channels
             New channels shown in the welcome screen (max 5)
-        reason:
+        reason
             The reason for editing the welcome screen
 
         Returns
@@ -1840,11 +1841,11 @@ class PartialGuild(PartialBase):
 
         Parameters
         ----------
-        enabled:
+        enabled
             Whether the widget should be enabled
-        channel:
+        channel
             The channel the widget invite should point to
-        reason:
+        reason
             The reason for editing the widget
 
         Returns
@@ -1884,7 +1885,7 @@ class PartialGuild(PartialBase):
 
         Parameters
         ----------
-        style:
+        style
             The style of the widget image (`shield`, `banner1`, `banner2`, `banner3`, or `banner4`)
 
         Returns
@@ -1918,15 +1919,15 @@ class PartialGuild(PartialBase):
 
         Parameters
         ----------
-        prompts:
+        prompts
             New prompts shown during onboarding and in the Channels & Roles tab
-        default_channel_ids:
+        default_channel_ids
             New channel IDs that members get opted into automatically
-        enabled:
+        enabled
             Whether onboarding should be enabled
-        mode:
+        mode
             New constraint mode used for onboarding
-        reason:
+        reason
             The reason for editing the onboarding configuration
 
         Returns
@@ -1996,58 +1997,57 @@ class PartialGuild(PartialBase):
 
         Parameters
         ----------
-        query:
+        query
             The content to search for (max 1024 characters).
-        limit:
+        limit
             The maximum amount of messages to yield.
-        offset:
+        offset
             Number of messages to skip (max 9975).
-        max_id:
+        max_id
             Get messages before this message ID.
-        min_id:
+        min_id
             Get messages after this message ID.
-        slop:
+        slop
             The max number of words to skip between matching tokens in the search (default 2, max 100).
-        channel_id:
+        channel_id
             Filter messages by these channels (max 500).
-        author_type:
+        author_type
             Filter messages by author type (e.g. 'user', 'bot', 'webhook'). Negate with '-'.
-        author_id:
+        author_id
             Filter messages by these authors (max 100).
-        mentions:
+        mentions
             Filter messages that mention these users (max 100).
-        mentions_role_id:
+        mentions_role_id
             Filter messages that mention these roles (max 100).
-        mention_everyone:
+        mention_everyone
             Filter messages that do or do not mention @everyone.
-        replied_to_user_id:
+        replied_to_user_id
             Filter messages that reply to these users (max 100).
-        replied_to_message_id:
+        replied_to_message_id
             Filter messages that reply to these messages (max 100).
-        pinned:
+        pinned
             Filter messages by whether they are or are not pinned.
-        has:
+        has
             Filter messages by whether or not they have specific things (e.g. 'image', 'embed').
-        embed_type:
+        embed_type
             Filter messages by embed type (e.g. 'image', 'video').
-        embed_provider:
+        embed_provider
             Filter messages by embed provider (case-sensitive, e.g. 'Tenor') (max 100).
-        link_hostname:
+        link_hostname
             Filter messages by link hostname (e.g. 'discord.com') (max 100).
-        attachment_filename:
+        attachment_filename
             Filter messages by attachment filename (max 100).
-        attachment_extension:
+        attachment_extension
             Filter messages by attachment extension (e.g. 'txt') (max 100).
-        sort_by:
+        sort_by
             The sorting algorithm to use ("timestamp" or "relevance").
-        sort_order:
+        sort_order
             The direction to sort ("asc" or "desc").
-        include_nsfw:
+        include_nsfw
             Whether to include results from age-restricted channels (default False).
 
         Yields
         ------
-        `Message`
             The message object matching the search.
         """
         base_params: dict = {
@@ -2220,37 +2220,37 @@ class PartialGuild(PartialBase):
 
         Parameters
         ----------
-        name:
+        name
             Name of the automod
-        event_type:
+        event_type
             What type of event
-        trigger_type:
+        trigger_type
             What should make it get triggered
-        keyword_filter:
+        keyword_filter
             Keywords to filter
-        regex_patterns:
+        regex_patterns
             Keywords in regex pattern to filter
-        presets:
+        presets
             Automod presets to include
-        allow_list:
+        allow_list
             List of keywords that are allowed
-        mention_total_limit:
+        mention_total_limit
             How many unique mentions allowed before trigger
-        mention_raid_protection_enabled:
+        mention_raid_protection_enabled
             If this should apply for raids
-        alert_channel:
+        alert_channel
             Where the action should be logged
-        timeout_seconds:
+        timeout_seconds
             How many seconds the user in question should be timed out
-        message:
+        message
             What message the user gets when action is taken
-        enabled:
+        enabled
             If the automod should be enabled or not
-        exempt_roles:
+        exempt_roles
             Which roles are allowed to bypass
-        exempt_channels:
+        exempt_channels
             Which channels are allowed to bypass
-        reason:
+        reason
             Reason for creating the automod
 
         Returns
@@ -2406,7 +2406,7 @@ class PartialGuild(PartialBase):
 
         Parameters
         ----------
-        user: Snowflake | int
+        user
             The user to fetch the ban of
 
         Returns
@@ -2436,11 +2436,11 @@ class PartialGuild(PartialBase):
 
         Parameters
         ----------
-        before:
+        before
             Consider only users before given user id
-        after:
+        after
             Consider only users after given user id
-        limit:
+        limit
             The maximum amount of messages to fetch.
             `None` will fetch all users.
 
@@ -2535,28 +2535,28 @@ class PartialGuild(PartialBase):
 
         Parameters
         ----------
-        name:
+        name
             The name of the role
-        permissions:
+        permissions
             The permissions of the role
-        color:
+        color
             Alias for colour
-        colour:
+        colour
             The colour of the role.
             If tuple is provided, it switches to the new gradient role colours.
             The third value must be one of the following:
             - 16761760
             - 11127295
             - 16759788
-        hoist:
+        hoist
             Whether the role should be hoisted
-        mentionable:
+        mentionable
             Whether the role should be mentionable
-        unicode_emoji:
+        unicode_emoji
             The unicode emoji of the role
-        icon:
+        icon
             The icon of the role
-        reason:
+        reason
             The reason for creating the role
 
         Returns
@@ -2633,27 +2633,27 @@ class PartialGuild(PartialBase):
 
         Parameters
         ----------
-        name:
+        name
             The name of the event
-        start_time:
+        start_time
             The start time of the event
-        end_time:
+        end_time
             The end time of the event
-        channel:
+        channel
             The channel of the event
-        description:
+        description
             The description of the event
-        privacy_level:
+        privacy_level
             The privacy level of the event (default is guild_only)
-        entity_type:
+        entity_type
             The entity type of the event (default is voice)
-        external_location:
+        external_location
             The external location of the event
-        image:
+        image
             The image of the event
-        recurrence_rule:
+        recurrence_rule
             The recurrence rule of the event, to make it a recurring event
-        reason:
+        reason
             The reason for creating the event
 
         Returns
@@ -2724,13 +2724,13 @@ class PartialGuild(PartialBase):
 
         Parameters
         ----------
-        name:
+        name
             The name of the category
-        overwrites:
+        overwrites
             The permission overwrites of the category
-        position:
+        position
             The position of the category
-        reason:
+        reason
             The reason for creating the category
 
         Returns
@@ -2781,21 +2781,21 @@ class PartialGuild(PartialBase):
 
         Parameters
         ----------
-        name:
+        name
             The name of the channel
-        topic:
+        topic
             The topic of the channel
-        position:
+        position
             The position of the channel
-        rate_limit_per_user:
+        rate_limit_per_user
             The rate limit per user of the channel
-        overwrites:
+        overwrites
             The permission overwrites of the category
-        parent_id:
+        parent_id
             The Category ID where the channel will be placed
-        nsfw:
+        nsfw
             Whether the channel is NSFW or not
-        reason:
+        reason
             The reason for creating the text channel
 
         Returns
@@ -2859,25 +2859,25 @@ class PartialGuild(PartialBase):
 
         Parameters
         ----------
-        name:
+        name
             The name of the channel
-        bitrate:
+        bitrate
             The bitrate of the channel
-        user_limit:
+        user_limit
             The user limit of the channel
-        rate_limit_per_user:
+        rate_limit_per_user
             The rate limit per user of the channel
-        overwrites:
+        overwrites
             The permission overwrites of the category
-        position:
+        position
             The position of the channel
-        video_quality_mode:
+        video_quality_mode
             The video quality mode of the channel
-        parent_id:
+        parent_id
             The Category ID where the channel will be placed
-        nsfw:
+        nsfw
             Whether the channel is NSFW or not
-        reason:
+        reason
             The reason for creating the voice channel
 
         Returns
@@ -2939,21 +2939,21 @@ class PartialGuild(PartialBase):
 
         Parameters
         ----------
-        name:
+        name
             The name of the channel
-        bitrate:
+        bitrate
             The bitrate of the channel
-        user_limit:
+        user_limit
             The user limit of the channel
-        overwrites:
+        overwrites
             The permission overwrites of the category
-        position:
+        position
             The position of the channel
-        video_quality_mode:
+        video_quality_mode
             The video quality mode of the channel
-        parent_id:
+        parent_id
             The Category ID where the channel will be placed
-        reason:
+        reason
             The reason for creating the stage channel
 
         Returns
@@ -3006,11 +3006,11 @@ class PartialGuild(PartialBase):
 
         Parameters
         ----------
-        name:
+        name
             Name of the emoji
-        image:
+        image
             File object to create an emoji from
-        reason:
+        reason
             The reason for creating the emoji
 
         Returns
@@ -3048,17 +3048,17 @@ class PartialGuild(PartialBase):
 
         Parameters
         ----------
-        name:
+        name
             Name of the soundboard sound
-        sound:
+        sound
             File object to create a soundboard sound from
-        volume:
+        volume
             The volume of the soundboard sound
-        emoji_name:
+        emoji_name
             The unicode emoji of the soundboard sound
-        emoji_id:
+        emoji_id
             The ID of the custom emoji of the soundboard sound
-        reason:
+        reason
             The reason for creating the soundboard sound
 
         Returns
@@ -3067,7 +3067,7 @@ class PartialGuild(PartialBase):
 
         Raises
         ------
-        `ValueError`
+        ValueError
             If both `emoji_name` and `emoji_id` are set
         """
         mime_type = None
@@ -3123,15 +3123,15 @@ class PartialGuild(PartialBase):
 
         Parameters
         ----------
-        name:
+        name
             Name of the sticker
-        description:
+        description
             Description of the sticker
-        emoji:
+        emoji
             Emoji that represents the sticker
-        file:
+        file
             File object to create a sticker from
-        reason:
+        reason
             The reason for creating the sticker
 
         Returns
@@ -3183,9 +3183,9 @@ class PartialGuild(PartialBase):
 
         Parameters
         ----------
-        days:
+        days
             How many days of inactivity to prune for
-        include_roles:
+        include_roles
             Which roles to include in the prune
 
         Returns
@@ -3224,13 +3224,13 @@ class PartialGuild(PartialBase):
 
         Parameters
         ----------
-        days:
+        days
             How many days of inactivity to prune for
-        compute_prune_count:
+        compute_prune_count
             Whether to return the amount of members that would be pruned
-        include_roles:
+        include_roles
             Which roles to include in the prune
-        reason:
+        reason
             The reason for beginning the prune
 
         Returns
@@ -3273,7 +3273,7 @@ class PartialGuild(PartialBase):
 
         Parameters
         ----------
-        id:
+        id
             The ID of the scheduled event.
 
         Returns
@@ -3295,7 +3295,7 @@ class PartialGuild(PartialBase):
 
         Parameters
         ----------
-        id:
+        id
             The ID of the scheduled event.
 
         Returns
@@ -3311,7 +3311,7 @@ class PartialGuild(PartialBase):
 
         Parameters
         ----------
-        role_id:
+        role_id
             The ID of the role
 
         Returns
@@ -3330,7 +3330,7 @@ class PartialGuild(PartialBase):
 
         Parameters
         ----------
-        channel_id:
+        channel_id
             The ID of the channel
 
         Returns
@@ -3351,7 +3351,7 @@ class PartialGuild(PartialBase):
 
         Parameters
         ----------
-        channel_id:
+        channel_id
             The ID of the channel
 
         Returns
@@ -3367,7 +3367,7 @@ class PartialGuild(PartialBase):
 
         Parameters
         ----------
-        emoji_id:
+        emoji_id
             The ID of the emoji
 
         Returns
@@ -3386,7 +3386,7 @@ class PartialGuild(PartialBase):
 
         Parameters
         ----------
-        sound_id:
+        sound_id
             The ID of the sound
 
         Returns
@@ -3415,7 +3415,7 @@ class PartialGuild(PartialBase):
 
         Parameters
         ----------
-        sticker_id:
+        sticker_id
             The ID of the sticker
 
         Returns
@@ -3434,7 +3434,7 @@ class PartialGuild(PartialBase):
 
         Parameters
         ----------
-        sticker_id:
+        sticker_id
             The ID of the sticker
 
         Returns
@@ -3450,7 +3450,7 @@ class PartialGuild(PartialBase):
 
         Parameters
         ----------
-        member_id:
+        member_id
             The ID of the member
 
         Returns
@@ -3471,7 +3471,7 @@ class PartialGuild(PartialBase):
 
         Parameters
         ----------
-        member_id:
+        member_id
             The ID of the member
 
         Returns
@@ -3524,9 +3524,9 @@ class PartialGuild(PartialBase):
 
         Parameters
         ----------
-        limit:
+        limit
             The maximum amount of members to return
-        after:
+        after
             The member to start after
 
         Yields
@@ -3626,13 +3626,13 @@ class PartialGuild(PartialBase):
 
         Parameters
         ----------
-        *members:
+        *members
             The members to ban
-        delete_message_days:
+        delete_message_days
             How many days of messages to delete
-        delete_message_seconds:
+        delete_message_seconds
             How many seconds of messages to delete
-        reason:
+        reason
             The reason for banning the members
 
         Returns
@@ -3689,13 +3689,13 @@ class PartialGuild(PartialBase):
 
         Parameters
         ----------
-        member:
+        member
             The member to ban
-        reason:
+        reason
             The reason for banning the member
-        delete_message_days:
+        delete_message_days
             How many days of messages to delete
-        delete_message_seconds:
+        delete_message_seconds
             How many seconds of messages to delete
         """
         payload = {}
@@ -3723,9 +3723,9 @@ class PartialGuild(PartialBase):
 
         Parameters
         ----------
-        member:
+        member
             The member to unban
-        reason:
+        reason
             The reason for unbanning the member
         """
         await self._state.query(
@@ -3746,9 +3746,9 @@ class PartialGuild(PartialBase):
 
         Parameters
         ----------
-        member:
+        member
             The member to kick
-        reason:
+        reason
             The reason for kicking the member
         """
         await self._state.query(
@@ -3788,15 +3788,15 @@ class PartialGuild(PartialBase):
 
         Parameters
         ----------
-        before:
+        before
             Consider only entries before given entry
-        after:
+        after
             Consider only entries after given entry
-        user:
+        user
             Consider only entries made by given user
-        action:
+        action
             Consider only entries with given action
-        limit:
+        limit
             The maximum amount of messages to fetch.
 
         Returns
@@ -3906,9 +3906,9 @@ class PartialGuild(PartialBase):
 
         Parameters
         ----------
-        query:
+        query
             The query to search for
-        limit:
+        limit
             The maximum amount of members to return
 
         Returns
@@ -3917,7 +3917,7 @@ class PartialGuild(PartialBase):
 
         Raises
         ------
-        `ValueError`
+        ValueError
             If the limit is not between 1 and 1000
         """
         if limit not in range(1, 1001):
@@ -4005,47 +4005,47 @@ class PartialGuild(PartialBase):
 
         Parameters
         ----------
-        name:
+        name
             New name of the guild
-        verification_level:
+        verification_level
             Verification level of the guild
-        default_message_notifications:
+        default_message_notifications
             Default message notification level of the guild
-        explicit_content_filter:
+        explicit_content_filter
             Explicit content filter level of the guild
-        afk_channel_id:
+        afk_channel_id
             AFK channel of the guild
-        afk_timeout:
+        afk_timeout
             AFK timeout of the guild
-        icon:
+        icon
             Icon of the guild
-        owner_id:
+        owner_id
             Owner of the guild
-        splash:
+        splash
             Splash of the guild
-        discovery_splash:
+        discovery_splash
             Discovery splash of the guild
-        banner:
+        banner
             Banner of the guild
-        system_channel_id:
+        system_channel_id
             System channel of the guild
-        system_channel_flags:
+        system_channel_flags
             System channel flags of the guild
-        rules_channel_id:
+        rules_channel_id
             Rules channel of the guild
-        public_updates_channel_id:
+        public_updates_channel_id
             Public updates channel of the guild
-        preferred_locale:
+        preferred_locale
             Preferred locale of the guild
-        description:
+        description
             Description of the guild
-        features:
+        features
             Features of the guild
-        premium_progress_bar_enabled:
+        premium_progress_bar_enabled
             Whether the premium progress bar is enabled
-        safety_alerts_channel_id:
+        safety_alerts_channel_id
             Safety alerts channel of the guild
-        reason:
+        reason
             The reason for editing the guild
 
         Returns
@@ -4483,7 +4483,7 @@ class Guild(PartialGuild):
 
         Parameters
         ----------
-        role_id:
+        role_id
             The ID of the role to get
 
         Returns
@@ -4499,7 +4499,7 @@ class Guild(PartialGuild):
 
         Parameters
         ----------
-        role_name:
+        role_name
             The name of the role to get (case sensitive)
 
         Returns
@@ -4518,7 +4518,7 @@ class Guild(PartialGuild):
 
         Parameters
         ----------
-        member:
+        member
             The member to get the top role of
 
         Returns

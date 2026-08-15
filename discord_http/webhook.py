@@ -133,35 +133,35 @@ class PartialWebhook(PartialBase):
 
         Parameters
         ----------
-        content:
+        content
             Content of the message
-        username:
+        username
             Username of the webhook
-        avatar_url:
+        avatar_url
             Avatar URL of the webhook
-        embed:
+        embed
             Embed of the message
-        embeds:
+        embeds
             Embeds of the message
-        file:
+        file
             File of the message
-        files:
+        files
             Files of the message
-        ephemeral:
+        ephemeral
             Whether the message should be sent as ephemeral
-        view:
+        view
             Components of the message
-        type:
+        type
             Which type of response should be sent
-        allowed_mentions:
+        allowed_mentions
             Allowed mentions of the message
-        wait:
+        wait
             Whether to wait for the message to be sent
-        flags:
+        flags
             Flags of the message
-        thread_id:
+        thread_id
             Thread ID to send the message to
-        poll:
+        poll
             Poll to send with the message
 
         Returns
@@ -170,7 +170,7 @@ class PartialWebhook(PartialBase):
 
         Raises
         ------
-        `ValueError`
+        ValueError
             - If the webhook has no token
             - If `avatar_url` does not start with `https://`
         """
@@ -254,16 +254,16 @@ class PartialWebhook(PartialBase):
 
         Parameters
         ----------
-        payload:
+        payload
             The Slack-formatted payload to send
-        wait:
+        wait
             Whether to wait for server confirmation of the message send
-        thread_id:
+        thread_id
             Thread ID to send the message to
 
         Raises
         ------
-        `ValueError`
+        ValueError
             If the webhook has no token
         """
         if self.token is None:
@@ -296,16 +296,16 @@ class PartialWebhook(PartialBase):
 
         Parameters
         ----------
-        payload:
+        payload
             The GitHub-formatted payload to send
-        wait:
+        wait
             Whether to wait for server confirmation of the message send
-        thread_id:
+        thread_id
             Thread ID to send the message to
 
         Raises
         ------
-        `ValueError`
+        ValueError
             If the webhook has no token
         """
         if self.token is None:
@@ -336,7 +336,7 @@ class PartialWebhook(PartialBase):
 
         Parameters
         ----------
-        reason:
+        reason
             The reason for deleting the webhook
         """
         if self.token is None:
@@ -368,13 +368,13 @@ class PartialWebhook(PartialBase):
 
         Parameters
         ----------
-        name:
+        name
             Name of the webhook
-        avatar:
+        avatar
             Avatar of the webhook
-        channel_id:
+        channel_id
             Channel ID to move the webhook to
-        reason:
+        reason
             Reason for the audit log
 
         Returns
@@ -474,9 +474,9 @@ class Webhook(PartialWebhook):
 
         Parameters
         ----------
-        state:
+        state
             The state to use for the webhook
-        data:
+        data
             The data to use for the webhook
 
         Returns

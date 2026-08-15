@@ -63,7 +63,7 @@ class PartialVoiceState(PartialBase):
 
         Raises
         ------
-        `NotFound`
+        NotFound
             - If the member is not in the guild
             - If the member is not in a voice channel
         """
@@ -97,7 +97,7 @@ class PartialVoiceState(PartialBase):
 
         Parameters
         ----------
-        suppress:
+        suppress
             Whether to suppress the user
         """
         if not self.guild_id:

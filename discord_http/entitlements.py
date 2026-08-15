@@ -52,9 +52,9 @@ class PartialSKU(PartialBase):
 
         Parameters
         ----------
-        owner_id:
+        owner_id
             The ID of the owner, can be GuildID or UserID.
-        owner_type:
+        owner_type
             The type of the owner.
 
         Returns
@@ -89,14 +89,14 @@ class PartialSKU(PartialBase):
 
         Parameters
         ----------
-        user_id:
+        user_id
             The user ID to fetch subscriptions for. Required for bot-token requests
             (only optional when using an OAuth2 access token, which this library does not support).
-        before:
+        before
             Consider only subscriptions before given ID
-        after:
+        after
             Consider only subscriptions after given ID
-        limit:
+        limit
             The maximum amount of subscriptions to fetch (1-100)
 
         Returns
@@ -133,7 +133,7 @@ class PartialSKU(PartialBase):
 
         Parameters
         ----------
-        subscription_id:
+        subscription_id
             The ID of the subscription to fetch
 
         Returns
@@ -151,7 +151,7 @@ class PartialSKU(PartialBase):
 
         Parameters
         ----------
-        subscription_id:
+        subscription_id
             The ID of the subscription
 
         Returns
@@ -512,7 +512,7 @@ class Subscription(PartialBase):
 
         Raises
         ------
-        `ValueError`
+        ValueError
             If no SKU is known to route the request through (should not happen for a
             subscription that came from the API, which always includes `sku_ids`)
         """

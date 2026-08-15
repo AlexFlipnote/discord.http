@@ -197,13 +197,13 @@ class HTTPClient:
 
         Parameters
         ----------
-        method:
+        method
             The HTTP method to use, defaults to GET
-        url:
+        url
             The URL to make the request to
-        res_method:
+        res_method
             The method to use to get the response, defaults to text
-        **kwargs:
+        **kwargs
             The keyword arguments to pass to the aiohttp.ClientSession.request method
 
         Returns
@@ -264,13 +264,13 @@ class HTTPClient:
 
         Parameters
         ----------
-        method:
+        method
             The HTTP method to use (e.g., "GET")
-        url:
+        url
             The URL to make the request to
-        chunk_size:
+        chunk_size
             The amount of bytes to yield at a time. Defaults to 64KB.
-        **kwargs:
+        **kwargs
             The keyword arguments to pass to the aiohttp.ClientSession.request method
 
         Yields
@@ -354,7 +354,7 @@ class Ratelimit:
 
         Parameters
         ----------
-        response:
+        response
             The HTTPResponse object to update the ratelimit information from
         """
         self._last_request = self._loop.time()
@@ -497,6 +497,7 @@ class DiscordAPI:
 
         # Aliases
         self.cache = self.bot.cache
+        """ Alias to the client's cache, used for caching guilds, users, etc. """
 
         self.token: str = self.bot.token
         """ The bot token used for authentication with the Discord API. """
@@ -565,9 +566,9 @@ class DiscordAPI:
 
         Parameters
         ----------
-        method:
+        method
             The HTTP method to use
-        path:
+        path
             The path to make the request to
 
         Returns
@@ -593,7 +594,7 @@ class DiscordAPI:
 
         Parameters
         ----------
-        key:
+        key
             The key to get the ratelimit for
 
         Returns
@@ -657,13 +658,13 @@ class DiscordAPI:
 
         Parameters
         ----------
-        method:
+        method
             Which HTTP method to use
-        path:
+        path
             The path to make the request to
-        res_method:
+        res_method
             The method to use to get the response
-        **kwargs:
+        **kwargs
             The keyword arguments to pass to the aiohttp.ClientSession.request method
 
         Returns
@@ -672,17 +673,17 @@ class DiscordAPI:
 
         Raises
         ------
-        `ValueError`
+        ValueError
             Invalid HTTP method
-        `DiscordServerError`
+        DiscordServerError
             Something went wrong on Discord's end
-        `Forbidden`
+        Forbidden
             You are not allowed to do this
-        `NotFound`
+        NotFound
             The resource was not found
-        `Unauthorized`
+        Unauthorized
             The bot token is invalid or has been revoked
-        `HTTPException`
+        HTTPException
             Something went wrong
         """
         extra_headers = kwargs.pop("headers", None)
@@ -823,7 +824,7 @@ class DiscordAPI:
 
         Raises
         ------
-        `RuntimeError`
+        RuntimeError
             - If the bot token is not valid
             - If the bot is not allowed to use the some intents
         """
@@ -885,11 +886,11 @@ class DiscordAPI:
 
         Parameters
         ----------
-        method:
+        method
             The HTTP method to use
-        guild_id:
+        guild_id
             The guild ID to query the commands for
-        **kwargs:
+        **kwargs
             The keyword arguments to pass to the aiohttp.ClientSession.request method
 
         Returns
@@ -924,9 +925,9 @@ class DiscordAPI:
 
         Parameters
         ----------
-        data:
+        data
             The JSON data to send to Discord API
-        guild_id:
+        guild_id
             The guild ID to update the commands for (if None, commands will be global)
 
         Returns
@@ -957,7 +958,7 @@ class DiscordAPI:
 
         Parameters
         ----------
-        guild_id:
+        guild_id
             The guild ID to fetch the commands for (if None, commands will be global)
 
         Returns
@@ -966,7 +967,7 @@ class DiscordAPI:
 
         Raises
         ------
-        `HTTPException`
+        HTTPException
             If the request returned anything other than 200.
             Typically this means the guild is not found.
         """

@@ -94,7 +94,7 @@ class EmojiParser:
 
         Parameters
         ----------
-        data:
+        data
             The dictionary to create the emoji from
 
         Returns
@@ -232,7 +232,7 @@ class PartialEmoji(PartialBase):
 
         Parameters
         ----------
-        reason:
+        reason
             The reason for deleting the emoji.
         """
         if self.guild_id:
@@ -262,11 +262,11 @@ class PartialEmoji(PartialBase):
 
         Parameters
         ----------
-        name:
+        name
             The new name of the emoji.
-        roles:
+        roles
             Roles that are allowed to use the emoji. (Only for guilds)
-        reason:
+        reason
             The reason for editing the emoji. (Only for guilds)
 
         Returns

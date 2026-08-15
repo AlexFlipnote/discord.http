@@ -64,6 +64,8 @@ class UserMissingPermissions(CheckFailed):
     """ Raised whenever a user is missing permissions. """
     def __init__(self, perms: Permissions):
         self.permissions = perms
+        """ The permissions the user is missing. """
+
         super().__init__(f"Missing permissions: {', '.join(perms.list_names)}")
 
 
@@ -71,6 +73,8 @@ class BotMissingPermissions(CheckFailed):
     """ Raised whenever a bot is missing permissions. """
     def __init__(self, perms: Permissions):
         self.permissions = perms
+        """ The permissions the bot is missing. """
+
         super().__init__(f"Bot is missing permissions: {', '.join(perms.list_names)}")
 
 

@@ -77,13 +77,13 @@ class MultipartData(MultipartWriter):
 
         Parameters
         ----------
-        name:
+        name
             The name of the form field.
-        data:
+        data
             The data to attach. Can be a File, a file-like object, a dictionary, a string, or bytes.
-        filename:
+        filename
             The filename to use for the attached file, if applicable.
-        content_type:
+        content_type
             The content type of the attached file, if applicable.
         """
         if data is None:
@@ -233,9 +233,9 @@ class Benchmark:
 
         Parameters
         ----------
-        name:
+        name
             The name of the benchmark entry
-        internal:
+        internal
             Whether this benchmark entry is for internal use (default: False)
             Mostly used to differentiate between user and internal benchmarks
 
@@ -256,7 +256,7 @@ class Benchmark:
 
         Parameters
         ----------
-        prefix:
+        prefix
             The prefix to use for each line, defaults to "➜"
 
         Returns
@@ -306,7 +306,7 @@ def format_small_unit(seconds: float | timedelta) -> str:
 
     Parameters
     ----------
-    seconds: float | timedelta
+    seconds
         The duration in seconds, or a timedelta.
 
     Returns
@@ -334,9 +334,9 @@ def create_missing_texture(*, size: int = 256, tiles: int = 8) -> bytes:
 
     Parameters
     ----------
-    size:
+    size
         The width and height of the image, in pixels, defaults to 256
-    tiles:
+    tiles
         The number of tiles across and down the image, defaults to 8
 
     Returns
@@ -383,7 +383,7 @@ def find_longest(*string: str) -> int:
 
     Parameters
     ----------
-    *string:
+    *string
         The strings to find the longest from
 
     Returns
@@ -399,9 +399,9 @@ def shortener(text: str, *, length: int = 64) -> str:
 
     Parameters
     ----------
-    text:
+    text
         The string to shorten.
-    length:
+    length
         The maximum length of the shortened string.
 
     Returns
@@ -425,9 +425,9 @@ def traceback_maker(
 
     Parameters
     ----------
-    err:
+    err
         The error to get the traceback from
-    advance:
+    advance
         Whether to include the traceback or not
 
     Returns
@@ -447,9 +447,9 @@ def escape_markdown(text: str, *, remove: bool = False) -> str:
 
     Parameters
     ----------
-    text:
+    text
         The text to escape
-    remove:
+    remove
         Whether to remove the markdown characters instead of escaping them
 
     Returns
@@ -468,9 +468,9 @@ def plural(word: str, num: int) -> str:
 
     Parameters
     ----------
-    word:
+    word
         The word to pluralize
-    num:
+    num
         The number to determine if the word should be pluralized
     """
     return f"{word}{'s'[:num ^ 1]}"
@@ -482,7 +482,7 @@ def ordinal(num: int) -> str:
 
     Parameters
     ----------
-    num:
+    num
         The number to determine the ordinal suffix
 
     Returns
@@ -500,7 +500,7 @@ def unwrap_optional(annotation: type) -> type:
 
     Parameters
     ----------
-    annotation:
+    annotation
         The annotation to unwrap, usually a type hint.
 
     Returns
@@ -524,7 +524,7 @@ def snowflake_time(
 
     Parameters
     ----------
-    id:
+    id
         The snowflake to get the datetime from
 
     Returns
@@ -547,9 +547,9 @@ def time_snowflake(
 
     Parameters
     ----------
-    dt:
+    dt
         The datetime to get the snowflake from
-    high:
+    high
         Whether to get the high snowflake or not
 
     Returns
@@ -558,7 +558,7 @@ def time_snowflake(
 
     Raises
     ------
-    `TypeError`
+    TypeError
         Wrong timestamp type provided
     """
     if not isinstance(dt, datetime):
@@ -576,7 +576,7 @@ def parse_time(ts: str | int) -> datetime:
 
     Parameters
     ----------
-    ts:
+    ts
         The timestamp to parse
 
     Returns
@@ -585,7 +585,7 @@ def parse_time(ts: str | int) -> datetime:
 
     Raises
     ------
-    `TypeError`
+    TypeError
         If the provided timestamp is not a string or int
     """
     if isinstance(ts, int):
@@ -611,7 +611,7 @@ def normalize_entity_id(
 
     Parameters
     ----------
-    entry:
+    entry
         The entry to translate
 
     Returns
@@ -620,7 +620,7 @@ def normalize_entity_id(
 
     Raises
     ------
-    `TypeError`
+    TypeError
         If the entry is not a datetime, int, str, or Snowflake
     """
     match entry:
@@ -650,7 +650,7 @@ def unicode_name(text: str) -> str:
 
     Parameters
     ----------
-    text:
+    text
         The text to get the unicode name from
 
     Returns
@@ -675,13 +675,13 @@ def oauth_url(
 
     Parameters
     ----------
-    client_id:
+    client_id
         Application ID to invite to the server
-    scope:
+    scope
         Changing the scope of the oauth url, default: `bot+applications.commands`
-    user_install:
+    user_install
         Whether the bot is allowed to be installed on the user's account
-    kwargs:
+    kwargs
         The query parameters to add to the url
 
     Returns
@@ -711,9 +711,9 @@ def divide_chunks(
 
     Parameters
     ----------
-    array:
+    array
         The list to divide
-    n:
+    n
         The amount of chunks to divide the list into
 
     Returns
@@ -745,7 +745,7 @@ def add_to_datetime(
 
     Parameters
     ----------
-    ts:
+    ts
         The timestamp to convert
         - `datetime`: Returns the datetime, but in UTC format
         - `timedelta`: Adds the timedelta to the current time
@@ -757,9 +757,9 @@ def add_to_datetime(
 
     Raises
     ------
-    `ValueError`
+    ValueError
         `datetime` object must be timezone aware
-    `TypeError`
+    TypeError
         Invalid type for timestamp provided
     """
     now = utcnow()
@@ -795,7 +795,7 @@ def mime_type_image(image: bytes) -> str:
 
     Parameters
     ----------
-    image:
+    image
         The image to get the mime type from
 
     Returns
@@ -804,7 +804,7 @@ def mime_type_image(image: bytes) -> str:
 
     Raises
     ------
-    `ValueError`
+    ValueError
         The image bytes provided is not supported sadly
     """
     match image:
@@ -833,7 +833,7 @@ def mime_type_audio(audio: bytes) -> str:
 
     Parameters
     ----------
-    audio:
+    audio
         The audio to get the mime type from
 
     Returns
@@ -842,7 +842,7 @@ def mime_type_audio(audio: bytes) -> str:
 
     Raises
     ------
-    `ValueError`
+    ValueError
         The audio bytes provided is not supported sadly
     """
     match audio:
@@ -865,7 +865,7 @@ def bytes_to_base64(image: File | bytes) -> str:
 
     Parameters
     ----------
-    image:
+    image
         The image to convert to base64
 
     Returns
@@ -874,7 +874,7 @@ def bytes_to_base64(image: File | bytes) -> str:
 
     Raises
     ------
-    `ValueError`
+    ValueError
         The image provided is not supported sadly
     """
     if isinstance(image, File):
@@ -904,11 +904,11 @@ def get_int(
 
     Parameters
     ----------
-    data:
+    data
         The dictionary to get the integer from
-    key:
+    key
         The key to get the integer from
-    default:
+    default
         The default value to return if the key is not found
 
     Returns
@@ -917,7 +917,7 @@ def get_int(
 
     Raises
     ------
-    `ValueError`
+    ValueError
         The key returned a non-digit value
     """
     output: str | None = data.get(key)
@@ -1077,7 +1077,7 @@ class URL:
 
         Parameters
         ----------
-        path:
+        path
             The path to join to the URL
 
         Returns
@@ -1100,9 +1100,9 @@ class URL:
 
         Parameters
         ----------
-        username:
+        username
             The new username, or None to remove credentials
-        password:
+        password
             The new password, or None to omit password
 
         Returns
@@ -1131,7 +1131,7 @@ class URL:
 
         Parameters
         ----------
-        params:
+        params
             The query parameters to update in the URL
             Use `None` to remove a query parameter
 
@@ -1164,11 +1164,11 @@ class URL:
 
         Parameters
         ----------
-        path:
+        path
             The path to set or append to the URL
-        append:
+        append
             Whether to append the path to the existing path or replace it
-        ensure_leading_slash:
+        ensure_leading_slash
             Whether to ensure the resulting path starts with a leading slash
 
         Returns
@@ -1192,7 +1192,7 @@ class URL:
 
         Parameters
         ----------
-        fragment:
+        fragment
             The fragment to add to the URL
 
         Returns
@@ -1207,7 +1207,7 @@ class URL:
 
         Parameters
         ----------
-        scheme:
+        scheme
             The scheme to update in the URL
 
         Returns
@@ -1222,7 +1222,7 @@ class URL:
 
         Parameters
         ----------
-        netloc:
+        netloc
             The netloc to update in the URL
 
         Returns
@@ -1272,7 +1272,7 @@ class DiscordTimestamp:
 
         Parameters
         ----------
-        fmt:
+        fmt
             The format to return the timestamp in
 
         Returns
@@ -1479,7 +1479,7 @@ def setup_logger(
 
     Parameters
     ----------
-    level:
+    level
         The level of the logger
     """
     lib, _, _ = __name__.partition(".")

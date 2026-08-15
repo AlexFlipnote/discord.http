@@ -60,11 +60,11 @@ class Cache:
 
         Parameters
         ----------
-        guild_id:
+        guild_id
             Guild ID to add
-        guild:
+        guild
             The object of the guild
-        data:
+        data
             Data of the guild
 
         Returns
@@ -90,9 +90,9 @@ class Cache:
 
         Parameters
         ----------
-        guild_id:
+        guild_id
             Guild ID to update
-        data:
+        data
             Data of the guild
         """
         if self.cache_flags is None:
@@ -114,7 +114,7 @@ class Cache:
 
         Parameters
         ----------
-        voice_state:
+        voice_state
             The voice state to update
         """
         if self.cache_flags is None:
@@ -150,7 +150,7 @@ class Cache:
 
         Parameters
         ----------
-        guild_id:
+        guild_id
             Guild ID to remove
 
         Returns
@@ -173,9 +173,9 @@ class Cache:
 
         Parameters
         ----------
-        member:
+        member
             The member to add
-        count_member:
+        count_member
             If the members should be counted or not, by default True
         """
         if self.cache_flags is None:
@@ -205,7 +205,7 @@ class Cache:
 
         Parameters
         ----------
-        member:
+        member
             The member to update
         """
         self.add_member(member, count_member=False)
@@ -216,9 +216,9 @@ class Cache:
 
         Parameters
         ----------
-        guild_id:
+        guild_id
             Guild ID to remove the member from
-        member_id:
+        member_id
             Member ID to remove
 
         Returns
@@ -243,7 +243,7 @@ class Cache:
 
         Parameters
         ----------
-        presence:
+        presence
             The presence to update
         """
         if self.cache_flags is None:
@@ -272,9 +272,9 @@ class Cache:
 
         Parameters
         ----------
-        guild_id:
+        guild_id
             Guild ID to get the channel from
-        channel_id:
+        channel_id
             Channel ID to get
 
         Returns
@@ -297,9 +297,9 @@ class Cache:
 
         Parameters
         ----------
-        guild_id:
+        guild_id
             The Guild ID to get the channel thread from
-        channel_id:
+        channel_id
             The Channel ID to get the channel thread from
 
         Returns
@@ -321,7 +321,7 @@ class Cache:
 
         Parameters
         ----------
-        channel:
+        channel
             The channel to add
         """
         if self.cache_flags is None:
@@ -346,7 +346,7 @@ class Cache:
 
         Parameters
         ----------
-        channel:
+        channel
             The channel to remove
         """
         if self.cache_flags is None:
@@ -366,7 +366,7 @@ class Cache:
 
         Parameters
         ----------
-        thread:
+        thread
             The thread to add
         """
         if self.cache_flags is None:
@@ -391,7 +391,7 @@ class Cache:
 
         Parameters
         ----------
-        thread:
+        thread
             The thread to remove
         """
         if self.cache_flags is None:
@@ -411,7 +411,7 @@ class Cache:
 
         Parameters
         ----------
-        role:
+        role
             The role to add
         """
         if self.cache_flags is None:
@@ -434,7 +434,7 @@ class Cache:
 
         Parameters
         ----------
-        role:
+        role
             The role to remove
         """
         if self.cache_flags is None:
@@ -452,9 +452,9 @@ class Cache:
 
         Parameters
         ----------
-        guild_id:
+        guild_id
             Guild ID to update the emojis from
-        emojis:
+        emojis
             The emojis to update
         """
         if self.cache_flags is None:
@@ -482,9 +482,9 @@ class Cache:
 
         Parameters
         ----------
-        guild_id:
+        guild_id
             Guild ID to update the stickers from
-        stickers:
+        stickers
             The stickers to update
         """
         if self.cache_flags is None:

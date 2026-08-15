@@ -108,7 +108,7 @@ class AutoModRuleTriggers:
 
         Parameters
         ----------
-        data:
+        data
             The dictionary to create the auto moderation rule from
 
         Returns
@@ -195,7 +195,7 @@ class AutoModRuleAction:
 
         Parameters
         ----------
-        data:
+        data
             The dictionary to create the auto moderation rule action from
 
         Returns
@@ -217,7 +217,7 @@ class AutoModRuleAction:
 
         Parameters
         ----------
-        message:
+        message
             The message to block
 
         Returns
@@ -236,7 +236,7 @@ class AutoModRuleAction:
 
         Parameters
         ----------
-        channel:
+        channel
             The channel to send the alert message to
 
         Returns
@@ -255,7 +255,7 @@ class AutoModRuleAction:
 
         Parameters
         ----------
-        seconds:
+        seconds
             The number of seconds to timeout the user for
 
         Returns
@@ -326,7 +326,7 @@ class PartialAutoModRule(PartialBase):
 
         Parameters
         ----------
-        reason:
+        reason
             Reason for deleting the automod
         """
         await self._state.query(
@@ -360,35 +360,35 @@ class PartialAutoModRule(PartialBase):
 
         Parameters
         ----------
-        name:
+        name
             Name of the automod
-        event_type:
+        event_type
             What type of event
-        keyword_filter:
+        keyword_filter
             Keywords to filter
-        regex_patterns:
+        regex_patterns
             Keywords in regex pattern to filter
-        presets:
+        presets
             Automod presets to include
-        allow_list:
+        allow_list
             List of keywords that are allowed
-        mention_total_limit:
+        mention_total_limit
             How many unique mentions allowed before trigger
-        mention_raid_protection_enabled:
+        mention_raid_protection_enabled
             If this should apply for raids
-        alert_channel:
+        alert_channel
             Where the action should be logged
-        timeout_seconds:
+        timeout_seconds
             How many seconds the user in question should be timed out
-        message:
+        message
             What message the user gets when action is taken
-        enabled:
+        enabled
             If the automod should be enabled or not
-        exempt_roles:
+        exempt_roles
             Which roles are allowed to bypass
-        exempt_channels:
+        exempt_channels
             Which channels are allowed to bypass
-        reason:
+        reason
             Reason for editing the automod
 
         Returns

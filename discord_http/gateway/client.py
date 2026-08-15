@@ -73,7 +73,7 @@ class GatewayClient:
 
         Parameters
         ----------
-        shard_id:
+        shard_id
             The ID of the shard to get.
 
         Returns
@@ -88,7 +88,7 @@ class GatewayClient:
 
         Parameters
         ----------
-        status:
+        status
             The status to change to.
         """
         for shard in self.__shards.values():
@@ -126,7 +126,7 @@ class GatewayClient:
 
         Parameters
         ----------
-        shard_id:
+        shard_id
             The shard ID to launch
         """
         attempt = 0
@@ -180,7 +180,7 @@ class GatewayClient:
 
         Parameters
         ----------
-        guild_id:
+        guild_id
             The ID of the guild to get the shard ID of
 
         Returns

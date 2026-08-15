@@ -292,7 +292,7 @@ class Parser:
 
         Parameters
         ----------
-        data:
+        data
             The data to create the guild from
 
         Returns
@@ -313,7 +313,7 @@ class Parser:
 
         Parameters
         ----------
-        data:
+        data
             The data to update the guild from
 
         Returns
@@ -330,7 +330,7 @@ class Parser:
 
         Parameters
         ----------
-        data:
+        data
             The data to delete the guild from
 
         Returns
@@ -353,7 +353,7 @@ class Parser:
 
         Parameters
         ----------
-        data:
+        data
             The data to create the entitlement from
 
         Returns
@@ -368,7 +368,7 @@ class Parser:
 
         Parameters
         ----------
-        data:
+        data
             The data to update the entitlement from
 
         Returns
@@ -383,7 +383,7 @@ class Parser:
 
         Parameters
         ----------
-        data:
+        data
             The data to delete the entitlement from
 
         Returns
@@ -404,7 +404,7 @@ class Parser:
 
         Parameters
         ----------
-        data:
+        data
             The data to create the subscription from
 
         Returns
@@ -419,7 +419,7 @@ class Parser:
 
         Parameters
         ----------
-        data:
+        data
             The data to update the subscription from
 
         Returns
@@ -434,7 +434,7 @@ class Parser:
 
         Parameters
         ----------
-        data:
+        data
             The data to delete the subscription from
 
         Returns
@@ -451,7 +451,7 @@ class Parser:
 
         Parameters
         ----------
-        data:
+        data
             The data to update the command permissions from
 
         Returns
@@ -471,7 +471,7 @@ class Parser:
 
         Parameters
         ----------
-        data:
+        data
             The data to update the user from
 
         Returns
@@ -494,7 +494,7 @@ class Parser:
 
         Parameters
         ----------
-        data:
+        data
             The data to chunk the guild members from
 
         Returns
@@ -551,7 +551,7 @@ class Parser:
 
         Parameters
         ----------
-        data:
+        data
             The data about the rate limit
 
         Returns
@@ -583,7 +583,7 @@ class Parser:
 
         Parameters
         ----------
-        data:
+        data
             The data to create the guild from
 
         Returns
@@ -604,7 +604,7 @@ class Parser:
 
         Parameters
         ----------
-        data:
+        data
             The data given by Discord when the guild is unavailable
 
         Returns
@@ -621,7 +621,7 @@ class Parser:
 
         Parameters
         ----------
-        data:
+        data
             The member data
 
         Returns
@@ -641,7 +641,7 @@ class Parser:
 
         Parameters
         ----------
-        data:
+        data
             The member data
 
         Returns
@@ -664,7 +664,7 @@ class Parser:
 
         Parameters
         ----------
-        data:
+        data
             Data about member removed
 
         Returns
@@ -688,7 +688,7 @@ class Parser:
 
         Parameters
         ----------
-        data:
+        data
             The data of banned user
 
         Returns
@@ -711,7 +711,7 @@ class Parser:
 
         Parameters
         ----------
-        data:
+        data
             Data about the user that was unbanned
 
         Returns
@@ -734,7 +734,7 @@ class Parser:
 
         Parameters
         ----------
-        data:
+        data
             The data of the emojis
 
         Returns
@@ -778,7 +778,7 @@ class Parser:
 
         Parameters
         ----------
-        data:
+        data
             The data received from the event.
 
         Returns
@@ -822,7 +822,7 @@ class Parser:
 
         Parameters
         ----------
-        data:
+        data
             The data received from the event.
 
         Returns
@@ -845,7 +845,7 @@ class Parser:
 
         Parameters
         ----------
-        data:
+        data
             Data received from the event.
 
         Returns
@@ -868,7 +868,7 @@ class Parser:
 
         Parameters
         ----------
-        data:
+        data
             Data received from the event.
 
         Returns
@@ -889,7 +889,7 @@ class Parser:
 
         Parameters
         ----------
-        data:
+        data
             Data received from the event.
 
         Returns
@@ -916,7 +916,7 @@ class Parser:
 
         Parameters
         ----------
-        data:
+        data
             Data received from the event.
 
         Returns
@@ -941,7 +941,7 @@ class Parser:
 
         Parameters
         ----------
-        data:
+        data
             Data received from the event.
 
         Returns
@@ -956,7 +956,7 @@ class Parser:
 
         Parameters
         ----------
-        data:
+        data
             Data received from the event.
 
         Returns
@@ -979,7 +979,7 @@ class Parser:
 
         Parameters
         ----------
-        data:
+        data
             Data received from the event.
 
         Returns
@@ -1013,7 +1013,7 @@ class Parser:
 
         Parameters
         ----------
-        data:
+        data
             Data received from the event.
 
         Returns
@@ -1030,7 +1030,7 @@ class Parser:
 
         Parameters
         ----------
-        data:
+        data
             Data received from the event.
 
         Returns
@@ -1047,7 +1047,7 @@ class Parser:
 
         Parameters
         ----------
-        data:
+        data
             Data received from the event.
 
         Returns
@@ -1064,7 +1064,7 @@ class Parser:
 
         Parameters
         ----------
-        data:
+        data
             Data received from the event.
 
         Returns
@@ -1096,7 +1096,7 @@ class Parser:
 
         Parameters
         ----------
-        data:
+        data
             Data received from the event.
 
         Returns
@@ -1123,7 +1123,7 @@ class Parser:
 
         Parameters
         ----------
-        data:
+        data
             Data received from the event.
 
         Returns
@@ -1150,7 +1150,7 @@ class Parser:
 
         Parameters
         ----------
-        data:
+        data
             Data received from the event.
 
         Returns
@@ -1167,7 +1167,7 @@ class Parser:
 
         Parameters
         ----------
-        data:
+        data
             Data received from the event.
 
         Returns
@@ -1184,7 +1184,7 @@ class Parser:
 
         Parameters
         ----------
-        data:
+        data
             Data received from the event.
 
         Returns
@@ -1208,7 +1208,7 @@ class Parser:
 
         Parameters
         ----------
-        data:
+        data
             Data received from the event.
 
         Returns
@@ -1223,7 +1223,7 @@ class Parser:
 
         Parameters
         ----------
-        data:
+        data
             Data received from the event.
 
         Returns
@@ -1244,7 +1244,7 @@ class Parser:
 
         Parameters
         ----------
-        data:
+        data
             Data received from the event.
 
         Returns
@@ -1271,7 +1271,7 @@ class Parser:
 
         Parameters
         ----------
-        data:
+        data
             Data received from the event.
 
         Returns
@@ -1286,7 +1286,7 @@ class Parser:
 
         Parameters
         ----------
-        data:
+        data
             Data received from the event.
 
         Returns
@@ -1301,7 +1301,7 @@ class Parser:
 
         Parameters
         ----------
-        data:
+        data
             Data received from the event.
 
         Returns
@@ -1322,7 +1322,7 @@ class Parser:
 
         Parameters
         ----------
-        data:
+        data
             Data received from the event.
 
         Returns
@@ -1358,7 +1358,7 @@ class Parser:
 
         Parameters
         ----------
-        data:
+        data
             Data received from the event.
 
         Returns
@@ -1378,7 +1378,7 @@ class Parser:
 
         Parameters
         ----------
-        data:
+        data
             Data received from the event.
 
         Returns
@@ -1398,7 +1398,7 @@ class Parser:
 
         Parameters
         ----------
-        data:
+        data
             Data received from the event.
 
         Returns
@@ -1420,7 +1420,7 @@ class Parser:
 
         Parameters
         ----------
-        data:
+        data
             Data received from the event.
 
         Returns
@@ -1445,7 +1445,7 @@ class Parser:
 
         Parameters
         ----------
-        data:
+        data
             Data received from the event.
 
         Returns
@@ -1469,7 +1469,7 @@ class Parser:
 
         Parameters
         ----------
-        data:
+        data
             Data received from the event.
 
         Returns
@@ -1493,7 +1493,7 @@ class Parser:
 
         Parameters
         ----------
-        data:
+        data
             Data received from the event.
 
         Returns
@@ -1514,7 +1514,7 @@ class Parser:
 
         Parameters
         ----------
-        data:
+        data
             Data received from the event.
 
         Returns
@@ -1529,7 +1529,7 @@ class Parser:
 
         Parameters
         ----------
-        data:
+        data
             Data received from the event.
 
         Returns
@@ -1564,7 +1564,7 @@ class Parser:
 
         Parameters
         ----------
-        data:
+        data
             Data received from the event.
 
         Returns
@@ -1601,7 +1601,7 @@ class Parser:
 
         Parameters
         ----------
-        data:
+        data
             Data received from the event.
 
         Returns
@@ -1628,7 +1628,7 @@ class Parser:
 
         Parameters
         ----------
-        data:
+        data
             Data received from the event.
 
         Returns
@@ -1653,7 +1653,7 @@ class Parser:
 
         Parameters
         ----------
-        data:
+        data
             Data received from the event.
 
         Returns
@@ -1678,7 +1678,7 @@ class Parser:
 
         Parameters
         ----------
-        data:
+        data
             Data received from the event.
 
         Returns
@@ -1703,7 +1703,7 @@ class Parser:
 
         Parameters
         ----------
-        data:
+        data
             Data received from the event.
 
         Returns
@@ -1733,7 +1733,7 @@ class Parser:
 
         Parameters
         ----------
-        data:
+        data
             Data received from the event.
 
         Returns
@@ -1748,7 +1748,7 @@ class Parser:
 
         Parameters
         ----------
-        data:
+        data
             Data received from the event.
 
         Returns
@@ -1779,7 +1779,7 @@ class Parser:
 
         Parameters
         ----------
-        data:
+        data
             Data received from the event.
 
         Returns
@@ -1799,7 +1799,7 @@ class Parser:
 
         Parameters
         ----------
-        data:
+        data
             Data received from the event.
 
         Returns
@@ -1826,7 +1826,7 @@ class Parser:
 
         Parameters
         ----------
-        data:
+        data
             Data received from the event.
 
         Returns
@@ -1846,7 +1846,7 @@ class Parser:
 
         Parameters
         ----------
-        data:
+        data
             Data received from the event.
 
         Returns
@@ -1866,7 +1866,7 @@ class Parser:
 
         Parameters
         ----------
-        data:
+        data
             Data received from the event.
 
         Returns
@@ -1886,7 +1886,7 @@ class Parser:
 
         Parameters
         ----------
-        data:
+        data
             Data received from the event.
 
         Returns
@@ -1909,7 +1909,7 @@ class Parser:
 
         Parameters
         ----------
-        data:
+        data
             Data received from the event.
 
         Returns
@@ -1939,7 +1939,7 @@ class Parser:
 
         Parameters
         ----------
-        data:
+        data
             Data received from the event.
 
         Returns
@@ -1966,7 +1966,7 @@ class Parser:
 
         Parameters
         ----------
-        data:
+        data
             Data received from the event.
 
         Returns
@@ -1986,7 +1986,7 @@ class Parser:
 
         Parameters
         ----------
-        data:
+        data
             Data received from the event.
 
         Returns
@@ -2006,7 +2006,7 @@ class Parser:
 
         Parameters
         ----------
-        data:
+        data
             Data received from the event.
 
         Returns
@@ -2026,7 +2026,7 @@ class Parser:
 
         Parameters
         ----------
-        data:
+        data
             Data received from the event.
 
         Returns
@@ -2100,7 +2100,7 @@ class Parser:
 
         Parameters
         ----------
-        data:
+        data
             Data received from the event.
 
         Returns
@@ -2120,7 +2120,7 @@ class Parser:
 
         Parameters
         ----------
-        data:
+        data
             Data received from the event.
 
         Returns

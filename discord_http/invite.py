@@ -139,7 +139,7 @@ class PartialInvite:
 
         Parameters
         ----------
-        user_ids:
+        user_ids
             The user IDs to allow to use this invite
         """
         multidata = utils.MultipartData()
@@ -195,7 +195,7 @@ class PartialInvite:
 
         Parameters
         ----------
-        reason: `str`
+        reason
             The reason for deleting the invite
 
         Returns

@@ -99,11 +99,11 @@ class DisplayNameStyles:
 
         Parameters
         ----------
-        colours:
+        colours
             The colors of the display name, if any.
-        font:
+        font
             The font of the display name, if any.
-        effect:
+        effect
             The effect of the display name, if any.
 
         Returns
@@ -296,29 +296,29 @@ class PartialUser(PartialBase):
 
         Parameters
         ----------
-        content:
+        content
             Content of the message
-        channel_id:
+        channel_id
             Channel ID to send the message to, if not provided, it will create a DM channel
-        embed:
+        embed
             Embed of the message
-        embeds:
+        embeds
             Embeds of the message
-        file:
+        file
             File of the message
-        files:
+        files
             Files of the message
-        view:
+        view
             Components of the message
-        tts:
+        tts
             Whether the message should be sent as TTS
-        type:
+        type
             Which type of response should be sent
-        flags:
+        flags
             Flags of the message
-        allowed_mentions:
+        allowed_mentions
             Allowed mentions of the message
-        delete_after:
+        delete_after
             How long to wait before deleting the message
 
         Returns
@@ -400,11 +400,11 @@ class PartialUser(PartialBase):
 
         Parameters
         ----------
-        username:
+        username
             The username to change the user to
-        avatar:
+        avatar
             New avatar for the user
-        banner:
+        banner
             New banner for the user
 
         Returns
@@ -1017,31 +1017,31 @@ class Application(PartialBase):
 
         Parameters
         ----------
-        custom_install_url:
+        custom_install_url
             New custom install URL of the application
-        description:
+        description
             New description of the application
-        role_connections_verification_url:
+        role_connections_verification_url
             New role connections verification URL of the application
-        install_params:
+        install_params
             New install params of the application
-        integration_types_config:
+        integration_types_config
             New integration types config of the application
-        flags:
+        flags
             New flags of the application
-        icon:
+        icon
             New icon of the application
-        cover_image:
+        cover_image
             New cover image of the application
-        interactions_endpoint_url:
+        interactions_endpoint_url
             New interactions endpoint URL of the application
-        tags:
+        tags
             New tags of the application
-        event_webhooks_url:
+        event_webhooks_url
             New event webhooks URL of the application
-        event_webhooks_status:
+        event_webhooks_status
             New event webhooks status of the application
-        event_webhooks_types:
+        event_webhooks_types
             New event webhooks types of the application
 
         Returns
@@ -1142,7 +1142,7 @@ class Application(PartialBase):
 
         Parameters
         ----------
-        records:
+        records
             The new metadata records for the application (max 5)
 
         Returns

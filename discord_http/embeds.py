@@ -201,7 +201,7 @@ class Embed:
 
         Parameters
         ----------
-        value:
+        value
             The colour to set the embed to.
             If `None`, the colour will be removed
 
@@ -234,9 +234,9 @@ class Embed:
 
         Parameters
         ----------
-        text:
+        text
             The text of the footer
-        icon_url:
+        icon_url
             Icon URL of the footer
 
         Returns
@@ -280,11 +280,11 @@ class Embed:
 
         Parameters
         ----------
-        name:
+        name
             The name of the author
-        url:
+        url
             The URL which the author name will link to
-        icon_url:
+        icon_url
             The icon URL of the author
 
         Returns
@@ -320,7 +320,7 @@ class Embed:
 
         Parameters
         ----------
-        url:
+        url
             The URL of the image
 
         Returns
@@ -351,7 +351,7 @@ class Embed:
 
         Parameters
         ----------
-        url:
+        url
             The URL of the thumbnail
 
         Returns
@@ -384,11 +384,11 @@ class Embed:
 
         Parameters
         ----------
-        name:
+        name
             Title of the field
-        value:
+        value
             Description of the field
-        inline:
+        inline
             Whether the field is inline or not
 
         Returns
@@ -412,7 +412,7 @@ class Embed:
 
         Parameters
         ----------
-        index:
+        index
             The index of the field to remove
 
         Returns
@@ -433,7 +433,7 @@ class Embed:
 
         Parameters
         ----------
-        data:
+        data
             The dictionary to create the embed from
 
         Returns

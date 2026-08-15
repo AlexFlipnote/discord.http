@@ -10,7 +10,7 @@ General Guidelines
 - **Python Version:** 3.11 or higher.
 - **Quotes:** Use double quotes (``"``) by default. Use single quotes (``'``) only to avoid escaping internal double quotes.
 - **Files:** Must always end with a single newline.
-- **Logging:** Never use ``print()``. Use the standard ``logging`` module.
+- **Logging:** Never use ``print()``, instead use the logging provided by the library.
 - **Formatting:** Use f-strings over ``.format()`` or ``%`` wherever possible.
 
 Import Conventions
@@ -54,6 +54,8 @@ Docstrings
 Use the NumPy/Google-style hybrid for detailed documentation. Skip type hints inside the docstring to avoid redundancy with the code signature.
 These days, most IDEs and documentation generators can extract type information directly from the code.
 Including it in the docstring is unnecessary and can lead to maintenance issues if the code signature changes but the docstring does not.
+For this same reason, do not add a trailing colon after a parameter or exception name.
+It used to separate the name from its type (e.g. ``arg1 : int``), but is redundant due to types being omitted entirely from docstring.
 
 .. code-block:: python
 
@@ -65,9 +67,9 @@ Including it in the docstring is unnecessary and can lead to maintenance issues 
 
         Parameters
         ----------
-        arg1:
+        arg1
             Description of the first argument.
-        arg2:
+        arg2
             Description of the second argument.
 
         Returns
@@ -76,8 +78,23 @@ Including it in the docstring is unnecessary and can lead to maintenance issues 
 
         Raises
         ------
-        ValueError:
+        ValueError
             Description of why this error is raised.
+        """
+        ...
+
+For generator and async generator functions, use ``Yields`` instead of ``Returns`` to describe each item produced.
+Like ``Returns``, it is typeless and has no name, just the description:
+
+.. code-block:: python
+
+    async def fetch_items(self) -> AsyncIterator[Item]:
+        """
+        Fetch all items.
+
+        Yields
+        ------
+            Each item as it is fetched.
         """
         ...
 
@@ -105,6 +122,13 @@ Implementation Rules
 4. **Inheritance:** Do not re-define inherited slots in subclasses; only define new attributes unique to that class.
 5. **Type Hints:** All attributes must be fully type-hinted.
 6. **No Redundancy:** Avoid type hints in docstrings for attributes, as they are already present in the code.
+
+Class docstrings follow the same one-line convention shown in `Docstrings`_ above, a summary only.
+Since attributes are documented inline rather than in the class body.
+
+.. note::
+    A subclass that defines new attributes must still declare ``__slots__``, even if only listing them.
+    If ``__slots__`` is omitted entirely, Python silently gives the subclass a ``__dict__``, which negates the memory savings ``__slots__`` was meant to provide for every instance of that class.
 
 .. code-block:: python
 

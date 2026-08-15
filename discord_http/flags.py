@@ -61,7 +61,7 @@ class BaseFlag(_FlagPyMeta):
 
         Parameters
         ----------
-        *flag_name:
+        *flag_name
             The flag to add
 
         Returns
@@ -70,7 +70,7 @@ class BaseFlag(_FlagPyMeta):
 
         Raises
         ------
-        `ValueError`
+        ValueError
             The flag name is not a valid flag
         """
         for p in flag_name:
@@ -100,7 +100,7 @@ class BaseFlag(_FlagPyMeta):
 
         Parameters
         ----------
-        flag_name:
+        flag_name
             The flag to remove
 
         Returns
@@ -109,7 +109,7 @@ class BaseFlag(_FlagPyMeta):
 
         Raises
         ------
-        `ValueError`
+        ValueError
             The flag name is not a valid flag
         """
         for p in flag_name:
@@ -156,7 +156,7 @@ class BaseFlag(_FlagPyMeta):
 
         Parameters
         ----------
-        *args:
+        *args
             The names of the flags to create
 
         Returns
@@ -165,7 +165,7 @@ class BaseFlag(_FlagPyMeta):
 
         Raises
         ------
-        `ValueError`
+        ValueError
             The flag name is not a valid flag
         """
         value = cls.none()
@@ -339,9 +339,9 @@ class Permissions(BaseFlag):
 
         Parameters
         ----------
-        allow:
+        allow
             The permission flag integer to allow
-        deny:
+        deny
             The permission flag integer to deny
 
         Returns
@@ -429,7 +429,7 @@ class PermissionOverwrite:
 
         Parameters
         ----------
-        data:
+        data
             The dictionary to create the permission overwrite from
 
         Returns

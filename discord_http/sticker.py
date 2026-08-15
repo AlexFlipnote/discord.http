@@ -79,7 +79,7 @@ class PartialSticker(PartialBase):
 
         Raises
         ------
-        `ValueError`
+        ValueError
             guild_id is not defined, unable to create PartialGuild
         """
         if not self.guild_id:
@@ -106,15 +106,15 @@ class PartialSticker(PartialBase):
 
         Parameters
         ----------
-        guild_id:
+        guild_id
             Guild ID to edit the sticker from
-        name:
+        name
             Replacement name for the sticker
-        description:
+        description
             Replacement description for the sticker
-        tags:
+        tags
             Replacement tags for the sticker
-        reason:
+        reason
             The reason for editing the sticker
 
         Returns
@@ -123,7 +123,7 @@ class PartialSticker(PartialBase):
 
         Raises
         ------
-        `ValueError`
+        ValueError
             No guild_id was passed
         """
         guild_id = guild_id or self.guild_id
@@ -165,14 +165,14 @@ class PartialSticker(PartialBase):
 
         Parameters
         ----------
-        guild_id:
+        guild_id
             Guild ID to delete the sticker from
-        reason:
+        reason
             The reason for deleting the sticker
 
         Raises
         ------
-        `ValueError`
+        ValueError
             No guild_id was passed or guild_id is not defined
         """
         guild_id = guild_id or self.guild_id
@@ -272,13 +272,13 @@ class Sticker(PartialSticker):
 
         Parameters
         ----------
-        name:
+        name
             Name of the sticker
-        description:
+        description
             Description of the sticker
-        tags:
+        tags
             Tags of the sticker
-        reason:
+        reason
             The reason for editing the sticker
 
         Returns
@@ -306,12 +306,12 @@ class Sticker(PartialSticker):
 
         Parameters
         ----------
-        reason:
+        reason
             The reason for deleting the sticker
 
         Raises
         ------
-        `ValueError`
+        ValueError
             Guild is not defined
         """
         if not self.guild:

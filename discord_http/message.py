@@ -143,7 +143,7 @@ class MessageReaction:
 
         Parameters
         ----------
-        user_id:
+        user_id
             User ID to remove the reaction from
             If none provided, it will remove the reaction from the bot
         """
@@ -172,11 +172,11 @@ class MessageReaction:
 
         Parameters
         ----------
-        type:
+        type
             The type of reaction to fetch, by default ReactionType.normal
-        after:
+        after
             The ID of the last user to fetch, by default None
-        limit:
+        limit
             The maximum number of users to fetch, by default 100
 
         Returns
@@ -528,9 +528,9 @@ class Poll:
 
         Parameters
         ----------
-        text:
+        text
             The text of the answer
-        emoji:
+        emoji
             The emoji of the answer
         """
         if not text and not emoji:
@@ -555,12 +555,12 @@ class Poll:
 
         Parameters
         ----------
-        answer_id:
+        answer_id
             The ID to the answer to remove
 
         Raises
         ------
-        `ValueError`
+        ValueError
             - If the answer ID does not exist
             - If the answer is not a PollAnswer or integer
         """
@@ -806,6 +806,7 @@ class Attachment:
         """ The width of the attachment, if applicable. """
 
         self.ephemeral: bool = data.get("ephemeral", False)
+        """ Whether the attachment is ephemeral. """
 
         self.duration_secs: int | None = data.get("duration_secs")
         """ The duration of the attachment in seconds, if applicable. """
@@ -866,7 +867,7 @@ class Attachment:
 
         Parameters
         ----------
-        use_cached:
+        use_cached
             Whether to use the cached URL or not, defaults to `False`
 
         Returns
@@ -875,7 +876,7 @@ class Attachment:
 
         Raises
         ------
-        `HTTPException`
+        HTTPException
             If the request returned anything other than 2XX
         """
         r = await self._state.http.request(
@@ -900,10 +901,10 @@ class Attachment:
 
         Parameters
         ----------
-        path:
+        path
             Path to save the file to, which includes the filename and extension.
             Example:
-        use_cached:
+        use_cached
             Whether to use the cached URL or not, defaults to `False`
 
         Returns
@@ -925,9 +926,9 @@ class Attachment:
 
         Parameters
         ----------
-        filename:
+        filename
             Filename for the file, if empty, the attachment's filename will be used
-        spoiler:
+        spoiler
             Weather the file should be marked as a spoiler or not, defaults to `False`
 
         Returns
@@ -1072,9 +1073,9 @@ class PartialMessage(PartialBase):
 
         Parameters
         ----------
-        delay:
+        delay
             How many seconds it should wait in background to delete
-        reason:
+        reason
             Reason for deleting the message
             (Only applies when deleting messages not made by yourself)
         """
@@ -1135,17 +1136,16 @@ class PartialMessage(PartialBase):
 
         Parameters
         ----------
-        answer:
+        answer
             The answer to fetch the voters from
-        after:
+        after
             The user ID to start fetching from
-        limit:
+        limit
             The amount of users to fetch, defaults to 100.
             `None` will fetch all users.
 
         Yields
         ------
-        `User`
             User object of people who voted
         """
         answer_id = answer
@@ -1214,21 +1214,21 @@ class PartialMessage(PartialBase):
 
         Parameters
         ----------
-        content:
+        content
             Content of the message
-        embed:
+        embed
             Embed of the message
-        embeds:
+        embeds
             Embeds of the message
-        view:
+        view
             Components of the message
-        attachment:
+        attachment
             New attachment of the message
-        attachments:
+        attachments
             New attachments of the message
-        allowed_mentions:
+        allowed_mentions
             Allowed mentions of the message
-        flags:
+        flags
             Flags of the message
 
         Returns
@@ -1285,7 +1285,7 @@ class PartialMessage(PartialBase):
 
         Parameters
         ----------
-        channel_id:
+        channel_id
             Channel ID to forward the message to
 
         Returns
@@ -1334,27 +1334,27 @@ class PartialMessage(PartialBase):
 
         Parameters
         ----------
-        content:
+        content
             Cotnent of the message
-        embed:
+        embed
             Includes an embed object
-        embeds:
+        embeds
             List of embed objects
-        file:
+        file
             A file object
-        files:
+        files
             A list of file objects
-        view:
+        view
             Send components to the message
-        tts:
+        tts
             If the message should be sent as a TTS message
-        type:
+        type
             The type of response to the message
-        allowed_mentions:
+        allowed_mentions
             The allowed mentions for the message
-        delete_after:
+        delete_after
             If provided, the message will be deleted after the given number of seconds
-        flags:
+        flags
             Message flags to send with the message
 
         Returns
@@ -1407,7 +1407,7 @@ class PartialMessage(PartialBase):
 
         Parameters
         ----------
-        reason:
+        reason
             Reason for pinning the message
         """
         await self._state.query(
@@ -1423,7 +1423,7 @@ class PartialMessage(PartialBase):
 
         Parameters
         ----------
-        reason:
+        reason
             Reason for unpinning the message
         """
         await self._state.query(
@@ -1439,7 +1439,7 @@ class PartialMessage(PartialBase):
 
         Parameters
         ----------
-        emoji:
+        emoji
             Emoji to add to the message
         """
         parsed = EmojiParser(emoji).to_reaction()
@@ -1460,9 +1460,9 @@ class PartialMessage(PartialBase):
 
         Parameters
         ----------
-        emoji:
+        emoji
             Emoji to remove from the message
-        user_id:
+        user_id
             User ID to remove the reaction from
         """
         parsed = EmojiParser(emoji).to_reaction()
@@ -1498,13 +1498,13 @@ class PartialMessage(PartialBase):
 
         Parameters
         ----------
-        name:
+        name
             Name of the thread
-        auto_archive_duration:
+        auto_archive_duration
             Duration in minutes to automatically archive the thread after recent activity,
-        rate_limit_per_user:
+        rate_limit_per_user
             A per-user rate limit for this thread (0-21600 seconds, default 0)
-        reason:
+        reason
             Reason for creating the thread
 
         Returns
@@ -1513,7 +1513,7 @@ class PartialMessage(PartialBase):
 
         Raises
         ------
-        `ValueError`
+        ValueError
             - If `auto_archive_duration` is not 60, 1440, 4320 or 10080
             - If `rate_limit_per_user` is not between 0 and 21600 seconds
         """
@@ -1942,21 +1942,21 @@ class WebhookMessage(Message):
 
         Parameters
         ----------
-        content:
+        content
             Content of the message
-        embed:
+        embed
             Embed of the message
-        embeds:
+        embeds
             Embeds of the message
-        attachment:
+        attachment
             Attachment of the message
-        attachments:
+        attachments
             Attachments of the message
-        view:
+        view
             Components of the message
-        allowed_mentions:
+        allowed_mentions
             Allowed mentions of the message
-        flags:
+        flags
             Flags of the message
 
         Returns
@@ -2000,9 +2000,9 @@ class WebhookMessage(Message):
 
         Parameters
         ----------
-        delay:
+        delay
             How many seconds it should wait in background to delete.
-        reason:
+        reason
             Reason for deleting the message.
         """
         async def _delete() -> None:

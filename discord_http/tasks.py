@@ -40,7 +40,7 @@ class Sleeper:
 
         Parameters
         ----------
-        dt:
+        dt
             The new time to wait until
         """
         self.handle.cancel()
@@ -429,21 +429,21 @@ class Loop:
 
         Parameters
         ----------
-        seconds:
+        seconds
             Amount of seconds between each iteration of the loop
-        minutes:
+        minutes
             Amount of minutes between each iteration of the loop
-        hours:
+        hours
             Amount of hours between each iteration of the loop
-        time:
+        time
             The time of day to run the loop at
 
         Raises
         ------
-        `ValueError`
+        ValueError
             - The sleep timer cannot be 0
             - `count` must be greater than 0 or `None`
-        `TypeError`
+        TypeError
             `time` must be a `datetime.time` object
         """
         if time is None:
@@ -478,7 +478,7 @@ class Loop:
 
         Parameters
         ----------
-        now:
+        now
             The current time
 
         Returns
@@ -531,17 +531,17 @@ def loop(
 
     Parameters
     ----------
-    seconds:
+    seconds
         The number of seconds between each iteration of the loop.
-    minutes:
+    minutes
         The number of minutes between each iteration of the loop.
-    hours:
+    hours
         The number of hours between each iteration of the loop.
-    time:
+    time
         The time of day to run the loop at. (UTC only)
-    count:
+    count
         The number of times to run the loop. If ``None``, the loop will run forever.
-    reconnect:
+    reconnect
         Whether the loop should reconnect if it fails or not.
     """
     def decorator(func: Callable) -> Loop:

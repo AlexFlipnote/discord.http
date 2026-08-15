@@ -124,29 +124,29 @@ class PartialMember(PartialBase):
 
         Parameters
         ----------
-        content:
+        content
             Content of the message
-        channel_id:
+        channel_id
             Channel ID of the user, leave empty to create a DM
-        embed:
+        embed
             Embed of the message
-        embeds:
+        embeds
             Embeds of the message
-        file:
+        file
             File of the message
-        files:
+        files
             Files of the message
-        view:
+        view
             Components to add to the message
-        tts:
+        tts
             Whether the message should be sent as TTS
-        type:
+        type
             Type of the message
-        flags:
+        flags
             Flags of the message
-        allowed_mentions:
+        allowed_mentions
             Allowed mentions of the message
-        delete_after:
+        delete_after
             How long to wait before deleting the message
 
         Returns
@@ -187,16 +187,16 @@ class PartialMember(PartialBase):
 
         Parameters
         ----------
-        reason:
+        reason
             The reason for banning the user
-        delete_message_days:
+        delete_message_days
             How many days of messages to delete
-        delete_message_seconds:
+        delete_message_seconds
             How many seconds of messages to delete
 
         Raises
         ------
-        `ValueError`
+        ValueError
             - If delete_message_days and delete_message_seconds are both specified
             - If delete_message_days is not between 0 and 7
             - If delete_message_seconds is not between 0 and 604,800
@@ -218,7 +218,7 @@ class PartialMember(PartialBase):
 
         Parameters
         ----------
-        reason:
+        reason
             The reason for unbanning the user
         """
         await self.guild.unban(self.id, reason=reason)
@@ -233,7 +233,7 @@ class PartialMember(PartialBase):
 
         Parameters
         ----------
-        reason:
+        reason
             The reason for kicking the user
         """
         await self.guild.kick(self.id, reason=reason)
@@ -258,27 +258,27 @@ class PartialMember(PartialBase):
 
         Parameters
         ----------
-        nick:
+        nick
             The new nickname of the member
-        roles:
+        roles
             Roles to make the member have
-        mute:
+        mute
             Whether to mute the member
-        deaf:
+        deaf
             Whether to deafen the member
-        communication_disabled_until:
+        communication_disabled_until
             How long to disable communication for (timeout)
-        channel_id:
+        channel_id
             The channel ID to move the member to
-        reason:
+        reason
             The reason for editing the member
-        banner:
+        banner
             The new guild banner for the bot (Application only).
-        avatar:
+        avatar
             The new avatar for the bot (Application only).
-        bio:
+        bio
             The new bio for the bot (Application only).
-        display_name:
+        display_name
             The new display name style for the bot (Application only).
 
         Returns
@@ -287,7 +287,7 @@ class PartialMember(PartialBase):
 
         Raises
         ------
-        `TypeError`
+        TypeError
             - If communication_disabled_until is not timedelta, datetime, or int
         """
         payload = {}
@@ -378,9 +378,9 @@ class PartialMember(PartialBase):
 
         Parameters
         ----------
-        *roles:
+        *roles
             Roles to add to the member
-        reason:
+        reason
             The reason for adding the roles
         """
         for role in roles:
@@ -403,9 +403,9 @@ class PartialMember(PartialBase):
 
         Parameters
         ----------
-        *roles:
+        *roles
             Roles to remove from the member
-        reason:
+        reason
             The reason for removing the roles
         """
         for role in roles:
@@ -567,7 +567,7 @@ class Member(PartialMember):
 
         Parameters
         ----------
-        role:
+        role
             The role to get. Can either be a role object or the Role ID
 
         Returns
@@ -644,7 +644,7 @@ class Member(PartialMember):
 
         Parameters
         ----------
-        *args:
+        *args
             Permissions to check
 
         Returns

@@ -238,7 +238,7 @@ class PartialChannel(PartialBase):
 
         Parameters
         ----------
-        member:
+        member
             The member to get the permissions for.
 
         Returns
@@ -253,7 +253,7 @@ class PartialChannel(PartialBase):
 
         Parameters
         ----------
-        message_id:
+        message_id
             The message ID to get the partial message from
 
         Returns
@@ -274,7 +274,7 @@ class PartialChannel(PartialBase):
 
         Parameters
         ----------
-        message_id:
+        message_id
             The message ID to fetch
 
         Returns
@@ -325,7 +325,7 @@ class PartialChannel(PartialBase):
 
         Parameters
         ----------
-        source_channel_id:
+        source_channel_id
             The channel ID to follow
         """
         await self._state.query(
@@ -367,7 +367,7 @@ class PartialChannel(PartialBase):
 
         Parameters
         ----------
-        client:
+        client
             If it should fetch only where the client is a member of the thread
 
         Returns
@@ -407,26 +407,26 @@ class PartialChannel(PartialBase):
 
         Parameters
         ----------
-        max_age:
+        max_age
             How long the invite should last
-        max_uses:
+        max_uses
             The maximum amount of uses for the invite
-        temporary:
+        temporary
             If the invite should be temporary
-        unique:
+        unique
             If the invite should be unique
-        target_type:
+        target_type
             The type of target for this voice channel invite
-        target_user_id:
+        target_user_id
             The ID of the user whose stream to display for this invite.
             (Requiresd if target_type is `InviteTargetType.stream`)
-        target_application_id:
+        target_application_id
             The ID of the embedded application to open for this invite.
             (Requiresd if target_type is `InviteTargetType.embedded_application`)
-        user_ids:
+        user_ids
             The users to be able to use this invite.
             Any users not in this list, will see the invite as "invalid".
-        role_ids:
+        role_ids
             The roles to be able to use this invite
 
         Returns
@@ -499,29 +499,29 @@ class PartialChannel(PartialBase):
 
         Parameters
         ----------
-        content:
+        content
             Cotnent of the message
-        embed:
+        embed
             Includes an embed object
-        embeds:
+        embeds
             List of embed objects
-        file:
+        file
             A file object
-        files:
+        files
             A list of file objects
-        view:
+        view
             Send components to the message
-        tts:
+        tts
             If the message should be sent as a TTS message
-        type:
+        type
             The type of response to the message
-        allowed_mentions:
+        allowed_mentions
             The allowed mentions for the message
-        poll:
+        poll
             The poll to be sent
-        flags:
+        flags
             Flags of the message
-        delete_after:
+        delete_after
             How long to wait before deleting the message
 
         Returns
@@ -569,7 +569,7 @@ class PartialChannel(PartialBase):
 
         Parameters
         ----------
-        channel_type:
+        channel_type
             The raw channel type from the API data
 
         Returns
@@ -611,11 +611,11 @@ class PartialChannel(PartialBase):
 
         Parameters
         ----------
-        state:
+        state
             The state to use
-        data:
+        data
             Data provided by Discord API
-        guild_id:
+        guild_id
             The ID of the guild the channel belongs to, if any
 
         Returns
@@ -681,55 +681,55 @@ class PartialChannel(PartialBase):
 
         Parameters
         ----------
-        name:
+        name
             New name of the channel (All)
-        type:
+        type
             The new type of the channel (Text, Announcement)
-        position:
+        position
             The new position of the channel (All)
-        topic:
+        topic
             The new topic of the channel (Text, Announcement, Forum, Media)
-        nsfw:
+        nsfw
             If the channel should be NSFW (Text, Voice, Announcement, Stage, Forum, Media)
-        rate_limit_per_user:
+        rate_limit_per_user
             How long the slowdown should be (Text, Voice, Stage, Forum, Media)
-        bitrate:
+        bitrate
             The new bitrate of the channel (Voice, Stage)
-        user_limit:
+        user_limit
             The new user limit of the channel (Voice, Stage)
-        overwrites:
+        overwrites
             The new permission overwrites of the channel (All)
-        parent_id:
+        parent_id
             The new parent ID of the channel (Text, Voice, Announcement, Stage, Forum, Media)
-        rtc_region:
+        rtc_region
             The new RTC region of the channel (Voice, Stage)
-        video_quality_mode:
+        video_quality_mode
             The new video quality mode of the channel (Voice, Stage)
-        default_auto_archive_duration:
+        default_auto_archive_duration
             The new default auto archive duration of the channel (Text, Announcement, Forum, Media)
-        flags:
+        flags
             The new flags of the channel (Forum, Media)
-        available_tags:
+        available_tags
             The new available tags of the channel (Forum, Media)
-        default_reaction_emoji:
+        default_reaction_emoji
             The new default reaction emoji of the channel (Forum, Media)
-        default_thread_rate_limit_per_user:
+        default_thread_rate_limit_per_user
             The new default thread rate limit per user of the channel (Text, Forum, Media)
-        default_sort_order:
+        default_sort_order
             The new default sort order of the channel (Forum, Media)
-        default_forum_layout:
+        default_forum_layout
             The new default forum layout of the channel (Forum)
-        archived:
+        archived
             If the thread should be archived (Thread, Forum)
-        auto_archive_duration:
+        auto_archive_duration
             The new auto archive duration of the thread (Thread, Forum)
-        locked:
+        locked
             If the thread should be locked (Thread, Forum)
-        invitable:
+        invitable
             If the thread should be invitable by everyone (Thread)
-        applied_tags:
+        applied_tags
             The new applied tags of the forum thread (Forum, Media)
-        reason:
+        reason
             The reason for editing the channel (All)
 
         Returns
@@ -892,9 +892,9 @@ class PartialChannel(PartialBase):
 
         Parameters
         ----------
-        overwrite:
+        overwrite
             The new overwrite permissions for the spesific role/user
-        reason:
+        reason
             The reason for editing the overwrite
         """
         await self._state.query(
@@ -916,9 +916,9 @@ class PartialChannel(PartialBase):
 
         Parameters
         ----------
-        id:
+        id
             The ID of the overwrite
-        reason:
+        reason
             The reason for deleting the overwrite
         """
         await self._state.query(
@@ -938,7 +938,7 @@ class PartialChannel(PartialBase):
 
         Parameters
         ----------
-        reason:
+        reason
             The reason for deleting the channel
         """
         await self._state.query(
@@ -960,11 +960,11 @@ class PartialChannel(PartialBase):
 
         Parameters
         ----------
-        name:
+        name
             The name of the webhook
-        avatar:
+        avatar
             The avatar of the webhook
-        reason:
+        reason
             The reason for creating the webhook that appears in audit logs
 
         Returns
@@ -1006,27 +1006,27 @@ class PartialChannel(PartialBase):
 
         Parameters
         ----------
-        name:
+        name
             The name of the thread
-        content:
+        content
             The content of the message
-        embed:
+        embed
             Embed to be sent
-        embeds:
+        embeds
             List of embeds to be sent
-        file:
+        file
             File to be sent
-        files:
+        files
             List of files to be sent
-        allowed_mentions:
+        allowed_mentions
             The allowed mentions for the message
-        view:
+        view
             The view to be sent
-        auto_archive_duration:
+        auto_archive_duration
             The duration in minutes to automatically archive the thread after recent activity
-        rate_limit_per_user:
+        rate_limit_per_user
             How long the slowdown should be
-        applied_tags:
+        applied_tags
             The tags to be applied to the thread
 
         Returns
@@ -1116,17 +1116,17 @@ class PartialChannel(PartialBase):
 
         Parameters
         ----------
-        name:
+        name
             The name of the thread
-        type:
+        type
             The type of thread to create
-        auto_archive_duration:
+        auto_archive_duration
             The duration in minutes to automatically archive the thread after recent activity
-        invitable:
+        invitable
             If the thread is invitable
-        rate_limit_per_user:
+        rate_limit_per_user
             How long the slowdown should be
-        reason:
+        reason
             The reason for creating the thread
 
         Returns
@@ -1135,7 +1135,7 @@ class PartialChannel(PartialBase):
 
         Raises
         ------
-        `ValueError`
+        ValueError
             - If the auto_archive_duration is not 60, 1440, 4320 or 10080
             - If the rate_limit_per_user is not between 0 and 21600 seconds
         """
@@ -1196,21 +1196,20 @@ class PartialChannel(PartialBase):
 
         Parameters
         ----------
-        before:
+        before
             Get messages before this message
-        after:
+        after
             Get messages after this message
-        around:
+        around
             Get messages around this message
-        limit:
+        limit
             The maximum amount of messages to fetch.
             `None` will fetch all users.
-        oldest_first:
+        oldest_first
             Whether to fetch the oldest messages first
 
         Yields
         ------
-        `Message`
             The message object
         """
         async def _get_history(limit: int, **kwargs) -> "HTTPResponse[dict]":
@@ -1378,21 +1377,21 @@ class PartialChannel(PartialBase):
 
         Parameters
         ----------
-        check:
+        check
             A function to check if the message should be deleted
-        before:
+        before
             The message before which to delete
-        after:
+        after
             The message after which to delete
-        around:
+        around
             The message around which to delete
-        message_ids:
+        message_ids
             The message IDs to delete
-        limit:
+        limit
             The maximum amount of messages to delete
-        reason:
+        reason
             The reason for deleting the messages
-        return_messages:
+        return_messages
             Whether to return the deleted messages or just the count of deleted messages
 
         Returns
@@ -1490,7 +1489,7 @@ class PartialChannel(PartialBase):
 
         Parameters
         ----------
-        user_id:
+        user_id
             The user ID to add
         """
         await self._state.query(
@@ -1508,7 +1507,7 @@ class PartialChannel(PartialBase):
 
         Parameters
         ----------
-        user_id:
+        user_id
             The user ID to remove
         """
         await self._state.query(
@@ -1526,7 +1525,7 @@ class PartialChannel(PartialBase):
 
         Parameters
         ----------
-        user_id:
+        user_id
             The user ID to fetch
 
         Returns
@@ -1689,7 +1688,7 @@ class BaseChannel(PartialChannel):
 
         Parameters
         ----------
-        member:
+        member
             The member to get the permissions for.
 
         Returns
@@ -1833,7 +1832,7 @@ class DMChannel(BaseChannel):
 
         Raises
         ------
-        `TypeError`
+        TypeError
             If you try to edit a DM channel
         """
         raise TypeError("Cannot edit a DM channel")
@@ -1950,21 +1949,21 @@ class CategoryChannel(BaseChannel):
 
         Parameters
         ----------
-        name:
+        name
             The name of the channel
-        topic:
+        topic
             The topic of the channel
-        rate_limit_per_user:
+        rate_limit_per_user
             The rate limit per user of the channel
-        overwrites:
+        overwrites
             The permission overwrites of the category
-        parent_id:
+        parent_id
             The Category ID where the channel will be placed
-        nsfw:
+        nsfw
             Whether the channel is NSFW or not
-        reason:
+        reason
             The reason for creating the text channel
-        **kwargs:
+        **kwargs
             Keyword arguments to pass to the channel, look above
 
         Returns
@@ -1987,25 +1986,25 @@ class CategoryChannel(BaseChannel):
 
         Parameters
         ----------
-        name:
+        name
             The name of the channel
-        bitrate:
+        bitrate
             The bitrate of the channel
-        user_limit:
+        user_limit
             The user limit of the channel
-        rate_limit_per_user:
+        rate_limit_per_user
             The rate limit per user of the channel
-        overwrites:
+        overwrites
             The permission overwrites of the category
-        position:
+        position
             The position of the channel
-        parent_id:
+        parent_id
             The Category ID where the channel will be placed
-        nsfw:
+        nsfw
             Whether the channel is NSFW or not
-        reason:
+        reason
             The reason for creating the voice channel
-        **kwargs:
+        **kwargs
             Keyword arguments to pass to the channel, look above
 
         Returns
@@ -2028,23 +2027,23 @@ class CategoryChannel(BaseChannel):
 
         Parameters
         ----------
-        name:
+        name
             The name of the channel
-        bitrate:
+        bitrate
             The bitrate of the channel
-        user_limit:
+        user_limit
             The user limit of the channel
-        overwrites:
+        overwrites
             The permission overwrites of the category
-        position:
+        position
             The position of the channel
-        video_quality_mode:
+        video_quality_mode
             The video quality mode of the channel
-        parent_id:
+        parent_id
             The Category ID where the channel will be placed
-        reason:
+        reason
             The reason for creating the stage channel
-        **kwargs:
+        **kwargs
             Keyword arguments to pass to the channel, look above
 
         Returns
@@ -2261,13 +2260,13 @@ class ForumTag:
 
         Parameters
         ----------
-        name:
+        name
             The name of the tag
-        emoji_id:
+        emoji_id
             The emoji ID of the tag
-        emoji_name:
+        emoji_name
             The emoji name of the tag
-        moderated:
+        moderated
             If the tag is moderated
 
         Returns
@@ -2310,7 +2309,7 @@ class ForumTag:
 
         Parameters
         ----------
-        data:
+        data
             The dictionary to create the forum tag from
 
         Returns
@@ -2529,14 +2528,14 @@ class VoiceChannel(BaseChannel):
 
         Parameters
         ----------
-        status:
+        status
             The new status of the voice channel, up to 500 characters. Use `None` to clear it.
-        reason:
+        reason
             The reason for setting the voice channel status
 
         Raises
         ------
-        `ValueError`
+        ValueError
             The status exceeds 500 characters
         """
         if status is not None and len(status) > 500:
@@ -2643,11 +2642,11 @@ class StageInstance(PartialBase):
 
         Parameters
         ----------
-        topic:
+        topic
             The new topic of this stage instance.
-        privacy_level:
+        privacy_level
             The new privacy level of this stage instance.
-        reason:
+        reason
             The reason for editing the stage instance.
 
         Returns
@@ -2681,7 +2680,7 @@ class StageInstance(PartialBase):
 
         Parameters
         ----------
-        reason:
+        reason
             The reason for deleting the stage instance
         """
         await self._state.query(
@@ -2748,16 +2747,16 @@ class StageChannel(VoiceChannel):
 
         Parameters
         ----------
-        topic:
+        topic
             The topic of the stage instance
-        privacy_level:
+        privacy_level
             The privacy level of the stage instance.
             Defaults to `PrivacyLevelType.guild_only`
-        send_start_notification:
+        send_start_notification
             Whether to notify @everyone that the stage instance has started.
-        guild_scheduled_event:
+        guild_scheduled_event
             The guild scheduled event to associate with this stage instance.
-        reason:
+        reason
             The reason for creating the stage instance
 
         Returns

@@ -66,7 +66,7 @@ class Asset:
 
         Parameters
         ----------
-        fallback: bool
+        fallback
             Whether to fallback to a missing texture if the asset returns anything but `HTTP 2XX`.
             Defaults to `False`.
 
@@ -97,10 +97,10 @@ class Asset:
 
         Parameters
         ----------
-        path:
+        path
             Path to save the file to, which includes the filename and extension.
             Example: `./path/to/file.png`
-        chunk_size:
+        chunk_size
             The amount of bytes to read at a time. Defaults to 64KB.
 
         Returns
@@ -143,9 +143,9 @@ class Asset:
 
         Parameters
         ----------
-        size: `int`
+        size
             The size of the asset
-        format: `AssetFormatTypes`
+        format
             The format of the asset
 
         Returns
@@ -187,7 +187,7 @@ class Asset:
 
         Parameters
         ----------
-        format: `StaticFormatTypes`
+        format
             The static format to use
 
         Returns

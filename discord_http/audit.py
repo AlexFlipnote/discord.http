@@ -579,7 +579,7 @@ class AuditLogEntry(Snowflake):
 
         Parameters
         ----------
-        key:
+        key
             The key of the change to retrieve.
 
         Returns

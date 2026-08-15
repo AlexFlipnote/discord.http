@@ -30,7 +30,7 @@ class BucketType(BaseEnum):
 
         Parameters
         ----------
-        ctx:
+        ctx
             The bot context
 
         Returns
@@ -65,7 +65,7 @@ class BucketType(BaseEnum):
 
         Parameters
         ----------
-        ctx:
+        ctx
             The bot context
 
         Returns
@@ -106,7 +106,7 @@ class CooldownCache:
 
         Parameters
         ----------
-        ctx:
+        ctx
             Context to create the key for.
 
         Returns
@@ -124,7 +124,7 @@ class CooldownCache:
 
         Parameters
         ----------
-        current:
+        current
             Current time to check the cache for.
         """
         current = current or time.time()
@@ -146,9 +146,9 @@ class CooldownCache:
 
         Parameters
         ----------
-        ctx:
+        ctx
             Context to get the bucket for.
-        current:
+        current
             Current time to check the bucket for.
 
         Returns
@@ -181,11 +181,11 @@ class CooldownCache:
 
         Parameters
         ----------
-        ctx:
+        ctx
             Context to update the rate limit for.
-        current:
+        current
             Current time to update the rate limit for.
-        tokens:
+        tokens
             Amount of tokens to remove from the rate limit.
 
         Returns
@@ -231,7 +231,7 @@ class Cooldown:
 
         Parameters
         ----------
-        current:
+        current
             The current time to check the tokens for.
 
         Returns
@@ -255,7 +255,7 @@ class Cooldown:
 
         Parameters
         ----------
-        current:
+        current
             The current time to check the retry after for.
 
         Returns
@@ -281,9 +281,9 @@ class Cooldown:
 
         Parameters
         ----------
-        current:
+        current
             The current time to update the rate limit for.
-        tokens:
+        tokens
             Amount of tokens to remove from the rate limit.
 
         Returns

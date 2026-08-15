@@ -58,7 +58,7 @@ class PartialSoundboardSound(PartialBase):
 
         Raises
         ------
-        `ValueError`
+        ValueError
             guild_id is not defined, unable to create PartialGuild
         """
         if not self.guild_id:
@@ -81,7 +81,7 @@ class PartialSoundboardSound(PartialBase):
 
         Raises
         ------
-        `ValueError`
+        ValueError
             Soundboard sound does not belong to a guild
         """
         if self.guild is None:
@@ -108,12 +108,12 @@ class PartialSoundboardSound(PartialBase):
 
         Parameters
         ----------
-        reason:
+        reason
             The reason for deleting the soundboard sound
 
         Raises
         ------
-        `ValueError`
+        ValueError
             Soundboard sound does not belong to a guild
         """
         if self.guild_id is None:
@@ -141,17 +141,17 @@ class PartialSoundboardSound(PartialBase):
 
         Parameters
         ----------
-        name:
+        name
             The new name of the soundboard sound
-        volume:
+        volume
             The new volume of the soundboard sound
-        emoji_name:
+        emoji_name
             The new unicode emoji of the soundboard sound
-        emoji_id:
+        emoji_id
             The ID of the new custom emoji of the soundboard sound
-        icon:
+        icon
             The new icon of the soundboard sound
-        reason:
+        reason
             The reason for editing the soundboard sound
 
         Returns
@@ -160,7 +160,7 @@ class PartialSoundboardSound(PartialBase):
 
         Raises
         ------
-        `ValueError`
+        ValueError
             - If both `emoji_name` and `emoji_id` are set
             - If there were no changes applied to the soundboard sound
             - Soundboard sound does not belong to a guild

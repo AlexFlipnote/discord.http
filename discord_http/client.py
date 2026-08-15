@@ -58,53 +58,53 @@ class Client:
 
     Parameters
     ----------
-    token: str
+    token
         Discord bot token
-    guild_id: int | None
+    guild_id
         Guild ID to sync commands to, if not provided, it will sync to global
-    sync: bool
+    sync
         Whether to sync commands on boot or not (defaults to `True`)
-    max_pending_connections:
+    max_pending_connections
         The maximum number of queued connections passed to the interaction URL, by default 128.
         If your bot is receiving a lot of traffic, you might want to increase this value.
-    api_version: int
+    api_version
         API version to use for both HTTP and WS, if not provided, it will use the default (10)
-    api_base_url: str | None
+    api_base_url
         Base URL to use for the API, if not provided, it will use the default (`https://discord.com/api`)
-    loop: asyncio.AbstractEventLoop | None
+    loop
         Event loop to use, if not provided, it will use `asyncio.get_running_loop()`
-    allowed_mentions: AllowedMentions | None
+    allowed_mentions
         Allowed mentions to use, if not provided, it will use `AllowedMentions.all()`
-    enable_gateway: bool
+    enable_gateway
         Whether to enable the gateway or not, which runs in the background
-    automatic_shards: bool
+    automatic_shards
         Whether to automatically shard the bot or not
-    playing_status: PlayingStatus | None
+    playing_status
         The playing status to use, if not provided, it will use `None`.
         This is only used if `enable_gateway` is `True`.
-    chunk_guilds_on_startup: bool
+    chunk_guilds_on_startup
         Whether to chunk guilds or not when booting, which will reduce the amount of requests
-    guild_ready_timeout: float
+    guild_ready_timeout
         **Gateway**: How long to wait for last GUILD_CREATE to be recieved
         before triggering shard ready
-    gateway_cache: GatewayCacheFlags | None
+    gateway_cache
         How the gateway should cache, only used if `enable_gateway` is `True`.
         Leave empty to use no cache.
-    intents: Intents | None
+    intents
         Intents to use, only used if `enable_gateway` is `True`
-    gateway_capabilities: GatewayCapabilities | None
+    gateway_capabilities
         Opt-in Gateway capabilities bitfield to send in the Identify payload, only used if
         `enable_gateway` is `True`. Currently only used to test upcoming, opt-in Gateway behavior.
-    logging_level: int
+    logging_level
         Logging level to use, if not provided, it will use `logging.INFO`
-    debug_events: bool
+    debug_events
         Whether to log events or not, if not provided, `on_raw_*` events will not be useable
-    interaction_path: str | None
+    interaction_path
         Path to the interaction endpoint, if not provided, it will use the default path which is just `/` (aka. root).
-    webhook_events_path: str | None
+    webhook_events_path
         Path to the webhook events endpoint (configured separately from the interaction endpoint in your app's
         settings), if not provided, webhook events will not be served.
-    disable_default_get_path: bool
+    disable_default_get_path
         Whether to disable the default GET path or not, if not provided, it will use `False`.
         The default GET path only provides information about the bot and when it was last rebooted.
         Usually a great tool to just validate that your bot is online.
@@ -412,7 +412,7 @@ class Client:
 
         Parameters
         ----------
-        guild_id:
+        guild_id
             The ID of the guild to get the shard ID of
 
         Returns
@@ -421,7 +421,7 @@ class Client:
 
         Raises
         ------
-        `NotImplementedError`
+        NotImplementedError
             If the gateway is not available
         """
         if not self.gateway:
@@ -446,17 +446,17 @@ class Client:
 
         Parameters
         ----------
-        guild_id:
+        guild_id
             The ID of the guild to query members in
-        query:
+        query
             The query to search for (defaults to an empty string, which will return all members)
-        limit:
+        limit
             The maximum amount of members to return (defaults to 0, which will return all members)
-        presences:
+        presences
             Whether to include presences in the response
-        user_ids:
+        user_ids
             The user IDs to fetch members for
-        shard_id:
+        shard_id
             The shard ID to query the members from
 
         Returns
@@ -465,7 +465,7 @@ class Client:
 
         Raises
         ------
-        `ValueError`
+        ValueError
             - If `shard_id` is not provided
             - If `shard_id` is not valid
         """
@@ -530,7 +530,7 @@ class Client:
 
         Raises
         ------
-        `AttributeError`
+        AttributeError
             - If used before the bot is ready
             - If the application does not have a bot user associated with it
         """
@@ -562,7 +562,7 @@ class Client:
 
         Parameters
         ----------
-        guild_id:
+        guild_id
             The ID of the guild to get.
 
         Returns
@@ -607,7 +607,7 @@ class Client:
 
         Parameters
         ----------
-        cls:
+        cls
             The context to use for commands.
             Leave empty to use the default context.
         """
@@ -638,7 +638,7 @@ class Client:
 
         Parameters
         ----------
-        cls:
+        cls
             The backend to use for everything.
             Leave empty to use the default backend.
         """
@@ -693,7 +693,7 @@ class Client:
 
         Parameters
         ----------
-        func:
+        func
             The async function to run.
         """
         if not inspect.iscoroutinefunction(func):
@@ -714,9 +714,9 @@ class Client:
 
         Parameters
         ----------
-        host:
+        host
             Host to use, if not provided, it will use `127.0.0.1`
-        port:
+        port
             Port to use, if not provided, it will use `8080`
         """
         _log.info(f"Starting discord.http (v{__version__})")
@@ -755,11 +755,11 @@ class Client:
 
         Parameters
         ----------
-        event_name:
+        event_name
             The name of the event to dispatch.
-        *args:
+        *args
             The arguments to pass to the event.
-        **kwargs:
+        **kwargs
             The keyword arguments to pass to the event.
         """
         method = f"on_{event_name.lower()}"
@@ -811,7 +811,7 @@ class Client:
 
         Parameters
         ----------
-        event_name:
+        event_name
             The name of the event to check for.
 
         Returns
@@ -829,7 +829,7 @@ class Client:
 
         Parameters
         ----------
-        package:
+        package
             The package to load the extension from.
         """
         if package in self._cogs:
@@ -854,7 +854,7 @@ class Client:
 
         Parameters
         ----------
-        package:
+        package
             The package to unload the extension from.
         """
         if package not in self._cogs:
@@ -874,12 +874,12 @@ class Client:
 
         Parameters
         ----------
-        package:
+        package
             The package to reload the extension from.
 
         Raises
         ------
-        `RuntimeError`
+        RuntimeError
             - If the extension failed to reload, but the previous state was restored successfully
             - If the extension failed to reload, and the previous state failed to be restored
         """
@@ -920,7 +920,7 @@ class Client:
 
         Parameters
         ----------
-        cog:
+        cog
             The cog to add to the bot.
         """
         await cog._inject(self)
@@ -931,7 +931,7 @@ class Client:
 
         Parameters
         ----------
-        cog:
+        cog
             The cog to remove from the bot.
         """
         await cog._eject(self)
@@ -951,11 +951,11 @@ class Client:
 
         Parameters
         ----------
-        event_name:
+        event_name
             The name of the event to wait for.
-        check:
+        check
             The check to use, by default None.
-        timeout:
+        timeout
             The timeout to use, by default None.
 
         Returns
@@ -964,7 +964,7 @@ class Client:
 
         Raises
         ------
-        `TimeoutError`
+        TimeoutError
             If the event was not dispatched within the timeout
         """
         if not self.enable_gateway:
@@ -1013,15 +1013,15 @@ class Client:
 
         Parameters
         ----------
-        name:
+        name
             Name of the command, if not provided, it will use the function name
-        description:
+        description
             Description of the command, if not provided, it will use the function docstring
-        guild_ids:
+        guild_ids
             List of guild IDs to register the command in
-        user_install:
+        user_install
             Whether the command can be installed by users or not
-        guild_install:
+        guild_install
             Whether the command can be installed by guilds or not
         """
         def decorator(func: Callable) -> Command:
@@ -1059,13 +1059,13 @@ class Client:
 
         Parameters
         ----------
-        name:
+        name
             Name of the command, if not provided, it will use the function name
-        guild_ids:
+        guild_ids
             List of guild IDs to register the command in
-        user_install:
+        user_install
             Whether the command can be installed by users or not
-        guild_install:
+        guild_install
             Whether the command can be installed by guilds or not
         """
         def decorator(func: Callable) -> Command:
@@ -1103,13 +1103,13 @@ class Client:
 
         Parameters
         ----------
-        name:
+        name
             Name of the command, if not provided, it will use the function name
-        guild_ids:
+        guild_ids
             List of guild IDs to register the command in
-        user_install:
+        user_install
             Whether the command can be installed by users or not
-        guild_install:
+        guild_install
             Whether the command can be installed by guilds or not
         """
         def decorator(func: Callable) -> Command:
@@ -1172,9 +1172,9 @@ class Client:
 
         Parameters
         ----------
-        name:
+        name
             Name of the group, if not provided, it will use the function name
-        description:
+        description
             Description of the group, if not provided, it will use the function docstring
         """
         def decorator(func: Callable) -> SubGroup:
@@ -1193,7 +1193,7 @@ class Client:
 
         Parameters
         ----------
-        name:
+        name
             Name of the group
 
         Returns
@@ -1217,9 +1217,9 @@ class Client:
 
         Parameters
         ----------
-        custom_id:
+        custom_id
             Custom ID of the interaction
-        regex:
+        regex
             Whether the custom_id is a regex or not
         """
         def decorator(func: Callable) -> Interaction:
@@ -1240,12 +1240,12 @@ class Client:
 
         Parameters
         ----------
-        name:
+        name
             Name of the listener, if not provided, it will use the function name
 
         Raises
         ------
-        `TypeError`
+        TypeError
             - If the listener name is not a string
             - If the listener is not a coroutine function
         """
@@ -1276,9 +1276,9 @@ class Client:
 
         Parameters
         ----------
-        channel_id:
+        channel_id
             The ID of the channel to get.
-        guild_id:
+        guild_id
             The ID of the guild the channel belongs to, if known.
             Providing this avoids a linear scan of every cached guild.
 
@@ -1310,9 +1310,9 @@ class Client:
 
         Parameters
         ----------
-        channel_id:
+        channel_id
             Channel ID to create the partial channel object with.
-        guild_id:
+        guild_id
             Guild ID to create the partial channel object with.
 
         Returns
@@ -1351,9 +1351,9 @@ class Client:
 
         Parameters
         ----------
-        channel_id:
+        channel_id
             Channel ID to fetch the channel object with.
-        guild_id:
+        guild_id
             Guild ID to fetch the channel object with.
 
         Returns
@@ -1373,9 +1373,9 @@ class Client:
 
         Parameters
         ----------
-        rule_id:
+        rule_id
             The ID of the automod rule
-        guild_id:
+        guild_id
             The Guild ID where it comes from
 
         Returns
@@ -1398,9 +1398,9 @@ class Client:
 
         Parameters
         ----------
-        rule_id:
+        rule_id
             The ID of the automod rule
-        guild_id:
+        guild_id
             The Guild ID where it comes from
 
         Returns
@@ -1426,11 +1426,11 @@ class Client:
 
         Parameters
         ----------
-        invite_code:
+        invite_code
             Invite code to create the partial invite object with.
-        channel_id:
+        channel_id
             Channel ID to create the partial invite object with.
-        guild_id:
+        guild_id
             Guild ID to create the partial invite object with.
 
         Returns
@@ -1456,11 +1456,11 @@ class Client:
 
         Parameters
         ----------
-        member_id:
+        member_id
             The ID of the member to create the partial voice state from
-        guild_id:
+        guild_id
             Guild ID to create the partial voice state from
-        channel_id:
+        channel_id
             Channel ID to create the partial voice state from
 
         Returns
@@ -1484,9 +1484,9 @@ class Client:
 
         Parameters
         ----------
-        member_id:
+        member_id
             The ID of the member to fetch the voice state from
-        guild_id:
+        guild_id
             Guild ID to fetch the voice state from
 
         Returns
@@ -1511,9 +1511,9 @@ class Client:
 
         Parameters
         ----------
-        emoji_id:
+        emoji_id
             Emoji ID to create the partial emoji object with.
-        guild_id:
+        guild_id
             Guild ID of where the emoji comes from.
             If None, it will get the emoji from the application.
 
@@ -1538,9 +1538,9 @@ class Client:
 
         Parameters
         ----------
-        emoji_id:
+        emoji_id
             The ID of the emoji in question
-        guild_id:
+        guild_id
             Guild ID of the emoji.
             If None, it will fetch the emoji from the application
 
@@ -1566,9 +1566,9 @@ class Client:
 
         Parameters
         ----------
-        sticker_id:
+        sticker_id
             Sticker ID to create the partial sticker object with.
-        guild_id:
+        guild_id
             Guild ID to create the partial sticker object with.
 
         Returns
@@ -1592,9 +1592,9 @@ class Client:
 
         Parameters
         ----------
-        sticker_id:
+        sticker_id
             Sticker ID to fetch the sticker object with.
-        guild_id:
+        guild_id
             Guild ID to fetch the sticker object from.
 
         Returns
@@ -1619,9 +1619,9 @@ class Client:
 
         Parameters
         ----------
-        sound_id:
+        sound_id
             Sound ID to create the partial soundboard sound object with.
-        guild_id:
+        guild_id
             Guild ID to create the partial soundboard sound object with.
 
         Returns
@@ -1644,9 +1644,9 @@ class Client:
 
         Parameters
         ----------
-        sound_id:
+        sound_id
             Sound ID to fetch the soundboard sound object with.
-        guild_id:
+        guild_id
             Guild ID to fetch the soundboard sound object from.
 
         Returns
@@ -1669,7 +1669,7 @@ class Client:
 
         Parameters
         ----------
-        invite_code:
+        invite_code
             Invite code to fetch the invite object with.
 
         Returns
@@ -1690,11 +1690,11 @@ class Client:
 
         Parameters
         ----------
-        message_id:
+        message_id
             Message ID to create the partial message object with.
-        channel_id:
+        channel_id
             Channel ID to create the partial message object with.
-        guild_id:
+        guild_id
             Guild ID to create the partial message object with.
 
         Returns
@@ -1719,11 +1719,11 @@ class Client:
 
         Parameters
         ----------
-        message_id:
+        message_id
             Message ID to fetch the message object with.
-        channel_id:
+        channel_id
             Channel ID to fetch the message object with.
-        guild_id:
+        guild_id
             Guild ID to fetch the message object from.
 
         Returns
@@ -1744,9 +1744,9 @@ class Client:
 
         Parameters
         ----------
-        webhook_id:
+        webhook_id
             Webhook ID to create the partial webhook object with.
-        webhook_token:
+        webhook_token
             Webhook token to create the partial webhook object with.
 
         Returns
@@ -1770,9 +1770,9 @@ class Client:
 
         Parameters
         ----------
-        webhook_id:
+        webhook_id
             Webhook ID to fetch the webhook object with.
-        webhook_token:
+        webhook_token
             Webhook token to fetch the webhook object with.
 
         Returns
@@ -1795,7 +1795,7 @@ class Client:
 
         Parameters
         ----------
-        user_id:
+        user_id
             User ID to create the partial user object with.
 
         Returns
@@ -1816,7 +1816,7 @@ class Client:
 
         Parameters
         ----------
-        user_id:
+        user_id
             User ID to fetch the user object with.
 
         Returns
@@ -1836,9 +1836,9 @@ class Client:
 
         Parameters
         ----------
-        user_id:
+        user_id
             User ID to create the partial member object with.
-        guild_id:
+        guild_id
             Guild ID that the member is in.
 
         Returns
@@ -1861,9 +1861,9 @@ class Client:
 
         Parameters
         ----------
-        guild_id:
+        guild_id
             Guild ID that the member is in.
-        user_id:
+        user_id
             User ID to fetch the member object with.
 
         Returns
@@ -1896,9 +1896,9 @@ class Client:
 
         Parameters
         ----------
-        name:
+        name
             Name of emoji
-        image:
+        image
             The image data to use for the emoji.
 
         Returns
@@ -1956,7 +1956,7 @@ class Client:
 
         Parameters
         ----------
-        entitlement_id:
+        entitlement_id
             Entitlement ID to create the partial entitlement object with.
 
         Returns
@@ -1977,7 +1977,7 @@ class Client:
 
         Parameters
         ----------
-        entitlement_id:
+        entitlement_id
             Entitlement ID to fetch the entitlement object with.
 
         Returns
@@ -2003,20 +2003,20 @@ class Client:
 
         Parameters
         ----------
-        user_id:
+        user_id
             Show entitlements for a specific user ID.
-        sku_ids:
+        sku_ids
             Show entitlements for a specific SKU ID.
-        before:
+        before
             Only show entitlements before this entitlement ID.
-        after:
+        after
             Only show entitlements after this entitlement ID.
-        limit:
+        limit
             Limit the amount of entitlements to fetch.
             Use `None` to fetch all entitlements.
-        guild_id:
+        guild_id
             Show entitlements for a specific guild ID.
-        exclude_ended:
+        exclude_ended
             Whether to exclude ended entitlements or not.
 
         Returns
@@ -2127,9 +2127,9 @@ class Client:
 
         Parameters
         ----------
-        event_id:
+        event_id
             The ID of the scheduled event.
-        guild_id:
+        guild_id
             The guild ID of the scheduled event.
 
         Returns
@@ -2152,9 +2152,9 @@ class Client:
 
         Parameters
         ----------
-        event_id:
+        event_id
             The ID of the scheduled event.
-        guild_id:
+        guild_id
             The guild ID of the scheduled event.
 
         Returns
@@ -2175,7 +2175,7 @@ class Client:
 
         Parameters
         ----------
-        guild_id:
+        guild_id
             Guild ID to create the partial guild object with.
 
         Returns
@@ -2196,7 +2196,7 @@ class Client:
 
         Parameters
         ----------
-        guild_id:
+        guild_id
             Guild ID to fetch the guild object with.
 
         Returns
@@ -2220,11 +2220,11 @@ class Client:
 
         Parameters
         ----------
-        name:
+        name
             The name of the guild
-        icon:
+        icon
             The icon of the guild
-        reason:
+        reason
             The reason for creating the guild
 
         Returns
@@ -2258,9 +2258,9 @@ class Client:
 
         Parameters
         ----------
-        role_id:
+        role_id
             Role ID to create the partial role object with.
-        guild_id:
+        guild_id
             Guild ID that the role is in.
 
         Returns
@@ -2282,7 +2282,7 @@ class Client:
 
         Parameters
         ----------
-        custom_id:
+        custom_id
             The Custom ID to find the interaction with.
             Will automatically convert to regex matching
             if some interaction Custom IDs are regex.
@@ -2309,7 +2309,7 @@ class Client:
 
         Parameters
         ----------
-        func:
+        func
             The listener to add to the bot.
         """
         self.listeners.setdefault(func.name, []).append(func)
@@ -2324,7 +2324,7 @@ class Client:
 
         Parameters
         ----------
-        func:
+        func
             The listener to remove from the bot.
         """
         if bucket := self.listeners.get(func.name):
@@ -2344,7 +2344,7 @@ class Client:
 
         Parameters
         ----------
-        func:
+        func
             The command to add to the bot.
         """
         self.commands[func.name] = func
@@ -2359,7 +2359,7 @@ class Client:
 
         Parameters
         ----------
-        func:
+        func
             The command to remove from the bot.
         """
         self.commands.pop(func.name, None)
@@ -2373,7 +2373,7 @@ class Client:
 
         Parameters
         ----------
-        func:
+        func
             The function to add
         """
         self._global_cmd_checks.append((func, inspect.iscoroutinefunction(func)))
@@ -2389,7 +2389,7 @@ class Client:
 
         Parameters
         ----------
-        func:
+        func
             The interaction to add to the bot.
         """
         if func.regex:
@@ -2408,7 +2408,7 @@ class Client:
 
         Parameters
         ----------
-        func:
+        func
             The interaction to remove from the bot.
         """
         if func.regex:

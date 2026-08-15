@@ -107,7 +107,7 @@ class File:
 
         Parameters
         ----------
-        index:
+        index
             The index of the file
 
         Returns

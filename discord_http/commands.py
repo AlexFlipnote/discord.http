@@ -216,9 +216,9 @@ class Converter(Protocol[ConverterT]):
 
         Parameters
         ----------
-        ctx:
+        ctx
             Context of the bot
-        value:
+        value
             The value returned by the argument in command
 
         Returns
@@ -489,7 +489,7 @@ class Command:
 
         Parameters
         ----------
-        suffix:
+        suffix
             The subcommand name.
 
         Returns
@@ -654,11 +654,11 @@ class Command:
 
         Parameters
         ----------
-        context:
+        context
             The context of the command.
-        *args:
+        *args
             The arguments of the command.
-        **kwargs:
+        **kwargs
             The keyword arguments of the command.
 
         Returns
@@ -667,9 +667,9 @@ class Command:
 
         Raises
         ------
-        `UserMissingPermissions`
+        UserMissingPermissions
             User that ran the command is missing permissions.
-        `BotMissingPermissions`
+        BotMissingPermissions
             Bot is missing permissions.
         """
         # Check before invoke
@@ -719,11 +719,11 @@ class Command:
 
         Parameters
         ----------
-        context:
+        context
             Context object for the command
-        name:
+        name
             Name of the option
-        current:
+        current
             Current value of the option
 
         Returns
@@ -732,7 +732,7 @@ class Command:
 
         Raises
         ------
-        `TypeError`
+        TypeError
             Autocomplete must return an AutocompleteResponse object
         """
         with context.benchmark.measure("autocomplete", internal=True):
@@ -858,7 +858,7 @@ class Command:
 
         Parameters
         ----------
-        name:
+        name
             Name of the option to set as an autocomplete.
         """
         def wrapper(func: Callable) -> Callable:
@@ -926,6 +926,7 @@ class SubGroup(Command):
         """ A list of guild IDs this subcommand group is in, empty if it's a global subcommand group. """
 
         self.type = int(ApplicationCommandType.chat_input)
+        """ The type of the subcommand group, always 1 (chat input). """
 
         self.cog: "Cog | None" = None
         """ The cog this subcommand group belongs to, None if it does not belong to a cog. """
@@ -960,15 +961,15 @@ class SubGroup(Command):
 
         Parameters
         ----------
-        name:
+        name
             Name of the command (defaults to the function name)
-        description:
+        description
             Description of the command (defaults to the function docstring)
-        guild_ids:
+        guild_ids
             List of guild IDs to register the command in
-        user_install:
+        user_install
             Whether the command can be installed by users or not
-        guild_install:
+        guild_install
             Whether the command can be installed by guilds or not
         """
         def decorator(func: Callable) -> SubCommand:
@@ -997,9 +998,9 @@ class SubGroup(Command):
 
         Parameters
         ----------
-        name:
+        name
             Name of the subcommand group (defaults to the function name)
-        description:
+        description
             Description of the subcommand group (defaults to the function docstring)
         """
         def decorator(func: Callable) -> "SubGroup":
@@ -1019,7 +1020,7 @@ class SubGroup(Command):
 
         Parameters
         ----------
-        name:
+        name
             Name of the subcommand group
 
         Returns
@@ -1073,6 +1074,7 @@ class Interaction:
         """ Whether the custom ID is a regex pattern or not. """
 
         self.cog: "Cog | None" = None
+        """ The cog this interaction belongs to, None if it does not belong to a cog. """
 
         self._pattern: re.Pattern | None = (
             re.compile(custom_id)
@@ -1093,7 +1095,7 @@ class Interaction:
 
         Parameters
         ----------
-        custom_id:
+        custom_id
             The custom ID to match.
 
         Returns
@@ -1110,7 +1112,7 @@ class Interaction:
 
         Parameters
         ----------
-        context:
+        context
             The context of the interaction.
 
         Returns
@@ -1119,7 +1121,7 @@ class Interaction:
 
         Raises
         ------
-        `TypeError`
+        TypeError
             Interaction must be a Response object
         """
         with context.benchmark.measure("interaction", internal=True):
@@ -1260,11 +1262,11 @@ else:
 
         Parameters
         ----------
-        type:
+        type
             The type of the option (str, int, or float)
-        min:
+        min
             The minimum value (or minimum length for str)
-        max:
+        max
             The maximum value (or maximum length for str), optional
         """
 
@@ -1282,15 +1284,15 @@ def command(
 
     Parameters
     ----------
-    name:
+    name
         Name of the command (defaults to the function name)
-    description:
+    description
         Description of the command (defaults to the function docstring)
-    guild_ids:
+    guild_ids
         List of guild IDs to register the command in
-    user_install:
+    user_install
         Whether the command can be installed by users or not
-    guild_install:
+    guild_install
         Whether the command can be installed by guilds or not
     """
     def decorator(func: Callable) -> Command:
@@ -1326,13 +1328,13 @@ def user_command(
 
     Parameters
     ----------
-    name:
+    name
         Name of the command (defaults to the function name)
-    guild_ids:
+    guild_ids
         List of guild IDs to register the command in
-    user_install:
+    user_install
         Whether the command can be installed by users or not
-    guild_install:
+    guild_install
         Whether the command can be installed by guilds or not
     """
     def decorator(func: Callable) -> Command:
@@ -1368,11 +1370,11 @@ def cooldown(
 
     Parameters
     ----------
-    rate:
+    rate
         The number of times the command can be used within the cooldown period
-    per:
+    per
         The cooldown period in seconds
-    type:
+    type
         The bucket type to use for the cooldown
         If not set, it will be using default, which is a global cooldown
     """
@@ -1410,13 +1412,13 @@ def message_command(
 
     Parameters
     ----------
-    name:
+    name
         Name of the command (defaults to the function name)
-    guild_ids:
+    guild_ids
         List of guild IDs to register the command in
-    user_install:
+    user_install
         Whether the command can be installed by users or not
-    guild_install:
+    guild_install
         Whether the command can be installed by guilds or not
     """
     def decorator(func: Callable) -> Command:
@@ -1441,7 +1443,7 @@ def before_invoke(invoke: Callable) -> Callable:
 
     Parameters
     ----------
-    invoke: Callable
+    invoke
         The function to be called before the command is invoked.
     """
     def decorator(func: Callable) -> Callable:
@@ -1459,7 +1461,7 @@ def after_invoke(invoke: Callable) -> Callable:
 
     Parameters
     ----------
-    invoke: Callable
+    invoke
         The function to be called after the command is invoked.
     """
     def decorator(func: Callable) -> Callable:
@@ -1500,7 +1502,7 @@ def locales(
 
     Parameters
     ----------
-    translations:
+    translations
         The translations for the command name, description, and options.
     """
     def decorator(func: Callable) -> Callable:
@@ -1567,15 +1569,15 @@ def group(
 
     Parameters
     ----------
-    name:
+    name
         Name of the command group (defaults to the function name)
-    description:
+    description
         Description of the command group (defaults to the function docstring)
-    guild_ids:
+    guild_ids
         List of guild IDs to register the command group in
-    user_install:
+    user_install
         Whether the command group can be installed by users or not
-    guild_install:
+    guild_install
         Whether the command group can be installed by guilds or not
     """
     def decorator(func: Callable) -> SubGroup:
@@ -1645,11 +1647,11 @@ def allow_contexts(
 
     Parameters
     ----------
-    guild:
+    guild
         Weather the command can be used in guilds.
-    bot_dm:
+    bot_dm
         Weather the command can be used in bot DMs.
-    private_dm:
+    private_dm
         Weather the command can be used in private DMs.
     """
     def decorator(func: Callable) -> Callable:
@@ -1866,9 +1868,9 @@ def interaction(
 
     Parameters
     ----------
-    custom_id:
+    custom_id
         The custom ID of the interaction. (can be partial, aka. regex)
-    regex:
+    regex
         Whether the custom_id is a regex or not
     """
     def decorator(func: Callable) -> Interaction:
@@ -1887,12 +1889,12 @@ def listener(name: str | None = None) -> Callable:
 
     Parameters
     ----------
-    name:
+    name
         Name of the listener (defaults to the function name)
 
     Raises
     ------
-    `TypeError`
+    TypeError
         - If name was not a string
         - If the listener was not a coroutine function
     """
