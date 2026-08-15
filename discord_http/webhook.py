@@ -178,7 +178,7 @@ class PartialWebhook(PartialBase):
             raise ValueError("Cannot send a message with a webhook that has no token")
 
         params = {}
-        if thread_id is not MISSING:
+        if thread_id is not MISSING and thread_id is not None:
             params["thread_id"] = str(thread_id)
         if wait is True:
             params["wait"] = "true"
@@ -241,6 +241,90 @@ class PartialWebhook(PartialBase):
             )
 
         return None
+
+    async def send_slack(
+        self,
+        payload: dict,
+        *,
+        wait: bool = True,
+        thread_id: int | None = MISSING,
+    ) -> None:
+        """
+        Send a Slack-compatible webhook.
+
+        Parameters
+        ----------
+        payload:
+            The Slack-formatted payload to send
+        wait:
+            Whether to wait for server confirmation of the message send
+        thread_id:
+            Thread ID to send the message to
+
+        Raises
+        ------
+        `ValueError`
+            If the webhook has no token
+        """
+        if self.token is None:
+            raise ValueError("Cannot execute a webhook that has no token")
+
+        params = {}
+        if thread_id is not MISSING and thread_id is not None:
+            params["thread_id"] = str(thread_id)
+        # These endpoints default to wait=true, unlike the regular execute endpoint
+        params["wait"] = "true" if wait else "false"
+
+        await self._state.query(
+            "POST",
+            f"/webhooks/{self.id}/{self.token}/slack",
+            webhook=True,
+            params=params,
+            json=payload,
+            res_method="text"
+        )
+
+    async def send_github(
+        self,
+        payload: dict,
+        *,
+        wait: bool = True,
+        thread_id: int | None = MISSING,
+    ) -> None:
+        """
+        Send a GitHub-compatible webhook.
+
+        Parameters
+        ----------
+        payload:
+            The GitHub-formatted payload to send
+        wait:
+            Whether to wait for server confirmation of the message send
+        thread_id:
+            Thread ID to send the message to
+
+        Raises
+        ------
+        `ValueError`
+            If the webhook has no token
+        """
+        if self.token is None:
+            raise ValueError("Cannot execute a webhook that has no token")
+
+        params = {}
+        if thread_id is not MISSING and thread_id is not None:
+            params["thread_id"] = str(thread_id)
+        # These endpoints default to wait=true, unlike the regular execute endpoint
+        params["wait"] = "true" if wait else "false"
+
+        await self._state.query(
+            "POST",
+            f"/webhooks/{self.id}/{self.token}/github",
+            webhook=True,
+            params=params,
+            json=payload,
+            res_method="text"
+        )
 
     async def delete(
         self,
@@ -343,8 +427,8 @@ class Webhook(PartialWebhook):
         super().__init__(
             state=state,
             id=(
-                self.application_id or
                 utils.get_int(data, "id") or
+                self.application_id or
                 0
             ),
             token=data.get("token")

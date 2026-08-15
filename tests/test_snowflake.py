@@ -30,5 +30,58 @@ class TestSnowflake(unittest.TestCase):
         self.assertEqual(sf.created_at, expected)
 
 
+class TestSnowflakeInitErrorType(unittest.TestCase):
+    """ A non-convertible id raises TypeError, not ValueError - int("not-an-int")
+    itself raises ValueError internally, but Snowflake.__init__ catches that
+    and re-raises as TypeError. """
+
+    def test_non_convertible_string_raises_type_error_not_value_error(self) -> None:
+        with self.assertRaises(TypeError):
+            Snowflake("not-an-int")
+
+        try:
+            Snowflake("not-an-int")
+        except TypeError:
+            pass
+        except ValueError:
+            self.fail("Snowflake should raise TypeError, not ValueError")
+
+    def test_none_raises_type_error(self) -> None:
+        # int(None) raises TypeError directly, which is not caught by the
+        # `except ValueError` clause - it propagates as-is (still a TypeError).
+        with self.assertRaises(TypeError):
+            Snowflake(None)  # type: ignore[arg-type]
+
+
+class TestSnowflakeEqualityOrderingAsymmetry(unittest.TestCase):
+    """ __eq__ is lenient (returns False for unrelated types, per Python's
+    NotImplemented-less convention here), while __gt__/__lt__/__ge__/__le__
+    are strict and raise TypeError for the same unrelated types. """
+
+    def test_equality_with_unrelated_type_returns_false(self) -> None:
+        sf = Snowflake(100)
+        self.assertFalse(sf == "100")
+        self.assertFalse(sf == 100.0)
+        self.assertFalse(sf == object())
+
+    def test_ordering_with_unrelated_type_raises_type_error(self) -> None:
+        sf = Snowflake(100)
+        with self.assertRaises(TypeError):
+            sf > "100"
+        with self.assertRaises(TypeError):
+            sf < "100"
+        with self.assertRaises(TypeError):
+            sf >= object()
+        with self.assertRaises(TypeError):
+            sf <= object()
+
+    def test_ordering_still_works_against_plain_int(self) -> None:
+        sf = Snowflake(100)
+        self.assertTrue(sf > 50)
+        self.assertTrue(sf < 150)
+        self.assertTrue(sf >= 100)
+        self.assertTrue(sf <= 100)
+
+
 if __name__ == "__main__":
     unittest.main()

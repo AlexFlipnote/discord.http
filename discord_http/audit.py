@@ -365,9 +365,8 @@ class AuditChange(Generic[_AuditChangeT]):
             self.new_value = self._handle_partial_role(data)  # type: ignore[assignment]
             return
 
-        translator: Callable[["AuditLogEntry", Any], Any] | None = self._translaters.get(self.key, None)
-
-        if translator:
+        translator: Callable[["AuditLogEntry", Any], Any] | None
+        if translator := self._translaters.get(self.key, None):
             if self.new_value is not None:
                 self.new_value = translator(self.entry, self.new_value)
 

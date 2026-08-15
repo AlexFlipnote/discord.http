@@ -78,8 +78,7 @@ class BaseFlag(_FlagPyMeta):
                 self |= p
                 continue
 
-            member_flag = self.__class__.__members__.get(p)
-            if member_flag and member_flag in self:
+            if (member_flag := self.__class__.__members__.get(p)) and member_flag in self:
                 continue
 
             try:
@@ -118,8 +117,7 @@ class BaseFlag(_FlagPyMeta):
                 self &= ~p
                 continue
 
-            member_flag = self.__class__.__members__.get(p)
-            if member_flag and member_flag not in self:
+            if (member_flag := self.__class__.__members__.get(p)) and member_flag not in self:
                 continue
 
             try:
@@ -187,6 +185,7 @@ class MessageFlags(BaseFlag):
     failed_to_mention_some_roles_in_thread = 1 << 8
     suppress_notifications = 1 << 12
     is_voice_message = 1 << 13
+    has_snapshot = 1 << 14
     is_components_v2 = 1 << 15
 
 
@@ -213,6 +212,7 @@ class GuildMemberFlags(BaseFlag):
     completed_home_actions = 1 << 6
     automod_quarantined_username = 1 << 7
     dm_settings_upsell_acknowledged = 1 << 9
+    automod_quarantined_guild_tag = 1 << 10
 
 
 class ChannelFlags(BaseFlag):
@@ -220,6 +220,8 @@ class ChannelFlags(BaseFlag):
     pinned = 1 << 1
     require_tag = 1 << 4
     hide_media_download_options = 1 << 15
+    obfuscated = 1 << 17
+    is_spoiler_channel = 1 << 21
 
 
 class UserFlags(BaseFlag):
@@ -328,6 +330,8 @@ class Permissions(BaseFlag):
     set_voice_channel_status = 1 << 48
     send_polls = 1 << 49
     use_external_apps = 1 << 50
+    pin_messages = 1 << 51
+    bypass_slowmode = 1 << 52
 
     def handle_overwrite(self, allow: int, deny: int) -> "Permissions":
         """

@@ -24,6 +24,8 @@ class PayloadType(BaseEnum):
     hello = 10
     heartbeat_ack = 11
     guild_sync = 12
+    request_soundboard_sounds = 31
+    request_channel_info = 43
 
 
 class ShardCloseType(BaseEnum):

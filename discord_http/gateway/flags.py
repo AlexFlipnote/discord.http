@@ -3,6 +3,7 @@ from ..flags import BaseFlag
 __all__ = (
     "ActivityFlags",
     "GatewayCacheFlags",
+    "GatewayCapabilities",
     "Intents",
 )
 
@@ -43,6 +44,11 @@ class Intents(BaseFlag):
     auto_moderation_execution = 1 << 21
     guild_message_polls = 1 << 24
     direct_message_polls = 1 << 25
+
+
+class GatewayCapabilities(BaseFlag):
+    """ Represents the opt-in capabilities bitfield sent in the Gateway Identify payload. """
+    private_channel_obfuscation = 1 << 15
 
 
 class GatewayCacheFlags(BaseFlag):

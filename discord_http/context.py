@@ -664,14 +664,12 @@ class Context:
                 data=data["message"],
                 guild=self._guild
             )
-        elif self._raw_resolved.get("messages", {}):
-            first_msg = next(iter(self._raw_resolved["messages"].values()), None)
-            if first_msg:
-                self.message = Message(
-                    state=self.bot.state,
-                    data=first_msg,
-                    guild=self._guild
-                )
+        elif first_msg := next(iter(self._raw_resolved.get("messages", {}).values()), None):
+            self.message = Message(
+                state=self.bot.state,
+                data=first_msg,
+                guild=self._guild
+            )
 
         if self._raw_resolved:
             self.resolved = ResolvedValues(self, data)
@@ -1320,8 +1318,7 @@ class Context:
                     case CommandOptionType.string:
                         kwargs[option["name"]] = option["value"]
 
-                        has_converter = self.command._converters.get(option["name"], None)
-                        if has_converter:
+                        if has_converter := self.command._converters.get(option["name"], None):
                             conv_class = has_converter()
                             if inspect.iscoroutinefunction(conv_class.convert):
                                 kwargs[option["name"]] = await conv_class.convert(

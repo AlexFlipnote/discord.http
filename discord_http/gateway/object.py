@@ -2,29 +2,35 @@ import time
 
 from collections.abc import Iterator
 from datetime import datetime
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, NamedTuple
 
 from .. import utils
 from ..automod import AutoModRuleAction, PartialAutoModRule
+from ..channel import PartialChannel
 from ..colour import Colour
 from ..emoji import EmojiParser
-from ..enums import ReactionType, AutoModRuleTriggerType
+from ..enums import ReactionType, AutoModRuleTriggerType, ApplicationCommandPermissionType
 from ..message import PartialMessage
+from ..role import PartialRole
+from ..user import PartialUser
 
 from .activity import Activity
 from .enums import StatusType, PollVoteActionType, ActivityType
 
 if TYPE_CHECKING:
-    from ..channel import BaseChannel, PartialChannel, Thread
+    from ..channel import BaseChannel, Thread
     from ..guild import Guild, PartialGuild
     from ..http import DiscordAPI
     from ..member import Member, PartialMember, PartialThreadMember, ThreadMember
-    from ..user import User, PartialUser
+    from ..user import User
 
 __all__ = (
+    "ApplicationCommandPermission",
     "AutomodExecution",
     "BulkDeletePayload",
     "ChannelPinsUpdate",
+    "GatewayRateLimited",
+    "GuildApplicationCommandPermissions",
     "GuildJoinRequest",
     "PlayingStatus",
     "PollVoteEvent",
@@ -162,8 +168,7 @@ class GuildJoinRequest:
         self._from_data(data)
 
     def _from_data(self, data: dict) -> None:
-        request = data.get("request", {})
-        if request:
+        if request := data.get("request", {}):
             self.user_id = utils.get_int(request, "user_id")
 
             if request.get("user", None):
@@ -700,7 +705,7 @@ class ThreadListSyncPayload:
 
             thread_members = []
             for member in members:
-                if member.id == thread.id:
+                if member.thread_id == thread.id:
                     thread_members.append(member)
 
             yield (parent_channel, (thread, thread_members))
@@ -784,3 +789,98 @@ class ThreadMembersUpdatePayload:
 
     def __repr__(self) -> str:
         return f"<ThreadMembersUpdatePayload id={self.id} guild_id={self.guild_id}>"
+
+
+class GatewayRateLimited(NamedTuple):
+    """ Represents a gateway opcode rate limit notice. """
+    opcode: int
+    retry_after: float
+    meta: dict
+
+
+class ApplicationCommandPermission:
+    """ Represents a single permission overwrite for an application command in a guild. """
+
+    __slots__ = (
+        "id",
+        "permission",
+        "target",
+        "type",
+    )
+
+    def __init__(self, *, state: "DiscordAPI", guild_id: int, data: dict):
+        self.id: int = int(data["id"])
+        """ The ID of the role, user, or channel this permission applies to. """
+
+        self.target: "PartialRole | PartialUser | PartialChannel | None" = None
+        """
+        The resolved target of the permission, based on `id` and `type`.
+
+        `None` if `id` is one of Discord's special constants instead of a real
+        entity (`@everyone` for all members when `type` is user, or `guild_id - 1`
+        for all channels when `type` is channel).
+        """
+
+        self.type: ApplicationCommandPermissionType = ApplicationCommandPermissionType(data["type"])
+        """ Whether `id` refers to a role, a user, or a channel. """
+
+        self.permission: bool = data["permission"]
+        """ Whether the command is allowed (`True`) or denied (`False`) for the target. """
+
+        match self.type:
+            case ApplicationCommandPermissionType.role:
+                # The literal @everyone role's ID always equals guild_id, so
+                # this is a real role - no special constant to guard against.
+                self.target = PartialRole(state=state, id=self.id, guild_id=guild_id)
+            case ApplicationCommandPermissionType.user:
+                if self.id != guild_id:  # guild_id itself means "all members"
+                    self.target = PartialUser(state=state, id=self.id)
+            case ApplicationCommandPermissionType.channel:
+                if self.id != guild_id - 1:  # guild_id - 1 means "all channels"
+                    self.target = PartialChannel(state=state, id=self.id, guild_id=guild_id)
+
+    def __repr__(self) -> str:
+        return f"<ApplicationCommandPermission id={self.id} type={self.type} permission={self.permission}>"
+
+
+class GuildApplicationCommandPermissions:
+    """ Represents the permissions for an application command (or all commands) in a guild. """
+
+    __slots__ = (
+        "_state",
+        "application_id",
+        "guild_id",
+        "id",
+        "permissions",
+    )
+
+    def __init__(self, *, state: "DiscordAPI", data: dict):
+        self._state = state
+
+        self.id: int = int(data["id"])
+        """ The ID of the command, or the application ID if these are the guild's default command permissions. """
+
+        self.application_id: int = int(data["application_id"])
+        """ The ID of the application the command belongs to. """
+
+        self.guild_id: int = int(data["guild_id"])
+        """ The ID of the guild the permissions are set in. """
+
+        self.permissions: list[ApplicationCommandPermission] = [
+            ApplicationCommandPermission(state=state, guild_id=self.guild_id, data=g)
+            for g in data.get("permissions", [])
+        ]
+        """ The permission overwrites for the command. """
+
+    def __repr__(self) -> str:
+        return f"<GuildApplicationCommandPermissions id={self.id} guild_id={self.guild_id}>"
+
+    @property
+    def guild(self) -> "PartialGuild":
+        """ The guild the permissions are set in. """
+        bot = self._state.bot
+        return bot.cache.get_guild(self.guild_id) or bot.get_partial_guild(self.guild_id)
+
+    def is_default(self) -> bool:
+        """ Whether these are the guild's default command permissions, rather than for one specific command. """
+        return self.id == self.application_id

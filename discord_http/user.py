@@ -8,7 +8,8 @@ from .colour import Colour
 from .embeds import Embed
 from .enums import (
     DefaultAvatarType, DisplayNameEffectType, DisplayNameFontType,
-    ApplicationEventWebhookStatus
+    ApplicationEventWebhookStatus, TeamMembershipState,
+    ApplicationRoleConnectionMetadataType
 )
 from .file import File
 from .flags import UserFlags, MessageFlags, ApplicationFlags
@@ -28,11 +29,14 @@ MISSING = utils.MISSING
 
 __all__ = (
     "Application",
+    "ApplicationRoleConnectionMetadata",
     "AvatarDecoration",
     "DisplayNameStyles",
     "Nameplate",
     "PartialUser",
     "PrimaryGuild",
+    "Team",
+    "TeamMember",
     "User",
 )
 
@@ -620,6 +624,177 @@ class User(PartialUser):
         return self.avatar is None
 
 
+class TeamMember(PartialBase):
+    """ Represents a member of a developer team. """
+
+    __slots__ = (
+        "_state",
+        "membership_state",
+        "role",
+        "team_id",
+        "user",
+    )
+
+    def __init__(
+        self,
+        *,
+        state: "DiscordAPI",
+        team_id: int,
+        data: dict
+    ):
+        super().__init__(id=int(data["user"]["id"]))
+        self._state = state
+
+        self.team_id: int = team_id
+        """ The ID of the team this member belongs to. """
+
+        self.membership_state: TeamMembershipState = TeamMembershipState(data["membership_state"])
+        """ The membership state of the team member. """
+
+        self.role: str = data.get("role", "")
+        """ The role of the team member. """
+
+        self.user: User = User(state=self._state, data=data["user"])
+        """ The user associated with the team member. """
+
+    def __repr__(self) -> str:
+        return f"<TeamMember id={self.id} role='{self.role}'>"
+
+    def __str__(self) -> str:
+        return self.role
+
+
+class Team(PartialBase):
+    """ Represents a Discord developer team. """
+
+    __slots__ = (
+        "_state",
+        "icon",
+        "members",
+        "name",
+        "owner_user_id",
+    )
+
+    def __init__(
+        self,
+        *,
+        state: "DiscordAPI",
+        data: dict
+    ):
+        super().__init__(id=int(data["id"]))
+        self._state = state
+
+        self.name: str = data["name"]
+        """ The name of the team. """
+
+        self.icon: Asset | None = None
+        """ The icon of the team, if any. """
+
+        self.owner_user_id: int = int(data["owner_user_id"])
+        """ The ID of the user that owns the team. """
+
+        self.members: list[TeamMember] = [
+            TeamMember(state=self._state, team_id=self.id, data=g)
+            for g in data.get("members", [])
+        ]
+        """ The members of the team. """
+
+    def __repr__(self) -> str:
+        return f"<Team id={self.id} name='{self.name}'>"
+
+    def __str__(self) -> str:
+        return self.name
+
+    def _from_data(self, data: dict) -> None:
+        if data.get("icon"):
+            self.icon = Asset._from_icon(
+                state=self._state,
+                object_id=self.id,
+                icon_hash=data["icon"],
+                path="team"
+            )
+
+    @property
+    def owner(self) -> PartialUser:
+        """ The user that owns the team. """
+        return PartialUser(state=self._state, id=self.owner_user_id)
+
+
+class ApplicationRoleConnectionMetadata:
+    """ Represents a single application role connection metadata record. """
+
+    __slots__ = (
+        "description",
+        "description_localizations",
+        "key",
+        "name",
+        "name_localizations",
+        "type",
+    )
+
+    def __init__(
+        self,
+        *,
+        type: ApplicationRoleConnectionMetadataType | int,  # ruff: ignore[builtin-argument-shadowing]
+        key: str,
+        name: str,
+        description: str,
+        name_localizations: dict[str, str] | None = None,
+        description_localizations: dict[str, str] | None = None,
+    ):
+        self.type: ApplicationRoleConnectionMetadataType = ApplicationRoleConnectionMetadataType(int(type))
+        """ The type of comparison the metadata value is checked against. """
+
+        self.key: str = key
+        """ The dictionary key for the metadata field. """
+
+        self.name: str = name
+        """ The name of the metadata field. """
+
+        self.description: str = description
+        """ The description of the metadata field. """
+
+        self.name_localizations: dict[str, str] = name_localizations or {}
+        """ The localizations of the name of the metadata field. """
+
+        self.description_localizations: dict[str, str] = description_localizations or {}
+        """ The localizations of the description of the metadata field. """
+
+    def __repr__(self) -> str:
+        return f"<ApplicationRoleConnectionMetadata key='{self.key}'>"
+
+    def __str__(self) -> str:
+        return self.key
+
+    @classmethod
+    def from_dict(cls, data: dict) -> "ApplicationRoleConnectionMetadata":
+        """ Creates an ApplicationRoleConnectionMetadata from a dict provided by Discord. """
+        return cls(
+            type=data["type"],
+            key=data["key"],
+            name=data["name"],
+            description=data["description"],
+            name_localizations=data.get("name_localizations"),
+            description_localizations=data.get("description_localizations"),
+        )
+
+    def to_dict(self) -> dict:
+        """ Returns a dict representation of the metadata record. """
+        payload = {
+            "type": int(self.type),
+            "key": self.key,
+            "name": self.name,
+            "description": self.description,
+        }
+
+        if self.name_localizations:
+            payload["name_localizations"] = self.name_localizations
+        if self.description_localizations:
+            payload["description_localizations"] = self.description_localizations
+
+        return payload
+
+
 class Application(PartialBase):
     """ Represents a user client object. """
 
@@ -632,6 +807,7 @@ class Application(PartialBase):
         "bot_public",
         "bot_require_code_grant",
         "cover_image",
+        "custom_install_url",
         "description",
         "event_webhooks_status",
         "event_webhooks_types",
@@ -639,6 +815,8 @@ class Application(PartialBase):
         "flags",
         "guild",
         "icon",
+        "install_params",
+        "integration_types_config",
         "interactions_endpoint_url",
         "name",
         "owner",
@@ -649,6 +827,7 @@ class Application(PartialBase):
         "rpc_origins",
         "slug",
         "tags",
+        "team",
         "terms_of_service_url",
         "verified",
         "verify_key",
@@ -708,7 +887,11 @@ class Application(PartialBase):
         self.cover_image: Asset | None = None
         """ The cover image of the application, if any. """
 
-        self.flags: ApplicationFlags = ApplicationFlags(data.get("flags", 0))
+        self.flags: ApplicationFlags = ApplicationFlags(
+            int(raw_flags_new)
+            if (raw_flags_new := data.get("flags_new")) is not None
+            else data.get("flags", 0)
+        )
         """ The flags of the application. """
 
         self.approximate_guild_count: int | None = data.get("approximate_guild_count")
@@ -743,6 +926,18 @@ class Application(PartialBase):
         self.tags: list[str] = data.get("tags", [])
         """ The tags of the application. """
 
+        self.custom_install_url: str | None = data.get("custom_install_url")
+        """ The custom install URL of the application, if any. """
+
+        self.install_params: dict | None = data.get("install_params")
+        """ The install params of the application, if any. """
+
+        self.integration_types_config: dict = data.get("integration_types_config", {})
+        """ The integration types config of the application. """
+
+        self.team: Team | None = None
+        """ The team that owns the application, if any. """
+
         self._from_data(data)
 
     def __repr__(self) -> str:
@@ -764,11 +959,11 @@ class Application(PartialBase):
                 data=data["bot"]
             )
 
-        if data.get("guild_id"):
+        if data.get("guild_id") or data.get("guild"):
             from .guild import PartialGuild
             self.guild = PartialGuild(
                 state=self._state,
-                id=int(data["guild_id"])
+                id=int(data["guild_id"]) if data.get("guild_id") else int(data["guild"]["id"])
             )
 
         if data.get("icon"):
@@ -791,3 +986,176 @@ class Application(PartialBase):
                 state=self._state,
                 id=int(data["primary_sku_id"])
             )
+
+        if data.get("team"):
+            self.team = Team(
+                state=self._state,
+                data=data["team"]
+            )
+
+    async def edit(
+        self,
+        *,
+        custom_install_url: str | None = MISSING,
+        description: str | None = MISSING,
+        role_connections_verification_url: str | None = MISSING,
+        install_params: dict | None = MISSING,
+        integration_types_config: dict | None = MISSING,
+        flags: ApplicationFlags | int | None = MISSING,
+        icon: File | bytes | None = MISSING,
+        cover_image: File | bytes | None = MISSING,
+        interactions_endpoint_url: str | None = MISSING,
+        tags: list[str] | None = MISSING,
+        event_webhooks_url: str | None = MISSING,
+        event_webhooks_status: ApplicationEventWebhookStatus | int | None = MISSING,
+        event_webhooks_types: list[str] | None = MISSING,
+    ) -> "Application":
+        """
+        Edit the current application.
+
+        Only limited intent flags can be updated through `flags`.
+
+        Parameters
+        ----------
+        custom_install_url:
+            New custom install URL of the application
+        description:
+            New description of the application
+        role_connections_verification_url:
+            New role connections verification URL of the application
+        install_params:
+            New install params of the application
+        integration_types_config:
+            New integration types config of the application
+        flags:
+            New flags of the application
+        icon:
+            New icon of the application
+        cover_image:
+            New cover image of the application
+        interactions_endpoint_url:
+            New interactions endpoint URL of the application
+        tags:
+            New tags of the application
+        event_webhooks_url:
+            New event webhooks URL of the application
+        event_webhooks_status:
+            New event webhooks status of the application
+        event_webhooks_types:
+            New event webhooks types of the application
+
+        Returns
+        -------
+            The edited application
+        """
+        payload: dict = {}
+
+        if custom_install_url is not MISSING:
+            payload["custom_install_url"] = custom_install_url
+
+        if description is not MISSING:
+            payload["description"] = description
+
+        if role_connections_verification_url is not MISSING:
+            payload["role_connections_verification_url"] = role_connections_verification_url
+
+        if install_params is not MISSING:
+            payload["install_params"] = install_params
+
+        if integration_types_config is not MISSING:
+            payload["integration_types_config"] = integration_types_config
+
+        if flags is not MISSING:
+            payload["flags"] = int(flags) if flags else 0
+
+        if icon is not MISSING:
+            payload["icon"] = (
+                utils.bytes_to_base64(icon)
+                if icon is not None else None
+            )
+
+        if cover_image is not MISSING:
+            payload["cover_image"] = (
+                utils.bytes_to_base64(cover_image)
+                if cover_image is not None else None
+            )
+
+        if interactions_endpoint_url is not MISSING:
+            payload["interactions_endpoint_url"] = interactions_endpoint_url
+
+        if tags is not MISSING:
+            payload["tags"] = tags or []
+
+        if event_webhooks_url is not MISSING:
+            payload["event_webhooks_url"] = event_webhooks_url
+
+        if event_webhooks_status is not MISSING:
+            resolved_status = ApplicationEventWebhookStatus(
+                int(event_webhooks_status or ApplicationEventWebhookStatus.disabled)
+            )
+
+            if resolved_status is ApplicationEventWebhookStatus.disabled_by_discord:
+                raise ValueError(
+                    "event_webhooks_status cannot be set to disabled_by_discord, "
+                    "that state can only be set by Discord itself"
+                )
+
+            payload["event_webhooks_status"] = int(resolved_status)
+
+        if event_webhooks_types is not MISSING:
+            payload["event_webhooks_types"] = event_webhooks_types or []
+
+        r = await self._state.query(
+            "PATCH",
+            "/applications/@me",
+            json=payload
+        )
+
+        app = Application(state=self._state, data=r.response)
+
+        if (
+            self._state.bot.application and
+            self._state.bot.application.id == self.id
+        ):
+            self._state.bot.application = app
+
+        return app
+
+    async def fetch_role_connection_metadata(self) -> list[ApplicationRoleConnectionMetadata]:
+        """ Fetches the role connection metadata records for the application. """
+        r = await self._state.query(
+            "GET",
+            f"/applications/{self.id}/role-connections/metadata"
+        )
+
+        return [
+            ApplicationRoleConnectionMetadata.from_dict(g)
+            for g in r.response
+        ]
+
+    async def edit_role_connection_metadata(
+        self,
+        records: list[ApplicationRoleConnectionMetadata]
+    ) -> list[ApplicationRoleConnectionMetadata]:
+        """
+        Updates the role connection metadata records for the application.
+
+        Parameters
+        ----------
+        records:
+            The new metadata records for the application (max 5)
+
+        Returns
+        -------
+            The updated metadata records
+        """
+        r = await self._state.query(
+            "PUT",
+            f"/applications/{self.id}/role-connections/metadata",
+            json=[g.to_dict() for g in records]
+        )
+
+        return [
+            ApplicationRoleConnectionMetadata.from_dict(g)
+            for g in r.response
+        ]

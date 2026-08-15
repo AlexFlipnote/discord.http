@@ -17,9 +17,12 @@ from aiohttp.web_exceptions import (
 
 from . import utils
 from .commands import Command, SubGroup
-from .enums import InteractionType, CommandOptionType
+from .entitlements import Entitlements
+from .enums import InteractionType, CommandOptionType, IntegrationType
 from .errors import CheckFailed
+from .guild import Guild
 from .response import BaseResponse, Ping, MessageResponse, EmptyResponse
+from .user import User
 
 if TYPE_CHECKING:
     from .client import Client
@@ -114,9 +117,7 @@ class DiscordHTTP(web.Application):
             if not find_next_step:
                 raise HTTPBadRequest(text="invalid command")
 
-            cmd = cmd.subcommands.get(find_next_step["name"], None)
-
-            if not cmd:
+            if not (cmd := cmd.subcommands.get(find_next_step["name"], None)):
                 _log.warning(
                     f"Unhandled subcommand: {find_next_step['name']} "
                     "(not found in local command list)"
@@ -289,7 +290,6 @@ class DiscordHTTP(web.Application):
             cmd, data_options = self._dig_subcommand(cmd, data)
 
             find_focused = next((x for x in data_options if x.get("focused", False)), None)
-
             if not find_focused:
                 _log.warning("Failed to find focused option in autocomplete")
                 return self.jsonify({"error": "focused option not found"}, status=400)
@@ -348,6 +348,76 @@ class DiscordHTTP(web.Application):
 
         self._attach_tracking(response, context._response_sent)
         return response
+
+    async def _index_webhook_events_endpoint(self, request: web.Request) -> web.Response:
+        """
+        The main function to handle all Webhook Events sent by Discord.
+
+        Please do not touch this function, unless you know what you're doing
+        """
+        # Validate signature
+        await self._validate_request(request)
+
+        try:
+            data = await request.json(loads=orjson.loads)
+        except Exception:
+            return self.jsonify({"error": "invalid json"}, status=400)
+
+        if self.debug_events:
+            self.bot.dispatch("raw_webhook_event", copy.deepcopy(data))
+
+        if data.get("type") == 0:
+            # PING, used by Discord to verify the webhook events URL is active.
+            # Discord requires a valid Content-Type on this response to consider it verified.
+            return web.Response(status=204, content_type="application/json")
+
+        event = data.get("event") or {}
+        event_type = event.get("type")
+        event_data = event.get("data") or {}
+
+        try:
+            match event_type:
+                case "APPLICATION_AUTHORIZED":
+                    if self.bot.has_any_dispatch("application_authorized"):
+                        self.bot.dispatch(
+                            "application_authorized",
+                            event_data["scopes"],
+                            User(state=self.bot.state, data=event_data["user"]),
+                            (
+                                Guild(state=self.bot.state, data=event_data["guild"])
+                                if event_data.get("guild") else None
+                            ),
+                            (
+                                IntegrationType(event_data["integration_type"])
+                                if "integration_type" in event_data else None
+                            ),
+                        )
+
+                case "APPLICATION_DEAUTHORIZED":
+                    if self.bot.has_any_dispatch("application_deauthorized"):
+                        self.bot.dispatch(
+                            "application_deauthorized",
+                            User(state=self.bot.state, data=event_data["user"]),
+                        )
+
+                case "ENTITLEMENT_CREATE" | "ENTITLEMENT_UPDATE" | "ENTITLEMENT_DELETE":
+                    dispatch_name = event_type.lower()
+                    if self.bot.has_any_dispatch(dispatch_name):
+                        self.bot.dispatch(
+                            dispatch_name,
+                            Entitlements(state=self.bot.state, data=event_data)
+                        )
+
+                case _:
+                    # Everything else (quests, Social SDK lobby/DM events, etc.) is
+                    # not available to bots, so it's only surfaced via raw_webhook_event
+                    _log.debug(f"Unhandled webhook event received (type: {event_type})")
+        except Exception as e:
+            # Discord disables the Webhook Events URL after too many failed/erroring
+            # deliveries, so a single malformed/unexpected payload must never propagate.
+            _log.error(f"Error while handling webhook event (type: {event_type})", exc_info=e)
+
+        return web.Response(status=204, content_type="application/json")
 
     def _attach_tracking(self, response: web.Response, event: asyncio.Event) -> None:
         """
@@ -509,6 +579,16 @@ class DiscordHTTP(web.Application):
             self.router.add_get(int_path, self.index_ping)
 
         self.router.add_post(int_path, self._index_interactions_endpoint)
+
+        if self.bot.webhook_events_path:
+            events_path = str(self.bot.webhook_events_path)
+            if not events_path.startswith("/"):
+                _log.warning(
+                    "Webhook events path should start with a slash ( / ), adding it automatically"
+                )
+                events_path = f"/{events_path}"
+
+            self.router.add_post(events_path, self._index_webhook_events_endpoint)
 
         try:
             _log.info(f"Serving on http://{host}:{port}")

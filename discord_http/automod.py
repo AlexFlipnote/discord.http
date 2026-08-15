@@ -541,9 +541,9 @@ class AutoModRule(PartialAutoModRule):
         return self.name
 
     def _from_data(self, data: dict) -> None:
-        if data.get("trigger_metadata"):
+        if trigger_metadata := data.get("trigger_metadata"):
             self.trigger_metadata = AutoModRuleTriggers.from_dict(
-                data["trigger_metadata"]
+                trigger_metadata
             )
 
     @property

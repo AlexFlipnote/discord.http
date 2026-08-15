@@ -1583,6 +1583,8 @@ class BaseChannel(PartialChannel):
     __slots__ = (
         "_permission_overwrites",
         "_raw_overwrites",
+        "app_permissions",
+        "flags",
         "last_message_id",
         "name",
         "nsfw",
@@ -1625,6 +1627,15 @@ class BaseChannel(PartialChannel):
         self.rate_limit_per_user: int = data.get("rate_limit_per_user", 0)
         """ The rate limit per user in seconds. """
 
+        self.flags: ChannelFlags = ChannelFlags(data.get("flags", 0))
+        """ The flags of the channel. """
+
+        self.app_permissions: Permissions | None = (
+            Permissions(int(data["app_permissions"]))
+            if "app_permissions" in data else None
+        )
+        """ The bot's permissions in this channel, only available on resolved channels from an interaction. """
+
         self._raw_type: int = data["type"]
         self._raw_overwrites: list[dict] = data.get("permission_overwrites", [])
         self._permission_overwrites: list[PermissionOverwrite] | None = None
@@ -1655,6 +1666,20 @@ class BaseChannel(PartialChannel):
     def type(self) -> ChannelType:
         """ The channel's type. """
         return ChannelType(self._raw_type)
+
+    def is_obfuscated(self) -> bool:
+        """
+        Whether this channel's data is obfuscated because the bot lacks `VIEW_CHANNEL` access to it.
+
+        Obfuscated channels have their `name` replaced with `"___hidden___"` and other
+        sensitive fields nulled or reduced. Access is regained the moment the bot's
+        permissions change, at which point a `CHANNEL_UPDATE` event delivers full data.
+        """
+        return ChannelFlags.obfuscated in self.flags
+
+    def is_spoiler(self) -> bool:
+        """ If a channel is marked as fulyl spoiler or not. """
+        return ChannelFlags.is_spoiler_channel in self.flags
 
     def permissions_for(self, member: "Member") -> Permissions:
         """
@@ -1834,10 +1859,15 @@ class StoreChannel(BaseChannel):
 class GroupDMChannel(BaseChannel):
     """ Represents a group DM channel. """
 
-    __slots__ = ()
+    __slots__ = (
+        "application_id",
+    )
 
     def __init__(self, *, state: "DiscordAPI", data: dict):
         super().__init__(state=state, data=data)
+
+        self.application_id: int | None = utils.get_int(data, "application_id")
+        """ The ID of the application that created the group DM, if any. """
 
     def __repr__(self) -> str:
         return f"<GroupDMChannel id={self.id} name='{self.name}'>"
@@ -2484,6 +2514,41 @@ class VoiceChannel(BaseChannel):
     def type(self) -> ChannelType:
         """ The channel's type. """
         return ChannelType.guild_voice
+
+    async def set_voice_status(
+        self,
+        status: str | None,
+        *,
+        reason: str | None = None
+    ) -> None:
+        """
+        Set the status of the voice channel.
+
+        Requires the `SET_VOICE_CHANNEL_STATUS` permission. If the bot is not
+        connected to the voice channel, `MANAGE_CHANNELS` is also required.
+
+        Parameters
+        ----------
+        status:
+            The new status of the voice channel, up to 500 characters. Use `None` to clear it.
+        reason:
+            The reason for setting the voice channel status
+
+        Raises
+        ------
+        `ValueError`
+            The status exceeds 500 characters
+        """
+        if status is not None and len(status) > 500:
+            raise ValueError("status must not exceed 500 characters")
+
+        await self._state.query(
+            "PUT",
+            f"/channels/{self.id}/voice-status",
+            json={"status": status},
+            res_method="text",
+            reason=reason
+        )
 
 
 class StageInstance(PartialBase):

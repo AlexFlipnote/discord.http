@@ -9,7 +9,7 @@ from ..audit import AuditLogEntry
 from ..automod import AutoModRule
 from ..channel import BaseChannel, PartialChannel, StageInstance, PartialThread
 from ..emoji import Emoji, EmojiParser
-from ..entitlements import Entitlements
+from ..entitlements import Entitlements, Subscription
 from ..enums import ChannelType
 from ..guild import Guild, PartialGuild, ScheduledEvent, PartialScheduledEvent
 from ..integrations import Integration, PartialIntegration
@@ -22,13 +22,14 @@ from ..sticker import Sticker
 from ..user import User, PartialUser
 from ..voice import VoiceState, PartialVoiceState
 
-from .enums import PollVoteActionType
+from .enums import PollVoteActionType, PayloadType
 from .flags import GatewayCacheFlags
 from .object import (
     ChannelPinsUpdate, TypingStartEvent,
     Reaction, BulkDeletePayload, ThreadListSyncPayload,
     ThreadMembersUpdatePayload, Presence, AutomodExecution,
-    PollVoteEvent, GuildJoinRequest
+    PollVoteEvent, GuildJoinRequest, GuildApplicationCommandPermissions,
+    GatewayRateLimited
 )
 
 if TYPE_CHECKING:
@@ -157,6 +158,12 @@ class GuildMembersChunk:
             if not future.done():
                 future.set_result(self.members)
 
+    def fail(self, exc: BaseException) -> None:
+        """ Fail the chunk request with an exception. """
+        for future in self._waiters:
+            if not future.done():
+                future.set_exception(exc)
+
 
 class Parser:
     """ The parser for the gateway events. """
@@ -196,8 +203,10 @@ class Parser:
         if nonce is None:
             return
 
-        req = self._chunk_requests.get(nonce)
-        if req is None or req.guild_id != guild_id:
+        if (
+            (req := self._chunk_requests.get(nonce)) is None or
+            req.guild_id != guild_id
+        ):
             return
 
         req.add_members(members)
@@ -332,6 +341,12 @@ class Parser:
         self.bot.cache.remove_guild(guild.id)
         return (guild,)
 
+    def _entitlement(self, data: dict) -> Entitlements:
+        return Entitlements(
+            state=self.bot.state,
+            data=data,
+        )
+
     def entitlement_create(self, data: dict) -> tuple[Entitlements]:
         """
         Create a new entitlement.
@@ -345,11 +360,7 @@ class Parser:
         -------
             The created entitlement
         """
-        ent = Entitlements(
-            state=self.bot.state,
-            data=data,
-        )
-        return (ent,)
+        return (self._entitlement(data),)
 
     def entitlement_update(self, data: dict) -> tuple[Entitlements]:
         """
@@ -364,11 +375,118 @@ class Parser:
         -------
             The updated entitlement
         """
-        ent = Entitlements(
+        return (self._entitlement(data),)
+
+    def entitlement_delete(self, data: dict) -> tuple[Entitlements]:
+        """
+        Delete an entitlement.
+
+        Parameters
+        ----------
+        data:
+            The data to delete the entitlement from
+
+        Returns
+        -------
+            The deleted entitlement
+        """
+        return (self._entitlement(data),)
+
+    def _subscription(self, data: dict) -> Subscription:
+        return Subscription(
             state=self.bot.state,
             data=data,
         )
-        return (ent,)
+
+    def subscription_create(self, data: dict) -> tuple[Subscription]:
+        """
+        Create a new subscription.
+
+        Parameters
+        ----------
+        data:
+            The data to create the subscription from
+
+        Returns
+        -------
+            The created subscription
+        """
+        return (self._subscription(data),)
+
+    def subscription_update(self, data: dict) -> tuple[Subscription]:
+        """
+        Update a subscription.
+
+        Parameters
+        ----------
+        data:
+            The data to update the subscription from
+
+        Returns
+        -------
+            The updated subscription
+        """
+        return (self._subscription(data),)
+
+    def subscription_delete(self, data: dict) -> tuple[Subscription]:
+        """
+        Delete a subscription.
+
+        Parameters
+        ----------
+        data:
+            The data to delete the subscription from
+
+        Returns
+        -------
+            The deleted subscription
+        """
+        return (self._subscription(data),)
+
+    def application_command_permissions_update(
+        self, data: dict
+    ) -> tuple[GuildApplicationCommandPermissions]:
+        """
+        Update the permissions of an application command in a guild.
+
+        Parameters
+        ----------
+        data:
+            The data to update the command permissions from
+
+        Returns
+        -------
+            The updated command permissions
+        """
+        return (
+            GuildApplicationCommandPermissions(
+                state=self.bot.state,
+                data=data,
+            ),
+        )
+
+    def user_update(self, data: dict) -> tuple[User]:
+        """
+        Update the current bot's user.
+
+        Parameters
+        ----------
+        data:
+            The data to update the user from
+
+        Returns
+        -------
+            The updated user
+        """
+        user = User(
+            state=self.bot.state,
+            data=data,
+        )
+
+        if self.bot.application:
+            self.bot.application.bot = user
+
+        return (user,)
 
     def guild_members_chunk(self, data: dict) -> tuple[GuildMembersChunk]:
         """
@@ -398,8 +516,7 @@ class Parser:
         if presences:
             temp_dict: dict[int, Member] = {g.id: g for g in members}
             for g in presences:
-                find_member = temp_dict.get(int(g["user"]["id"]))
-                if not find_member:
+                if not (find_member := temp_dict.get(int(g["user"]["id"]))):
                     continue
                 find_member._update_presence(Presence(
                     state=self.bot.state,
@@ -423,6 +540,39 @@ class Parser:
         dispatch_raw.add_members(members)
 
         return (dispatch_raw,)
+
+    def rate_limited(self, data: dict) -> tuple[GatewayRateLimited]:
+        """
+        Handle being rate limited on a gateway opcode.
+
+        If this was caused by a pending `Request Guild Members` (opcode 8) call,
+        the matching chunk request (if any) is failed immediately instead of
+        being left to time out.
+
+        Parameters
+        ----------
+        data:
+            The data about the rate limit
+
+        Returns
+        -------
+            The rate limit notice
+        """
+        payload = GatewayRateLimited(
+            opcode=data["opcode"],
+            retry_after=data["retry_after"],
+            meta=data.get("meta", {}),
+        )
+
+        if payload.opcode == int(PayloadType.request_guild_members):
+            nonce = payload.meta.get("nonce")
+            if nonce and (req := self._chunk_requests.pop(nonce, None)) is not None:
+                req.fail(RuntimeError(
+                    "Rate limited while requesting guild members "
+                    f"(retry after {payload.retry_after}s)"
+                ))
+
+        return (payload,)
 
     def guild_available(self, data: dict) -> tuple[Guild | PartialGuild]:
         """
@@ -934,6 +1084,64 @@ class Parser:
                 last_pin_timestamp=last_pin_timestamp,
                 guild=self._get_guild_or_partial(guild_id)
             ),
+        )
+
+    def voice_channel_status_update(self, data: dict) -> tuple[
+        Guild | PartialGuild | None,
+        BaseChannel | PartialChannel,
+        str | None
+    ]:
+        """
+        Voice channel status update event.
+
+        Parameters
+        ----------
+        data:
+            Data received from the event.
+
+        Returns
+        -------
+            The guild the channel is in, the voice channel whose
+            status changed, and the new status (`None` if cleared).
+        """
+        guild_id: int | None = utils.get_int(data, "guild_id")
+        channel_id: int = int(data["id"])
+
+        return (
+            self._get_guild_or_partial(guild_id),
+            self._get_channel_or_partial(channel_id, guild_id),
+            data.get("status")
+        )
+
+    def voice_channel_start_time_update(self, data: dict) -> tuple[
+        Guild | PartialGuild | None,
+        BaseChannel | PartialChannel,
+        datetime | None
+    ]:
+        """
+        Voice channel start time update event.
+
+        Parameters
+        ----------
+        data:
+            Data received from the event.
+
+        Returns
+        -------
+            The guild the channel is in, the voice channel whose
+            start time changed, and the new start time (`None` if no active session).
+        """
+        guild_id: int | None = utils.get_int(data, "guild_id")
+        channel_id: int = int(data["id"])
+        start_time: datetime | None = (
+            utils.parse_time(start_time_raw)
+            if (start_time_raw := data.get("voice_start_time")) else None
+        )
+
+        return (
+            self._get_guild_or_partial(guild_id),
+            self._get_channel_or_partial(channel_id, guild_id),
+            start_time,
         )
 
     def thread_create(self, data: dict) -> tuple[BaseChannel]:

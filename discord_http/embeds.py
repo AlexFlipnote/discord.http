@@ -4,6 +4,7 @@ from dataclasses import dataclass
 from datetime import datetime
 from typing import Self, Literal, cast
 
+from . import utils
 from .asset import Asset
 from .colour import Colour
 
@@ -443,7 +444,10 @@ class Embed:
 
         self.title = data.get("title")
         self.description = data.get("description")
-        self.timestamp = data.get("timestamp")
+        self.timestamp = (
+            utils.parse_time(data["timestamp"])
+            if data.get("timestamp") else None
+        )
         self.url = data.get("url")
         self.type = cast("EmbedTypes", sys.intern(data.get("type", "rich")))
 

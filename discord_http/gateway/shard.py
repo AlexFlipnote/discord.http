@@ -14,7 +14,7 @@ from .. import utils
 from ..object import Snowflake
 
 from .enums import PayloadType, ShardCloseType
-from .flags import GatewayCacheFlags, Intents
+from .flags import GatewayCacheFlags, GatewayCapabilities, Intents
 from .object import PlayingStatus
 from .parser import Parser, GuildMembersChunk
 
@@ -308,6 +308,9 @@ class Shard:
         self.intents: Intents = intents or Intents.none()
         """ The intents that the shard is using, or `None` if not specified. """
 
+        self.capabilities: GatewayCapabilities | None = bot.gateway_capabilities
+        """ The opt-in Gateway capabilities bitfield to send in the Identify payload, if any. """
+
         self.cache_flags = cache_flags
         """ The cache flags that the shard is using, or `None` if not specified. """
 
@@ -392,11 +395,9 @@ class Shard:
             self._ready_task = None
 
         for chunk_request in self.parser._chunk_requests.values():
-            for future in chunk_request._waiters:
-                if not future.done():
-                    future.set_exception(
-                        ConnectionResetError("Shard connection was reset while waiting for a member chunk")
-                    )
+            chunk_request.fail(
+                ConnectionResetError("Shard connection was reset while waiting for a member chunk")
+            )
 
         self.parser._chunk_requests.clear()
 
@@ -1023,9 +1024,7 @@ class Shard:
         event:
             The event data
         """
-        data = event.get("d")
-
-        if not data:
+        if not (data := event.get("d")):
             return
 
         if self.debug_events:
@@ -1216,5 +1215,8 @@ class Shard:
 
                 if self.playing_status is not None:
                     payload["d"]["presence"] = self.playing_status.to_dict()
+
+                if self.capabilities is not None:
+                    payload["d"]["capabilities"] = int(self.capabilities)
 
                 return payload

@@ -1,15 +1,17 @@
 import json
 
+from datetime import datetime
+
 from discord_http.gateway import (
     Intents, GatewayCacheFlags, Reaction,
     BulkDeletePayload, AutomodExecution, PollVoteEvent,
-    PlayingStatus
+    PlayingStatus, GatewayCapabilities
 )
 from discord_http import (
     Client, Message, Member, User,
     PartialGuild, Role, PartialRole, PartialMessage, VoiceState,
     AuditLogEntry, PartialChannel, ScheduledEvent, PartialScheduledEvent,
-    AutoModRule, Guild
+    AutoModRule, Guild, VoiceChannel, BaseChannel
 )
 
 
@@ -21,6 +23,7 @@ client = Client(
     debug_events=config["debug_events"],
     guild_id=config.get("guild_id", None),
     enable_gateway=True,
+    gateway_capabilities=GatewayCapabilities.private_channel_obfuscation,
     playing_status=PlayingStatus(
         name="Testing status",
         status="dnd"
@@ -147,6 +150,27 @@ async def on_guild_member_remove(guild: PartialGuild, member: User):
 
 
 @client.listener()
+async def on_channel_update(channel: BaseChannel):
+    print(f"Channel changed: {channel}")
+
+
+@client.listener()
+async def on_voice_channel_status_update(
+    guild: Guild, channel: VoiceChannel,
+    status: str | None
+):
+    print(f"Voice status update: {guild} / {channel} / {status}")
+
+
+@client.listener()
+async def on_voice_channel_start_time_update(
+    guild: Guild, channel: VoiceChannel,
+    timestamp: datetime | None
+):
+    print(f"Voice status start update: {guild} / {channel} / {timestamp}")
+
+
+@client.listener()
 async def on_guild_member_update(guild: PartialGuild, member: Member):
     print(f"Member updated {guild}: {member.display_name}")
 
@@ -167,8 +191,8 @@ async def on_guild_role_delete(role: PartialRole):
 
 
 @client.listener()
-async def on_voice_state_update(voice_state: VoiceState):
-    print(f"Voice state updated: {voice_state.channel_id}")
+async def on_voice_state_update(before: VoiceState | None, after: VoiceState | None):
+    print(f"Voice state updated: {before} -> {after}")
 
 
 @client.listener()

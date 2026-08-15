@@ -3,7 +3,7 @@ import asyncio
 from collections.abc import AsyncIterator, Callable
 from datetime import timedelta, datetime
 from io import BytesIO
-from typing import TYPE_CHECKING, Self
+from typing import TYPE_CHECKING, NamedTuple, Self
 
 from . import utils
 from .colour import Colour
@@ -18,7 +18,7 @@ from .object import PartialBase, Snowflake
 from .response import MessageResponse
 from .role import Role, PartialRole
 from .sticker import PartialSticker
-from .user import User
+from .user import User, PartialUser, Application
 from .view import View
 
 if TYPE_CHECKING:
@@ -33,11 +33,13 @@ __all__ = (
     "Attachment",
     "JumpURL",
     "Message",
+    "MessageCall",
     "MessageInteraction",
     "MessageReaction",
     "MessageReference",
     "PartialMessage",
     "Poll",
+    "RoleSubscriptionData",
     "WebhookMessage",
 )
 
@@ -724,11 +726,28 @@ class MessageReference:
         return payload
 
 
+class RoleSubscriptionData(NamedTuple):
+    """ Represents the role subscription data of a message. """
+    role_subscription_listing_id: int
+    tier_name: str
+    total_months_subscribed: int
+    is_renewal: bool
+
+
+class MessageCall(NamedTuple):
+    """ Represents the call data of a message. """
+    participants: list[PartialUser]
+    ended_timestamp: datetime | None
+
+
 class Attachment:
     """ Represents an attachment in a message. """
 
     __slots__ = (
         "_state",
+        "application",
+        "clip_created_at",
+        "clip_participants",
         "content_type",
         "description",
         "duration_secs",
@@ -737,6 +756,8 @@ class Attachment:
         "flags",
         "height",
         "id",
+        "placeholder",
+        "placeholder_version",
         "proxy_url",
         "size",
         "title",
@@ -791,6 +812,30 @@ class Attachment:
 
         self.waveform: str | None = data.get("waveform")
         """ The waveform of the attachment, if applicable. """
+
+        self.placeholder: str | None = data.get("placeholder")
+        """ The thumbhash placeholder of the attachment, if applicable. """
+
+        self.placeholder_version: int | None = data.get("placeholder_version")
+        """ The version of the placeholder, if applicable. """
+
+        self.clip_created_at: datetime | None = (
+            utils.parse_time(data["clip_created_at"])
+            if data.get("clip_created_at") else None
+        )
+        """ The time the clip was created, if the attachment is a clip. """
+
+        self.clip_participants: list[User] = [
+            User(state=self._state, data=g)
+            for g in data.get("clip_participants", [])
+        ]
+        """ The users participating in the clip, if the attachment is a clip. """
+
+        self.application: Application | None = (
+            Application(state=self._state, data=data["application"])
+            if data.get("application") else None
+        )
+        """ The application that created the clip, if applicable. """
 
     def __str__(self) -> str:
         return self.filename or ""
@@ -1589,6 +1634,7 @@ class Message(PartialMessage):
     __slots__ = (
         "attachments",
         "author",
+        "call",
         "content",
         "edited_timestamp",
         "embeds",
@@ -1601,6 +1647,7 @@ class Message(PartialMessage):
         "reference",
         "resolved_forward",
         "resolved_reply",
+        "role_subscription_data",
         "stickers",
         "tts",
         "type",
@@ -1687,6 +1734,12 @@ class Message(PartialMessage):
         self.interaction: MessageInteraction | None = None
         """ The interaction associated with the message, if any. """
 
+        self.role_subscription_data: RoleSubscriptionData | None = None
+        """ The role subscription data of the message, if any. """
+
+        self.call: MessageCall | None = None
+        """ The call associated with the message, if any. """
+
         self._from_data(data)
 
     def __repr__(self) -> str:
@@ -1734,6 +1787,27 @@ class Message(PartialMessage):
 
         if data.get("edited_timestamp"):
             self.edited_timestamp = utils.parse_time(data["edited_timestamp"])
+
+        if data.get("role_subscription_data"):
+            rsd = data["role_subscription_data"]
+            self.role_subscription_data = RoleSubscriptionData(
+                role_subscription_listing_id=int(rsd["role_subscription_listing_id"]),
+                tier_name=rsd["tier_name"],
+                total_months_subscribed=rsd["total_months_subscribed"],
+                is_renewal=rsd["is_renewal"],
+            )
+
+        if data.get("call"):
+            self.call = MessageCall(
+                participants=[
+                    PartialUser(state=self._state, id=int(g))
+                    for g in data["call"].get("participants", [])
+                ],
+                ended_timestamp=(
+                    utils.parse_time(data["call"]["ended_timestamp"])
+                    if data["call"].get("ended_timestamp") else None
+                ),
+            )
 
         if data.get("member"):
             from .member import Member

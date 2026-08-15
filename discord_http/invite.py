@@ -1,21 +1,33 @@
 from datetime import datetime
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, NamedTuple
 
 from . import utils
 from .channel import PartialChannel
-from .enums import InviteType, InviteTargetType
+from .enums import InviteType, InviteTargetType, InviteTargetUsersJobStatusType
 from .flags import GuildInviteFlags
 from .guild import PartialGuild, Guild
+from .object import Snowflake
 from .role import Role
-from .user import User
+from .user import User, PartialUser
 
 if TYPE_CHECKING:
     from .http import DiscordAPI
 
 __all__ = (
     "Invite",
+    "InviteTargetUsersJobStatus",
     "PartialInvite",
 )
+
+
+class InviteTargetUsersJobStatus(NamedTuple):
+    """ Represents the status of an invite's target users file processing job. """
+    status: InviteTargetUsersJobStatusType
+    total_users: int
+    processed_users: int
+    created_at: datetime
+    completed_at: datetime | None
+    error_message: str | None
 
 
 class PartialInvite:
@@ -99,6 +111,78 @@ class PartialInvite:
         return Invite(
             state=self._state,
             data=r.response
+        )
+
+    async def fetch_target_users(self) -> list[PartialUser]:
+        """
+        Fetch the list of users allowed to use this invite.
+
+        Returns
+        -------
+            The users from the target users file
+        """
+        r = await self._state.query(
+            "GET",
+            f"/invites/{self.code}/target-users",
+            res_method="text"
+        )
+
+        lines = [g.strip() for g in r.response.splitlines() if g.strip()]
+        if lines and lines[0].lower() == "user_id":
+            lines = lines[1:]
+
+        return [PartialUser(state=self._state, id=int(g)) for g in lines]
+
+    async def edit_target_users(self, user_ids: list[Snowflake | int]) -> None:
+        """
+        Update the list of users allowed to use this invite.
+
+        Parameters
+        ----------
+        user_ids:
+            The user IDs to allow to use this invite
+        """
+        multidata = utils.MultipartData()
+
+        csv_content = "\n".join(str(int(g)) for g in user_ids)
+        multidata.attach(
+            "target_users_file",
+            f"{csv_content}\n",
+            filename="target_users_file.csv",
+            content_type="text/csv"
+        )
+
+        await self._state.query(
+            "PUT",
+            f"/invites/{self.code}/target-users",
+            headers={"Content-Type": multidata.content_type},
+            data=multidata.finish(),
+            res_method="text"
+        )
+
+    async def fetch_target_users_job_status(self) -> "InviteTargetUsersJobStatus":
+        """
+        Fetch the status of the target users file processing job.
+
+        Returns
+        -------
+            The status of the target users file processing job
+        """
+        r = await self._state.query(
+            "GET",
+            f"/invites/{self.code}/target-users/job-status"
+        )
+
+        return InviteTargetUsersJobStatus(
+            status=InviteTargetUsersJobStatusType(r.response["status"]),
+            total_users=r.response["total_users"],
+            processed_users=r.response["processed_users"],
+            created_at=utils.parse_time(r.response["created_at"]),
+            completed_at=(
+                utils.parse_time(r.response["completed_at"])
+                if r.response.get("completed_at") else None
+            ),
+            error_message=r.response.get("error_message"),
         )
 
     async def delete(

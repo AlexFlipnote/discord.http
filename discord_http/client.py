@@ -13,7 +13,7 @@ from typing import Any, TYPE_CHECKING, TypeVar
 from . import utils, __version__
 from .automod import PartialAutoModRule, AutoModRule
 from .backend import DiscordHTTP
-from .channel import PartialChannel, BaseChannel
+from .channel import PartialChannel, BaseChannel, VoiceRegion
 from .commands import Command, Interaction, Listener, Cog, SubGroup
 from .context import Context
 from .emoji import PartialEmoji, Emoji
@@ -39,7 +39,7 @@ from .webhook import PartialWebhook, Webhook
 
 if TYPE_CHECKING:
     from .gateway.client import GatewayClient
-    from .gateway.flags import GatewayCacheFlags, Intents
+    from .gateway.flags import GatewayCacheFlags, GatewayCapabilities, Intents
     from .gateway.object import PlayingStatus
 
 _log = logging.getLogger(__name__)
@@ -92,12 +92,18 @@ class Client:
         Leave empty to use no cache.
     intents: Intents | None
         Intents to use, only used if `enable_gateway` is `True`
+    gateway_capabilities: GatewayCapabilities | None
+        Opt-in Gateway capabilities bitfield to send in the Identify payload, only used if
+        `enable_gateway` is `True`. Currently only used to test upcoming, opt-in Gateway behavior.
     logging_level: int
         Logging level to use, if not provided, it will use `logging.INFO`
     debug_events: bool
         Whether to log events or not, if not provided, `on_raw_*` events will not be useable
     interaction_path: str | None
         Path to the interaction endpoint, if not provided, it will use the default path which is just `/` (aka. root).
+    webhook_events_path: str | None
+        Path to the webhook events endpoint (configured separately from the interaction endpoint in your app's
+        settings), if not provided, webhook events will not be served.
     disable_default_get_path: bool
         Whether to disable the default GET path or not, if not provided, it will use `False`.
         The default GET path only provides information about the bot and when it was last rebooted.
@@ -123,7 +129,9 @@ class Client:
         guild_ready_timeout: float = 2.0,
         gateway_cache: "GatewayCacheFlags | None" = None,
         interaction_path: str | None = None,
+        webhook_events_path: str | None = None,
         intents: "Intents | None" = None,
+        gateway_capabilities: "GatewayCapabilities | None" = None,
         logging_level: int = logging.INFO,
         disable_default_get_path: bool = False,
         debug_events: bool = False
@@ -174,7 +182,9 @@ class Client:
         self.chunk_guilds_on_startup: bool = chunk_guilds_on_startup
 
         self.intents: Intents | None = intents
+        self.gateway_capabilities: "GatewayCapabilities | None" = gateway_capabilities
         self.interaction_path: str | None = interaction_path or "/"
+        self.webhook_events_path: str | None = webhook_events_path
         self.max_pending_connections: int = max_pending_connections
 
         self.gateway: "GatewayClient | None" = None
@@ -342,8 +352,7 @@ class Client:
 
     def _update_command_ids(self, data: dict) -> None:
         for g in data:
-            cmd = self.commands.get(g["name"], None)
-            if not cmd:
+            if not (cmd := self.commands.get(g["name"], None)):
                 continue
             cmd.id = int(g["id"])
 
@@ -763,8 +772,7 @@ class Client:
             )
 
         # Now check if there are any listeners waiting for this event
-        listeners = self._waiting_listeners.get(method, None)
-        if not listeners:
+        if not (listeners := self._waiting_listeners.get(method, None)):
             return
 
         removed = []
@@ -832,9 +840,7 @@ class Client:
         if was_imported:
             lib = importlib.reload(lib)
 
-        setup = getattr(lib, "setup", None)
-
-        if not setup:
+        if not (setup := getattr(lib, "setup", None)):
             raise RuntimeError(f"Cog {package} does not have a setup function")
 
         await setup(self)
@@ -1324,6 +1330,15 @@ class Client:
         app = await self.state.me()
         self.application = app
         return app
+
+    async def fetch_voice_regions(self) -> list[VoiceRegion]:
+        """ Fetches the list of voice regions available on Discord. """
+        r = await self.state.query("GET", "/voice/regions")
+
+        return [
+            VoiceRegion(data=g)
+            for g in r.response
+        ]
 
     async def fetch_channel(
         self,
@@ -2276,8 +2291,7 @@ class Client:
         -------
             The interaction that was found if any.
         """
-        inter = self.interactions.get(custom_id, None)
-        if inter:
+        if inter := self.interactions.get(custom_id, None):
             return inter
 
         for _, inter in self.interactions_regex.items():
@@ -2313,8 +2327,7 @@ class Client:
         func:
             The listener to remove from the bot.
         """
-        bucket = self.listeners.get(func.name)
-        if bucket:
+        if bucket := self.listeners.get(func.name):
             try:
                 bucket.remove(func)
             except ValueError:

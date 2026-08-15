@@ -1248,10 +1248,11 @@ class CheckboxGroupComponent(Item):
         if not (1 <= len(self.options) <= 10):
             raise ValueError("CheckboxGroupComponent must have between 1 and 10 options")
 
-        if self.max_values is None:
-            # If max_values is not set, set it to the number of options (up to 10)
-            # self.add_item does not automatically update self.max_values
-            self.max_values = min(len(self.options), 10)
+        max_values = (
+            min(len(self.options), 10)
+            if self.max_values is None else
+            self.max_values
+        )
 
         payload = {
             "type": int(self.type),
@@ -1264,10 +1265,10 @@ class CheckboxGroupComponent(Item):
                 raise ValueError("min_values must be between 0 and 10")
             payload["min_values"] = self.min_values
 
-        if isinstance(self.max_values, int):
-            if not (1 <= self.max_values <= 10):
+        if isinstance(max_values, int):
+            if not (1 <= max_values <= 10):
                 raise ValueError("max_values must be between 1 and 10")
-            payload["max_values"] = self.max_values
+            payload["max_values"] = max_values
 
         if self.required:
             payload["required"] = self.required

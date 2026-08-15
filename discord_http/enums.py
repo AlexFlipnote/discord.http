@@ -7,7 +7,10 @@ from enum import Enum as _Enum
 from typing import Any, Self
 
 __all__ = (
+    "ApplicationCommandPermissionType",
     "ApplicationCommandType",
+    "ApplicationEventWebhookStatus",
+    "ApplicationRoleConnectionMetadataType",
     "AuditLogType",
     "AutoModRuleActionType",
     "AutoModRuleEventType",
@@ -30,21 +33,32 @@ __all__ = (
     "IntegrationType",
     "InteractionType",
     "InviteTargetType",
+    "InviteTargetUsersJobStatusType",
     "InviteType",
+    "Locale",
     "MFALevel",
     "MessageReferenceType",
     "MessageType",
+    "NSFWLevel",
+    "OnboardingMode",
+    "OnboardingPromptType",
     "PermissionType",
+    "PremiumTier",
     "PrivacyLevelType",
     "ReactionType",
     "ResponseType",
     "SKUType",
     "ScheduledEventEntityType",
+    "ScheduledEventRecurrenceFrequency",
+    "ScheduledEventRecurrenceMonth",
+    "ScheduledEventRecurrenceWeekday",
     "ScheduledEventStatusType",
     "SeparatorSpacingType",
     "SortOrderType",
     "StickerFormatType",
     "StickerType",
+    "SubscriptionStatus",
+    "TeamMembershipState",
     "TextStyles",
     "VerificationLevel",
     "VideoQualityType",
@@ -181,8 +195,7 @@ class BaseEnum(_Enum):
         -------
             The result of the comparison if the types are compatible, otherwise NotImplemented.
         """
-        op = _OPERATOR_TABLE.get(op_name)
-        if op is None:
+        if (op := _OPERATOR_TABLE.get(op_name)) is None:
             raise ValueError(f"Invalid operator name: '{op_name}'")
 
         if isinstance(other, str):
@@ -234,11 +247,39 @@ class InviteTargetType(BaseEnum):
     embedded_application = 2
 
 
+class InviteTargetUsersJobStatusType(BaseEnum):
+    """ Represents the status of an invite's target users file processing job. """
+    unspecified = 0
+    processing = 1
+    completed = 2
+    failed = 3
+
+
 class ApplicationCommandType(BaseEnum):
     """ Represents the type of an application command. """
     chat_input = 1
     user = 2
     message = 3
+    primary_entry_point = 4
+
+
+class ApplicationCommandPermissionType(BaseEnum):
+    """ Represents the type of target an application command permission overwrite applies to. """
+    role = 1
+    user = 2
+    channel = 3
+
+
+class ApplicationRoleConnectionMetadataType(BaseEnum):
+    """ Represents the comparison operation of an application role connection metadata record. """
+    integer_less_than_or_equal = 1
+    integer_greater_than_or_equal = 2
+    integer_equal = 3
+    integer_not_equal = 4
+    datetime_less_than_or_equal = 5
+    datetime_greater_than_or_equal = 6
+    boolean_equal = 7
+    boolean_not_equal = 8
 
 
 class ApplicationEventWebhookStatus(BaseEnum):
@@ -246,6 +287,12 @@ class ApplicationEventWebhookStatus(BaseEnum):
     disabled = 1
     enabled = 2
     disabled_by_discord = 3
+
+
+class TeamMembershipState(BaseEnum):
+    """ Represents the membership state of a team member. """
+    invited = 1
+    accepted = 2
 
 
 class ReactionType(BaseEnum):
@@ -393,6 +440,9 @@ class AuditLogType(BaseEnum):
     thread_update = 111
     thread_delete = 112
     application_command_permission_update = 121
+    soundboard_sound_create = 130
+    soundboard_sound_update = 131
+    soundboard_sound_delete = 132
     auto_moderation_rule_create = 140
     auto_moderation_rule_update = 141
     auto_moderation_rule_delete = 142
@@ -438,9 +488,14 @@ class AuditLogType(BaseEnum):
             (93, 102, "guild_scheduled_event"),
             (103, 112, "thread"),
             (113, 121, "integration_or_app_command"),
+            (130, 132, "soundboard_sound"),
             (140, 142, "auto_moderation"),
-            (143, 145, "user"),
-            (146, 151, "creator_monetization")
+            (143, 146, "user"),
+            (150, 151, "creator_monetization"),
+            (163, 167, "onboarding"),
+            (190, 191, "guild"),
+            (192, 193, "channel"),
+            (200, 202, "guild_scheduled_event"),
         ]
 
         if self.value in category_map:
@@ -504,6 +559,53 @@ class ScheduledEventStatusType(BaseEnum):
     canceled = 4
 
 
+class ScheduledEventRecurrenceFrequency(BaseEnum):
+    """ Represents the frequency of a scheduled event's recurrence rule. """
+    yearly = 0
+    monthly = 1
+    weekly = 2
+    daily = 3
+
+
+class ScheduledEventRecurrenceWeekday(BaseEnum):
+    """ Represents a weekday used in a scheduled event's recurrence rule. """
+    monday = 0
+    tuesday = 1
+    wednesday = 2
+    thursday = 3
+    friday = 4
+    saturday = 5
+    sunday = 6
+
+
+class ScheduledEventRecurrenceMonth(BaseEnum):
+    """ Represents a month used in a scheduled event's recurrence rule. """
+    january = 1
+    february = 2
+    march = 3
+    april = 4
+    may = 5
+    june = 6
+    july = 7
+    august = 8
+    september = 9
+    october = 10
+    november = 11
+    december = 12
+
+
+class OnboardingPromptType(BaseEnum):
+    """ Represents the type of a guild onboarding prompt. """
+    multiple_choice = 0
+    dropdown = 1
+
+
+class OnboardingMode(BaseEnum):
+    """ Represents the constraint mode of a guild's onboarding. """
+    onboarding_default = 0
+    onboarding_advanced = 1
+
+
 class DisplayNameFontType(BaseEnum):
     """ Represents the font type of a user's display name style. """
     # Aliases
@@ -549,6 +651,22 @@ class VerificationLevel(BaseEnum):
     medium = 2
     high = 3
     very_high = 4
+
+
+class NSFWLevel(BaseEnum):
+    """ Represents the NSFW level of a guild. """
+    default = 0
+    explicit = 1
+    safe = 2
+    age_restricted = 3
+
+
+class PremiumTier(BaseEnum):
+    """ Represents the premium tier (boost level) of a guild. """
+    none = 0
+    tier_1 = 1
+    tier_2 = 2
+    tier_3 = 3
 
 
 class ExpireBehaviour(BaseEnum):
@@ -690,6 +808,13 @@ class SKUType(BaseEnum):
     consumable = 3
     subscription = 5
     subscription_group = 6
+
+
+class SubscriptionStatus(BaseEnum):
+    """ Represents the status of a subscription. """
+    active = 0
+    inactive = 1
+    ending = 2
 
 
 class InteractionType(BaseEnum):

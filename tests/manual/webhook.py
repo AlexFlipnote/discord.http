@@ -174,7 +174,7 @@ async def test_components_v2(ctx: Context):
         guild_data = SectionComponent(
             "## Guild details\n"
             f"Nickname: {ctx.user.nick or 'None'}\n"
-            f"Joined: {DiscordTimestamp(ctx.user.joined_at)}\n"
+            f"Joined: {DiscordTimestamp(ctx.user.joined_at or 0)}\n"
             f"Roles ({len(ctx.user.roles)}): {pretty_roles}\n",
             accessory=test_file
         )

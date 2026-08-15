@@ -19,10 +19,13 @@ from .enums import (
     DefaultNotificationLevel, ContentFilterLevel,
     ScheduledEventEntityType, PrivacyLevelType,
     ScheduledEventStatusType, VideoQualityType, AuditLogType,
-    AutoModRuleEventType, AutoModRuleTriggerType, AutoModRulePresetType
+    AutoModRuleEventType, AutoModRuleTriggerType, AutoModRulePresetType,
+    NSFWLevel, PremiumTier, MFALevel,
+    ScheduledEventRecurrenceFrequency, ScheduledEventRecurrenceWeekday,
+    ScheduledEventRecurrenceMonth, OnboardingMode, OnboardingPromptType
 )
 from .channel import BaseChannel
-from .emoji import Emoji, PartialEmoji
+from .emoji import Emoji, PartialEmoji, EmojiParser
 from .file import File
 from .flags import Permissions, SystemChannelFlags, PermissionOverwrite
 from .object import PartialBase, Snowflake
@@ -50,9 +53,24 @@ MISSING = utils.MISSING
 __all__ = (
     "BanEntry",
     "Guild",
+    "GuildIncidentsData",
+    "GuildOnboarding",
+    "GuildPreview",
+    "GuildTemplate",
+    "GuildWidget",
+    "GuildWidgetChannel",
+    "GuildWidgetMember",
+    "GuildWidgetSettings",
+    "OnboardingPrompt",
+    "OnboardingPromptOption",
     "PartialGuild",
+    "PartialGuildTemplate",
     "PartialScheduledEvent",
     "ScheduledEvent",
+    "ScheduledEventRecurrenceRule",
+    "ScheduledEventRecurrenceRuleNWeekday",
+    "WelcomeScreen",
+    "WelcomeScreenChannel",
 )
 
 SearchSortByType = Literal["timestamp", "relevance"]
@@ -85,6 +103,741 @@ class BanEntry(NamedTuple):
     """ Represents a ban entry for a guild member. """
     user: "User"
     reason: str | None
+
+
+class GuildIncidentsData(NamedTuple):
+    """ Represents the security incident actions taken on a guild. """
+    invites_disabled_until: datetime | None
+    dms_disabled_until: datetime | None
+    dm_spam_detected_at: datetime | None
+    raid_detected_at: datetime | None
+
+    @classmethod
+    def _from_data(cls, data: dict) -> "GuildIncidentsData":
+        return cls(
+            invites_disabled_until=(
+                utils.parse_time(data["invites_disabled_until"])
+                if data.get("invites_disabled_until") else None
+            ),
+            dms_disabled_until=(
+                utils.parse_time(data["dms_disabled_until"])
+                if data.get("dms_disabled_until") else None
+            ),
+            dm_spam_detected_at=(
+                utils.parse_time(data["dm_spam_detected_at"])
+                if data.get("dm_spam_detected_at") else None
+            ),
+            raid_detected_at=(
+                utils.parse_time(data["raid_detected_at"])
+                if data.get("raid_detected_at") else None
+            ),
+        )
+
+
+class ScheduledEventRecurrenceRuleNWeekday(NamedTuple):
+    """ Represents a specific weekday within a specific week for a scheduled event recurrence rule. """
+    n: int
+    day: ScheduledEventRecurrenceWeekday
+
+
+class ScheduledEventRecurrenceRule(NamedTuple):
+    """ Represents the recurrence rule of a scheduled event. """
+    start: datetime
+    frequency: ScheduledEventRecurrenceFrequency
+    interval: int
+    end: datetime | None = None
+    by_weekday: list[ScheduledEventRecurrenceWeekday] | None = None
+    by_n_weekday: list[ScheduledEventRecurrenceRuleNWeekday] | None = None
+    by_month: list[ScheduledEventRecurrenceMonth] | None = None
+    by_month_day: list[int] | None = None
+    by_year_day: list[int] | None = None
+    count: int | None = None
+
+    @classmethod
+    def _from_data(cls, data: dict) -> "ScheduledEventRecurrenceRule":
+        return cls(
+            start=utils.parse_time(data["start"]),
+            frequency=ScheduledEventRecurrenceFrequency(data["frequency"]),
+            interval=data["interval"],
+            end=utils.parse_time(data["end"]) if data.get("end") else None,
+            by_weekday=(
+                [ScheduledEventRecurrenceWeekday(g) for g in data["by_weekday"]]
+                if data.get("by_weekday") is not None else None
+            ),
+            by_n_weekday=(
+                [
+                    ScheduledEventRecurrenceRuleNWeekday(
+                        n=g["n"],
+                        day=ScheduledEventRecurrenceWeekday(g["day"])
+                    )
+                    for g in data["by_n_weekday"]
+                ]
+                if data.get("by_n_weekday") is not None else None
+            ),
+            by_month=(
+                [ScheduledEventRecurrenceMonth(g) for g in data["by_month"]]
+                if data.get("by_month") is not None else None
+            ),
+            by_month_day=data.get("by_month_day"),
+            by_year_day=data.get("by_year_day"),
+            count=data.get("count"),
+        )
+
+    def to_dict(self) -> dict:
+        """
+        Turns the recurrence rule into a payload for the API.
+
+        Only the fields that can be set externally are included,
+        as the rest are only ever provided by Discord.
+        """
+        payload: dict[str, Any] = {
+            "start": utils.add_to_datetime(self.start).isoformat(),
+            "frequency": int(self.frequency),
+            "interval": self.interval,
+        }
+
+        if self.by_weekday is not None:
+            payload["by_weekday"] = [int(g) for g in self.by_weekday]
+
+        if self.by_n_weekday is not None:
+            payload["by_n_weekday"] = [
+                {"n": g.n, "day": int(g.day)}
+                for g in self.by_n_weekday
+            ]
+
+        if self.by_month is not None:
+            payload["by_month"] = [int(g) for g in self.by_month]
+
+        if self.by_month_day is not None:
+            payload["by_month_day"] = self.by_month_day
+
+        return payload
+
+
+class WelcomeScreenChannel:
+    """ Represents a channel shown in a guild's welcome screen. """
+
+    __slots__ = (
+        "_state",
+        "channel",
+        "description",
+        "emoji_id",
+        "emoji_name",
+        "guild_id",
+    )
+
+    def __init__(self, *, state: "DiscordAPI", guild_id: int, data: dict):
+        self._state = state
+
+        self.description: str = data["description"]
+        """ The description shown next to the channel. """
+
+        self.emoji_id: int | None = utils.get_int(data, "emoji_id")
+        """ The ID of the custom emoji shown next to the channel, if any. """
+
+        self.emoji_name: str | None = data.get("emoji_name")
+        """ The unicode emoji shown next to the channel, if any. """
+
+        self.guild_id: int = guild_id
+        """ The guild_id that the welcome screen belongs to. """
+
+        self._from_data(data=data)
+
+    def __repr__(self) -> str:
+        return f"<WelcomeScreenChannel channel={self.channel} description='{self.description}'>"
+
+    def _from_data(self, data: dict) -> None:
+        from .channel import PartialChannel
+
+        self.channel: "PartialChannel" = PartialChannel(
+            state=self._state, id=int(data["channel_id"]), guild_id=self.guild_id
+        )
+        """ The channel shown in the welcome screen. """
+
+    def to_dict(self) -> dict:
+        """ Returns a dict representation of the welcome screen channel. """
+        return {
+            "channel_id": str(int(self.channel)),
+            "description": self.description,
+            "emoji_id": str(self.emoji_id) if self.emoji_id else None,
+            "emoji_name": self.emoji_name,
+        }
+
+
+class WelcomeScreen:
+    """ Represents a guild's welcome screen. """
+
+    __slots__ = (
+        "description",
+        "welcome_channels",
+    )
+
+    def __init__(self, *, state: "DiscordAPI", guild_id: int, data: dict):
+        self.description: str | None = data.get("description")
+        """ The description of the welcome screen, if any. """
+
+        self.welcome_channels: list[WelcomeScreenChannel] = [
+            WelcomeScreenChannel(state=state, guild_id=guild_id, data=g)
+            for g in data.get("welcome_channels", [])
+        ]
+        """ The channels shown in the welcome screen. """
+
+    def __repr__(self) -> str:
+        return f"<WelcomeScreen description='{self.description}'>"
+
+
+class GuildWidgetSettings:
+    """ Represents a guild's widget settings. """
+
+    __slots__ = (
+        "_state",
+        "channel",
+        "enabled",
+        "guild_id",
+    )
+
+    def __init__(self, *, state: "DiscordAPI", guild_id: int, data: dict):
+        self._state = state
+
+        self.channel: "PartialChannel | None" = None
+        """ The channel the widget invite points to, if any. """
+
+        self.enabled: bool = data["enabled"]
+        """ Whether the widget is enabled. """
+
+        self.guild_id: int = guild_id
+
+        self._from_data(data)
+
+    def __repr__(self) -> str:
+        return f"<GuildWidgetSettings enabled={self.enabled} channel={self.channel}>"
+
+    def _from_data(self, data: dict) -> None:
+        if channel_id := utils.get_int(data, "channel_id"):
+            from .channel import PartialChannel
+            self.channel = PartialChannel(state=self._state, id=channel_id, guild_id=self.guild_id)
+
+
+class GuildWidgetChannel:
+    """ Represents a channel shown in a guild's widget. """
+
+    __slots__ = (
+        "_state",
+        "channel",
+        "guild_id",
+        "name",
+        "position",
+    )
+
+    def __init__(self, *, state: "DiscordAPI", guild_id: int, data: dict):
+        self._state = state
+
+        self.name: str = data["name"]
+        """ The name of the channel. """
+
+        self.position: int = data["position"]
+        """ The position of the channel. """
+
+        self.guild_id: int = guild_id
+        """ The guild_id of the widget. """
+
+        self.channel: "PartialChannel"
+        """ The channel shown in the widget. """
+
+        self._from_data(data)
+
+    def __repr__(self) -> str:
+        return f"<GuildWidgetChannel channel={self.channel} name='{self.name}'>"
+
+    def _from_data(self, data: dict) -> None:
+        # I honestly did not want this inside the __init__, that's all...
+        from .channel import PartialChannel
+
+        self.channel: "PartialChannel" = PartialChannel(
+            state=self._state, id=int(data["id"]), guild_id=self.guild_id
+        )
+
+
+class GuildWidgetMember(NamedTuple):
+    """ Represents an anonymized member shown in a guild's widget. This does not correspond to a real user. """
+    id: int
+    username: str
+    status: str
+    avatar_url: str
+
+
+class GuildWidget:
+    """ Represents a guild's public widget. """
+
+    __slots__ = (
+        "channels",
+        "id",
+        "instant_invite",
+        "members",
+        "name",
+        "presence_count",
+    )
+
+    def __init__(self, *, state: "DiscordAPI", data: dict):
+        self.id: int = int(data["id"])
+        """ The ID of the guild. """
+
+        self.name: str = data["name"]
+        """ The name of the guild. """
+
+        self.instant_invite: str | None = data.get("instant_invite")
+        """ The instant invite for the guild's widget channel, if any. """
+
+        self.channels: list[GuildWidgetChannel] = [
+            GuildWidgetChannel(state=state, guild_id=self.id, data=g)
+            for g in data.get("channels", [])
+        ]
+        """ The voice/stage channels accessible by @everyone. """
+
+        self.members: list[GuildWidgetMember] = [
+            GuildWidgetMember(
+                id=int(g["id"]),
+                username=g["username"],
+                status=g["status"],
+                avatar_url=g["avatar_url"],
+            )
+            for g in data.get("members", [])
+        ]
+        """ The anonymized members currently visible in the widget (up to 100). """
+
+        self.presence_count: int = data.get("presence_count", 0)
+        """ The number of online members in the guild. """
+
+    def __repr__(self) -> str:
+        return f"<GuildWidget id={self.id} name='{self.name}'>"
+
+    def __str__(self) -> str:
+        return self.name
+
+
+class GuildPreview(PartialBase):
+    """ Represents a preview of a guild, including ones the bot may not be in. """
+
+    __slots__ = (
+        "_discovery_splash",
+        "_icon",
+        "_splash",
+        "_state",
+        "approximate_member_count",
+        "approximate_presence_count",
+        "description",
+        "emojis",
+        "features",
+        "name",
+        "stickers",
+    )
+
+    def __init__(self, *, state: "DiscordAPI", data: dict):
+        super().__init__(id=int(data["id"]))
+        self._state = state
+
+        self.name: str = data["name"]
+        """ The name of the guild. """
+
+        self._icon: str | None = data.get("icon")
+        self._splash: str | None = data.get("splash")
+        self._discovery_splash: str | None = data.get("discovery_splash")
+
+        self.features: list[str] = data.get("features", [])
+        """ The features of the guild. """
+
+        self.approximate_member_count: int = data.get("approximate_member_count", 0)
+        """ The approximate number of members in the guild. """
+
+        self.approximate_presence_count: int = data.get("approximate_presence_count", 0)
+        """ The approximate number of online members in the guild. """
+
+        self.description: str | None = data.get("description")
+        """ The description of the guild, if any. """
+
+        guild_ref = PartialGuild(state=state, id=self.id)
+
+        self.emojis: list[Emoji] = [
+            Emoji(state=state, guild=guild_ref, data=g)
+            for g in data.get("emojis", [])
+        ]
+        """ The custom emojis of the guild. """
+
+        self.stickers: list[Sticker] = [
+            Sticker(state=state, guild=guild_ref, data=g)
+            for g in data.get("stickers", [])
+        ]
+        """ The custom stickers of the guild. """
+
+    def __repr__(self) -> str:
+        return f"<GuildPreview id={self.id} name='{self.name}'>"
+
+    def __str__(self) -> str:
+        return self.name
+
+    @property
+    def icon(self) -> Asset | None:
+        """ The guild's icon. """
+        if self._icon is None:
+            return None
+        return Asset._from_guild_image(self._state, self.id, self._icon, path="icons")
+
+    @property
+    def splash(self) -> Asset | None:
+        """ The guild's invite splash. """
+        if self._splash is None:
+            return None
+        return Asset._from_guild_image(self._state, self.id, self._splash, path="splashes")
+
+    @property
+    def discovery_splash(self) -> Asset | None:
+        """ The guild's discovery splash. """
+        if self._discovery_splash is None:
+            return None
+        return Asset._from_guild_image(
+            self._state, self.id, self._discovery_splash, path="discovery-splashes"
+        )
+
+
+class OnboardingPromptOption(PartialBase):
+    """ Represents an option within a guild onboarding prompt. """
+
+    __slots__ = (
+        "_state",
+        "channel_ids",
+        "description",
+        "emoji",
+        "id",
+        "role_ids",
+        "title",
+    )
+
+    def __init__(self, *, state: "DiscordAPI", data: dict):
+        super().__init__(id=int(data["id"]))
+        self._state = state
+
+        self.title: str = data["title"]
+        """ The title of the option. """
+
+        self.description: str | None = data.get("description")
+        """ The description of the option, if any. """
+
+        self.channel_ids: list[int] = [int(g) for g in data.get("channel_ids", [])]
+        """ The channel IDs a member is added to when this option is selected. """
+
+        self.role_ids: list[int] = [int(g) for g in data.get("role_ids", [])]
+        """ The role IDs assigned to a member when this option is selected. """
+
+        self.emoji: EmojiParser | None = None
+        """ The emoji associated with the prompt option. """
+
+        self._from_data(data)
+
+    def __repr__(self) -> str:
+        return f"<OnboardingPromptOption id={self.id} title='{self.title}'>"
+
+    def __str__(self) -> str:
+        return self.title
+
+    def _from_data(self, data: dict) -> None:
+        emoji = data.get("emoji") or {}
+        emoji_name = data.get("emoji_name") or emoji.get("name")
+
+        if emoji_name:
+            self.emoji = EmojiParser.from_dict({
+                "name": emoji_name,
+                "id": utils.get_int(data, "emoji_id") or utils.get_int(emoji, "id"),
+                "animated": bool(data.get("emoji_animated", emoji.get("animated", False)))
+            })
+
+    def to_dict(self) -> dict:
+        """ Returns a dict representation of the option, for creating/editing. """
+        payload: dict[str, Any] = {
+            "title": self.title,
+            "channel_ids": [str(g) for g in self.channel_ids],
+            "role_ids": [str(g) for g in self.role_ids],
+            "emoji_id": str(self.emoji.id) if self.emoji and self.emoji.id is not None else None,
+            "emoji_name": self.emoji.name if self.emoji else None,
+            "emoji_animated": self.emoji.animated if self.emoji else False
+        }
+
+        if self.id is not None:
+            payload["id"] = str(self.id)
+        if self.description is not None:
+            payload["description"] = self.description
+
+        return payload
+
+
+class OnboardingPrompt(PartialBase):
+    """ Represents a prompt within a guild's onboarding flow. """
+
+    __slots__ = (
+        "_state",
+        "id",
+        "in_onboarding",
+        "options",
+        "required",
+        "single_select",
+        "title",
+        "type",
+    )
+
+    def __init__(self, *, state: "DiscordAPI", data: dict):
+        super().__init__(id=int(data["id"]))
+        self._state = state
+
+        self.title: str = data["title"]
+        """ The title of the prompt. """
+
+        self.options: list[OnboardingPromptOption] = [
+            OnboardingPromptOption(state=self._state, data=g)
+            for g in data.get("options", [])
+        ]
+        """ The options available within the prompt. """
+
+        self.type: OnboardingPromptType = OnboardingPromptType(data.get("type", 0))
+        """ The type of the prompt. """
+
+        self.single_select: bool = data.get("single_select", True)
+        """ Whether users are limited to selecting one option for the prompt. """
+
+        self.required: bool = data.get("required", True)
+        """ Whether the prompt is required before a user completes onboarding. """
+
+        self.in_onboarding: bool = data.get("in_onboarding", True)
+        """ Whether the prompt is present in the onboarding flow, rather than only the Channels & Roles tab. """
+
+    def __repr__(self) -> str:
+        return f"<OnboardingPrompt id={self.id} title='{self.title}'>"
+
+    def __str__(self) -> str:
+        return self.title
+
+    def to_dict(self) -> dict:
+        """ Returns a dict representation of the prompt, for creating/editing. """
+        payload: dict[str, Any] = {
+            "title": self.title,
+            "options": [g.to_dict() for g in self.options],
+            "type": int(self.type),
+            "single_select": self.single_select,
+            "required": self.required,
+            "in_onboarding": self.in_onboarding,
+        }
+
+        if self.id is not None:
+            payload["id"] = str(self.id)
+
+        return payload
+
+
+class GuildOnboarding:
+    """ Represents a guild's onboarding configuration. """
+
+    __slots__ = (
+        "_state",
+        "default_channel_ids",
+        "enabled",
+        "guild_id",
+        "mode",
+        "prompts",
+    )
+
+    def __init__(self, *, state: "DiscordAPI", data: dict):
+        self._state = state
+
+        self.guild_id: int = int(data["guild_id"])
+        """ The ID of the guild this onboarding is part of. """
+
+        self.prompts: list[OnboardingPrompt] = [
+            OnboardingPrompt(state=self._state, data=g)
+            for g in data.get("prompts", [])
+        ]
+        """ The prompts shown during onboarding and in the Channels & Roles tab. """
+
+        self.default_channel_ids: list[int] = [
+            int(g) for g in data.get("default_channel_ids", [])
+        ]
+        """ The channel IDs that members get opted into automatically. """
+
+        self.enabled: bool = data.get("enabled", False)
+        """ Whether onboarding is enabled in the guild. """
+
+        self.mode: OnboardingMode = OnboardingMode(data.get("mode", 0))
+        """ The constraint mode used for onboarding. """
+
+    def __repr__(self) -> str:
+        return f"<GuildOnboarding guild_id={self.guild_id} enabled={self.enabled}>"
+
+
+class PartialGuildTemplate:
+    """ Represents a partial guild template object. """
+
+    __slots__ = ("_state", "code", "guild_id")
+
+    def __init__(
+        self,
+        *,
+        state: "DiscordAPI",
+        code: str,
+        guild_id: int | None = None
+    ):
+        self._state = state
+
+        self.code: str = code
+        """ The code of the template. """
+
+        self.guild_id: int | None = guild_id
+        """ The ID of the guild the template belongs to, if known. """
+
+    def __repr__(self) -> str:
+        return f"<PartialGuildTemplate code='{self.code}'>"
+
+    def __str__(self) -> str:
+        return self.code
+
+    async def fetch(self) -> "GuildTemplate":
+        """ Fetches the guild template. """
+        r = await self._state.query(
+            "GET",
+            f"/guilds/templates/{self.code}"
+        )
+
+        return GuildTemplate(state=self._state, data=r.response)
+
+    async def sync(self) -> "GuildTemplate":
+        """ Syncs the template to the guild's current state. """
+        if not self.guild_id:
+            raise ValueError("Cannot sync a template without a guild_id")
+
+        r = await self._state.query(
+            "PUT",
+            f"/guilds/{self.guild_id}/templates/{self.code}"
+        )
+
+        return GuildTemplate(state=self._state, data=r.response)
+
+    async def edit(
+        self,
+        *,
+        name: str | None = MISSING,
+        description: str | None = MISSING,
+    ) -> "GuildTemplate":
+        """
+        Edits the template's metadata.
+
+        Parameters
+        ----------
+        name:
+            New name of the template
+        description:
+            New description of the template
+
+        Returns
+        -------
+            The edited template
+        """
+        if not self.guild_id:
+            raise ValueError("Cannot edit a template without a guild_id")
+
+        payload = {}
+
+        if name is not MISSING:
+            payload["name"] = name
+        if description is not MISSING:
+            payload["description"] = description
+
+        r = await self._state.query(
+            "PATCH",
+            f"/guilds/{self.guild_id}/templates/{self.code}",
+            json=payload
+        )
+
+        return GuildTemplate(state=self._state, data=r.response)
+
+    async def delete(self) -> None:
+        """ Deletes the template. """
+        if not self.guild_id:
+            raise ValueError("Cannot delete a template without a guild_id")
+
+        await self._state.query(
+            "DELETE",
+            f"/guilds/{self.guild_id}/templates/{self.code}",
+            res_method="text"
+        )
+
+
+class GuildTemplate(PartialGuildTemplate):
+    """ Represents a guild template object. """
+
+    __slots__ = (
+        "created_at",
+        "creator",
+        "creator_id",
+        "description",
+        "is_dirty",
+        "name",
+        "serialized_source_guild",
+        "source_guild_id",
+        "updated_at",
+        "usage_count",
+    )
+
+    def __init__(self, *, state: "DiscordAPI", data: dict):
+        super().__init__(
+            state=state,
+            code=data["code"],
+            guild_id=int(data["source_guild_id"])
+        )
+
+        self.name: str = data["name"]
+        """ The name of the template. """
+
+        self.description: str | None = data.get("description")
+        """ The description of the template, if any. """
+
+        self.usage_count: int = data.get("usage_count", 0)
+        """ The number of times this template has been used. """
+
+        self.creator_id: int = int(data["creator_id"])
+        """ The ID of the user who created the template. """
+
+        self.source_guild_id: int = int(data["source_guild_id"])
+        """ The ID of the guild this template is based on. """
+
+        self.serialized_source_guild: dict = data.get("serialized_source_guild", {})
+        """
+        The raw guild snapshot this template contains.
+
+        This is not a real `Guild` object, placeholder IDs in it are given as plain integers.
+        """
+
+        self.is_dirty: bool = bool(data.get("is_dirty"))
+        """ Whether the template has unsynced changes. """
+
+        self.created_at: datetime = utils.parse_time(data["created_at"])
+        """ The time the template was created. """
+
+        self.updated_at: datetime = utils.parse_time(data["updated_at"])
+        """ The time the template was last synced to the source guild. """
+
+        from .user import User
+        self.creator: User = User(state=self._state, data=data["creator"])
+        """ The user who created the template. """
+
+    def __repr__(self) -> str:
+        return f"<GuildTemplate code='{self.code}' name='{self.name}'>"
+
+    def __str__(self) -> str:
+        return self.name
+
+    @property
+    def source_guild(self) -> "Guild | PartialGuild":
+        """ The guild this template is based on. """
+        cache = self._state.cache.get_guild(self.source_guild_id)
+        if cache:
+            return cache
+        return PartialGuild(state=self._state, id=self.source_guild_id)
 
 
 class PartialScheduledEvent(PartialBase):
@@ -159,6 +912,7 @@ class PartialScheduledEvent(PartialBase):
         start_time: datetime | timedelta | int | None = MISSING,
         end_time: datetime | timedelta | int | None = MISSING,
         image: File | bytes | None = MISSING,
+        recurrence_rule: "ScheduledEventRecurrenceRule | None" = MISSING,
         reason: str | None = None
     ) -> "ScheduledEvent":
         """
@@ -186,6 +940,8 @@ class PartialScheduledEvent(PartialBase):
             New end time of the event (only for external events)
         image:
             New image of the event
+        recurrence_rule:
+            New recurrence rule of the event, if any
         reason:
             The reason for editing the event
 
@@ -252,6 +1008,12 @@ class PartialScheduledEvent(PartialBase):
             else:
                 payload["image"] = utils.bytes_to_base64(image)
 
+        if recurrence_rule is not MISSING:
+            payload["recurrence_rule"] = (
+                recurrence_rule.to_dict()
+                if recurrence_rule else None
+            )
+
         r = await self._state.query(
             "PATCH",
             f"/guilds/{self.guild_id}/scheduled-events/{self.id}",
@@ -264,6 +1026,66 @@ class PartialScheduledEvent(PartialBase):
             data=r.response,
         )
 
+    async def fetch_users(
+        self,
+        *,
+        limit: int = 100,
+        with_member: bool = False,
+        before: "datetime | Snowflake | int | None" = None,
+        after: "datetime | Snowflake | int | None" = None,
+    ) -> list["User | Member"]:
+        """
+        Fetches the users interested in the event.
+
+        Parameters
+        ----------
+        limit:
+            The maximum amount of users to fetch (1-100)
+        with_member:
+            Whether to include guild member data for each user, if available
+        before:
+            Consider only users before given user ID
+        after:
+            Consider only users after given user ID
+
+        Returns
+        -------
+            The users interested in the event
+        """
+        params: dict[str, int | str] = {"limit": limit}
+
+        if with_member:
+            params["with_member"] = "true"
+        if before is not None:
+            params["before"] = str(utils.normalize_entity_id(before))
+        if after is not None:
+            params["after"] = str(utils.normalize_entity_id(after))
+
+        r = await self._state.query(
+            "GET",
+            f"/guilds/{self.guild_id}/scheduled-events/{self.id}/users",
+            params=params
+        )
+
+        from .member import Member
+        from .user import User
+
+        guild = self.guild
+        results = []
+
+        for g in r.response:
+            user = User(state=self._state, data=g["user"])
+
+            member = None
+            if g.get("member"):
+                member_data = g["member"]
+                member_data["user"] = g["user"]
+                member = Member(state=self._state, guild=guild, data=member_data)
+
+            results.append(member or user)
+
+        return results
+
 
 class ScheduledEvent(PartialScheduledEvent):
     """ Represents a scheduled event in a guild. """
@@ -273,8 +1095,10 @@ class ScheduledEvent(PartialScheduledEvent):
         "description",
         "end_time",
         "entity_type",
+        "image",
         "name",
         "privacy_level",
+        "recurrence_rule",
         "start_time",
         "status",
         "user_count",
@@ -322,6 +1146,12 @@ class ScheduledEvent(PartialScheduledEvent):
         self.end_time: datetime | None = None
         """ The time the event ends at, if applicable. """
 
+        self.recurrence_rule: ScheduledEventRecurrenceRule | None = None
+        """ The recurrence rule of the event, if any. """
+
+        self.image: Asset | None = data.get("image")
+        """ The cover image of the event, if any. """
+
         self._from_data(data)
 
     def __repr__(self) -> str:
@@ -331,26 +1161,28 @@ class ScheduledEvent(PartialScheduledEvent):
         return self.name
 
     def _from_data(self, data: dict) -> None:
-        if data.get("creator"):
-            from .user import User
-            self.creator = User(
-                state=self._state,
-                data=data["creator"]
+        if image := data.get("image"):
+            self.image = Asset._from_scheduled_event_cover_image(
+                self._state, self.id, image
             )
 
-        if data.get("scheduled_end_time"):
-            self.end_time = utils.parse_time(data["scheduled_end_time"])
+        if creator := data.get("creator"):
+            from .user import User
+            self.creator = User(state=self._state, data=creator)
 
-        if data.get("entity_id") in (
-            ScheduledEventEntityType.stage_instance,
-            ScheduledEventEntityType.voice
-        ):
+        if scheduled_end_time := data.get("scheduled_end_time"):
+            self.end_time = utils.parse_time(scheduled_end_time)
+
+        if channel_id := data.get("channel_id"):
             from .channel import PartialChannel
             self.channel = PartialChannel(
                 state=self._state,
-                id=int(data["entity_id"]),
+                id=int(channel_id),
                 guild_id=self.guild_id
             )
+
+        if recurrence_rule := data.get("recurrence_rule"):
+            self.recurrence_rule = ScheduledEventRecurrenceRule._from_data(recurrence_rule)
 
 
 class PartialGuild(PartialBase):
@@ -791,17 +1623,337 @@ class PartialGuild(PartialBase):
             res_method="text"
         )
 
-    async def fetch(self) -> "Guild":
-        """ Fetches more information about the guild. """
+    async def fetch(self, *, with_counts: bool = False) -> "Guild":
+        """
+        Fetches more information about the guild.
+
+        Parameters
+        ----------
+        with_counts:
+            Whether to include `approximate_member_count` and `approximate_presence_count` or not
+
+        Returns
+        -------
+            The guild object
+        """
+        params = {}
+        if with_counts:
+            params["with_counts"] = "true"
+
         r = await self._state.query(
             "GET",
-            f"/guilds/{self.id}"
+            f"/guilds/{self.id}",
+            params=params
         )
 
         return Guild(
             state=self._state,
             data=r.response
         )
+
+    async def fetch_preview(self) -> "GuildPreview":
+        """ Fetches a preview of the guild, including for guilds the bot may not be in if discoverable. """
+        r = await self._state.query(
+            "GET",
+            f"/guilds/{self.id}/preview"
+        )
+
+        return GuildPreview(state=self._state, data=r.response)
+
+    async def edit_incident_actions(
+        self,
+        *,
+        invites_disabled_until: datetime | timedelta | int | None = MISSING,
+        dms_disabled_until: datetime | timedelta | int | None = MISSING,
+    ) -> "GuildIncidentsData":
+        """
+        Edits the guild's security incident actions.
+
+        Requires the `MANAGE_GUILD` permission.
+
+        Parameters
+        ----------
+        invites_disabled_until:
+            When invites should be re-enabled, or `None` to re-enable them immediately.
+            Can only be up to 24 hours in the future.
+        dms_disabled_until:
+            When direct messages should be re-enabled, or `None` to re-enable them immediately.
+            Can only be up to 24 hours in the future.
+
+        Returns
+        -------
+            The updated security incident actions
+        """
+        payload: dict[str, Any] = {}
+
+        if invites_disabled_until is not MISSING:
+            payload["invites_disabled_until"] = (
+                utils.add_to_datetime(invites_disabled_until).isoformat()
+                if invites_disabled_until else None
+            )
+
+        if dms_disabled_until is not MISSING:
+            payload["dms_disabled_until"] = (
+                utils.add_to_datetime(dms_disabled_until).isoformat()
+                if dms_disabled_until else None
+            )
+
+        r = await self._state.query(
+            "PUT",
+            f"/guilds/{self.id}/incident-actions",
+            json=payload
+        )
+
+        return GuildIncidentsData._from_data(r.response)
+
+    async def fetch_templates(self) -> list["GuildTemplate"]:
+        """ Fetches the templates for the guild. Requires the `MANAGE_GUILD` permission. """
+        r = await self._state.query(
+            "GET",
+            f"/guilds/{self.id}/templates"
+        )
+
+        return [
+            GuildTemplate(state=self._state, data=g)
+            for g in r.response
+        ]
+
+    async def create_template(
+        self,
+        name: str,
+        *,
+        description: str | None = None
+    ) -> "GuildTemplate":
+        """
+        Creates a template based on the guild's current state.
+
+        Requires the `MANAGE_GUILD` permission.
+
+        Parameters
+        ----------
+        name:
+            The name of the template (1-100 characters)
+        description:
+            The description of the template, if any (0-120 characters)
+
+        Returns
+        -------
+            The created template
+        """
+        payload = {"name": name}
+        if description is not None:
+            payload["description"] = description
+
+        r = await self._state.query(
+            "POST",
+            f"/guilds/{self.id}/templates",
+            json=payload
+        )
+
+        return GuildTemplate(state=self._state, data=r.response)
+
+    def get_partial_template(self, code: str) -> "PartialGuildTemplate":
+        """ Creates a partial template object under this guild, without fetching it. """
+        return PartialGuildTemplate(
+            state=self._state,
+            code=code,
+            guild_id=self.id
+        )
+
+    async def fetch_welcome_screen(self) -> "WelcomeScreen":
+        """ Fetches the guild's welcome screen. """
+        r = await self._state.query(
+            "GET",
+            f"/guilds/{self.id}/welcome-screen"
+        )
+
+        return WelcomeScreen(state=self._state, guild_id=self.id, data=r.response)
+
+    async def edit_welcome_screen(
+        self,
+        *,
+        enabled: bool | None = MISSING,
+        description: str | None = MISSING,
+        welcome_channels: list["WelcomeScreenChannel"] | None = MISSING,
+        reason: str | None = None
+    ) -> "WelcomeScreen":
+        """
+        Edits the guild's welcome screen.
+
+        Requires the `MANAGE_GUILD` permission.
+
+        Parameters
+        ----------
+        enabled:
+            Whether the welcome screen is enabled
+        description:
+            New description of the welcome screen
+        welcome_channels:
+            New channels shown in the welcome screen (max 5)
+        reason:
+            The reason for editing the welcome screen
+
+        Returns
+        -------
+            The edited welcome screen
+        """
+        payload: dict[str, Any] = {}
+
+        if enabled is not MISSING:
+            payload["enabled"] = enabled
+        if description is not MISSING:
+            payload["description"] = description
+        if welcome_channels is not MISSING:
+            payload["welcome_channels"] = [
+                g.to_dict() for g in (welcome_channels or [])
+            ]
+
+        r = await self._state.query(
+            "PATCH",
+            f"/guilds/{self.id}/welcome-screen",
+            json=payload,
+            reason=reason
+        )
+
+        return WelcomeScreen(state=self._state, guild_id=self.id, data=r.response)
+
+    async def fetch_widget_settings(self) -> "GuildWidgetSettings":
+        """ Fetches the guild's widget settings. Requires the `MANAGE_GUILD` permission. """
+        r = await self._state.query(
+            "GET",
+            f"/guilds/{self.id}/widget"
+        )
+
+        return GuildWidgetSettings(state=self._state, guild_id=self.id, data=r.response)
+
+    async def edit_widget(
+        self,
+        *,
+        enabled: bool | None = MISSING,
+        channel: "BaseChannel | PartialChannel | int | None" = MISSING,
+        reason: str | None = None
+    ) -> "GuildWidgetSettings":
+        """
+        Edits the guild's widget settings.
+
+        Requires the `MANAGE_GUILD` permission.
+
+        Parameters
+        ----------
+        enabled:
+            Whether the widget should be enabled
+        channel:
+            The channel the widget invite should point to
+        reason:
+            The reason for editing the widget
+
+        Returns
+        -------
+            The edited widget settings
+        """
+        payload: dict[str, Any] = {}
+
+        if enabled is not MISSING:
+            payload["enabled"] = enabled
+        if channel is not MISSING:
+            payload["channel_id"] = str(int(channel)) if channel else None
+
+        r = await self._state.query(
+            "PATCH",
+            f"/guilds/{self.id}/widget",
+            json=payload,
+            reason=reason
+        )
+
+        return GuildWidgetSettings(state=self._state, guild_id=self.id, data=r.response)
+
+    async def fetch_widget(self) -> "GuildWidget":
+        """ Fetches the guild's public widget. Requires no permissions or authentication. """
+        r = await self._state.query(
+            "GET",
+            f"/guilds/{self.id}/widget.json"
+        )
+
+        return GuildWidget(state=self._state, data=r.response)
+
+    def widget_image_url(self, *, style: str = "shield") -> str:
+        """
+        Returns the URL for the guild's widget image (PNG).
+
+        Requires no permissions or authentication to access.
+
+        Parameters
+        ----------
+        style:
+            The style of the widget image (`shield`, `banner1`, `banner2`, `banner3`, or `banner4`)
+
+        Returns
+        -------
+            The URL for the widget image
+        """
+        return f"{self._state.base_url}/guilds/{self.id}/widget.png?style={style}"
+
+    async def fetch_onboarding(self) -> "GuildOnboarding":
+        """ Fetches the guild's onboarding configuration. """
+        r = await self._state.query(
+            "GET",
+            f"/guilds/{self.id}/onboarding"
+        )
+
+        return GuildOnboarding(state=self._state, data=r.response)
+
+    async def edit_onboarding(
+        self,
+        *,
+        prompts: list["OnboardingPrompt"] | None = MISSING,
+        default_channel_ids: list[Snowflake | int] | None = MISSING,
+        enabled: bool | None = MISSING,
+        mode: OnboardingMode | int | None = MISSING,
+        reason: str | None = None
+    ) -> "GuildOnboarding":
+        """
+        Edits the guild's onboarding configuration.
+
+        Requires the `MANAGE_GUILD` and `MANAGE_ROLES` permissions.
+
+        Parameters
+        ----------
+        prompts:
+            New prompts shown during onboarding and in the Channels & Roles tab
+        default_channel_ids:
+            New channel IDs that members get opted into automatically
+        enabled:
+            Whether onboarding should be enabled
+        mode:
+            New constraint mode used for onboarding
+        reason:
+            The reason for editing the onboarding configuration
+
+        Returns
+        -------
+            The edited onboarding configuration
+        """
+        payload: dict[str, Any] = {}
+
+        if prompts is not MISSING:
+            payload["prompts"] = [g.to_dict() for g in (prompts or [])]
+        if default_channel_ids is not MISSING:
+            payload["default_channel_ids"] = [
+                str(int(g)) for g in (default_channel_ids or [])
+            ]
+        if enabled is not MISSING:
+            payload["enabled"] = bool(enabled)
+        if mode is not MISSING:
+            payload["mode"] = int(mode or OnboardingMode.onboarding_default)
+
+        r = await self._state.query(
+            "PUT",
+            f"/guilds/{self.id}/onboarding",
+            json=payload,
+            reason=reason
+        )
+
+        return GuildOnboarding(state=self._state, data=r.response)
 
     def get_partial_automod_rule(self, automod_id: int) -> PartialAutoModRule:
         """ Returns a partial automod rule object. """
@@ -999,8 +2151,7 @@ class PartialGuild(PartialBase):
                 await asyncio.sleep(retry_after if retry_after > 0 else 1)
                 continue
 
-            messages = r.response.get("messages", [])
-            if not messages:
+            if not (messages := r.response.get("messages", [])):
                 break
 
             for msg_group in messages:
@@ -1474,6 +2625,7 @@ class PartialGuild(PartialBase):
         entity_type: ScheduledEventEntityType | None = None,
         external_location: str | None = None,
         image: File | bytes | None = None,
+        recurrence_rule: "ScheduledEventRecurrenceRule | None" = None,
         reason: str | None = None
     ) -> "ScheduledEvent":
         """
@@ -1499,6 +2651,8 @@ class PartialGuild(PartialBase):
             The external location of the event
         image:
             The image of the event
+        recurrence_rule:
+            The recurrence rule of the event, to make it a recurring event
         reason:
             The reason for creating the event
 
@@ -1541,6 +2695,9 @@ class PartialGuild(PartialBase):
 
         if image is not None:
             payload["image"] = utils.bytes_to_base64(image)
+
+        if recurrence_rule is not None:
+            payload["recurrence_rule"] = recurrence_rule.to_dict()
 
         r = await self._state.query(
             "POST",
@@ -2506,8 +3663,7 @@ class PartialGuild(PartialBase):
             json=payload
         )
 
-        banned_users = r.response.get("banned_users", [])
-        if not banned_users:
+        if not (banned_users := r.response.get("banned_users", [])):
             return []
 
         from .member import PartialMember
@@ -2981,13 +4137,19 @@ class Guild(PartialGuild):
 
     __slots__ = (
         "_banner",
+        "_discovery_splash",
         "_icon",
+        "_splash",
         "afk_channel_id",
         "afk_timeout",
+        "application_id",
+        "approximate_member_count",
+        "approximate_presence_count",
         "default_message_notifications",
         "description",
         "explicit_content_filter",
         "features",
+        "incidents_data",
         "latest_onboarding_question_id",
         "max_members",
         "max_stage_video_channel_users",
@@ -3008,6 +4170,7 @@ class Guild(PartialGuild):
         "system_channel_id",
         "vanity_url_code",
         "verification_level",
+        "welcome_screen",
         "widget_channel_id",
         "widget_enabled",
     )
@@ -3028,6 +4191,15 @@ class Guild(PartialGuild):
         self.afk_timeout: int = data.get("afk_timeout", 0)
         """ The AFK timeout in seconds. """
 
+        self.application_id: int | None = utils.get_int(data, "application_id")
+        """ The ID of the application that created the guild, if bot-created. """
+
+        self.approximate_member_count: int | None = data.get("approximate_member_count")
+        """ The approximate number of members in the guild, only available when fetched with `with_counts`. """
+
+        self.approximate_presence_count: int | None = data.get("approximate_presence_count")
+        """ The approximate number of non-offline members in the guild, only available when fetched with `with_counts`. """
+
         self.default_message_notifications: int = data.get("default_message_notifications", 0)
         """ The default message notification level of the guild. """
 
@@ -3036,6 +4208,8 @@ class Guild(PartialGuild):
 
         self._icon: str | None = data.get("icon")
         self._banner: str | None = data.get("banner")
+        self._splash: str | None = data.get("splash")
+        self._discovery_splash: str | None = data.get("discovery_splash")
 
         self.explicit_content_filter: int = data.get("explicit_content_filter", 0)
         """ The explicit content filter level of the guild. """
@@ -3055,7 +4229,7 @@ class Guild(PartialGuild):
         self.max_video_channel_users: int = data.get("max_video_channel_users", 0)
         """ The maximum number of users in a video channel. """
 
-        self.mfa_level: int | None = utils.get_int(data, "mfa_level")
+        self.mfa_level: MFALevel = MFALevel(data.get("mfa_level", 0))
         """ The MFA level of the guild. """
 
         self.name: str = data["name"]
@@ -3064,7 +4238,7 @@ class Guild(PartialGuild):
         self.nsfw: bool = data.get("nsfw", False)
         """ Whether the guild is marked as NSFW. """
 
-        self.nsfw_level: int = data.get("nsfw_level", 0)
+        self.nsfw_level: NSFWLevel = NSFWLevel(data.get("nsfw_level", 0))
         """ The NSFW level of the guild. """
 
         self.owner_id: int | None = utils.get_int(data, "owner_id")
@@ -3079,7 +4253,7 @@ class Guild(PartialGuild):
         self.premium_subscription_count: int = data.get("premium_subscription_count", 0)
         """ The number of premium subscriptions in the guild. """
 
-        self.premium_tier: int = data.get("premium_tier", 0)
+        self.premium_tier: PremiumTier = PremiumTier(data.get("premium_tier", 0))
         """ The premium tier of the guild. """
 
         self.public_updates_channel_id: int | None = utils.get_int(data, "public_updates_channel_id")
@@ -3108,6 +4282,12 @@ class Guild(PartialGuild):
 
         self.widget_enabled: bool = data.get("widget_enabled", False)
         """ Whether the widget is enabled for the guild. """
+
+        self.incidents_data: GuildIncidentsData | None = None
+        """ The security incident actions taken on the guild, if any. """
+
+        self.welcome_screen: WelcomeScreen | None = None
+        """ The welcome screen of the guild, if it's a Community guild and this was returned in an Invite's guild object. """
 
         self._from_data(data)
 
@@ -3145,33 +4325,53 @@ class Guild(PartialGuild):
             for g in data.get("stickers", [])
         }
 
-        if data.get("member_count"):
-            self.member_count = data["member_count"]
+        if incidents_data := data.get("incidents_data"):
+            self.incidents_data = GuildIncidentsData._from_data(incidents_data)
+
+        if welcome_screen := data.get("welcome_screen"):
+            self.welcome_screen = WelcomeScreen(
+                state=self._state,
+                guild_id=self.id,
+                data=welcome_screen
+            )
+
+        if member_count := data.get("member_count"):
+            self.member_count = member_count
 
     def _update(self, data: dict) -> None:
         """ Update the guild from the data. """
         self._icon = data.get("icon")
         self._banner = data.get("banner")
+        self._splash = data.get("splash")
+        self._discovery_splash = data.get("discovery_splash")
 
         self.afk_channel_id: int | None = utils.get_int(data, "afk_channel_id")
         self.afk_timeout: int = data.get("afk_timeout", 0)
+        self.application_id: int | None = utils.get_int(data, "application_id")
+        self.approximate_member_count: int | None = data.get("approximate_member_count")
+        self.approximate_presence_count: int | None = data.get("approximate_presence_count")
         self.default_message_notifications: int = data.get("default_message_notifications", 0)
         self.description: str | None = data.get("description")
         self.explicit_content_filter: int = data.get("explicit_content_filter", 0)
         self.features: list[str] = [sys.intern(f) for f in data.get("features", [])]
+
+        self.incidents_data: GuildIncidentsData | None = None
+        if incidents_data := data.get("incidents_data"):
+            self.incidents_data = GuildIncidentsData._from_data(incidents_data)
+
         self.latest_onboarding_question_id: int | None = utils.get_int(data, "latest_onboarding_question_id")
         self.max_members: int = data.get("max_members", 0)
         self.max_stage_video_channel_users: int = data.get("max_stage_video_channel_users", 0)
         self.max_video_channel_users: int = data.get("max_video_channel_users", 0)
-        self.mfa_level: int | None = utils.get_int(data, "mfa_level")
+        self.mfa_level: MFALevel = MFALevel(data.get("mfa_level", 0))
         self.name: str = data["name"]
         self.nsfw: bool = data.get("nsfw", False)
-        self.nsfw_level: int = data.get("nsfw_level", 0)
+        self.nsfw_level: NSFWLevel = NSFWLevel(data.get("nsfw_level", 0))
         self.owner_id: int | None = utils.get_int(data, "owner_id")
         self.preferred_locale: str | None = data.get("preferred_locale")
         self.premium_progress_bar_enabled: bool = data.get("premium_progress_bar_enabled", False)
         self.premium_subscription_count: int = data.get("premium_subscription_count", 0)
-        self.premium_tier: int = data.get("premium_tier", 0)
+        self.premium_tier: PremiumTier = PremiumTier(data.get("premium_tier", 0))
         self.public_updates_channel_id: int | None = utils.get_int(data, "public_updates_channel_id")
         self.region: str | None = sys.intern(data.get("region", ""))
         self.safety_alerts_channel_id: int | None = utils.get_int(data, "safety_alerts_channel_id")
@@ -3179,6 +4379,10 @@ class Guild(PartialGuild):
         self.system_channel_id: int | None = utils.get_int(data, "system_channel_id")
         self.vanity_url_code: str | None = data.get("vanity_url_code")
         self.verification_level: VerificationLevel = VerificationLevel(data.get("verification_level", 0))
+        self.welcome_screen: WelcomeScreen | None = (
+            WelcomeScreen(state=self._state, guild_id=self.id, data=data["welcome_screen"])
+            if data.get("welcome_screen") else None
+        )
         self.widget_channel_id: int | None = utils.get_int(data, "widget_channel_id")
         self.widget_enabled: bool = data.get("widget_enabled", False)
 
@@ -3187,7 +4391,7 @@ class Guild(PartialGuild):
         """ The maximum amount of emojis the guild can have. """
         return max(
             200 if "MORE_EMOJI" in self.features else 50,
-            self._GUILD_LIMITS[self.premium_tier].emojis
+            self._GUILD_LIMITS[int(self.premium_tier)].emojis
         )
 
     @property
@@ -3195,7 +4399,7 @@ class Guild(PartialGuild):
         """ The maximum amount of stickers the guild can have. """
         return max(
             60 if "MORE_STICKERS" in self.features else 0,
-            self._GUILD_LIMITS[self.premium_tier].stickers
+            self._GUILD_LIMITS[int(self.premium_tier)].stickers
         )
 
     @property
@@ -3203,13 +4407,13 @@ class Guild(PartialGuild):
         """ The maximum bitrate the guild can have. """
         return max(
             self._GUILD_LIMITS[1].bitrate if "VIP_REGIONS" in self.features else 96_000,
-            self._GUILD_LIMITS[self.premium_tier].bitrate
+            self._GUILD_LIMITS[int(self.premium_tier)].bitrate
         )
 
     @property
     def filesize_limit(self) -> int:
         """ The maximum filesize the guild can have. """
-        return self._GUILD_LIMITS[self.premium_tier].filesize
+        return self._GUILD_LIMITS[int(self.premium_tier)].filesize
 
     @property
     def icon(self) -> Asset | None:
@@ -3224,6 +4428,20 @@ class Guild(PartialGuild):
         if self._banner is None:
             return None
         return Asset._from_guild_image(self._state, self.id, self._banner, path="banners")
+
+    @property
+    def splash(self) -> Asset | None:
+        """ The guild's invite splash. """
+        if self._splash is None:
+            return None
+        return Asset._from_guild_image(self._state, self.id, self._splash, path="splashes")
+
+    @property
+    def discovery_splash(self) -> Asset | None:
+        """ The guild's discovery splash, only present for guilds with the DISCOVERABLE feature. """
+        if self._discovery_splash is None:
+            return None
+        return Asset._from_guild_image(self._state, self.id, self._discovery_splash, path="discovery-splashes")
 
     @property
     def default_role(self) -> Role:
