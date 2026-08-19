@@ -402,7 +402,15 @@ class Ratelimit:
                     return self
 
                 # No tokens? Calculate wait time
-                wait_time = (self.expires - now) if self.expires else 1.0
+                if self.expires:
+                    wait_time = self.expires - now
+                else:
+                    # No X-RateLimit-Reset was ever recorded for this bucket (e.g. the
+                    # last response was an error like 403 that carries no ratelimit
+                    # headers), so there's nothing to actually wait out.
+                    self.remaining = self.limit
+                    wait_time = 1.0
+
                 _log.warning(f"Ratelimit prevented ({self.key}), waiting {max(wait_time, 0):.2f}s...")
 
             # Sleep outside the lock so others can at least check the state
