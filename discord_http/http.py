@@ -403,7 +403,7 @@ class Ratelimit:
 
                 # No tokens? Calculate wait time
                 wait_time = (self.expires - now) if self.expires else 1.0
-                _log.debug(f"Ratelimit prevented ({self.key}), waiting {max(wait_time, 0):.2f}s...")
+                _log.warning(f"Ratelimit prevented ({self.key}), waiting {max(wait_time, 0):.2f}s...")
 
             # Sleep outside the lock so others can at least check the state
             await asyncio.sleep(max(wait_time, 0.1) + 0.1)
