@@ -780,6 +780,11 @@ class DiscordAPI:
                             if error_tries >= 4:  # Give up after 5 tries
                                 raise DiscordServerError(r)
 
+                            _log.warning(
+                                f"HTTP {method.upper()} {path} got {x}, "
+                                f"retrying (attempt {error_tries + 1}/5)..."
+                            )
+
                             # Try again, maybe it will work next time, surely...
                             await _sleep(error_tries)
                             error_tries += 1
@@ -809,6 +814,10 @@ class DiscordAPI:
 
                 except OSError as e:
                     if error_tries < 4 and e.errno in (errno.ECONNRESET, errno.ECONNABORTED, 54):
+                        _log.warning(
+                            f"HTTP {method.upper()} {path} hit {e!r}, "
+                            f"retrying (attempt {error_tries + 1}/5)..."
+                        )
                         await _sleep(error_tries)
                         error_tries += 1
                         continue
