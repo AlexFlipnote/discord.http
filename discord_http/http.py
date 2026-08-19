@@ -481,6 +481,7 @@ class GlobalRatelimit:
 
                     wait_time = self.per - (now - self.window)
 
+            _log.warning(f"Global ratelimit exhausted, waiting {max(wait_time, 0):.2f}s...")
             await asyncio.sleep(max(wait_time, 0.05))
 
     def lock_for(self, retry_after: float) -> None:
