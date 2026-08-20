@@ -5,6 +5,7 @@ import logging
 import orjson
 import random
 import re
+import socket
 import ssl
 import sys
 
@@ -137,6 +138,7 @@ class HTTPClient:
                 limit=0,
                 ssl=ssl.create_default_context(),
                 keepalive_timeout=self._timeout,
+                family=socket.AF_INET,
             ),
             timeout=aiohttp.ClientTimeout(total=self._timeout),
             cookie_jar=aiohttp.DummyCookieJar(),
