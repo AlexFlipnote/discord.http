@@ -413,7 +413,7 @@ class Ratelimit:
                     self.remaining = self.limit
                     wait_time = 1.0
 
-                _log.warning(f"Ratelimit prevented ({self.key}), waiting {max(wait_time, 0):.2f}s...")
+                _log.debug(f"Ratelimit prevented ({self.key}), waiting {max(wait_time, 0):.2f}s...")
 
             # Sleep outside the lock so others can at least check the state
             await asyncio.sleep(max(wait_time, 0.1) + 0.1)
@@ -491,7 +491,7 @@ class GlobalRatelimit:
 
                     wait_time = self.per - (now - self.window)
 
-            _log.warning(f"Global ratelimit exhausted, waiting {max(wait_time, 0):.2f}s...")
+            _log.debug(f"Global ratelimit exhausted, waiting {max(wait_time, 0):.2f}s...")
             await asyncio.sleep(max(wait_time, 0.05))
 
     def lock_for(self, retry_after: float) -> None:
@@ -791,7 +791,7 @@ class DiscordAPI:
                             if error_tries >= 4:  # Give up after 5 tries
                                 raise DiscordServerError(r)
 
-                            _log.warning(
+                            _log.debug(
                                 f"HTTP {method.upper()} {path} got {x}, "
                                 f"retrying (attempt {error_tries + 1}/5)..."
                             )
@@ -825,7 +825,7 @@ class DiscordAPI:
 
                 except OSError as e:
                     if error_tries < 4 and e.errno in (errno.ECONNRESET, errno.ECONNABORTED, 54):
-                        _log.warning(
+                        _log.debug(
                             f"HTTP {method.upper()} {path} hit {e!r}, "
                             f"retrying (attempt {error_tries + 1}/5)..."
                         )

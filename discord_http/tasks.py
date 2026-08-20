@@ -213,10 +213,14 @@ class Loop:
                 try:
                     await self.func(*args, **kwargs)
                     self._last_loop_failed = False
-                except self._whitelist_exceptions:
+                except self._whitelist_exceptions as e:
                     self._last_loop_failed = True
                     if not self.reconnect:
                         raise
+                    _log.debug(
+                        f"task:{self.func.__name__} hit {e!r}, "
+                        "retrying in 5s..."
+                    )
                     await asyncio.sleep(5)
                 else:
                     if self._should_stop:
