@@ -141,24 +141,29 @@ class BenchmarkEntry:
 
     __slots__ = (
         "_end_perf",
+        "_perf_anchor",
         "_start_perf",
-        "created_at",
-        "finished_at",
+        "_wall_anchor",
         "internal",
     )
 
-    def __init__(self, *, internal: bool = False) -> None:
+    def __init__(
+        self,
+        *,
+        internal: bool = False,
+        wall_anchor: "datetime | None" = None,
+        perf_anchor: float | None = None
+    ) -> None:
         self.internal: bool = internal
         """
         Whether this benchmark entry is for internal use (default: False).
         Mostly used to differentiate between user and internal benchmarks.
         """
 
-        self.created_at: datetime | None = None
-        """ The time the benchmark was created. """
-
-        self.finished_at: datetime | None = None
-        """ The time the benchmark was finished. """
+        self._wall_anchor: datetime = wall_anchor or utcnow()
+        self._perf_anchor: float = (
+            perf_anchor if perf_anchor is not None else time.perf_counter()
+        )
 
         self._start_perf: float | None = None
         self._end_perf: float | None = None
@@ -180,12 +185,24 @@ class BenchmarkEntry:
     def start(self) -> None:
         """ Start the benchmark timer. """
         self._start_perf = time.perf_counter()
-        self.created_at = utcnow()
 
     def stop(self) -> None:
         """ Stop the benchmark timer. """
         self._end_perf = time.perf_counter()
-        self.finished_at = utcnow()
+
+    @property
+    def created_at(self) -> "datetime | None":
+        """ The time the benchmark was created. """
+        if self._start_perf is None:
+            return None
+        return self._wall_anchor + timedelta(seconds=self._start_perf - self._perf_anchor)
+
+    @property
+    def finished_at(self) -> "datetime | None":
+        """ The time the benchmark was finished. """
+        if self._end_perf is None:
+            return None
+        return self._wall_anchor + timedelta(seconds=self._end_perf - self._perf_anchor)
 
     @property
     def elapsed(self) -> float:
@@ -217,13 +234,14 @@ class Benchmark:
     Used to benchmark code execution time.
     """
 
-    __slots__ = ("_overall_start", "results",)
+    __slots__ = ("_overall_start", "_wall_anchor", "results",)
 
     def __init__(self):
         self.results: dict[str, BenchmarkEntry] = {}
         """ A dictionary of benchmark entries, keyed by benchmark name. """
 
         self._overall_start = time.perf_counter()
+        self._wall_anchor = utcnow()
 
     def measure(self, name: str, *, internal: bool = False) -> BenchmarkEntry:
         """
@@ -243,7 +261,11 @@ class Benchmark:
         -------
             A BenchmarkEntry context manager
         """
-        entry = BenchmarkEntry(internal=internal)
+        entry = BenchmarkEntry(
+            internal=internal,
+            wall_anchor=self._wall_anchor,
+            perf_anchor=self._overall_start
+        )
         self.results[name] = entry
         return entry
 

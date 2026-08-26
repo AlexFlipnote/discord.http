@@ -751,7 +751,7 @@ class Context:
                 )
                 return
 
-            with self.benchmark.measure("call_after:execution", internal=True):
+            with self.benchmark.measure("call_after:execution"):
                 await call_after()
         except Exception as e:
             if self.bot.has_any_dispatch("interaction_error"):

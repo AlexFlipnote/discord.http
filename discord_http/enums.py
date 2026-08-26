@@ -105,22 +105,32 @@ class BaseEnum(_Enum):
 
     def __gt__(self, other: Self | str | int) -> bool:
         """ Greater than. """
+        if isinstance(other, self.__class__):
+            return self._value_ > other._value_
         return self._dispatch(other, "gt")
 
     def __lt__(self, other: Self | str | int) -> bool:
         """ Less than.  """
+        if isinstance(other, self.__class__):
+            return self._value_ < other._value_
         return self._dispatch(other, "lt")
 
     def __ge__(self, other: Self | str | int) -> bool:
         """ Greater than or equal to. """
+        if isinstance(other, self.__class__):
+            return self._value_ >= other._value_
         return self._dispatch(other, "ge")
 
     def __le__(self, other: Self | str | int) -> bool:
         """ Less than or equal to. """
+        if isinstance(other, self.__class__):
+            return self._value_ <= other._value_
         return self._dispatch(other, "le")
 
     def __eq__(self, other: Self | str | int) -> bool:
         """ Equal to. """
+        if isinstance(other, self.__class__):
+            return self._value_ == other._value_
         res = self._dispatch(other, "eq")
         return res if res is not NotImplemented else False
 
