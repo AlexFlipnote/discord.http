@@ -324,7 +324,8 @@ class DiscordHTTP(web.Application):
             self.bot.dispatch("raw_interaction", copy.deepcopy(data))
 
         context = self.bot._context(self.bot, data)
-        data_type = data.get("type", -1)
+        raw_type = data.get("type", -1)
+        data_type = InteractionType(raw_type)
 
         match data_type:
             case InteractionType.ping:
@@ -335,15 +336,15 @@ class DiscordHTTP(web.Application):
                     response = await self._handle_application_command(context, data)
 
             case InteractionType.message_component | InteractionType.modal_submit:
-                with context.benchmark.measure(f"start_end:{InteractionType(data_type).name}"):
+                with context.benchmark.measure(f"start_end:{data_type.name}"):
                     response = await self._handle_interaction(context, data)
 
             case InteractionType.application_command_autocomplete:
                 with context.benchmark.measure("start_end:autocomplete"):
                     return await self._handle_autocomplete(context, data)
 
-            case _:  # Unknown
-                _log.debug(f"Unhandled interaction received (type: {data_type})")
+            case _:
+                _log.debug(f"Unhandled interaction received (type: {raw_type})")
                 return self.jsonify({"error": "invalid request body"}, status=400)
 
         self._attach_tracking(response, context._response_sent)
