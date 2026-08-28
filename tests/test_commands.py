@@ -7,7 +7,8 @@ from discord_http import (
 )
 from discord_http.commands import (
     Choice, Command, Range, SubGroup, bot_has_permissions,
-    default_permissions, has_permissions, locales,
+    default_permissions, has_permissions, locales, _get_meta,
+    _COMMAND_META_ATTR,
 )
 from discord_http.enums import ChannelType, CommandOptionType
 
@@ -199,7 +200,7 @@ class TestCommandAnnotationInferenceChoiceAndRange(unittest.TestCase):
             pass
         cmd = _make_command(f)
         self.assertEqual(cmd.options[0]["type"], int(CommandOptionType.string))
-        self.assertEqual(f.__choices_params__["value"], {"a": "a", "b": "b"})
+        self.assertEqual(cmd._meta.choices_params["value"], {"a": "a", "b": "b"})
 
     def test_range_str_sets_length_bounds(self) -> None:
         async def f(ctx, value: Range[str, 1, 50]) -> None:
@@ -277,7 +278,7 @@ class TestPermissionDecoratorValidation(unittest.TestCase):
         async def f(ctx) -> None:
             pass
         result = has_permissions()(f)
-        self.assertFalse(hasattr(result, "__has_permissions__"))
+        self.assertFalse(hasattr(result, _COMMAND_META_ATTR))
 
     def test_mixed_permissions_object_and_string_raises(self) -> None:
         # Only args[0] is checked for being a Permissions instance - if it's
@@ -299,19 +300,19 @@ class TestPermissionDecoratorValidation(unittest.TestCase):
             pass
         perms = Permissions.from_names("manage_messages")
         result = has_permissions(perms)(f)
-        self.assertEqual(result.__has_permissions__, perms)
+        self.assertEqual(_get_meta(result).has_permissions, perms)
 
     def test_default_permissions_sets_attribute(self) -> None:
         async def f(ctx) -> None:
             pass
         result = default_permissions("manage_messages")(f)
-        self.assertIn("manage_messages", result.__default_permissions__.to_names())
+        self.assertIn("manage_messages", _get_meta(result).default_permissions.to_names())
 
     def test_bot_has_permissions_sets_attribute(self) -> None:
         async def f(ctx) -> None:
             pass
         result = bot_has_permissions("embed_links")(f)
-        self.assertIn("embed_links", result.__bot_has_permissions__.to_names())
+        self.assertIn("embed_links", _get_meta(result).bot_has_permissions.to_names())
 
 
 class TestLocalesValidation(unittest.TestCase):
@@ -321,8 +322,9 @@ class TestLocalesValidation(unittest.TestCase):
         result = locales({
             "no": {"_": ("ping", "beskrivelse"), "value": ("verdi",)},
         })(f)
-        self.assertIn("no", result.__locales__)
-        keys = {c.key: c for c in result.__locales__["no"]}
+        stored = _get_meta(result).locales
+        self.assertIn("no", stored)
+        keys = {c.key: c for c in stored["no"]}
         self.assertEqual(keys["_"].name, "ping")
         self.assertEqual(keys["_"].description, "beskrivelse")
         self.assertEqual(keys["value"].name, "verdi")
@@ -333,28 +335,28 @@ class TestLocalesValidation(unittest.TestCase):
             pass
         with self.assertLogs("discord_http", level="WARNING"):
             result = locales({"xx-not-real": {"_": ("a", "b")}})(f)
-        self.assertNotIn("xx-not-real", result.__locales__)
+        self.assertNotIn("xx-not-real", _get_meta(result).locales)
 
     def test_non_dict_translation_value_is_skipped(self) -> None:
         async def f(ctx) -> None:
             pass
         with self.assertLogs("discord_http", level="WARNING"):
             result = locales({"no": "not-a-dict"})(f)  # type: ignore[arg-type]
-        self.assertNotIn("no", result.__locales__)
+        self.assertNotIn("no", _get_meta(result).locales)
 
     def test_empty_values_tuple_is_skipped(self) -> None:
         async def f(ctx) -> None:
             pass
         with self.assertLogs("discord_http", level="WARNING"):
             result = locales({"no": {"_": ()}})(f)
-        self.assertNotIn("no", result.__locales__)
+        self.assertNotIn("no", _get_meta(result).locales)
 
     def test_all_entries_skipped_means_locale_not_added(self) -> None:
         async def f(ctx) -> None:
             pass
         with self.assertLogs("discord_http", level="WARNING"):
             result = locales({"no": {"_": ()}})(f)
-        self.assertEqual(result.__locales__, {})
+        self.assertEqual(_get_meta(result).locales, {})
 
 
 class TestSubGroupOptionsRecursiveStripping(unittest.TestCase):
