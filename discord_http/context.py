@@ -1319,8 +1319,9 @@ class Context:
                         kwargs[option["name"]] = option["value"]
 
                         if has_converter := self.command._converters.get(option["name"], None):
-                            conv_class = has_converter()
-                            if inspect.iscoroutinefunction(conv_class.convert):
+                            conv_type, conv_is_coro = has_converter
+                            conv_class = conv_type()
+                            if conv_is_coro:
                                 kwargs[option["name"]] = await conv_class.convert(
                                     self,
                                     option["value"]
