@@ -576,7 +576,9 @@ class PartialChannel(PartialBase):
         -------
             The channel class type
         """
-        match channel_type:
+        resolved_type = ChannelType(channel_type)
+
+        match resolved_type:
             case x if x in (ChannelType.guild_text, ChannelType.guild_news):
                 return TextChannel
             case ChannelType.guild_voice:
@@ -1164,7 +1166,7 @@ class PartialChannel(PartialBase):
             reason=reason
         )
 
-        match r.response["type"]:
+        match ChannelType(r.response["type"]):
             case ChannelType.guild_public_thread:
                 class_ = PublicThread
 

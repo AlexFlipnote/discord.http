@@ -51,11 +51,12 @@ class PartialMember(PartialBase):
         state: "DiscordAPI",
         id: int,  # ruff: ignore[builtin-argument-shadowing]
         guild_id: int,
+        user: "PartialUser | None" = None
     ):
         super().__init__(id=int(id))
         self._state = state
 
-        self._user = PartialUser(state=state, id=self.id)
+        self._user = user if user is not None else PartialUser(state=state, id=self.id)
 
         self.guild_id: int = int(guild_id)
         """ The ID of the guild the member belongs to. """
@@ -451,13 +452,17 @@ class Member(PartialMember):
         guild: Guild | PartialGuild,
         data: dict
     ):
+        real_user = User(state=state, data=data["user"])
+
         super().__init__(
             state=state,
-            id=int(data["user"]["id"]),
+            id=real_user.id,
             guild_id=guild.id,
+            user=real_user,
         )
 
-        self._user = User(state=state, data=data["user"])
+        self._user: User = real_user
+
         self._raw_permissions: int | None = utils.get_int(data, "permissions")
 
         self.role_ids: tuple[int, ...] = tuple(int(r) for r in data["roles"])

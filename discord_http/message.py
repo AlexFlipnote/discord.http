@@ -805,9 +805,6 @@ class Attachment:
         self.width: int | None = data.get("width")
         """ The width of the attachment, if applicable. """
 
-        self.ephemeral: bool = data.get("ephemeral", False)
-        """ Whether the attachment is ephemeral. """
-
         self.duration_secs: int | None = data.get("duration_secs")
         """ The duration of the attachment in seconds, if applicable. """
 
@@ -1670,7 +1667,7 @@ class Message(PartialMessage):
         self.content: str = data.get("content", "")
         """ The content of the message. """
 
-        self.author: "User | Member" = User(state=state, data=data["author"])
+        self.author: "User | Member"
         """ The author of the message. """
 
         self.pinned: bool = data.get("pinned", False)
@@ -1815,6 +1812,8 @@ class Message(PartialMessage):
                 guild=self.guild,  # type: ignore
                 data=member
             )
+        else:
+            self.author = User(state=self._state, data=data["author"])
 
         if mentions := data.get("mentions"):
             from .member import Member

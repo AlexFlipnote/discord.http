@@ -749,8 +749,9 @@ class DiscordAPI:
                     )
                     ratelimit.update(r)
                     _log.debug(
-                        f"HTTP {method.upper()} ({r.status}): {path} "
-                        f"({ratelimit.remaining}/{ratelimit.limit}, {ratelimit.reset_after:.2f}s until reset)"
+                        "HTTP %s (%s): %s (%s/%s, %.2fs until reset)",
+                        method.upper(), r.status, path,
+                        ratelimit.remaining, ratelimit.limit, ratelimit.reset_after
                     )
 
                     match r.status:

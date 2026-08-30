@@ -506,7 +506,7 @@ class Shard:
         else:
             msg: dict = orjson.loads(raw_msg)
 
-        op = msg.get("op")
+        op = PayloadType(msg.get("op"))
         data = msg.get("d")
         seq = msg.get("s")
 

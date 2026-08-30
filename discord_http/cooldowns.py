@@ -158,14 +158,17 @@ class CooldownCache:
         if self._type is BucketType.default:
             return self._cooldown
 
-        self._cleanup_cache(current)
+        current = current or time.time()
         key = self._bucket_key(ctx)
 
-        if key not in self._cache:
+        bucket = self._cache.get(key)
+        if bucket is not None and current > bucket._last + bucket.per:
+            del self._cache[key]
+            bucket = None
+
+        if bucket is None:
             bucket = self.create_bucket()
             self._cache[key] = bucket
-        else:
-            bucket = self._cache[key]
 
         return bucket
 

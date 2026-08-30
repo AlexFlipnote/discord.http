@@ -299,8 +299,20 @@ class Parser:
         -------
             The created guild
         """
-        guild = self._guild(data)
-        cache_guild = self.bot.cache.add_guild(guild.id, guild)
+        guild_id = int(data["id"])
+        cache_flags = self.bot.cache.cache_flags
+
+        guild: "Guild | PartialGuild"
+        if (
+            cache_flags is not None and
+            GatewayCacheFlags.guilds not in cache_flags and
+            GatewayCacheFlags.partial_guilds in cache_flags
+        ):
+            guild = self.bot.get_partial_guild(guild_id)
+        else:
+            guild = self._guild(data)
+
+        cache_guild = self.bot.cache.add_guild(guild_id, guild)
 
         if cache_guild:
             cache_guild._populate_internal_cache(data)
@@ -1335,13 +1347,14 @@ class Parser:
             If the guild id is not provided by Discord.
         """
         guild = self._get_guild_or_partial(utils.get_int(data, "guild_id"))
+
+        if guild is None:
+            raise ValueError("guild_id somehow was not provided by Discord")
+
         channel = self._get_channel_or_partial(
             int(data["channel_id"]),
             guild_id=guild.id
         )
-
-        if guild is None:
-            raise ValueError("guild_id somehow was not provided by Discord")
 
         return (
             BulkDeletePayload(
@@ -1583,7 +1596,10 @@ class Parser:
         if data.get("guild_id") is not None:
             guild = self._get_guild_or_partial(int(data["guild_id"]))
 
-        before_vs = guild.get_member_voice_state(int(data["user_id"]))
+        before_vs = (
+            guild.get_member_voice_state(int(data["user_id"]))
+            if guild is not None else None
+        )
 
         vs = VoiceState(
             state=self.bot.state,
