@@ -199,7 +199,7 @@ class Client:
             if sys.platform != "win32":
                 import uvloop
                 self.loop: asyncio.AbstractEventLoop = uvloop.new_event_loop()
-                _log.info("asyncio/uvloop loop not, creating uvloop")
+                _log.info("asyncio/uvloop loop not found, creating uvloop")
             else:
                 self.loop: asyncio.AbstractEventLoop = asyncio.new_event_loop()
                 _log.info("asyncio loop not found, creating one")
