@@ -971,6 +971,9 @@ class Shard:
         quiet for `guild_ready_timeout` seconds, whichever happens first.
         The timeout is only a fallback for a guild stuck unavailable.
         """
+        loop_start = time.perf_counter()
+        parse_time = 0.0
+
         try:
             states: list[tuple[Guild | PartialGuild, asyncio.Future[list[Member]]]] = []
             received = 0
@@ -985,12 +988,15 @@ class Shard:
                 else:
                     received += 1
                     # Start adding guilds to cache if it's enabled
+                    parse_start = time.perf_counter()
                     (parsed_guild,) = self.parser.guild_create(guild_data)
+                    parse_time += time.perf_counter() - parse_start
 
                     if self._guild_needs_chunking(parsed_guild):
                         future = await self.chunk_guild(parsed_guild.id, wait=False)
                         states.append((parsed_guild, future))
 
+            chunk_start = time.perf_counter()
             for guild, future in states:
                 timeout = self._chunk_timeout(guild)
 
@@ -1002,9 +1008,17 @@ class Shard:
                             f"Timed out while waiting for guild members chunk "
                             f"(guild_id={guild.id}, timeout={timeout})"
                         )
+            chunk_time = time.perf_counter() - chunk_start
 
         except asyncio.CancelledError:
             return
+
+        total_time = time.perf_counter() - loop_start
+        _log.debug(
+            f"Shard {self.shard_id} guild sync: {received}/{self._expected_guild_count} guild(s) "
+            f"in {total_time:.3f}s (parsing/caching: {parse_time:.3f}s, "
+            f"member chunking: {chunk_time:.3f}s, rest was waiting on the socket)"
+        )
 
         self._ready.set()
         self.parser._chunk_requests.clear()
