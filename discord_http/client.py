@@ -307,6 +307,19 @@ class Client:
             return
 
         await self.setup_hook()
+
+        if self.enable_gateway:
+            # To avoid circular import, import here
+            from .gateway import GatewayClient
+            self.gateway = GatewayClient(
+                bot=self,
+                intents=self.intents,
+                automatic_shards=self.automatic_shards,
+                cache_flags=self._gateway_cache
+            )
+            self.gateway.start()
+            _log.info("Starting discord.http/gateway client")
+
         await self._prepare_commands()
 
         task = self.loop.create_task(
@@ -322,18 +335,6 @@ class Client:
             self.dispatch("ready", client)
         else:
             _log.info("discord.http is now ready")
-
-        if self.enable_gateway:
-            # To avoid circular import, import here
-            from .gateway import GatewayClient
-            self.gateway = GatewayClient(
-                bot=self,
-                intents=self.intents,
-                automatic_shards=self.automatic_shards,
-                cache_flags=self._gateway_cache
-            )
-            self.gateway.start()
-            _log.info("Starting discord.http/gateway client")
 
     async def __cleanup(self, _: web.Application | None = None) -> None:
         """ Called when the bot is shutting down. """
