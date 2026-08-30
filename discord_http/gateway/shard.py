@@ -343,8 +343,10 @@ class Shard:
         """ The playing status of the shard, if any. """
 
         self._ready: asyncio.Event = asyncio.Event()
+        self._identified: asyncio.Event = asyncio.Event()
         self._ready_task: asyncio.Task | None = None
         self._guild_ready_timeout: float = float(bot.guild_ready_timeout)
+        self._expected_guild_count: int = 0
         self._guild_create_queue: asyncio.Queue[dict] = asyncio.Queue()
         self._ratelimiter: GatewayRatelimiter = GatewayRatelimiter(shard_id)
 
@@ -388,6 +390,8 @@ class Shard:
 
         self._close_code = None
         self._ready.clear()
+        self._identified.clear()
+        self._expected_guild_count = 0
         self._guild_create_queue = asyncio.Queue()
 
         if self._ready_task is not None and not self._ready_task.done():
@@ -573,6 +577,8 @@ class Shard:
             case "READY":
                 self.status.update_sequence(msg["s"])
                 self.status.update_ready_data(data)
+                self._expected_guild_count = len(data.get("guilds") or [])
+                self._identified.set()
 
                 if self._ready_task is not None and not self._ready_task.done():
                     self._ready_task.cancel()
@@ -960,11 +966,15 @@ class Shard:
         """
         Purposfully delays the ready event.
 
-        Then make shard ready when last GUILD_CREATE is received
+        Then make shard ready as soon as every guild reported in the READY
+        payload has sent its GUILD_CREATE, or when GUILD_CREATE traffic goes
+        quiet for `guild_ready_timeout` seconds, whichever happens first.
+        The timeout is only a fallback for a guild stuck unavailable.
         """
         try:
             states: list[tuple[Guild | PartialGuild, asyncio.Future[list[Member]]]] = []
-            while True:
+            received = 0
+            while received < self._expected_guild_count:
                 try:
                     guild_data = await asyncio.wait_for(
                         self._guild_create_queue.get(),
@@ -973,6 +983,7 @@ class Shard:
                 except TimeoutError:
                     break  # It's supposed to timeout
                 else:
+                    received += 1
                     # Start adding guilds to cache if it's enabled
                     (parsed_guild,) = self.parser.guild_create(guild_data)
 

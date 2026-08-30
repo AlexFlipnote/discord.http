@@ -144,14 +144,29 @@ class GatewayClient:
                 )
 
                 shard.connect()
+                connection = shard._connection
+                if connection is None:
+                    raise RuntimeError(f"Shard {shard_id} connection was not established")
 
-                identify_start = self.bot.loop.time()
-                while not shard.status.session_id:
-                    if shard._connection is not None and shard._connection.done():
-                        raise RuntimeError(f"Shard {shard_id} connection ended before it could identify")
-                    if self.bot.loop.time() - identify_start > 30:
+                identify_wait = asyncio.ensure_future(shard._identified.wait())
+                try:
+                    done, _ = await asyncio.wait(
+                        {identify_wait, connection},
+                        timeout=30,
+                        return_when=asyncio.FIRST_COMPLETED
+                    )
+
+                    if identify_wait not in done:
+                        if connection in done:
+                            raise RuntimeError(f"Shard {shard_id} connection ended before it could identify")
                         raise TimeoutError(f"Shard {shard_id} timed out waiting to identify")
-                    await asyncio.sleep(0.5)
+                finally:
+                    if not identify_wait.done():
+                        identify_wait.cancel()
+                        try:
+                            await identify_wait
+                        except asyncio.CancelledError:
+                            pass
 
             except Exception as e:
                 if shard is not None and shard._is_fatal_close():
@@ -213,21 +228,30 @@ class GatewayClient:
                 for i in range(0, len(shard_ids), self.max_concurrency)
             ]
 
+            booting: list[asyncio.Task] = []
+
             for i, shard_chunk in enumerate(chunks, start=1):
-                booting: list[Coroutine] = [
-                    self._launch_shard(shard_id)
-                    for shard_id in shard_chunk
-                ]
-
                 _log.debug(f"Launching bucket {i}/{len(chunks)}")
-                await asyncio.gather(*booting)
+                booting.extend(
+                    asyncio.ensure_future(self._launch_shard(shard_id))
+                    for shard_id in shard_chunk
+                )
 
-                if i != len(chunks):
-                    _log.debug(f"Bucket {i}/{len(chunks)} shards launched, waiting (5s/bucket)")
-                    await asyncio.sleep(5)
-                else:
-                    _log.debug(f"Bucket {i}/{len(chunks)} shards launched, last bucket, skipping wait")
+                if i == len(chunks):
+                    break
 
+                if any(
+                    task.done() and not task.cancelled() and task.exception() is not None
+                    for task in booting
+                ):
+                    # A previous bucket already failed fatally, no point pacing
+                    # further buckets for a boot that's already going to error out
+                    _log.debug("A shard failed during startup, stopping further bucket launches")
+                    break
+
+                await asyncio.sleep(5)
+
+            await asyncio.gather(*booting)
             _log.debug(f"All {len(chunks)} bucket(s) have launched a total of {self.shard_count} shard(s)")
 
         task = asyncio.create_task(
