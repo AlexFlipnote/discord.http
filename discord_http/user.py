@@ -275,6 +275,11 @@ class PartialUser(PartialBase):
             (self.id >> 22) % len(DefaultAvatarType)
         )
 
+    @property
+    def display_avatar(self) -> Asset:
+        """ The display avatar of the member. """
+        return self.default_avatar
+
     async def send(
         self,
         content: str | None = MISSING,

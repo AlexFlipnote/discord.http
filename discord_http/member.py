@@ -91,6 +91,11 @@ class PartialMember(PartialBase):
         """ Alias for `User.default_avatar`. """
         return self._user.default_avatar
 
+    @property
+    def display_avatar(self) -> Asset:
+        """ The display avatar of the member. """
+        return self.default_avatar
+
     async def fetch(self) -> "Member":
         """ Fetches the member from the API. """
         r = await self._state.query(
