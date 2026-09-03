@@ -1,3 +1,4 @@
+import asyncio
 import sys
 import weakref
 
@@ -28,7 +29,8 @@ __all__ = (
 )
 
 _SHARED_STATE_ATTR = "_state"
-
+_YIELD_EVERY = 2000
+_IMMUTABLE_LEAF_TYPES = (str, bytes, int, float, bool, complex, type(None))
 _GUILD_CACHE_ATTRS = (
     "_cache_members",
     "_cache_channels",
@@ -39,8 +41,6 @@ _GUILD_CACHE_ATTRS = (
     "_cache_stickers",
     "_cache_voice_states",
 )
-
-_IMMUTABLE_LEAF_TYPES = (str, bytes, int, float, bool, complex, type(None))
 
 
 def _iter_slots(cls: type) -> "Generator[str, None, None]":
@@ -56,50 +56,55 @@ def _iter_slots(cls: type) -> "Generator[str, None, None]":
                 yield name
 
 
-def _deep_sizeof(
-    obj: object,
+async def _deep_sizeof(
+    root: object,
     seen: set[int],
     skip: frozenset[str] = frozenset({_SHARED_STATE_ATTR})
 ) -> int:
-    """
-    Roughly estimate the total memory footprint of `obj`, in bytes.
+    """ Roughly estimate the total memory footprint of `root`, in bytes. """
+    total = 0
+    stack: list[object] = [root]
+    since_yield = 0
 
-    Walks `__slots__`/`__dict__` and common containers recursively.
-    Objects are tracked by identity in `seen`, so anything already
-    counted is not counted again.
-    """
-    if obj is None or isinstance(obj, _IMMUTABLE_LEAF_TYPES):
-        return sys.getsizeof(obj)
+    while stack:
+        obj = stack.pop()
 
-    oid = id(obj)
-    if oid in seen:
-        return 0
-    seen.add(oid)
+        since_yield += 1
+        if since_yield >= _YIELD_EVERY:
+            since_yield = 0
+            await asyncio.sleep(0)
 
-    size = sys.getsizeof(obj)
+        if obj is None or isinstance(obj, _IMMUTABLE_LEAF_TYPES):
+            total += sys.getsizeof(obj)
+            continue
 
-    if isinstance(obj, (dict, weakref.WeakValueDictionary)):
-        for key, value in obj.items():
-            size += _deep_sizeof(key, seen, skip)
-            size += _deep_sizeof(value, seen, skip)
-        return size
+        oid = id(obj)
+        if oid in seen:
+            continue
+        seen.add(oid)
 
-    if isinstance(obj, (list, tuple, set, frozenset)):
-        for value in obj:
-            size += _deep_sizeof(value, seen, skip)
-        return size
+        total += sys.getsizeof(obj)
 
-    if getattr(type(obj), "__slots__", None) is not None:
-        for name in _iter_slots(type(obj)):
-            if name in skip or name in ("__dict__", "__weakref__"):
-                continue
-            value = getattr(obj, name, None)
-            if value is not None:
-                size += _deep_sizeof(value, seen, skip)
-    elif hasattr(obj, "__dict__"):
-        size += _deep_sizeof(obj.__dict__, seen, skip)
+        if isinstance(obj, (dict, weakref.WeakValueDictionary)):
+            for key, value in list(obj.items()):
+                stack.extend((key, value))
+            continue
 
-    return size
+        if isinstance(obj, (list, tuple, set, frozenset)):
+            stack.extend(list(obj))
+            continue
+
+        if getattr(type(obj), "__slots__", None) is not None:
+            for name in _iter_slots(type(obj)):
+                if name in skip or name in ("__dict__", "__weakref__"):
+                    continue
+                value = getattr(obj, name, None)
+                if value is not None:
+                    stack.append(value)
+        elif hasattr(obj, "__dict__"):
+            stack.append(dict(obj.__dict__))
+
+    return total
 
 
 class Cache:
@@ -121,12 +126,11 @@ class Cache:
         self.__guilds: dict[int, "PartialGuild | Guild"] = {}
         self.__users: "weakref.WeakValueDictionary[int, User]" = weakref.WeakValueDictionary()
 
-    def calculate_memory_usage(self) -> dict[str, int]:
+    async def calculate_memory_usage(self) -> dict[str, int]:
         """
-        Roughly estimate how much memory the cache is currently using.
+        Roughly estimate how much memory the cache is currently using in bytes.
 
-        This is a debugging aid, not an exact measurement.
-        Mostly returns a breakdown in bytes per cache category, plus a "total" key.
+        This is a debugging aid, not an exact measurement!
         """
         seen: set[int] = set()
         usage: dict[str, int] = {
@@ -142,19 +146,19 @@ class Cache:
             "users": 0,
         }
 
-        usage["users"] = _deep_sizeof(dict(self.__users), seen)
+        usage["users"] = await _deep_sizeof(dict(self.__users), seen)
 
         guild_skip = frozenset({_SHARED_STATE_ATTR, *_GUILD_CACHE_ATTRS})
-        for guild in self.__guilds.values():
-            usage["guilds"] += _deep_sizeof(guild, seen, guild_skip)
-            usage["members"] += _deep_sizeof(guild._cache_members, seen)
-            usage["channels"] += _deep_sizeof(guild._cache_channels, seen)
-            usage["threads"] += _deep_sizeof(guild._cache_threads, seen)
-            usage["roles"] += _deep_sizeof(guild._cache_roles, seen)
-            usage["emojis"] += _deep_sizeof(guild._cache_emojis, seen)
-            usage["soundboard_sounds"] += _deep_sizeof(guild._cache_soundboard_sounds, seen)
-            usage["stickers"] += _deep_sizeof(guild._cache_stickers, seen)
-            usage["voice_states"] += _deep_sizeof(guild._cache_voice_states, seen)
+        for guild in list(self.__guilds.values()):
+            usage["guilds"] += await _deep_sizeof(guild, seen, guild_skip)
+            usage["members"] += await _deep_sizeof(guild._cache_members, seen)
+            usage["channels"] += await _deep_sizeof(guild._cache_channels, seen)
+            usage["threads"] += await _deep_sizeof(guild._cache_threads, seen)
+            usage["roles"] += await _deep_sizeof(guild._cache_roles, seen)
+            usage["emojis"] += await _deep_sizeof(guild._cache_emojis, seen)
+            usage["soundboard_sounds"] += await _deep_sizeof(guild._cache_soundboard_sounds, seen)
+            usage["stickers"] += await _deep_sizeof(guild._cache_stickers, seen)
+            usage["voice_states"] += await _deep_sizeof(guild._cache_voice_states, seen)
 
         usage["total"] = sum(usage.values())
         return usage
