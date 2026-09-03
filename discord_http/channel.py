@@ -14,7 +14,7 @@ from .errors import NotFound
 from .enums import (
     ChannelType, ResponseType, VideoQualityType,
     SortOrderType, ForumLayoutType, PrivacyLevelType,
-    InviteTargetType
+    InviteTargetType, PermissionType
 )
 from .file import File
 from .flags import PermissionOverwrite, ChannelFlags, Permissions, MessageFlags
@@ -1638,7 +1638,15 @@ class BaseChannel(PartialChannel):
         """ The bot's permissions in this channel, only available on resolved channels from an interaction. """
 
         self._raw_type: int = data["type"]
-        self._raw_overwrites: list[dict] = data.get("permission_overwrites", [])
+
+        # Stored as compact (id, type, allow, deny) int tuples rather than
+        # the raw API dicts (string keys + stringified bitfields) they came
+        # from, since every cached channel carries this around indefinitely
+        # and most are never inspected for their overwrites at all.
+        self._raw_overwrites: tuple[tuple[int, int, int, int], ...] = tuple(
+            (int(g["id"]), int(g["type"]), int(g["allow"]), int(g["deny"]))
+            for g in data.get("permission_overwrites", [])
+        )
         self._permission_overwrites: list[PermissionOverwrite] | None = None
 
     def __repr__(self) -> str:
@@ -1652,8 +1660,13 @@ class BaseChannel(PartialChannel):
         """ Shows the permission overwrites for the channel. """
         if self._permission_overwrites is None:
             self._permission_overwrites = [
-                PermissionOverwrite.from_dict(g)
-                for g in self._raw_overwrites
+                PermissionOverwrite(
+                    target=target_id,
+                    allow=Permissions(allow),
+                    deny=Permissions(deny),
+                    target_type=PermissionType(target_type)
+                )
+                for target_id, target_type, allow, deny in self._raw_overwrites
             ]
 
         return self._permission_overwrites
@@ -2111,7 +2124,6 @@ class PublicThread(BaseChannel):
     """ Represents a public thread channel object. """
 
     __slots__ = (
-        "_metadata",
         "archived",
         "auto_archive_duration",
         "channel_id",
@@ -2141,15 +2153,15 @@ class PublicThread(BaseChannel):
         self.total_message_sent: int = utils.get_int(data, "total_message_sent") or 0
         """ The total number of messages sent in the thread. """
 
-        self._metadata: dict = data.get("thread_metadata", {})
+        metadata: dict = data.get("thread_metadata", {})
 
-        self.locked: bool = self._metadata.get("locked", False)
+        self.locked: bool = metadata.get("locked", False)
         """ Whether the thread is locked. """
 
-        self.archived: bool = self._metadata.get("archived", False)
+        self.archived: bool = metadata.get("archived", False)
         """ Whether the thread is archived. """
 
-        self.auto_archive_duration: int = self._metadata.get("auto_archive_duration", 60)
+        self.auto_archive_duration: int = metadata.get("auto_archive_duration", 60)
         """ The duration in minutes to automatically archive the thread after recent activity. """
 
         self.channel_id: int = int(data["id"])
