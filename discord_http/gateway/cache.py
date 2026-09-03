@@ -1,3 +1,4 @@
+import sys
 import weakref
 
 from typing import TYPE_CHECKING
@@ -10,6 +11,8 @@ from ..voice import VoiceState, PartialVoiceState
 from .flags import GatewayCacheFlags
 
 if TYPE_CHECKING:
+    from collections.abc import Generator
+
     from ..channel import PartialChannel, PartialThread
     from ..client import Client
     from ..emoji import Emoji
@@ -23,6 +26,80 @@ if TYPE_CHECKING:
 __all__ = (
     "Cache",
 )
+
+_SHARED_STATE_ATTR = "_state"
+
+_GUILD_CACHE_ATTRS = (
+    "_cache_members",
+    "_cache_channels",
+    "_cache_threads",
+    "_cache_roles",
+    "_cache_emojis",
+    "_cache_soundboard_sounds",
+    "_cache_stickers",
+    "_cache_voice_states",
+)
+
+_IMMUTABLE_LEAF_TYPES = (str, bytes, int, float, bool, complex, type(None))
+
+
+def _iter_slots(cls: type) -> "Generator[str, None, None]":
+    """ Yield every `__slots__` name declared anywhere in a class' MRO, without duplicates. """
+    yielded: set[str] = set()
+    for klass in cls.__mro__:
+        slots = getattr(klass, "__slots__", ())
+        if isinstance(slots, str):
+            slots = (slots,)
+        for name in slots:
+            if name not in yielded:
+                yielded.add(name)
+                yield name
+
+
+def _deep_sizeof(
+    obj: object,
+    seen: set[int],
+    skip: frozenset[str] = frozenset({_SHARED_STATE_ATTR})
+) -> int:
+    """
+    Roughly estimate the total memory footprint of `obj`, in bytes.
+
+    Walks `__slots__`/`__dict__` and common containers recursively.
+    Objects are tracked by identity in `seen`, so anything already
+    counted is not counted again.
+    """
+    if obj is None or isinstance(obj, _IMMUTABLE_LEAF_TYPES):
+        return sys.getsizeof(obj)
+
+    oid = id(obj)
+    if oid in seen:
+        return 0
+    seen.add(oid)
+
+    size = sys.getsizeof(obj)
+
+    if isinstance(obj, (dict, weakref.WeakValueDictionary)):
+        for key, value in obj.items():
+            size += _deep_sizeof(key, seen, skip)
+            size += _deep_sizeof(value, seen, skip)
+        return size
+
+    if isinstance(obj, (list, tuple, set, frozenset)):
+        for value in obj:
+            size += _deep_sizeof(value, seen, skip)
+        return size
+
+    if getattr(type(obj), "__slots__", None) is not None:
+        for name in _iter_slots(type(obj)):
+            if name in skip or name in ("__dict__", "__weakref__"):
+                continue
+            value = getattr(obj, name, None)
+            if value is not None:
+                size += _deep_sizeof(value, seen, skip)
+    elif hasattr(obj, "__dict__"):
+        size += _deep_sizeof(obj.__dict__, seen, skip)
+
+    return size
 
 
 class Cache:
@@ -43,6 +120,44 @@ class Cache:
 
         self.__guilds: dict[int, "PartialGuild | Guild"] = {}
         self.__users: "weakref.WeakValueDictionary[int, User]" = weakref.WeakValueDictionary()
+
+    def calculate_memory_usage(self) -> dict[str, int]:
+        """
+        Roughly estimate how much memory the cache is currently using.
+
+        This is a debugging aid, not an exact measurement.
+        Mostly returns a breakdown in bytes per cache category, plus a "total" key.
+        """
+        seen: set[int] = set()
+        usage: dict[str, int] = {
+            "guilds": 0,
+            "members": 0,
+            "channels": 0,
+            "threads": 0,
+            "roles": 0,
+            "emojis": 0,
+            "soundboard_sounds": 0,
+            "stickers": 0,
+            "voice_states": 0,
+            "users": 0,
+        }
+
+        usage["users"] = _deep_sizeof(dict(self.__users), seen)
+
+        guild_skip = frozenset({_SHARED_STATE_ATTR, *_GUILD_CACHE_ATTRS})
+        for guild in self.__guilds.values():
+            usage["guilds"] += _deep_sizeof(guild, seen, guild_skip)
+            usage["members"] += _deep_sizeof(guild._cache_members, seen)
+            usage["channels"] += _deep_sizeof(guild._cache_channels, seen)
+            usage["threads"] += _deep_sizeof(guild._cache_threads, seen)
+            usage["roles"] += _deep_sizeof(guild._cache_roles, seen)
+            usage["emojis"] += _deep_sizeof(guild._cache_emojis, seen)
+            usage["soundboard_sounds"] += _deep_sizeof(guild._cache_soundboard_sounds, seen)
+            usage["stickers"] += _deep_sizeof(guild._cache_stickers, seen)
+            usage["voice_states"] += _deep_sizeof(guild._cache_voice_states, seen)
+
+        usage["total"] = sum(usage.values())
+        return usage
 
     def get_user(self, user_id: int | None) -> "User | None":
         """ Returns the shared, deduplicated user from the cache if it exists. """
