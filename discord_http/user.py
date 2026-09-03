@@ -452,6 +452,7 @@ class User(PartialUser):
     """ Represents a user object. """
 
     __slots__ = (
+        "__weakref__",
         "accent_colour",
         "avatar",
         "avatar_decoration",
@@ -627,6 +628,13 @@ class User(PartialUser):
     def is_default_avatar(self) -> bool:
         """ Returns whether the user has a default avatar. """
         return self.avatar is None
+
+    def _copy_from(self, other: "User") -> None:
+        """ Refreshes this user's fields in place from another (freshly parsed) User instance. """
+        for attr in User.__slots__:
+            if attr == "__weakref__":
+                continue
+            setattr(self, attr, getattr(other, attr))
 
 
 class TeamMember(PartialBase):

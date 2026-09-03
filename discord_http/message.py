@@ -1801,6 +1801,9 @@ class Message(PartialMessage):
                 ),
             )
 
+        cache = self._state.cache
+        dedupe = cache if cache is not None and cache._user_dedup_enabled else None
+
         if member := data.get("member"):
             from .member import Member
 
@@ -1812,8 +1815,12 @@ class Message(PartialMessage):
                 guild=self.guild,  # type: ignore
                 data=member
             )
+            if dedupe is not None:
+                dedupe._dedupe_user(self.author)
         else:
             self.author = User(state=self._state, data=data["author"])
+            if dedupe is not None:
+                self.author = dedupe._dedupe_plain_user(self.author)
 
         if mentions := data.get("mentions"):
             from .member import Member
@@ -1823,18 +1830,20 @@ class Message(PartialMessage):
                     # This is only done through the gateway
                     fake_member = m["member"]
                     fake_member["user"] = m
-                    self.mentions.append(
-                        Member(
-                            state=self._state,
-                            guild=self.guild,  # type: ignore
-                            data=fake_member
-                        )
+                    mention_member = Member(
+                        state=self._state,
+                        guild=self.guild,  # type: ignore
+                        data=fake_member
                     )
+                    if dedupe is not None:
+                        dedupe._dedupe_user(mention_member)
+                    self.mentions.append(mention_member)
 
                 else:
-                    self.mentions.append(
-                        User(state=self._state, data=m)
-                    )
+                    mention_user = User(state=self._state, data=m)
+                    if dedupe is not None:
+                        mention_user = dedupe._dedupe_plain_user(mention_user)
+                    self.mentions.append(mention_user)
 
     def is_system(self) -> bool:
         """ Returns whether the message is a system message. """

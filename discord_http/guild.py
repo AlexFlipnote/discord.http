@@ -1273,14 +1273,12 @@ class PartialGuild(PartialBase):
         if data.get("members"):
             if GatewayCacheFlags.members in flags:
                 from .member import Member
-                self._cache_members = {
-                    int(g["user"]["id"]): Member(
-                        state=self._state,
-                        guild=self,
-                        data=g
-                    )
-                    for g in data["members"]
-                }
+                cache = self._state.bot.cache
+                self._cache_members = {}
+                for g in data["members"]:
+                    member = Member(state=self._state, guild=self, data=g)
+                    cache._dedupe_user(member)
+                    self._cache_members[member.id] = member
             elif GatewayCacheFlags.partial_members in flags:
                 self._cache_members = {
                     int(g["user"]["id"]): self._state.bot.get_partial_member(
@@ -1292,51 +1290,71 @@ class PartialGuild(PartialBase):
             else:
                 # Still cache the only member which is the bot
                 from .member import Member
-                self._cache_members = {
-                    int(g["user"]["id"]): Member(
+                cache = self._state.bot.cache
+                self._cache_members = {}
+                for g in data["members"]:
+                    if int(g["user"]["id"]) != self._state.bot.user.id:
+                        continue
+                    member = Member(state=self._state, guild=self, data=g)
+                    cache._dedupe_user(member)
+                    self._cache_members[member.id] = member
+
+        if data.get("roles"):
+            if GatewayCacheFlags.roles in flags:
+                self._cache_roles = {
+                    int(g["id"]): Role(
                         state=self._state,
                         guild=self,
                         data=g
                     )
-                    for g in data["members"]
-                    if int(g["user"]["id"]) == self._state.bot.user.id
+                    for g in data["roles"]
                 }
-
-        if data.get("roles"):
-            if GatewayCacheFlags.roles in flags:
-                pass
             elif GatewayCacheFlags.partial_roles in flags:
                 self._cache_roles = {
-                    k: self._state.bot.get_partial_role(
-                        v.id, guild_id
+                    int(g["id"]): self._state.bot.get_partial_role(
+                        int(g["id"]), guild_id
                     )
-                    for k, v in dict(self._cache_roles).items()
+                    for g in data["roles"]
                 }
             else:
                 self._cache_roles = {}
 
         if data.get("emojis"):
             if GatewayCacheFlags.emojis in flags:
-                pass
+                self._cache_emojis = {
+                    int(g["id"]): Emoji(
+                        state=self._state,
+                        guild=self,
+                        data=g
+                    )
+                    for g in data["emojis"]
+                }
             elif GatewayCacheFlags.partial_emojis in flags:
                 self._cache_emojis = {
-                    k: self._state.bot.get_partial_emoji(
-                        v.id, guild_id=guild_id
+                    int(g["id"]): self._state.bot.get_partial_emoji(
+                        int(g["id"]), guild_id=guild_id
                     )
-                    for k, v in dict(self._cache_emojis).items()
+                    for g in data["emojis"]
                 }
             else:
                 self._cache_emojis = {}
 
         if data.get("stickers"):
             if GatewayCacheFlags.stickers in flags:
-                pass
+                self._cache_stickers = {
+                    int(g["id"]): Sticker(
+                        state=self._state,
+                        guild=self,
+                        data=g
+                    )
+                    for g in data["stickers"]
+                }
             elif GatewayCacheFlags.partial_stickers in flags:
                 self._cache_stickers = {
-                    k: self._state.bot.get_partial_sticker(
-                        v.id, guild_id=guild_id
+                    int(g["id"]): self._state.bot.get_partial_sticker(
+                        int(g["id"]), guild_id=guild_id
                     )
-                    for k, v in dict(self._cache_stickers).items()
+                    for g in data["stickers"]
                 }
             else:
                 self._cache_stickers = {}
@@ -1369,14 +1387,7 @@ class PartialGuild(PartialBase):
                     int(g["user_id"]): VoiceState(
                         state=self._state,
                         data=g,
-                        guild=self,
-                        channel=(
-                            self.get_channel(int(g["channel_id"])) or
-                            self._state.bot.get_partial_channel(
-                                int(g["channel_id"]),
-                                guild_id=guild_id
-                            )
-                        )
+                        guild_id=guild_id
                     )
                     for g in data["voice_states"]
                 }

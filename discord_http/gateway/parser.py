@@ -1584,14 +1584,7 @@ class Parser:
         -------
             The voice state and the voice state.
         """
-        channel = None
         guild = None
-
-        if data.get("channel_id") is not None:
-            channel = self._get_channel_or_partial(
-                int(data["channel_id"]),
-                guild_id=utils.get_int(data, "guild_id")
-            )
 
         if data.get("guild_id") is not None:
             guild = self._get_guild_or_partial(int(data["guild_id"]))
@@ -1603,9 +1596,7 @@ class Parser:
 
         vs = VoiceState(
             state=self.bot.state,
-            data=data,
-            guild=guild,
-            channel=channel
+            data=data
         )
 
         self.bot.cache.update_voice_state(vs)

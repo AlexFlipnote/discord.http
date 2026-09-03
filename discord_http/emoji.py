@@ -10,7 +10,7 @@ from .role import PartialRole
 if TYPE_CHECKING:
     from .guild import Guild, PartialGuild
     from .http import DiscordAPI
-    from .user import User
+    from .user import PartialUser
 
 MISSING = utils.MISSING
 
@@ -360,7 +360,7 @@ class Emoji(PartialEmoji):
         self.managed: bool = data.get("managed", False)
         """ Whether the emoji is managed by an integration or not. """
 
-        self.user: "User | None" = None
+        self.user: "PartialUser | None" = None
         """ The user that created the emoji, if available. """
 
         self.roles: list[PartialRole] = [
@@ -379,8 +379,8 @@ class Emoji(PartialEmoji):
 
     def _from_data(self, data: dict) -> None:
         if user := data.get("user"):
-            from .user import User
-            self.user = User(state=self._state, data=user)
+            from .user import PartialUser
+            self.user = PartialUser(state=self._state, id=int(user["id"]))
 
     @property
     def url(self) -> str:

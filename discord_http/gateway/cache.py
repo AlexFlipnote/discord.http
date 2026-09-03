@@ -1,6 +1,10 @@
+import weakref
+
 from typing import TYPE_CHECKING
 
 from ..channel import BaseChannel
+from ..member import Member
+from ..user import User
 from ..voice import VoiceState, PartialVoiceState
 
 from .flags import GatewayCacheFlags
@@ -10,7 +14,7 @@ if TYPE_CHECKING:
     from ..client import Client
     from ..emoji import Emoji
     from ..guild import PartialGuild, Guild
-    from ..member import PartialMember, Member
+    from ..member import PartialMember
     from ..role import PartialRole, Role
     from ..sticker import Sticker
 
@@ -24,7 +28,7 @@ __all__ = (
 class Cache:
     """ Represents the discord.http/gateway cache. """
 
-    __slots__ = ("__guilds", "_state", "bot", "cache_flags")
+    __slots__ = ("__guilds", "__users", "_state", "bot", "cache_flags")
 
     def __init__(
         self,
@@ -38,6 +42,42 @@ class Cache:
         """ The cache flags that determine what is cached. """
 
         self.__guilds: dict[int, "PartialGuild | Guild"] = {}
+        self.__users: "weakref.WeakValueDictionary[int, User]" = weakref.WeakValueDictionary()
+
+    def get_user(self, user_id: int | None) -> "User | None":
+        """ Returns the shared, deduplicated user from the cache if it exists. """
+        if user_id is None:
+            return None
+        return self.__users.get(user_id)
+
+    @property
+    def _user_dedup_enabled(self) -> bool:
+        """ Whether it's worth touching the shared user table at all right now. """
+        if self.cache_flags is None:
+            return False
+
+        return (
+            GatewayCacheFlags.members in self.cache_flags or
+            GatewayCacheFlags.partial_members in self.cache_flags
+        )
+
+    def _dedupe_plain_user(self, user: "User") -> "User":
+        """ Reuse or register the shared canonical `User` for this ID. """
+        canonical = self.__users.get(user.id)
+        if canonical is not None and canonical is not user:
+            canonical._copy_from(user)
+            return canonical
+
+        self.__users[user.id] = user
+        return user
+
+    def _dedupe_user(self, member: "Member") -> None:
+        """ Point a member's embedded user at the shared canonical `User` instance for that ID. """
+        user = getattr(member, "_user", None)
+        if not isinstance(user, User):
+            return
+
+        member._user = self._dedupe_plain_user(user)
 
     @property
     def guilds(self) -> list["PartialGuild | Guild"]:
@@ -189,6 +229,8 @@ class Cache:
             guild.member_count += 1
 
         if GatewayCacheFlags.members in self.cache_flags:
+            if isinstance(member, Member):
+                self._dedupe_user(member)
             guild._cache_members[member.id] = member
         elif GatewayCacheFlags.partial_members in self.cache_flags:
             guild._cache_members[member.id] = self.bot.get_partial_member(
@@ -197,6 +239,8 @@ class Cache:
         else:
             # Cache bot regardless of cache flags
             if member.id == self.bot.user.id:
+                if isinstance(member, Member):
+                    self._dedupe_user(member)
                 guild._cache_members[member.id] = member
 
     def update_member(self, member: "Member | PartialMember") -> None:

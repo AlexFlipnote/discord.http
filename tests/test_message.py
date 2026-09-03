@@ -4,7 +4,7 @@ from discord_http import Message, PartialUser
 
 
 class FakeState:
-    pass
+    cache = None
 
 
 def _message_data(**overrides):

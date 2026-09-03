@@ -40,7 +40,6 @@ class PartialMember(PartialBase):
 
     __slots__ = (
         "_state",
-        "_user",
         "guild_id",
         "presence",
     )
@@ -51,12 +50,9 @@ class PartialMember(PartialBase):
         state: "DiscordAPI",
         id: int,  # ruff: ignore[builtin-argument-shadowing]
         guild_id: int,
-        user: "PartialUser | None" = None
     ):
         super().__init__(id=int(id))
         self._state = state
-
-        self._user = user if user is not None else PartialUser(state=state, id=self.id)
 
         self.guild_id: int = int(guild_id)
         """ The ID of the guild the member belongs to. """
@@ -69,6 +65,17 @@ class PartialMember(PartialBase):
 
     def __str__(self) -> str:
         return "PartialMember"
+
+    @property
+    def _user(self) -> "PartialUser | User":
+        """ The (partial) user behind this member. """
+        cache = self._state.cache
+        if cache is not None:
+            cached = cache.get_user(self.id)
+            if cached is not None:
+                return cached
+
+        return PartialUser(state=self._state, id=self.id)
 
     def _update_presence(self, obj: "Presence | None") -> None:
         self.presence = obj
@@ -435,6 +442,7 @@ class Member(PartialMember):
 
     __slots__ = (
         "_raw_permissions",
+        "_user",
         "avatar",
         "avatar_decoration",
         "banner",
@@ -463,10 +471,10 @@ class Member(PartialMember):
             state=state,
             id=real_user.id,
             guild_id=guild.id,
-            user=real_user,
         )
 
         self._user: User = real_user
+        """ The user behind this member. """
 
         self._raw_permissions: int | None = utils.get_int(data, "permissions")
 

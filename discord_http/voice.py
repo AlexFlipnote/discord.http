@@ -75,16 +75,10 @@ class PartialVoiceState(PartialBase):
             f"/guilds/{self.guild_id}/voice-states/{self.id}"
         )
 
-        guild = self._state.cache.get_guild(self.guild_id)
-        channel = None
-        if self.channel_id is not None:
-            channel = self._state.cache.get_channel(self.guild_id, self.channel_id)
-
         return VoiceState(
             state=self._state,
             data=r.response,
-            guild=guild,
-            channel=channel
+            guild_id=self.guild_id
         )
 
     async def edit(
@@ -120,10 +114,8 @@ class VoiceState(PartialVoiceState):
     """ Represents a voice state object. """
 
     __slots__ = (
-        "channel",
+        "_member_data",
         "deaf",
-        "guild",
-        "member",
         "mute",
         "request_to_speak_timestamp",
         "self_deaf",
@@ -140,13 +132,12 @@ class VoiceState(PartialVoiceState):
         *,
         state: "DiscordAPI",
         data: dict,
-        guild: "PartialGuild | None",
-        channel: "BaseChannel | PartialChannel | None"
+        guild_id: int | None = None,
     ):
         super().__init__(
             state=state,
             id=int(data["user_id"]),
-            guild_id=utils.get_int(data, "guild_id"),
+            guild_id=utils.get_int(data, "guild_id") or guild_id,
             channel_id=utils.get_int(data, "channel_id")
         )
 
@@ -156,14 +147,7 @@ class VoiceState(PartialVoiceState):
         self.user: PartialUser = PartialUser(state=state, id=int(data["user_id"]))
         """ The user this voice state belongs to. """
 
-        self.member: "Member | None" = None
-        """ The member this voice state belongs to, if any. """
-
-        self.channel: "BaseChannel | PartialChannel | None" = channel
-        """ The voice channel this user is in, if any. """
-
-        self.guild: "PartialGuild | None" = guild
-        """ The guild this voice state is in, if any. """
+        self._member_data: dict | None = data.get("member")
 
         self.deaf: bool = data["deaf"]
         """ Whether the user is deafened by the server. """
@@ -195,15 +179,68 @@ class VoiceState(PartialVoiceState):
         return f"<VoiceState id={self.user} session_id='{self.session_id}'>"
 
     def _from_data(self, data: dict) -> None:
-        if self.guild and (member := data.get("member")):
-            from .member import Member
-            self.member = Member(
-                state=self._state,
-                guild=self.guild,
-                data=member
-            )
-
         if rts_timestamp := data.get("request_to_speak_timestamp"):
             self.request_to_speak_timestamp = utils.parse_time(
                 rts_timestamp
             )
+
+    @property
+    def guild(self) -> "PartialGuild | None":
+        """ The guild this voice state is in, if any. Resolved live from cache. """
+        if self.guild_id is None:
+            return None
+
+        cache = self._state.cache.get_guild(self.guild_id)
+        if cache:
+            return cache
+
+        from .guild import PartialGuild
+        return PartialGuild(state=self._state, id=self.guild_id)
+
+    @property
+    def channel(self) -> "BaseChannel | PartialChannel | None":
+        """ The voice channel this user is in, if any. Resolved live from cache. """
+        if self.channel_id is None:
+            return None
+
+        if self.guild_id is not None:
+            cache = self._state.cache.get_channel(self.guild_id, self.channel_id)
+            if cache:
+                return cache
+
+        from .channel import PartialChannel
+        return PartialChannel(state=self._state, id=self.channel_id, guild_id=self.guild_id)
+
+    @property
+    def member(self) -> "Member | None":
+        """
+        The member this voice state belongs to, if any.
+
+        Prefers an already-cached `Member` for this guild (so this doesn't
+        hold its own separate copy of member/user data), falling back to
+        building one from the voice state payload if not cached.
+        """
+        guild = self.guild
+        if guild is None:
+            return None
+
+        from .member import Member
+
+        cached_member = guild.get_member(self.id)
+        if isinstance(cached_member, Member):
+            return cached_member
+
+        if self._member_data is None:
+            return None
+
+        built = Member(
+            state=self._state,
+            guild=guild,
+            data=self._member_data
+        )
+
+        cache = self._state.cache
+        if cache is not None and cache._user_dedup_enabled:
+            cache._dedupe_user(built)
+
+        return built
