@@ -1,6 +1,7 @@
 # flake8: noqa: E731
 import asyncio
 import builtins
+import itertools
 import time
 
 from collections.abc import AsyncIterator, Callable, Generator
@@ -2340,6 +2341,24 @@ class ForumTag:
 
         return self
 
+    @classmethod
+    def _from_compact(
+        cls,
+        id_: int | None,
+        name: str,
+        moderated: bool,
+        emoji_id: int | None,
+        emoji_name: str | None
+    ) -> Self:
+        """ Build a tag from the compact tuple form `ForumChannel` caches it as. """
+        self = cls.__new__(cls)
+        self.id = id_
+        self.name = name
+        self.moderated = moderated
+        self.emoji_id = emoji_id
+        self.emoji_name = emoji_name
+        return self
+
 
 class ForumChannel(PublicThread):
     """ Represents a forum channel object. """
@@ -2355,7 +2374,16 @@ class ForumChannel(PublicThread):
         self.default_reaction_emoji: EmojiParser | None = None
         """ The default reaction emoji for the forum channel. """
 
-        self._raw_tags: list[dict] = data.get("available_tags", [])
+        self._raw_tags: tuple[tuple[int | None, str, bool, int | None, str | None], ...] = tuple(
+            (
+                utils.get_int(g, "id"),
+                g["name"],
+                g.get("moderated", False),
+                utils.get_int(g, "emoji_id"),
+                g.get("emoji_name"),
+            )
+            for g in data.get("available_tags", [])
+        )
         self._tags: list[ForumTag] | None = None
 
         self._from_data(data)
@@ -2382,7 +2410,7 @@ class ForumChannel(PublicThread):
     def tags(self) -> list[ForumTag]:
         """ The available tags for the forum channel. """
         if self._tags is None:
-            self._tags = [ForumTag(data=g) for g in self._raw_tags]
+            self._tags = list(itertools.starmap(ForumTag._from_compact, self._raw_tags))
         return self._tags
 
 

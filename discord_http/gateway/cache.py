@@ -78,6 +78,9 @@ async def _deep_sizeof(
             total += sys.getsizeof(obj)
             continue
 
+        if isinstance(obj, type):
+            continue
+
         oid = id(obj)
         if oid in seen:
             continue
