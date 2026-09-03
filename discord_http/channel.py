@@ -1583,10 +1583,9 @@ class BaseChannel(PartialChannel):
     """ Represents a base channel object. """
 
     __slots__ = (
-        "_permission_overwrites",
+        "_raw_app_permissions",
+        "_raw_flags",
         "_raw_overwrites",
-        "app_permissions",
-        "flags",
         "last_message_id",
         "name",
         "nsfw",
@@ -1629,26 +1628,20 @@ class BaseChannel(PartialChannel):
         self.rate_limit_per_user: int = data.get("rate_limit_per_user", 0)
         """ The rate limit per user in seconds. """
 
-        self.flags: ChannelFlags = ChannelFlags(data.get("flags", 0))
-        """ The flags of the channel. """
+        self._raw_flags: int = data.get("flags", 0)
 
-        self.app_permissions: Permissions | None = (
-            Permissions(int(data["app_permissions"]))
+        self._raw_app_permissions: int | None = (
+            int(data["app_permissions"])
             if "app_permissions" in data else None
         )
-        """ The bot's permissions in this channel, only available on resolved channels from an interaction. """
 
         self._raw_type: int = data["type"]
 
-        # Stored as compact (id, type, allow, deny) int tuples rather than
-        # the raw API dicts (string keys + stringified bitfields) they came
-        # from, since every cached channel carries this around indefinitely
-        # and most are never inspected for their overwrites at all.
+        # Stored as compact int tuples (id, type, allow, deny)
         self._raw_overwrites: tuple[tuple[int, int, int, int], ...] = tuple(
             (int(g["id"]), int(g["type"]), int(g["allow"]), int(g["deny"]))
             for g in data.get("permission_overwrites", [])
         )
-        self._permission_overwrites: list[PermissionOverwrite] | None = None
 
     def __repr__(self) -> str:
         return f"<Channel id={self.id} name='{self.name}'>"
@@ -1659,18 +1652,27 @@ class BaseChannel(PartialChannel):
     @property
     def permission_overwrites(self) -> list[PermissionOverwrite]:
         """ Shows the permission overwrites for the channel. """
-        if self._permission_overwrites is None:
-            self._permission_overwrites = [
-                PermissionOverwrite(
-                    target=target_id,
-                    allow=Permissions(allow),
-                    deny=Permissions(deny),
-                    target_type=PermissionType(target_type)
-                )
-                for target_id, target_type, allow, deny in self._raw_overwrites
-            ]
+        return [
+            PermissionOverwrite(
+                target=target_id,
+                allow=Permissions(allow),
+                deny=Permissions(deny),
+                target_type=PermissionType(target_type)
+            )
+            for target_id, target_type, allow, deny in self._raw_overwrites
+        ]
 
-        return self._permission_overwrites
+    @property
+    def flags(self) -> ChannelFlags:
+        """ The flags of the channel. """
+        return ChannelFlags(self._raw_flags)
+
+    @property
+    def app_permissions(self) -> Permissions | None:
+        """ The bot's permissions in this channel, only available on resolved channels from an interaction. """
+        if self._raw_app_permissions is None:
+            return None
+        return Permissions(self._raw_app_permissions)
 
     @property
     def mention(self) -> str:
@@ -2365,7 +2367,6 @@ class ForumChannel(PublicThread):
 
     __slots__ = (
         "_raw_tags",
-        "_tags",
         "default_reaction_emoji",
     )
 
@@ -2384,7 +2385,6 @@ class ForumChannel(PublicThread):
             )
             for g in data.get("available_tags", [])
         )
-        self._tags: list[ForumTag] | None = None
 
         self._from_data(data)
 
@@ -2409,9 +2409,7 @@ class ForumChannel(PublicThread):
     @property
     def tags(self) -> list[ForumTag]:
         """ The available tags for the forum channel. """
-        if self._tags is None:
-            self._tags = list(itertools.starmap(ForumTag._from_compact, self._raw_tags))
-        return self._tags
+        return list(itertools.starmap(ForumTag._from_compact, self._raw_tags))
 
 
 class ForumThread(PublicThread):

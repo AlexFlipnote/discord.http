@@ -1,6 +1,6 @@
 import sys
 
-from typing import TYPE_CHECKING, Any
+from typing import TYPE_CHECKING, Any, NamedTuple
 
 from . import utils
 from .asset import Asset
@@ -448,24 +448,29 @@ class PartialUser(PartialBase):
         )
 
 
+class _UserExtra(NamedTuple):
+    """ Raw values for the fields most users don't have set at all. """
+    banner: str | None
+    accent_colour: int | None
+    banner_colour: str | None
+    avatar_decoration: dict | None
+    nameplate: dict | None
+    name_style: dict | None
+    primary_guild: dict | None
+
+
 class User(PartialUser):
     """ Represents a user object. """
 
     __slots__ = (
         "__weakref__",
-        "accent_colour",
-        "avatar",
-        "avatar_decoration",
-        "banner",
-        "banner_colour",
+        "_extra",
+        "_raw_avatar",
+        "_raw_public_flags",
         "bot",
         "discriminator",
         "global_name",
         "name",
-        "name_style",
-        "nameplate",
-        "primary_guild",
-        "public_flags",
         "system",
         "verified",
     )
@@ -477,12 +482,6 @@ class User(PartialUser):
         data: dict
     ):
         super().__init__(state=state, id=int(data["id"]))
-
-        self.avatar: Asset | None = None
-        """ The avatar of the user, if any. """
-
-        self.banner: Asset | None = None
-        """ The banner of the user, if any. """
 
         self.name: str = sys.intern(data["username"])
         """ The name of the user. """
@@ -504,29 +503,8 @@ class User(PartialUser):
             # Instead of showing "0", just make it None....
             self.discriminator = None
 
-        self.accent_colour: Colour | None = None
-        """ The accent colour of the user, if any. """
-
-        self.banner_colour: Colour | None = None
-        """ The banner colour of the user, if any. """
-
         self.global_name: str | None = sys.intern(g) if (g := data.get("global_name")) else None
         """ The global name of the user, if any. """
-
-        self.public_flags: UserFlags | None = None
-        """ The public flags of the user, if any. """
-
-        self.primary_guild: PrimaryGuild | None = None
-        """ The primary guild of the user (aka. clan), if any. """
-
-        self.avatar_decoration: AvatarDecoration | None = None
-        """ The avatar decoration of the member, if available. """
-
-        self.nameplate: Nameplate | None = None
-        """ The nameplate of the member, if available. """
-
-        self.name_style: DisplayNameStyles | None = None
-        """ The display name style of the user, if any. """
 
         self._from_data(data)
 
@@ -544,46 +522,89 @@ class User(PartialUser):
     def _from_data(self, data: dict) -> None:
         collectibles = data.get("collectibles", {}) or {}  # Fallback if None
 
-        if avatar := data.get("avatar"):
-            self.avatar = Asset._from_avatar(
-                self._state, self.id, avatar
-            )
+        self._raw_avatar: str | None = data.get("avatar")
+        self._raw_public_flags: int | None = data.get("public_flags")
 
-        if primary_guild := data.get("primary_guild"):
-            self.primary_guild = PrimaryGuild(
-                state=self._state,
-                data=primary_guild
-            )
+        extra = _UserExtra(
+            banner=data.get("banner"),
+            accent_colour=data.get("accent_color"),
+            banner_colour=data.get("banner_color"),
+            avatar_decoration=data.get("avatar_decoration_data"),
+            nameplate=collectibles.get("nameplate"),
+            name_style=data.get("display_name_styles"),
+            primary_guild=data.get("primary_guild"),
+        )
+        self._extra: _UserExtra | None = extra if any(extra) else None
 
-        if display_name_styles := data.get("display_name_styles"):
-            self.name_style = DisplayNameStyles(
-                data=display_name_styles
-            )
+    @property
+    def avatar(self) -> Asset | None:
+        """ The avatar of the user, if any. """
+        if not self._raw_avatar:
+            return None
+        return Asset._from_avatar(self._state, self.id, self._raw_avatar)
 
-        if banner := data.get("banner"):
-            self.banner = Asset._from_banner(
-                self._state, self.id, banner
-            )
+    @property
+    def public_flags(self) -> UserFlags | None:
+        """ The public flags of the user, if any. """
+        if not self._raw_public_flags:
+            return None
+        return UserFlags(self._raw_public_flags)
 
-        if accent_color := data.get("accent_color"):
-            self.accent_colour = Colour(accent_color)
+    @property
+    def banner(self) -> Asset | None:
+        """ The banner of the user, if any. """
+        banner = self._extra.banner if self._extra else None
+        if not banner:
+            return None
+        return Asset._from_banner(self._state, self.id, banner)
 
-        if banner_color := data.get("banner_color"):
-            self.banner_colour = Colour.from_hex(banner_color)
+    @property
+    def accent_colour(self) -> Colour | None:
+        """ The accent colour of the user, if any. """
+        accent_colour = self._extra.accent_colour if self._extra else None
+        if not accent_colour:
+            return None
+        return Colour(accent_colour)
 
-        if avatar_decoration_data := data.get("avatar_decoration_data"):
-            self.avatar_decoration = AvatarDecoration(
-                self._state, avatar_decoration_data
-            )
+    @property
+    def banner_colour(self) -> Colour | None:
+        """ The banner colour of the user, if any. """
+        banner_colour = self._extra.banner_colour if self._extra else None
+        if not banner_colour:
+            return None
+        return Colour.from_hex(banner_colour)
 
-        if nameplate := collectibles.get("nameplate"):
-            self.nameplate = Nameplate(
-                state=self._state,
-                data=nameplate
-            )
+    @property
+    def avatar_decoration(self) -> AvatarDecoration | None:
+        """ The avatar decoration of the member, if available. """
+        avatar_decoration = self._extra.avatar_decoration if self._extra else None
+        if not avatar_decoration:
+            return None
+        return AvatarDecoration(self._state, avatar_decoration)
 
-        if public_flags := data.get("public_flags"):
-            self.public_flags = UserFlags(public_flags)
+    @property
+    def nameplate(self) -> Nameplate | None:
+        """ The nameplate of the member, if available. """
+        nameplate = self._extra.nameplate if self._extra else None
+        if not nameplate:
+            return None
+        return Nameplate(state=self._state, data=nameplate)
+
+    @property
+    def name_style(self) -> DisplayNameStyles | None:
+        """ The display name style of the user, if any. """
+        name_style = self._extra.name_style if self._extra else None
+        if not name_style:
+            return None
+        return DisplayNameStyles(data=name_style)
+
+    @property
+    def primary_guild(self) -> PrimaryGuild | None:
+        """ The primary guild of the user (aka. clan), if any. """
+        primary_guild = self._extra.primary_guild if self._extra else None
+        if not primary_guild:
+            return None
+        return PrimaryGuild(state=self._state, data=primary_guild)
 
     @property
     def global_avatar(self) -> Asset | None:

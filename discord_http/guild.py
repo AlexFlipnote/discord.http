@@ -420,9 +420,9 @@ class GuildPreview(PartialBase):
     """ Represents a preview of a guild, including ones the bot may not be in. """
 
     __slots__ = (
-        "_discovery_splash",
-        "_icon",
-        "_splash",
+        "_raw_discovery_splash",
+        "_raw_icon",
+        "_raw_splash",
         "_state",
         "approximate_member_count",
         "approximate_presence_count",
@@ -440,9 +440,9 @@ class GuildPreview(PartialBase):
         self.name: str = data["name"]
         """ The name of the guild. """
 
-        self._icon: str | None = data.get("icon")
-        self._splash: str | None = data.get("splash")
-        self._discovery_splash: str | None = data.get("discovery_splash")
+        self._raw_icon: str | None = data.get("icon")
+        self._raw_splash: str | None = data.get("splash")
+        self._raw_discovery_splash: str | None = data.get("discovery_splash")
 
         self.features: list[str] = data.get("features", [])
         """ The features of the guild. """
@@ -479,24 +479,24 @@ class GuildPreview(PartialBase):
     @property
     def icon(self) -> Asset | None:
         """ The guild's icon. """
-        if self._icon is None:
+        if self._raw_icon is None:
             return None
-        return Asset._from_guild_image(self._state, self.id, self._icon, path="icons")
+        return Asset._from_guild_image(self._state, self.id, self._raw_icon, path="icons")
 
     @property
     def splash(self) -> Asset | None:
         """ The guild's invite splash. """
-        if self._splash is None:
+        if self._raw_splash is None:
             return None
-        return Asset._from_guild_image(self._state, self.id, self._splash, path="splashes")
+        return Asset._from_guild_image(self._state, self.id, self._raw_splash, path="splashes")
 
     @property
     def discovery_splash(self) -> Asset | None:
         """ The guild's discovery splash. """
-        if self._discovery_splash is None:
+        if self._raw_discovery_splash is None:
             return None
         return Asset._from_guild_image(
-            self._state, self.id, self._discovery_splash, path="discovery-splashes"
+            self._state, self.id, self._raw_discovery_splash, path="discovery-splashes"
         )
 
 
@@ -4147,10 +4147,10 @@ class Guild(PartialGuild):
     """ Represents a guild (server) in Discord. """
 
     __slots__ = (
-        "_banner",
-        "_discovery_splash",
-        "_icon",
-        "_splash",
+        "_raw_banner",
+        "_raw_discovery_splash",
+        "_raw_icon",
+        "_raw_splash",
         "afk_channel_id",
         "afk_timeout",
         "application_id",
@@ -4217,10 +4217,10 @@ class Guild(PartialGuild):
         self.description: str | None = data.get("description")
         """ The description of the guild. """
 
-        self._icon: str | None = data.get("icon")
-        self._banner: str | None = data.get("banner")
-        self._splash: str | None = data.get("splash")
-        self._discovery_splash: str | None = data.get("discovery_splash")
+        self._raw_icon: str | None = data.get("icon")
+        self._raw_banner: str | None = data.get("banner")
+        self._raw_splash: str | None = data.get("splash")
+        self._raw_discovery_splash: str | None = data.get("discovery_splash")
 
         self.explicit_content_filter: int = data.get("explicit_content_filter", 0)
         """ The explicit content filter level of the guild. """
@@ -4351,10 +4351,10 @@ class Guild(PartialGuild):
 
     def _update(self, data: dict) -> None:
         """ Update the guild from the data. """
-        self._icon = data.get("icon")
-        self._banner = data.get("banner")
-        self._splash = data.get("splash")
-        self._discovery_splash = data.get("discovery_splash")
+        self._raw_icon = data.get("icon")
+        self._raw_banner = data.get("banner")
+        self._raw_splash = data.get("splash")
+        self._raw_discovery_splash = data.get("discovery_splash")
 
         self.afk_channel_id: int | None = utils.get_int(data, "afk_channel_id")
         self.afk_timeout: int = data.get("afk_timeout", 0)
@@ -4429,30 +4429,30 @@ class Guild(PartialGuild):
     @property
     def icon(self) -> Asset | None:
         """ The guild's icon. """
-        if self._icon is None:
+        if self._raw_icon is None:
             return None
-        return Asset._from_guild_image(self._state, self.id, self._icon, path="icons")
+        return Asset._from_guild_image(self._state, self.id, self._raw_icon, path="icons")
 
     @property
     def banner(self) -> Asset | None:
         """ The guild's banner. """
-        if self._banner is None:
+        if self._raw_banner is None:
             return None
-        return Asset._from_guild_image(self._state, self.id, self._banner, path="banners")
+        return Asset._from_guild_image(self._state, self.id, self._raw_banner, path="banners")
 
     @property
     def splash(self) -> Asset | None:
         """ The guild's invite splash. """
-        if self._splash is None:
+        if self._raw_splash is None:
             return None
-        return Asset._from_guild_image(self._state, self.id, self._splash, path="splashes")
+        return Asset._from_guild_image(self._state, self.id, self._raw_splash, path="splashes")
 
     @property
     def discovery_splash(self) -> Asset | None:
         """ The guild's discovery splash, only present for guilds with the DISCOVERABLE feature. """
-        if self._discovery_splash is None:
+        if self._raw_discovery_splash is None:
             return None
-        return Asset._from_guild_image(self._state, self.id, self._discovery_splash, path="discovery-splashes")
+        return Asset._from_guild_image(self._state, self.id, self._raw_discovery_splash, path="discovery-splashes")
 
     @property
     def default_role(self) -> Role:

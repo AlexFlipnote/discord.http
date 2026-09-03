@@ -224,12 +224,12 @@ class Invite(PartialInvite):
 
     __slots__ = (
         "_account",
+        "_raw_flags",
         "_raw_type",
         "approximate_member_count",
         "approximate_presence_count",
         "created_at",
         "expires_at",
-        "flags",
         "inviter",
         "max_uses",
         "roles",
@@ -277,8 +277,7 @@ class Invite(PartialInvite):
         self.roles: list[Role] = []
         """ The roles a user gets when joining via this invite. """
 
-        self.flags: GuildInviteFlags = GuildInviteFlags.none()
-        """ The flags associated with the invite. """
+        self._raw_flags: int = 0
 
         self.target_type: InviteTargetType | None = None
         """ The target type of the invite, if applicable. """
@@ -320,7 +319,7 @@ class Invite(PartialInvite):
             self.target_user = User(state=self._state, data=target_user)
 
         if flags := data.get("flags"):
-            self.flags = GuildInviteFlags(flags)
+            self._raw_flags = flags
 
         if (roles := data.get("roles")) and self.guild:
             self.roles = [
@@ -332,6 +331,11 @@ class Invite(PartialInvite):
     def type(self) -> InviteType:
         """ The type of the invite. """
         return InviteType(self._raw_type)
+
+    @property
+    def flags(self) -> GuildInviteFlags:
+        """ The flags associated with the invite. """
+        return GuildInviteFlags(self._raw_flags)
 
     def is_vanity(self) -> bool:
         """ Whether the invite is a vanity invite. """

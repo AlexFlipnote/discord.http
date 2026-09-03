@@ -52,9 +52,15 @@ class TestRoleTagFlags(unittest.TestCase):
         self.assertFalse(role.is_guild_connection())
 
     def test_bot_and_integration_managed(self) -> None:
-        role = Role(state=FakeState(), guild=FakeGuild(), data=_role_data(bot_id="5"))
+        # bot_id/integration_id/subscription_listing_id live under the role's
+        # `tags` object in Discord's actual payload shape, not top-level.
+        role = Role(state=FakeState(), guild=FakeGuild(), data=_role_data(tags={
+            "bot_id": "5",
+        }))
         self.assertTrue(role.is_bot_managed())
         self.assertFalse(role.is_integration())
+        self.assertEqual(role.bot_id, 5)
+        self.assertEqual(role.tags, {"bot_id": "5"})
 
 
 class TestRoleIcon(unittest.TestCase):

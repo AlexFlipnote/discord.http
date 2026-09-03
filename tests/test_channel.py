@@ -117,7 +117,12 @@ class TestBaseChannelPermissionsFor(unittest.TestCase):
             deny=Permissions.from_names("view_channel"),
             target_type=PermissionType.member,
         )
-        channel._permission_overwrites = [everyone_ow, role_ow, member_ow]
+        # `_permission_overwrites` isn't cached anymore (rebuilt fresh from
+        # `_raw_overwrites` on every access), so inject fixtures at that level.
+        channel._raw_overwrites = tuple(
+            (int(ow.target), int(ow.target_type), int(ow.allow), int(ow.deny))
+            for ow in (everyone_ow, role_ow, member_ow)
+        )
 
         perms = channel.permissions_for(member)
         self.assertIn("send_messages", perms.to_names())

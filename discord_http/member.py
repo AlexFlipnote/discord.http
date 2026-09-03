@@ -1,7 +1,7 @@
 import logging
 
 from datetime import datetime, timedelta
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, NamedTuple
 
 from . import utils
 from .asset import Asset
@@ -437,23 +437,28 @@ class PartialMember(PartialBase):
         return f"<@!{self.id}>"
 
 
+class _MemberExtra(NamedTuple):
+    """ Raw values for the fields most members don't have set at all. """
+    avatar: str | None
+    banner: str | None
+    avatar_decoration: dict | None
+    communication_disabled_until: str | None
+    premium_since: str | None
+    name_style: dict | None
+
+
 class Member(PartialMember):
     """ Represents a member of a guild. """
 
     __slots__ = (
+        "_extra",
+        "_raw_flags",
         "_raw_permissions",
         "_user",
-        "avatar",
-        "avatar_decoration",
-        "banner",
-        "communication_disabled_until",
-        "flags",
         "joined_at",
-        "name_style",
         "nameplate",
         "nick",
         "pending",
-        "premium_since",
         "primary_guild",
         "role_ids",
     )
@@ -481,14 +486,7 @@ class Member(PartialMember):
         self.role_ids: tuple[int, ...] = tuple(int(r) for r in data["roles"])
         """ The role IDs of the member. """
 
-        self.avatar: Asset | None = None
-        """ The avatar of the member, if available. """
-
-        self.banner: Asset | None = None
-        """ The banner of the member, if available. """
-
-        self.flags: GuildMemberFlags = GuildMemberFlags(data["flags"])
-        """ The flags of the member. """
+        self._raw_flags: int = data["flags"]
 
         self.pending: bool = data.get("pending", False)
         """ Whether the member is pending or not. """
@@ -499,23 +497,11 @@ class Member(PartialMember):
         self.joined_at: datetime | None = None
         """ The time the member joined the guild, if None, Discord failed to provide data. """
 
-        self.communication_disabled_until: datetime | None = None
-        """ The time until the member is communication disabled (timeout). """
-
-        self.premium_since: datetime | None = None
-        """ The time the member started boosting the guild, if available. """
-
-        self.avatar_decoration: AvatarDecoration | None = None
-        """ The avatar decoration of the member, if available. """
-
         self.nameplate: Nameplate | None = self._user.nameplate
         """ The nameplate of the member, if available. """
 
         self.primary_guild: PrimaryGuild | None = self._user.primary_guild
         """ The primary guild of the member, if available. """
-
-        self.name_style: DisplayNameStyles | None = None
-        """ The display name style of the member, if any. """
 
         self._from_data(data)
 
@@ -532,35 +518,72 @@ class Member(PartialMember):
         if joined_at := data.get("joined_at"):
             self.joined_at = utils.parse_time(joined_at)
 
-        if avatar := data.get("avatar"):
-            self.avatar = Asset._from_guild_avatar(
-                self._state, self.guild.id, self.id, avatar
-            )
+        extra = _MemberExtra(
+            avatar=data.get("avatar"),
+            banner=data.get("banner"),
+            avatar_decoration=data.get("avatar_decoration_data"),
+            communication_disabled_until=data.get("communication_disabled_until"),
+            premium_since=data.get("premium_since"),
+            name_style=data.get("display_name_styles"),
+        )
+        self._extra: _MemberExtra | None = extra if any(extra) else None
 
-        if banner := data.get("banner"):
-            self.banner = Asset._from_guild_banner(
-                self._state, self.guild.id, self.id, banner
-            )
+    @property
+    def flags(self) -> GuildMemberFlags:
+        """ The flags of the member. """
+        return GuildMemberFlags(self._raw_flags)
 
-        if avatar_decoration_data := data.get("avatar_decoration_data"):
-            self.avatar_decoration = AvatarDecoration(
-                self._state, avatar_decoration_data
-            )
+    @property
+    def avatar(self) -> Asset | None:
+        """ The avatar of the member, if available. """
+        avatar = self._extra.avatar if self._extra else None
+        if not avatar:
+            return None
+        return Asset._from_guild_avatar(
+            self._state, self.guild.id, self.id, avatar
+        )
 
-        if communication_disabled_until := data.get("communication_disabled_until"):
-            self.communication_disabled_until = utils.parse_time(
-                communication_disabled_until
-            )
+    @property
+    def banner(self) -> Asset | None:
+        """ The banner of the member, if available. """
+        banner = self._extra.banner if self._extra else None
+        if not banner:
+            return None
+        return Asset._from_guild_banner(
+            self._state, self.guild.id, self.id, banner
+        )
 
-        if premium_since := data.get("premium_since"):
-            self.premium_since = utils.parse_time(
-                premium_since
-            )
+    @property
+    def avatar_decoration(self) -> AvatarDecoration | None:
+        """ The avatar decoration of the member, if available. """
+        avatar_decoration = self._extra.avatar_decoration if self._extra else None
+        if not avatar_decoration:
+            return None
+        return AvatarDecoration(self._state, avatar_decoration)
 
-        if display_name_styles := data.get("display_name_styles"):
-            self.name_style = DisplayNameStyles(
-                data=display_name_styles
-            )
+    @property
+    def communication_disabled_until(self) -> datetime | None:
+        """ The time until the member is communication disabled (timeout). """
+        timestamp = self._extra.communication_disabled_until if self._extra else None
+        if not timestamp:
+            return None
+        return utils.parse_time(timestamp)
+
+    @property
+    def premium_since(self) -> datetime | None:
+        """ The time the member started boosting the guild, if available. """
+        timestamp = self._extra.premium_since if self._extra else None
+        if not timestamp:
+            return None
+        return utils.parse_time(timestamp)
+
+    @property
+    def name_style(self) -> DisplayNameStyles | None:
+        """ The display name style of the member, if any. """
+        name_style = self._extra.name_style if self._extra else None
+        if not name_style:
+            return None
+        return DisplayNameStyles(data=name_style)
 
     @property
     def roles(self) -> list[Role | PartialRole]:
@@ -819,6 +842,7 @@ class ThreadMember(Member):
     """ Represents a member of a thread. """
 
     __slots__ = (
+        "_thread_flags",
         "join_timestamp",
         "thread_id",
     )
@@ -842,8 +866,12 @@ class ThreadMember(Member):
         self.join_timestamp: datetime = utils.parse_time(data["join_timestamp"])
         """ The time the member joined the thread. """
 
-        self.flags: int = data["flags"]
+        self._thread_flags: int = data["flags"]
+
+    @property
+    def flags(self) -> int:
         """ The flags of the member in the thread. """
+        return self._thread_flags
 
     @property
     def thread(self) -> "PartialChannel | Thread":

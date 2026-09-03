@@ -83,7 +83,6 @@ class MessageReaction:
     """ Represents a reaction to a message. """
 
     __slots__ = (
-        "_burst_me",
         "_message",
         "_state",
         "burst_colors",
@@ -744,6 +743,7 @@ class Attachment:
     """ Represents an attachment in a message. """
 
     __slots__ = (
+        "_raw_flags",
         "_state",
         "application",
         "clip_created_at",
@@ -753,7 +753,6 @@ class Attachment:
         "duration_secs",
         "ephemeral",
         "filename",
-        "flags",
         "height",
         "id",
         "placeholder",
@@ -787,8 +786,7 @@ class Attachment:
         self.ephemeral: bool = data.get("ephemeral", False)
         """ Whether the attachment is ephemeral or not. """
 
-        self.flags: AttachmentFlags = AttachmentFlags(data.get("flags", 0))
-        """ The flags of the attachment. """
+        self._raw_flags: int = data.get("flags", 0)
 
         self.content_type: str | None = data.get("content_type")
         """ The content type of the attachment, if available. """
@@ -846,6 +844,11 @@ class Attachment:
             f"<Attachment id={self.id} filename='{self.filename}' "
             f"url='{self.url}'>"
         )
+
+    @property
+    def flags(self) -> AttachmentFlags:
+        """ The flags of the attachment. """
+        return AttachmentFlags(self._raw_flags)
 
     def is_spoiler(self) -> bool:
         """ Whether the attachment is a spoiler or not. """
