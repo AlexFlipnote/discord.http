@@ -301,10 +301,9 @@ class Client:
         try:
             client = await self.update_me()
         except RuntimeError as e:
-            # Make sure the error is readable and stop HTTP server here
+            # If this failed, kill the bot, it will fail..
             _log.error(e)
-            await self.backend.shutdown()
-            return
+            raise
 
         await self.setup_hook()
 

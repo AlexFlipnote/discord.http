@@ -956,7 +956,7 @@ class Attachment:
             "url": self.url,
             "proxy_url": self.proxy_url,
             "spoiler": self.is_spoiler(),
-            "flags": self.flags
+            "flags": int(self.flags)
         }
 
         if self.title is not None:

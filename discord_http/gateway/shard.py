@@ -545,8 +545,6 @@ class Shard:
                         int(data["heartbeat_interval"]) / 1000
                     )
 
-                    self._reconnect_attempts = 0
-
                     if self.status.can_resume():
                         _log.debug(f"Shard {self.shard_id} resuming session")
                         await self.send_message(PayloadType.resume)
@@ -579,6 +577,7 @@ class Shard:
                 self.status.update_ready_data(data)
                 self._expected_guild_count = len(data.get("guilds") or [])
                 self._identified.set()
+                self._reconnect_attempts = 0
 
                 if self._ready_task is not None and not self._ready_task.done():
                     self._ready_task.cancel()
@@ -589,6 +588,8 @@ class Shard:
                 )
 
             case "RESUMED":
+                self._reconnect_attempts = 0
+
                 if self.bot.has_any_dispatch("shard_resumed"):
                     self.bot.dispatch(
                         "shard_resumed",
@@ -901,7 +902,7 @@ class Shard:
                                 exception=e
                             )
 
-                    # Reset back to 0 as soon as HELLO confirms a real connection.
+                    # Reset back to 0 only once READY/RESUMED confirms the session actually established
                     self._reconnect_attempts += 1
 
                     # First attempt reconnects instantly (the common case: a brief

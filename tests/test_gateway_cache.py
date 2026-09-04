@@ -198,10 +198,35 @@ class TestAddMember(unittest.TestCase):
 class TestUpdateMember(unittest.TestCase):
     def test_delegates_to_add_member_without_counting(self) -> None:
         cache, _, guild = _cache_with_guild(GatewayCacheFlags.members)
-        member = SimpleNamespace(id=5, guild_id=guild.id)
+        member = SimpleNamespace(id=5, guild_id=guild.id, presence=None)
         cache.update_member(member)
         self.assertIs(guild._cache_members[5], member)
         self.assertEqual(guild.member_count, 10)
+
+    def test_preserves_existing_presence_when_replacement_has_none(self) -> None:
+        """ Regression test: GUILD_MEMBER_UPDATE never carries presence data, so the
+        freshly built Member always has presence=None. Replacing the cached member
+        wholesale used to silently drop whatever PRESENCE_UPDATE had already set. """
+        cache, _, guild = _cache_with_guild(GatewayCacheFlags.members)
+        presence = SimpleNamespace(status="online")
+        guild._cache_members[5] = SimpleNamespace(id=5, guild_id=guild.id, presence=presence)
+
+        updated_member = SimpleNamespace(id=5, guild_id=guild.id, presence=None)
+        cache.update_member(updated_member)
+
+        self.assertIs(guild._cache_members[5], updated_member)
+        self.assertIs(updated_member.presence, presence)
+
+    def test_does_not_overwrite_presence_already_set_on_replacement(self) -> None:
+        cache, _, guild = _cache_with_guild(GatewayCacheFlags.members)
+        old_presence = SimpleNamespace(status="online")
+        new_presence = SimpleNamespace(status="idle")
+        guild._cache_members[5] = SimpleNamespace(id=5, guild_id=guild.id, presence=old_presence)
+
+        updated_member = SimpleNamespace(id=5, guild_id=guild.id, presence=new_presence)
+        cache.update_member(updated_member)
+
+        self.assertIs(updated_member.presence, new_presence)
 
 
 class TestRemoveMember(unittest.TestCase):

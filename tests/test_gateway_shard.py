@@ -1,8 +1,9 @@
+import json
 import time
 import unittest
 
 from discord_http.gateway.client import GatewayClient
-from discord_http.gateway.shard import GatewayRatelimiter, Status
+from discord_http.gateway.shard import GatewayRatelimiter, Shard, Status
 
 
 class TestGatewayRatelimiter(unittest.TestCase):
@@ -189,6 +190,83 @@ class TestShardByGuildId(unittest.TestCase):
             client.shard_by_guild_id(500000000000000000),
             client.shard_by_guild_id(FakeSnowflake()),  # type: ignore[arg-type]
         )
+
+
+class FakeHttpState:
+    def __init__(self):
+        self.session = object()
+
+
+class FakeBotState:
+    def __init__(self):
+        self.http = FakeHttpState()
+
+
+class FakeGatewayBot:
+    def __init__(self):
+        self.state = FakeBotState()
+        self.gateway_capabilities = None
+        self.playing_status = None
+        self.guild_ready_timeout = 5
+
+    def has_any_dispatch(self, _name) -> bool:
+        return False
+
+    def dispatch(self, *args, **kwargs) -> None:
+        pass
+
+
+class TestShardReconnectBackoff(unittest.IsolatedAsyncioTestCase):
+    """ Regression tests: _reconnect_attempts used to be reset to 0 as soon as HELLO
+    was received, before IDENTIFY/RESUME was confirmed to succeed. That meant a fail
+    loop where the socket connects fine but the session keeps getting rejected (e.g.
+    repeated invalid session) reconnected with zero backoff forever instead of
+    escalating - exactly the scenario backoff exists to protect against. """
+
+    def _shard(self) -> Shard:
+        shard = Shard(bot=FakeGatewayBot(), intents=None, shard_id=0, api_version=10)
+
+        async def _noop_send_message(*_args, **_kwargs) -> None:
+            return None
+
+        shard.send_message = _noop_send_message  # type: ignore[method-assign]
+        return shard
+
+    async def test_hello_does_not_reset_reconnect_attempts(self) -> None:
+        shard = self._shard()
+        shard._reconnect_attempts = 3
+
+        hello = json.dumps({"op": 10, "d": {"heartbeat_interval": 41250}})
+        await shard.received_message(hello)
+
+        self.assertEqual(shard._reconnect_attempts, 3)
+
+    async def test_resumed_resets_reconnect_attempts(self) -> None:
+        shard = self._shard()
+        shard._reconnect_attempts = 5
+
+        resumed = json.dumps({"op": 0, "t": "RESUMED", "s": 10, "d": None})
+        await shard.received_message(resumed)
+
+        self.assertEqual(shard._reconnect_attempts, 0)
+
+    async def test_ready_resets_reconnect_attempts(self) -> None:
+        shard = self._shard()
+        shard._reconnect_attempts = 5
+
+        ready = json.dumps({
+            "op": 0, "t": "READY", "s": 1,
+            "d": {"session_id": "abc", "resume_gateway_url": "wss://example.com/", "guilds": []},
+        })
+        await shard.received_message(ready)
+
+        self.assertEqual(shard._reconnect_attempts, 0)
+
+        # The READY handler spins up a background _delay_ready() task; let it
+        # finish (guilds is empty so it completes immediately) instead of
+        # leaking a pending task past the end of the test.
+        if shard._ready_task is not None:
+            await shard._ready_task
 
 
 if __name__ == "__main__":

@@ -1,5 +1,7 @@
 import unittest
 
+import orjson
+
 from discord_http import Message, PartialUser
 
 
@@ -62,6 +64,18 @@ class TestAttachmentNewFields(unittest.TestCase):
         self.assertIsNotNone(attachment.clip_created_at)
         self.assertEqual(len(attachment.clip_participants), 1)
         self.assertEqual(attachment.clip_participants[0].name, "a")
+
+    def test_to_dict_flags_is_json_serializable(self) -> None:
+        message = Message(state=FakeState(), data=_message_data(attachments=[{
+            "id": "1", "filename": "clip.mp4", "size": 100,
+            "url": "https://x", "proxy_url": "https://x",
+            "flags": 4,
+        }]))
+        attachment = message.attachments[0]
+        data = attachment.to_dict()
+        self.assertEqual(data["flags"], 4)
+        self.assertIsInstance(data["flags"], int)
+        orjson.dumps(data)  # raises TypeError if any value isn't JSON-serializable
 
 
 if __name__ == "__main__":

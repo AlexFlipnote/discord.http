@@ -374,6 +374,12 @@ class Cache:
         member
             The member to update
         """
+        if member.presence is None:
+            guild = self.get_guild(member.guild_id)
+            existing = guild.get_member(member.id) if guild else None
+            if existing is not None and existing.presence is not None:
+                member.presence = existing.presence
+
         self.add_member(member, count_member=False)
 
     def remove_member(self, guild_id: int, member_id: int) -> "Member | PartialMember | None":

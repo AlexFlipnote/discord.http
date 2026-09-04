@@ -282,13 +282,13 @@ class DiscordHTTP(web.Application):
         command_name = data.get("data", {}).get("name", None)
         cmd = self.bot.commands.get(command_name)
 
+        if not cmd:
+            _log.warning(f"Unhandled autocomplete received (name: {command_name})")
+            return self.jsonify({"error": "command not found"}, status=404)
+
+        cmd, data_options = self._dig_subcommand(cmd, data)
+
         try:
-            if not cmd:
-                _log.warning(f"Unhandled autocomplete received (name: {command_name})")
-                return self.jsonify({"error": "command not found"}, status=404)
-
-            cmd, data_options = self._dig_subcommand(cmd, data)
-
             find_focused = next((x for x in data_options if x.get("focused", False)), None)
             if not find_focused:
                 _log.warning("Failed to find focused option in autocomplete")

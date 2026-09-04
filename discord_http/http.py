@@ -46,9 +46,10 @@ _HTTP_400_ERROR_TABLE: dict[int, type[HTTPException]] = {
     200001: AutomodBlock,
 }
 
-ratelimit_bucket_re = re.compile(
-    r"/(messages|members|roles|emojis|stickers|permissions|reactions|interactions)/([^/]+)"
-)
+_MAJOR_PARAM_ROOTS = ("guilds", "channels", "webhooks", "stage-instances")
+
+major_param_re = re.compile(r"^/(" + "|".join(_MAJOR_PARAM_ROOTS) + r")/(\d+)(?=/|$)")
+id_segment_re = re.compile(r"(?<=/)\d+(?=/|$)")
 
 
 def _try_json(data: str) -> dict | str:
@@ -298,6 +299,7 @@ class Ratelimit:
         "_last_request",
         "_lock",
         "_loop",
+        "bucket_hash",
         "bucket_reset_epoch",
         "expires",
         "in_flight",
@@ -310,6 +312,9 @@ class Ratelimit:
     def __init__(self, key: str):
         self.key: str = key
         """ The key of the ratelimit bucket, usually in the format "METHOD /path/:id". """
+
+        self.bucket_hash: str | None = None
+        """ Discord's own bucket identifier from the `X-RateLimit-Bucket` header, if seen yet. """
 
         self.limit: int = 1
         """ The maximum number of requests that can be made in the current bucket window. """
@@ -336,7 +341,8 @@ class Ratelimit:
     def __repr__(self) -> str:
         return (
             f"<Ratelimit key='{self.key}' limit={self.limit} "
-            f"remaining={self.remaining} reset_after={self.reset_after:.2f}>"
+            f"remaining={self.remaining} reset_after={self.reset_after:.2f} "
+            f"bucket_hash={self.bucket_hash!r}>"
         )
 
     def is_inactive(self) -> bool:
@@ -361,6 +367,19 @@ class Ratelimit:
         """
         self._last_request = self._loop.time()
         headers = response.headers
+
+        new_bucket_hash = headers.get("X-RateLimit-Bucket")
+        if (
+            new_bucket_hash and
+            self.bucket_hash and
+            new_bucket_hash != self.bucket_hash
+        ):
+            _log.debug(
+                f"Ratelimit bucket hash changed for key '{self.key}': "
+                f"{self.bucket_hash!r} -> {new_bucket_hash!r}"
+            )
+        if new_bucket_hash:
+            self.bucket_hash = new_bucket_hash
 
         reset_epoch_str = headers.get("X-RateLimit-Reset")
         if not reset_epoch_str:
@@ -541,6 +560,7 @@ class DiscordAPI:
         # Ratelimit handling
         self._buckets: dict[str, Ratelimit] = {}
         self._global_ratelimit: GlobalRatelimit = GlobalRatelimit()
+        self._bucket_hashes: dict[str, str] = {}
 
         # Background tasks
         task = self.bot.loop.create_task(
@@ -571,9 +591,16 @@ class DiscordAPI:
         if to_remove:
             _log.debug(f"Cleaned up {len(to_remove)} old ratelimits, {len(self._buckets)} remaining.")
 
+    @staticmethod
+    def _apply_bucket_quirks(method: str, normalized: str) -> str:
+        """ Route-specific exceptions to the generic id-collapsing rule below. """
+        if method == "DELETE" and normalized.endswith("/messages/:id"):
+            return normalized + "-delete"
+        return normalized
+
     def _get_bucket_key(self, method: str, path: str) -> str:
         """
-        Get the bucket key for the given method and path.
+        Get the local, path-guessed bucket key for the given method and path.
 
         Parameters
         ----------
@@ -589,15 +616,72 @@ class DiscordAPI:
         # Remove query parameters
         base_path = path.partition("?")[0]
 
-        # Replace IDs in the path with :id to create a more general bucket key
-        # Each guild has its own bucket, but all channels share the same bucket, etc.
-        normalized = ratelimit_bucket_re.sub(r"/\1/:id", base_path)
+        # Keep the major param (guild/channel/webhook id) raw, collapse everything else
+        if major_match := major_param_re.match(base_path):
+            prefix = major_match.group(0)
+            remainder = base_path[major_match.end():]
+        else:
+            prefix = ""
+            remainder = base_path
 
-        # Special case for message deletion, as it has a separate bucket
-        if method == "DELETE" and normalized.endswith("/messages/:id"):
-            normalized += "-delete"
+        normalized = self._apply_bucket_quirks(
+            method, prefix + id_segment_re.sub(":id", remainder)
+        )
 
         return f"{method} {normalized}"
+
+    def _route_template(self, method: str, path: str) -> str:
+        """
+        Get the route "shape" for the given method and path, with every id collapsed.
+
+        Parameters
+        ----------
+        method
+            The HTTP method to use
+        path
+            The path to make the request to
+
+        Returns
+        -------
+            The route template for the given method and path
+        """
+        base_path = path.partition("?")[0]
+        normalized = self._apply_bucket_quirks(
+            method, id_segment_re.sub(":id", base_path)
+        )
+        return f"{method} {normalized}"
+
+    @staticmethod
+    def _major_param_value(path: str) -> str:
+        """ The raw major-param id for the given path, or "" if it has none. """
+        base_path = path.partition("?")[0]
+        return match.group(2) if (match := major_param_re.match(base_path)) else ""
+
+    def _resolve_bucket_key(self, method: str, path: str) -> tuple[str, str]:
+        """
+        Resolve which route template and actual bucket key a request should use.
+
+        Parameters
+        ----------
+        method
+            The HTTP method to use
+        path
+            The path to make the request to
+
+        Returns
+        -------
+            A tuple of `(route_template, bucket_key)`. `route_template` is what
+            `_bucket_hashes` should be updated with once a response comes back.
+        """
+        route_template = self._route_template(method, path)
+
+        if bucket_hash := self._bucket_hashes.get(route_template):
+            major_param = self._major_param_value(path)
+            key = f"{method} #{bucket_hash}" + (f":{major_param}" if major_param else "")
+        else:
+            key = self._get_bucket_key(method, path)
+
+        return route_template, key
 
     def get_ratelimit(self, key: str) -> Ratelimit:
         """
@@ -718,12 +802,13 @@ class DiscordAPI:
         if kwargs.pop("webhook", False):
             api_url = self.base_url
 
-        ratelimit = self.get_ratelimit(
-            self._get_bucket_key(method, path)
-        )
-
         base_path = path.split("?")[0]
         exempt_from_global = base_path.startswith(("/interactions/", "/webhooks/"))
+
+        # Resolved once per call, reused across retries - resolving fresh per retry
+        # could orphan a 429 cooldown if the hash gets learned mid-loop.
+        route_template, bucket_key = self._resolve_bucket_key(method, path)
+        ratelimit = self.get_ratelimit(bucket_key)
 
         async def _sleep(tries: int) -> None:
             await asyncio.sleep(1 + (tries * 2) + self.create_jitter())
@@ -748,6 +833,10 @@ class DiscordAPI:
                         **kwargs
                     )
                     ratelimit.update(r)
+
+                    if new_bucket_hash := r.headers.get("X-RateLimit-Bucket"):
+                        self._bucket_hashes[route_template] = new_bucket_hash
+
                     _log.debug(
                         "HTTP %s (%s): %s (%s/%s, %.2fs until reset)",
                         method.upper(), r.status, path,

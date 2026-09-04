@@ -50,7 +50,7 @@ class MultipartData(MultipartWriter):
     allowing you to attach files, JSON data, and other content seamlessly.
     """
 
-    __slots__ = ("_files_keepalive",)
+    __slots__ = ("_files_keepalive", "_streams_keepalive")
 
     def __init__(self):
         super().__init__("form-data", boundary="---------------discord.http")
@@ -58,6 +58,10 @@ class MultipartData(MultipartWriter):
         # Keep a reference to prevent aiohttp from complaining due to race conditions with file-like objects
         # It will be cleared with File.__del__, so it should not cause memory leaks
         self._files_keepalive: list[Any] = []
+
+        # Raw file-like objects passed directly to attach() (not wrapped in File),
+        # kept alongside their original stream position so reset() can rewind them too
+        self._streams_keepalive: list[tuple[Any, int]] = []
 
     @property
     def content_type(self) -> str:
@@ -103,6 +107,14 @@ class MultipartData(MultipartWriter):
             part.set_content_disposition("form-data", name=name)
             part.headers["Content-Type"] = "application/json"
         elif hasattr(data, "read"):
+            seek: Any = getattr(data, "seek", None)
+            tell: Any = getattr(data, "tell", None)
+            if callable(seek) and callable(tell):
+                try:
+                    self._streams_keepalive.append((data, int(tell())))  # pyright: ignore[reportArgumentType]
+                except (OSError, ValueError, TypeError):
+                    pass
+
             part = self.append(data)
             part.set_content_disposition(
                 "form-data",
@@ -130,6 +142,8 @@ class MultipartData(MultipartWriter):
         """ Reset any attached file streams, so this payload can be re-sent after a failed attempt. """
         for item in self._files_keepalive:
             item.reset()
+        for stream, original_pos in self._streams_keepalive:
+            stream.seek(original_pos)
 
 
 class BenchmarkEntry:
