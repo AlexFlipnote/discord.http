@@ -88,8 +88,7 @@ class PartialIntegration(PartialBase):
     @property
     def guild(self) -> "PartialGuild | Guild":
         """:class:`PartialGuild` | :class:`Guild`: The guild associated with this integration."""
-        cache = self._state.cache.get_guild(self.guild_id)
-        if cache:
+        if cache := self._state.cache.get_guild(self.guild_id):
             return cache
 
         from .guild import PartialGuild

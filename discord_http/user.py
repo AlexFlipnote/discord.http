@@ -200,8 +200,7 @@ class PrimaryGuild:
         if not self.guild_id:
             return None
 
-        cache = self._state.cache.get_guild(self.guild_id)
-        if cache:
+        if cache := self._state.cache.get_guild(self.guild_id):
             return cache
 
         return self._state.bot.get_partial_guild(

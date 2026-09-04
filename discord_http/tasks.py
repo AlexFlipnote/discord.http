@@ -272,8 +272,7 @@ class Loop:
         if task.cancelled():
             return
 
-        exc = task.exception()
-        if exc is not None:
+        if (exc := task.exception()) is not None:
             _log.error(
                 f"Unhandled exception escaped background loop {self.func.__name__}",
                 exc_info=exc
@@ -455,8 +454,7 @@ class Loop:
             minutes = minutes or 0.0
             hours = hours or 0.0
 
-            sleep = seconds + (minutes * 60.0) + (hours * 3600.0)
-            if sleep <= 0:
+            if (sleep := seconds + (minutes * 60.0) + (hours * 3600.0)) <= 0:
                 raise ValueError("The sleep timer cannot be 0")
 
             self._seconds = float(seconds)
@@ -507,9 +505,7 @@ class Loop:
         if now is None:
             now = utils.utcnow()
 
-        index = self._find_time_index(now)
-
-        if index is None:
+        if (index := self._find_time_index(now)) is None:
             time = self._time[0]
             tomorrow = now.astimezone(time.tzinfo) + timedelta(days=1)
             date = tomorrow.date()

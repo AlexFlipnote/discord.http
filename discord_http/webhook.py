@@ -491,8 +491,7 @@ class Webhook(PartialWebhook):
         if not self.guild_id:
             return None
 
-        cache = self._state.cache.get_guild(self.guild_id)
-        if cache:
+        if cache := self._state.cache.get_guild(self.guild_id):
             return cache
 
         from .guild import PartialGuild

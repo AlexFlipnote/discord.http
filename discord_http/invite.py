@@ -77,8 +77,7 @@ class PartialInvite:
         if not self.guild_id:
             return None
 
-        cache = self._state.cache.get_guild(self.guild_id)
-        if cache:
+        if cache := self._state.cache.get_guild(self.guild_id):
             return cache
 
         return PartialGuild(state=self._state, id=self.guild_id)

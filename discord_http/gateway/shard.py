@@ -148,8 +148,7 @@ class GatewayRatelimiter:
     async def block(self) -> None:
         """ Acquires the lock and sleeps if the shard is ratelimited. """
         async with self.lock:
-            retry_after = self.get_delay()
-            if retry_after:
+            if retry_after := self.get_delay():
                 _log.warning(
                     "WebSocket ratelimit hit on ShardID "
                     f"{self.shard_id}, waiting {retry_after:.2f}s..."
@@ -512,16 +511,12 @@ class Shard:
 
         op = PayloadType(msg.get("op"))
         data = msg.get("d")
-        seq = msg.get("s")
-
-        if seq is not None:
+        if (seq := msg.get("s")) is not None:
             self.status.update_sequence(seq)
 
         self.status.tick()
 
-        event = msg.get("t")
-
-        if event:
+        if event := msg.get("t"):
             await self.on_event(event, msg)
 
         if op != PayloadType.dispatch:
@@ -1103,8 +1098,7 @@ class Shard:
             _log.error(f"Error while parsing event {name}", exc_info=e)
 
     async def _parse_guild_create(self, data: dict) -> None:
-        unavailable = data.get("unavailable")
-        if unavailable is True:
+        if (unavailable := data.get("unavailable")) is True:
             return
 
         if unavailable is False:

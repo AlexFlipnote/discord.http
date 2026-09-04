@@ -190,8 +190,7 @@ class VoiceState(PartialVoiceState):
         if self.guild_id is None:
             return None
 
-        cache = self._state.cache.get_guild(self.guild_id)
-        if cache:
+        if cache := self._state.cache.get_guild(self.guild_id):
             return cache
 
         from .guild import PartialGuild
@@ -203,10 +202,8 @@ class VoiceState(PartialVoiceState):
         if self.channel_id is None:
             return None
 
-        if self.guild_id is not None:
-            cache = self._state.cache.get_channel(self.guild_id, self.channel_id)
-            if cache:
-                return cache
+        if self.guild_id is not None and (cache := self._state.cache.get_channel(self.guild_id, self.channel_id)):
+            return cache
 
         from .channel import PartialChannel
         return PartialChannel(state=self._state, id=self.channel_id, guild_id=self.guild_id)
@@ -220,8 +217,7 @@ class VoiceState(PartialVoiceState):
         hold its own separate copy of member/user data), falling back to
         building one from the voice state payload if not cached.
         """
-        guild = self.guild
-        if guild is None:
+        if (guild := self.guild) is None:
             return None
 
         from .member import Member
@@ -239,8 +235,7 @@ class VoiceState(PartialVoiceState):
             data=self._member_data
         )
 
-        cache = self._state.cache
-        if cache is not None and cache._user_dedup_enabled:
+        if (cache := self._state.cache) is not None and cache._user_dedup_enabled:
             cache._dedupe_user(built)
 
         return built

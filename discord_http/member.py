@@ -69,11 +69,8 @@ class PartialMember(PartialBase):
     @property
     def _user(self) -> "PartialUser | User":
         """ The (partial) user behind this member. """
-        cache = self._state.cache
-        if cache is not None:
-            cached = cache.get_user(self.id)
-            if cached is not None:
-                return cached
+        if (cache := self._state.cache) is not None and (cached := cache.get_user(self.id)) is not None:
+            return cached
 
         return PartialUser(state=self._state, id=self.id)
 
@@ -87,8 +84,7 @@ class PartialMember(PartialBase):
 
         If you are using gateway cache, it can return full object too
         """
-        cache = self._state.cache.get_guild(self.guild_id)
-        if cache:
+        if cache := self._state.cache.get_guild(self.guild_id):
             return cache
 
         return PartialGuild(state=self._state, id=self.guild_id)
@@ -615,8 +611,7 @@ class Member(PartialMember):
         -------
             The role if found, else None
         """
-        role_id = int(role)
-        if role_id not in self.role_ids:
+        if (role_id := int(role)) not in self.role_ids:
             return None
 
         guild = self.guild

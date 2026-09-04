@@ -791,8 +791,7 @@ class DiscordAPI:
         if res_method != "json":
             headers.pop("Content-Type", None)
 
-        reason = kwargs.pop("reason", None)
-        if reason:
+        if reason := kwargs.pop("reason", None):
             headers["X-Audit-Log-Reason"] = url_quote(reason)
 
         # Set the headers after modifications

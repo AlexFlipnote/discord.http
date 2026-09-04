@@ -1419,8 +1419,7 @@ class InteractionStorage:
             if self._timeout_expiry is None:
                 return await self._dispatch_timeout()
 
-            now = time.monotonic()
-            if now >= self._timeout_expiry:
+            if (now := time.monotonic()) >= self._timeout_expiry:
                 return await self._dispatch_timeout()
             await asyncio.sleep(self._timeout_expiry - now)
 

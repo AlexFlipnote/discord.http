@@ -218,8 +218,7 @@ class DiscordHTTP(web.Application):
                     exc_info=e
                 )
 
-            send_error = self.error_messages(ctx, e)
-            if send_error and isinstance(send_error, BaseResponse):
+            if (send_error := self.error_messages(ctx, e)) and isinstance(send_error, BaseResponse):
                 return self.jsonify(send_error.to_dict())
 
             raise HTTPInternalServerError()

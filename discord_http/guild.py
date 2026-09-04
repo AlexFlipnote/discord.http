@@ -542,9 +542,8 @@ class OnboardingPromptOption(PartialBase):
 
     def _from_data(self, data: dict) -> None:
         emoji = data.get("emoji") or {}
-        emoji_name = data.get("emoji_name") or emoji.get("name")
 
-        if emoji_name:
+        if emoji_name := (data.get("emoji_name") or emoji.get("name")):
             self.emoji = EmojiParser.from_dict({
                 "name": emoji_name,
                 "id": utils.get_int(data, "emoji_id") or utils.get_int(emoji, "id"),
@@ -835,8 +834,7 @@ class GuildTemplate(PartialGuildTemplate):
     @property
     def source_guild(self) -> "Guild | PartialGuild":
         """ The guild this template is based on. """
-        cache = self._state.cache.get_guild(self.source_guild_id)
-        if cache:
+        if cache := self._state.cache.get_guild(self.source_guild_id):
             return cache
         return PartialGuild(state=self._state, id=self.source_guild_id)
 
@@ -867,8 +865,7 @@ class PartialScheduledEvent(PartialBase):
     @property
     def guild(self) -> "Guild | PartialGuild":
         """ The guild object this event is in. """
-        cache = self._state.cache.get_guild(self.guild_id)
-        if cache:
+        if cache := self._state.cache.get_guild(self.guild_id):
             return cache
 
         from .guild import PartialGuild
@@ -1244,8 +1241,7 @@ class PartialGuild(PartialBase):
         return "PartialGuild"
 
     def _populate_internal_cache(self, data: dict) -> None:
-        flags = self._state.bot._gateway_cache
-        if flags is None:
+        if (flags := self._state.bot._gateway_cache) is None:
             return
 
         from .gateway.flags import GatewayCacheFlags
@@ -1415,8 +1411,7 @@ class PartialGuild(PartialBase):
     @property
     def chunked(self) -> bool:
         """ Whether the guild is chunked or not. """
-        count = self.member_count
-        if count is None:
+        if (count := self.member_count) is None:
             return False
         return count == len(self._cache_members)
 
@@ -1427,8 +1422,7 @@ class PartialGuild(PartialBase):
 
         Only useable if you are using gateway and caching
         """
-        member = self.get_member(self._state.bot.user.id)
-        if member:
+        if member := self.get_member(self._state.bot.user.id):
             return member
 
         return self.get_partial_member(self.id)
@@ -3834,9 +3828,8 @@ class PartialGuild(PartialBase):
             **kwargs
         ) -> tuple[dict, int | None, int | None]:
             r = await _get_history(limit=http_limit, after=after_id, **kwargs)
-            data_ = r.response.get("audit_log_entries", [])
 
-            if data_:
+            if data_ := r.response.get("audit_log_entries", []):
                 if limit is not None:
                     limit -= len(data_)
                 after_id = int(data_[0]["id"])
@@ -3850,9 +3843,8 @@ class PartialGuild(PartialBase):
             **kwargs
         ) -> tuple[dict, int | None, int | None]:
             r = await _get_history(limit=http_limit, before=before_id, **kwargs)
-            data_ = r.response.get("audit_log_entries", [])
 
-            if data_:
+            if data_ := r.response.get("audit_log_entries", []):
                 if limit is not None:
                     limit -= len(data_)
                 before_id = int(data_[-1]["id"])

@@ -543,8 +543,7 @@ def unwrap_optional(annotation: type) -> type:
     -------
         The unwrapped annotation
     """
-    origin = get_origin(annotation)
-    if origin is Union or origin is UnionType:
+    if (origin := get_origin(annotation)) is Union or origin is UnionType:
         args = get_args(annotation)
         non_none_args = [a for a in args if a is not type(None)]
         if len(non_none_args) == 1:

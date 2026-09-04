@@ -53,8 +53,7 @@ class PartialRole(PartialBase):
     @property
     def guild(self) -> "Guild | PartialGuild":
         """ The guild this role is in. """
-        cache = self._state.cache.get_guild(self.guild_id)
-        if cache:
+        if cache := self._state.cache.get_guild(self.guild_id):
             return cache
 
         from .guild import PartialGuild

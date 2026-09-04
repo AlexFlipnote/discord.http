@@ -472,10 +472,8 @@ class Client:
         if not self.gateway:
             raise NotImplementedError("gateway is not available")
 
-        if shard_id is None:
-            shard_id = self.get_shard_by_guild_id(guild_id)
-            if shard_id is None:  # Just double check
-                raise ValueError("shard_id must be provided")
+        if shard_id is None and (shard_id := self.get_shard_by_guild_id(guild_id)) is None:  # Just double check
+            raise ValueError("shard_id must be provided")
 
         shard = self.gateway.get_shard(shard_id)
         if not shard:
@@ -1293,8 +1291,7 @@ class Client:
             return self.cache.get_channel(guild_id, channel_id)
 
         for guild in self.guilds:
-            channel = guild.get_channel(channel_id)
-            if channel:
+            if channel := guild.get_channel(channel_id):
                 return channel
 
         return None

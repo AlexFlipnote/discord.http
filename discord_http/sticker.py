@@ -85,8 +85,7 @@ class PartialSticker(PartialBase):
         if not self.guild_id:
             return None
 
-        cache = self._state.cache.get_guild(self.guild_id)
-        if cache:
+        if cache := self._state.cache.get_guild(self.guild_id):
             return cache
 
         from .guild import PartialGuild
@@ -126,8 +125,7 @@ class PartialSticker(PartialBase):
         ValueError
             No guild_id was passed
         """
-        guild_id = guild_id or self.guild_id
-        if guild_id is None:
+        if (guild_id := guild_id or self.guild_id) is None:
             raise ValueError("guild_id is a required argument")
 
         payload = {}
@@ -175,8 +173,7 @@ class PartialSticker(PartialBase):
         ValueError
             No guild_id was passed or guild_id is not defined
         """
-        guild_id = guild_id or self.guild_id
-        if guild_id is None:
+        if (guild_id := guild_id or self.guild_id) is None:
             raise ValueError(
                 "guild_id is a required argument "
                 "since it was not provided by object"

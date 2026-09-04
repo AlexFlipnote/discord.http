@@ -81,8 +81,7 @@ async def _deep_sizeof(
         if isinstance(obj, type):
             continue
 
-        oid = id(obj)
-        if oid in seen:
+        if (oid := id(obj)) in seen:
             continue
         seen.add(oid)
 
@@ -101,8 +100,7 @@ async def _deep_sizeof(
             for name in _iter_slots(type(obj)):
                 if name in skip or name in ("__dict__", "__weakref__"):
                     continue
-                value = getattr(obj, name, None)
-                if value is not None:
+                if (value := getattr(obj, name, None)) is not None:
                     stack.append(value)
         elif hasattr(obj, "__dict__"):
             stack.append(dict(obj.__dict__))
@@ -185,8 +183,7 @@ class Cache:
 
     def _dedupe_plain_user(self, user: "User") -> "User":
         """ Reuse or register the shared canonical `User` for this ID. """
-        canonical = self.__users.get(user.id)
-        if canonical is not None and canonical is not user:
+        if (canonical := self.__users.get(user.id)) is not None and canonical is not user:
             canonical._copy_from(user)
             return canonical
 

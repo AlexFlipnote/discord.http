@@ -590,9 +590,7 @@ class Command:
         return result
 
     def _has_permissions(self, ctx: "Context") -> Permissions:
-        perms = self._meta.has_permissions
-
-        if perms is None:
+        if (perms := self._meta.has_permissions) is None:
             return Permissions(0)
 
         resolved_perms: Permissions | None = getattr(
@@ -611,9 +609,7 @@ class Command:
         ))
 
     def _bot_has_permissions(self, ctx: "Context") -> Permissions:
-        perms = self._meta.bot_has_permissions
-
-        if perms is None:
+        if (perms := self._meta.bot_has_permissions) is None:
             return Permissions(0)
         if Permissions.administrator in ctx.app_permissions:
             return Permissions(0)
@@ -714,13 +710,11 @@ class Command:
         await self._command_checks(context)
 
         # Check user permissions
-        perms_user = self._has_permissions(context)
-        if perms_user != Permissions(0):
+        if (perms_user := self._has_permissions(context)) != Permissions(0):
             raise UserMissingPermissions(perms_user)
 
         # Check bot permissions
-        perms_bot = self._bot_has_permissions(context)
-        if perms_bot != Permissions(0):
+        if (perms_bot := self._bot_has_permissions(context)) != Permissions(0):
             raise BotMissingPermissions(perms_bot)
 
         # Check cooldown

@@ -177,8 +177,7 @@ class PartialChannel(PartialBase):
         if not self.guild_id:
             return None
 
-        cache = self._state.cache.get_guild(self.guild_id)
-        if cache:
+        if cache := self._state.cache.get_guild(self.guild_id):
             return cache
 
         from .guild import PartialGuild
@@ -1723,8 +1722,7 @@ class BaseChannel(PartialChannel):
         )
 
         for r_id in member.role_ids:
-            role = self.guild.get_role(r_id)
-            if role is None:
+            if (role := self.guild.get_role(r_id)) is None:
                 continue
             base |= getattr(role, "permissions", Permissions.none())
 
@@ -2196,8 +2194,7 @@ class PublicThread(BaseChannel):
         if not self.guild_id:
             return None
 
-        cache = self._state.cache.get_guild(self.guild_id)
-        if cache:
+        if cache := self._state.cache.get_guild(self.guild_id):
             return cache
 
         from .guild import PartialGuild
@@ -2643,8 +2640,7 @@ class StageInstance(PartialBase):
         if not self.guild_id:
             return None
 
-        cache = self._state.cache.get_guild(self.guild_id)
-        if cache:
+        if cache := self._state.cache.get_guild(self.guild_id):
             return cache
 
         from .guild import PartialGuild

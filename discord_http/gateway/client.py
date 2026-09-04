@@ -144,8 +144,7 @@ class GatewayClient:
                 )
 
                 shard.connect()
-                connection = shard._connection
-                if connection is None:
+                if (connection := shard._connection) is None:
                     raise RuntimeError(f"Shard {shard_id} connection was not established")
 
                 identify_wait = asyncio.ensure_future(shard._identified.wait())

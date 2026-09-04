@@ -777,8 +777,7 @@ class Context:
         if not self._guild:
             return None
 
-        cache = self.bot.cache.get_guild(self._guild.id)
-        if cache:
+        if cache := self.bot.cache.get_guild(self._guild.id):
             return cache
 
         return self._guild
@@ -789,14 +788,11 @@ class Context:
         if not self.channel_id:
             return None
 
-        if self.guild:
-            cache = self.bot.cache.get_channel_thread(
-                guild_id=self.guild.id,
-                channel_id=self.channel_id
-            )
-
-            if cache:
-                return cache
+        if self.guild and (cache := self.bot.cache.get_channel_thread(
+            guild_id=self.guild.id,
+            channel_id=self.channel_id
+        )):
+            return cache
 
         if self._channel:
             # Prefer the channel from context
@@ -823,9 +819,7 @@ class Context:
     @property
     def cooldown(self) -> Cooldown | None:
         """ The context cooldown. """
-        cooldown = self.command.cooldown
-
-        if cooldown is None:
+        if (cooldown := self.command.cooldown) is None:
             return None
 
         return cooldown.get_bucket(

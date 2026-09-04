@@ -86,8 +86,7 @@ class BaseFlag:
         """ Mask `value` to the class's known bits, reusing a cached member if one matches. """
         value = int(value) & cls._all_value_
 
-        cached = cls._value2member_.get(value)
-        if cached is not None:
+        if (cached := cls._value2member_.get(value)) is not None:
             return cached  # type: ignore[return-value]
 
         self = object.__new__(cls)
@@ -105,8 +104,7 @@ class BaseFlag:
         return self.value != 0
 
     def __repr__(self) -> str:
-        name = self.name
-        if name is None:
+        if (name := self.name) is None:
             return f"<{self.__class__.__name__}: {self.value}>"
         return f"<{self.__class__.__name__}.{name}: {self.value}>"
 

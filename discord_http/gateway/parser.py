@@ -266,8 +266,7 @@ class Parser:
     ) -> "Role | PartialRole":
         state = self.bot.state
 
-        cache = self.bot.cache.get_guild(guild_id)
-        if cache:
+        if cache := self.bot.cache.get_guild(guild_id):
             return cache.get_role(role_id) or PartialRole(
                 state=state,
                 id=role_id,
@@ -312,9 +311,7 @@ class Parser:
         else:
             guild = self._guild(data)
 
-        cache_guild = self.bot.cache.add_guild(guild_id, guild)
-
-        if cache_guild:
+        if cache_guild := self.bot.cache.add_guild(guild_id, guild):
             cache_guild._populate_internal_cache(data)
 
         return (cache_guild or guild,)
@@ -1346,9 +1343,7 @@ class Parser:
         ValueError
             If the guild id is not provided by Discord.
         """
-        guild = self._get_guild_or_partial(utils.get_int(data, "guild_id"))
-
-        if guild is None:
+        if (guild := self._get_guild_or_partial(utils.get_int(data, "guild_id"))) is None:
             raise ValueError("guild_id somehow was not provided by Discord")
 
         channel = self._get_channel_or_partial(
@@ -1722,8 +1717,7 @@ class Parser:
         ValueError
             If the guild id is not provided by Discord.
         """
-        guild = self._get_guild_or_partial(int(data.pop("guild_id")))
-        if guild is None:
+        if (guild := self._get_guild_or_partial(int(data.pop("guild_id")))) is None:
             raise ValueError("guild_id somehow was not provided by Discord")
 
         return (
