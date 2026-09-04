@@ -53,6 +53,17 @@ Webhook
   :param data: :class:`dict` raw dictionary with the interaction data sent by Discord.
 
 
+.. function:: async def on_interaction_dropped(ctx)
+
+  Called whenever an interaction is dropped because it arrived too late to be acknowledged in time.
+  Discord requires interactions to be acknowledged within 3 seconds of creation. If it took longer than
+  that just to reach the bot, the interaction is already invalid and is dropped without being processed.
+
+  Using this event will disable the default WARN print given by the library, and instead let you decide what it should do.
+
+  :param ctx: :class:`Context` The context object for the interaction that was dropped.
+
+
 Webhook Events
 --------------
 .. note::
