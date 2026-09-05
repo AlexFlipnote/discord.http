@@ -9,9 +9,7 @@ from discord_http.utils import MultipartData
 
 class TestGlobalRatelimitConstruction(unittest.TestCase):
     def test_construction_outside_a_running_loop_does_not_raise(self) -> None:
-        # Regression test: DiscordAPI.__init__ (and thus GlobalRatelimit())
-        # can run before any event loop exists, e.g. a plain `Client(...)`
-        # in a synchronous script. Must not eagerly call get_running_loop().
+        # Must not eagerly call get_running_loop() - this can run before any loop exists
         grl = GlobalRatelimit()
         self.assertIsNone(grl._loop)
 
@@ -33,9 +31,7 @@ class TestRatelimit(unittest.IsolatedAsyncioTestCase):
         self.assertFalse(rl.is_inactive())
 
     async def test_is_inactive_false_during_cooldown_window(self) -> None:
-        # Regression test: a bucket must not be evicted while it's mid-429
-        # cooldown, or the next request starts from a falsely-optimistic
-        # fresh bucket and immediately re-triggers the same rate limit.
+        # Must not evict mid-429-cooldown, or the next request starts falsely-fresh
         rl = Ratelimit("GET /test")
         rl._last_request -= 61
         rl.expires = rl._loop.time() + 30
@@ -90,8 +86,7 @@ class TestRatelimit(unittest.IsolatedAsyncioTestCase):
         self.assertEqual(rl.bucket_hash, "abcd1234")
 
     async def test_update_logs_and_switches_when_bucket_hash_changes(self) -> None:
-        # This is the actual "notice a divergence" signal bucket_hash exists for:
-        # our local key stayed the same, but Discord's real bucket for it changed.
+        # The actual "notice a divergence" signal bucket_hash exists for
         rl = Ratelimit("GET /test")
         rl.bucket_hash = "old-hash"
 
@@ -120,8 +115,7 @@ class TestGlobalRatelimit(unittest.IsolatedAsyncioTestCase):
         self.assertGreaterEqual(elapsed, 0.1)
 
     async def test_lock_for_blocks_every_request_until_it_clears(self) -> None:
-        # Regression test: a real global 429 must pause ALL requests, not
-        # just the one route that happened to trigger it.
+        # A real global 429 must pause ALL requests, not just the one that triggered it
         grl = GlobalRatelimit(max_requests=5, per=10.0)
         grl.lock_for(0.2)
 
@@ -163,9 +157,7 @@ class TestGetBucketKey(unittest.TestCase):
         self.assertEqual(key, "GET /channels/123/messages")
 
     def test_unlisted_subresource_route_still_collapses(self) -> None:
-        # Regression test: the old implementation only collapsed IDs behind a
-        # hardcoded keyword list, so any route outside it (scheduled events here)
-        # kept a raw ID and fragmented into its own bucket forever.
+        # The old keyword-list version never collapsed this, fragmenting per event
         key = self.api._get_bucket_key("GET", "/guilds/999/scheduled-events/555")
         self.assertEqual(key, "GET /guilds/999/scheduled-events/:id")
 
@@ -182,9 +174,7 @@ class TestGetBucketKey(unittest.TestCase):
         self.assertEqual(key, "PATCH /webhooks/123456/abcToken123/messages/:id")
 
     def test_mixed_alphanumeric_segment_is_left_untouched(self) -> None:
-        # A digit run *inside* a segment (a token, or the literal "@original"
-        # placeholder) must not be partially replaced - only a whole segment
-        # that is purely digits counts as an ID.
+        # Only a whole segment that is purely digits counts as an id
         key = self.api._get_bucket_key("PATCH", "/webhooks/123456/abcToken123/messages/@original")
         self.assertEqual(key, "PATCH /webhooks/123456/abcToken123/messages/@original")
 
@@ -194,8 +184,7 @@ class TestRouteTemplateAndMajorParam(unittest.TestCase):
         self.api = object.__new__(DiscordAPI)
 
     def test_route_template_collapses_major_param_too(self) -> None:
-        # Unlike _get_bucket_key, the template must ignore major param value,
-        # since Discord's bucket hash is the same regardless of which guild.
+        # Unlike _get_bucket_key, the hash is the same regardless of which guild
         self.assertEqual(
             self.api._route_template("GET", "/guilds/999/scheduled-events/555"),
             "GET /guilds/:id/scheduled-events/:id",
@@ -225,34 +214,63 @@ class TestResolveBucketKey(unittest.TestCase):
         self.api._bucket_hashes = {}
 
     def test_falls_back_to_local_guess_when_hash_unknown(self) -> None:
-        template, key = self.api._resolve_bucket_key("GET", "/guilds/999/scheduled-events/555")
+        template, key, fallback = self.api._resolve_bucket_key("GET", "/guilds/999/scheduled-events/555")
         self.assertEqual(template, "GET /guilds/:id/scheduled-events/:id")
         self.assertEqual(key, "GET /guilds/999/scheduled-events/:id")
+        self.assertEqual(fallback, key)
 
     def test_uses_learned_hash_once_known(self) -> None:
-        template, _ = self.api._resolve_bucket_key("GET", "/guilds/999/scheduled-events/555")
+        template, _, _ = self.api._resolve_bucket_key("GET", "/guilds/999/scheduled-events/555")
         self.api._bucket_hashes[template] = "abcXYZ"
 
-        _, key = self.api._resolve_bucket_key("GET", "/guilds/999/scheduled-events/777")
+        _, key, fallback = self.api._resolve_bucket_key("GET", "/guilds/999/scheduled-events/777")
         self.assertEqual(key, "GET #abcXYZ:999")
+        self.assertEqual(fallback, "GET /guilds/999/scheduled-events/:id")
 
     def test_hash_based_key_still_separates_different_major_params(self) -> None:
-        # Regression test: switching to the hash must not accidentally merge
-        # buckets across guilds/channels/webhooks - only the minor param collapses.
-        template, _ = self.api._resolve_bucket_key("GET", "/guilds/999/scheduled-events/555")
+        # The hash must not merge buckets across guilds/channels/webhooks
+        template, _, _ = self.api._resolve_bucket_key("GET", "/guilds/999/scheduled-events/555")
         self.api._bucket_hashes[template] = "abcXYZ"
 
-        _, key_guild_999 = self.api._resolve_bucket_key("GET", "/guilds/999/scheduled-events/1")
-        _, key_guild_111 = self.api._resolve_bucket_key("GET", "/guilds/111/scheduled-events/2")
+        _, key_guild_999, _ = self.api._resolve_bucket_key("GET", "/guilds/999/scheduled-events/1")
+        _, key_guild_111, _ = self.api._resolve_bucket_key("GET", "/guilds/111/scheduled-events/2")
 
         self.assertNotEqual(key_guild_999, key_guild_111)
 
     def test_hash_based_key_has_no_major_suffix_for_global_routes(self) -> None:
-        template, _ = self.api._resolve_bucket_key("GET", "/stickers/123")
+        template, _, _ = self.api._resolve_bucket_key("GET", "/stickers/123")
         self.api._bucket_hashes[template] = "abcXYZ"
 
-        _, key = self.api._resolve_bucket_key("GET", "/stickers/456")
+        _, key, _ = self.api._resolve_bucket_key("GET", "/stickers/456")
         self.assertEqual(key, "GET #abcXYZ")
+
+
+class TestGetRatelimitMigration(unittest.IsolatedAsyncioTestCase):
+    async def test_migrates_existing_bucket_state_to_the_new_key(self) -> None:
+        # Used to reset to limit=1 defaults instead of keeping the real known state
+        api = object.__new__(DiscordAPI)
+        api._buckets = {}
+
+        old = api.get_ratelimit("GET /guilds/999/scheduled-events/:id")
+        old.limit = 5
+        old.remaining = 3
+
+        migrated = api.get_ratelimit("GET #abcXYZ:999", migrate_from="GET /guilds/999/scheduled-events/:id")
+
+        self.assertIs(migrated, old)
+        self.assertEqual(migrated.limit, 5)
+        self.assertEqual(migrated.remaining, 3)
+        self.assertEqual(migrated.key, "GET #abcXYZ:999")
+        self.assertNotIn("GET /guilds/999/scheduled-events/:id", api._buckets)
+
+    async def test_no_migration_source_creates_a_fresh_bucket(self) -> None:
+        api = object.__new__(DiscordAPI)
+        api._buckets = {}
+
+        rl = api.get_ratelimit("GET #abcXYZ:999", migrate_from="GET /guilds/999/scheduled-events/:id")
+
+        self.assertEqual(rl.limit, 1)
+        self.assertEqual(rl.remaining, 1)
 
 
 class TestMultipartDataReset(unittest.TestCase):
@@ -300,12 +318,18 @@ class _FakeHTTPClient:
 
 
 def _fake_response(
-    *, bucket_hash: str | None = None, status: int = 200, response: dict | None = None,
+    *,
+    bucket_hash: str | None = None,
+    status: int = 200,
+    response: dict | None = None,
+    limit: str = "5",
+    remaining: str = "4",
+    reset: str = "0",
 ) -> HTTPResponse:
     headers = {
-        "X-RateLimit-Limit": "5",
-        "X-RateLimit-Remaining": "4",
-        "X-RateLimit-Reset": "0",
+        "X-RateLimit-Limit": limit,
+        "X-RateLimit-Remaining": remaining,
+        "X-RateLimit-Reset": reset,
         "X-RateLimit-Reset-After": "1.0",
     }
     if bucket_hash:
@@ -349,8 +373,7 @@ class TestQuerySelfCorrectsBucketKey(unittest.IsolatedAsyncioTestCase):
         await api.query("GET", "/guilds/999/scheduled-events/555")
         await api.query("GET", "/guilds/999/scheduled-events/777")
 
-        # The second, different-event-id request reused the hash-based key
-        # instead of creating yet another fragmented per-event bucket.
+        # Reused the hash-based key instead of fragmenting per event id
         self.assertIn("GET #hashABC:999", api._buckets)
 
     async def test_different_guild_still_gets_its_own_bucket_after_hash_learned(self) -> None:
@@ -362,22 +385,13 @@ class TestQuerySelfCorrectsBucketKey(unittest.IsolatedAsyncioTestCase):
         await api.query("GET", "/guilds/999/scheduled-events/555")
         await api.query("GET", "/guilds/111/scheduled-events/1")
 
-        # The first call (the one that taught us the hash) still used the local guess.
+        # First call (taught the hash) kept the local guess; second already knew it
         self.assertIn("GET /guilds/999/scheduled-events/:id", api._buckets)
-        # The second, different-guild call already knew the hash and got its own
-        # hash-based bucket - not merged with guild 999's.
         self.assertIn("GET #hashABC:111", api._buckets)
         self.assertNotIn("GET #hashABC:999", api._buckets)
 
     async def test_hash_learned_mid_call_does_not_orphan_a_429_cooldown(self) -> None:
-        # Regression test: the bucket key used to be re-resolved on every retry
-        # iteration. A 429 (which also carries X-RateLimit-Bucket) would teach the
-        # hash and set its cooldown on the pre-hash Ratelimit object in the same
-        # breath - the next iteration then resolved to a *different*, freshly
-        # created hash-based object with no cooldown on it, so the retry fired
-        # immediately instead of respecting retry_after. The key must be resolved
-        # once for the whole call so the cooldown set on attempt 1 is still the
-        # object attempt 2 waits on.
+        # Re-resolving the key per retry used to drop the 429 cooldown mid-loop
         api = self._make_api([
             _fake_response(status=429, bucket_hash="hashABC", response={
                 "retry_after": 0.05, "global": False,
@@ -386,17 +400,65 @@ class TestQuerySelfCorrectsBucketKey(unittest.IsolatedAsyncioTestCase):
         ])
 
         start = asyncio.get_running_loop().time()
-        await api.query("GET", "/guilds/999/scheduled-events/555")
+        with self.assertLogs("discord_http", level="WARNING"):
+            await api.query("GET", "/guilds/999/scheduled-events/555")
         elapsed = asyncio.get_running_loop().time() - start
 
-        # Ratelimit.__aenter__ floors any wait at ~0.2s, so a real wait proves the
-        # cooldown carried over; an orphaned cooldown would retry near-instantly.
+        # __aenter__ floors any wait at ~0.2s; an orphaned cooldown retries near-instantly
         self.assertGreaterEqual(elapsed, 0.15)
 
-        # Only the local-guess key was ever used for this call - the hash it
-        # learned along the way didn't cause a mid-call switch to a second,
-        # unrelated Ratelimit object.
+        # Only the local-guess key was ever used - no mid-call switch to a second object
         self.assertEqual(list(api._buckets), ["GET /guilds/999/scheduled-events/:id"])
+
+    async def test_switching_to_hash_key_preserves_the_bucket_state(self) -> None:
+        # Used to reset to limit=1 instead of carrying over the real known state
+        api = self._make_api([
+            _fake_response(bucket_hash="hashABC", limit="5", remaining="4", reset="100"),
+            _fake_response(bucket_hash="hashABC", limit="5", remaining="3", reset="100"),
+        ])
+
+        await api.query("PATCH", "/channels/570916125672603659/messages/111")
+        await api.query("PATCH", "/channels/570916125672603659/messages/222")
+
+        self.assertEqual(list(api._buckets), ["PATCH #hashABC:570916125672603659"])
+        rl = api._buckets["PATCH #hashABC:570916125672603659"]
+        self.assertEqual(rl.limit, 5)
+        self.assertEqual(rl.remaining, 3)
+
+    async def test_ratelimit_warning_shows_the_normalized_path_not_the_raw_id(self) -> None:
+        # Should read as "this counts as one bucket", not the one id that triggered it
+        api = self._make_api([
+            _fake_response(status=429, response={"retry_after": 0.01, "global": False}),
+            _fake_response(status=200),
+        ])
+
+        with self.assertLogs("discord_http", level="WARNING") as logs:
+            await api.query("GET", "/guilds/999/scheduled-events/555")
+
+        message = "\n".join(logs.output)
+        self.assertIn("GET /guilds/999/scheduled-events/:id", message)
+        self.assertNotIn("555", message)
+
+    async def test_ratelimit_warning_stays_readable_even_once_hash_is_known(self) -> None:
+        # Once the key has switched to the opaque hash internally, must still print the path
+        api = self._make_api([
+            _fake_response(bucket_hash="abcXYZ"),  # teaches the hash
+            _fake_response(
+                status=429, bucket_hash="abcXYZ",
+                response={"retry_after": 0.01, "global": False},
+            ),
+            _fake_response(status=200, bucket_hash="abcXYZ"),
+        ])
+
+        await api.query("GET", "/guilds/999/scheduled-events/555")
+
+        with self.assertLogs("discord_http", level="WARNING") as logs:
+            await api.query("GET", "/guilds/999/scheduled-events/777")
+
+        message = "\n".join(logs.output)
+        self.assertIn("GET /guilds/999/scheduled-events/:id", message)
+        self.assertNotIn("#", message)
+        self.assertNotIn("abcXYZ", message)
 
 
 if __name__ == "__main__":

@@ -262,9 +262,7 @@ class TestShardReconnectBackoff(unittest.IsolatedAsyncioTestCase):
 
         self.assertEqual(shard._reconnect_attempts, 0)
 
-        # The READY handler spins up a background _delay_ready() task; let it
-        # finish (guilds is empty so it completes immediately) instead of
-        # leaking a pending task past the end of the test.
+        # Drain the background _delay_ready() task READY spins up, or it leaks
         if shard._ready_task is not None:
             await shard._ready_task
 

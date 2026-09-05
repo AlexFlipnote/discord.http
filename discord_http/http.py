@@ -657,7 +657,7 @@ class DiscordAPI:
         base_path = path.partition("?")[0]
         return match.group(2) if (match := major_param_re.match(base_path)) else ""
 
-    def _resolve_bucket_key(self, method: str, path: str) -> tuple[str, str]:
+    def _resolve_bucket_key(self, method: str, path: str) -> tuple[str, str, str]:
         """
         Resolve which route template and actual bucket key a request should use.
 
@@ -670,20 +670,20 @@ class DiscordAPI:
 
         Returns
         -------
-            A tuple of `(route_template, bucket_key)`. `route_template` is what
-            `_bucket_hashes` should be updated with once a response comes back.
+            A tuple of `(route_template, bucket_key, fallback_key)`
         """
         route_template = self._route_template(method, path)
+        fallback_key = self._get_bucket_key(method, path)
 
         if bucket_hash := self._bucket_hashes.get(route_template):
             major_param = self._major_param_value(path)
             key = f"{method} #{bucket_hash}" + (f":{major_param}" if major_param else "")
         else:
-            key = self._get_bucket_key(method, path)
+            key = fallback_key
 
-        return route_template, key
+        return route_template, key, fallback_key
 
-    def get_ratelimit(self, key: str) -> Ratelimit:
+    def get_ratelimit(self, key: str, *, migrate_from: str | None = None) -> Ratelimit:
         """
         Get a ratelimit object from the bucket.
 
@@ -691,16 +691,22 @@ class DiscordAPI:
         ----------
         key
             The key to get the ratelimit for
+        migrate_from
+            Previous key to move an existing bucket's state from, if any
 
         Returns
         -------
             The ratelimit object for the given key
         """
-        try:
-            value = self._buckets[key]
-        except KeyError:
-            self._buckets[key] = value = Ratelimit(key)
+        if key in self._buckets:
+            return self._buckets[key]
 
+        if migrate_from and migrate_from != key and (old := self._buckets.pop(migrate_from, None)):
+            old.key = key
+            self._buckets[key] = old
+            return old
+
+        value = self._buckets[key] = Ratelimit(key)
         return value
 
     def create_jitter(self) -> float:
@@ -804,10 +810,9 @@ class DiscordAPI:
         base_path = path.split("?")[0]
         exempt_from_global = base_path.startswith(("/interactions/", "/webhooks/"))
 
-        # Resolved once per call, reused across retries - resolving fresh per retry
-        # could orphan a 429 cooldown if the hash gets learned mid-loop.
-        route_template, bucket_key = self._resolve_bucket_key(method, path)
-        ratelimit = self.get_ratelimit(bucket_key)
+        # Resolved once per call and reused across retries, not re-resolved per retry
+        route_template, bucket_key, fallback_key = self._resolve_bucket_key(method, path)
+        ratelimit = self.get_ratelimit(bucket_key, migrate_from=fallback_key)
 
         async def _sleep(tries: int) -> None:
             await asyncio.sleep(1 + (tries * 2) + self.create_jitter())
@@ -856,7 +861,7 @@ class DiscordAPI:
                             ratelimit_tries += 1
                             if ratelimit_tries > 10:
                                 # something is actually wrong, not just normal throttling
-                                _log.error(f"Ratelimit hit ({ratelimit.key}) 10 times in a row, giving up")
+                                _log.error(f"Ratelimit hit ({fallback_key}) 10 times in a row, giving up")
                                 raise Ratelimited(r)
 
                             retry_after: float = response.get("retry_after", 1.0)
@@ -868,7 +873,7 @@ class DiscordAPI:
                                 if exempt_from_global:
                                     await asyncio.sleep(retry_after)
                             else:
-                                _log.warning(f"Ratelimit hit ({ratelimit.key}), waiting {retry_after}s...")
+                                _log.warning(f"Ratelimit hit ({fallback_key}), waiting {retry_after}s...")
 
                                 async with ratelimit._lock:
                                     ratelimit.remaining = 0
