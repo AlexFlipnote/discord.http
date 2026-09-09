@@ -8,6 +8,7 @@ import re
 import socket
 import ssl
 import sys
+import time
 
 from aiohttp.client_exceptions import ContentTypeError
 from collections.abc import AsyncIterator
@@ -831,20 +832,23 @@ class DiscordAPI:
 
             async with ratelimit:
                 try:
+                    req_start = time.perf_counter()
                     r: HTTPResponse = await self.http.request(
                         method, f"{api_url}{path}",
                         res_method=res_method,
                         **kwargs
                     )
+                    req_elapsed = time.perf_counter() - req_start
                     ratelimit.update(r)
 
                     if new_bucket_hash := r.headers.get("X-RateLimit-Bucket"):
                         self._bucket_hashes[route_template] = new_bucket_hash
 
                     _log.debug(
-                        "HTTP %s (%s): %s (%s/%s, %.2fs until reset)",
+                        "HTTP %s (%s): %s (%s/%s, %.2fs until reset, took %.3fs)",
                         method.upper(), r.status, path,
-                        ratelimit.remaining, ratelimit.limit, ratelimit.reset_after
+                        ratelimit.remaining, ratelimit.limit, ratelimit.reset_after,
+                        req_elapsed
                     )
 
                     match r.status:
