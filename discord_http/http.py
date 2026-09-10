@@ -118,17 +118,14 @@ class HTTPClient:
     """
     Used to make HTTP requests, but with a session.
 
-    Can be used to make requests outside of the usual Discord API
+    Can be used to make requests outside of the usual Discord API.
     """
 
-    __slots__ = ("_timeout", "session",)
+    __slots__ = ("session",)
 
     def __init__(self):
         self.session: HTTPSession | None = None
         """ The aiohttp session used for making requests. """
-
-        self._timeout: int = 60
-        """ The timeout for HTTP requests, in seconds. """
 
     async def _create_session(self) -> None:
         """ Creates a new session for the library. """
@@ -139,10 +136,14 @@ class HTTPClient:
             connector=aiohttp.TCPConnector(
                 limit=0,
                 ssl=ssl.create_default_context(),
-                keepalive_timeout=15,
-                family=socket.AF_INET,
+                keepalive_timeout=15,  # How long an idle pooled connection is kept before being discarded
+                family=socket.AF_INET,  # Force IPv4, skip any IPv6 happy-eyeballs racing
             ),
-            timeout=aiohttp.ClientTimeout(total=self._timeout),
+            timeout=aiohttp.ClientTimeout(
+                total=60,  # Max time for the whole request/response cycle
+                sock_connect=10,  # Max time to establish the TCP connection
+                sock_read=30  # Max time to wait between reads once connected
+            ),
             cookie_jar=aiohttp.DummyCookieJar(),
             json_serialize=lambda obj: orjson.dumps(obj).decode("utf-8")
         )
@@ -561,7 +562,7 @@ class DiscordAPI:
         # Ratelimit handling
         self._buckets: dict[str, Ratelimit] = {}
         self._global_ratelimit: GlobalRatelimit = GlobalRatelimit()
-        self._bucket_hashes: dict[str, str] = {}
+        self._bucket_hashes: dict[str, tuple[str, float]] = {}
 
         # Background tasks
         task = self.bot.loop.create_task(
@@ -591,6 +592,17 @@ class DiscordAPI:
 
         if to_remove:
             _log.debug(f"Cleaned up {len(to_remove)} old ratelimits, {len(self._buckets)} remaining.")
+
+        now = time.perf_counter()
+        stale_hashes = [
+            route for route, (_, last_seen) in self._bucket_hashes.items()
+            if now - last_seen >= 60
+        ]
+        for route in stale_hashes:
+            self._bucket_hashes.pop(route, None)
+
+        if stale_hashes:
+            _log.debug(f"Cleaned up {len(stale_hashes)} old bucket hashes, {len(self._bucket_hashes)} remaining.")
 
     @staticmethod
     def _apply_bucket_quirks(method: str, normalized: str) -> str:
@@ -676,7 +688,8 @@ class DiscordAPI:
         route_template = self._route_template(method, path)
         fallback_key = self._get_bucket_key(method, path)
 
-        if bucket_hash := self._bucket_hashes.get(route_template):
+        if cached := self._bucket_hashes.get(route_template):
+            bucket_hash, _ = cached
             major_param = self._major_param_value(path)
             key = f"{method} #{bucket_hash}" + (f":{major_param}" if major_param else "")
         else:
@@ -842,7 +855,7 @@ class DiscordAPI:
                     ratelimit.update(r)
 
                     if new_bucket_hash := r.headers.get("X-RateLimit-Bucket"):
-                        self._bucket_hashes[route_template] = new_bucket_hash
+                        self._bucket_hashes[route_template] = (new_bucket_hash, time.perf_counter())
 
                     _log.debug(
                         "HTTP %s (%s): %s (%s/%s, %.2fs until reset, took %.3fs)",
@@ -922,7 +935,11 @@ class DiscordAPI:
                             raise HTTPException(r)
 
                 except OSError as e:
-                    if error_tries < 4 and e.errno in (errno.ECONNRESET, errno.ECONNABORTED, 54):
+                    retryable = (
+                        e.errno in (errno.ECONNRESET, errno.ECONNABORTED, 54) or
+                        isinstance(e, (aiohttp.ConnectionTimeoutError, aiohttp.SocketTimeoutError))
+                    )
+                    if error_tries < 4 and retryable:
                         _log.debug(
                             f"HTTP {method.upper()} {path} hit {e!r}, "
                             f"retrying (attempt {error_tries + 1}/5)..."
