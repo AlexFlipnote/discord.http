@@ -139,7 +139,7 @@ class HTTPClient:
             connector=aiohttp.TCPConnector(
                 limit=0,
                 ssl=ssl.create_default_context(),
-                keepalive_timeout=self._timeout,
+                keepalive_timeout=15,
                 family=socket.AF_INET,
             ),
             timeout=aiohttp.ClientTimeout(total=self._timeout),
