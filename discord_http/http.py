@@ -871,7 +871,8 @@ class DiscordAPI:
                         "HTTP %s (%s): %s (%s/%s, %.2fs until reset, took %.3fs, peer %s)",
                         method.upper(), r.status, path,
                         ratelimit.remaining, ratelimit.limit, ratelimit.reset_after,
-                        req_elapsed, r.peer
+                        req_elapsed,
+                        f"{r.peer[0]}:{r.peer[1]}" if r.peer else "unknown"
                     )
 
                     match r.status:
