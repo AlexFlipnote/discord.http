@@ -77,7 +77,6 @@ class HTTPResponse(Generic[ResponseT]):
 
     __slots__ = (
         "headers",
-        "peer",
         "reason",
         "res_method",
         "response",
@@ -92,7 +91,6 @@ class HTTPResponse(Generic[ResponseT]):
         reason: str | None,
         res_method: ResMethodTypes,
         headers: CIMultiDictProxy[str],
-        peer: tuple[str, int] | None = None,
     ):
         self.status = status
         """ The HTTP status code of the response. """
@@ -108,9 +106,6 @@ class HTTPResponse(Generic[ResponseT]):
 
         self.headers = headers
         """ The headers of the response, as a CIMultiDictProxy. """
-
-        self.peer = peer
-        """ The (ip, port) of the actual peer that answered, if the connection was still available to inspect. """
 
     def __repr__(self) -> str:
         return (
@@ -233,10 +228,6 @@ class HTTPClient:
             )
 
         async with self.session.request(method.upper(), str(url), **kwargs) as res:
-            peer = None
-            if res.connection and res.connection.transport:
-                peer = res.connection.transport.get_extra_info("peername")
-
             match res_method:
                 case "read":
                     r = await res.read()
@@ -260,8 +251,7 @@ class HTTPClient:
                 response=r,
                 res_method=res_method,
                 reason=res.reason,
-                headers=res.headers,
-                peer=tuple(peer) if peer else None
+                headers=res.headers
             )
 
     async def stream_request(
@@ -868,11 +858,10 @@ class DiscordAPI:
                         self._bucket_hashes[route_template] = (new_bucket_hash, time.perf_counter())
 
                     _log.debug(
-                        "HTTP %s (%s): %s (%s/%s, %.2fs until reset, took %.3fs, peer %s)",
+                        "HTTP %s (%s): %s (%s/%s, %.2fs until reset, took %.3fs)",
                         method.upper(), r.status, path,
                         ratelimit.remaining, ratelimit.limit, ratelimit.reset_after,
-                        req_elapsed,
-                        f"{r.peer[0]}:{r.peer[1]}" if r.peer else "unknown"
+                        req_elapsed
                     )
 
                     match r.status:
