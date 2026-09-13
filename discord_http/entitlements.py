@@ -168,7 +168,7 @@ class SKU(PartialSKU):
     __slots__ = (
         "_raw_flags",
         "_raw_type",
-        "application",
+        "application_id",
         "name",
         "slug",
     )
@@ -190,14 +190,19 @@ class SKU(PartialSKU):
         self._raw_type: int = data["type"]
         self._raw_flags: int = data["flags"]
 
-        self.application: PartialUser = self._state.bot.get_partial_user(int(data["application_id"]))
-        """ The application that owns the SKU. """
+        self.application_id: int = int(data["application_id"])
+        """ The ID of the application that owns the SKU. """
 
     def __repr__(self) -> str:
         return f"<SKU id={self.id} name={self.name} type={self.type}>"
 
     def __str__(self) -> str:
         return f"{self.name}"
+
+    @property
+    def application(self) -> PartialUser:
+        """ The application that owns the SKU. """
+        return self._state.bot.get_partial_user(self.application_id)
 
     @property
     def type(self) -> SKUType:
@@ -263,15 +268,15 @@ class Entitlements(PartialEntitlements):
     """ Represents an entitlement object. """
     __slots__ = (
         "_data_consumed",
-        "application",
+        "application_id",
         "deleted",
         "ends_at",
         "guild_id",
-        "sku",
+        "sku_id",
         "starts_at",
         "subscription_id",
         "type",
-        "user",
+        "user_id",
     )
 
     def __init__(
@@ -288,8 +293,8 @@ class Entitlements(PartialEntitlements):
         self.type: EntitlementType = EntitlementType(data["type"])
         """ The type of the entitlement. """
 
-        self.user: PartialUser | None = None
-        """ The user that owns the entitlement, if the owner type is user. """
+        self.user_id: int | None = None
+        """ The ID of the user that owns the entitlement, if the owner type is user. """
 
         self.guild_id: int | None = utils.get_int(data, "guild_id")
         """ The guild ID that owns the entitlement, if the owner type is guild. """
@@ -297,11 +302,11 @@ class Entitlements(PartialEntitlements):
         self.subscription_id: int | None = utils.get_int(data, "subscription_id")
         """ The subscription ID that the entitlement belongs to, if any. """
 
-        self.application: PartialUser = self._state.bot.get_partial_user(int(data["application_id"]))
-        """ The application that owns the entitlement. """
+        self.application_id: int = int(data["application_id"])
+        """ The ID of the application that owns the entitlement. """
 
-        self.sku: PartialSKU = self._state.bot.get_partial_sku(int(data["sku_id"]))
-        """ The SKU that the entitlement belongs to. """
+        self.sku_id: int = int(data["sku_id"])
+        """ The ID of the SKU that the entitlement belongs to. """
 
         self.starts_at: datetime | None = None
         """ The time the entitlement starts at, if any. """
@@ -320,13 +325,31 @@ class Entitlements(PartialEntitlements):
 
     def _from_data(self, data: dict) -> None:
         if user_id := data.get("user_id"):
-            self.user = self._state.bot.get_partial_user(int(user_id))
+            self.user_id = int(user_id)
 
         if starts_at := data.get("starts_at"):
             self.starts_at = utils.parse_time(starts_at)
 
         if ends_at := data.get("ends_at"):
             self.ends_at = utils.parse_time(ends_at)
+
+    @property
+    def application(self) -> PartialUser:
+        """ The application that owns the entitlement. """
+        return self._state.bot.get_partial_user(self.application_id)
+
+    @property
+    def sku(self) -> PartialSKU:
+        """ The SKU that the entitlement belongs to. """
+        return self._state.bot.get_partial_sku(self.sku_id)
+
+    @property
+    def user(self) -> PartialUser | None:
+        """ The user that owns the entitlement, if the owner type is user. """
+        if not self.user_id:
+            return None
+
+        return self._state.bot.get_partial_user(self.user_id)
 
     @property
     def guild(self) -> Guild | PartialGuild | None:

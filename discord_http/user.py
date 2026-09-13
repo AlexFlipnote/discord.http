@@ -864,14 +864,14 @@ class Application(PartialBase):
         "event_webhooks_types",
         "event_webhooks_url",
         "flags",
-        "guild",
+        "guild_id",
         "icon",
         "install_params",
         "integration_types_config",
         "interactions_endpoint_url",
         "name",
-        "owner",
-        "primary_sku",
+        "owner_id",
+        "primary_sku_id",
         "privacy_policy_url",
         "redirect_uris",
         "role_connections_verification_url",
@@ -920,17 +920,17 @@ class Application(PartialBase):
         self.privacy_policy_url: str | None = data.get("privacy_policy_url")
         """ The URL of the privacy policy of the application, if any. """
 
-        self.owner: PartialUser | None = None
-        """ The owner of the application, if any. """
+        self.owner_id: int | None = None
+        """ The ID of the owner of the application, if any. """
 
         self.verify_key: str = data.get("verify_key", "")
         """ The verify key of the application. """
 
-        self.guild: "PartialGuild | None" = None
-        """ The guild of the application, if the application is a game sold on Discord. """
+        self.guild_id: int | None = None
+        """ The ID of the guild of the application, if the application is a game sold on Discord. """
 
-        self.primary_sku: "PartialSKU | None" = None
-        """ The primary SKU of the application, if the application is a game sold on Discord. """
+        self.primary_sku_id: int | None = None
+        """ The ID of the primary SKU of the application, if the application is a game sold on Discord. """
 
         self.slug: str | None = data.get("slug")
         """ The slug of the application, if any. """
@@ -997,9 +997,33 @@ class Application(PartialBase):
     def __str__(self) -> str:
         return self.name
 
+    @property
+    def owner(self) -> "PartialUser | None":
+        """ The owner of the application, if any. """
+        if not self.owner_id:
+            return None
+
+        return self._state.bot.get_partial_user(self.owner_id)
+
+    @property
+    def guild(self) -> "PartialGuild | None":
+        """ The guild of the application, if the application is a game sold on Discord. """
+        if not self.guild_id:
+            return None
+
+        return self._state.bot.get_partial_guild(self.guild_id)
+
+    @property
+    def primary_sku(self) -> "PartialSKU | None":
+        """ The primary SKU of the application, if the application is a game sold on Discord. """
+        if not self.primary_sku_id:
+            return None
+
+        return self._state.bot.get_partial_sku(self.primary_sku_id)
+
     def _from_data(self, data: dict) -> None:
         if owner := data.get("owner"):
-            self.owner = self._state.bot.get_partial_user(int(owner["id"]))
+            self.owner_id = int(owner["id"])
 
         if bot := data.get("bot"):
             self.bot = User(
@@ -1008,9 +1032,7 @@ class Application(PartialBase):
             )
 
         if (guild_id := data.get("guild_id")) or (guild := data.get("guild")):
-            self.guild = self._state.bot.get_partial_guild(
-                int(guild_id) if guild_id else int(guild["id"])
-            )
+            self.guild_id = int(guild_id) if guild_id else int(guild["id"])
 
         if icon := data.get("icon"):
             self.icon = Asset._from_application_image(
@@ -1027,7 +1049,7 @@ class Application(PartialBase):
             )
 
         if primary_sku_id := data.get("primary_sku_id"):
-            self.primary_sku = self._state.bot.get_partial_sku(int(primary_sku_id))
+            self.primary_sku_id = int(primary_sku_id)
 
         if team := data.get("team"):
             self.team = Team(

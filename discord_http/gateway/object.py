@@ -399,7 +399,7 @@ class PollVoteEvent:
         "answer_id",
         "channel",
         "guild",
-        "message",
+        "message_id",
         "type",
         "user",
     )
@@ -425,12 +425,8 @@ class PollVoteEvent:
         self.channel: "PartialChannel" = channel
         """ The channel the poll is in. """
 
-        self.message: PartialMessage = self._state.bot.get_partial_message(
-            int(data["message_id"]),
-            self.channel.id,
-            self.guild.id if self.guild else None
-        )
-        """ The message the poll is in. """
+        self.message_id: int = int(data["message_id"])
+        """ The ID of the message the poll is in. """
 
         self.type: PollVoteActionType = type
         """ The type of the poll vote action, either "vote" or "unvote". """
@@ -442,6 +438,15 @@ class PollVoteEvent:
         return (
             f"<PollVoteEvent user={self.user} "
             f"answer={self.answer_id} type={self.type}>"
+        )
+
+    @property
+    def message(self) -> "PartialMessage":
+        """ The message the poll is in. """
+        return self._state.bot.get_partial_message(
+            self.message_id,
+            self.channel.id,
+            self.guild.id if self.guild else None
         )
 
 

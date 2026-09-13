@@ -219,7 +219,7 @@ class WelcomeScreenChannel:
 
     __slots__ = (
         "_state",
-        "channel",
+        "channel_id",
         "description",
         "emoji_id",
         "emoji_name",
@@ -246,6 +246,9 @@ class WelcomeScreenChannel:
     def __repr__(self) -> str:
         return f"<WelcomeScreenChannel channel={self.channel} description='{self.description}'>"
 
+    def _from_data(self, data: dict) -> None:
+        self.channel_id: int = int(data["channel_id"])
+
     @property
     def emoji(self) -> "PartialEmoji | None":
         """ The partial custom emoji shown next to the channel, if any. """
@@ -254,16 +257,15 @@ class WelcomeScreenChannel:
 
         return self._state.bot.get_partial_emoji(self.emoji_id, guild_id=self.guild_id)
 
-    def _from_data(self, data: dict) -> None:
-        self.channel: "PartialChannel" = self._state.bot.get_partial_channel(
-            int(data["channel_id"]), guild_id=self.guild_id
-        )
+    @property
+    def channel(self) -> "PartialChannel":
         """ The channel shown in the welcome screen. """
+        return self._state.bot.get_partial_channel(self.channel_id, guild_id=self.guild_id)
 
     def to_dict(self) -> dict:
         """ Returns a dict representation of the welcome screen channel. """
         return {
-            "channel_id": str(int(self.channel)),
+            "channel_id": str(self.channel_id),
             "description": self.description,
             "emoji_id": str(self.emoji_id) if self.emoji_id else None,
             "emoji_name": self.emoji_name,
@@ -297,7 +299,7 @@ class GuildWidgetSettings:
 
     __slots__ = (
         "_state",
-        "channel",
+        "channel_id",
         "enabled",
         "guild_id",
     )
@@ -305,8 +307,8 @@ class GuildWidgetSettings:
     def __init__(self, *, state: "DiscordAPI", guild_id: int, data: dict):
         self._state = state
 
-        self.channel: "PartialChannel | None" = None
-        """ The channel the widget invite points to, if any. """
+        self.channel_id: int | None = None
+        """ The ID of the channel the widget invite points to, if any. """
 
         self.enabled: bool = data["enabled"]
         """ Whether the widget is enabled. """
@@ -319,9 +321,16 @@ class GuildWidgetSettings:
     def __repr__(self) -> str:
         return f"<GuildWidgetSettings enabled={self.enabled} channel={self.channel}>"
 
+    @property
+    def channel(self) -> "PartialChannel | None":
+        """ The channel the widget invite points to, if any. """
+        if not self.channel_id:
+            return None
+
+        return self._state.bot.get_partial_channel(self.channel_id, guild_id=self.guild_id)
+
     def _from_data(self, data: dict) -> None:
-        if channel_id := utils.get_int(data, "channel_id"):
-            self.channel = self._state.bot.get_partial_channel(channel_id, guild_id=self.guild_id)
+        self.channel_id = utils.get_int(data, "channel_id")
 
 
 class GuildWidgetChannel:
@@ -329,7 +338,7 @@ class GuildWidgetChannel:
 
     __slots__ = (
         "_state",
-        "channel",
+        "channel_id",
         "guild_id",
         "name",
         "position",
@@ -347,19 +356,18 @@ class GuildWidgetChannel:
         self.guild_id: int = guild_id
         """ The guild_id of the widget. """
 
-        self.channel: "PartialChannel"
-        """ The channel shown in the widget. """
-
         self._from_data(data)
 
     def __repr__(self) -> str:
         return f"<GuildWidgetChannel channel={self.channel} name='{self.name}'>"
 
+    @property
+    def channel(self) -> "PartialChannel":
+        """ The channel shown in the widget. """
+        return self._state.bot.get_partial_channel(self.channel_id, guild_id=self.guild_id)
+
     def _from_data(self, data: dict) -> None:
-        # I honestly did not want this inside the __init__, that's all...
-        self.channel: "PartialChannel" = self._state.bot.get_partial_channel(
-            int(data["id"]), guild_id=self.guild_id
-        )
+        self.channel_id: int = int(data["id"])
 
 
 class GuildWidgetMember(NamedTuple):
@@ -1088,7 +1096,7 @@ class PartialScheduledEvent(PartialBase):
 class ScheduledEvent(PartialScheduledEvent):
     """ Represents a scheduled event in a guild. """
     __slots__ = (
-        "channel",
+        "channel_id",
         "creator",
         "description",
         "end_time",
@@ -1132,8 +1140,8 @@ class ScheduledEvent(PartialScheduledEvent):
         self.entity_type: ScheduledEventEntityType = ScheduledEventEntityType(data["entity_type"])
         """ The entity type of the event. """
 
-        self.channel: PartialChannel | None = None
-        """ The channel the event is in, if applicable. """
+        self.channel_id: int | None = None
+        """ The ID of the channel the event is in, if applicable. """
 
         self.creator: "User | None" = None
         """ The creator of the event, if applicable. """
@@ -1158,6 +1166,14 @@ class ScheduledEvent(PartialScheduledEvent):
     def __str__(self) -> str:
         return self.name
 
+    @property
+    def channel(self) -> "PartialChannel | None":
+        """ The channel the event is in, if applicable. """
+        if not self.channel_id:
+            return None
+
+        return self._state.bot.get_partial_channel(self.channel_id, guild_id=self.guild_id)
+
     def _from_data(self, data: dict) -> None:
         if image := data.get("image"):
             self.image = Asset._from_scheduled_event_cover_image(
@@ -1172,10 +1188,7 @@ class ScheduledEvent(PartialScheduledEvent):
             self.end_time = utils.parse_time(scheduled_end_time)
 
         if channel_id := data.get("channel_id"):
-            self.channel = self._state.bot.get_partial_channel(
-                int(channel_id),
-                guild_id=self.guild_id
-            )
+            self.channel_id = int(channel_id)
 
         if recurrence_rule := data.get("recurrence_rule"):
             self.recurrence_rule = ScheduledEventRecurrenceRule._from_data(recurrence_rule)

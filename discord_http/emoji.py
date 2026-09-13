@@ -327,7 +327,7 @@ class Emoji(PartialEmoji):
         "managed",
         "name",
         "require_colons",
-        "user",
+        "user_id",
     )
 
     def __init__(
@@ -358,8 +358,8 @@ class Emoji(PartialEmoji):
         self.managed: bool = data.get("managed", False)
         """ Whether the emoji is managed by an integration or not. """
 
-        self.user: "PartialUser | None" = None
-        """ The user that created the emoji, if available. """
+        self.user_id: int | None = None
+        """ The ID of the user that created the emoji, if available. """
 
         self._raw_roles: list[int] = [int(r) for r in data.get("roles", [])]
 
@@ -384,7 +384,15 @@ class Emoji(PartialEmoji):
 
     def _from_data(self, data: dict) -> None:
         if user := data.get("user"):
-            self.user = self._state.bot.get_partial_user(int(user["id"]))
+            self.user_id = int(user["id"])
+
+    @property
+    def user(self) -> "PartialUser | None":
+        """ The user that created the emoji, if available. """
+        if not self.user_id:
+            return None
+
+        return self._state.bot.get_partial_user(self.user_id)
 
     @property
     def url(self) -> str:
