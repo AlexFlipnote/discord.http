@@ -816,7 +816,8 @@ class Client:
         -------
             Whether the bot has any listeners for the event.
         """
-        return bool(self.listeners.get(f"on_{event_name}"))
+        method = f"on_{event_name}"
+        return bool(self.listeners.get(method)) or bool(self._waiting_listeners.get(method))
 
     async def load_extension(
         self,

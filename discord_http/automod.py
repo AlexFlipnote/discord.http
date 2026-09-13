@@ -472,12 +472,12 @@ class AutoModRule(PartialAutoModRule):
     """ Represents an auto moderation rule in a guild. """
 
     __slots__ = (
+        "_raw_exempt_channels",
+        "_raw_exempt_roles",
         "actions",
         "creator_id",
         "enabled",
         "event_type",
-        "exempt_channels",
-        "exempt_roles",
         "name",
         "trigger_metadata",
         "trigger_type",
@@ -519,17 +519,8 @@ class AutoModRule(PartialAutoModRule):
         self.enabled: bool = data.get("enabled", False)
         """ Whether the automod rule is enabled or not. """
 
-        self.exempt_roles: list[PartialRole] = [
-            PartialRole(state=state, id=int(g), guild_id=self.guild_id)
-            for g in data.get("exempt_roles", [])
-        ]
-        """ The roles that are exempt from the automod rule. """
-
-        self.exempt_channels: list[PartialChannel] = [
-            PartialChannel(state=state, id=int(g), guild_id=self.guild_id)
-            for g in data.get("exempt_channels", [])
-        ]
-        """ The channels that are exempt from the automod rule. """
+        self._raw_exempt_roles: list[int] = [int(g) for g in data.get("exempt_roles", [])]
+        self._raw_exempt_channels: list[int] = [int(g) for g in data.get("exempt_channels", [])]
 
         self._from_data(data)
 
@@ -552,3 +543,19 @@ class AutoModRule(PartialAutoModRule):
             state=self._state,
             id=self.creator_id
         )
+
+    @property
+    def exempt_roles(self) -> list[PartialRole]:
+        """ The roles that are exempt from the automod rule. """
+        return [
+            PartialRole(state=self._state, id=g, guild_id=self.guild_id)
+            for g in self._raw_exempt_roles
+        ]
+
+    @property
+    def exempt_channels(self) -> list[PartialChannel]:
+        """ The channels that are exempt from the automod rule. """
+        return [
+            PartialChannel(state=self._state, id=g, guild_id=self.guild_id)
+            for g in self._raw_exempt_channels
+        ]

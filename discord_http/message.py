@@ -83,7 +83,8 @@ class MessageReaction:
     """ Represents a reaction to a message. """
 
     __slots__ = (
-        "_message",
+        "_channel_id",
+        "_message_id",
         "_state",
         "burst_colors",
         "burst_count",
@@ -96,7 +97,8 @@ class MessageReaction:
 
     def __init__(self, *, state: "DiscordAPI", message: "Message", data: dict):
         self._state = state
-        self._message = message
+        self._channel_id = message.channel_id
+        self._message_id = message.id
 
         self.count: int = int(data["count"])
         """ The number of users that reacted with this emoji. """
@@ -118,7 +120,7 @@ class MessageReaction:
 
         self.burst_colors: list[Colour] = [
             Colour.from_hex(g)
-            for g in data.get("burst_colors", [])
+            for g in data.get("burst_colors") or ()
         ]
         """ The colors of the burst reaction. """
 
@@ -132,7 +134,7 @@ class MessageReaction:
         parsed = self.emoji.to_reaction()
         await self._state.query(
             "PUT",
-            f"/channels/{self._message.channel.id}/messages/{self._message.id}/reactions/{parsed}/@me",
+            f"/channels/{self._channel_id}/messages/{self._message_id}/reactions/{parsed}/@me",
             res_method="text"
         )
 
@@ -149,7 +151,7 @@ class MessageReaction:
         parsed = self.emoji.to_reaction()
         target = str(user_id) if user_id is not None else "@me"
         url = (
-            f"/channels/{self._message.channel.id}/messages/{self._message.id}"
+            f"/channels/{self._channel_id}/messages/{self._message_id}"
             f"/reactions/{parsed}/{target}"
         )
 
@@ -198,8 +200,8 @@ class MessageReaction:
 
             return await self._state.query(
                 "GET",
-                f"/channels/{self._message.channel.id}/messages/"
-                f"{self._message.id}/reactions/{self.emoji.to_reaction()}",
+                f"/channels/{self._channel_id}/messages/"
+                f"{self._message_id}/reactions/{self.emoji.to_reaction()}",
                 params=params
             )
 
@@ -821,7 +823,7 @@ class Attachment:
 
         self.clip_participants: list[User] = [
             User(state=self._state, data=g)
-            for g in data.get("clip_participants", [])
+            for g in data.get("clip_participants") or ()
         ]
         """ The users participating in the clip, if the attachment is a clip. """
 
@@ -1684,25 +1686,25 @@ class Message(PartialMessage):
 
         self.embeds: list[Embed] = [
             Embed.from_dict(embed)
-            for embed in data.get("embeds", [])
+            for embed in data.get("embeds") or ()
         ]
         """ The embeds of the message. """
 
         self.attachments: list[Attachment] = [
             Attachment(state=state, data=a)
-            for a in data.get("attachments", [])
+            for a in data.get("attachments") or ()
         ]
         """ The attachments of the message. """
 
         self.stickers: list[PartialSticker] = [
             PartialSticker(state=state, id=int(s["id"]), name=s["name"], format_type=s["format_type"])
-            for s in data.get("sticker_items", [])
+            for s in data.get("sticker_items") or ()
         ]
         """ The stickers of the message. """
 
         self.reactions: list[MessageReaction] = [
             MessageReaction(state=state, message=self, data=g)
-            for g in data.get("reactions", [])
+            for g in data.get("reactions") or ()
         ]
         """ The reactions to the message. """
 
@@ -1742,6 +1744,9 @@ class Message(PartialMessage):
         return self.content or ""
 
     def _from_data(self, data: dict) -> None:
+        cache = self._state.cache
+        dedupe = cache if cache is not None and cache._user_dedup_enabled else None
+
         if data.get("components"):
             self.view = View.from_dict(
                 state=self._state,
@@ -1766,8 +1771,10 @@ class Message(PartialMessage):
                 state=self._state,
                 data=interaction_metadata
             )
+            if dedupe is not None:
+                self.interaction.user = dedupe._dedupe_plain_user(self.interaction.user)
 
-        for m in data.get("message_snapshots", []):
+        for m in data.get("message_snapshots") or ():
             self.resolved_forward.append(
                 MessageSnapshot(
                     state=self._state,
@@ -1793,7 +1800,7 @@ class Message(PartialMessage):
             self.call = MessageCall(
                 participants=[
                     PartialUser(state=self._state, id=int(g))
-                    for g in call.get("participants", [])
+                    for g in call.get("participants") or ()
                 ],
                 ended_timestamp=(
                     utils.parse_time(call["ended_timestamp"])
@@ -1801,19 +1808,13 @@ class Message(PartialMessage):
                 ),
             )
 
-        cache = self._state.cache
-        dedupe = cache if cache is not None and cache._user_dedup_enabled else None
-
         if member := data.get("member"):
             from .member import Member
-
-            # Append author data to member data
-            member["user"] = data["author"]
 
             self.author = Member(
                 state=self._state,
                 guild=self.guild,  # type: ignore
-                data=member
+                data={**member, "user": data["author"]}
             )
             if dedupe is not None:
                 dedupe._dedupe_user(self.author)
@@ -1827,13 +1828,10 @@ class Message(PartialMessage):
 
             for m in mentions:
                 if m.get("member", None) and self.guild_id:
-                    # This is only done through the gateway
-                    fake_member = m["member"]
-                    fake_member["user"] = m
                     mention_member = Member(
                         state=self._state,
                         guild=self.guild,  # type: ignore
-                        data=fake_member
+                        data={**m["member"], "user": m}
                     )
                     if dedupe is not None:
                         dedupe._dedupe_user(mention_member)
@@ -1900,9 +1898,11 @@ class Message(PartialMessage):
         """
         from .channel import PartialChannel
 
+        guild = self.guild if self.guild_id else None
+
         return [
-            self.guild.get_channel(int(channel_id)) or
-            PartialChannel(state=self._state, id=int(channel_id))
+            (guild.get_channel(int(channel_id)) if guild else None) or
+            PartialChannel(state=self._state, id=int(channel_id), guild_id=self.guild_id)
             for channel_id in utils.re_channel.findall(self.content)
         ]
 

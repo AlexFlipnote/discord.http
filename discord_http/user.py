@@ -214,15 +214,11 @@ class AvatarDecoration(Snowflake):
     __slots__ = (
         "_state",
         "asset",
-        "sku_id",
     )
 
     def __init__(self, state: "DiscordAPI", data: dict):
         super().__init__(id=int(data["sku_id"]))
         self._state = state
-
-        self.sku_id: int = int(data["sku_id"])
-        """ The ID of the SKU associated with the avatar decoration. """
 
         self.asset = Asset._from_avatar_decoration(
             self._state, data["asset"]
@@ -234,6 +230,11 @@ class AvatarDecoration(Snowflake):
 
     def __str__(self) -> str:
         return self.asset.url
+
+    @property
+    def sku_id(self) -> int:
+        """ The ID of the SKU associated with the avatar decoration (alias of `id`). """
+        return self.id
 
     @property
     def shop_url(self) -> str:
@@ -645,6 +646,16 @@ class User(PartialUser):
         """ Alias for `User.avatar_decoration`. """
         return self.avatar_decoration
 
+    @property
+    def global_nameplate(self) -> Nameplate | None:
+        """ Alias for `User.nameplate`. """
+        return self.nameplate
+
+    @property
+    def display_nameplate(self) -> Nameplate | None:
+        """ An alias to merge with `Member.display_nameplate`. """
+        return self.nameplate
+
     def is_default_avatar(self) -> bool:
         """ Returns whether the user has a default avatar. """
         return self.avatar is None
@@ -731,6 +742,8 @@ class Team(PartialBase):
             for g in data.get("members", [])
         ]
         """ The members of the team. """
+
+        self._from_data(data)
 
     def __repr__(self) -> str:
         return f"<Team id={self.id} name='{self.name}'>"

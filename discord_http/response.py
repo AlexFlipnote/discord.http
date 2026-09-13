@@ -24,6 +24,8 @@ __all__ = (
     "Ping",
 )
 
+_MULTIPART_CONTENT_TYPE = f"multipart/form-data; boundary={utils.MultipartData.BOUNDARY}"
+
 
 class Ping(Snowflake):
     """
@@ -83,8 +85,7 @@ class BaseResponse:
     @property
     def content_type(self) -> str:
         """ The content type of the response. """
-        multidata = utils.MultipartData()
-        return multidata.content_type
+        return _MULTIPART_CONTENT_TYPE
 
     def to_dict(self) -> dict:
         """ Default method to convert the response to a `dict`. """

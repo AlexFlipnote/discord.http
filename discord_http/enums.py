@@ -73,6 +73,39 @@ _OPERATOR_TABLE: dict[str, Callable[[Any, Any], bool]] = {
     "eq": operator.eq,
 }
 
+_AUDIT_LOG_TARGET_CATEGORY_MAP: dict[int, str] = {
+    -1: "all",
+    73: "channel"
+}
+
+_AUDIT_LOG_TARGET_RANGE_MAP: list[tuple[int, int, str]] = [
+    (0, 9, "guild"),
+    (10, 19, "channel"),
+    (20, 29, "user"),
+    (30, 39, "role"),
+    (40, 49, "invite"),
+    (50, 59, "webhook"),
+    (60, 69, "emoji"),
+    (70, 79, "message"),
+    (80, 82, "integration"),
+    (83, 89, "stage_instance"),
+    (90, 92, "sticker"),
+    (93, 102, "guild_scheduled_event"),
+    (103, 112, "thread"),
+    (113, 121, "integration_or_app_command"),
+    (130, 132, "soundboard_sound"),
+    (140, 142, "auto_moderation"),
+    (143, 146, "user"),
+    (150, 151, "creator_monetization"),
+    (163, 167, "onboarding"),
+    (190, 191, "guild"),
+    (192, 193, "channel"),
+    (200, 202, "guild_scheduled_event"),
+]
+
+_unknown_members: dict[type, "BaseEnum"] = {}
+""" One cached `unknown = -1` pseudo-member per enum class, so unrecognised values don't allocate on every parse. """
+
 
 class BaseEnum(_Enum):
     """
@@ -136,10 +169,22 @@ class BaseEnum(_Enum):
 
     @classmethod
     def _missing_(cls, _value: object) -> "BaseEnum":
-        """ If an invalid enum is provided, return `unknown = -1` """
+        """
+        If an invalid enum is provided, return a fitting `unknown` member.
+
+        The class' own if it declares one (some use a sentinel other than -1),
+        otherwise a cached `unknown = -1` pseudo-member shared by every unrecognised value.
+        """
+        if (real_unknown := cls.__members__.get("unknown")) is not None:
+            return real_unknown
+
+        if (obj := _unknown_members.get(cls)) is not None:
+            return obj
+
         obj = object.__new__(cls)
         obj._name_ = "unknown"
         obj._value_ = -1
+        _unknown_members[cls] = obj
         return obj
 
     @property
@@ -478,42 +523,12 @@ class AuditLogType(BaseEnum):
     @property
     def target_type(self) -> str | None:
         """ The type of the target of the audit log entry. """
-        category_map: dict[int, str] = {
-            -1: "all",
-            73: "channel"
-        }
-
-        range_map: list[tuple[int, int, str]] = [
-            (0, 9, "guild"),
-            (10, 19, "channel"),
-            (20, 29, "user"),
-            (30, 39, "role"),
-            (40, 49, "invite"),
-            (50, 59, "webhook"),
-            (60, 69, "emoji"),
-            (70, 79, "message"),
-            (80, 82, "integration"),
-            (83, 89, "stage_instance"),
-            (90, 92, "sticker"),
-            (93, 102, "guild_scheduled_event"),
-            (103, 112, "thread"),
-            (113, 121, "integration_or_app_command"),
-            (130, 132, "soundboard_sound"),
-            (140, 142, "auto_moderation"),
-            (143, 146, "user"),
-            (150, 151, "creator_monetization"),
-            (163, 167, "onboarding"),
-            (190, 191, "guild"),
-            (192, 193, "channel"),
-            (200, 202, "guild_scheduled_event"),
-        ]
-
-        if self.value in category_map:
-            return category_map[self.value]
+        if self.value in _AUDIT_LOG_TARGET_CATEGORY_MAP:
+            return _AUDIT_LOG_TARGET_CATEGORY_MAP[self.value]
 
         return next((
             category
-            for start, end, category in range_map
+            for start, end, category in _AUDIT_LOG_TARGET_RANGE_MAP
             if start <= self.value <= end
         ), None)
 

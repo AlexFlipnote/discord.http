@@ -102,7 +102,12 @@ class HTTPException(DiscordException):
             if r.response.get("errors", None):
                 self.text += f"\n{r.response['errors']}"
         else:
-            self.text: str = str(r.response)
+            response = r.response
+            self.text = (
+                response.decode("utf-8", "replace")
+                if isinstance(response, bytes)
+                else str(response)
+            )
             self.code = 0
 
         error_text = f"HTTP {self.request.status} > {self.request.reason} (code: {self.code})"

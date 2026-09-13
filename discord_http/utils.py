@@ -29,6 +29,7 @@ if TYPE_CHECKING:
     from .object import Snowflake
 
 DISCORD_EPOCH = 1420070400000
+_ORDINAL_SUFFIXES: dict[int, str] = {1: "st", 2: "nd", 3: "rd"}
 
 # RegEx patterns
 re_channel: re.Pattern = re.compile(r"<#([0-9]{15,20})>")
@@ -52,8 +53,10 @@ class MultipartData(MultipartWriter):
 
     __slots__ = ("_files_keepalive", "_streams_keepalive")
 
+    BOUNDARY = "---------------discord.http"
+
     def __init__(self):
-        super().__init__("form-data", boundary="---------------discord.http")
+        super().__init__("form-data", boundary=self.BOUNDARY)
 
         # Keep a reference to prevent aiohttp from complaining due to race conditions with file-like objects
         # It will be cleared with File.__del__, so it should not cause memory leaks
@@ -363,7 +366,7 @@ def format_small_unit(seconds: float | timedelta) -> str:
     return f"{seconds:.2f}s"
 
 
-@functools.cache
+@functools.lru_cache(maxsize=8)
 def create_missing_texture(*, size: int = 256, tiles: int = 8) -> bytes:
     """
     Generate a PNG image of the classic magenta and black checkerboard pattern.
@@ -402,7 +405,7 @@ def create_missing_texture(*, size: int = 256, tiles: int = 8) -> bytes:
             color = magenta if ((x // tile + y // tile) & 1) == 0 else black
             raw += bytes(color)
 
-    compressed = zlib.compress(bytes(raw), 9)
+    compressed = zlib.compress(raw, 9)
     ihdr = struct.pack(">IIBBBBB", w, h, 8, 6, 0, 0, 0)
 
     return (
@@ -525,8 +528,7 @@ def ordinal(num: int) -> str:
     -------
         The ordinal of the number
     """
-    suffix_list = {1: "st", 2: "nd", 3: "rd"}
-    suffix = "th" if 10 <= num % 100 <= 20 else suffix_list.get(num % 10, "th")
+    suffix = "th" if 10 <= num % 100 <= 20 else _ORDINAL_SUFFIXES.get(num % 10, "th")
     return f"{num}{suffix}"
 
 
@@ -1448,6 +1450,15 @@ class CustomFormatter(logging.Formatter):
         super().__init__()
         self._datefmt = datefmt
 
+        self._formatters: dict[int, logging.Formatter] = {
+            logging.DEBUG: self._make_formatter("DEBUG", self.grey, self.light_grey),
+            logging.INFO: self._make_formatter("INFO", self.blue, self.light_blue),
+            logging.WARNING: self._make_formatter("WARN", self.yellow, self.light_yellow),
+            logging.ERROR: self._make_formatter("ERROR", self.red, self.light_red),
+            logging.CRITICAL: self._make_formatter("CRIT", self.bold_red, self.light_bold_red),
+        }
+        self._default_formatter = self._make_formatter("OTHER", self.white, self.light_white)
+
     def _prefix_fmt(
         self,
         name: str,
@@ -1463,45 +1474,17 @@ class CustomFormatter(logging.Formatter):
             f"{secondary}]{self.reset}"
         )
 
-    def format(self, record: logging.LogRecord) -> str:
-        """ Format the log. """
-        match record.levelno:
-            case logging.DEBUG:
-                prefix = self._prefix_fmt(
-                    "DEBUG", self.grey, self.light_grey
-                )
-
-            case logging.INFO:
-                prefix = self._prefix_fmt(
-                    "INFO", self.blue, self.light_blue
-                )
-
-            case logging.WARNING:
-                prefix = self._prefix_fmt(
-                    "WARN", self.yellow, self.light_yellow
-                )
-
-            case logging.ERROR:
-                prefix = self._prefix_fmt(
-                    "ERROR", self.red, self.light_red
-                )
-
-            case logging.CRITICAL:
-                prefix = self._prefix_fmt(
-                    "CRIT", self.bold_red, self.light_bold_red
-                )
-
-            case _:
-                prefix = self._prefix_fmt(
-                    "OTHER", self.white, self.light_white
-                )
-
-        formatter = logging.Formatter(
-            f"{prefix} {self.grey}%(asctime)s{self.reset} "
+    def _make_formatter(self, name: str, primary: str, secondary: str) -> logging.Formatter:
+        prefix = self._prefix_fmt(name, primary, secondary)
+        return logging.Formatter(
+            f"{prefix} {self.grey}%(asctime)s.%(msecs)03d{self.reset} "
             f"%(message)s{self.reset}",
             datefmt=self._datefmt
         )
 
+    def format(self, record: logging.LogRecord) -> str:
+        """ Format the log. """
+        formatter = self._formatters.get(record.levelno, self._default_formatter)
         return formatter.format(record)
 
 
@@ -1519,6 +1502,10 @@ def setup_logger(
     """
     lib, _, _ = __name__.partition(".")
     logger = logging.getLogger(lib)
+
+    for existing in logger.handlers[:]:
+        if isinstance(existing, logging.StreamHandler) and isinstance(existing.formatter, CustomFormatter):
+            logger.removeHandler(existing)
 
     handler = logging.StreamHandler(sys.stdout)
     formatter = CustomFormatter(datefmt="%Y-%m-%d %H:%M:%S")

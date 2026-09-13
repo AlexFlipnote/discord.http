@@ -444,7 +444,7 @@ class GuildPreview(PartialBase):
         self._raw_splash: str | None = data.get("splash")
         self._raw_discovery_splash: str | None = data.get("discovery_splash")
 
-        self.features: list[str] = data.get("features", [])
+        self.features: list[str] = [sys.intern(f) for f in data.get("features", [])]
         """ The features of the guild. """
 
         self.approximate_member_count: int = data.get("approximate_member_count", 0)
@@ -508,7 +508,6 @@ class OnboardingPromptOption(PartialBase):
         "channel_ids",
         "description",
         "emoji",
-        "id",
         "role_ids",
         "title",
     )
@@ -574,7 +573,6 @@ class OnboardingPrompt(PartialBase):
 
     __slots__ = (
         "_state",
-        "id",
         "in_onboarding",
         "options",
         "required",
@@ -1195,9 +1193,7 @@ class PartialGuild(PartialBase):
         "_cache_stickers",
         "_cache_threads",
         "_cache_voice_states",
-        "_large",
         "_state",
-        "guild_id",
         "member_count",
         "unavailable",
     )
@@ -1228,11 +1224,6 @@ class PartialGuild(PartialBase):
         self._cache_soundboard_sounds: dict[int, "SoundboardSound | PartialSoundboardSound"] = {}
         self._cache_stickers: dict[int, "Sticker | PartialSticker"] = {}
         self._cache_voice_states: dict[int, "VoiceState | PartialVoiceState"] = {}
-
-        self._large: bool | None = (
-            None if self.member_count is None
-            else self.member_count >= 250
-        )
 
     def __repr__(self) -> str:
         return f"<PartialGuild id={self.id}>"
@@ -1376,7 +1367,6 @@ class PartialGuild(PartialBase):
             else:
                 self._cache_threads = {}
 
-        # Do voice states in the end
         if data.get("voice_states"):
             if GatewayCacheFlags.voice_states in flags:
                 self._cache_voice_states = {
@@ -1387,6 +1377,16 @@ class PartialGuild(PartialBase):
                     )
                     for g in data["voice_states"]
                 }
+
+                if GatewayCacheFlags.members in flags:
+                    from .member import Member
+                    for user_id, vs in self._cache_voice_states.items():
+                        if (
+                            isinstance(vs, VoiceState) and
+                            isinstance(self._cache_members.get(user_id), Member)
+                        ):
+                            vs._member_data = None
+
             elif GatewayCacheFlags.partial_voice_states in flags:
                 self._cache_voice_states = {
                     int(g["user_id"]): self._state.bot.get_partial_voice_state(
@@ -1402,11 +1402,9 @@ class PartialGuild(PartialBase):
     @property
     def large(self) -> bool:
         """ Whether the guild is considered large. """
-        if self._large is None:
-            if self.member_count is not None:
-                return self.member_count >= 250
-            return len(self._cache_members) >= 250
-        return self._large
+        if self.member_count is not None:
+            return self.member_count >= 250
+        return len(self._cache_members) >= 250
 
     @property
     def chunked(self) -> bool:
@@ -4185,7 +4183,7 @@ class Guild(PartialGuild):
         3: _GuildLimits(emojis=250, stickers=60, bitrate=384_000, filesize=104_857_600, soundboards=48),
     }
 
-    def __init__(self, *, state: "DiscordAPI", data: dict):
+    def __init__(self, *, state: "DiscordAPI", data: dict, populate_cache: bool = True):
         super().__init__(state=state, id=int(data["id"]))
 
         self.afk_channel_id: int | None = utils.get_int(data, "afk_channel_id")
@@ -4217,7 +4215,7 @@ class Guild(PartialGuild):
         self.explicit_content_filter: int = data.get("explicit_content_filter", 0)
         """ The explicit content filter level of the guild. """
 
-        self.features: list[str] = data.get("features", [])
+        self.features: list[str] = [sys.intern(f) for f in data.get("features", [])]
         """ The features of the guild. """
 
         self.latest_onboarding_question_id: int | None = utils.get_int(data, "latest_onboarding_question_id")
@@ -4247,7 +4245,9 @@ class Guild(PartialGuild):
         self.owner_id: int | None = utils.get_int(data, "owner_id")
         """ The ID of the owner of the guild, if any. """
 
-        self.preferred_locale: str | None = data.get("preferred_locale")
+        self.preferred_locale: str | None = (
+            sys.intern(locale) if (locale := data.get("preferred_locale")) else None
+        )
         """ The preferred locale of the guild. """
 
         self.premium_progress_bar_enabled: bool = data.get("premium_progress_bar_enabled", False)
@@ -4292,7 +4292,7 @@ class Guild(PartialGuild):
         self.welcome_screen: WelcomeScreen | None = None
         """ The welcome screen of the guild, if it's a Community guild and this was returned in an Invite's guild object. """
 
-        self._from_data(data)
+        self._from_data(data, populate_cache=populate_cache)
 
     def __str__(self) -> str:
         return self.name
@@ -4300,33 +4300,34 @@ class Guild(PartialGuild):
     def __repr__(self) -> str:
         return f"<Guild id={self.id} name='{self.name}'>"
 
-    def _from_data(self, data: dict) -> None:
-        self._cache_roles = {
-            int(g["id"]): Role(
-                state=self._state,
-                guild=self,
-                data=g
-            )
-            for g in data.get("roles", [])
-        }
+    def _from_data(self, data: dict, *, populate_cache: bool = True) -> None:
+        if populate_cache:
+            self._cache_roles = {
+                int(g["id"]): Role(
+                    state=self._state,
+                    guild=self,
+                    data=g
+                )
+                for g in data.get("roles", [])
+            }
 
-        self._cache_emojis = {
-            int(g["id"]): Emoji(
-                state=self._state,
-                guild=self,
-                data=g
-            )
-            for g in data.get("emojis", [])
-        }
+            self._cache_emojis = {
+                int(g["id"]): Emoji(
+                    state=self._state,
+                    guild=self,
+                    data=g
+                )
+                for g in data.get("emojis", [])
+            }
 
-        self._cache_stickers = {
-            int(g["id"]): Sticker(
-                state=self._state,
-                guild=self,
-                data=g
-            )
-            for g in data.get("stickers", [])
-        }
+            self._cache_stickers = {
+                int(g["id"]): Sticker(
+                    state=self._state,
+                    guild=self,
+                    data=g
+                )
+                for g in data.get("stickers", [])
+            }
 
         if incidents_data := data.get("incidents_data"):
             self.incidents_data = GuildIncidentsData._from_data(incidents_data)
@@ -4371,7 +4372,9 @@ class Guild(PartialGuild):
         self.nsfw: bool = data.get("nsfw", False)
         self.nsfw_level: NSFWLevel = NSFWLevel(data.get("nsfw_level", 0))
         self.owner_id: int | None = utils.get_int(data, "owner_id")
-        self.preferred_locale: str | None = data.get("preferred_locale")
+        self.preferred_locale: str | None = (
+            sys.intern(locale) if (locale := data.get("preferred_locale")) else None
+        )
         self.premium_progress_bar_enabled: bool = data.get("premium_progress_bar_enabled", False)
         self.premium_subscription_count: int = data.get("premium_subscription_count", 0)
         self.premium_tier: PremiumTier = PremiumTier(data.get("premium_tier", 0))

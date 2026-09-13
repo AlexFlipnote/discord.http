@@ -5,7 +5,7 @@ import time
 
 from collections.abc import Callable
 from datetime import datetime, timedelta
-from typing import TYPE_CHECKING, Any, Self
+from typing import TYPE_CHECKING, Any, Self, cast
 
 from . import utils
 from .channel import (
@@ -69,6 +69,10 @@ __all__ = (
 )
 
 
+_none_singletons: dict[type, "_ResolveParser"] = {}
+""" One cached empty instance per `_ResolveParser` subclass. """
+
+
 class _ResolveParser:
     __slots__ = (
         "_parsed_data",
@@ -95,7 +99,19 @@ class _ResolveParser:
     @classmethod
     def none(cls, ctx: "Context") -> Self:
         """ With no values. """
-        return cls(ctx, {})
+        if (cached := _none_singletons.get(cls)) is not None:
+            return cast("Self", cached)
+
+        instance = cls(ctx, {})
+        _none_singletons[cls] = instance
+        return instance
+
+    @classmethod
+    def _from_parsed(cls, parsed_data: dict) -> Self:
+        """ Build an instance sharing an already-parsed data dict, skipping a redundant re-parse. """
+        self = cls.__new__(cls)
+        self._parsed_data = parsed_data
+        return self
 
     def is_empty(self) -> bool:
         """ Whether no values were selected. """
@@ -512,7 +528,7 @@ class Context:
         "_original_response",
         "_raw_resolved",
         "_raw_type",
-        "_response_sent",
+        "_response_sent_event",
         "app_permissions",
         "author",
         "benchmark",
@@ -543,7 +559,7 @@ class Context:
     ):
         self._guild: PartialGuild | None = None
         self._channel: BaseChannel | None = None
-        self._response_sent: asyncio.Event = asyncio.Event()
+        self._response_sent_event: asyncio.Event | None = None
 
         self.bot: "Client" = bot
         """ The bot/client instance that the interaction belongs to. """
@@ -623,8 +639,12 @@ class Context:
         self.message: Message | None = None
         """ The message associated with the interaction, if any. """
 
-        self._data: dict = data
-        """ Should not be used, but if you *really* want the raw data, here it is. """
+        self._data: dict = data_payload
+        """
+        Should not be used, but if you *really* want the raw data, here it is.
+
+        Only the `data` sub-payload - the full payload pins `message`/`member`/`channel` for the Context's lifetime.
+        """
 
         self.author: Member | User | None = None
         """ The author of the message that was interacted with, if any. """
@@ -678,7 +698,10 @@ class Context:
 
         match self.type:
             case InteractionType.message_component:
-                self.select_values = SelectValues(self, data)
+                if self._raw_resolved:
+                    self.select_values = SelectValues._from_parsed(self.resolved._parsed_data)
+                else:
+                    self.select_values = SelectValues(self, data)
 
             case InteractionType.modal_submit:
                 for comp in data["data"]["components"]:
@@ -761,6 +784,13 @@ class Context:
                     f"Error while running call_after:{call_after}",
                     exc_info=e
                 )
+
+    @property
+    def _response_sent(self) -> asyncio.Event:
+        """ The event set once the HTTP response has actually been flushed. """
+        if self._response_sent_event is None:
+            self._response_sent_event = asyncio.Event()
+        return self._response_sent_event
 
     @property
     def type(self) -> InteractionType:

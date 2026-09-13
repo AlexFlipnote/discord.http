@@ -51,6 +51,7 @@ _MAJOR_PARAM_ROOTS = ("guilds", "channels", "webhooks", "stage-instances")
 
 major_param_re = re.compile(r"^/(" + "|".join(_MAJOR_PARAM_ROOTS) + r")/(\d+)(?=/|$)")
 id_segment_re = re.compile(r"(?<=/)\d+(?=/|$)")
+_token_route_re = re.compile(r"^/(interactions|webhooks)/(\d+)/([^/]+)")
 
 
 def _try_json(data: str) -> dict | str:
@@ -628,6 +629,7 @@ class DiscordAPI:
         """
         # Remove query parameters
         base_path = path.partition("?")[0]
+        base_path = _token_route_re.sub(r"/\1/\2/:token", base_path, count=1)
 
         # Keep the major param (guild/channel/webhook id) raw, collapse everything else
         if major_match := major_param_re.match(base_path):
@@ -659,6 +661,7 @@ class DiscordAPI:
             The route template for the given method and path
         """
         base_path = path.partition("?")[0]
+        base_path = _token_route_re.sub(r"/\1/\2/:token", base_path, count=1)
         normalized = self._apply_bucket_quirks(
             method, id_segment_re.sub(":id", base_path)
         )
@@ -666,8 +669,19 @@ class DiscordAPI:
 
     @staticmethod
     def _major_param_value(path: str) -> str:
-        """ The raw major-param id for the given path, or "" if it has none. """
+        """
+        The raw major-param id for the given path, or "" if it has none.
+
+        For `/interactions/{id}/{token}/...` and `/webhooks/{id}/{token}/...`, the
+        token is included too - each token is Discord's own separate ratelimit
+        bucket, so a hash-based key must stay scoped per-token, not just per-id
+        (every interaction shares the same application/webhook id otherwise).
+        """
         base_path = path.partition("?")[0]
+
+        if token_match := _token_route_re.match(base_path):
+            return f"{token_match.group(2)}:{token_match.group(3)}"
+
         return match.group(2) if (match := major_param_re.match(base_path)) else ""
 
     def _resolve_bucket_key(self, method: str, path: str) -> tuple[str, str, str]:

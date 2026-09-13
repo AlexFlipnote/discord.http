@@ -26,9 +26,10 @@ class PartialRole(PartialBase):
 
     __slots__ = (
         "_state",
-        "_target_type",
         "guild_id",
     )
+
+    _target_type: PermissionType = PermissionType.role
 
     def __init__(
         self,
@@ -39,7 +40,6 @@ class PartialRole(PartialBase):
     ):
         super().__init__(id=int(id))
         self._state = state
-        self._target_type: PermissionType = PermissionType.role
 
         self.guild_id: int = guild_id
         """ The ID of the guild this role is in. """

@@ -1,6 +1,7 @@
 from typing import TYPE_CHECKING, Literal, overload
 
 from . import utils
+from .asset import Asset
 from .embeds import Embed
 from .enums import ResponseType
 from .file import File
@@ -30,7 +31,6 @@ class PartialWebhook(PartialBase):
 
     __slots__ = (
         "_state",
-        "id",
         "token",
     )
 
@@ -411,8 +411,8 @@ class Webhook(PartialWebhook):
     """ Represents a webhook object. """
 
     __slots__ = (
+        "_raw_avatar",
         "application_id",
-        "avatar",
         "channel_id",
         "guild_id",
         "name",
@@ -437,8 +437,7 @@ class Webhook(PartialWebhook):
         self.name: str | None = data.get("name")
         """ The name of the webhook, if any. """
 
-        self.avatar: str | None = None
-        """ The avatar of the webhook, if any. """
+        self._raw_avatar: str | None = data.get("avatar")
 
         self.url: str | None = data.get("url")
         """ The URL of the webhook, if any. """
@@ -496,6 +495,14 @@ class Webhook(PartialWebhook):
 
         from .guild import PartialGuild
         return PartialGuild(state=self._state, id=self.guild_id)
+
+    @property
+    def avatar(self) -> "Asset | None":
+        """ The avatar of the webhook, if any. """
+        if not self._raw_avatar:
+            return None
+
+        return Asset._from_avatar(self._state, self.id, self._raw_avatar)
 
     @property
     def channel(self) -> "PartialChannel | None":

@@ -23,11 +23,11 @@ __all__ = (
 class ActivityAssets:
     """ Represents the assets of an activity. """
     __slots__ = (
+        "_raw_large_image",
+        "_raw_small_image",
         "_state",
         "application_id",
-        "large_image",
         "large_text",
-        "small_image",
         "small_text",
     )
 
@@ -43,34 +43,38 @@ class ActivityAssets:
         self.application_id: int = application_id
         """ The ID of the application this activity belongs to. """
 
-        self.large_image: Asset | None = None
-        """ The large image asset of the activity, if any. """
-
         self.large_text: str | None = data.get("large_text")
         """ The text for the large image, if any. """
-
-        self.small_image: Asset | None = None
-        """ The small image asset of the activity, if any. """
 
         self.small_text: str | None = data.get("small_text")
         """ The text for the small image, if any. """
 
-        self._from_data(data)
+        self._raw_large_image: str | None = data.get("large_image")
+        self._raw_small_image: str | None = data.get("small_image")
 
-    def _from_data(self, data: dict) -> None:
-        if large_image := data.get("large_image"):
-            self.large_image = Asset._from_activity_asset(
-                state=self._state,
-                activity_id=self.application_id,
-                image=large_image
-            )
+    @property
+    def large_image(self) -> Asset | None:
+        """ The large image asset of the activity, if any. """
+        if not self._raw_large_image:
+            return None
 
-        if small_image := data.get("small_image"):
-            self.small_image = Asset._from_activity_asset(
-                state=self._state,
-                activity_id=self.application_id,
-                image=small_image
-            )
+        return Asset._from_activity_asset(
+            state=self._state,
+            activity_id=self.application_id,
+            image=self._raw_large_image
+        )
+
+    @property
+    def small_image(self) -> Asset | None:
+        """ The small image asset of the activity, if any. """
+        if not self._raw_small_image:
+            return None
+
+        return Asset._from_activity_asset(
+            state=self._state,
+            activity_id=self.application_id,
+            image=self._raw_small_image
+        )
 
 
 class ActivityTimestamps:

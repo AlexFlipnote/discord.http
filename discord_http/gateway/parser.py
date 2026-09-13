@@ -48,6 +48,7 @@ class GuildMembersChunk:
         "_state",
         "_waiters",
         "cache",
+        "collect",
         "guild_id",
         "members",
         "nonce",
@@ -59,7 +60,8 @@ class GuildMembersChunk:
         *,
         state: "DiscordAPI",
         guild_id: int,
-        cache: bool = False
+        cache: bool = False,
+        collect: bool = True
     ):
         self._state = state
 
@@ -77,6 +79,9 @@ class GuildMembersChunk:
 
         self.cache: bool = cache
         """ Whether to cache the members in the chunk, defaults to `False`. """
+
+        self.collect: bool = collect
+        """ Whether to accumulate the parsed `Member` objects on `.members`, defaults to `True`. """
 
         self._waiters: list[asyncio.Future[list[Member]]] = []
 
@@ -109,7 +114,8 @@ class GuildMembersChunk:
 
         However if cache is enabled, try to add them to the cache
         """
-        self.members.extend(members)
+        if self.collect:
+            self.members.extend(members)
 
         if self.cache:
             if not self._cache_level:
@@ -279,10 +285,11 @@ class Parser:
             guild_id=guild_id
         )
 
-    def _guild(self, data: dict) -> Guild:
+    def _guild(self, data: dict, *, populate_cache: bool = True) -> Guild:
         return Guild(
             state=self.bot.state,
-            data=data
+            data=data,
+            populate_cache=populate_cache
         )
 
     def guild_create(self, data: dict) -> tuple[Guild | PartialGuild]:
@@ -309,7 +316,11 @@ class Parser:
         ):
             guild = self.bot.get_partial_guild(guild_id)
         else:
-            guild = self._guild(data)
+            guild_will_be_repopulated = (
+                cache_flags is not None and
+                GatewayCacheFlags.guilds in cache_flags
+            )
+            guild = self._guild(data, populate_cache=not guild_will_be_repopulated)
 
         if cache_guild := self.bot.cache.add_guild(guild_id, guild):
             cache_guild._populate_internal_cache(data)
@@ -540,6 +551,9 @@ class Parser:
             members,
             data.get("chunk_index", 0) + 1 == data.get("chunk_count", 1)
         )
+
+        if not self.bot.has_any_dispatch("guild_members_chunk"):
+            return (None,)  # type: ignore[return-value]
 
         dispatch_raw = GuildMembersChunk(
             state=self.bot.state,
@@ -1317,6 +1331,9 @@ class Parser:
         -------
             The message.
         """
+        if not self.bot.has_any_dispatch("message_delete"):
+            return (None,)  # type: ignore[return-value]
+
         return (
             self.bot.get_partial_message(
                 message_id=int(data["id"]),
@@ -1343,6 +1360,9 @@ class Parser:
         ValueError
             If the guild id is not provided by Discord.
         """
+        if not self.bot.has_any_dispatch("message_delete_bulk"):
+            return (None,)  # type: ignore[return-value]
+
         if (guild := self._get_guild_or_partial(utils.get_int(data, "guild_id"))) is None:
             raise ValueError("guild_id somehow was not provided by Discord")
 
@@ -1373,6 +1393,9 @@ class Parser:
         -------
             The reaction.
         """
+        if not self.bot.has_any_dispatch("message_reaction_add"):
+            return (None,)  # type: ignore[return-value]
+
         return (
             Reaction(
                 state=self.bot.state,
@@ -1393,6 +1416,9 @@ class Parser:
         -------
             The reaction.
         """
+        if not self.bot.has_any_dispatch("message_reaction_remove"):
+            return (None,)  # type: ignore[return-value]
+
         return (
             Reaction(
                 state=self.bot.state,
@@ -1413,6 +1439,9 @@ class Parser:
         -------
             The message.
         """
+        if not self.bot.has_any_dispatch("message_reaction_remove_all"):
+            return (None,)  # type: ignore[return-value]
+
         return (
             PartialMessage(
                 state=self.bot.state,
@@ -1435,6 +1464,9 @@ class Parser:
         -------
             The message and the emoji.
         """
+        if not self.bot.has_any_dispatch("message_reaction_remove_emoji"):
+            return (None, None)  # type: ignore[return-value]
+
         message = PartialMessage(
             state=self.bot.state,
             id=int(data["message_id"]),
@@ -1610,6 +1642,9 @@ class Parser:
         -------
             The typing start event.
         """
+        if not self.bot.has_any_dispatch("typing_start"):
+            return (None,)  # type: ignore[return-value]
+
         guild_id: int | None = utils.get_int(data, "guild_id")
         channel_id: int = int(data["channel_id"])
         user_id: int = int(data["user_id"])

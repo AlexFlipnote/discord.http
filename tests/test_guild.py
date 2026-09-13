@@ -263,5 +263,42 @@ class TestGuildWelcomeScreenField(unittest.TestCase):
         self.assertEqual(guild.welcome_screen.description, "hi")
 
 
+class _GatewayCacheState(FakeState):
+    """ A `_state` whose `.bot` looks enough like a gateway-enabled Client for `_populate_internal_cache`. """
+
+    def __init__(self, cache_flags):
+        super().__init__()
+
+        class _Bot:
+            _gateway_cache = cache_flags
+
+        self.bot = _Bot()
+
+
+class TestPopulateInternalCacheVoiceStates(unittest.TestCase):
+    """ Regression test: the voice_states branch of `_populate_internal_cache` was
+    accidentally left nested inside the `threads` branch, so any GUILD_CREATE
+    payload without a threads array silently never cached its voice states. """
+
+    def test_voice_states_cached_without_threads_key(self) -> None:
+        from discord_http.gateway.flags import GatewayCacheFlags
+
+        state = _GatewayCacheState(GatewayCacheFlags.voice_states)
+        data = {
+            "id": "1", "name": "g", "features": [],
+            "voice_states": [{
+                "user_id": "111", "session_id": "abc", "channel_id": "999",
+                "deaf": False, "mute": False, "self_deaf": False,
+                "self_mute": False, "self_video": False, "suppress": False,
+            }],
+        }
+
+        guild = Guild(state=state, data=data)
+        guild._populate_internal_cache(data)
+
+        self.assertEqual(len(guild._cache_voice_states), 1)
+        self.assertIn(111, guild._cache_voice_states)
+
+
 if __name__ == "__main__":
     unittest.main()

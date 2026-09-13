@@ -11,6 +11,12 @@ from . import utils
 
 _log = logging.getLogger(__name__)
 
+_DEFAULT_WHITELIST_EXCEPTIONS: tuple[type[Exception], ...] = (
+    OSError,
+    asyncio.TimeoutError,
+    aiohttp.ClientError,
+)
+
 
 class Sleeper:
     """ A helper class that handles sleeping until a specified datetime. """
@@ -109,11 +115,7 @@ class Loop:
         self._before_loop: Callable = self._default_before_loop
         self._after_loop: Callable = self._default_after_loop
 
-        self._whitelist_exceptions: tuple[type[Exception], ...] = (
-            OSError,
-            asyncio.TimeoutError,
-            aiohttp.ClientError,
-        )
+        self._whitelist_exceptions: tuple[type[Exception], ...] = _DEFAULT_WHITELIST_EXCEPTIONS
 
         self.handle_interval(
             seconds=seconds,
@@ -155,6 +157,7 @@ class Loop:
         copy._before_loop = self._before_loop
         copy._after_loop = self._after_loop
         copy._error = self._error
+        copy._whitelist_exceptions = self._whitelist_exceptions
         setattr(obj, self.func.__name__, copy)
         return copy
 
@@ -277,6 +280,7 @@ class Loop:
                 f"Unhandled exception escaped background loop {self.func.__name__}",
                 exc_info=exc
             )
+            exc.__traceback__ = None
 
     def stop(self) -> None:
         """ Stops the loop. """
@@ -384,11 +388,7 @@ class Loop:
 
     def reset_exceptions(self) -> None:
         """ Resets the whitelist of exceptions that are ignored back to the default. """
-        self._whitelist_exceptions = (
-            OSError,
-            asyncio.TimeoutError,
-            aiohttp.ClientError,
-        )
+        self._whitelist_exceptions = _DEFAULT_WHITELIST_EXCEPTIONS
 
     def _sort_static_times(
         self,

@@ -37,7 +37,6 @@ class PartialInvite:
         "_state",
         "channel_id",
         "code",
-        "guild",
         "guild_id",
     )
 
@@ -62,9 +61,6 @@ class PartialInvite:
         self.guild_id: int | None = guild_id
         """ The ID of the guild the invite is in, if applicable. """
 
-        self.guild: "Guild | PartialGuild | None" = self._get_guild
-        """ The guild associated with the invite, if applicable. """
-
     def __str__(self) -> str:
         return self.url
 
@@ -72,8 +68,8 @@ class PartialInvite:
         return f"<PartialInvite code='{self.code}'>"
 
     @property
-    def _get_guild(self) -> Guild | PartialGuild | None:
-        """ Used to create the guild object for `Invite.guild`. """
+    def guild(self) -> "Guild | PartialGuild | None":
+        """ The guild associated with the invite, if applicable. Resolved live from cache. """
         if not self.guild_id:
             return None
 
@@ -222,7 +218,7 @@ class Invite(PartialInvite):
     """ Represents an invite object. """
 
     __slots__ = (
-        "_account",
+        "_guild_override",
         "_raw_flags",
         "_raw_type",
         "approximate_member_count",
@@ -241,6 +237,7 @@ class Invite(PartialInvite):
     def __init__(self, *, state: "DiscordAPI", data: dict):
         super().__init__(state=state, code=data["code"])
 
+        self._guild_override: "Guild | PartialGuild | None" = None
         self._raw_type: int = data["type"]
 
         self.uses: int = data.get("uses", 0)
@@ -306,10 +303,16 @@ class Invite(PartialInvite):
             self.inviter = User(state=self._state, data=inviter)
 
         if guild := data.get("guild"):
-            try:
-                self.guild = Guild(state=self._state, data=guild)
-            except KeyError:
-                pass
+            cached = self._state.cache.get_guild(self.guild_id) if self.guild_id else None
+            if not isinstance(cached, Guild):
+                # `self.guild` checks `_guild_override` before falling back to a live
+                # cache lookup, so only set it when the cache doesn't already have a
+                # full Guild - otherwise this would just pin a permanent, stale-prone
+                # reference to it for the same result the live lookup already gives.
+                try:
+                    self._guild_override = Guild(state=self._state, data=guild)
+                except KeyError:
+                    pass
 
         if (target_type := data.get("target_type")) is not None:
             self.target_type = InviteTargetType(target_type)
@@ -320,11 +323,19 @@ class Invite(PartialInvite):
         if flags := data.get("flags"):
             self._raw_flags = flags
 
-        if (roles := data.get("roles")) and self.guild:
+        if (roles := data.get("roles")) and (guild := self.guild):
             self.roles = [
-                Role(state=self._state, guild=self.guild, data=role_data)
+                Role(state=self._state, guild=guild, data=role_data)
                 for role_data in roles
             ]
+
+    @property
+    def guild(self) -> "Guild | PartialGuild | None":
+        """ The guild associated with the invite, if applicable. Resolved live from cache. """
+        if self._guild_override is not None:
+            return self._guild_override
+
+        return super().guild
 
     @property
     def type(self) -> InviteType:

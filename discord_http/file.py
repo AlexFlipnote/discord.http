@@ -12,7 +12,6 @@ class File:
 
     __slots__ = (
         "_filename",
-        "_finalizer",
         "_original_pos",
         "_owner",
         "data",

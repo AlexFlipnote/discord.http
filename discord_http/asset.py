@@ -1,7 +1,6 @@
 import asyncio
 import io
 import os
-import sys
 
 from typing import Self, TYPE_CHECKING, Literal
 
@@ -44,10 +43,10 @@ class Asset:
     ):
         self._state = state
 
-        self.url: str = sys.intern(url)
+        self.url: str = url
         """ The URL of the asset. """
 
-        self.key: str = sys.intern(key)
+        self.key: str = key
         """ The key of the asset. """
 
         self.animated: bool = animated

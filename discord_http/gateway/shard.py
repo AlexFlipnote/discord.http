@@ -346,7 +346,7 @@ class Shard:
         self._ready_task: asyncio.Task | None = None
         self._guild_ready_timeout: float = float(bot.guild_ready_timeout)
         self._expected_guild_count: int = 0
-        self._guild_create_queue: asyncio.Queue[dict] = asyncio.Queue()
+        self._guild_create_queue: "asyncio.Queue[Guild | PartialGuild]" = asyncio.Queue()
         self._ratelimiter: GatewayRatelimiter = GatewayRatelimiter(shard_id)
 
         self._connection = None
@@ -745,7 +745,7 @@ class Shard:
         """
         chunker = GuildMembersChunk(
             state=self.bot.state, guild_id=int(guild_id),
-            cache=True
+            cache=True, collect=False
         )
         self.parser._chunk_requests[chunker.nonce] = chunker
 
@@ -941,22 +941,20 @@ class Shard:
 
     async def _chunk_and_dispatch(
         self,
-        guild_data: dict,
+        guild: "Guild | PartialGuild",
         event_name: str
     ) -> None:
-        (parsed_guild,) = self.parser.guild_create(guild_data)
-
-        timeout = self._chunk_timeout(parsed_guild)
+        timeout = self._chunk_timeout(guild)
 
         try:
-            await asyncio.wait_for(self.chunk_guild(parsed_guild.id), timeout=timeout)
+            await asyncio.wait_for(self.chunk_guild(guild.id), timeout=timeout)
         except TimeoutError:
             _log.warning(
                 f"Timed out while waiting for guild members chunk "
-                f"(guild_id={parsed_guild.id}, timeout={timeout})"
+                f"(guild_id={guild.id}, timeout={timeout})"
             )
 
-        self._send_dispatch(event_name, parsed_guild)
+        self._send_dispatch(event_name, guild)
 
     async def _delay_ready(self) -> None:
         """
@@ -968,14 +966,13 @@ class Shard:
         The timeout is only a fallback for a guild stuck unavailable.
         """
         loop_start = time.perf_counter()
-        parse_time = 0.0
 
         try:
             states: list[tuple[Guild | PartialGuild, asyncio.Future[list[Member]]]] = []
             received = 0
             while received < self._expected_guild_count:
                 try:
-                    guild_data = await asyncio.wait_for(
+                    parsed_guild = await asyncio.wait_for(
                         self._guild_create_queue.get(),
                         timeout=self._guild_ready_timeout
                     )
@@ -983,10 +980,6 @@ class Shard:
                     break  # It's supposed to timeout
                 else:
                     received += 1
-                    # Start adding guilds to cache if it's enabled
-                    parse_start = time.perf_counter()
-                    (parsed_guild,) = self.parser.guild_create(guild_data)
-                    parse_time += time.perf_counter() - parse_start
 
                     if self._guild_needs_chunking(parsed_guild):
                         future = await self.chunk_guild(parsed_guild.id, wait=False)
@@ -1012,8 +1005,8 @@ class Shard:
         total_time = time.perf_counter() - loop_start
         _log.debug(
             f"Shard {self.shard_id} guild sync: {received}/{self._expected_guild_count} guild(s) "
-            f"in {total_time:.3f}s (parsing/caching: {parse_time:.3f}s, "
-            f"member chunking: {chunk_time:.3f}s, rest was waiting on the socket)"
+            f"in {total_time:.3f}s (member chunking: {chunk_time:.3f}s, "
+            "rest was waiting on the socket)"
         )
 
         self._ready.set()
@@ -1111,14 +1104,12 @@ class Shard:
             event_name = "guild_create"
 
         if not self._ready.is_set():
-            # We still want to parse GUILD_CREATE
-            # But we do not want to dispatch event just yet
-            self._guild_create_queue.put_nowait(data)
+            self._guild_create_queue.put_nowait(guild)
             return
 
         if self._guild_needs_chunking(guild):
             task = asyncio.create_task(
-                self._chunk_and_dispatch(data, event_name),
+                self._chunk_and_dispatch(guild, event_name),
                 name=f"discord.http/gateway/shard-{self.shard_id}/chunk-{guild.id}"
             )
             self.bot._background_tasks.add(task)

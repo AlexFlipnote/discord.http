@@ -349,7 +349,7 @@ class AuditChange(Generic[_AuditChangeT]):
         entry: "AuditLogEntry",
         data: dict
     ):
-        self.entry = entry
+        self.entry: "AuditLogEntry" = entry
         """ The audit log entry this change belongs to. """
 
         self.key: str = data["key"]
@@ -440,7 +440,7 @@ class AuditLogEntry(Snowflake):
         self.options: dict = data.get("options", {})
         """ Additional options related to the action, if any. """
 
-        self.changes: list[AuditChange] = []
+        self.changes: list[AuditChange]
         """ A list of changes made in this audit log entry. """
 
         self._users: dict[int, User] = users or {}
@@ -602,10 +602,13 @@ class AuditLogEntry(Snowflake):
         )
 
     def _convert_target_user(self, user_id: int) -> User | PartialUser:
-        return self._users.get(user_id, PartialUser(
+        if (user := self._users.get(user_id)) is not None:
+            return user
+
+        return PartialUser(
             state=self._state,
             id=user_id
-        ))
+        )
 
     def _convert_target_role(self, role_id: int) -> PartialRole:
         return PartialRole(

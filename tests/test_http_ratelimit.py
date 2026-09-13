@@ -1,4 +1,5 @@
 import asyncio
+import time
 import unittest
 
 from types import SimpleNamespace
@@ -169,14 +170,23 @@ class TestGetBucketKey(unittest.TestCase):
         key = self.api._get_bucket_key("GET", "/stage-instances/321")
         self.assertEqual(key, "GET /stage-instances/321")
 
-    def test_webhook_route_keeps_webhook_id_and_collapses_message_id(self) -> None:
+    def test_webhook_route_keeps_webhook_id_collapses_token_and_message_id(self) -> None:
         key = self.api._get_bucket_key("PATCH", "/webhooks/123456/abcToken123/messages/789")
-        self.assertEqual(key, "PATCH /webhooks/123456/abcToken123/messages/:id")
+        self.assertEqual(key, "PATCH /webhooks/123456/:token/messages/:id")
 
     def test_mixed_alphanumeric_segment_is_left_untouched(self) -> None:
-        # Only a whole segment that is purely digits counts as an id
+        # Only a whole digits-only segment counts as an id - except the webhook/interaction token
         key = self.api._get_bucket_key("PATCH", "/webhooks/123456/abcToken123/messages/@original")
-        self.assertEqual(key, "PATCH /webhooks/123456/abcToken123/messages/@original")
+        self.assertEqual(key, "PATCH /webhooks/123456/:token/messages/@original")
+
+    def test_webhook_token_does_not_fragment_the_bucket_key(self) -> None:
+        key_a = self.api._get_bucket_key("PATCH", "/webhooks/123456/tokenAAA/messages/@original")
+        key_b = self.api._get_bucket_key("PATCH", "/webhooks/123456/tokenBBB/messages/@original")
+        self.assertEqual(key_a, key_b)
+
+    def test_interaction_callback_collapses_id_and_token(self) -> None:
+        key = self.api._get_bucket_key("POST", "/interactions/123456/someInteractionToken/callback")
+        self.assertEqual(key, "POST /interactions/:id/:token/callback")
 
 
 class TestRouteTemplateAndMajorParam(unittest.TestCase):
@@ -201,11 +211,40 @@ class TestRouteTemplateAndMajorParam(unittest.TestCase):
             "DELETE /channels/:id/messages/:id-delete",
         )
 
+    def test_route_template_collapses_webhook_token(self) -> None:
+        # Without this, every webhook followup's unique token fragments the route
+        # template, and the bucket hash for this route shape is never learned/reused
+        template_a = self.api._route_template("PATCH", "/webhooks/123456/tokenAAA/messages/@original")
+        template_b = self.api._route_template("PATCH", "/webhooks/123456/tokenBBB/messages/@original")
+        self.assertEqual(template_a, template_b)
+        self.assertEqual(template_a, "PATCH /webhooks/:id/:token/messages/@original")
+
+    def test_route_template_collapses_interaction_token(self) -> None:
+        template_a = self.api._route_template("POST", "/interactions/111/tokenAAA/callback")
+        template_b = self.api._route_template("POST", "/interactions/222/tokenBBB/callback")
+        self.assertEqual(template_a, template_b)
+        self.assertEqual(template_a, "POST /interactions/:id/:token/callback")
+
     def test_major_param_value_extracts_the_raw_id(self) -> None:
         self.assertEqual(self.api._major_param_value("/channels/123/messages/456"), "123")
 
     def test_major_param_value_empty_when_no_major_param(self) -> None:
         self.assertEqual(self.api._major_param_value("/stickers/123"), "")
+
+    def test_major_param_value_includes_webhook_token(self) -> None:
+        # Every interaction shares one application/webhook id, so a hash-based
+        # key must stay scoped per-token too, or all interactions would collapse
+        # onto the same local ratelimit bucket.
+        self.assertEqual(
+            self.api._major_param_value("/webhooks/123456/tokenAAA/messages/@original"),
+            "123456:tokenAAA",
+        )
+
+    def test_major_param_value_includes_interaction_token(self) -> None:
+        self.assertEqual(
+            self.api._major_param_value("/interactions/111/tokenAAA/callback"),
+            "111:tokenAAA",
+        )
 
 
 class TestResolveBucketKey(unittest.TestCase):
@@ -221,7 +260,7 @@ class TestResolveBucketKey(unittest.TestCase):
 
     def test_uses_learned_hash_once_known(self) -> None:
         template, _, _ = self.api._resolve_bucket_key("GET", "/guilds/999/scheduled-events/555")
-        self.api._bucket_hashes[template] = "abcXYZ"
+        self.api._bucket_hashes[template] = ("abcXYZ", time.perf_counter())
 
         _, key, fallback = self.api._resolve_bucket_key("GET", "/guilds/999/scheduled-events/777")
         self.assertEqual(key, "GET #abcXYZ:999")
@@ -230,7 +269,7 @@ class TestResolveBucketKey(unittest.TestCase):
     def test_hash_based_key_still_separates_different_major_params(self) -> None:
         # The hash must not merge buckets across guilds/channels/webhooks
         template, _, _ = self.api._resolve_bucket_key("GET", "/guilds/999/scheduled-events/555")
-        self.api._bucket_hashes[template] = "abcXYZ"
+        self.api._bucket_hashes[template] = ("abcXYZ", time.perf_counter())
 
         _, key_guild_999, _ = self.api._resolve_bucket_key("GET", "/guilds/999/scheduled-events/1")
         _, key_guild_111, _ = self.api._resolve_bucket_key("GET", "/guilds/111/scheduled-events/2")
@@ -239,10 +278,28 @@ class TestResolveBucketKey(unittest.TestCase):
 
     def test_hash_based_key_has_no_major_suffix_for_global_routes(self) -> None:
         template, _, _ = self.api._resolve_bucket_key("GET", "/stickers/123")
-        self.api._bucket_hashes[template] = "abcXYZ"
+        self.api._bucket_hashes[template] = ("abcXYZ", time.perf_counter())
 
         _, key, _ = self.api._resolve_bucket_key("GET", "/stickers/456")
         self.assertEqual(key, "GET #abcXYZ")
+
+    def test_hash_based_key_still_separates_different_webhook_tokens(self) -> None:
+        # Regression: once the route's bucket hash is learned, every interaction
+        # followup shares the same webhook/application id - without the token in
+        # the major param too, they'd all collapse onto one local ratelimit bucket.
+        template, _, _ = self.api._resolve_bucket_key(
+            "PATCH", "/webhooks/123456/tokenAAA/messages/@original"
+        )
+        self.api._bucket_hashes[template] = ("abcXYZ", time.perf_counter())
+
+        _, key_a, _ = self.api._resolve_bucket_key(
+            "PATCH", "/webhooks/123456/tokenAAA/messages/@original"
+        )
+        _, key_b, _ = self.api._resolve_bucket_key(
+            "PATCH", "/webhooks/123456/tokenBBB/messages/@original"
+        )
+
+        self.assertNotEqual(key_a, key_b)
 
 
 class TestGetRatelimitMigration(unittest.IsolatedAsyncioTestCase):
@@ -361,7 +418,8 @@ class TestQuerySelfCorrectsBucketKey(unittest.IsolatedAsyncioTestCase):
 
         await api.query("GET", "/guilds/999/scheduled-events/555")
 
-        self.assertEqual(api._bucket_hashes["GET /guilds/:id/scheduled-events/:id"], "hashABC")
+        bucket_hash, _timestamp = api._bucket_hashes["GET /guilds/:id/scheduled-events/:id"]
+        self.assertEqual(bucket_hash, "hashABC")
         self.assertIn("GET /guilds/999/scheduled-events/:id", api._buckets)
 
     async def test_second_call_to_same_route_shape_uses_learned_hash(self) -> None:

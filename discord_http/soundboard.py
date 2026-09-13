@@ -22,7 +22,6 @@ class PartialSoundboardSound(PartialBase):
     __slots__ = (
         "_state",
         "guild_id",
-        "sound_id",
     )
 
     def __init__(
@@ -35,9 +34,6 @@ class PartialSoundboardSound(PartialBase):
         super().__init__(id=int(id))
         self._state = state
 
-        self.sound_id: int = self.id
-        """ The ID of the soundboard sound. """
-
         self.guild_id: int | None = guild_id
         """ The ID of the guild this soundboard sound is in, if any. """
 
@@ -46,6 +42,11 @@ class PartialSoundboardSound(PartialBase):
 
     def __str__(self) -> str:
         return "PartialSoundboardSound"
+
+    @property
+    def sound_id(self) -> int:
+        """ The ID of the soundboard sound (alias of `id`). """
+        return self.id
 
     @property
     def guild(self) -> "Guild | PartialGuild | None":

@@ -4,6 +4,7 @@ import builtins
 import itertools
 import time
 
+from collections import deque
 from collections.abc import AsyncIterator, Callable, Generator
 from datetime import datetime, timedelta
 from typing import TYPE_CHECKING, Self, overload, Literal
@@ -1400,8 +1401,6 @@ class PartialChannel(PartialBase):
         -------
             Returns a list of messages deleted if return_messages is True, otherwise returns the count of deleted messages.
         """
-        msg_collector: list["Message"] = []
-
         async def _bulk_delete(messages: list["Message"]) -> None:
             if len(messages) > 1:
                 await self._state.query(
@@ -1431,8 +1430,20 @@ class PartialChannel(PartialBase):
             return len(message_ids)
 
         count = 0
+        total = 0
         minimum_time = int((time.time() - 14 * 24 * 60 * 60) * 1000 - 1420070400000) << 22
         strategy = _bulk_delete
+
+        msg_collector: "deque[Message] | list[Message]" = (
+            [] if return_messages else deque(maxlen=100)
+        )
+
+        def _tail(n: int) -> list["Message"]:
+            # `msg_collector` is either a `list` (already sliceable directly) or a
+            # `deque(maxlen=100)` (needs `list()` first, but that's at most 100 items)
+            if isinstance(msg_collector, deque):
+                return list(msg_collector)[-n:]
+            return msg_collector[-n:]
 
         async for message in self.fetch_history(
             before=before,
@@ -1441,8 +1452,7 @@ class PartialChannel(PartialBase):
             limit=limit
         ):
             if count == 100:
-                to_delete = msg_collector[-100:]
-                await strategy(to_delete)
+                await strategy(_tail(100))
                 count = 0
                 await asyncio.sleep(0.5)
 
@@ -1453,18 +1463,19 @@ class PartialChannel(PartialBase):
                 if count == 1:
                     await msg_collector[-1].delete()
                 elif count >= 2:
-                    await strategy(msg_collector[-count:])
+                    await strategy(_tail(count))
 
                 count = 0
                 strategy = _single_delete
 
             count += 1
+            total += 1
             msg_collector.append(message)
 
         if count != 0:
-            await strategy(msg_collector[-count:])
+            await strategy(_tail(count))
 
-        return msg_collector if return_messages else len(msg_collector)
+        return list(msg_collector) if return_messages else total
 
     async def join_thread(self) -> None:
         """ Make the bot join a thread. """
@@ -1793,7 +1804,6 @@ class DMChannel(BaseChannel):
     """ Represents a Direct Message channel. """
 
     __slots__ = (
-        "last_message",
         "last_pin_timestamp",
         "user",
     )
@@ -1807,8 +1817,8 @@ class DMChannel(BaseChannel):
         self.user: "User | None" = None
         """ The user in the DM channel. """
 
-        self.last_message: "PartialMessage | None" = None
-        """ The last message in the DM channel. """
+        self.last_pin_timestamp: datetime | None = None
+        """ The time of the last pinned message in the DM channel, if any. """
 
         self._from_data(data)
 
@@ -1821,16 +1831,21 @@ class DMChannel(BaseChannel):
             self.user = User(state=self._state, data=recipients[0])
             self.name = self.user.name
 
-        if last_message_id := data.get("last_message_id"):
-            from .message import PartialMessage
-            self.last_message = PartialMessage(
-                state=self._state,
-                channel_id=self.id,
-                id=int(last_message_id)
-            )
-
         if last_pin_timestamp := data.get("last_pin_timestamp"):
             self.last_pin_timestamp = utils.parse_time(last_pin_timestamp)
+
+    @property
+    def last_message(self) -> "PartialMessage | None":
+        """ The last message in the DM channel, if any. """
+        if not self.last_message_id:
+            return None
+
+        from .message import PartialMessage
+        return PartialMessage(
+            state=self._state,
+            channel_id=self.id,
+            id=self.last_message_id
+        )
 
     @property
     def type(self) -> ChannelType:
@@ -2127,7 +2142,6 @@ class PublicThread(BaseChannel):
     __slots__ = (
         "archived",
         "auto_archive_duration",
-        "channel_id",
         "locked",
         "member_count",
         "message_count",
@@ -2165,9 +2179,6 @@ class PublicThread(BaseChannel):
         self.auto_archive_duration: int = metadata.get("auto_archive_duration", 60)
         """ The duration in minutes to automatically archive the thread after recent activity. """
 
-        self.channel_id: int = int(data["id"])
-        """ The ID of the channel. """
-
         self.newly_created: bool = data.get("newly_created", False)
         """ Whether the thread was newly created. """
 
@@ -2187,6 +2198,11 @@ class PublicThread(BaseChannel):
     def type(self) -> ChannelType:
         """ The channel's type. """
         return ChannelType.guild_public_thread
+
+    @property
+    def channel_id(self) -> int:
+        """ The ID of the channel (alias of `id`). """
+        return self.id
 
     @property
     def guild(self) -> "Guild | PartialGuild | None":

@@ -441,6 +441,7 @@ class _MemberExtra(NamedTuple):
     communication_disabled_until: str | None
     premium_since: str | None
     name_style: dict | None
+    nameplate: dict | None
 
 
 class Member(PartialMember):
@@ -452,10 +453,8 @@ class Member(PartialMember):
         "_raw_permissions",
         "_user",
         "joined_at",
-        "nameplate",
         "nick",
         "pending",
-        "primary_guild",
         "role_ids",
     )
 
@@ -479,7 +478,7 @@ class Member(PartialMember):
 
         self._raw_permissions: int | None = utils.get_int(data, "permissions")
 
-        self.role_ids: tuple[int, ...] = tuple(int(r) for r in data["roles"])
+        self.role_ids: tuple[int, ...] = state.cache.intern_role_ids(guild.id, data["roles"])
         """ The role IDs of the member. """
 
         self._raw_flags: int = data["flags"]
@@ -492,12 +491,6 @@ class Member(PartialMember):
 
         self.joined_at: datetime | None = None
         """ The time the member joined the guild, if None, Discord failed to provide data. """
-
-        self.nameplate: Nameplate | None = self._user.nameplate
-        """ The nameplate of the member, if available. """
-
-        self.primary_guild: PrimaryGuild | None = self._user.primary_guild
-        """ The primary guild of the member, if available. """
 
         self._from_data(data)
 
@@ -514,6 +507,8 @@ class Member(PartialMember):
         if joined_at := data.get("joined_at"):
             self.joined_at = utils.parse_time(joined_at)
 
+        collectibles = data.get("collectibles", {}) or {}
+
         extra = _MemberExtra(
             avatar=data.get("avatar"),
             banner=data.get("banner"),
@@ -521,6 +516,7 @@ class Member(PartialMember):
             communication_disabled_until=data.get("communication_disabled_until"),
             premium_since=data.get("premium_since"),
             name_style=data.get("display_name_styles"),
+            nameplate=collectibles.get("nameplate"),
         )
         self._extra: _MemberExtra | None = extra if any(extra) else None
 
@@ -536,7 +532,7 @@ class Member(PartialMember):
         if not avatar:
             return None
         return Asset._from_guild_avatar(
-            self._state, self.guild.id, self.id, avatar
+            self._state, self.guild_id, self.id, avatar
         )
 
     @property
@@ -546,7 +542,7 @@ class Member(PartialMember):
         if not banner:
             return None
         return Asset._from_guild_banner(
-            self._state, self.guild.id, self.id, banner
+            self._state, self.guild_id, self.id, banner
         )
 
     @property
@@ -580,6 +576,14 @@ class Member(PartialMember):
         if not name_style:
             return None
         return DisplayNameStyles(data=name_style)
+
+    @property
+    def nameplate(self) -> Nameplate | None:
+        """ The nameplate of the member, if available. """
+        nameplate = self._extra.nameplate if self._extra else None
+        if not nameplate:
+            return None
+        return Nameplate(state=self._state, data=nameplate)
 
     @property
     def roles(self) -> list[Role | PartialRole]:
@@ -632,12 +636,12 @@ class Member(PartialMember):
 
         This is only available if you are using gateway with guild cache.
         """
-        if getattr(self.guild, "owner_id", None) == self.id:
+        guild = self.guild
+        if getattr(guild, "owner_id", None) == self.id:
             return Permissions.all()
 
         base = Permissions.none()
 
-        guild = self.guild
         for r_id in self.role_ids:
             g_role = guild.get_role(r_id)
             if isinstance(g_role, Role):
@@ -746,6 +750,11 @@ class Member(PartialMember):
         return self._user.global_name
 
     @property
+    def primary_guild(self) -> PrimaryGuild | None:
+        """ The primary guild of the member, if available. Shortcut for `User.primary_guild`. """
+        return self._user.primary_guild
+
+    @property
     def global_avatar(self) -> Asset | None:
         """ Shortcut for `User.avatar`. """
         return self._user.avatar
@@ -756,6 +765,11 @@ class Member(PartialMember):
         return self._user.banner
 
     @property
+    def global_nameplate(self) -> Nameplate | None:
+        """ Shortcut for `User.nameplate`. """
+        return self._user.nameplate
+
+    @property
     def display_name(self) -> str:
         """ The display name of the member. """
         return self.nick or self.global_name or self.name
@@ -764,6 +778,11 @@ class Member(PartialMember):
     def display_name_style(self) -> DisplayNameStyles | None:
         """ The currently displayed name style of the member. """
         return self.name_style or self._user.name_style
+
+    @property
+    def display_nameplate(self) -> Nameplate | None:
+        """ The currently displayed nameplate of the member. """
+        return self.nameplate or self.global_nameplate
 
     @property
     def display_banner(self) -> Asset | None:
@@ -789,9 +808,10 @@ class Member(PartialMember):
 
         Only usable if you are using gateway and caching
         """
-        if not isinstance(self.guild, Guild):
+        guild = self.guild
+        if not isinstance(guild, Guild):
             return None
-        return self.guild.get_member_top_role(self)
+        return guild.get_member_top_role(self)
 
 
 class PartialThreadMember(PartialMember):

@@ -15,16 +15,14 @@ if TYPE_CHECKING:
 class IntegrationAccount:
     """ Represents an account associated with an integration. """
 
-    __slots__ = ("_state", "id", "name",)
+    __slots__ = ("id", "name",)
 
     def __init__(
         self,
         *,
-        state: "DiscordAPI",
+        state: "DiscordAPI",  # ruff: ignore[unused-method-argument]
         data: dict,
     ) -> None:
-        self._state = state
-
         self.name: str = data.get("name", "")
         """ The name of the account. """
 
@@ -144,8 +142,6 @@ class Integration(PartialIntegration):
             guild_id=guild.id,
             application_id=utils.get_int(data.get("application", {}), "id")
         )
-
-        self._state: "DiscordAPI" = state
 
         self.name: str = data["name"]
         """ The name of the integration. """

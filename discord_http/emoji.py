@@ -322,12 +322,12 @@ class PartialEmoji(PartialBase):
 class Emoji(PartialEmoji):
     """ Represents a Discord emoji. """
     __slots__ = (
+        "_raw_roles",
         "animated",
         "available",
         "managed",
         "name",
         "require_colons",
-        "roles",
         "user",
     )
 
@@ -362,13 +362,20 @@ class Emoji(PartialEmoji):
         self.user: "PartialUser | None" = None
         """ The user that created the emoji, if available. """
 
-        self.roles: list[PartialRole] = [
-            PartialRole(state=state, id=r, guild_id=guild.id)
-            for r in data.get("roles", [])
-        ]
-        """ The roles that are allowed to use the emoji. (Only for guilds). """
+        self._raw_roles: list[int] = [int(r) for r in data.get("roles", [])]
 
         self._from_data(data)
+
+    @property
+    def roles(self) -> list[PartialRole]:
+        """ The roles that are allowed to use the emoji. (Only for guilds). """
+        if not self.guild_id:
+            return []
+
+        return [
+            PartialRole(state=self._state, id=r, guild_id=self.guild_id)
+            for r in self._raw_roles
+        ]
 
     def __repr__(self) -> str:
         return f"<Emoji id={self.id} name='{self.name}' animated={self.animated}>"

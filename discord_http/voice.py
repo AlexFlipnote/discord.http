@@ -53,6 +53,11 @@ class PartialVoiceState(PartialBase):
     def __str__(self) -> str:
         return "PartialVoiceState"
 
+    @property
+    def member_id(self) -> int:
+        """ The ID of the member (alias of `id`). """
+        return self.id
+
     async def fetch(self) -> "VoiceState":
         """
         Fetches the voice state of the member.
@@ -124,7 +129,6 @@ class VoiceState(PartialVoiceState):
         "self_video",
         "session_id",
         "suppress",
-        "user",
     )
 
     def __init__(
@@ -143,9 +147,6 @@ class VoiceState(PartialVoiceState):
 
         self.session_id: str = data["session_id"]
         """ The session ID of the voice state. """
-
-        self.user: PartialUser = PartialUser(state=state, id=int(data["user_id"]))
-        """ The user this voice state belongs to. """
 
         self._member_data: dict | None = data.get("member")
 
@@ -177,6 +178,17 @@ class VoiceState(PartialVoiceState):
 
     def __repr__(self) -> str:
         return f"<VoiceState id={self.user} session_id='{self.session_id}'>"
+
+    @property
+    def user(self) -> "PartialUser":
+        """ The user this voice state belongs to. Resolved live from cache. """
+        if (
+            (cache := self._state.cache) is not None and
+            (cached := cache.get_user(self.id)) is not None
+        ):
+            return cached
+
+        return PartialUser(state=self._state, id=self.id)
 
     def _from_data(self, data: dict) -> None:
         if rts_timestamp := data.get("request_to_speak_timestamp"):
@@ -224,6 +236,7 @@ class VoiceState(PartialVoiceState):
 
         cached_member = guild.get_member(self.id)
         if isinstance(cached_member, Member):
+            self._member_data = None
             return cached_member
 
         if self._member_data is None:

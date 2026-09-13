@@ -117,11 +117,7 @@ class AttachmentComponent:
     """ Represents an attachment component. """
 
     __slots__ = (
-        "_edata",
-        "_file",
-        "_media",
         "_state",
-        "_url",
         "content_type",
         "filename",
         "flags",
@@ -143,11 +139,8 @@ class AttachmentComponent:
     ):
         self._state = state
 
-        self._file: dict | None = data.get("file")
-        self._media: dict | None = data.get("media")
-
-        self._edata = self._file or self._media
-        if self._edata is None:
+        edata: dict | None = data.get("file") or data.get("media")
+        if edata is None:
             raise ValueError("Either file or media must be provided")
 
         self.spoiler: bool = data.get("spoiler", False)
@@ -159,28 +152,28 @@ class AttachmentComponent:
         self.size: int = data.get("size", 0)
         """ The size of the attachment in bytes. """
 
-        self.url: str = self._edata["url"]
+        self.url: str = edata["url"]
         """ The URL of the attachment. """
 
-        self.proxy_url: str = self._edata["proxy_url"]
+        self.proxy_url: str = edata["proxy_url"]
         """ The proxied URL of the attachment. """
 
-        self.height: int | None = self._edata.get("height", None)
+        self.height: int | None = edata.get("height", None)
         """ The height of the attachment, if any. """
 
-        self.width: int | None = self._edata.get("width", None)
+        self.width: int | None = edata.get("width", None)
         """ The width of the attachment, if any. """
 
-        self.placeholder: str | None = self._edata.get("placeholder", None)
+        self.placeholder: str | None = edata.get("placeholder", None)
         """ The placeholder of the attachment, if any. """
 
-        self.placeholder_version: int | None = self._edata.get("placeholder_version", None)
+        self.placeholder_version: int | None = edata.get("placeholder_version", None)
         """ The placeholder version of the attachment, if any. """
 
-        self.content_type: str | None = self._edata.get("content_type", None)
+        self.content_type: str | None = edata.get("content_type", None)
         """ The content type of the attachment, if any. """
 
-        self.flags: int = self._edata.get("flags", 0)
+        self.flags: int = edata.get("flags", 0)
         """ The flags of the attachment, if any. """
 
     def __str__(self) -> str:
@@ -1365,6 +1358,7 @@ class InteractionStorage:
     __slots__ = (
         "_call_after",
         "_event_wait",
+        "_loop",
         "_msg_cache",
         "_store_interaction",
         "_timeout",
@@ -1372,15 +1366,13 @@ class InteractionStorage:
         "_timeout_expiry",
         "_timeout_task",
         "_users",
-        "loop",
     )
 
     def __init__(self):
-        self._event_wait = asyncio.Event()
-        self._store_interaction: "Context | None" = None
+        self._event_wait: asyncio.Event | None = None
+        self._loop: asyncio.AbstractEventLoop | None = None
 
-        self.loop = asyncio.get_running_loop()
-        """ The event loop this storage was created in. """
+        self._store_interaction: "Context | None" = None
 
         self._call_after: Callable | None = None
         self._users: list["Snowflake"] = []
@@ -1396,6 +1388,20 @@ class InteractionStorage:
             f"msg={self._msg_cache}>"
         )
 
+    @property
+    def loop(self) -> asyncio.AbstractEventLoop:
+        """ The event loop this storage is running in. """
+        if self._loop is None:
+            self._loop = asyncio.get_running_loop()
+        return self._loop
+
+    @property
+    def _event(self) -> asyncio.Event:
+        """ The event waiter. """
+        if self._event_wait is None:
+            self._event_wait = asyncio.Event()
+        return self._event_wait
+
     def _update_event(self, value: bool) -> None:
         """
         Update the event waiter to either set or clear.
@@ -1407,9 +1413,9 @@ class InteractionStorage:
             `False` means the event is cleared
         """
         if value is True:
-            self._event_wait.set()
+            self._event.set()
         elif value is False:
-            self._event_wait.clear()
+            self._event.clear()
 
     async def _timeout_watcher(self) -> None:
         """ Watches for the timeout and calls on_timeout when it expires. """
@@ -1425,7 +1431,7 @@ class InteractionStorage:
 
     async def _dispatch_timeout(self) -> None:
         """ Dispatches the timeout event. """
-        if self._event_wait.is_set():
+        if self._event.is_set():
             return
 
         try:
@@ -1578,7 +1584,7 @@ class InteractionStorage:
 
         ctx.bot._view_storage[self._msg_cache] = self
         try:
-            await self._event_wait.wait()
+            await self._event.wait()
         finally:
             if self._timeout_task and not self._timeout_task.done():
                 self._timeout_task.cancel()

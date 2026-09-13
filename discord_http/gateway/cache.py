@@ -111,7 +111,10 @@ async def _deep_sizeof(
 class Cache:
     """ Represents the discord.http/gateway cache. """
 
-    __slots__ = ("__guilds", "__users", "_state", "bot", "cache_flags")
+    __slots__ = (
+        "__guilds", "__role_id_pools", "__role_ids_pools", "__users",
+        "_state", "bot", "cache_flags",
+    )
 
     def __init__(
         self,
@@ -126,6 +129,26 @@ class Cache:
 
         self.__guilds: dict[int, "PartialGuild | Guild"] = {}
         self.__users: "weakref.WeakValueDictionary[int, User]" = weakref.WeakValueDictionary()
+        self.__role_id_pools: dict[int, dict[int, int]] = {}
+        self.__role_ids_pools: dict[int, dict[tuple[int, ...], tuple[int, ...]]] = {}
+
+    def intern_role_ids(self, guild_id: int, raw_role_ids: list) -> tuple[int, ...]:
+        """
+        Deduplicate a member's role-ID tuple against the other members of the same guild.
+
+        Only pools when full `Member` objects are actually retained in the guild's
+        member cache - otherwise every throwaway `Member` (built per message author,
+        mention, interaction, audit log entry, ...) would intern its roles into a
+        pool that's never revisited by anything, growing forever for no benefit.
+        """
+        if self.cache_flags is None or GatewayCacheFlags.members not in self.cache_flags:
+            return tuple(int(r) for r in raw_role_ids)
+
+        id_pool = self.__role_id_pools.setdefault(guild_id, {})
+        role_ids = tuple(id_pool.setdefault(i, i) for i in map(int, raw_role_ids))
+
+        ids_pool = self.__role_ids_pools.setdefault(guild_id, {})
+        return ids_pool.setdefault(role_ids, role_ids)
 
     async def calculate_memory_usage(self) -> dict[str, int]:
         """
@@ -289,6 +312,12 @@ class Cache:
         if GatewayCacheFlags.voice_states in self.cache_flags:
             vs_update = voice_state
 
+            if (
+                GatewayCacheFlags.members in self.cache_flags and
+                isinstance(guild.get_member(voice_state.id), Member)
+            ):
+                voice_state._member_data = None
+
         elif GatewayCacheFlags.partial_voice_states in self.cache_flags:
             vs_update = self.bot.get_partial_voice_state(
                 voice_state.id,
@@ -319,6 +348,8 @@ class Cache:
         if self.cache_flags is None:
             return None
 
+        self.__role_id_pools.pop(guild_id, None)
+        self.__role_ids_pools.pop(guild_id, None)
         return self.__guilds.pop(guild_id, None)
 
     def add_member(

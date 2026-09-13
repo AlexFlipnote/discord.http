@@ -315,11 +315,11 @@ class DiscordHTTP(web.Application):
         await self._validate_request(request)
 
         try:
-            data = await request.json(loads=orjson.loads)
+            data = orjson.loads(await request.read())
         except Exception:
             return self.jsonify({"error": "invalid json"}, status=400)
 
-        if self.debug_events:
+        if self.debug_events and self.bot.has_any_dispatch("raw_interaction"):
             self.bot.dispatch("raw_interaction", copy.deepcopy(data))
 
         context = self.bot._context(self.bot, data)
@@ -377,11 +377,11 @@ class DiscordHTTP(web.Application):
         await self._validate_request(request)
 
         try:
-            data = await request.json(loads=orjson.loads)
+            data = orjson.loads(await request.read())
         except Exception:
             return self.jsonify({"error": "invalid json"}, status=400)
 
-        if self.debug_events:
+        if self.debug_events and self.bot.has_any_dispatch("raw_webhook_event"):
             self.bot.dispatch("raw_webhook_event", copy.deepcopy(data))
 
         if data.get("type") == 0:
@@ -454,8 +454,12 @@ class DiscordHTTP(web.Application):
         original_write_eof = response.write_eof
 
         async def _tracked(data: bytes = b"") -> None:
-            await original_write_eof(data)
-            event.set()
+            try:
+                await original_write_eof(data)
+            finally:
+                event.set()
+                # Drops the closure that keeps `response` alive through its own patched method.
+                response.__dict__.pop("write_eof", None)
 
         response.write_eof = _tracked
 

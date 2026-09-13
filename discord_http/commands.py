@@ -33,6 +33,7 @@ from .message import Attachment
 from .object import PartialBase, Snowflake
 from .response import BaseResponse, AutocompleteResponse
 from .role import Role
+from .tasks import Loop
 from .user import User
 import builtins
 
@@ -93,6 +94,7 @@ class Cog:
         commands = {}
         listeners = {}
         interactions = {}
+        loops = {}
 
         for base in reversed(cls.__mro__):
             for _, value in base.__dict__.items():
@@ -112,9 +114,13 @@ class Cog:
                     case x if isinstance(x, Listener):
                         listeners[value.name] = value
 
+                    case x if isinstance(x, Loop):
+                        loops[value.func.__name__] = value
+
         cls._cog_commands: dict[str, "Command"] = commands
         cls._cog_interactions: dict[str, "Interaction"] = interactions
         cls._cog_listeners: dict[str, "Listener"] = listeners
+        cls._cog_loops: dict[str, Loop] = loops
 
         return super().__new__(cls)
 
@@ -159,6 +165,11 @@ class Cog:
         for interaction in self._cog_interactions.values():
             bot.remove_interaction(interaction)
 
+        for name in self._cog_loops:
+            bound_loop = getattr(self, name, None)
+            if isinstance(bound_loop, Loop):
+                bound_loop.cancel()
+
     async def cog_load(self) -> None:
         """ Called before the cog is loaded. """
 
@@ -186,6 +197,8 @@ class PartialCommand(PartialBase):
 
 class LocaleContainer:
     """ Represents a container for localized names and descriptions. """
+
+    __slots__ = ("description", "key", "name")
 
     def __init__(
         self,
