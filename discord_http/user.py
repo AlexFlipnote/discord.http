@@ -157,6 +157,11 @@ class Nameplate:
         """ The URL of the avatar decoration asset. """
         return f"https://discord.com/shop#itemSkuId={self.sku_id}"
 
+    @property
+    def sku(self) -> "PartialSKU":
+        """ The partial SKU associated with the nameplate. """
+        return self._state.bot.get_partial_sku(self.sku_id)
+
 
 class PrimaryGuild:
     """
@@ -763,7 +768,7 @@ class Team(PartialBase):
     @property
     def owner(self) -> PartialUser:
         """ The user that owns the team. """
-        return PartialUser(state=self._state, id=self.owner_user_id)
+        return self._state.bot.get_partial_user(self.owner_user_id)
 
 
 class ApplicationRoleConnectionMetadata:
@@ -994,10 +999,7 @@ class Application(PartialBase):
 
     def _from_data(self, data: dict) -> None:
         if owner := data.get("owner"):
-            self.owner = PartialUser(
-                state=self._state,
-                id=int(owner["id"])
-            )
+            self.owner = self._state.bot.get_partial_user(int(owner["id"]))
 
         if bot := data.get("bot"):
             self.bot = User(
@@ -1006,10 +1008,8 @@ class Application(PartialBase):
             )
 
         if (guild_id := data.get("guild_id")) or (guild := data.get("guild")):
-            from .guild import PartialGuild
-            self.guild = PartialGuild(
-                state=self._state,
-                id=int(guild_id) if guild_id else int(guild["id"])
+            self.guild = self._state.bot.get_partial_guild(
+                int(guild_id) if guild_id else int(guild["id"])
             )
 
         if icon := data.get("icon"):
@@ -1027,11 +1027,7 @@ class Application(PartialBase):
             )
 
         if primary_sku_id := data.get("primary_sku_id"):
-            from .entitlements import PartialSKU
-            self.primary_sku = PartialSKU(
-                state=self._state,
-                id=int(primary_sku_id)
-            )
+            self.primary_sku = self._state.bot.get_partial_sku(int(primary_sku_id))
 
         if team := data.get("team"):
             self.team = Team(

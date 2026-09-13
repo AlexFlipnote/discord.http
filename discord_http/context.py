@@ -663,10 +663,7 @@ class Context:
             self.channel_id = int(channel_id)
 
         if guild_id := data.get("guild_id"):
-            self._guild = PartialGuild(
-                state=self.bot.state,
-                id=int(guild_id)
-            )
+            self._guild = self.bot.get_partial_guild(int(guild_id))
 
         if channel := data.get("channel"):
             if self._guild:
@@ -828,9 +825,8 @@ class Context:
             # Prefer the channel from context
             return self._channel
 
-        return PartialChannel(
-            state=self.bot.state,
-            id=self.channel_id,
+        return self.bot.get_partial_channel(
+            self.channel_id,
             guild_id=self.guild.id if self.guild else None
         )
 

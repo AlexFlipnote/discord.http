@@ -72,7 +72,7 @@ class PartialMember(PartialBase):
         if (cache := self._state.cache) is not None and (cached := cache.get_user(self.id)) is not None:
             return cached
 
-        return PartialUser(state=self._state, id=self.id)
+        return self._state.bot.get_partial_user(self.id)
 
     def _update_presence(self, obj: "Presence | None") -> None:
         self.presence = obj
@@ -87,7 +87,7 @@ class PartialMember(PartialBase):
         if cache := self._state.cache.get_guild(self.guild_id):
             return cache
 
-        return PartialGuild(state=self._state, id=self.guild_id)
+        return self._state.bot.get_partial_guild(self.guild_id)
 
     @property
     def default_avatar(self) -> Asset:
@@ -591,7 +591,7 @@ class Member(PartialMember):
         guild = self.guild
         return [
             guild.get_role(r_id) or
-            PartialRole(state=self._state, id=r_id, guild_id=guild.id)
+            self._state.bot.get_partial_role(r_id, guild_id=guild.id)
             for r_id in self.role_ids
         ]
 
@@ -619,9 +619,7 @@ class Member(PartialMember):
             return None
 
         guild = self.guild
-        return guild.get_role(role_id) or PartialRole(
-            state=self._state, id=role_id, guild_id=guild.id
-        )
+        return guild.get_role(role_id) or self._state.bot.get_partial_role(role_id, guild_id=guild.id)
 
     def is_timed_out(self) -> bool:
         """ Returns whether the member is timed out or not. """

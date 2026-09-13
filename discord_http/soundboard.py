@@ -5,6 +5,7 @@ from .file import File
 from .object import PartialBase
 
 if TYPE_CHECKING:
+    from .emoji import PartialEmoji
     from .guild import PartialGuild, Guild
     from .http import DiscordAPI
 
@@ -68,8 +69,7 @@ class PartialSoundboardSound(PartialBase):
         if cache := self._state.cache.get_guild(self.guild_id):
             return cache
 
-        from .guild import PartialGuild
-        return PartialGuild(state=self._state, id=self.guild_id)
+        return self._state.bot.get_partial_guild(self.guild_id)
 
     async def fetch(self) -> "SoundboardSound":
         """
@@ -255,3 +255,11 @@ class SoundboardSound(PartialSoundboardSound):
 
     def __repr__(self) -> str:
         return f"<SoundboardSound id={self.id} name='{self.name}'>"
+
+    @property
+    def emoji(self) -> "PartialEmoji | None":
+        """ The partial custom emoji used for the soundboard sound, if any. """
+        if not self.emoji_id:
+            return None
+
+        return self._state.bot.get_partial_emoji(self.emoji_id, guild_id=self.guild_id)

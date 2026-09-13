@@ -304,8 +304,7 @@ class PartialAutoModRule(PartialBase):
         if cache := self._state.cache.get_guild(self.guild_id):
             return cache
 
-        from .guild import PartialGuild
-        return PartialGuild(state=self._state, id=self.guild_id)
+        return self._state.bot.get_partial_guild(self.guild_id)
 
     async def fetch(self) -> "AutoModRule":
         """ Fetches more information about the automod rule. """
@@ -539,16 +538,13 @@ class AutoModRule(PartialAutoModRule):
     @property
     def creator(self) -> PartialUser:
         """ The user that created the automod rule in User object form. """
-        return PartialUser(
-            state=self._state,
-            id=self.creator_id
-        )
+        return self._state.bot.get_partial_user(self.creator_id)
 
     @property
     def exempt_roles(self) -> list[PartialRole]:
         """ The roles that are exempt from the automod rule. """
         return [
-            PartialRole(state=self._state, id=g, guild_id=self.guild_id)
+            self._state.bot.get_partial_role(g, guild_id=self.guild_id)
             for g in self._raw_exempt_roles
         ]
 
@@ -556,6 +552,6 @@ class AutoModRule(PartialAutoModRule):
     def exempt_channels(self) -> list[PartialChannel]:
         """ The channels that are exempt from the automod rule. """
         return [
-            PartialChannel(state=self._state, id=g, guild_id=self.guild_id)
+            self._state.bot.get_partial_channel(g, guild_id=self.guild_id)
             for g in self._raw_exempt_channels
         ]

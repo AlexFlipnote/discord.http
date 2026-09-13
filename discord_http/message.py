@@ -307,11 +307,7 @@ class JumpURL:
         if cache := self._state.cache.get_guild(self.guild_id):
             return cache
 
-        from .guild import PartialGuild
-        return PartialGuild(
-            state=self._state,
-            id=self.guild_id
-        )
+        return self._state.bot.get_partial_guild(self.guild_id)
 
     async def fetch_guild(self) -> "Guild":
         """ Returns the guild the message was sent in. """
@@ -339,11 +335,8 @@ class JumpURL:
             if cache:
                 return cache
 
-        from .channel import PartialChannel
-        return PartialChannel(
-            state=self._state,
-            id=self.channel_id,
-            guild_id=self.guild_id
+        return self._state.bot.get_partial_channel(
+            self.channel_id, guild_id=self.guild_id
         )
 
     async def fetch_channel(self) -> "BaseChannel":
@@ -356,11 +349,8 @@ class JumpURL:
         if not self.channel_id or not self.message_id:
             return None
 
-        return PartialMessage(
-            state=self._state,
-            channel_id=self.channel_id,
-            guild_id=self.guild_id,
-            id=self.message_id
+        return self._state.bot.get_partial_message(
+            self.message_id, self.channel_id, self.guild_id
         )
 
     async def fetch_message(self) -> "Message":
@@ -668,11 +658,7 @@ class MessageReference:
         if cache := self._state.cache.get_guild(self.guild_id):
             return cache
 
-        from .guild import PartialGuild
-        return PartialGuild(
-            state=self._state,
-            id=self.guild_id
-        )
+        return self._state.bot.get_partial_guild(self.guild_id)
 
     @property
     def channel(self) -> "PartialChannel | None":
@@ -689,11 +675,8 @@ class MessageReference:
             if cache:
                 return cache
 
-        from .channel import PartialChannel
-        return PartialChannel(
-            state=self._state,
-            id=self.channel_id,
-            guild_id=self.guild_id
+        return self._state.bot.get_partial_channel(
+            self.channel_id, guild_id=self.guild_id
         )
 
     @property
@@ -702,11 +685,8 @@ class MessageReference:
         if not self.channel_id or not self.message_id:
             return None
 
-        return PartialMessage(
-            state=self._state,
-            channel_id=self.channel_id,
-            guild_id=self.guild_id,
-            id=self.message_id
+        return self._state.bot.get_partial_message(
+            self.message_id, self.channel_id, self.guild_id
         )
 
     def to_dict(self) -> dict:
@@ -1021,11 +1001,8 @@ class PartialMessage(PartialBase):
             if cache:
                 return cache
 
-        from .channel import PartialChannel
-        return PartialChannel(
-            state=self._state,
-            id=self.channel_id,
-            guild_id=self.guild_id
+        return self._state.bot.get_partial_channel(
+            self.channel_id, guild_id=self.guild_id
         )
 
     @property
@@ -1037,8 +1014,7 @@ class PartialMessage(PartialBase):
         if cache := self._state.cache.get_guild(self.guild_id):
             return cache
 
-        from .guild import PartialGuild
-        return PartialGuild(state=self._state, id=self.guild_id)
+        return self._state.bot.get_partial_guild(self.guild_id)
 
     @property
     def jump_url(self) -> JumpURL:
@@ -1799,7 +1775,7 @@ class Message(PartialMessage):
         if call := data.get("call"):
             self.call = MessageCall(
                 participants=[
-                    PartialUser(state=self._state, id=int(g))
+                    self._state.bot.get_partial_user(int(g))
                     for g in call.get("participants") or ()
                 ],
                 ended_timestamp=(
@@ -1881,11 +1857,7 @@ class Message(PartialMessage):
 
         return [
             self.guild.get_role(int(role_id)) or
-            PartialRole(
-                state=self._state,
-                id=int(role_id),
-                guild_id=self.guild_id
-            )
+            self._state.bot.get_partial_role(int(role_id), guild_id=self.guild_id)
             for role_id in utils.re_role.findall(self.content)
         ]
 
@@ -1896,13 +1868,11 @@ class Message(PartialMessage):
 
         Can return full role object if guild and channel cache is enabled
         """
-        from .channel import PartialChannel
-
         guild = self.guild if self.guild_id else None
 
         return [
             (guild.get_channel(int(channel_id)) if guild else None) or
-            PartialChannel(state=self._state, id=int(channel_id), guild_id=self.guild_id)
+            self._state.bot.get_partial_channel(int(channel_id), guild_id=self.guild_id)
             for channel_id in utils.re_channel.findall(self.content)
         ]
 

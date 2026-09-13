@@ -378,10 +378,16 @@ class AutomodExecution:
     @property
     def rule(self) -> PartialAutoModRule:
         """ A partial object of automod rule. """
-        return PartialAutoModRule(
-            state=self._state,
-            id=self.rule_id,
-            guild_id=self.guild.id
+        return self._state.bot.get_partial_automod_rule(self.rule_id, self.guild.id)
+
+    @property
+    def message(self) -> "PartialMessage | None":
+        """ The partial message that triggered the automod execution, if applicable. """
+        if not self.message_id or not self.channel:
+            return None
+
+        return self._state.bot.get_partial_message(
+            self.message_id, self.channel.id, self.guild.id
         )
 
 
@@ -419,11 +425,10 @@ class PollVoteEvent:
         self.channel: "PartialChannel" = channel
         """ The channel the poll is in. """
 
-        self.message: PartialMessage = PartialMessage(
-            state=self._state,
-            id=int(data["message_id"]),
-            channel_id=self.channel.id,
-            guild_id=self.guild.id if self.guild else None
+        self.message: PartialMessage = self._state.bot.get_partial_message(
+            int(data["message_id"]),
+            self.channel.id,
+            self.guild.id if self.guild else None
         )
         """ The message the poll is in. """
 
@@ -520,8 +525,7 @@ class Reaction:
         if cache := self._state.cache.get_guild(self.guild_id):
             return cache
 
-        from ..guild import PartialGuild
-        return PartialGuild(state=self._state, id=self.guild_id)
+        return self._state.bot.get_partial_guild(self.guild_id)
 
     @property
     def channel(self) -> "PartialChannel | None":
@@ -542,11 +546,8 @@ class Reaction:
             if cache:
                 return cache
 
-        from ..channel import PartialChannel
-        return PartialChannel(
-            state=self._state,
-            id=self.channel_id,
-            guild_id=self.guild_id
+        return self._state.bot.get_partial_channel(
+            self.channel_id, guild_id=self.guild_id
         )
 
     @property
@@ -555,12 +556,22 @@ class Reaction:
         if not self.channel_id or not self.message_id:
             return None
 
-        return PartialMessage(
-            state=self._state,
-            channel_id=self.channel_id,
-            guild_id=self.guild_id,
-            id=self.message_id
+        return self._state.bot.get_partial_message(
+            self.message_id, self.channel_id, self.guild_id
         )
+
+    @property
+    def user(self) -> "PartialUser":
+        """ The partial user that made the reaction. """
+        return self._state.bot.get_partial_user(self.user_id)
+
+    @property
+    def message_author(self) -> "PartialUser | None":
+        """ The partial user that authored the message, if available. """
+        if not self.message_author_id:
+            return None
+
+        return self._state.bot.get_partial_user(self.message_author_id)
 
 
 class BulkDeletePayload:
@@ -590,12 +601,7 @@ class BulkDeletePayload:
         """ The channel the messages were deleted in. """
 
         self.messages: list[PartialMessage] = [
-            PartialMessage(
-                state=self._state,
-                id=int(g),
-                guild_id=guild.id,
-                channel_id=channel.id,
-            )
+            self._state.bot.get_partial_message(int(g), channel.id, guild.id)
             for g in data["ids"]
         ]
         """ The messages that were deleted. """
@@ -830,13 +836,13 @@ class ApplicationCommandPermission:
             case ApplicationCommandPermissionType.role:
                 # The literal @everyone role's ID always equals guild_id, so
                 # this is a real role - no special constant to guard against.
-                self.target = PartialRole(state=state, id=self.id, guild_id=guild_id)
+                self.target = state.bot.get_partial_role(self.id, guild_id)
             case ApplicationCommandPermissionType.user:
                 if self.id != guild_id:  # guild_id itself means "all members"
-                    self.target = PartialUser(state=state, id=self.id)
+                    self.target = state.bot.get_partial_user(self.id)
             case ApplicationCommandPermissionType.channel:
                 if self.id != guild_id - 1:  # guild_id - 1 means "all channels"
-                    self.target = PartialChannel(state=state, id=self.id, guild_id=guild_id)
+                    self.target = state.bot.get_partial_channel(self.id, guild_id=guild_id)
 
     def __repr__(self) -> str:
         return f"<ApplicationCommandPermission id={self.id} type={self.type} permission={self.permission}>"

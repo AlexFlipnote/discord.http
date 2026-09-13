@@ -179,8 +179,7 @@ class PartialEmoji(PartialBase):
         if cache := self._state.cache.get_guild(self.guild_id):
             return cache
 
-        from .guild import PartialGuild
-        return PartialGuild(state=self._state, id=self.guild_id)
+        return self._state.bot.get_partial_guild(self.guild_id)
 
     @property
     def url(self) -> str:
@@ -373,7 +372,7 @@ class Emoji(PartialEmoji):
             return []
 
         return [
-            PartialRole(state=self._state, id=r, guild_id=self.guild_id)
+            self._state.bot.get_partial_role(r, guild_id=self.guild_id)
             for r in self._raw_roles
         ]
 
@@ -385,8 +384,7 @@ class Emoji(PartialEmoji):
 
     def _from_data(self, data: dict) -> None:
         if user := data.get("user"):
-            from .user import PartialUser
-            self.user = PartialUser(state=self._state, id=int(user["id"]))
+            self.user = self._state.bot.get_partial_user(int(user["id"]))
 
     @property
     def url(self) -> str:

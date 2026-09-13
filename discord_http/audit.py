@@ -378,11 +378,7 @@ class AuditChange(Generic[_AuditChangeT]):
 
     def _handle_partial_role(self, data: dict) -> list[PartialRole]:
         return [
-            PartialRole(
-                state=self.entry._state,
-                id=int(g["id"]),
-                guild_id=self.entry.guild.id
-            )
+            self.entry._state.bot.get_partial_role(int(g["id"]), self.entry.guild.id)
             for g in data["new_value"]
         ]
 
@@ -413,9 +409,8 @@ class AuditLogEntry(Snowflake):
         super().__init__(id=int(data["id"]))
         self._state = state
 
-        self.guild: PartialGuild = guild or PartialGuild(
-            state=self._state,
-            id=int(data["guild_id"])
+        self.guild: PartialGuild = guild or self._state.bot.get_partial_guild(
+            int(data["guild_id"])
         )
         """ The guild this audit log entry belongs to. """
 
@@ -589,33 +584,19 @@ class AuditLogEntry(Snowflake):
         return next((g for g in self.changes if g.key == key), None)
 
     def _convert_target_guild(self, guild_id: int) -> PartialGuild:
-        return PartialGuild(
-            state=self._state,
-            id=guild_id
-        )
+        return self._state.bot.get_partial_guild(guild_id)
 
     def _convert_target_channel(self, channel_id: int) -> PartialChannel:
-        return PartialChannel(
-            state=self._state,
-            id=channel_id,
-            guild_id=self.guild.id
-        )
+        return self._state.bot.get_partial_channel(channel_id, guild_id=self.guild.id)
 
     def _convert_target_user(self, user_id: int) -> User | PartialUser:
         if (user := self._users.get(user_id)) is not None:
             return user
 
-        return PartialUser(
-            state=self._state,
-            id=user_id
-        )
+        return self._state.bot.get_partial_user(user_id)
 
     def _convert_target_role(self, role_id: int) -> PartialRole:
-        return PartialRole(
-            state=self._state,
-            id=role_id,
-            guild_id=self.guild.id
-        )
+        return self._state.bot.get_partial_role(role_id, self.guild.id)
 
     def _convert_target_message(self, user_id: int) -> User | PartialUser:
         return self._convert_target_user(user_id)

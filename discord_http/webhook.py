@@ -493,8 +493,7 @@ class Webhook(PartialWebhook):
         if cache := self._state.cache.get_guild(self.guild_id):
             return cache
 
-        from .guild import PartialGuild
-        return PartialGuild(state=self._state, id=self.guild_id)
+        return self._state.bot.get_partial_guild(self.guild_id)
 
     @property
     def avatar(self) -> "Asset | None":
@@ -507,11 +506,7 @@ class Webhook(PartialWebhook):
     @property
     def channel(self) -> "PartialChannel | None":
         """ The channel the webhook is in. """
-        if self.channel_id:
-            from .channel import PartialChannel
-            return PartialChannel(
-                state=self._state,
-                id=self.channel_id
-            )
+        if not self.channel_id:
+            return None
 
-        return None
+        return self._state.bot.get_partial_channel(self.channel_id)

@@ -76,7 +76,7 @@ class PartialInvite:
         if cache := self._state.cache.get_guild(self.guild_id):
             return cache
 
-        return PartialGuild(state=self._state, id=self.guild_id)
+        return self._state.bot.get_partial_guild(self.guild_id)
 
     @property
     def channel(self) -> "PartialChannel | None":
@@ -84,11 +84,7 @@ class PartialInvite:
         if not self.channel_id:
             return None
 
-        return PartialChannel(
-            state=self._state,
-            id=self.channel_id,
-            guild_id=self.guild_id
-        )
+        return self._state.bot.get_partial_channel(self.channel_id, guild_id=self.guild_id)
 
     async def fetch(self) -> "Invite":
         """
@@ -126,7 +122,7 @@ class PartialInvite:
         if lines and lines[0].lower() == "user_id":
             lines = lines[1:]
 
-        return [PartialUser(state=self._state, id=int(g)) for g in lines]
+        return [self._state.bot.get_partial_user(int(g)) for g in lines]
 
     async def edit_target_users(self, user_ids: list[Snowflake | int]) -> None:
         """

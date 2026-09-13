@@ -10,6 +10,7 @@ from .user import User
 if TYPE_CHECKING:
     from .http import DiscordAPI
     from .guild import PartialGuild, Guild
+    from .role import PartialRole
 
 
 class IntegrationAccount:
@@ -89,8 +90,7 @@ class PartialIntegration(PartialBase):
         if cache := self._state.cache.get_guild(self.guild_id):
             return cache
 
-        from .guild import PartialGuild
-        return PartialGuild(state=self._state, id=self.guild_id)
+        return self._state.bot.get_partial_guild(self.guild_id)
 
     async def delete(self) -> None:
         """
@@ -219,6 +219,14 @@ class Integration(PartialIntegration):
         The bot user associated with this integration, if available.
         """
         return self.application.bot if self.application else None
+
+    @property
+    def role(self) -> "PartialRole | None":
+        """ The partial role used for "subscribers" of this integration, if any. """
+        if not self.role_id:
+            return None
+
+        return self._state.bot.get_partial_role(self.role_id, guild_id=self.guild_id)
 
 
 class IntegrationApplication(PartialBase):

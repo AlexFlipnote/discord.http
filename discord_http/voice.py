@@ -11,7 +11,7 @@ if TYPE_CHECKING:
     from .channel import BaseChannel, PartialChannel
     from .guild import PartialGuild
     from .http import DiscordAPI
-    from .member import Member
+    from .member import Member, PartialMember
 
 __all__ = (
     "PartialVoiceState",
@@ -57,6 +57,30 @@ class PartialVoiceState(PartialBase):
     def member_id(self) -> int:
         """ The ID of the member (alias of `id`). """
         return self.id
+
+    @property
+    def guild(self) -> "PartialGuild | None":
+        """ The partial guild of the voice state, if available. """
+        if not self.guild_id:
+            return None
+
+        return self._state.bot.get_partial_guild(self.guild_id)
+
+    @property
+    def member(self) -> "PartialMember | PartialUser":
+        """ The partial user/member of the state. """
+        if self.guild:
+            return self.guild.get_partial_member(self.member_id)
+
+        return self._state.bot.get_partial_user(self.member_id)
+
+    @property
+    def channel(self) -> "PartialChannel | None":
+        """ The partial channel of the state, if available """
+        if not self.channel_id:
+            return None
+
+        return self._state.bot.get_partial_channel(self.channel_id)
 
     async def fetch(self) -> "VoiceState":
         """
@@ -188,7 +212,7 @@ class VoiceState(PartialVoiceState):
         ):
             return cached
 
-        return PartialUser(state=self._state, id=self.id)
+        return self._state.bot.get_partial_user(self.id)
 
     def _from_data(self, data: dict) -> None:
         if rts_timestamp := data.get("request_to_speak_timestamp"):
@@ -205,8 +229,7 @@ class VoiceState(PartialVoiceState):
         if cache := self._state.cache.get_guild(self.guild_id):
             return cache
 
-        from .guild import PartialGuild
-        return PartialGuild(state=self._state, id=self.guild_id)
+        return self._state.bot.get_partial_guild(self.guild_id)
 
     @property
     def channel(self) -> "BaseChannel | PartialChannel | None":
@@ -217,8 +240,7 @@ class VoiceState(PartialVoiceState):
         if self.guild_id is not None and (cache := self._state.cache.get_channel(self.guild_id, self.channel_id)):
             return cache
 
-        from .channel import PartialChannel
-        return PartialChannel(state=self._state, id=self.channel_id, guild_id=self.guild_id)
+        return self._state.bot.get_partial_channel(self.channel_id, guild_id=self.guild_id)
 
     @property
     def member(self) -> "Member | None":

@@ -24,7 +24,7 @@ from .enums import (
     ScheduledEventRecurrenceFrequency, ScheduledEventRecurrenceWeekday,
     ScheduledEventRecurrenceMonth, OnboardingMode, OnboardingPromptType
 )
-from .channel import BaseChannel
+from .channel import BaseChannel, PartialChannel
 from .emoji import Emoji, PartialEmoji, EmojiParser
 from .file import File
 from .flags import Permissions, SystemChannelFlags, PermissionOverwrite
@@ -38,7 +38,7 @@ from .voice import VoiceState, PartialVoiceState
 if TYPE_CHECKING:
     from .audit import AuditLogEntry
     from .channel import (
-        TextChannel, VoiceChannel, PartialChannel,
+        TextChannel, VoiceChannel,
         CategoryChannel, PublicThread,
         VoiceRegion, StageChannel, PrivateThread
     )
@@ -246,11 +246,17 @@ class WelcomeScreenChannel:
     def __repr__(self) -> str:
         return f"<WelcomeScreenChannel channel={self.channel} description='{self.description}'>"
 
-    def _from_data(self, data: dict) -> None:
-        from .channel import PartialChannel
+    @property
+    def emoji(self) -> "PartialEmoji | None":
+        """ The partial custom emoji shown next to the channel, if any. """
+        if not self.emoji_id:
+            return None
 
-        self.channel: "PartialChannel" = PartialChannel(
-            state=self._state, id=int(data["channel_id"]), guild_id=self.guild_id
+        return self._state.bot.get_partial_emoji(self.emoji_id, guild_id=self.guild_id)
+
+    def _from_data(self, data: dict) -> None:
+        self.channel: "PartialChannel" = self._state.bot.get_partial_channel(
+            int(data["channel_id"]), guild_id=self.guild_id
         )
         """ The channel shown in the welcome screen. """
 
@@ -315,8 +321,7 @@ class GuildWidgetSettings:
 
     def _from_data(self, data: dict) -> None:
         if channel_id := utils.get_int(data, "channel_id"):
-            from .channel import PartialChannel
-            self.channel = PartialChannel(state=self._state, id=channel_id, guild_id=self.guild_id)
+            self.channel = self._state.bot.get_partial_channel(channel_id, guild_id=self.guild_id)
 
 
 class GuildWidgetChannel:
@@ -352,10 +357,8 @@ class GuildWidgetChannel:
 
     def _from_data(self, data: dict) -> None:
         # I honestly did not want this inside the __init__, that's all...
-        from .channel import PartialChannel
-
-        self.channel: "PartialChannel" = PartialChannel(
-            state=self._state, id=int(data["id"]), guild_id=self.guild_id
+        self.channel: "PartialChannel" = self._state.bot.get_partial_channel(
+            int(data["id"]), guild_id=self.guild_id
         )
 
 
@@ -456,7 +459,7 @@ class GuildPreview(PartialBase):
         self.description: str | None = data.get("description")
         """ The description of the guild, if any. """
 
-        guild_ref = PartialGuild(state=state, id=self.id)
+        guild_ref = state.bot.get_partial_guild(self.id)
 
         self.emojis: list[Emoji] = [
             Emoji(state=state, guild=guild_ref, data=g)
@@ -834,7 +837,7 @@ class GuildTemplate(PartialGuildTemplate):
         """ The guild this template is based on. """
         if cache := self._state.cache.get_guild(self.source_guild_id):
             return cache
-        return PartialGuild(state=self._state, id=self.source_guild_id)
+        return self._state.bot.get_partial_guild(self.source_guild_id)
 
 
 class PartialScheduledEvent(PartialBase):
@@ -866,8 +869,7 @@ class PartialScheduledEvent(PartialBase):
         if cache := self._state.cache.get_guild(self.guild_id):
             return cache
 
-        from .guild import PartialGuild
-        return PartialGuild(state=self._state, id=self.guild_id)
+        return self._state.bot.get_partial_guild(self.guild_id)
 
     @property
     def url(self) -> str:
@@ -1170,10 +1172,8 @@ class ScheduledEvent(PartialScheduledEvent):
             self.end_time = utils.parse_time(scheduled_end_time)
 
         if channel_id := data.get("channel_id"):
-            from .channel import PartialChannel
-            self.channel = PartialChannel(
-                state=self._state,
-                id=int(channel_id),
+            self.channel = self._state.bot.get_partial_channel(
+                int(channel_id),
                 guild_id=self.guild_id
             )
 
@@ -1613,11 +1613,7 @@ class PartialGuild(PartialBase):
     @property
     def default_role(self) -> PartialRole:
         """ The default role, but as a partial role object. """
-        return PartialRole(
-            state=self._state,
-            id=self.id,
-            guild_id=self.id
-        )
+        return self._state.bot.get_partial_role(self.id, self.id)
 
     async def leave(self) -> None:
         """ Leave the guild. """
@@ -1961,11 +1957,7 @@ class PartialGuild(PartialBase):
 
     def get_partial_automod_rule(self, automod_id: int) -> PartialAutoModRule:
         """ Returns a partial automod rule object. """
-        return PartialAutoModRule(
-            state=self._state,
-            id=automod_id,
-            guild_id=self.id
-        )
+        return self._state.bot.get_partial_automod_rule(automod_id, self.id)
 
     async def search_messages(
         self,
@@ -3283,11 +3275,7 @@ class PartialGuild(PartialBase):
         -------
             The partial scheduled event object.
         """
-        return PartialScheduledEvent(
-            state=self._state,
-            id=id,
-            guild_id=self.id
-        )
+        return self._state.bot.get_partial_scheduled_event(id, self.id)
 
     async def fetch_scheduled_event(
         self,
@@ -3321,11 +3309,7 @@ class PartialGuild(PartialBase):
         -------
             The partial role object
         """
-        return PartialRole(
-            state=self._state,
-            id=role_id,
-            guild_id=self.id
-        )
+        return self._state.bot.get_partial_role(role_id, self.id)
 
     def get_partial_channel(self, channel_id: int) -> "PartialChannel":
         """
@@ -3340,11 +3324,8 @@ class PartialGuild(PartialBase):
         -------
             The partial channel object
         """
-        from .channel import PartialChannel
-
-        return PartialChannel(
-            state=self._state,
-            id=channel_id,
+        return self._state.bot.get_partial_channel(
+            channel_id,
             guild_id=self.id
         )
 
@@ -3377,11 +3358,7 @@ class PartialGuild(PartialBase):
         -------
             The partial emoji object
         """
-        return PartialEmoji(
-            state=self._state,
-            id=emoji_id,
-            guild_id=self.id
-        )
+        return self._state.bot.get_partial_emoji(emoji_id, guild_id=self.id)
 
     def get_partial_soundboard_sound(self, sound_id: int) -> PartialSoundboardSound:
         """
@@ -3396,11 +3373,7 @@ class PartialGuild(PartialBase):
         -------
             The partial soundboard sound object
         """
-        return PartialSoundboardSound(
-            state=self._state,
-            id=sound_id,
-            guild_id=self.id
-        )
+        return self._state.bot.get_partial_soundboard_sound(sound_id, guild_id=self.id)
 
     async def fetch_soundboard_sound(self, sound_id: int) -> SoundboardSound:
         """ Fetches a soundboard sound from the guild. """
@@ -3425,11 +3398,7 @@ class PartialGuild(PartialBase):
         -------
             The partial sticker object
         """
-        return PartialSticker(
-            state=self._state,
-            id=sticker_id,
-            guild_id=self.id
-        )
+        return self._state.bot.get_partial_sticker(sticker_id, guild_id=self.id)
 
     async def fetch_sticker(self, sticker_id: int) -> Sticker:
         """
@@ -3460,13 +3429,7 @@ class PartialGuild(PartialBase):
         -------
             The partial member object
         """
-        from .member import PartialMember
-
-        return PartialMember(
-            state=self._state,
-            id=member_id,
-            guild_id=self.id
-        )
+        return self._state.bot.get_partial_member(member_id, self.id)
 
     async def fetch_member(self, member_id: int) -> "Member":
         """
@@ -3669,13 +3632,8 @@ class PartialGuild(PartialBase):
         if not (banned_users := r.response.get("banned_users", [])):
             return []
 
-        from .member import PartialMember
         return [
-            PartialMember(
-                state=self._state,
-                id=int(g),
-                guild_id=self.id
-            )
+            self.get_partial_member(int(g))
             for g in banned_users
         ]
 
@@ -3768,7 +3726,6 @@ class PartialGuild(PartialBase):
             f"/guilds/{self.id}/channels"
         )
 
-        from .channel import PartialChannel
         return [
             PartialChannel.from_dict(
                 state=self._state,
@@ -4391,6 +4348,60 @@ class Guild(PartialGuild):
         )
         self.widget_channel_id: int | None = utils.get_int(data, "widget_channel_id")
         self.widget_enabled: bool = data.get("widget_enabled", False)
+
+    @property
+    def owner(self) -> "Member | PartialMember | None":
+        """ The owner of the guild, if any. """
+        if not self.owner_id:
+            return None
+
+        return self.get_member(self.owner_id) or self.get_partial_member(self.owner_id)
+
+    @property
+    def afk_channel(self) -> "BaseChannel | PartialChannel | None":
+        """ The AFK channel of the guild, if any. """
+        if not self.afk_channel_id:
+            return None
+
+        return self.get_channel(self.afk_channel_id) or self.get_partial_channel(self.afk_channel_id)
+
+    @property
+    def system_channel(self) -> "BaseChannel | PartialChannel | None":
+        """ The system channel of the guild, if any. """
+        if not self.system_channel_id:
+            return None
+
+        return self.get_channel(self.system_channel_id) or self.get_partial_channel(self.system_channel_id)
+
+    @property
+    def public_updates_channel(self) -> "BaseChannel | PartialChannel | None":
+        """ The public updates channel of the guild, if any. """
+        if not self.public_updates_channel_id:
+            return None
+
+        return (
+            self.get_channel(self.public_updates_channel_id) or
+            self.get_partial_channel(self.public_updates_channel_id)
+        )
+
+    @property
+    def safety_alerts_channel(self) -> "BaseChannel | PartialChannel | None":
+        """ The safety alerts channel of the guild, if any. """
+        if not self.safety_alerts_channel_id:
+            return None
+
+        return (
+            self.get_channel(self.safety_alerts_channel_id) or
+            self.get_partial_channel(self.safety_alerts_channel_id)
+        )
+
+    @property
+    def widget_channel(self) -> "BaseChannel | PartialChannel | None":
+        """ The widget channel of the guild, if any. """
+        if not self.widget_channel_id:
+            return None
+
+        return self.get_channel(self.widget_channel_id) or self.get_partial_channel(self.widget_channel_id)
 
     @property
     def emojis_limit(self) -> int:

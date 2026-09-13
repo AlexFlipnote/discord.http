@@ -95,10 +95,7 @@ class GuildMembersChunk:
     @property
     def guild(self) -> "Guild | PartialGuild":
         """ The guild the chunk belongs to. """
-        return self._state.cache.get_guild(self.guild_id) or PartialGuild(
-            state=self._state,
-            id=self.guild_id
-        )
+        return self._state.cache.get_guild(self.guild_id) or self._state.bot.get_partial_guild(self.guild_id)
 
     @property
     def _cache_level(self) -> GatewayCacheFlags | None:
@@ -137,11 +134,7 @@ class GuildMembersChunk:
 
             elif GatewayCacheFlags.partial_members in self._cache_level:
                 for m in members:
-                    guild._cache_members[m.id] = PartialMember(
-                        state=self._state,
-                        id=m.id,
-                        guild_id=self.guild_id
-                    )
+                    guild._cache_members[m.id] = self._state.bot.get_partial_member(m.id, self.guild_id)
 
     async def wait(self) -> list["Member"]:
         """ Waits for the chunk to be ready. """
@@ -196,7 +189,7 @@ class Parser:
 
         return (
             self.bot.cache.get_guild(guild_id) or
-            PartialGuild(state=self.bot.state, id=guild_id)
+            self.bot.get_partial_guild(guild_id)
         )
 
     def _process_chunk_request(
@@ -226,14 +219,10 @@ class Parser:
         guild_id: int | None = None
     ) -> "BaseChannel | PartialChannel":
         if not guild_id:
-            return PartialChannel(state=self.bot.state, id=channel_id)
+            return self.bot.get_partial_channel(channel_id)
 
         guild = self._get_guild_or_partial(guild_id)
-        return guild.get_channel(channel_id) or PartialChannel(
-            state=self.bot.state,
-            id=channel_id,
-            guild_id=guild_id
-        )
+        return guild.get_channel(channel_id) or self.bot.get_partial_channel(channel_id, guild_id=guild_id)
 
     @overload
     def _get_user_or_partial(
@@ -256,34 +245,21 @@ class Parser:
         user_id: int,
         guild_id: int | None
     ) -> "PartialUser | User | Member | PartialMember":
-        state = self.bot.state
         if not guild_id:
-            return PartialUser(state=state, id=user_id)
+            return self.bot.get_partial_user(user_id)
 
         guild = self._get_guild_or_partial(guild_id)
-        return guild.get_member(user_id) or PartialMember(
-            state=state, id=user_id, guild_id=guild.id
-        )
+        return guild.get_member(user_id) or self.bot.get_partial_member(user_id, guild.id)
 
     def _get_role_or_partial(
         self,
         role_id: int,
         guild_id: int
     ) -> "Role | PartialRole":
-        state = self.bot.state
-
         if cache := self.bot.cache.get_guild(guild_id):
-            return cache.get_role(role_id) or PartialRole(
-                state=state,
-                id=role_id,
-                guild_id=guild_id
-            )
+            return cache.get_role(role_id) or self.bot.get_partial_role(role_id, guild_id)
 
-        return PartialRole(
-            state=state,
-            id=role_id,
-            guild_id=guild_id
-        )
+        return self.bot.get_partial_role(role_id, guild_id)
 
     def _guild(self, data: dict, *, populate_cache: bool = True) -> Guild:
         return Guild(
@@ -899,10 +875,8 @@ class Parser:
             The soundboard sound.
         """
         return (
-            PartialSoundboardSound(
-                state=self.bot.state,
-                id=int(data["sound_id"]),
-                guild_id=int(data["guild_id"])
+            self.bot.get_partial_soundboard_sound(
+                int(data["sound_id"]), guild_id=int(data["guild_id"])
             ),
         )
 
@@ -1443,11 +1417,10 @@ class Parser:
             return (None,)  # type: ignore[return-value]
 
         return (
-            PartialMessage(
-                state=self.bot.state,
-                id=int(data["message_id"]),
-                channel_id=int(data["channel_id"]),
-                guild_id=utils.get_int(data, "guild_id")
+            self.bot.get_partial_message(
+                int(data["message_id"]),
+                int(data["channel_id"]),
+                utils.get_int(data, "guild_id")
             ),
         )
 
@@ -1467,11 +1440,10 @@ class Parser:
         if not self.bot.has_any_dispatch("message_reaction_remove_emoji"):
             return (None, None)  # type: ignore[return-value]
 
-        message = PartialMessage(
-            state=self.bot.state,
-            id=int(data["message_id"]),
-            channel_id=int(data["channel_id"]),
-            guild_id=utils.get_int(data, "guild_id")
+        message = self.bot.get_partial_message(
+            int(data["message_id"]),
+            int(data["channel_id"]),
+            utils.get_int(data, "guild_id")
         )
 
         return (
@@ -1958,10 +1930,8 @@ class Parser:
         )
 
         return (
-            PartialScheduledEvent(
-                state=self.bot.state,
-                id=int(data["guild_scheduled_event_id"]),
-                guild_id=int(data["guild_id"])
+            self.bot.get_partial_scheduled_event(
+                int(data["guild_scheduled_event_id"]), int(data["guild_id"])
             ),
             user
         )
@@ -1988,10 +1958,8 @@ class Parser:
         )
 
         return (
-            PartialScheduledEvent(
-                state=self.bot.state,
-                id=int(data["guild_scheduled_event_id"]),
-                guild_id=int(data["guild_id"])
+            self.bot.get_partial_scheduled_event(
+                int(data["guild_scheduled_event_id"]), int(data["guild_id"])
             ),
             user
         )
@@ -2101,10 +2069,7 @@ class Parser:
         type: PollVoteActionType  # ruff: ignore[builtin-argument-shadowing]
     ) -> PollVoteEvent:
         guild = None
-        user = PartialUser(
-            state=self.bot.state,
-            id=int(data["user_id"])
-        )
+        user = self.bot.get_partial_user(int(data["user_id"]))
 
         if data.get("guild_id") is not None:
             guild = self._get_guild_or_partial(

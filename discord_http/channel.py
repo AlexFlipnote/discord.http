@@ -181,8 +181,7 @@ class PartialChannel(PartialBase):
         if cache := self._state.cache.get_guild(self.guild_id):
             return cache
 
-        from .guild import PartialGuild
-        return PartialGuild(state=self._state, id=self.guild_id)
+        return self._state.bot.get_partial_guild(self.guild_id)
 
     @property
     def channel(self) -> "BaseChannel | CategoryChannel | PartialChannel | None":
@@ -200,11 +199,7 @@ class PartialChannel(PartialBase):
             if cache:
                 return cache
 
-        return PartialChannel(
-            state=self._state,
-            id=self.id,
-            guild_id=self.guild_id
-        )
+        return self._state.bot.get_partial_channel(self.id, guild_id=self.guild_id)
 
     @property
     def parent(self) -> "BaseChannel | CategoryChannel | PartialChannel | None":
@@ -225,11 +220,7 @@ class PartialChannel(PartialBase):
             if cache:
                 return cache
 
-        return PartialChannel(
-            state=self._state,
-            id=self.parent_id,
-            guild_id=self.guild_id
-        )
+        return self._state.bot.get_partial_channel(self.parent_id, guild_id=self.guild_id)
 
     def permissions_for(self, member: "Member") -> Permissions:  # ruff: ignore[unused-method-argument]
         """
@@ -261,12 +252,8 @@ class PartialChannel(PartialBase):
         -------
             The partial message object
         """
-        from .message import PartialMessage
-        return PartialMessage(
-            state=self._state,
-            channel_id=self.id,
-            guild_id=self.guild_id,
-            id=message_id,
+        return self._state.bot.get_partial_message(
+            message_id, self.id, self.guild_id
         )
 
     async def fetch_message(self, message_id: int) -> "Message":
@@ -1840,11 +1827,8 @@ class DMChannel(BaseChannel):
         if not self.last_message_id:
             return None
 
-        from .message import PartialMessage
-        return PartialMessage(
-            state=self._state,
-            channel_id=self.id,
-            id=self.last_message_id
+        return self._state.bot.get_partial_message(
+            self.last_message_id, self.id
         )
 
     @property
@@ -2213,8 +2197,7 @@ class PublicThread(BaseChannel):
         if cache := self._state.cache.get_guild(self.guild_id):
             return cache
 
-        from .guild import PartialGuild
-        return PartialGuild(state=self._state, id=self.guild_id)
+        return self._state.bot.get_partial_guild(self.guild_id)
 
     @property
     def owner(self) -> "PartialUser | None":
@@ -2222,8 +2205,7 @@ class PublicThread(BaseChannel):
         if not self.owner_id:
             return None
 
-        from .user import PartialUser
-        return PartialUser(state=self._state, id=self.owner_id)
+        return self._state.bot.get_partial_user(self.owner_id)
 
     @property
     def last_message(self) -> "PartialMessage | None":
@@ -2231,12 +2213,8 @@ class PublicThread(BaseChannel):
         if not self.last_message_id:
             return None
 
-        from .message import PartialMessage
-        return PartialMessage(
-            state=self._state,
-            channel_id=self.channel_id,
-            guild_id=self.guild_id,
-            id=self.last_message_id
+        return self._state.bot.get_partial_message(
+            self.last_message_id, self.channel_id, self.guild_id
         )
 
 
@@ -2659,14 +2637,13 @@ class StageInstance(PartialBase):
         if cache := self._state.cache.get_guild(self.guild_id):
             return cache
 
-        from .guild import PartialGuild
-        return PartialGuild(state=self._state, id=self.guild_id)
+        return self._state.bot.get_partial_guild(self.guild_id)
 
     @property
     def channel(self) -> "PartialChannel | StageChannel":
         """ The stage channel this instance is associated with. """
         return self.guild.get_channel(self.channel_id) or (
-            PartialChannel(state=self._state, id=self.channel_id)
+            self._state.bot.get_partial_channel(self.channel_id)
         )
 
     @property
@@ -2675,11 +2652,8 @@ class StageInstance(PartialBase):
         if not self.guild_scheduled_event_id:
             return None
 
-        from .guild import PartialScheduledEvent
-        return PartialScheduledEvent(
-            state=self._state,
-            id=self.guild_scheduled_event_id,
-            guild_id=self.guild_id
+        return self._state.bot.get_partial_scheduled_event(
+            self.guild_scheduled_event_id, self.guild_id
         )
 
     async def edit(

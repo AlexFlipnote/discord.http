@@ -64,8 +64,7 @@ class Ping(Snowflake):
     @property
     def application(self) -> "PartialUser":
         """ The partial user object of the application. """
-        from .user import PartialUser
-        return PartialUser(state=self._state, id=self.application_id)
+        return self._state.bot.get_partial_user(self.application_id)
 
     @property
     def user(self) -> "User":
