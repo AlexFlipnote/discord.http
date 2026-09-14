@@ -115,8 +115,6 @@ class Client:
         self,
         *,
         token: str,
-        application_id: int | None = None,
-        public_key: str | None = None,
         guild_id: int | None = None,
         sync: bool = True,
         api_version: int = 10,
@@ -158,15 +156,6 @@ class Client:
         self._ready: asyncio.Event | None = asyncio.Event()
         self._shards_ready: asyncio.Event | None = asyncio.Event()
         self._context: Callable[["Client", dict], Context] = Context
-
-        if application_id is not None:
-            _log.warning(
-                "application_id parameter is no longer needed, it will be fetched automatically."
-            )
-        if public_key is not None:
-            _log.warning(
-                "public_key parameter is no longer needed, it will be fetched automatically."
-            )
 
         self.application: Application | None = None
         """ The application object for the bot. """
