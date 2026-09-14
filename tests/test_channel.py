@@ -8,6 +8,8 @@ from discord_http import (
     utils,
 )
 
+from _fake_client import FakeBot
+
 
 class FakeCache:
     def __init__(self):
@@ -23,6 +25,7 @@ class FakeCache:
 class FakeState:
     def __init__(self):
         self.cache = FakeCache()
+        self.bot = FakeBot(self)
 
 
 def _make_guild(state, owner_id=None):

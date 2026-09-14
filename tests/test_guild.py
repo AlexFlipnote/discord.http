@@ -12,6 +12,8 @@ from discord_http import (
 )
 from discord_http.guild import GuildWidget
 
+from _fake_client import FakeBot
+
 
 class FakeCache:
     def get_guild(self, guild_id):
@@ -21,6 +23,7 @@ class FakeCache:
 class FakeState:
     def __init__(self):
         self.cache = FakeCache()
+        self.bot = FakeBot(self)
 
 
 def _scheduled_event_data(**overrides):

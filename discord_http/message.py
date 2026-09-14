@@ -67,10 +67,7 @@ class MessageInteraction(PartialBase):
         self.name: str | None = data.get("name")
         """ The name of the interaction, if available. """
 
-        self.user: User = User(
-            state=state,
-            data=data["user"]
-        )
+        self.user: User = state.bot.create_user_from_data(data["user"])
         """ The user who triggered the interaction. """
 
     @property
@@ -231,10 +228,7 @@ class MessageReaction:
             users, state, limit = await strategy(http_limit, state, limit)
 
             for u in users:
-                yield User(
-                    state=self._state,
-                    data=u
-                )
+                yield self._state.bot.create_user_from_data(u)
 
             if len(users) < 100:
                 break
@@ -802,13 +796,13 @@ class Attachment:
         """ The time the clip was created, if the attachment is a clip. """
 
         self.clip_participants: list[User] = [
-            User(state=self._state, data=g)
+            self._state.bot.create_user_from_data(g)
             for g in data.get("clip_participants") or ()
         ]
         """ The users participating in the clip, if the attachment is a clip. """
 
         self.application: Application | None = (
-            Application(state=self._state, data=data["application"])
+            self._state.bot.create_application_from_data(data["application"])
             if data.get("application") else None
         )
         """ The application that created the clip, if applicable. """
@@ -1031,9 +1025,8 @@ class PartialMessage(PartialBase):
             f"/channels/{self.channel.id}/messages/{self.id}"
         )
 
-        return Message(
-            state=self._state,
-            data=r.response,
+        return self._state.bot.create_message_from_data(
+            r.response,
             guild=self.channel.guild
         )
 
@@ -1095,10 +1088,7 @@ class PartialMessage(PartialBase):
             f"/channels/{self.channel_id}/polls/{self.id}/expire"
         )
 
-        return Message(
-            state=self._state,
-            data=r.response
-        )
+        return self._state.bot.create_message_from_data(r.response)
 
     async def fetch_poll_voters(
         self,
@@ -1167,7 +1157,7 @@ class PartialMessage(PartialBase):
             users, state, limit = await strategy(http_limit, state, limit)
 
             for u in users["users"]:
-                yield User(state=self._state, data=u)
+                yield self._state.bot.create_user_from_data(u)
 
             if len(users["users"]) < 100:
                 break
@@ -1228,9 +1218,8 @@ class PartialMessage(PartialBase):
             data=payload.to_multipart(is_request=True),
         )
 
-        return Message(
-            state=self._state,
-            data=r.response,
+        return self._state.bot.create_message_from_data(
+            r.response,
             guild=self.channel.guild
         )
 
@@ -1242,9 +1231,8 @@ class PartialMessage(PartialBase):
             res_method="json"
         )
 
-        return Message(
-            state=self._state,
-            data=r.response,
+        return self._state.bot.create_message_from_data(
+            r.response,
             guild=self.channel.guild
         )
 
@@ -1285,10 +1273,7 @@ class PartialMessage(PartialBase):
             headers={"Content-Type": payload.content_type}
         )
 
-        return Message(
-            state=self._state,
-            data=r.response
-        )
+        return self._state.bot.create_message_from_data(r.response)
 
     async def reply(
         self,
@@ -1366,10 +1351,7 @@ class PartialMessage(PartialBase):
             headers={"Content-Type": payload.content_type}
         )
 
-        msg = Message(
-            state=self._state,
-            data=r.response
-        )
+        msg = self._state.bot.create_message_from_data(r.response)
 
         if delete_after is not None:
             await msg.delete(delay=float(delete_after))
@@ -1516,11 +1498,7 @@ class PartialMessage(PartialBase):
             reason=reason
         )
 
-        from .channel import PublicThread
-        return PublicThread(
-            state=self._state,
-            data=r.response
-        )
+        return self._state.bot.create_public_thread_from_data(r.response)
 
 
 class MessageSnapshot:
@@ -1736,9 +1714,8 @@ class Message(PartialMessage):
             )
 
         if referenced_message := data.get("referenced_message"):
-            self.resolved_reply = Message(
-                state=self._state,
-                data=referenced_message,
+            self.resolved_reply = self._state.bot.create_message_from_data(
+                referenced_message,
                 guild=self.guild
             )
 
@@ -1785,36 +1762,30 @@ class Message(PartialMessage):
             )
 
         if member := data.get("member"):
-            from .member import Member
-
-            self.author = Member(
-                state=self._state,
-                guild=self.guild,  # type: ignore
-                data={**member, "user": data["author"]}
+            self.author = self._state.bot.create_member_from_data(
+                {**member, "user": data["author"]},
+                guild=self.guild  # type: ignore
             )
             if dedupe is not None:
                 dedupe._dedupe_user(self.author)
         else:
-            self.author = User(state=self._state, data=data["author"])
+            self.author = self._state.bot.create_user_from_data(data["author"])
             if dedupe is not None:
                 self.author = dedupe._dedupe_plain_user(self.author)
 
         if mentions := data.get("mentions"):
-            from .member import Member
-
             for m in mentions:
                 if m.get("member", None) and self.guild_id:
-                    mention_member = Member(
-                        state=self._state,
-                        guild=self.guild,  # type: ignore
-                        data={**m["member"], "user": m}
+                    mention_member = self._state.bot.create_member_from_data(
+                        {**m["member"], "user": m},
+                        guild=self.guild  # type: ignore
                     )
                     if dedupe is not None:
                         dedupe._dedupe_user(mention_member)
                     self.mentions.append(mention_member)
 
                 else:
-                    mention_user = User(state=self._state, data=m)
+                    mention_user = self._state.bot.create_user_from_data(m)
                     if dedupe is not None:
                         mention_user = dedupe._dedupe_plain_user(mention_user)
                     self.mentions.append(mention_user)
@@ -1960,9 +1931,8 @@ class WebhookMessage(Message):
             data=payload.to_multipart(is_request=True),
         )
 
-        return WebhookMessage(
-            state=self._state,
-            data=r.response,
+        return self._state.bot.create_webhook_message_from_data(
+            r.response,
             application_id=self.application_id,
             token=self.token
         )

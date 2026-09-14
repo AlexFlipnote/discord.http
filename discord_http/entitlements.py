@@ -242,10 +242,7 @@ class PartialEntitlements(PartialBase):
             f"/applications/{self._state.bot.application_id}/entitlements/{self.id}"
         )
 
-        return Entitlements(
-            state=self._state,
-            data=r.response
-        )
+        return self._state.bot.create_entitlements_from_data(r.response)
 
     async def consume(self) -> None:
         """ Mark the entitlement as consumed. """

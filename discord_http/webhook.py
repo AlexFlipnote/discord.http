@@ -232,10 +232,8 @@ class PartialWebhook(PartialBase):
         )
 
         if wait is True:
-            from .message import WebhookMessage
-            return WebhookMessage(
-                state=self._state,
-                data=r.response,
+            return self._state.bot.create_webhook_message_from_data(
+                r.response,
                 application_id=self.id,
                 token=self.token
             )
@@ -461,10 +459,7 @@ class Webhook(PartialWebhook):
 
     def _from_data(self, data: dict) -> None:
         if user := data.get("user"):
-            self.user = User(
-                state=self._state,
-                data=user
-            )
+            self.user = self._state.bot.create_user_from_data(user)
 
     @classmethod
     def from_state(cls, *, state: "DiscordAPI", data: dict) -> "Webhook":

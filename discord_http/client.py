@@ -11,9 +11,10 @@ from datetime import datetime
 from typing import Any, TYPE_CHECKING, TypeVar
 
 from . import utils, __version__
+from .audit import AuditLogEntry
 from .automod import PartialAutoModRule, AutoModRule
 from .backend import DiscordHTTP
-from .channel import PartialChannel, BaseChannel, VoiceRegion
+from .channel import PartialChannel, BaseChannel, PublicThread, PrivateThread, Thread, ForumThread, VoiceRegion
 from .commands import Command, Interaction, Listener, Cog, SubGroup
 from .context import Context
 from .emoji import PartialEmoji, Emoji
@@ -24,12 +25,13 @@ from .file import File
 from .gateway.cache import Cache
 from .guild import PartialGuild, Guild, PartialScheduledEvent, ScheduledEvent
 from .http import DiscordAPI, HTTPResponse
+from .integrations import Integration
 from .invite import PartialInvite, Invite
-from .member import PartialMember, Member
+from .member import PartialMember, Member, ThreadMember, PartialThreadMember
 from .mentions import AllowedMentions
-from .message import PartialMessage, Message
+from .message import PartialMessage, Message, WebhookMessage
 from .object import Snowflake
-from .role import PartialRole
+from .role import PartialRole, Role
 from .soundboard import SoundboardSound, PartialSoundboardSound
 from .sticker import PartialSticker, Sticker
 from .user import User, PartialUser, Application
@@ -1323,11 +1325,86 @@ class Client:
             guild_id=guild_id
         )
 
+    def create_public_thread_from_data(self, data: dict) -> PublicThread:
+        """
+        Creates a public thread object from raw API/gateway data.
+
+        Parameters
+        ----------
+        data
+            The data to create the public thread object with.
+
+        Returns
+        -------
+            The public thread object.
+        """
+        return PublicThread(state=self.state, data=data)
+
+    def create_private_thread_from_data(self, data: dict) -> PrivateThread:
+        """
+        Creates a private thread object from raw API/gateway data.
+
+        Parameters
+        ----------
+        data
+            The data to create the private thread object with.
+
+        Returns
+        -------
+            The private thread object.
+        """
+        return PrivateThread(state=self.state, data=data)
+
+    def create_thread_from_data(self, data: dict) -> Thread:
+        """
+        Creates a thread object from raw API/gateway data.
+
+        Parameters
+        ----------
+        data
+            The data to create the thread object with.
+
+        Returns
+        -------
+            The thread object.
+        """
+        return Thread(state=self.state, data=data)
+
+    def create_forum_thread_from_data(self, data: dict) -> ForumThread:
+        """
+        Creates a forum thread object from raw API/gateway data.
+
+        Parameters
+        ----------
+        data
+            The data to create the forum thread object with.
+
+        Returns
+        -------
+            The forum thread object.
+        """
+        return ForumThread(state=self.state, data=data)
+
     async def fetch_current_application(self) -> Application:
         """ Fetches and update cache of the current application object. """
         app = await self.state.me()
         self.application = app
         return app
+
+    def create_application_from_data(self, data: dict) -> Application:
+        """
+        Creates an application object from raw API data.
+
+        Parameters
+        ----------
+        data
+            The data to create the application object with.
+
+        Returns
+        -------
+            The application object.
+        """
+        return Application(state=self.state, data=data)
 
     async def fetch_voice_regions(self) -> list[VoiceRegion]:
         """ Fetches the list of voice regions available on Discord. """
@@ -1525,6 +1602,28 @@ class Client:
             guild_id=guild_id
         )
 
+    def create_emoji_from_data(
+        self,
+        data: dict,
+        *,
+        guild: "PartialGuild | Guild | None" = None
+    ) -> Emoji:
+        """
+        Creates an emoji object from raw API/gateway data.
+
+        Parameters
+        ----------
+        data
+            The data to create the emoji object with.
+        guild
+            The guild the emoji belongs to. If None, it's an application-owned emoji.
+
+        Returns
+        -------
+            The emoji object.
+        """
+        return Emoji(state=self.state, data=data, guild=guild)
+
     async def fetch_emoji(
         self,
         emoji_id: int,
@@ -1579,6 +1678,28 @@ class Client:
             guild_id=guild_id
         )
 
+    def create_sticker_from_data(
+        self,
+        data: dict,
+        *,
+        guild: "PartialGuild | None" = None
+    ) -> Sticker:
+        """
+        Creates a sticker object from raw API/gateway data.
+
+        Parameters
+        ----------
+        data
+            The data to create the sticker object with.
+        guild
+            The guild the sticker belongs to, if any.
+
+        Returns
+        -------
+            The sticker object.
+        """
+        return Sticker(state=self.state, data=data, guild=guild)
+
     async def fetch_sticker(
         self,
         sticker_id: int,
@@ -1632,6 +1753,28 @@ class Client:
             guild_id=guild_id
         )
 
+    def create_soundboard_sound_from_data(
+        self,
+        data: dict,
+        *,
+        guild: "PartialGuild | Guild | None" = None
+    ) -> SoundboardSound:
+        """
+        Creates a soundboard sound object from raw API/gateway data.
+
+        Parameters
+        ----------
+        data
+            The data to create the soundboard sound object with.
+        guild
+            The guild the soundboard sound belongs to, if any.
+
+        Returns
+        -------
+            The soundboard sound object.
+        """
+        return SoundboardSound(state=self.state, data=data, guild=guild)
+
     async def fetch_soundboard_sound(
         self,
         sound_id: int,
@@ -1676,6 +1819,21 @@ class Client:
         """
         invite = self.get_partial_invite(invite_code)
         return await invite.fetch()
+
+    def create_invite_from_data(self, data: dict) -> Invite:
+        """
+        Creates an invite object from raw API/gateway data.
+
+        Parameters
+        ----------
+        data
+            The data to create the invite object with.
+
+        Returns
+        -------
+            The invite object.
+        """
+        return Invite(state=self.state, data=data)
 
     def get_partial_message(
         self,
@@ -1731,6 +1889,28 @@ class Client:
         msg = self.get_partial_message(message_id, channel_id, guild_id)
         return await msg.fetch()
 
+    def create_message_from_data(
+        self,
+        data: dict,
+        *,
+        guild: "PartialGuild | None" = None
+    ) -> Message:
+        """
+        Creates a message object from raw API/gateway data.
+
+        Parameters
+        ----------
+        data
+            The data to create the message object with.
+        guild
+            The guild the message was sent in, if any.
+
+        Returns
+        -------
+            The message object.
+        """
+        return Message(state=self.state, data=data, guild=guild)
+
     def get_partial_webhook(
         self,
         webhook_id: int,
@@ -1784,6 +1964,36 @@ class Client:
 
         return await webhook.fetch()
 
+    def create_webhook_message_from_data(
+        self,
+        data: dict,
+        *,
+        application_id: int,
+        token: str
+    ) -> WebhookMessage:
+        """
+        Creates a webhook message object from raw API data.
+
+        Parameters
+        ----------
+        data
+            The data to create the webhook message object with.
+        application_id
+            The ID of the application/webhook that sent the message.
+        token
+            The token of the webhook that sent the message.
+
+        Returns
+        -------
+            The webhook message object.
+        """
+        return WebhookMessage(
+            state=self.state,
+            data=data,
+            application_id=application_id,
+            token=token
+        )
+
     def get_partial_user(
         self,
         user_id: int
@@ -1823,6 +2033,21 @@ class Client:
         """
         user = self.get_partial_user(user_id)
         return await user.fetch()
+
+    def create_user_from_data(self, data: dict) -> User:
+        """
+        Creates a user object from raw API/gateway data.
+
+        Parameters
+        ----------
+        data
+            The data to create the user object with.
+
+        Returns
+        -------
+            The user object.
+        """
+        return User(state=self.state, data=data)
 
     def get_partial_member(
         self,
@@ -1871,6 +2096,57 @@ class Client:
         member = self.get_partial_member(user_id, guild_id)
         return await member.fetch()
 
+    def create_member_from_data(self, data: dict, *, guild: "Guild | PartialGuild") -> Member:
+        """
+        Creates a member object from raw API/gateway data.
+
+        Parameters
+        ----------
+        data
+            The data to create the member object with.
+        guild
+            The guild the member is in.
+
+        Returns
+        -------
+            The member object.
+        """
+        return Member(state=self.state, guild=guild, data=data)
+
+    def create_thread_member_from_data(self, data: dict, *, guild: "PartialGuild") -> ThreadMember:
+        """
+        Creates a thread member object from raw API/gateway data.
+
+        Parameters
+        ----------
+        data
+            The data to create the thread member object with.
+        guild
+            The guild the thread is in.
+
+        Returns
+        -------
+            The thread member object.
+        """
+        return ThreadMember(state=self.state, guild=guild, data=data)
+
+    def create_partial_thread_member_from_data(self, data: dict, *, guild_id: int) -> PartialThreadMember:
+        """
+        Creates a partial thread member object from raw API/gateway data.
+
+        Parameters
+        ----------
+        data
+            The data to create the partial thread member object with.
+        guild_id
+            The ID of the guild the thread is in.
+
+        Returns
+        -------
+            The partial thread member object.
+        """
+        return PartialThreadMember(state=self.state, data=data, guild_id=guild_id)
+
     async def fetch_application_emojis(self) -> list[Emoji]:
         """ Fetches all emojis available to the application. """
         r = await self.state.query(
@@ -1879,7 +2155,7 @@ class Client:
         )
 
         return [
-            Emoji(state=self.state, data=g)
+            self.create_emoji_from_data(g)
             for g in r.response.get("items", [])
         ]
 
@@ -1912,10 +2188,7 @@ class Client:
             }
         )
 
-        return Emoji(
-            state=self.state,
-            data=r.response
-        )
+        return self.create_emoji_from_data(r.response)
 
     def get_partial_sku(
         self,
@@ -1933,6 +2206,21 @@ class Client:
             id=sku_id
         )
 
+    def create_sku_from_data(self, data: dict) -> SKU:
+        """
+        Creates a SKU object from raw API data.
+
+        Parameters
+        ----------
+        data
+            The data to create the SKU object with.
+
+        Returns
+        -------
+            The SKU object.
+        """
+        return SKU(state=self.state, data=data)
+
     async def fetch_skus(self) -> list[SKU]:
         """ Fetches all SKUs available to the bot. """
         r = await self.state.query(
@@ -1941,7 +2229,7 @@ class Client:
         )
 
         return [
-            SKU(state=self.state, data=g)
+            self.create_sku_from_data(g)
             for g in r.response
         ]
 
@@ -1984,6 +2272,38 @@ class Client:
         """
         ent = self.get_partial_entitlement(entitlement_id)
         return await ent.fetch()
+
+    def create_entitlements_from_data(self, data: dict) -> Entitlements:
+        """
+        Creates an entitlement object from raw API/gateway data.
+
+        Parameters
+        ----------
+        data
+            The data to create the entitlement object with.
+
+        Returns
+        -------
+            The entitlement object.
+        """
+        return Entitlements(state=self.state, data=data)
+
+    def create_integration_from_data(self, data: dict, *, guild: "Guild | PartialGuild") -> Integration:
+        """
+        Creates an integration object from raw API/gateway data.
+
+        Parameters
+        ----------
+        data
+            The data to create the integration object with.
+        guild
+            The guild the integration belongs to.
+
+        Returns
+        -------
+            The integration object.
+        """
+        return Integration(state=self.state, data=data, guild=guild)
 
     async def fetch_entitlement_list(
         self,
@@ -2109,7 +2429,7 @@ class Client:
 
             i = 0
             for ent in messages:
-                yield Entitlements(state=self.state, data=ent)
+                yield self.create_entitlements_from_data(ent)
                 i += 1
 
             if i < 100:
@@ -2204,6 +2524,49 @@ class Client:
         guild = self.get_partial_guild(guild_id)
         return await guild.fetch()
 
+    def create_guild_from_data(self, data: dict, *, populate_cache: bool = True) -> Guild:
+        """
+        Creates a guild object from raw API/gateway data.
+
+        Parameters
+        ----------
+        data
+            The data to create the guild object with.
+        populate_cache
+            Whether to populate the guild's role/emoji/sticker cache from the data.
+
+        Returns
+        -------
+            The guild object.
+        """
+        return Guild(state=self.state, data=data, populate_cache=populate_cache)
+
+    def create_audit_log_entry_from_data(
+        self,
+        data: dict,
+        *,
+        guild: "PartialGuild | None" = None,
+        users: dict[int, User] | None = None
+    ) -> AuditLogEntry:
+        """
+        Creates an audit log entry object from raw API/gateway data.
+
+        Parameters
+        ----------
+        data
+            The data to create the audit log entry object with.
+        guild
+            The guild the audit log entry belongs to, if already known.
+        users
+            A mapping of user IDs to already-resolved `User` objects, used to
+            avoid re-resolving users referenced multiple times in the same audit log page.
+
+        Returns
+        -------
+            The audit log entry object.
+        """
+        return AuditLogEntry(state=self.state, data=data, guild=guild, users=users)
+
     async def create_guild(
         self,
         name: str,
@@ -2241,10 +2604,7 @@ class Client:
             reason=reason
         )
 
-        return Guild(
-            state=self.state,
-            data=r.response
-        )
+        return self.create_guild_from_data(r.response)
 
     def get_partial_role(
         self,
@@ -2270,6 +2630,23 @@ class Client:
             id=role_id,
             guild_id=guild_id
         )
+
+    def create_role_from_data(self, data: dict, *, guild: "Guild | PartialGuild") -> Role:
+        """
+        Creates a role object from raw API/gateway data.
+
+        Parameters
+        ----------
+        data
+            The data to create the role object with.
+        guild
+            The guild the role belongs to.
+
+        Returns
+        -------
+            The role object.
+        """
+        return Role(state=self.state, guild=guild, data=data)
 
     def find_interaction(
         self,

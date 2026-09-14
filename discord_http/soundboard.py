@@ -92,10 +92,8 @@ class PartialSoundboardSound(PartialBase):
             f"/guild/{self.guild_id}/soundboard-sounds/{self.id}"
         )
 
-        return SoundboardSound(
-            state=self._state,
-            data=r.response,
-            guild=self.guild,
+        return self._state.bot.create_soundboard_sound_from_data(
+            r.response, guild=self.guild
         )
 
     async def delete(
@@ -196,10 +194,8 @@ class PartialSoundboardSound(PartialBase):
                 reason=reason
             )
 
-            sound = SoundboardSound(
-                state=self._state,
-                guild=self.guild,
-                data=r.response
+            sound = self._state.bot.create_soundboard_sound_from_data(
+                r.response, guild=self.guild
             )
 
         if not sound:

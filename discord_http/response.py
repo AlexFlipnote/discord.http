@@ -69,8 +69,7 @@ class Ping(Snowflake):
     @property
     def user(self) -> "User":
         """ The user object of the bot. """
-        from .user import User
-        return User(state=self._state, data=self._raw_user)
+        return self._state.bot.create_user_from_data(self._raw_user)
 
 
 class BaseResponse:

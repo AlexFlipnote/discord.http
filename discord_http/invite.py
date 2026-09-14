@@ -99,10 +99,7 @@ class PartialInvite:
             f"/invites/{self.code}"
         )
 
-        return Invite(
-            state=self._state,
-            data=r.response
-        )
+        return self._state.bot.create_invite_from_data(r.response)
 
     async def fetch_target_users(self) -> list[PartialUser]:
         """
@@ -199,10 +196,7 @@ class PartialInvite:
             reason=reason
         )
 
-        return Invite(
-            state=self._state,
-            data=data.response
-        )
+        return self._state.bot.create_invite_from_data(data.response)
 
     @property
     def url(self) -> str:
@@ -296,7 +290,7 @@ class Invite(PartialInvite):
             self.created_at = utils.parse_time(created_at)
 
         if inviter := data.get("inviter"):
-            self.inviter = User(state=self._state, data=inviter)
+            self.inviter = self._state.bot.create_user_from_data(inviter)
 
         if guild := data.get("guild"):
             cached = self._state.cache.get_guild(self.guild_id) if self.guild_id else None
@@ -306,7 +300,7 @@ class Invite(PartialInvite):
                 # full Guild - otherwise this would just pin a permanent, stale-prone
                 # reference to it for the same result the live lookup already gives.
                 try:
-                    self._guild_override = Guild(state=self._state, data=guild)
+                    self._guild_override = self._state.bot.create_guild_from_data(guild)
                 except KeyError:
                     pass
 
@@ -314,14 +308,14 @@ class Invite(PartialInvite):
             self.target_type = InviteTargetType(target_type)
 
         if target_user := data.get("target_user"):
-            self.target_user = User(state=self._state, data=target_user)
+            self.target_user = self._state.bot.create_user_from_data(target_user)
 
         if flags := data.get("flags"):
             self._raw_flags = flags
 
         if (roles := data.get("roles")) and (guild := self.guild):
             self.roles = [
-                Role(state=self._state, guild=guild, data=role_data)
+                self._state.bot.create_role_from_data(role_data, guild=guild)
                 for role_data in roles
             ]
 

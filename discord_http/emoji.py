@@ -202,10 +202,8 @@ class PartialEmoji(PartialBase):
                 f"/guilds/{self.guild_id}/emojis/{self.id}"
             )
 
-            return Emoji(
-                state=self._state,
-                guild=self.guild,
-                data=r.response
+            return self._state.bot.create_emoji_from_data(
+                r.response, guild=self.guild
             )
 
         r = await self._state.query(
@@ -213,10 +211,7 @@ class PartialEmoji(PartialBase):
             f"/applications/{self._state.bot.application_id}/emojis/{self.id}"
         )
 
-        return Emoji(
-            state=self._state,
-            data=r.response
-        )
+        return self._state.bot.create_emoji_from_data(r.response)
 
     async def delete(
         self,
@@ -295,10 +290,8 @@ class PartialEmoji(PartialBase):
                 reason=reason
             )
 
-            return Emoji(
-                state=self._state,
-                guild=self.guild,
-                data=r.response
+            return self._state.bot.create_emoji_from_data(
+                r.response, guild=self.guild
             )
 
         if not payload.get("name"):
@@ -312,10 +305,7 @@ class PartialEmoji(PartialBase):
             json={"name": payload["name"]},
         )
 
-        return Emoji(
-            state=self._state,
-            data=r.response
-        )
+        return self._state.bot.create_emoji_from_data(r.response)
 
 
 class Emoji(PartialEmoji):

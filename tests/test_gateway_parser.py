@@ -7,14 +7,17 @@ from discord_http.gateway.object import GuildApplicationCommandPermissions
 from discord_http.gateway.parser import Parser, GuildMembersChunk
 from discord_http.user import User
 
+from _fake_client import FakeBot as _FakeBotBase
+
 
 class FakeState:
-    pass
+    def __init__(self, bot):
+        self.bot = bot
 
 
-class FakeBot:
+class FakeBot(_FakeBotBase):
     def __init__(self):
-        self.state = FakeState()
+        self.state = FakeState(self)
         self.application = None
         self.cache = None
 

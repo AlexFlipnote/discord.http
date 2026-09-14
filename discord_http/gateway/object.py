@@ -172,11 +172,7 @@ class GuildJoinRequest:
             self.user_id = utils.get_int(request, "user_id")
 
             if user := request.get("user", None):
-                from ..user import User
-                self.user = User(
-                    state=self._state,
-                    data=user
-                )
+                self.user = self._state.bot.create_user_from_data(user)
 
             self.rejection_reason = request.get("rejection_reason", None)
 
@@ -514,11 +510,8 @@ class Reaction:
             self.burst_colour = Colour.from_hex(burst_colour)
 
         if member := data.get("member"):
-            from ..member import Member
-            self.member = Member(
-                state=self._state,
-                guild=self.guild,  # type: ignore
-                data=member
+            self.member = self._state.bot.create_member_from_data(
+                member, guild=self.guild  # type: ignore
             )
 
     @property
@@ -656,10 +649,10 @@ class ThreadListSyncPayload:
         if not self._threads:
             return []
 
-        from ..channel import Thread
-
-        state = self._state
-        return [Thread(state=state, data=t) for t in self._threads]
+        return [
+            self._state.bot.create_thread_from_data(t)
+            for t in self._threads
+        ]
 
     @property
     def members(self) -> list["PartialThreadMember"]:
@@ -667,15 +660,10 @@ class ThreadListSyncPayload:
         if not self._members:
             return []
 
-        from ..member import PartialThreadMember
-
         guild = self.guild
-        state = self._state
         return [
-            PartialThreadMember(
-                state=state,
-                data=m,
-                guild_id=guild.id,
+            self._state.bot.create_partial_thread_member_from_data(
+                m, guild_id=guild.id
             )
             for m in self._members
         ]
@@ -775,14 +763,8 @@ class ThreadMembersUpdatePayload:
         guild = self.guild
         state = self._state
 
-        from ..member import ThreadMember
-
         return [
-            ThreadMember(
-                state=state,
-                guild=guild,
-                data=m,
-            )
+            state.bot.create_thread_member_from_data(m, guild=guild)
             for m in self._added_members
         ]
 

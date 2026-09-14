@@ -132,10 +132,10 @@ class _ResolveParser:
                 case "members":
                     if not ctx.guild:
                         raise ValueError("While parsing members, guild object was not available")
-                    to_append.append(Member(state=ctx.bot.state, guild=ctx.guild, data=data_))
+                    to_append.append(ctx.bot.create_member_from_data(data_, guild=ctx.guild))
 
                 case "users":
-                    to_append.append(User(state=ctx.bot.state, data=data_))
+                    to_append.append(ctx.bot.create_user_from_data(data_))
 
                 case "attachments":
                     to_append.append(Attachment(state=ctx.bot.state, data=data_))
@@ -146,7 +146,7 @@ class _ResolveParser:
                 case "roles":
                     if not ctx.guild:
                         raise ValueError("While parsing roles, guild object was not available")
-                    to_append.append(Role(state=ctx.bot.state, guild=ctx.guild, data=data_))
+                    to_append.append(ctx.bot.create_role_from_data(data_, guild=ctx.guild))
 
                 case _:
                     pass
@@ -608,7 +608,7 @@ class Context:
         self._raw_resolved: dict = data_payload.get("resolved", {})
 
         self.entitlements: list[Entitlements] = [
-            Entitlements(state=self.bot.state, data=g)
+            self.bot.create_entitlements_from_data(g)
             for g in data.get("entitlements", [])
         ]
         """ The entitlements associated with the interaction. """
@@ -622,7 +622,7 @@ class Context:
             self.last_message_id = int(channel_payload["last_message_id"])
 
         self.recipients: list[User] = [
-            User(state=self.bot.state, data=g)
+            self.bot.create_user_from_data(g)
             for g in channel_payload.get("recipients", [])
         ]
         """ The recipients of the interaction, if any. """
@@ -675,15 +675,13 @@ class Context:
             )
 
         if message := data.get("message"):
-            self.message = Message(
-                state=self.bot.state,
-                data=message,
+            self.message = self.bot.create_message_from_data(
+                message,
                 guild=self._guild
             )
         elif first_msg := next(iter(self._raw_resolved.get("messages", {}).values()), None):
-            self.message = Message(
-                state=self.bot.state,
-                data=first_msg,
+            self.message = self.bot.create_message_from_data(
+                first_msg,
                 guild=self._guild
             )
 
@@ -907,9 +905,8 @@ class Context:
             json=payload.to_dict()
         )
 
-        return WebhookMessage(
-            state=self.bot.state,
-            data=r.response["resource"]["message"],
+        return self.bot.create_webhook_message_from_data(
+            r.response["resource"]["message"],
             application_id=self.bot.application_id,  # type: ignore
             token=self._followup_token
         )
@@ -1010,9 +1007,8 @@ class Context:
             headers={"Content-Type": multidata.content_type}
         )
 
-        msg = WebhookMessage(
-            state=self.bot.state,
-            data=r.response["resource"]["message"],
+        msg = self.bot.create_webhook_message_from_data(
+            r.response["resource"]["message"],
             application_id=self.bot.application_id,  # type: ignore
             token=self._followup_token
         )
@@ -1135,9 +1131,8 @@ class Context:
             headers={"Content-Type": payload.content_type}
         )
 
-        msg = WebhookMessage(
-            state=self.bot.state,
-            data=r.response,
+        msg = self.bot.create_webhook_message_from_data(
+            r.response,
             application_id=self.bot.application_id,  # type: ignore
             token=self._followup_token
         )
@@ -1157,9 +1152,8 @@ class Context:
             f"/webhooks/{self.bot.application_id}/{self._followup_token}/messages/@original"
         )
 
-        msg = WebhookMessage(
-            state=self.bot.state,
-            data=r.response,
+        msg = self.bot.create_webhook_message_from_data(
+            r.response,
             application_id=self.bot.application_id,  # type: ignore
             token=self._followup_token
         )
@@ -1202,9 +1196,8 @@ class Context:
             data=payload.to_multipart(is_request=True)
         )
 
-        msg = WebhookMessage(
-            state=self.bot.state,
-            data=r.response,
+        msg = self.bot.create_webhook_message_from_data(
+            r.response,
             application_id=self.bot.application_id,  # type: ignore
             token=self._followup_token
         )
@@ -1242,10 +1235,8 @@ class Context:
                         None
                     )
 
-                    target = Member(
-                        state=self.bot.state,
-                        guild=self.guild,
-                        data=first
+                    target = self.bot.create_member_from_data(
+                        first, guild=self.guild
                     )
 
                 elif self._raw_resolved.get("users", {}):
@@ -1257,7 +1248,7 @@ class Context:
                     if not first:
                         raise ValueError("User command detected users, but was unable to parse it")
 
-                    target = User(state=self.bot.state, data=first)
+                    target = self.bot.create_user_from_data(first)
 
                 else:
                     raise ValueError("Neither members nor users were detected while parsing user command")
@@ -1300,16 +1291,14 @@ class Context:
                             if not self.guild:
                                 raise ValueError("Guild somehow was not available while parsing Member")
 
-                            kwargs[option["name"]] = Member(
-                                state=self.bot.state,
-                                guild=self.guild,
-                                data=member_data
+                            kwargs[option["name"]] = self.bot.create_member_from_data(
+                                member_data,
+                                guild=self.guild
                             )
 
                         else:
-                            kwargs[option["name"]] = User(
-                                state=self.bot.state,
-                                data=resolved["users"][option["value"]]
+                            kwargs[option["name"]] = self.bot.create_user_from_data(
+                                resolved["users"][option["value"]]
                             )
 
                     case CommandOptionType.channel:
@@ -1329,10 +1318,9 @@ class Context:
                         if not self.guild:
                             raise ValueError("Guild somehow was not available while parsing Role")
 
-                        kwargs[option["name"]] = Role(
-                            state=self.bot.state,
-                            guild=self.guild,
-                            data=resolved["roles"][option["value"]]
+                        kwargs[option["name"]] = self.bot.create_role_from_data(
+                            resolved["roles"][option["value"]],
+                            guild=self.guild
                         )
 
                     case CommandOptionType.string:
@@ -1373,16 +1361,12 @@ class Context:
 
     def _parse_user(self, data: dict) -> Member | User:
         if data.get("member"):
-            return Member(
-                state=self.bot.state,
-                guild=self.guild,  # type: ignore
-                data=data["member"]
+            return self.bot.create_member_from_data(
+                data["member"],
+                guild=self.guild  # type: ignore
             )
         if data.get("user"):
-            return User(
-                state=self.bot.state,
-                data=data["user"]
-            )
+            return self.bot.create_user_from_data(data["user"])
         raise ValueError(
             "Neither member nor user was detected while parsing user"
         )

@@ -106,11 +106,7 @@ class PartialMember(PartialBase):
             f"/guilds/{self.guild_id}/members/{self.id}"
         )
 
-        return Member(
-            state=self._state,
-            guild=self.guild,
-            data=r.response
-        )
+        return self._state.bot.create_member_from_data(r.response, guild=self.guild)
 
     async def send(
         self,
@@ -371,11 +367,7 @@ class PartialMember(PartialBase):
         else:
             raise ValueError("No parameters to edit were provided.")
 
-        return Member(
-            state=self._state,
-            guild=self.guild,
-            data=r.response
-        )
+        return self._state.bot.create_member_from_data(r.response, guild=self.guild)
 
     async def add_roles(
         self,
@@ -465,7 +457,7 @@ class Member(PartialMember):
         guild: Guild | PartialGuild,
         data: dict
     ):
-        real_user = User(state=state, data=data["user"])
+        real_user = state.bot.create_user_from_data(data["user"])
 
         super().__init__(
             state=state,

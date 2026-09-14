@@ -203,7 +203,7 @@ class Integration(PartialIntegration):
 
     def _from_data(self, data: dict) -> None:
         if user := data.get("user"):
-            self.user = User(state=self._state, data=user)
+            self.user = self._state.bot.create_user_from_data(user)
 
         if account := data.get("account"):
             self.account = IntegrationAccount(state=self._state, data=account)
@@ -289,10 +289,7 @@ class IntegrationApplication(PartialBase):
     def _from_data(self, data: dict) -> None:
         """ Update the application with new data. """
         if bot := data.get("bot"):
-            self.bot = User(
-                state=self._state,
-                data=bot
-            )
+            self.bot = self._state.bot.create_user_from_data(bot)
 
         if icon := data.get("icon"):
             self.icon = Asset._from_icon(

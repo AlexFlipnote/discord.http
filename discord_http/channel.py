@@ -274,11 +274,8 @@ class PartialChannel(PartialBase):
             f"/channels/{self.id}/messages/{message_id}"
         )
 
-        from .message import Message
-        return Message(
-            state=self._state,
-            data=r.response,
-            guild=self.guild
+        return self._state.bot.create_message_from_data(
+            r.response, guild=self.guild
         )
 
     async def fetch_pins(self) -> list["Message"]:
@@ -294,12 +291,9 @@ class PartialChannel(PartialBase):
             f"/channels/{self.id}/pins"
         )
 
-        from .message import Message
         return [
-            Message(
-                state=self._state,
-                data=data,
-                guild=self.guild
+            self._state.bot.create_message_from_data(
+                data, guild=self.guild
             )
             for data in r.response
         ]
@@ -336,12 +330,8 @@ class PartialChannel(PartialBase):
             f"/channels/{self.id}/threads/archived/public"
         )
 
-        from .channel import PublicThread
         return [
-            PublicThread(
-                state=self._state,
-                data=data
-            )
+            self._state.bot.create_public_thread_from_data(data)
             for data in r.response
         ]
 
@@ -368,12 +358,8 @@ class PartialChannel(PartialBase):
 
         r = await self._state.query("GET", path)
 
-        from .channel import PrivateThread
         return [
-            PrivateThread(
-                state=self._state,
-                data=data
-            )
+            self._state.bot.create_private_thread_from_data(data)
             for data in r.response
         ]
 
@@ -460,11 +446,7 @@ class PartialChannel(PartialBase):
             data=multidata.finish()
         )
 
-        from .invite import Invite
-        return Invite(
-            state=self._state,
-            data=r.response
-        )
+        return self._state.bot.create_invite_from_data(r.response)
 
     async def send(
         self,
@@ -540,11 +522,7 @@ class PartialChannel(PartialBase):
             headers={"Content-Type": payload.content_type}
         )
 
-        from .message import Message
-        msg = Message(
-            state=self._state,
-            data=r.response
-        )
+        msg = self._state.bot.create_message_from_data(r.response)
 
         if delete_after is not None:
             await msg.delete(delay=float(delete_after))
@@ -1086,10 +1064,7 @@ class PartialChannel(PartialBase):
                 json=payload
             )
 
-        return ForumThread(
-            state=self._state,
-            data=r.response
-        )
+        return self._state.bot.create_forum_thread_from_data(r.response)
 
     async def create_thread(
         self,
@@ -1276,10 +1251,6 @@ class PartialChannel(PartialBase):
         else:
             strategy, state = _before_http, None
 
-        # Must be imported here to avoid circular import
-        # From the top of the file
-        from .message import Message
-
         while True:
             http_limit: int = 100 if limit is None else min(limit, 100)
             if http_limit <= 0:
@@ -1295,10 +1266,8 @@ class PartialChannel(PartialBase):
 
             i = 0
             for msg in messages:
-                yield Message(
-                    state=self._state,
-                    data=msg,
-                    guild=self.guild
+                yield self._state.bot.create_message_from_data(
+                    msg, guild=self.guild
                 )
                 i += 1
 
@@ -1541,11 +1510,8 @@ class PartialChannel(PartialBase):
             params={"with_member": "true"}
         )
 
-        from .member import ThreadMember
-        return ThreadMember(
-            state=self._state,
-            guild=self.guild,
-            data=r.response,
+        return self._state.bot.create_thread_member_from_data(
+            r.response, guild=self.guild
         )
 
     async def fetch_thread_members(self) -> list["ThreadMember"]:
@@ -1565,12 +1531,9 @@ class PartialChannel(PartialBase):
             params={"with_member": "true"},
         )
 
-        from .member import ThreadMember
         return [
-            ThreadMember(
-                state=self._state,
-                guild=self.guild,
-                data=data
+            self._state.bot.create_thread_member_from_data(
+                data, guild=self.guild
             )
             for data in r.response
         ]
@@ -1814,8 +1777,7 @@ class DMChannel(BaseChannel):
 
     def _from_data(self, data: dict) -> None:
         if recipients := data.get("recipients"):
-            from .user import User
-            self.user = User(state=self._state, data=recipients[0])
+            self.user = self._state.bot.create_user_from_data(recipients[0])
             self.name = self.user.name
 
         if last_pin_timestamp := data.get("last_pin_timestamp"):
@@ -2419,12 +2381,8 @@ class ForumThread(PublicThread):
         return self.name
 
     def _from_data(self, data: dict) -> None:
-        from .message import Message
-
-        self.message: Message = Message(
-            state=self._state,
-            data=data["message"],
-            guild=self.guild
+        self.message: "Message" = self._state.bot.create_message_from_data(
+            data["message"], guild=self.guild
         )
 
     @property

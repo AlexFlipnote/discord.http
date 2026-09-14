@@ -259,11 +259,7 @@ class PartialRole(PartialBase):
                     "(Most likely Discord API bug)"
                 )
 
-            role = Role(
-                state=self._state,
-                guild=self.guild,
-                data=find_role
-            )
+            role = self._state.bot.create_role_from_data(find_role, guild=self.guild)
 
         if payload:
             r = await self._state.query(
@@ -273,11 +269,7 @@ class PartialRole(PartialBase):
                 reason=reason
             )
 
-            role = Role(
-                state=self._state,
-                guild=self.guild,
-                data=r.response
-            )
+            role = self._state.bot.create_role_from_data(r.response, guild=self.guild)
 
         if not role:
             raise ValueError(

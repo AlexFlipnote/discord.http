@@ -4,9 +4,14 @@ import orjson
 
 from discord_http import Message, PartialUser
 
+from _fake_client import FakeBot
+
 
 class FakeState:
     cache = None
+
+    def __init__(self):
+        self.bot = FakeBot(self)
 
 
 def _message_data(**overrides):

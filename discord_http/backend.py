@@ -17,12 +17,9 @@ from aiohttp.web_exceptions import (
 
 from . import utils
 from .commands import Command, SubGroup
-from .entitlements import Entitlements
 from .enums import InteractionType, CommandOptionType, IntegrationType
 from .errors import CheckFailed
-from .guild import Guild
 from .response import BaseResponse, Ping, MessageResponse, EmptyResponse
-from .user import User
 
 if TYPE_CHECKING:
     from .client import Client
@@ -400,9 +397,9 @@ class DiscordHTTP(web.Application):
                         self.bot.dispatch(
                             "application_authorized",
                             event_data["scopes"],
-                            User(state=self.bot.state, data=event_data["user"]),
+                            self.bot.create_user_from_data(event_data["user"]),
                             (
-                                Guild(state=self.bot.state, data=event_data["guild"])
+                                self.bot.create_guild_from_data(event_data["guild"])
                                 if event_data.get("guild") else None
                             ),
                             (
@@ -415,7 +412,7 @@ class DiscordHTTP(web.Application):
                     if self.bot.has_any_dispatch("application_deauthorized"):
                         self.bot.dispatch(
                             "application_deauthorized",
-                            User(state=self.bot.state, data=event_data["user"]),
+                            self.bot.create_user_from_data(event_data["user"]),
                         )
 
                 case "ENTITLEMENT_CREATE" | "ENTITLEMENT_UPDATE" | "ENTITLEMENT_DELETE":
@@ -423,7 +420,7 @@ class DiscordHTTP(web.Application):
                     if self.bot.has_any_dispatch(dispatch_name):
                         self.bot.dispatch(
                             dispatch_name,
-                            Entitlements(state=self.bot.state, data=event_data)
+                            self.bot.create_entitlements_from_data(event_data)
                         )
 
                 case _:

@@ -362,11 +362,7 @@ class PartialUser(PartialBase):
             headers={"Content-Type": payload.content_type}
         )
 
-        from .message import Message
-        msg = Message(
-            state=self._state,
-            data=r.response
-        )
+        msg = self._state.bot.create_message_from_data(r.response)
 
         if delete_after is not None:
             await msg.delete(delay=float(delete_after))
@@ -393,10 +389,7 @@ class PartialUser(PartialBase):
             f"/users/{self.id}"
         )
 
-        return User(
-            state=self._state,
-            data=r.response
-        )
+        return self._state.bot.create_user_from_data(r.response)
 
     async def edit(
         self,
@@ -447,10 +440,7 @@ class PartialUser(PartialBase):
             json=payload
         )
 
-        return User(
-            state=self._state,
-            data=r.response
-        )
+        return self._state.bot.create_user_from_data(r.response)
 
 
 class _UserExtra(NamedTuple):
@@ -703,7 +693,7 @@ class TeamMember(PartialBase):
         self.role: str = data.get("role", "")
         """ The role of the team member. """
 
-        self.user: User = User(state=self._state, data=data["user"])
+        self.user: User = self._state.bot.create_user_from_data(data["user"])
         """ The user associated with the team member. """
 
     def __repr__(self) -> str:
@@ -1026,10 +1016,7 @@ class Application(PartialBase):
             self.owner_id = int(owner["id"])
 
         if bot := data.get("bot"):
-            self.bot = User(
-                state=self._state,
-                data=bot
-            )
+            self.bot = self._state.bot.create_user_from_data(bot)
 
         if (guild_id := data.get("guild_id")) or (guild := data.get("guild")):
             self.guild_id = int(guild_id) if guild_id else int(guild["id"])
@@ -1175,7 +1162,7 @@ class Application(PartialBase):
             json=payload
         )
 
-        app = Application(state=self._state, data=r.response)
+        app = self._state.bot.create_application_from_data(r.response)
 
         if (
             self._state.bot.application and

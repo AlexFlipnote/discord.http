@@ -3,9 +3,12 @@ import unittest
 from discord_http import Application, Team, ApplicationRoleConnectionMetadata
 from discord_http.enums import ApplicationRoleConnectionMetadataType, TeamMembershipState
 
+from _fake_client import FakeBot
+
 
 class FakeState:
-    pass
+    def __init__(self):
+        self.bot = FakeBot(self)
 
 
 class TestTeamMember(unittest.TestCase):

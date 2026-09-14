@@ -5,6 +5,8 @@ from types import SimpleNamespace
 from discord_http.gateway.enums import ActivityType, StatusType
 from discord_http.gateway.object import PlayingStatus, ThreadListSyncPayload
 
+from _fake_client import FakeBot as _FakeBotBase
+
 
 class TestPlayingStatusStyleCoercion(unittest.TestCase):
     def test_string_status_and_type_are_converted_to_enums(self) -> None:
@@ -78,8 +80,9 @@ class FakeCache:
         return self._guild
 
 
-class FakeBot:
-    def __init__(self, guild):
+class FakeBot(_FakeBotBase):
+    def __init__(self, state, guild):
+        self.state = state
         self.cache = FakeCache(guild)
         self._guild = guild
 
@@ -89,7 +92,7 @@ class FakeBot:
 
 class FakeState:
     def __init__(self, guild):
-        self.bot = FakeBot(guild)
+        self.bot = FakeBot(self, guild)
 
 
 def _thread_data(thread_id: int, parent_id: int) -> dict:

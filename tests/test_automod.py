@@ -5,9 +5,12 @@ from discord_http.enums import AutoModRuleActionType, AutoModRuleEventType, Auto
 from discord_http.role import PartialRole
 from discord_http.channel import PartialChannel
 
+from _fake_client import FakeBot
+
 
 class FakeState:
-    pass
+    def __init__(self):
+        self.bot = FakeBot(self)
 
 
 class TestAutoModRuleActionDurationCap(unittest.TestCase):

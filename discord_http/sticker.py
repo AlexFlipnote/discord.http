@@ -62,10 +62,8 @@ class PartialSticker(PartialBase):
 
         self.guild_id = utils.get_int(r.response, "guild_id")
 
-        return Sticker(
-            state=self._state,
-            data=r.response,
-            guild=self.guild,
+        return self._state.bot.create_sticker_from_data(
+            r.response, guild=self.guild
         )
 
     @property
@@ -145,10 +143,8 @@ class PartialSticker(PartialBase):
 
         self.guild_id = int(r.response["guild_id"])
 
-        return Sticker(
-            state=self._state,
-            data=r.response,
-            guild=self.guild,
+        return self._state.bot.create_sticker_from_data(
+            r.response, guild=self.guild
         )
 
     async def delete(

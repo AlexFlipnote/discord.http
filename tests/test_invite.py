@@ -2,6 +2,8 @@ import unittest
 
 from discord_http import PartialInvite
 
+from _fake_client import FakeBot
+
 
 class FakeResponse:
     def __init__(self, response):
@@ -11,6 +13,7 @@ class FakeResponse:
 class FakeState:
     def __init__(self, csv_text: str):
         self._csv_text = csv_text
+        self.bot = FakeBot(self)
 
     async def query(self, method, path, **kwargs):
         return FakeResponse(self._csv_text)

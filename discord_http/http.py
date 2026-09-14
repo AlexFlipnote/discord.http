@@ -1016,11 +1016,7 @@ class DiscordAPI:
                 f"by the application. Denied intents: {denied_intents!r}"
             )
 
-        from .user import Application
-        return Application(
-            state=self,
-            data=r.response
-        )
+        return self.bot.create_application_from_data(r.response)
 
     async def _app_command_query(
         self,

@@ -8,9 +8,12 @@ from discord_http.object import Snowflake
 from discord_http.role import PartialRole
 from discord_http.user import PartialUser
 
+from _fake_client import FakeBot
+
 
 class FakeState:
-    pass
+    def __init__(self):
+        self.bot = FakeBot(self)
 
 
 def _make_entry(action_type: int, **overrides) -> AuditLogEntry:

@@ -3,9 +3,12 @@ import unittest
 from discord_http import Subscription, PartialSubscription
 from discord_http.enums import SubscriptionStatus
 
+from _fake_client import FakeBot
+
 
 class FakeState:
-    pass
+    def __init__(self):
+        self.bot = FakeBot(self)
 
 
 def _subscription_data(**overrides):

@@ -262,10 +262,8 @@ class Parser:
         return self.bot.get_partial_role(role_id, guild_id)
 
     def _guild(self, data: dict, *, populate_cache: bool = True) -> Guild:
-        return Guild(
-            state=self.bot.state,
-            data=data,
-            populate_cache=populate_cache
+        return self.bot.create_guild_from_data(
+            data, populate_cache=populate_cache
         )
 
     def guild_create(self, data: dict) -> tuple[Guild | PartialGuild]:
@@ -338,10 +336,7 @@ class Parser:
         return (guild,)
 
     def _entitlement(self, data: dict) -> Entitlements:
-        return Entitlements(
-            state=self.bot.state,
-            data=data,
-        )
+        return self.bot.create_entitlements_from_data(data)
 
     def entitlement_create(self, data: dict) -> tuple[Entitlements]:
         """
@@ -474,10 +469,7 @@ class Parser:
         -------
             The updated user
         """
-        user = User(
-            state=self.bot.state,
-            data=data,
-        )
+        user = self.bot.create_user_from_data(data)
 
         if self.bot.application:
             self.bot.application.bot = user
@@ -500,11 +492,8 @@ class Parser:
         guild = self._get_guild_or_partial(int(data["guild_id"]))
 
         members = [
-            Member(
-                state=self.bot.state,
-                guild=guild,
-                data=g
-            ) for g in data.get("members", [])
+            self.bot.create_member_from_data(g, guild=guild)
+            for g in data.get("members", [])
         ]
 
         presences = data.get("presences", [])
@@ -628,7 +617,7 @@ class Parser:
             The guild and member that was added
         """
         guild = self._get_guild_or_partial(int(data["guild_id"]))
-        member = Member(state=self.bot.state, guild=guild, data=data)
+        member = self.bot.create_member_from_data(data, guild=guild)
 
         self.bot.cache.add_member(member)
 
@@ -648,7 +637,7 @@ class Parser:
             The guild and member that was updated
         """
         guild = self._get_guild_or_partial(int(data["guild_id"]))
-        member = Member(state=self.bot.state, guild=guild, data=data)
+        member = self.bot.create_member_from_data(data, guild=guild)
 
         self.bot.cache.update_member(member)
 
@@ -675,10 +664,7 @@ class Parser:
 
         return (
             guild,
-            member or User(
-                state=self.bot.state,
-                data=data["user"]
-            )
+            member or self.bot.create_user_from_data(data["user"])
         )
 
     def guild_ban_add(self, data: dict) -> tuple[Guild | PartialGuild, User]:
@@ -698,10 +684,7 @@ class Parser:
 
         return (
             guild,
-            User(
-                state=self.bot.state,
-                data=data["user"]
-            )
+            self.bot.create_user_from_data(data["user"])
         )
 
     def guild_ban_remove(self, data: dict) -> tuple[Guild | PartialGuild, User]:
@@ -721,10 +704,7 @@ class Parser:
 
         return (
             guild,
-            User(
-                state=self.bot.state,
-                data=data["user"]
-            )
+            self.bot.create_user_from_data(data["user"])
         )
 
     def guild_emojis_update(self, data: dict) -> tuple[Guild | PartialGuild, list[Emoji], list[Emoji]]:
@@ -743,11 +723,7 @@ class Parser:
         guild = self._get_guild_or_partial(int(data["guild_id"]))
 
         emojis_after = [
-            Emoji(
-                state=self.bot.state,
-                guild=guild,
-                data=e
-            )
+            self.bot.create_emoji_from_data(e, guild=guild)
             for e in data["emojis"]
         ]
 
@@ -787,11 +763,7 @@ class Parser:
         guild = self._get_guild_or_partial(int(data["guild_id"]))
 
         stickers_after = [
-            Sticker(
-                state=self.bot.state,
-                guild=guild,
-                data=e
-            )
+            self.bot.create_sticker_from_data(e, guild=guild)
             for e in data["stickers"]
         ]
 
@@ -831,11 +803,7 @@ class Parser:
         guild = self._get_guild_or_partial(int(data["guild_id"]))
 
         return (
-            SoundboardSound(
-                state=self.bot.state,
-                guild=guild,
-                data=data
-            ),
+            self.bot.create_soundboard_sound_from_data(data, guild=guild),
         )
 
     def guild_soundboard_sound_update(self, data: dict) -> tuple[SoundboardSound]:
@@ -854,11 +822,7 @@ class Parser:
         guild = self._get_guild_or_partial(int(data["guild_id"]))
 
         return (
-            SoundboardSound(
-                state=self.bot.state,
-                guild=guild,
-                data=data
-            ),
+            self.bot.create_soundboard_sound_from_data(data, guild=guild),
         )
 
     def guild_soundboard_sound_delete(self, data: dict) -> tuple[PartialSoundboardSound]:
@@ -898,11 +862,7 @@ class Parser:
         return (
             guild,
             [
-                SoundboardSound(
-                    state=self.bot.state,
-                    guild=guild,
-                    data=e
-                )
+                self.bot.create_soundboard_sound_from_data(e, guild=guild)
                 for e in data["soundboard_sounds"]
             ]
         )
@@ -923,11 +883,7 @@ class Parser:
         guild = self._get_guild_or_partial(int(data["guild_id"]))
 
         return (
-            AuditLogEntry(
-                state=self.bot.state,
-                data=data,
-                guild=guild
-            ),
+            self.bot.create_audit_log_entry_from_data(data, guild=guild),
         )
 
     # NOTE: These are not documented in Discord API......
@@ -1228,10 +1184,8 @@ class Parser:
             The thread member.
         """
         return (
-            PartialThreadMember(
-                state=self.bot.state,
-                data=data,
-                guild_id=int(data["guild_id"])
+            self.bot.create_partial_thread_member_from_data(
+                data, guild_id=int(data["guild_id"])
             ),
         )
 
@@ -1253,9 +1207,8 @@ class Parser:
     def _message(self, data: dict) -> Message:
         guild_id = int(data["guild_id"]) if "guild_id" in data else None
 
-        return Message(
-            state=self.bot.state,
-            data=data,
+        return self.bot.create_message_from_data(
+            data,
             guild=(
                 self._get_guild_or_partial(guild_id)
                 if guild_id else None
@@ -1466,11 +1419,7 @@ class Parser:
         """
         guild = self._get_guild_or_partial(int(data["guild_id"]))
 
-        role = Role(
-            state=self.bot.state,
-            guild=guild,
-            data=data["role"]
-        )
+        role = self.bot.create_role_from_data(data["role"], guild=guild)
 
         self.bot.cache.add_role(role)
         return (role,)
@@ -1490,11 +1439,7 @@ class Parser:
         """
         guild = self._get_guild_or_partial(int(data["guild_id"]))
 
-        role = Role(
-            state=self.bot.state,
-            guild=guild,
-            data=data["role"]
-        )
+        role = self.bot.create_role_from_data(data["role"], guild=guild)
 
         self.bot.cache.add_role(role)
         return (role,)
@@ -1533,7 +1478,7 @@ class Parser:
         -------
             The invite.
         """
-        return (Invite(state=self.bot.state, data=data),)
+        return (self.bot.create_invite_from_data(data),)
 
     def invite_delete(self, data: dict) -> tuple[PartialInvite]:
         """
@@ -1728,11 +1673,7 @@ class Parser:
             raise ValueError("guild_id somehow was not provided by Discord")
 
         return (
-            Integration(
-                state=self.bot.state,
-                data=data,
-                guild=guild
-            ),
+            self.bot.create_integration_from_data(data, guild=guild),
         )
 
     def integration_update(self, data: dict) -> tuple[Integration]:

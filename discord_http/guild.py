@@ -470,13 +470,13 @@ class GuildPreview(PartialBase):
         guild_ref = state.bot.get_partial_guild(self.id)
 
         self.emojis: list[Emoji] = [
-            Emoji(state=state, guild=guild_ref, data=g)
+            state.bot.create_emoji_from_data(g, guild=guild_ref)
             for g in data.get("emojis", [])
         ]
         """ The custom emojis of the guild. """
 
         self.stickers: list[Sticker] = [
-            Sticker(state=state, guild=guild_ref, data=g)
+            state.bot.create_sticker_from_data(g, guild=guild_ref)
             for g in data.get("stickers", [])
         ]
         """ The custom stickers of the guild. """
@@ -830,8 +830,7 @@ class GuildTemplate(PartialGuildTemplate):
         self.updated_at: datetime = utils.parse_time(data["updated_at"])
         """ The time the template was last synced to the source guild. """
 
-        from .user import User
-        self.creator: User = User(state=self._state, data=data["creator"])
+        self.creator: "User" = self._state.bot.create_user_from_data(data["creator"])
         """ The user who created the template. """
 
     def __repr__(self) -> str:
@@ -1073,20 +1072,19 @@ class PartialScheduledEvent(PartialBase):
             params=params
         )
 
-        from .member import Member
-        from .user import User
-
         guild = self.guild
         results = []
 
         for g in r.response:
-            user = User(state=self._state, data=g["user"])
+            user = self._state.bot.create_user_from_data(g["user"])
 
             member = None
             if g.get("member"):
                 member_data = g["member"]
                 member_data["user"] = g["user"]
-                member = Member(state=self._state, guild=guild, data=member_data)
+                member = self._state.bot.create_member_from_data(
+                    member_data, guild=guild
+                )
 
             results.append(member or user)
 
@@ -1181,8 +1179,7 @@ class ScheduledEvent(PartialScheduledEvent):
             )
 
         if creator := data.get("creator"):
-            from .user import User
-            self.creator = User(state=self._state, data=creator)
+            self.creator = self._state.bot.create_user_from_data(creator)
 
         if scheduled_end_time := data.get("scheduled_end_time"):
             self.end_time = utils.parse_time(scheduled_end_time)
@@ -1272,11 +1269,10 @@ class PartialGuild(PartialBase):
 
         if data.get("members"):
             if GatewayCacheFlags.members in flags:
-                from .member import Member
                 cache = self._state.bot.cache
                 self._cache_members = {}
                 for g in data["members"]:
-                    member = Member(state=self._state, guild=self, data=g)
+                    member = self._state.bot.create_member_from_data(g, guild=self)
                     cache._dedupe_user(member)
                     self._cache_members[member.id] = member
             elif GatewayCacheFlags.partial_members in flags:
@@ -1289,24 +1285,19 @@ class PartialGuild(PartialBase):
                 }
             else:
                 # Still cache the only member which is the bot
-                from .member import Member
                 cache = self._state.bot.cache
                 self._cache_members = {}
                 for g in data["members"]:
                     if int(g["user"]["id"]) != self._state.bot.user.id:
                         continue
-                    member = Member(state=self._state, guild=self, data=g)
+                    member = self._state.bot.create_member_from_data(g, guild=self)
                     cache._dedupe_user(member)
                     self._cache_members[member.id] = member
 
         if data.get("roles"):
             if GatewayCacheFlags.roles in flags:
                 self._cache_roles = {
-                    int(g["id"]): Role(
-                        state=self._state,
-                        guild=self,
-                        data=g
-                    )
+                    int(g["id"]): self._state.bot.create_role_from_data(g, guild=self)
                     for g in data["roles"]
                 }
             elif GatewayCacheFlags.partial_roles in flags:
@@ -1322,11 +1313,7 @@ class PartialGuild(PartialBase):
         if data.get("emojis"):
             if GatewayCacheFlags.emojis in flags:
                 self._cache_emojis = {
-                    int(g["id"]): Emoji(
-                        state=self._state,
-                        guild=self,
-                        data=g
-                    )
+                    int(g["id"]): self._state.bot.create_emoji_from_data(g, guild=self)
                     for g in data["emojis"]
                 }
             elif GatewayCacheFlags.partial_emojis in flags:
@@ -1342,11 +1329,7 @@ class PartialGuild(PartialBase):
         if data.get("stickers"):
             if GatewayCacheFlags.stickers in flags:
                 self._cache_stickers = {
-                    int(g["id"]): Sticker(
-                        state=self._state,
-                        guild=self,
-                        data=g
-                    )
+                    int(g["id"]): self._state.bot.create_sticker_from_data(g, guild=self)
                     for g in data["stickers"]
                 }
             elif GatewayCacheFlags.partial_stickers in flags:
@@ -1659,10 +1642,7 @@ class PartialGuild(PartialBase):
             params=params
         )
 
-        return Guild(
-            state=self._state,
-            data=r.response
-        )
+        return self._state.bot.create_guild_from_data(r.response)
 
     async def fetch_preview(self) -> "GuildPreview":
         """ Fetches a preview of the guild, including for guilds the bot may not be in if discoverable. """
@@ -2168,9 +2148,8 @@ class PartialGuild(PartialBase):
 
                 target_msg = msg_group[0]
 
-                yield Message(
-                    state=self._state,
-                    data=target_msg,
+                yield self._state.bot.create_message_from_data(
+                    target_msg,
                     guild=self
                 )
 
@@ -2337,11 +2316,7 @@ class PartialGuild(PartialBase):
         )
 
         return [
-            Role(
-                state=self._state,
-                guild=self,
-                data=data
-            )
+            self._state.bot.create_role_from_data(data, guild=self)
             for data in r.response
         ]
 
@@ -2353,11 +2328,7 @@ class PartialGuild(PartialBase):
         )
 
         return [
-            Sticker(
-                state=self._state,
-                guild=self,
-                data=data
-            )
+            self._state.bot.create_sticker_from_data(data, guild=self)
             for data in r.response
         ]
 
@@ -2384,11 +2355,7 @@ class PartialGuild(PartialBase):
         )
 
         return [
-            Emoji(
-                state=self._state,
-                guild=self,
-                data=data
-            )
+            self._state.bot.create_emoji_from_data(data, guild=self)
             for data in r.response
         ]
 
@@ -2400,11 +2367,7 @@ class PartialGuild(PartialBase):
         )
 
         return [
-            SoundboardSound(
-                state=self._state,
-                guild=self,
-                data=data
-            )
+            self._state.bot.create_soundboard_sound_from_data(data, guild=self)
             for data in r.response
         ]
 
@@ -2426,9 +2389,8 @@ class PartialGuild(PartialBase):
             f"/guilds/{self.id}/bans/{int(user)}"
         )
 
-        from .user import User
         return BanEntry(
-            user=User(state=self._state, data=r.response["user"]),
+            user=self._state.bot.create_user_from_data(r.response["user"]),
             reason=r.response["reason"]
         )
 
@@ -2504,8 +2466,6 @@ class PartialGuild(PartialBase):
         else:
             strategy, state = _before_http, None
 
-        from .user import User
-
         while True:
             http_limit: int = 1000 if limit is None else min(limit, 1000)
             if http_limit <= 0:
@@ -2517,7 +2477,7 @@ class PartialGuild(PartialBase):
             i = 0
             for b in bans:
                 yield BanEntry(
-                    user=User(state=self._state, data=b["user"]),
+                    user=self._state.bot.create_user_from_data(b["user"]),
                     reason=b["reason"]
                 )
                 i += 1
@@ -2615,10 +2575,8 @@ class PartialGuild(PartialBase):
             reason=reason
         )
 
-        return Role(
-            state=self._state,
-            guild=self,
-            data=r.response
+        return self._state.bot.create_role_from_data(
+            r.response, guild=self
         )
 
     async def create_scheduled_event(
@@ -3035,10 +2993,8 @@ class PartialGuild(PartialBase):
             }
         )
 
-        return Emoji(
-            state=self._state,
-            guild=self,
-            data=r.response
+        return self._state.bot.create_emoji_from_data(
+            r.response, guild=self
         )
 
     async def create_soundboard_sound(
@@ -3111,10 +3067,8 @@ class PartialGuild(PartialBase):
             json=payload
         )
 
-        return SoundboardSound(
-            state=self._state,
-            guild=self,
-            data=r.response
+        return self._state.bot.create_soundboard_sound_from_data(
+            r.response, guild=self
         )
 
     async def create_sticker(
@@ -3174,11 +3128,7 @@ class PartialGuild(PartialBase):
             reason=reason
         )
 
-        return Sticker(
-            state=self._state,
-            guild=self,
-            data=r.response
-        )
+        return self._state.bot.create_sticker_from_data(r.response, guild=self)
 
     async def fetch_guild_prune_count(
         self,
@@ -3462,13 +3412,7 @@ class PartialGuild(PartialBase):
             f"/guilds/{self.id}/members/{member_id}"
         )
 
-        from .member import Member
-
-        return Member(
-            state=self._state,
-            guild=self,
-            data=r.response
-        )
+        return self._state.bot.create_member_from_data(r.response, guild=self)
 
     async def fetch_public_threads(self) -> list["PublicThread"]:
         """
@@ -3483,12 +3427,8 @@ class PartialGuild(PartialBase):
             f"/guilds/{self.id}/threads/active"
         )
 
-        from .channel import PublicThread
         return [
-            PublicThread(
-                state=self._state,
-                data=data
-            )
+            self._state.bot.create_public_thread_from_data(data)
             for data in r.response
         ]
 
@@ -3512,8 +3452,6 @@ class PartialGuild(PartialBase):
         ------
             The members in the guild
         """
-        from .member import Member
-
         while True:
             http_limit = 1000 if limit is None else min(limit, 1000)
             if http_limit <= 0:
@@ -3537,10 +3475,8 @@ class PartialGuild(PartialBase):
             after = int(data.response[-1]["user"]["id"])
 
             for member_data in data.response:
-                yield Member(
-                    state=self._state,
-                    guild=self,
-                    data=member_data
+                yield self._state.bot.create_member_from_data(
+                    member_data, guild=self
                 )
 
     async def fetch_regions(self) -> list["VoiceRegion"]:
@@ -3562,12 +3498,8 @@ class PartialGuild(PartialBase):
             f"/guilds/{self.id}/invites"
         )
 
-        from .invite import Invite
         return [
-            Invite(
-                state=self._state,
-                data=data
-            )
+            self._state.bot.create_invite_from_data(data)
             for data in r.response
         ]
 
@@ -3826,10 +3758,6 @@ class PartialGuild(PartialBase):
         else:
             strategy, state = _before_http, None
 
-        # Avoid circular import, fun times...
-        from .audit import AuditLogEntry
-        from .user import User
-
         search_kwargs = {}
 
         if user is not None:
@@ -3846,20 +3774,14 @@ class PartialGuild(PartialBase):
             data, state, limit = await strategy(http_limit, state, limit, **search_kwargs)
 
             users = {
-                int(g["id"]): User(
-                    state=self._state,
-                    data=g
-                )
+                int(g["id"]): self._state.bot.create_user_from_data(g)
                 for g in data.get("users", [])
             }
 
             i = 0
             for entry in data["audit_log_entries"]:
-                yield AuditLogEntry(
-                    state=self._state,
-                    data=entry,
-                    guild=self,
-                    users=users
+                yield self._state.bot.create_audit_log_entry_from_data(
+                    entry, guild=self, users=users
                 )
                 i += 1
 
@@ -3903,13 +3825,8 @@ class PartialGuild(PartialBase):
             }
         )
 
-        from .member import Member
         return [
-            Member(
-                state=self._state,
-                guild=self,
-                data=m
-            )
+            self._state.bot.create_member_from_data(m, guild=self)
             for m in r.response
         ]
 
@@ -3928,13 +3845,8 @@ class PartialGuild(PartialBase):
             f"/guilds/{self.id}/integrations"
         )
 
-        from .integrations import Integration
         return [
-            Integration(
-                state=self._state,
-                data=data,
-                guild=self
-            )
+            self._state.bot.create_integration_from_data(data, guild=self)
             for data in r.response
         ]
 
@@ -4097,10 +4009,7 @@ class PartialGuild(PartialBase):
             reason=reason
         )
 
-        return Guild(
-            state=self._state,
-            data=r.response
-        )
+        return self._state.bot.create_guild_from_data(r.response)
 
 
 class Guild(PartialGuild):
@@ -4273,29 +4182,17 @@ class Guild(PartialGuild):
     def _from_data(self, data: dict, *, populate_cache: bool = True) -> None:
         if populate_cache:
             self._cache_roles = {
-                int(g["id"]): Role(
-                    state=self._state,
-                    guild=self,
-                    data=g
-                )
+                int(g["id"]): self._state.bot.create_role_from_data(g, guild=self)
                 for g in data.get("roles", [])
             }
 
             self._cache_emojis = {
-                int(g["id"]): Emoji(
-                    state=self._state,
-                    guild=self,
-                    data=g
-                )
+                int(g["id"]): self._state.bot.create_emoji_from_data(g, guild=self)
                 for g in data.get("emojis", [])
             }
 
             self._cache_stickers = {
-                int(g["id"]): Sticker(
-                    state=self._state,
-                    guild=self,
-                    data=g
-                )
+                int(g["id"]): self._state.bot.create_sticker_from_data(g, guild=self)
                 for g in data.get("stickers", [])
             }
 
