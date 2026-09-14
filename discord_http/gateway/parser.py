@@ -216,19 +216,23 @@ class Parser:
     def _get_channel_or_partial(
         self,
         channel_id: int,
-        guild_id: int | None = None
+        guild_id: int | None = None,
+        *,
+        guild: "PartialGuild | Guild | None" = None
     ) -> "BaseChannel | PartialChannel":
         if not guild_id:
             return self.bot.get_partial_channel(channel_id)
 
-        guild = self._get_guild_or_partial(guild_id)
+        guild = guild or self._get_guild_or_partial(guild_id)
         return guild.get_channel(channel_id) or self.bot.get_partial_channel(channel_id, guild_id=guild_id)
 
     @overload
     def _get_user_or_partial(
         self,
         user_id: int,
-        guild_id: None
+        guild_id: None,
+        *,
+        guild: "PartialGuild | Guild | None" = ...
     ) -> "PartialUser | User":
         ...
 
@@ -236,19 +240,23 @@ class Parser:
     def _get_user_or_partial(
         self,
         user_id: int,
-        guild_id: int
+        guild_id: int,
+        *,
+        guild: "PartialGuild | Guild | None" = ...
     ) -> "Member | PartialMember":
         ...
 
     def _get_user_or_partial(
         self,
         user_id: int,
-        guild_id: int | None
+        guild_id: int | None,
+        *,
+        guild: "PartialGuild | Guild | None" = None
     ) -> "PartialUser | User | Member | PartialMember":
         if not guild_id:
             return self.bot.get_partial_user(user_id)
 
-        guild = self._get_guild_or_partial(guild_id)
+        guild = guild or self._get_guild_or_partial(guild_id)
         return guild.get_member(user_id) or self.bot.get_partial_member(user_id, guild.id)
 
     def _get_role_or_partial(
@@ -1566,12 +1574,13 @@ class Parser:
         channel_id: int = int(data["channel_id"])
         user_id: int = int(data["user_id"])
         timestamp: datetime = utils.parse_time(data["timestamp"])
+        guild = self._get_guild_or_partial(guild_id)
 
         return (
             TypingStartEvent(
-                guild=self._get_guild_or_partial(guild_id),
-                channel=self._get_channel_or_partial(channel_id, guild_id),
-                user=self._get_user_or_partial(user_id, guild_id),
+                guild=guild,
+                channel=self._get_channel_or_partial(channel_id, guild_id, guild=guild),
+                user=self._get_user_or_partial(user_id, guild_id, guild=guild),
                 timestamp=timestamp
             ),
         )
@@ -1593,7 +1602,6 @@ class Parser:
         stage_instance = StageInstance(
             state=self.bot.state,
             data=data,
-            guild=guild
         )
 
         if guild and (channel := guild.get_channel(int(data["channel_id"]))):
@@ -1618,7 +1626,6 @@ class Parser:
         stage_instance = StageInstance(
             state=self.bot.state,
             data=data,
-            guild=guild
         )
 
         if guild and (channel := guild.get_channel(int(data["channel_id"]))):
@@ -1643,7 +1650,6 @@ class Parser:
         stage_instance = StageInstance(
             state=self.bot.state,
             data=data,
-            guild=guild
         )
 
         if guild and (channel := guild.get_channel(int(data["channel_id"]))):
@@ -1755,13 +1761,17 @@ class Parser:
         -------
             The presence.
         """
+        guild_id = int(data["guild_id"])
+        guild = self._get_guild_or_partial(guild_id)
+
         p = Presence(
             state=self.bot.state,
             user=self._get_user_or_partial(
                 int(data["user"]["id"]),
-                int(data["guild_id"])
+                guild_id,
+                guild=guild
             ),
-            guild=self._get_guild_or_partial(int(data["guild_id"])),
+            guild=guild,
             data=data
         )
 

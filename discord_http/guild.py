@@ -1269,11 +1269,9 @@ class PartialGuild(PartialBase):
 
         if data.get("members"):
             if GatewayCacheFlags.members in flags:
-                cache = self._state.bot.cache
                 self._cache_members = {}
                 for g in data["members"]:
                     member = self._state.bot.create_member_from_data(g, guild=self)
-                    cache._dedupe_user(member)
                     self._cache_members[member.id] = member
             elif GatewayCacheFlags.partial_members in flags:
                 self._cache_members = {

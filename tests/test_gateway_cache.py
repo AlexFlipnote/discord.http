@@ -2,6 +2,7 @@ import unittest
 
 from types import SimpleNamespace
 
+from discord_http.gateway.activity import ActivityAssets
 from discord_http.gateway.cache import Cache
 from discord_http.gateway.flags import GatewayCacheFlags
 
@@ -280,6 +281,53 @@ class TestUpdatePresence(unittest.TestCase):
         cache, _, guild = _cache_with_guild(GatewayCacheFlags.presences)
         presence = SimpleNamespace(guild=SimpleNamespace(id=guild.id), user=SimpleNamespace(id=999))
         cache.update_presence(presence)  # should not raise
+
+
+class TestPresenceDedupEnabled(unittest.TestCase):
+    def test_none_cache_flags_disabled(self) -> None:
+        cache = Cache(client=FakeClient(cache_flags=None))
+        self.assertFalse(cache._presence_dedup_enabled)
+
+    def test_disabled_without_presences_flag(self) -> None:
+        cache = Cache(client=FakeClient(cache_flags=GatewayCacheFlags.members))
+        self.assertFalse(cache._presence_dedup_enabled)
+
+    def test_enabled_with_presences_flag(self) -> None:
+        cache = Cache(client=FakeClient(cache_flags=GatewayCacheFlags.presences))
+        self.assertTrue(cache._presence_dedup_enabled)
+
+
+class TestDedupeActivityAssets(unittest.TestCase):
+    """
+    Members showing the exact same rich-presence assets (same game, same
+    menu/status) should share one `ActivityAssets` instance instead of each
+    holding a byte-identical copy.
+    """
+
+    def _assets(self, **overrides) -> ActivityAssets:
+        data = dict(
+            large_image="a", small_image="b",
+            large_text="Large", small_text="Small",
+        )
+        data.update(overrides)
+        return ActivityAssets(state=None, application_id=1, data=data)
+
+    def test_identical_payload_returns_same_canonical_instance(self) -> None:
+        cache = Cache(client=FakeClient(cache_flags=GatewayCacheFlags.presences))
+        first = self._assets()
+        second = self._assets()
+        self.assertIsNot(first, second)
+
+        self.assertIs(cache._dedupe_activity_assets(first), first)
+        self.assertIs(cache._dedupe_activity_assets(second), first)
+
+    def test_differing_payload_is_not_merged(self) -> None:
+        cache = Cache(client=FakeClient(cache_flags=GatewayCacheFlags.presences))
+        first = self._assets()
+        second = self._assets(large_text="Different")
+
+        self.assertIs(cache._dedupe_activity_assets(first), first)
+        self.assertIs(cache._dedupe_activity_assets(second), second)
 
 
 class TestGetChannel(unittest.TestCase):

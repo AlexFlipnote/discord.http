@@ -2547,7 +2547,6 @@ class StageInstance(PartialBase):
     """
 
     __slots__ = (
-        "_guild",
         "_state",
         "channel_id",
         "guild_id",
@@ -2561,12 +2560,10 @@ class StageInstance(PartialBase):
         *,
         state: "DiscordAPI",
         data: dict,
-        guild: "PartialGuild | None" = None,
     ) -> None:
         super().__init__(id=int(data["id"]))
 
         self._state: "DiscordAPI" = state
-        self._guild: "PartialGuild | None" = guild
 
         self.channel_id: int = int(data["channel_id"])
         """ The ID of the stage channel. """
@@ -2655,7 +2652,6 @@ class StageInstance(PartialBase):
         return self.__class__(
             state=self._state,
             data=r.response,
-            guild=self._guild,
         )
 
     async def delete(self, *, reason: str | None = None) -> None:
@@ -2714,7 +2710,6 @@ class StageChannel(VoiceChannel):
         return StageInstance(
             state=self._state,
             data=r.response,
-            guild=self.guild
         )
 
     async def create_stage_instance(
@@ -2771,6 +2766,5 @@ class StageChannel(VoiceChannel):
         self._stage_instance = StageInstance(
             state=self._state,
             data=r.response,
-            guild=self.guild
         )
         return self._stage_instance

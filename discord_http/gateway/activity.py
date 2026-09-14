@@ -23,6 +23,7 @@ __all__ = (
 class ActivityAssets:
     """ Represents the assets of an activity. """
     __slots__ = (
+        "__weakref__",
         "_raw_large_image",
         "_raw_small_image",
         "_state",
@@ -260,11 +261,17 @@ class Activity:
             (assets := data.get("assets")) and
             self.application_id is not None
         ):
-            self.assets = ActivityAssets(
+            built_assets = ActivityAssets(
                 state=self._state,
                 application_id=self.application_id,
                 data=assets
             )
+
+            cache = self._state.cache
+            if cache._presence_dedup_enabled:
+                built_assets = cache._dedupe_activity_assets(built_assets)
+
+            self.assets = built_assets
 
     @property
     def type(self) -> ActivityType:

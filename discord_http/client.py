@@ -2047,7 +2047,10 @@ class Client:
         -------
             The user object.
         """
-        return User(state=self.state, data=data)
+        user = User(state=self.state, data=data)
+        if self.cache._user_dedup_enabled:
+            user = self.cache._dedupe_plain_user(user)
+        return user
 
     def get_partial_member(
         self,

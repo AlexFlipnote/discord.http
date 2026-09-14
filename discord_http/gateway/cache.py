@@ -22,6 +22,7 @@ if TYPE_CHECKING:
     from ..role import PartialRole, Role
     from ..sticker import Sticker
 
+    from .activity import ActivityAssets
     from .object import Presence
 
 __all__ = (
@@ -112,8 +113,16 @@ class Cache:
     """ Represents the discord.http/gateway cache. """
 
     __slots__ = (
-        "__guilds", "__role_id_pools", "__role_ids_pools", "__users",
-        "_state", "bot", "cache_flags",
+        "__activity_assets_pool",
+        "__guilds",
+        "__role_id_pools",
+        "__role_ids_pools",
+        "__users",
+        "_presence_dedup_enabled",
+        "_state",
+        "_user_dedup_enabled",
+        "bot",
+        "cache_flags",
     )
 
     def __init__(
@@ -131,6 +140,21 @@ class Cache:
         self.__users: "weakref.WeakValueDictionary[int, User]" = weakref.WeakValueDictionary()
         self.__role_id_pools: dict[int, dict[int, int]] = {}
         self.__role_ids_pools: dict[int, dict[tuple[int, ...], tuple[int, ...]]] = {}
+        self.__activity_assets_pool: "weakref.WeakValueDictionary[tuple, ActivityAssets]" = (
+            weakref.WeakValueDictionary()
+        )
+
+        self._user_dedup_enabled: bool = self.cache_flags is not None and (
+            GatewayCacheFlags.members in self.cache_flags or
+            GatewayCacheFlags.partial_members in self.cache_flags
+        )
+        """ Whether it's worth touching the shared user table at all right now. """
+
+        self._presence_dedup_enabled: bool = (
+            self.cache_flags is not None and
+            GatewayCacheFlags.presences in self.cache_flags
+        )
+        """ Whether it's worth touching the shared activity-assets pool at all right now. """
 
     def intern_role_ids(self, guild_id: int, raw_role_ids: list) -> tuple[int, ...]:
         """
@@ -193,17 +217,6 @@ class Cache:
             return None
         return self.__users.get(user_id)
 
-    @property
-    def _user_dedup_enabled(self) -> bool:
-        """ Whether it's worth touching the shared user table at all right now. """
-        if self.cache_flags is None:
-            return False
-
-        return (
-            GatewayCacheFlags.members in self.cache_flags or
-            GatewayCacheFlags.partial_members in self.cache_flags
-        )
-
     def _dedupe_plain_user(self, user: "User") -> "User":
         """ Reuse or register the shared canonical `User` for this ID. """
         if (canonical := self.__users.get(user.id)) is not None and canonical is not user:
@@ -220,6 +233,17 @@ class Cache:
             return
 
         member._user = self._dedupe_plain_user(user)
+
+    def _dedupe_activity_assets(self, assets: "ActivityAssets") -> "ActivityAssets":
+        """ Reuse or register the shared canonical `ActivityAssets` for this exact payload. """
+        key = (
+            assets.application_id,
+            assets._raw_large_image,
+            assets._raw_small_image,
+            assets.large_text,
+            assets.small_text,
+        )
+        return self.__activity_assets_pool.setdefault(key, assets)
 
     @property
     def guilds(self) -> list["PartialGuild | Guild"]:
@@ -379,8 +403,6 @@ class Cache:
             guild.member_count += 1
 
         if GatewayCacheFlags.members in self.cache_flags:
-            if isinstance(member, Member):
-                self._dedupe_user(member)
             guild._cache_members[member.id] = member
         elif GatewayCacheFlags.partial_members in self.cache_flags:
             guild._cache_members[member.id] = self.bot.get_partial_member(

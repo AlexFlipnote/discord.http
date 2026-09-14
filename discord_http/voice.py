@@ -264,11 +264,6 @@ class VoiceState(PartialVoiceState):
         if self._member_data is None:
             return None
 
-        built = self._state.bot.create_member_from_data(
+        return self._state.bot.create_member_from_data(
             self._member_data, guild=guild
         )
-
-        if (cache := self._state.cache) is not None and cache._user_dedup_enabled:
-            cache._dedupe_user(built)
-
-        return built

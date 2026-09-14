@@ -1698,9 +1698,6 @@ class Message(PartialMessage):
         return self.content or ""
 
     def _from_data(self, data: dict) -> None:
-        cache = self._state.cache
-        dedupe = cache if cache is not None and cache._user_dedup_enabled else None
-
         if data.get("components"):
             self.view = View.from_dict(
                 state=self._state,
@@ -1724,8 +1721,6 @@ class Message(PartialMessage):
                 state=self._state,
                 data=interaction_metadata
             )
-            if dedupe is not None:
-                self.interaction.user = dedupe._dedupe_plain_user(self.interaction.user)
 
         for m in data.get("message_snapshots") or ():
             self.resolved_forward.append(
@@ -1766,12 +1761,8 @@ class Message(PartialMessage):
                 {**member, "user": data["author"]},
                 guild=self.guild  # type: ignore
             )
-            if dedupe is not None:
-                dedupe._dedupe_user(self.author)
         else:
             self.author = self._state.bot.create_user_from_data(data["author"])
-            if dedupe is not None:
-                self.author = dedupe._dedupe_plain_user(self.author)
 
         if mentions := data.get("mentions"):
             for m in mentions:
@@ -1780,14 +1771,10 @@ class Message(PartialMessage):
                         {**m["member"], "user": m},
                         guild=self.guild  # type: ignore
                     )
-                    if dedupe is not None:
-                        dedupe._dedupe_user(mention_member)
                     self.mentions.append(mention_member)
 
                 else:
                     mention_user = self._state.bot.create_user_from_data(m)
-                    if dedupe is not None:
-                        mention_user = dedupe._dedupe_plain_user(mention_user)
                     self.mentions.append(mention_user)
 
     def is_system(self) -> bool:
