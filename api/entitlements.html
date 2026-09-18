@@ -301,25 +301,31 @@
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>state</strong> (<a class="reference internal" href="http.html#discord_http.http.DiscordAPI" title="discord_http.http.DiscordAPI"><em>DiscordAPI</em></a>)</p></li>
-<li><p><strong>data</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.14)"><em>dict</em></a>)</p></li>
+<li><p><strong>data</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#dict" title="(in Python v3.14)"><em>dict</em></a>)</p></li>
 </ul>
 </dd>
 </dl>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="discord_http.entitlements.SKU.name">
-<span class="sig-name descname"><span class="pre">name</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></span><a class="headerlink" href="#discord_http.entitlements.SKU.name" title="Link to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">name</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></span><a class="headerlink" href="#discord_http.entitlements.SKU.name" title="Link to this definition">¶</a></dt>
 <dd><p>The name of the SKU.</p>
 </dd></dl>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="discord_http.entitlements.SKU.slug">
-<span class="sig-name descname"><span class="pre">slug</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></span><a class="headerlink" href="#discord_http.entitlements.SKU.slug" title="Link to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">slug</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></span><a class="headerlink" href="#discord_http.entitlements.SKU.slug" title="Link to this definition">¶</a></dt>
 <dd><p>The slug of the SKU.</p>
 </dd></dl>
 
 <dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.entitlements.SKU.application_id">
+<span class="sig-name descname"><span class="pre">application_id</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#int" title="(in Python v3.14)"><span class="pre">int</span></a></span><a class="headerlink" href="#discord_http.entitlements.SKU.application_id" title="Link to this definition">¶</a></dt>
+<dd><p>The ID of the application that owns the SKU.</p>
+</dd></dl>
+
+<dl class="py property">
 <dt class="sig sig-object py" id="discord_http.entitlements.SKU.application">
-<span class="sig-name descname"><span class="pre">application</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="user.html#discord_http.user.PartialUser" title="discord_http.user.PartialUser"><span class="pre">PartialUser</span></a></span><a class="headerlink" href="#discord_http.entitlements.SKU.application" title="Link to this definition">¶</a></dt>
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">application</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="user.html#discord_http.user.PartialUser" title="discord_http.user.PartialUser"><span class="pre">PartialUser</span></a></span><a class="headerlink" href="#discord_http.entitlements.SKU.application" title="Link to this definition">¶</a></dt>
 <dd><p>The application that owns the SKU.</p>
 </dd></dl>
 
@@ -342,8 +348,8 @@
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>owner_id</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference internal" href="object.html#discord_http.object.Snowflake" title="discord_http.object.Snowflake"><code class="xref py py-class docutils literal notranslate"><span class="pre">Snowflake</span></code></a> | <a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a></span>) – The ID of the owner, can be GuildID or UserID.</p></li>
-<li><p><strong>owner_type</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference internal" href="enums.html#discord_http.enums.EntitlementOwnerType" title="discord_http.enums.EntitlementOwnerType"><code class="xref py py-class docutils literal notranslate"><span class="pre">EntitlementOwnerType</span></code></a> | <a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a></span>) – The type of the owner.</p></li>
+<li><p><strong>owner_id</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference internal" href="object.html#discord_http.object.Snowflake" title="discord_http.object.Snowflake"><code class="xref py py-class docutils literal notranslate"><span class="pre">Snowflake</span></code></a> | <a class="reference external" href="https://docs.python.org/3/builtins/functions.html#int" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a></span>) – The ID of the owner, can be GuildID or UserID.</p></li>
+<li><p><strong>owner_type</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference internal" href="enums.html#discord_http.enums.EntitlementOwnerType" title="discord_http.enums.EntitlementOwnerType"><code class="xref py py-class docutils literal notranslate"><span class="pre">EntitlementOwnerType</span></code></a> | <a class="reference external" href="https://docs.python.org/3/builtins/functions.html#int" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a></span>) – The type of the owner.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Return type<span class="colon">:</span></dt>
@@ -361,9 +367,66 @@
 <dd><p>The datetime of the snowflake.</p>
 </dd></dl>
 
+<dl class="py method">
+<dt class="sig sig-object py" id="discord_http.entitlements.SKU.fetch_subscription">
+<span class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">fetch_subscription</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">subscription_id</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#discord_http.entitlements.Subscription" title="discord_http.entitlements.Subscription"><span class="pre">Subscription</span></a></span></span><a class="headerlink" href="#discord_http.entitlements.SKU.fetch_subscription" title="Link to this definition">¶</a></dt>
+<dd><p>Fetch a specific subscription for this SKU.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>subscription_id</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference internal" href="object.html#discord_http.object.Snowflake" title="discord_http.object.Snowflake"><code class="xref py py-class docutils literal notranslate"><span class="pre">Snowflake</span></code></a> | <a class="reference external" href="https://docs.python.org/3/builtins/functions.html#int" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a></span>) – The ID of the subscription to fetch</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><a class="reference internal" href="#discord_http.entitlements.Subscription" title="discord_http.entitlements.Subscription"><code class="xref py py-class docutils literal notranslate"><span class="pre">Subscription</span></code></a></span></p>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The subscription</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="discord_http.entitlements.SKU.fetch_subscriptions">
+<span class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">fetch_subscriptions</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">user_id</span></span></em>, <em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">before</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">after</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">limit</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">50</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#list" title="(in Python v3.14)"><span class="pre">list</span></a><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#discord_http.entitlements.Subscription" title="discord_http.entitlements.Subscription"><span class="pre">Subscription</span></a><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#discord_http.entitlements.SKU.fetch_subscriptions" title="Link to this definition">¶</a></dt>
+<dd><p>Fetch the subscriptions for this SKU.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>user_id</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference internal" href="object.html#discord_http.object.Snowflake" title="discord_http.object.Snowflake"><code class="xref py py-class docutils literal notranslate"><span class="pre">Snowflake</span></code></a> | <a class="reference external" href="https://docs.python.org/3/builtins/functions.html#int" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a></span>) – The user ID to fetch subscriptions for. Required for bot-token requests
+(only optional when using an OAuth2 access token, which this library does not support).</p></li>
+<li><p><strong>before</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference internal" href="object.html#discord_http.object.Snowflake" title="discord_http.object.Snowflake"><code class="xref py py-class docutils literal notranslate"><span class="pre">Snowflake</span></code></a> | <a class="reference external" href="https://docs.python.org/3/builtins/functions.html#int" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a> | <a class="reference external" href="https://docs.python.org/3/builtins/constants.html#None" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></span>) – Consider only subscriptions before given ID</p></li>
+<li><p><strong>after</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference internal" href="object.html#discord_http.object.Snowflake" title="discord_http.object.Snowflake"><code class="xref py py-class docutils literal notranslate"><span class="pre">Snowflake</span></code></a> | <a class="reference external" href="https://docs.python.org/3/builtins/functions.html#int" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a> | <a class="reference external" href="https://docs.python.org/3/builtins/constants.html#None" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></span>) – Consider only subscriptions after given ID</p></li>
+<li><p><strong>limit</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#int" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a></span>) – The maximum amount of subscriptions to fetch (1-100)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#list" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">list</span></code></a>[<a class="reference internal" href="#discord_http.entitlements.Subscription" title="discord_http.entitlements.Subscription"><code class="xref py py-class docutils literal notranslate"><span class="pre">Subscription</span></code></a>]</span></p>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The subscriptions for this SKU</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="discord_http.entitlements.SKU.get_partial_subscription">
+<span class="sig-name descname"><span class="pre">get_partial_subscription</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">subscription_id</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#discord_http.entitlements.PartialSubscription" title="discord_http.entitlements.PartialSubscription"><span class="pre">PartialSubscription</span></a></span></span><a class="headerlink" href="#discord_http.entitlements.SKU.get_partial_subscription" title="Link to this definition">¶</a></dt>
+<dd><p>Creates a partial subscription object under this SKU, without fetching it.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>subscription_id</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference internal" href="object.html#discord_http.object.Snowflake" title="discord_http.object.Snowflake"><code class="xref py py-class docutils literal notranslate"><span class="pre">Snowflake</span></code></a> | <a class="reference external" href="https://docs.python.org/3/builtins/functions.html#int" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a></span>) – The ID of the subscription</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><a class="reference internal" href="#discord_http.entitlements.PartialSubscription" title="discord_http.entitlements.PartialSubscription"><code class="xref py py-class docutils literal notranslate"><span class="pre">PartialSubscription</span></code></a></span></p>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The partial subscription object</p>
+</dd>
+</dl>
+</dd></dl>
+
 <dl class="py attribute">
 <dt class="sig sig-object py" id="discord_http.entitlements.SKU.id">
-<span class="sig-name descname"><span class="pre">id</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><span class="pre">int</span></a></span><a class="headerlink" href="#discord_http.entitlements.SKU.id" title="Link to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">id</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#int" title="(in Python v3.14)"><span class="pre">int</span></a></span><a class="headerlink" href="#discord_http.entitlements.SKU.id" title="Link to this definition">¶</a></dt>
 <dd><p>The ID of the snowflake.</p>
 </dd></dl>
 
@@ -378,13 +441,13 @@
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>state</strong> (<a class="reference internal" href="http.html#discord_http.http.DiscordAPI" title="discord_http.http.DiscordAPI"><em>DiscordAPI</em></a>)</p></li>
-<li><p><strong>data</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.14)"><em>dict</em></a>)</p></li>
+<li><p><strong>data</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#dict" title="(in Python v3.14)"><em>dict</em></a>)</p></li>
 </ul>
 </dd>
 </dl>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="discord_http.entitlements.Entitlements.deleted">
-<span class="sig-name descname"><span class="pre">deleted</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><span class="pre">bool</span></a></span><a class="headerlink" href="#discord_http.entitlements.Entitlements.deleted" title="Link to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">deleted</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#bool" title="(in Python v3.14)"><span class="pre">bool</span></a></span><a class="headerlink" href="#discord_http.entitlements.Entitlements.deleted" title="Link to this definition">¶</a></dt>
 <dd><p>Whether the entitlement is deleted or not.</p>
 </dd></dl>
 
@@ -395,36 +458,95 @@
 </dd></dl>
 
 <dl class="py attribute">
-<dt class="sig sig-object py" id="discord_http.entitlements.Entitlements.user">
-<span class="sig-name descname"><span class="pre">user</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="user.html#discord_http.user.PartialUser" title="discord_http.user.PartialUser"><span class="pre">PartialUser</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span><a class="headerlink" href="#discord_http.entitlements.Entitlements.user" title="Link to this definition">¶</a></dt>
-<dd><p>The user that owns the entitlement, if the owner type is user.</p>
+<dt class="sig sig-object py" id="discord_http.entitlements.Entitlements.user_id">
+<span class="sig-name descname"><span class="pre">user_id</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#int" title="(in Python v3.14)"><span class="pre">int</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/builtins/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span><a class="headerlink" href="#discord_http.entitlements.Entitlements.user_id" title="Link to this definition">¶</a></dt>
+<dd><p>The ID of the user that owns the entitlement, if the owner type is user.</p>
 </dd></dl>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="discord_http.entitlements.Entitlements.guild_id">
-<span class="sig-name descname"><span class="pre">guild_id</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><span class="pre">int</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span><a class="headerlink" href="#discord_http.entitlements.Entitlements.guild_id" title="Link to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">guild_id</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#int" title="(in Python v3.14)"><span class="pre">int</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/builtins/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span><a class="headerlink" href="#discord_http.entitlements.Entitlements.guild_id" title="Link to this definition">¶</a></dt>
 <dd><p>The guild ID that owns the entitlement, if the owner type is guild.</p>
 </dd></dl>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="discord_http.entitlements.Entitlements.subscription_id">
-<span class="sig-name descname"><span class="pre">subscription_id</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><span class="pre">int</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span><a class="headerlink" href="#discord_http.entitlements.Entitlements.subscription_id" title="Link to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">subscription_id</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#int" title="(in Python v3.14)"><span class="pre">int</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/builtins/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span><a class="headerlink" href="#discord_http.entitlements.Entitlements.subscription_id" title="Link to this definition">¶</a></dt>
 <dd><p>The subscription ID that the entitlement belongs to, if any.</p>
 </dd></dl>
 
 <dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.entitlements.Entitlements.application_id">
+<span class="sig-name descname"><span class="pre">application_id</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#int" title="(in Python v3.14)"><span class="pre">int</span></a></span><a class="headerlink" href="#discord_http.entitlements.Entitlements.application_id" title="Link to this definition">¶</a></dt>
+<dd><p>The ID of the application that owns the entitlement.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.entitlements.Entitlements.sku_id">
+<span class="sig-name descname"><span class="pre">sku_id</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#int" title="(in Python v3.14)"><span class="pre">int</span></a></span><a class="headerlink" href="#discord_http.entitlements.Entitlements.sku_id" title="Link to this definition">¶</a></dt>
+<dd><p>The ID of the SKU that the entitlement belongs to.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.entitlements.Entitlements.starts_at">
+<span class="sig-name descname"><span class="pre">starts_at</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/datetime.html#datetime.datetime" title="(in Python v3.14)"><span class="pre">datetime</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/builtins/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span><a class="headerlink" href="#discord_http.entitlements.Entitlements.starts_at" title="Link to this definition">¶</a></dt>
+<dd><p>The time the entitlement starts at, if any.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.entitlements.Entitlements.ends_at">
+<span class="sig-name descname"><span class="pre">ends_at</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/datetime.html#datetime.datetime" title="(in Python v3.14)"><span class="pre">datetime</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/builtins/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span><a class="headerlink" href="#discord_http.entitlements.Entitlements.ends_at" title="Link to this definition">¶</a></dt>
+<dd><p>The time the entitlement ends at, if any.</p>
+</dd></dl>
+
+<dl class="py property">
 <dt class="sig sig-object py" id="discord_http.entitlements.Entitlements.application">
-<span class="sig-name descname"><span class="pre">application</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="user.html#discord_http.user.PartialUser" title="discord_http.user.PartialUser"><span class="pre">PartialUser</span></a></span><a class="headerlink" href="#discord_http.entitlements.Entitlements.application" title="Link to this definition">¶</a></dt>
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">application</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="user.html#discord_http.user.PartialUser" title="discord_http.user.PartialUser"><span class="pre">PartialUser</span></a></span><a class="headerlink" href="#discord_http.entitlements.Entitlements.application" title="Link to this definition">¶</a></dt>
 <dd><p>The application that owns the entitlement.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="discord_http.entitlements.Entitlements.sku">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">sku</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="#discord_http.entitlements.PartialSKU" title="discord_http.entitlements.PartialSKU"><span class="pre">PartialSKU</span></a></span><a class="headerlink" href="#discord_http.entitlements.Entitlements.sku" title="Link to this definition">¶</a></dt>
+<dd><p>The SKU that the entitlement belongs to.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="discord_http.entitlements.Entitlements.user">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">user</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="user.html#discord_http.user.PartialUser" title="discord_http.user.PartialUser"><span class="pre">PartialUser</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/builtins/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span><a class="headerlink" href="#discord_http.entitlements.Entitlements.user" title="Link to this definition">¶</a></dt>
+<dd><p>The user that owns the entitlement, if the owner type is user.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="discord_http.entitlements.Entitlements.guild">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">guild</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="guild.html#discord_http.guild.Guild" title="discord_http.guild.Guild"><span class="pre">Guild</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="guild.html#discord_http.guild.PartialGuild" title="discord_http.guild.PartialGuild"><span class="pre">PartialGuild</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/builtins/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span><a class="headerlink" href="#discord_http.entitlements.Entitlements.guild" title="Link to this definition">¶</a></dt>
+<dd><p>The guild the entitlement is in.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="discord_http.entitlements.Entitlements.subscription">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">subscription</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="#discord_http.entitlements.PartialSubscription" title="discord_http.entitlements.PartialSubscription"><span class="pre">PartialSubscription</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/builtins/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span><a class="headerlink" href="#discord_http.entitlements.Entitlements.subscription" title="Link to this definition">¶</a></dt>
+<dd><p>The partial subscription this entitlement belongs to, if any.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="discord_http.entitlements.Entitlements.is_consumed">
+<span class="sig-name descname"><span class="pre">is_consumed</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#bool" title="(in Python v3.14)"><span class="pre">bool</span></a></span></span><a class="headerlink" href="#discord_http.entitlements.Entitlements.is_consumed" title="Link to this definition">¶</a></dt>
+<dd><p>Returns whether the entitlement is consumed or not.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#bool" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></a></span></p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="discord_http.entitlements.Entitlements.consume">
-<span class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">consume</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span></span><a class="headerlink" href="#discord_http.entitlements.Entitlements.consume" title="Link to this definition">¶</a></dt>
+<span class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">consume</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/builtins/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span></span><a class="headerlink" href="#discord_http.entitlements.Entitlements.consume" title="Link to this definition">¶</a></dt>
 <dd><p>Mark the entitlement as consumed.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></span></p>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/builtins/constants.html#None" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></span></p>
 </dd>
 </dl>
 </dd></dl>
@@ -437,11 +559,11 @@
 
 <dl class="py method">
 <dt class="sig sig-object py" id="discord_http.entitlements.Entitlements.delete_test_entitlement">
-<span class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">delete_test_entitlement</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span></span><a class="headerlink" href="#discord_http.entitlements.Entitlements.delete_test_entitlement" title="Link to this definition">¶</a></dt>
+<span class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">delete_test_entitlement</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/builtins/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span></span><a class="headerlink" href="#discord_http.entitlements.Entitlements.delete_test_entitlement" title="Link to this definition">¶</a></dt>
 <dd><p>Deletes a test entitlement.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></span></p>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/builtins/constants.html#None" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></span></p>
 </dd>
 </dl>
 </dd></dl>
@@ -459,43 +581,8 @@
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="discord_http.entitlements.Entitlements.id">
-<span class="sig-name descname"><span class="pre">id</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><span class="pre">int</span></a></span><a class="headerlink" href="#discord_http.entitlements.Entitlements.id" title="Link to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">id</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#int" title="(in Python v3.14)"><span class="pre">int</span></a></span><a class="headerlink" href="#discord_http.entitlements.Entitlements.id" title="Link to this definition">¶</a></dt>
 <dd><p>The ID of the snowflake.</p>
-</dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="discord_http.entitlements.Entitlements.sku">
-<span class="sig-name descname"><span class="pre">sku</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="#discord_http.entitlements.PartialSKU" title="discord_http.entitlements.PartialSKU"><span class="pre">PartialSKU</span></a></span><a class="headerlink" href="#discord_http.entitlements.Entitlements.sku" title="Link to this definition">¶</a></dt>
-<dd><p>The SKU that the entitlement belongs to.</p>
-</dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="discord_http.entitlements.Entitlements.starts_at">
-<span class="sig-name descname"><span class="pre">starts_at</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/datetime.html#datetime.datetime" title="(in Python v3.14)"><span class="pre">datetime</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span><a class="headerlink" href="#discord_http.entitlements.Entitlements.starts_at" title="Link to this definition">¶</a></dt>
-<dd><p>The time the entitlement starts at, if any.</p>
-</dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="discord_http.entitlements.Entitlements.ends_at">
-<span class="sig-name descname"><span class="pre">ends_at</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/datetime.html#datetime.datetime" title="(in Python v3.14)"><span class="pre">datetime</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span><a class="headerlink" href="#discord_http.entitlements.Entitlements.ends_at" title="Link to this definition">¶</a></dt>
-<dd><p>The time the entitlement ends at, if any.</p>
-</dd></dl>
-
-<dl class="py property">
-<dt class="sig sig-object py" id="discord_http.entitlements.Entitlements.guild">
-<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">guild</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="guild.html#discord_http.guild.Guild" title="discord_http.guild.Guild"><span class="pre">Guild</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="guild.html#discord_http.guild.PartialGuild" title="discord_http.guild.PartialGuild"><span class="pre">PartialGuild</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span><a class="headerlink" href="#discord_http.entitlements.Entitlements.guild" title="Link to this definition">¶</a></dt>
-<dd><p>The guild the entitlement is in.</p>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="discord_http.entitlements.Entitlements.is_consumed">
-<span class="sig-name descname"><span class="pre">is_consumed</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><span class="pre">bool</span></a></span></span><a class="headerlink" href="#discord_http.entitlements.Entitlements.is_consumed" title="Link to this definition">¶</a></dt>
-<dd><p>Returns whether the entitlement is consumed or not.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></a></span></p>
-</dd>
-</dl>
 </dd></dl>
 
 </dd></dl>
@@ -509,7 +596,7 @@
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>state</strong> (<a class="reference internal" href="http.html#discord_http.http.DiscordAPI" title="discord_http.http.DiscordAPI"><em>DiscordAPI</em></a>)</p></li>
-<li><p><strong>id</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><em>int</em></a>)</p></li>
+<li><p><strong>id</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/functions.html#int" title="(in Python v3.14)"><em>int</em></a>)</p></li>
 </ul>
 </dd>
 </dl>
@@ -526,22 +613,22 @@
 
 <dl class="py method">
 <dt class="sig sig-object py" id="discord_http.entitlements.PartialEntitlements.consume">
-<span class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">consume</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span></span><a class="headerlink" href="#discord_http.entitlements.PartialEntitlements.consume" title="Link to this definition">¶</a></dt>
+<span class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">consume</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/builtins/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span></span><a class="headerlink" href="#discord_http.entitlements.PartialEntitlements.consume" title="Link to this definition">¶</a></dt>
 <dd><p>Mark the entitlement as consumed.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></span></p>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/builtins/constants.html#None" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></span></p>
 </dd>
 </dl>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="discord_http.entitlements.PartialEntitlements.delete_test_entitlement">
-<span class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">delete_test_entitlement</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span></span><a class="headerlink" href="#discord_http.entitlements.PartialEntitlements.delete_test_entitlement" title="Link to this definition">¶</a></dt>
+<span class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">delete_test_entitlement</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/builtins/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span></span><a class="headerlink" href="#discord_http.entitlements.PartialEntitlements.delete_test_entitlement" title="Link to this definition">¶</a></dt>
 <dd><p>Deletes a test entitlement.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></span></p>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/builtins/constants.html#None" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></span></p>
 </dd>
 </dl>
 </dd></dl>
@@ -554,7 +641,7 @@
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="discord_http.entitlements.PartialEntitlements.id">
-<span class="sig-name descname"><span class="pre">id</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><span class="pre">int</span></a></span><a class="headerlink" href="#discord_http.entitlements.PartialEntitlements.id" title="Link to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">id</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#int" title="(in Python v3.14)"><span class="pre">int</span></a></span><a class="headerlink" href="#discord_http.entitlements.PartialEntitlements.id" title="Link to this definition">¶</a></dt>
 <dd><p>The ID of the snowflake.</p>
 </dd></dl>
 
@@ -569,7 +656,7 @@
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>state</strong> (<a class="reference internal" href="http.html#discord_http.http.DiscordAPI" title="discord_http.http.DiscordAPI"><em>DiscordAPI</em></a>)</p></li>
-<li><p><strong>id</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><em>int</em></a>)</p></li>
+<li><p><strong>id</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/functions.html#int" title="(in Python v3.14)"><em>int</em></a>)</p></li>
 </ul>
 </dd>
 </dl>
@@ -580,8 +667,8 @@
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>owner_id</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference internal" href="object.html#discord_http.object.Snowflake" title="discord_http.object.Snowflake"><code class="xref py py-class docutils literal notranslate"><span class="pre">Snowflake</span></code></a> | <a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a></span>) – The ID of the owner, can be GuildID or UserID.</p></li>
-<li><p><strong>owner_type</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference internal" href="enums.html#discord_http.enums.EntitlementOwnerType" title="discord_http.enums.EntitlementOwnerType"><code class="xref py py-class docutils literal notranslate"><span class="pre">EntitlementOwnerType</span></code></a> | <a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a></span>) – The type of the owner.</p></li>
+<li><p><strong>owner_id</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference internal" href="object.html#discord_http.object.Snowflake" title="discord_http.object.Snowflake"><code class="xref py py-class docutils literal notranslate"><span class="pre">Snowflake</span></code></a> | <a class="reference external" href="https://docs.python.org/3/builtins/functions.html#int" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a></span>) – The ID of the owner, can be GuildID or UserID.</p></li>
+<li><p><strong>owner_type</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference internal" href="enums.html#discord_http.enums.EntitlementOwnerType" title="discord_http.enums.EntitlementOwnerType"><code class="xref py py-class docutils literal notranslate"><span class="pre">EntitlementOwnerType</span></code></a> | <a class="reference external" href="https://docs.python.org/3/builtins/functions.html#int" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a></span>) – The type of the owner.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Return type<span class="colon">:</span></dt>
@@ -589,6 +676,63 @@
 </dd>
 <dt class="field-odd">Returns<span class="colon">:</span></dt>
 <dd class="field-odd"><p>The created entitlement.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="discord_http.entitlements.PartialSKU.fetch_subscriptions">
+<span class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">fetch_subscriptions</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">user_id</span></span></em>, <em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">before</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">after</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">limit</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">50</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#list" title="(in Python v3.14)"><span class="pre">list</span></a><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#discord_http.entitlements.Subscription" title="discord_http.entitlements.Subscription"><span class="pre">Subscription</span></a><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#discord_http.entitlements.PartialSKU.fetch_subscriptions" title="Link to this definition">¶</a></dt>
+<dd><p>Fetch the subscriptions for this SKU.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>user_id</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference internal" href="object.html#discord_http.object.Snowflake" title="discord_http.object.Snowflake"><code class="xref py py-class docutils literal notranslate"><span class="pre">Snowflake</span></code></a> | <a class="reference external" href="https://docs.python.org/3/builtins/functions.html#int" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a></span>) – The user ID to fetch subscriptions for. Required for bot-token requests
+(only optional when using an OAuth2 access token, which this library does not support).</p></li>
+<li><p><strong>before</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference internal" href="object.html#discord_http.object.Snowflake" title="discord_http.object.Snowflake"><code class="xref py py-class docutils literal notranslate"><span class="pre">Snowflake</span></code></a> | <a class="reference external" href="https://docs.python.org/3/builtins/functions.html#int" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a> | <a class="reference external" href="https://docs.python.org/3/builtins/constants.html#None" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></span>) – Consider only subscriptions before given ID</p></li>
+<li><p><strong>after</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference internal" href="object.html#discord_http.object.Snowflake" title="discord_http.object.Snowflake"><code class="xref py py-class docutils literal notranslate"><span class="pre">Snowflake</span></code></a> | <a class="reference external" href="https://docs.python.org/3/builtins/functions.html#int" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a> | <a class="reference external" href="https://docs.python.org/3/builtins/constants.html#None" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></span>) – Consider only subscriptions after given ID</p></li>
+<li><p><strong>limit</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#int" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a></span>) – The maximum amount of subscriptions to fetch (1-100)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#list" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">list</span></code></a>[<a class="reference internal" href="#discord_http.entitlements.Subscription" title="discord_http.entitlements.Subscription"><code class="xref py py-class docutils literal notranslate"><span class="pre">Subscription</span></code></a>]</span></p>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The subscriptions for this SKU</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="discord_http.entitlements.PartialSKU.fetch_subscription">
+<span class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">fetch_subscription</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">subscription_id</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#discord_http.entitlements.Subscription" title="discord_http.entitlements.Subscription"><span class="pre">Subscription</span></a></span></span><a class="headerlink" href="#discord_http.entitlements.PartialSKU.fetch_subscription" title="Link to this definition">¶</a></dt>
+<dd><p>Fetch a specific subscription for this SKU.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>subscription_id</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference internal" href="object.html#discord_http.object.Snowflake" title="discord_http.object.Snowflake"><code class="xref py py-class docutils literal notranslate"><span class="pre">Snowflake</span></code></a> | <a class="reference external" href="https://docs.python.org/3/builtins/functions.html#int" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a></span>) – The ID of the subscription to fetch</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><a class="reference internal" href="#discord_http.entitlements.Subscription" title="discord_http.entitlements.Subscription"><code class="xref py py-class docutils literal notranslate"><span class="pre">Subscription</span></code></a></span></p>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The subscription</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="discord_http.entitlements.PartialSKU.get_partial_subscription">
+<span class="sig-name descname"><span class="pre">get_partial_subscription</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">subscription_id</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#discord_http.entitlements.PartialSubscription" title="discord_http.entitlements.PartialSubscription"><span class="pre">PartialSubscription</span></a></span></span><a class="headerlink" href="#discord_http.entitlements.PartialSKU.get_partial_subscription" title="Link to this definition">¶</a></dt>
+<dd><p>Creates a partial subscription object under this SKU, without fetching it.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>subscription_id</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference internal" href="object.html#discord_http.object.Snowflake" title="discord_http.object.Snowflake"><code class="xref py py-class docutils literal notranslate"><span class="pre">Snowflake</span></code></a> | <a class="reference external" href="https://docs.python.org/3/builtins/functions.html#int" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a></span>) – The ID of the subscription</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><a class="reference internal" href="#discord_http.entitlements.PartialSubscription" title="discord_http.entitlements.PartialSubscription"><code class="xref py py-class docutils literal notranslate"><span class="pre">PartialSubscription</span></code></a></span></p>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The partial subscription object</p>
 </dd>
 </dl>
 </dd></dl>
@@ -601,8 +745,174 @@
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="discord_http.entitlements.PartialSKU.id">
-<span class="sig-name descname"><span class="pre">id</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><span class="pre">int</span></a></span><a class="headerlink" href="#discord_http.entitlements.PartialSKU.id" title="Link to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">id</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#int" title="(in Python v3.14)"><span class="pre">int</span></a></span><a class="headerlink" href="#discord_http.entitlements.PartialSKU.id" title="Link to this definition">¶</a></dt>
 <dd><p>The ID of the snowflake.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="discord_http.entitlements.PartialSubscription">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">discord_http.entitlements.</span></span><span class="sig-name descname"><span class="pre">PartialSubscription</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">state</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sku_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">id</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#discord_http.entitlements.PartialSubscription" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="object.html#discord_http.object.PartialBase" title="discord_http.object.PartialBase"><code class="xref py py-class docutils literal notranslate"><span class="pre">PartialBase</span></code></a></p>
+<p>Represents a partial subscription object.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>state</strong> (<a class="reference internal" href="http.html#discord_http.http.DiscordAPI" title="discord_http.http.DiscordAPI"><em>DiscordAPI</em></a>)</p></li>
+<li><p><strong>sku_id</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/functions.html#int" title="(in Python v3.14)"><em>int</em></a>)</p></li>
+<li><p><strong>id</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/functions.html#int" title="(in Python v3.14)"><em>int</em></a>)</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py property">
+<dt class="sig sig-object py" id="discord_http.entitlements.PartialSubscription.sku">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">sku</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="#discord_http.entitlements.PartialSKU" title="discord_http.entitlements.PartialSKU"><span class="pre">PartialSKU</span></a></span><a class="headerlink" href="#discord_http.entitlements.PartialSubscription.sku" title="Link to this definition">¶</a></dt>
+<dd><p>The SKU this subscription is being looked up through.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="discord_http.entitlements.PartialSubscription.fetch">
+<span class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">fetch</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#discord_http.entitlements.Subscription" title="discord_http.entitlements.Subscription"><span class="pre">Subscription</span></a></span></span><a class="headerlink" href="#discord_http.entitlements.PartialSubscription.fetch" title="Link to this definition">¶</a></dt>
+<dd><p>Fetches the subscription.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><a class="reference internal" href="#discord_http.entitlements.Subscription" title="discord_http.entitlements.Subscription"><code class="xref py py-class docutils literal notranslate"><span class="pre">Subscription</span></code></a></span></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="discord_http.entitlements.PartialSubscription.created_at">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">created_at</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/datetime.html#datetime.datetime" title="(in Python v3.14)"><span class="pre">datetime</span></a></span><a class="headerlink" href="#discord_http.entitlements.PartialSubscription.created_at" title="Link to this definition">¶</a></dt>
+<dd><p>The datetime of the snowflake.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.entitlements.PartialSubscription.id">
+<span class="sig-name descname"><span class="pre">id</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#int" title="(in Python v3.14)"><span class="pre">int</span></a></span><a class="headerlink" href="#discord_http.entitlements.PartialSubscription.id" title="Link to this definition">¶</a></dt>
+<dd><p>The ID of the snowflake.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="discord_http.entitlements.Subscription">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">discord_http.entitlements.</span></span><span class="sig-name descname"><span class="pre">Subscription</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">state</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sku_id</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#discord_http.entitlements.Subscription" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="object.html#discord_http.object.PartialBase" title="discord_http.object.PartialBase"><code class="xref py py-class docutils literal notranslate"><span class="pre">PartialBase</span></code></a></p>
+<p>Represents a subscription object.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>state</strong> (<a class="reference internal" href="http.html#discord_http.http.DiscordAPI" title="discord_http.http.DiscordAPI"><em>DiscordAPI</em></a>)</p></li>
+<li><p><strong>data</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#dict" title="(in Python v3.14)"><em>dict</em></a>)</p></li>
+<li><p><strong>sku_id</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/functions.html#int" title="(in Python v3.14)"><em>int</em></a><em> | </em><em>None</em>)</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.entitlements.Subscription.user_id">
+<span class="sig-name descname"><span class="pre">user_id</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#int" title="(in Python v3.14)"><span class="pre">int</span></a></span><a class="headerlink" href="#discord_http.entitlements.Subscription.user_id" title="Link to this definition">¶</a></dt>
+<dd><p>The ID of the user subscribed to the SKU(s).</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.entitlements.Subscription.sku_ids">
+<span class="sig-name descname"><span class="pre">sku_ids</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#list" title="(in Python v3.14)"><span class="pre">list</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#int" title="(in Python v3.14)"><span class="pre">int</span></a><span class="p"><span class="pre">]</span></span></span><a class="headerlink" href="#discord_http.entitlements.Subscription.sku_ids" title="Link to this definition">¶</a></dt>
+<dd><p>The SKUs the user is subscribed to.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="discord_http.entitlements.Subscription.created_at">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">created_at</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/datetime.html#datetime.datetime" title="(in Python v3.14)"><span class="pre">datetime</span></a></span><a class="headerlink" href="#discord_http.entitlements.Subscription.created_at" title="Link to this definition">¶</a></dt>
+<dd><p>The datetime of the snowflake.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.entitlements.Subscription.id">
+<span class="sig-name descname"><span class="pre">id</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#int" title="(in Python v3.14)"><span class="pre">int</span></a></span><a class="headerlink" href="#discord_http.entitlements.Subscription.id" title="Link to this definition">¶</a></dt>
+<dd><p>The ID of the snowflake.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.entitlements.Subscription.entitlement_ids">
+<span class="sig-name descname"><span class="pre">entitlement_ids</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#list" title="(in Python v3.14)"><span class="pre">list</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#int" title="(in Python v3.14)"><span class="pre">int</span></a><span class="p"><span class="pre">]</span></span></span><a class="headerlink" href="#discord_http.entitlements.Subscription.entitlement_ids" title="Link to this definition">¶</a></dt>
+<dd><p>The entitlements granted for this subscription.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.entitlements.Subscription.renewal_sku_ids">
+<span class="sig-name descname"><span class="pre">renewal_sku_ids</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#list" title="(in Python v3.14)"><span class="pre">list</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#int" title="(in Python v3.14)"><span class="pre">int</span></a><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/builtins/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span><a class="headerlink" href="#discord_http.entitlements.Subscription.renewal_sku_ids" title="Link to this definition">¶</a></dt>
+<dd><p>The SKUs the user will be subscribed to at renewal, if any.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.entitlements.Subscription.current_period_start">
+<span class="sig-name descname"><span class="pre">current_period_start</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/datetime.html#datetime.datetime" title="(in Python v3.14)"><span class="pre">datetime</span></a></span><a class="headerlink" href="#discord_http.entitlements.Subscription.current_period_start" title="Link to this definition">¶</a></dt>
+<dd><p>The start of the current subscription period.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.entitlements.Subscription.current_period_end">
+<span class="sig-name descname"><span class="pre">current_period_end</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/datetime.html#datetime.datetime" title="(in Python v3.14)"><span class="pre">datetime</span></a></span><a class="headerlink" href="#discord_http.entitlements.Subscription.current_period_end" title="Link to this definition">¶</a></dt>
+<dd><p>The end of the current subscription period.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.entitlements.Subscription.canceled_at">
+<span class="sig-name descname"><span class="pre">canceled_at</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/datetime.html#datetime.datetime" title="(in Python v3.14)"><span class="pre">datetime</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/builtins/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span><a class="headerlink" href="#discord_http.entitlements.Subscription.canceled_at" title="Link to this definition">¶</a></dt>
+<dd><p>The time the subscription was canceled, if any.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.entitlements.Subscription.country">
+<span class="sig-name descname"><span class="pre">country</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/builtins/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span><a class="headerlink" href="#discord_http.entitlements.Subscription.country" title="Link to this definition">¶</a></dt>
+<dd><p>The ISO 3166-1 alpha-2 country code of the payment source, if any.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="discord_http.entitlements.Subscription.skus">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">skus</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#list" title="(in Python v3.14)"><span class="pre">list</span></a><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#discord_http.entitlements.PartialSKU" title="discord_http.entitlements.PartialSKU"><span class="pre">PartialSKU</span></a><span class="p"><span class="pre">]</span></span></span><a class="headerlink" href="#discord_http.entitlements.Subscription.skus" title="Link to this definition">¶</a></dt>
+<dd><p>The partial SKU objects this subscription applies to.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="discord_http.entitlements.Subscription.renewal_skus">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">renewal_skus</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#list" title="(in Python v3.14)"><span class="pre">list</span></a><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#discord_http.entitlements.PartialSKU" title="discord_http.entitlements.PartialSKU"><span class="pre">PartialSKU</span></a><span class="p"><span class="pre">]</span></span></span><a class="headerlink" href="#discord_http.entitlements.Subscription.renewal_skus" title="Link to this definition">¶</a></dt>
+<dd><p>The partial SKU objects the user will be subscribed to at renewal, if any.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="discord_http.entitlements.Subscription.entitlements">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">entitlements</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#list" title="(in Python v3.14)"><span class="pre">list</span></a><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#discord_http.entitlements.PartialEntitlements" title="discord_http.entitlements.PartialEntitlements"><span class="pre">PartialEntitlements</span></a><span class="p"><span class="pre">]</span></span></span><a class="headerlink" href="#discord_http.entitlements.Subscription.entitlements" title="Link to this definition">¶</a></dt>
+<dd><p>The partial entitlement objects granted for this subscription.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="discord_http.entitlements.Subscription.status">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">status</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="enums.html#discord_http.enums.SubscriptionStatus" title="discord_http.enums.SubscriptionStatus"><span class="pre">SubscriptionStatus</span></a></span><a class="headerlink" href="#discord_http.entitlements.Subscription.status" title="Link to this definition">¶</a></dt>
+<dd><p>The status of the subscription.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="discord_http.entitlements.Subscription.user">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">user</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="user.html#discord_http.user.PartialUser" title="discord_http.user.PartialUser"><span class="pre">PartialUser</span></a></span><a class="headerlink" href="#discord_http.entitlements.Subscription.user" title="Link to this definition">¶</a></dt>
+<dd><p>The user subscribed to the SKU(s).</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="discord_http.entitlements.Subscription.fetch">
+<span class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">fetch</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#discord_http.entitlements.Subscription" title="discord_http.entitlements.Subscription"><span class="pre">Subscription</span></a></span></span><a class="headerlink" href="#discord_http.entitlements.Subscription.fetch" title="Link to this definition">¶</a></dt>
+<dd><p>Fetches the latest version of this subscription.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Raises<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/builtins/exceptions.html#ValueError" title="(in Python v3.14)"><strong>ValueError</strong></a> – If no SKU is known to route the request through (should not happen for a
+    subscription that came from the API, which always includes <cite>sku_ids</cite>)</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><a class="reference internal" href="#discord_http.entitlements.Subscription" title="discord_http.entitlements.Subscription"><code class="xref py py-class docutils literal notranslate"><span class="pre">Subscription</span></code></a></span></p>
+</dd>
+</dl>
 </dd></dl>
 
 </dd></dl>
@@ -670,31 +980,39 @@
 <li><a class="reference internal" href="#discord_http.entitlements.SKU"><code class="docutils literal notranslate"><span class="pre">SKU</span></code></a><ul>
 <li><a class="reference internal" href="#discord_http.entitlements.SKU.name"><code class="docutils literal notranslate"><span class="pre">SKU.name</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.entitlements.SKU.slug"><code class="docutils literal notranslate"><span class="pre">SKU.slug</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.entitlements.SKU.application_id"><code class="docutils literal notranslate"><span class="pre">SKU.application_id</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.entitlements.SKU.application"><code class="docutils literal notranslate"><span class="pre">SKU.application</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.entitlements.SKU.type"><code class="docutils literal notranslate"><span class="pre">SKU.type</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.entitlements.SKU.flags"><code class="docutils literal notranslate"><span class="pre">SKU.flags</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.entitlements.SKU.create_test_entitlement"><code class="docutils literal notranslate"><span class="pre">SKU.create_test_entitlement()</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.entitlements.SKU.created_at"><code class="docutils literal notranslate"><span class="pre">SKU.created_at</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.entitlements.SKU.fetch_subscription"><code class="docutils literal notranslate"><span class="pre">SKU.fetch_subscription()</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.entitlements.SKU.fetch_subscriptions"><code class="docutils literal notranslate"><span class="pre">SKU.fetch_subscriptions()</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.entitlements.SKU.get_partial_subscription"><code class="docutils literal notranslate"><span class="pre">SKU.get_partial_subscription()</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.entitlements.SKU.id"><code class="docutils literal notranslate"><span class="pre">SKU.id</span></code></a></li>
 </ul>
 </li>
 <li><a class="reference internal" href="#discord_http.entitlements.Entitlements"><code class="docutils literal notranslate"><span class="pre">Entitlements</span></code></a><ul>
 <li><a class="reference internal" href="#discord_http.entitlements.Entitlements.deleted"><code class="docutils literal notranslate"><span class="pre">Entitlements.deleted</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.entitlements.Entitlements.type"><code class="docutils literal notranslate"><span class="pre">Entitlements.type</span></code></a></li>
-<li><a class="reference internal" href="#discord_http.entitlements.Entitlements.user"><code class="docutils literal notranslate"><span class="pre">Entitlements.user</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.entitlements.Entitlements.user_id"><code class="docutils literal notranslate"><span class="pre">Entitlements.user_id</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.entitlements.Entitlements.guild_id"><code class="docutils literal notranslate"><span class="pre">Entitlements.guild_id</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.entitlements.Entitlements.subscription_id"><code class="docutils literal notranslate"><span class="pre">Entitlements.subscription_id</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.entitlements.Entitlements.application_id"><code class="docutils literal notranslate"><span class="pre">Entitlements.application_id</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.entitlements.Entitlements.sku_id"><code class="docutils literal notranslate"><span class="pre">Entitlements.sku_id</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.entitlements.Entitlements.starts_at"><code class="docutils literal notranslate"><span class="pre">Entitlements.starts_at</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.entitlements.Entitlements.ends_at"><code class="docutils literal notranslate"><span class="pre">Entitlements.ends_at</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.entitlements.Entitlements.application"><code class="docutils literal notranslate"><span class="pre">Entitlements.application</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.entitlements.Entitlements.sku"><code class="docutils literal notranslate"><span class="pre">Entitlements.sku</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.entitlements.Entitlements.user"><code class="docutils literal notranslate"><span class="pre">Entitlements.user</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.entitlements.Entitlements.guild"><code class="docutils literal notranslate"><span class="pre">Entitlements.guild</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.entitlements.Entitlements.subscription"><code class="docutils literal notranslate"><span class="pre">Entitlements.subscription</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.entitlements.Entitlements.is_consumed"><code class="docutils literal notranslate"><span class="pre">Entitlements.is_consumed()</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.entitlements.Entitlements.consume"><code class="docutils literal notranslate"><span class="pre">Entitlements.consume()</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.entitlements.Entitlements.created_at"><code class="docutils literal notranslate"><span class="pre">Entitlements.created_at</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.entitlements.Entitlements.delete_test_entitlement"><code class="docutils literal notranslate"><span class="pre">Entitlements.delete_test_entitlement()</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.entitlements.Entitlements.fetch"><code class="docutils literal notranslate"><span class="pre">Entitlements.fetch()</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.entitlements.Entitlements.id"><code class="docutils literal notranslate"><span class="pre">Entitlements.id</span></code></a></li>
-<li><a class="reference internal" href="#discord_http.entitlements.Entitlements.sku"><code class="docutils literal notranslate"><span class="pre">Entitlements.sku</span></code></a></li>
-<li><a class="reference internal" href="#discord_http.entitlements.Entitlements.starts_at"><code class="docutils literal notranslate"><span class="pre">Entitlements.starts_at</span></code></a></li>
-<li><a class="reference internal" href="#discord_http.entitlements.Entitlements.ends_at"><code class="docutils literal notranslate"><span class="pre">Entitlements.ends_at</span></code></a></li>
-<li><a class="reference internal" href="#discord_http.entitlements.Entitlements.guild"><code class="docutils literal notranslate"><span class="pre">Entitlements.guild</span></code></a></li>
-<li><a class="reference internal" href="#discord_http.entitlements.Entitlements.is_consumed"><code class="docutils literal notranslate"><span class="pre">Entitlements.is_consumed()</span></code></a></li>
 </ul>
 </li>
 <li><a class="reference internal" href="#discord_http.entitlements.PartialEntitlements"><code class="docutils literal notranslate"><span class="pre">PartialEntitlements</span></code></a><ul>
@@ -707,8 +1025,37 @@
 </li>
 <li><a class="reference internal" href="#discord_http.entitlements.PartialSKU"><code class="docutils literal notranslate"><span class="pre">PartialSKU</span></code></a><ul>
 <li><a class="reference internal" href="#discord_http.entitlements.PartialSKU.create_test_entitlement"><code class="docutils literal notranslate"><span class="pre">PartialSKU.create_test_entitlement()</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.entitlements.PartialSKU.fetch_subscriptions"><code class="docutils literal notranslate"><span class="pre">PartialSKU.fetch_subscriptions()</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.entitlements.PartialSKU.fetch_subscription"><code class="docutils literal notranslate"><span class="pre">PartialSKU.fetch_subscription()</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.entitlements.PartialSKU.get_partial_subscription"><code class="docutils literal notranslate"><span class="pre">PartialSKU.get_partial_subscription()</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.entitlements.PartialSKU.created_at"><code class="docutils literal notranslate"><span class="pre">PartialSKU.created_at</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.entitlements.PartialSKU.id"><code class="docutils literal notranslate"><span class="pre">PartialSKU.id</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#discord_http.entitlements.PartialSubscription"><code class="docutils literal notranslate"><span class="pre">PartialSubscription</span></code></a><ul>
+<li><a class="reference internal" href="#discord_http.entitlements.PartialSubscription.sku"><code class="docutils literal notranslate"><span class="pre">PartialSubscription.sku</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.entitlements.PartialSubscription.fetch"><code class="docutils literal notranslate"><span class="pre">PartialSubscription.fetch()</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.entitlements.PartialSubscription.created_at"><code class="docutils literal notranslate"><span class="pre">PartialSubscription.created_at</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.entitlements.PartialSubscription.id"><code class="docutils literal notranslate"><span class="pre">PartialSubscription.id</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#discord_http.entitlements.Subscription"><code class="docutils literal notranslate"><span class="pre">Subscription</span></code></a><ul>
+<li><a class="reference internal" href="#discord_http.entitlements.Subscription.user_id"><code class="docutils literal notranslate"><span class="pre">Subscription.user_id</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.entitlements.Subscription.sku_ids"><code class="docutils literal notranslate"><span class="pre">Subscription.sku_ids</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.entitlements.Subscription.created_at"><code class="docutils literal notranslate"><span class="pre">Subscription.created_at</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.entitlements.Subscription.id"><code class="docutils literal notranslate"><span class="pre">Subscription.id</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.entitlements.Subscription.entitlement_ids"><code class="docutils literal notranslate"><span class="pre">Subscription.entitlement_ids</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.entitlements.Subscription.renewal_sku_ids"><code class="docutils literal notranslate"><span class="pre">Subscription.renewal_sku_ids</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.entitlements.Subscription.current_period_start"><code class="docutils literal notranslate"><span class="pre">Subscription.current_period_start</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.entitlements.Subscription.current_period_end"><code class="docutils literal notranslate"><span class="pre">Subscription.current_period_end</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.entitlements.Subscription.canceled_at"><code class="docutils literal notranslate"><span class="pre">Subscription.canceled_at</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.entitlements.Subscription.country"><code class="docutils literal notranslate"><span class="pre">Subscription.country</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.entitlements.Subscription.skus"><code class="docutils literal notranslate"><span class="pre">Subscription.skus</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.entitlements.Subscription.renewal_skus"><code class="docutils literal notranslate"><span class="pre">Subscription.renewal_skus</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.entitlements.Subscription.entitlements"><code class="docutils literal notranslate"><span class="pre">Subscription.entitlements</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.entitlements.Subscription.status"><code class="docutils literal notranslate"><span class="pre">Subscription.status</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.entitlements.Subscription.user"><code class="docutils literal notranslate"><span class="pre">Subscription.user</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.entitlements.Subscription.fetch"><code class="docutils literal notranslate"><span class="pre">Subscription.fetch()</span></code></a></li>
 </ul>
 </li>
 </ul>

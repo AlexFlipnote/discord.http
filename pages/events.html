@@ -299,7 +299,7 @@ The events are divided into categories, and each event has a description of what
 
 <span class="nd">@client</span><span class="o">.</span><span class="n">listener</span><span class="p">()</span>
 <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">on_ready</span><span class="p">(</span><span class="n">user</span><span class="p">:</span> <span class="n">discord_http</span><span class="o">.</span><span class="n">User</span><span class="p">):</span>
-    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Logged in as </span><span class="si">{</span><span class="n">user</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Logged in as </span><span class="si">{</span><span class="n">user</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
 </pre></div>
 </div>
 <p>If you are trying to get listeners inside a cog, you will need to do the following:</p>
@@ -307,7 +307,7 @@ The events are divided into categories, and each event has a description of what
 
 <span class="nd">@commands</span><span class="o">.</span><span class="n">listener</span><span class="p">()</span>
 <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">on_ready</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">user</span><span class="p">:</span> <span class="n">User</span><span class="p">):</span>
-    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Logged in as </span><span class="si">{</span><span class="n">user</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Logged in as </span><span class="si">{</span><span class="n">user</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
 </pre></div>
 </div>
 <section id="connection">
@@ -346,11 +346,93 @@ Using this event will disable the default INFO print given by the library, and i
 In order to use this event, you must have <cite>Client.debug_events</cite> set to True, otherwise it will not be called.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>data</strong> – <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">dict</span></code></a> raw dictionary with the interaction data sent by Discord.</p>
+<dd class="field-odd"><p><strong>data</strong> – <a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#dict" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">dict</span></code></a> raw dictionary with the interaction data sent by Discord.</p>
 </dd>
 </dl>
 </dd></dl>
 
+<dl class="py function">
+<dt class="sig sig-object py">
+<span class="sig-name descname"><span class="pre">async</span> <span class="pre">def</span> <span class="pre">on_interaction_dropped(ctx)</span></span></dt>
+<dd><p>Called whenever an interaction is dropped because it arrived too late to be acknowledged in time.
+Discord requires interactions to be acknowledged within 3 seconds of creation. If it took longer than
+that just to reach the bot, the interaction is already invalid and is dropped without being processed.</p>
+<p>Using this event will disable the default WARN print given by the library, and instead let you decide what it should do.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>ctx</strong> – <code class="xref py py-class docutils literal notranslate"><span class="pre">Context</span></code> The context object for the interaction that was dropped.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+<section id="webhook-events">
+<h2>Webhook Events<a class="headerlink" href="#webhook-events" title="Link to this heading">¶</a></h2>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Webhook Events are a separate feature from Interactions and Gateway events. Discord sends them as plain HTTP
+requests to a <strong>Webhook Events URL</strong>, which is configured independently from your Interactions Endpoint URL.</p>
+<p>To receive them, set <code class="docutils literal notranslate"><span class="pre">webhook_events_path</span></code> when creating your client (it is <code class="docutils literal notranslate"><span class="pre">None</span></code>/disabled by default):</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">discord_http</span><span class="w"> </span><span class="kn">import</span> <span class="n">Client</span>
+
+<span class="n">client</span> <span class="o">=</span> <span class="n">Client</span><span class="p">(</span>
+    <span class="o">...</span><span class="p">,</span>
+    <span class="n">webhook_events_path</span><span class="o">=</span><span class="s2">"/webhook-events"</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+<p>Then, in the Discord Developer Portal, set your application’s <strong>Webhook Events URL</strong> to
+<code class="docutils literal notranslate"><span class="pre">https://yourdomain.com/webhook-events</span></code> (matching the path you chose above). Discord will send a PING to that
+URL to verify it right after you save it.</p>
+<p>Unlike the events in the <em>Gateway events</em> category, these do not require <code class="docutils literal notranslate"><span class="pre">enable_gateway=True</span></code> and work purely
+over HTTP, the same way Interactions do.</p>
+</div>
+<dl class="py function">
+<dt class="sig sig-object py">
+<span class="sig-name descname"><span class="pre">async</span> <span class="pre">def</span> <span class="pre">on_application_authorized(user,</span> <span class="pre">guild,</span> <span class="pre">scopes,</span> <span class="pre">integration_type)</span></span></dt>
+<dd><p>Called whenever a user authorizes (installs) the application.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>scopes</strong> – list[<a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>] the OAuth2 scopes that were authorized.</p></li>
+<li><p><strong>user</strong> – <code class="xref py py-class docutils literal notranslate"><span class="pre">User</span></code> object with information about the user that authorized the application.</p></li>
+<li><p><strong>guild</strong> – <code class="xref py py-class docutils literal notranslate"><span class="pre">Guild</span></code> | <code class="docutils literal notranslate"><span class="pre">None</span></code> object with information about the guild the application was installed to, only if it was installed to a guild.</p></li>
+<li><p><strong>integration_type</strong> – <code class="xref py py-class docutils literal notranslate"><span class="pre">IntegrationType</span></code> | <code class="docutils literal notranslate"><span class="pre">None</span></code> whether the app was installed to a guild or to a user account.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py">
+<span class="sig-name descname"><span class="pre">async</span> <span class="pre">def</span> <span class="pre">on_application_deauthorized(user)</span></span></dt>
+<dd><p>Called whenever a user removes (deauthorizes) the application.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>user</strong> – <code class="xref py py-class docutils literal notranslate"><span class="pre">User</span></code> object with information about the user that deauthorized the application.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py">
+<span class="sig-name descname"><span class="pre">async</span> <span class="pre">def</span> <span class="pre">on_raw_webhook_event(data)</span></span></dt>
+<dd><p>Called whenever any webhook event payload is received from Discord, including ones the library does not turn
+into a named event (e.g. Social SDK-only events, which are not usable by bots).
+In order to use this event, you must have <cite>Client.debug_events</cite> set to True, otherwise it will not be called.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>data</strong> – <a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#dict" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">dict</span></code></a> raw dictionary with the webhook event payload sent by Discord.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p><code class="docutils literal notranslate"><span class="pre">on_entitlement_create</span></code>, <code class="docutils literal notranslate"><span class="pre">on_entitlement_update</span></code> and <code class="docutils literal notranslate"><span class="pre">on_entitlement_delete</span></code> (documented under <em>Global
+events</em>) are also dispatched here whenever Discord delivers them as Webhook Events instead of Gateway events, so
+a single listener works regardless of which transport is configured.</p>
+</div>
 </section>
 <section id="errors">
 <h2>Errors<a class="headerlink" href="#errors" title="Link to this heading">¶</a></h2>
@@ -363,7 +445,7 @@ In order to use this event, you must have <cite>Client.debug_events</cite> set t
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>client</strong> – <code class="xref py py-class docutils literal notranslate"><span class="pre">Client</span></code> The client object.</p></li>
-<li><p><strong>error</strong> – <a class="reference external" href="https://docs.python.org/3/library/exceptions.html#Exception" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Exception</span></code></a> object with the error that occurred.</p></li>
+<li><p><strong>error</strong> – <a class="reference external" href="https://docs.python.org/3/builtins/exceptions.html#Exception" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Exception</span></code></a> object with the error that occurred.</p></li>
 </ul>
 </dd>
 </dl>
@@ -378,7 +460,7 @@ In order to use this event, you must have <cite>Client.debug_events</cite> set t
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>ctx</strong> – <code class="xref py py-class docutils literal notranslate"><span class="pre">Context</span></code> The context object.</p></li>
-<li><p><strong>error</strong> – <a class="reference external" href="https://docs.python.org/3/library/exceptions.html#Exception" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Exception</span></code></a> object with the error that occurred.</p></li>
+<li><p><strong>error</strong> – <a class="reference external" href="https://docs.python.org/3/builtins/exceptions.html#Exception" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Exception</span></code></a> object with the error that occurred.</p></li>
 </ul>
 </dd>
 </dl>
@@ -421,6 +503,88 @@ In order to use this event, you must have <cite>Client.debug_events</cite> set t
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>entitlement</strong> – <code class="xref py py-class docutils literal notranslate"><span class="pre">Entitlements</span></code> object with information about the entitlement.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py">
+<span class="sig-name descname"><span class="pre">async</span> <span class="pre">def</span> <span class="pre">on_entitlement_delete(entitlement):</span></span></dt>
+<dd><p>Called whenever an entitlement is deleted</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>entitlement</strong> – <code class="xref py py-class docutils literal notranslate"><span class="pre">Entitlements</span></code> object with information about the entitlement.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py">
+<span class="sig-name descname"><span class="pre">async</span> <span class="pre">def</span> <span class="pre">on_subscription_create(subscription):</span></span></dt>
+<dd><p>Called whenever a subscription is created</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>subscription</strong> – <code class="xref py py-class docutils literal notranslate"><span class="pre">Subscription</span></code> object with information about the subscription.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py">
+<span class="sig-name descname"><span class="pre">async</span> <span class="pre">def</span> <span class="pre">on_subscription_update(subscription):</span></span></dt>
+<dd><p>Called whenever a subscription is updated</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>subscription</strong> – <code class="xref py py-class docutils literal notranslate"><span class="pre">Subscription</span></code> object with information about the subscription.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py">
+<span class="sig-name descname"><span class="pre">async</span> <span class="pre">def</span> <span class="pre">on_subscription_delete(subscription):</span></span></dt>
+<dd><p>Called whenever a subscription is deleted</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>subscription</strong> – <code class="xref py py-class docutils literal notranslate"><span class="pre">Subscription</span></code> object with information about the subscription.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py">
+<span class="sig-name descname"><span class="pre">async</span> <span class="pre">def</span> <span class="pre">on_user_update(user):</span></span></dt>
+<dd><p>Called whenever the bot’s own user is updated</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>user</strong> – <code class="xref py py-class docutils literal notranslate"><span class="pre">User</span></code> object with the updated information about the bot’s user.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py">
+<span class="sig-name descname"><span class="pre">async</span> <span class="pre">def</span> <span class="pre">on_application_command_permissions_update(permissions):</span></span></dt>
+<dd><p>Called whenever the permissions of an application command are updated in a guild</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>permissions</strong> – <code class="xref py py-class docutils literal notranslate"><span class="pre">GuildApplicationCommandPermissions</span></code> object with information about the updated permissions.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py">
+<span class="sig-name descname"><span class="pre">async</span> <span class="pre">def</span> <span class="pre">on_rate_limited(payload):</span></span></dt>
+<dd><p>Called whenever the shard gets rate limited on a gateway opcode (currently only opcode 8, Request Guild Members).</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>If this was caused by a pending <cite>chunk_guild</cite>/<cite>fetch_members</cite> call, that call’s waiter is failed immediately
+with a <cite>RuntimeError</cite> instead of only timing out after 30 seconds.</p>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>payload</strong> – <code class="xref py py-class docutils literal notranslate"><span class="pre">GatewayRateLimited</span></code> object with information about the rate limit.</p>
 </dd>
 </dl>
 </dd></dl>
@@ -626,6 +790,44 @@ You can in theory listen to the events and simply do nothing to disable the logs
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>payload</strong> – <code class="xref py py-class docutils literal notranslate"><span class="pre">ChannelPinsUpdate</span></code> object with information about the pins.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py">
+<span class="sig-name descname"><span class="pre">async</span> <span class="pre">def</span> <span class="pre">on_voice_channel_status_update(guild,</span> <span class="pre">channel,</span> <span class="pre">status):</span></span></dt>
+<dd><p>Called whenever a voice channel’s status is updated</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Depending on your cache rules, channel will either return Full or Partial object.</p>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>guild</strong> – <code class="xref py py-class docutils literal notranslate"><span class="pre">Guild</span></code> | <code class="xref py py-class docutils literal notranslate"><span class="pre">PartialGuild</span></code> object with information about the guild.</p></li>
+<li><p><strong>channel</strong> – <code class="xref py py-class docutils literal notranslate"><span class="pre">BaseChannel</span></code> | <code class="xref py py-class docutils literal notranslate"><span class="pre">PartialChannel</span></code> object with information about the voice channel.</p></li>
+<li><p><strong>status</strong> – <a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a> | <code class="docutils literal notranslate"><span class="pre">None</span></code> the new status of the voice channel, or <code class="docutils literal notranslate"><span class="pre">None</span></code> if it was cleared.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py">
+<span class="sig-name descname"><span class="pre">async</span> <span class="pre">def</span> <span class="pre">on_voice_channel_start_time_update(guild,</span> <span class="pre">channel,</span> <span class="pre">start_time):</span></span></dt>
+<dd><p>Called whenever a voice channel’s session start time is updated</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Depending on your cache rules, channel will either return Full or Partial object.</p>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>guild</strong> – <code class="xref py py-class docutils literal notranslate"><span class="pre">Guild</span></code> | <code class="xref py py-class docutils literal notranslate"><span class="pre">PartialGuild</span></code> object with information about the guild.</p></li>
+<li><p><strong>channel</strong> – <code class="xref py py-class docutils literal notranslate"><span class="pre">BaseChannel</span></code> | <code class="xref py py-class docutils literal notranslate"><span class="pre">PartialChannel</span></code> object with information about the voice channel.</p></li>
+<li><p><strong>start_time</strong> – <a class="reference external" href="https://docs.python.org/3/library/datetime.html#datetime.datetime" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">datetime.datetime</span></code></a> | <code class="docutils literal notranslate"><span class="pre">None</span></code> the new voice session start time, or <code class="docutils literal notranslate"><span class="pre">None</span></code> if there is no active session.</p></li>
+</ul>
 </dd>
 </dl>
 </dd></dl>
@@ -1473,6 +1675,7 @@ You can in theory listen to the events and simply do nothing to disable the logs
 <li><a class="reference internal" href="#">Event references</a><ul>
 <li><a class="reference internal" href="#connection">Connection</a></li>
 <li><a class="reference internal" href="#webhook">Webhook</a></li>
+<li><a class="reference internal" href="#webhook-events">Webhook Events</a></li>
 <li><a class="reference internal" href="#errors">Errors</a></li>
 <li><a class="reference internal" href="#gateway-events">Gateway events</a><ul>
 <li><a class="reference internal" href="#global-events">Global events</a></li>

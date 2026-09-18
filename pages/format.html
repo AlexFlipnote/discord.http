@@ -299,7 +299,7 @@
 <li><p><strong>Python Version:</strong> 3.11 or higher.</p></li>
 <li><p><strong>Quotes:</strong> Use double quotes (<code class="docutils literal notranslate"><span class="pre">&quot;</span></code>) by default. Use single quotes (<code class="docutils literal notranslate"><span class="pre">'</span></code>) only to avoid escaping internal double quotes.</p></li>
 <li><p><strong>Files:</strong> Must always end with a single newline.</p></li>
-<li><p><strong>Logging:</strong> Never use <code class="docutils literal notranslate"><span class="pre">print()</span></code>. Use the standard <code class="docutils literal notranslate"><span class="pre">logging</span></code> module.</p></li>
+<li><p><strong>Logging:</strong> Never use <code class="docutils literal notranslate"><span class="pre">print()</span></code>, instead use the logging provided by the library.</p></li>
 <li><p><strong>Formatting:</strong> Use f-strings over <code class="docutils literal notranslate"><span class="pre">.format()</span></code> or <code class="docutils literal notranslate"><span class="pre">%</span></code> wherever possible.</p></li>
 </ul>
 </section>
@@ -343,18 +343,20 @@ There are exceptions to this rule, but only when there are no native Python type
 <h2>Docstrings<a class="headerlink" href="#docstrings" title="Link to this heading">¶</a></h2>
 <p>Use the NumPy/Google-style hybrid for detailed documentation. Skip type hints inside the docstring to avoid redundancy with the code signature.
 These days, most IDEs and documentation generators can extract type information directly from the code.
-Including it in the docstring is unnecessary and can lead to maintenance issues if the code signature changes but the docstring does not.</p>
+Including it in the docstring is unnecessary and can lead to maintenance issues if the code signature changes but the docstring does not.
+For this same reason, do not add a trailing colon after a parameter or exception name.
+It used to separate the name from its type (e.g. <code class="docutils literal notranslate"><span class="pre">arg1</span> <span class="pre">:</span> <span class="pre">int</span></code>), but is redundant due to types being omitted entirely from docstring.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">function</span><span class="p">(</span><span class="n">arg1</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">arg2</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Summary of the function.</span>
 
 <span class="sd">    Extended description providing more context.</span>
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
-<span class="sd">    arg1:</span>
+<span class="sd">    arg1</span>
 <span class="sd">        Description of the first argument.</span>
-<span class="sd">    arg2:</span>
+<span class="sd">    arg2</span>
 <span class="sd">        Description of the second argument.</span>
 
 <span class="sd">    Returns</span>
@@ -363,15 +365,28 @@ Including it in the docstring is unnecessary and can lead to maintenance issues 
 
 <span class="sd">    Raises</span>
 <span class="sd">    ------</span>
-<span class="sd">    ValueError:</span>
+<span class="sd">    ValueError</span>
 <span class="sd">        Description of why this error is raised.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
+    <span class="o">...</span>
+</pre></div>
+</div>
+<p>For generator and async generator functions, use <code class="docutils literal notranslate"><span class="pre">Yields</span></code> instead of <code class="docutils literal notranslate"><span class="pre">Returns</span></code> to describe each item produced.
+Like <code class="docutils literal notranslate"><span class="pre">Returns</span></code>, it is typeless and has no name, just the description:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">fetch_items</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">AsyncIterator</span><span class="p">[</span><span class="n">Item</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">"""</span>
+<span class="sd">    Fetch all items.</span>
+
+<span class="sd">    Yields</span>
+<span class="sd">    ------</span>
+<span class="sd">        Each item as it is fetched.</span>
+<span class="sd">    """</span>
     <span class="o">...</span>
 </pre></div>
 </div>
 <p>For simple logic, use a concise one-line docstring:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">is_expired</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot; Returns whether the object has expired. &quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">""" Returns whether the object has expired. """</span>
     <span class="o">...</span>
 </pre></div>
 </div>
@@ -392,26 +407,33 @@ However, for all other classes, the following rules apply.</p>
 <li><p><strong>Type Hints:</strong> All attributes must be fully type-hinted.</p></li>
 <li><p><strong>No Redundancy:</strong> Avoid type hints in docstrings for attributes, as they are already present in the code.</p></li>
 </ol>
+<p>Class docstrings follow the same one-line convention shown in <a class="reference internal" href="#docstrings">Docstrings</a> above, a summary only.
+Since attributes are documented inline rather than in the class body.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>A subclass that defines new attributes must still declare <code class="docutils literal notranslate"><span class="pre">__slots__</span></code>, even if only listing them.
+If <code class="docutils literal notranslate"><span class="pre">__slots__</span></code> is omitted entirely, Python silently gives the subclass a <code class="docutils literal notranslate"><span class="pre">__dict__</span></code>, which negates the memory savings <code class="docutils literal notranslate"><span class="pre">__slots__</span></code> was meant to provide for every instance of that class.</p>
+</div>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">class</span><span class="w"> </span><span class="nc">BaseObject</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot; Represents a base object. &quot;&quot;&quot;</span>
-    <span class="vm">__slots__</span> <span class="o">=</span> <span class="p">(</span><span class="s2">&quot;id&quot;</span><span class="p">,</span> <span class="s2">&quot;name&quot;</span><span class="p">)</span>
+<span class="w">    </span><span class="sd">""" Represents a base object. """</span>
+    <span class="vm">__slots__</span> <span class="o">=</span> <span class="p">(</span><span class="s2">"id"</span><span class="p">,</span> <span class="s2">"name"</span><span class="p">)</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="nb">dict</span><span class="p">):</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">id</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="s2">&quot;id&quot;</span><span class="p">])</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot; The unique ID of this object. &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">id</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="s2">"id"</span><span class="p">])</span>
+<span class="w">        </span><span class="sd">""" The unique ID of this object. """</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;name&quot;</span><span class="p">)</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot; The name of this object. &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"name"</span><span class="p">)</span>
+<span class="w">        </span><span class="sd">""" The name of this object. """</span>
 
 <span class="k">class</span><span class="w"> </span><span class="nc">CustomObject</span><span class="p">(</span><span class="n">BaseObject</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot; Represents a more specific object. &quot;&quot;&quot;</span>
-    <span class="vm">__slots__</span> <span class="o">=</span> <span class="p">(</span><span class="s2">&quot;extra&quot;</span><span class="p">,)</span>
+<span class="w">    </span><span class="sd">""" Represents a more specific object. """</span>
+    <span class="vm">__slots__</span> <span class="o">=</span> <span class="p">(</span><span class="s2">"extra"</span><span class="p">,)</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="nb">dict</span><span class="p">):</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">extra</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;extra&quot;</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot; An extra attribute unique to this subclass. &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">extra</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"extra"</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
+<span class="w">        </span><span class="sd">""" An extra attribute unique to this subclass. """</span>
 </pre></div>
 </div>
 </section>

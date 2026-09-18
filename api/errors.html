@@ -329,19 +329,19 @@ set self.__traceback__ to tb and return self.</p>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="discord_http.errors.AutomodBlock.status">
-<span class="sig-name descname"><span class="pre">status</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><span class="pre">int</span></a></span><a class="headerlink" href="#discord_http.errors.AutomodBlock.status" title="Link to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">status</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#int" title="(in Python v3.14)"><span class="pre">int</span></a></span><a class="headerlink" href="#discord_http.errors.AutomodBlock.status" title="Link to this definition">¶</a></dt>
 <dd><p>The HTTP status code.</p>
 </dd></dl>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="discord_http.errors.AutomodBlock.code">
-<span class="sig-name descname"><span class="pre">code</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><span class="pre">int</span></a></span><a class="headerlink" href="#discord_http.errors.AutomodBlock.code" title="Link to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">code</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#int" title="(in Python v3.14)"><span class="pre">int</span></a></span><a class="headerlink" href="#discord_http.errors.AutomodBlock.code" title="Link to this definition">¶</a></dt>
 <dd><p>The error code returned by Discord, if any.</p>
 </dd></dl>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="discord_http.errors.AutomodBlock.text">
-<span class="sig-name descname"><span class="pre">text</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></span><a class="headerlink" href="#discord_http.errors.AutomodBlock.text" title="Link to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">text</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></span><a class="headerlink" href="#discord_http.errors.AutomodBlock.text" title="Link to this definition">¶</a></dt>
 <dd><p>The error message returned by Discord, if any.</p>
 </dd></dl>
 
@@ -357,6 +357,12 @@ set self.__traceback__ to tb and return self.</p>
 <dd class="field-odd"><p><strong>perms</strong> (<a class="reference internal" href="flags.html#discord_http.flags.Permissions" title="discord_http.flags.Permissions"><em>Permissions</em></a>)</p>
 </dd>
 </dl>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.errors.BotMissingPermissions.permissions">
+<span class="sig-name descname"><span class="pre">permissions</span></span><a class="headerlink" href="#discord_http.errors.BotMissingPermissions.permissions" title="Link to this definition">¶</a></dt>
+<dd><p>The permissions the bot is missing.</p>
+</dd></dl>
+
 <dl class="py method">
 <dt class="sig sig-object py" id="discord_http.errors.BotMissingPermissions.add_note">
 <span class="sig-name descname"><span class="pre">add_note</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#discord_http.errors.BotMissingPermissions.add_note" title="Link to this definition">¶</a></dt>
@@ -407,7 +413,7 @@ set self.__traceback__ to tb and return self.</p>
 <dl class="py exception">
 <dt class="sig sig-object py" id="discord_http.errors.CommandError">
 <span class="property"><span class="k"><span class="pre">exception</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">discord_http.errors.</span></span><span class="sig-name descname"><span class="pre">CommandError</span></span><a class="headerlink" href="#discord_http.errors.CommandError" title="Link to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/exceptions.html#Exception" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Exception</span></code></a></p>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/builtins/exceptions.html#Exception" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Exception</span></code></a></p>
 <p>Raised whenever a command error occurs.</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="discord_http.errors.CommandError.add_note">
@@ -439,7 +445,7 @@ set self.__traceback__ to tb and return self.</p>
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>cooldown</strong> (<a class="reference internal" href="cooldowns.html#discord_http.cooldowns.Cooldown" title="discord_http.cooldowns.Cooldown"><em>Cooldown</em></a>)</p></li>
-<li><p><strong>retry_after</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><em>float</em></a>)</p></li>
+<li><p><strong>retry_after</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/functions.html#float" title="(in Python v3.14)"><em>float</em></a>)</p></li>
 </ul>
 </dd>
 </dl>
@@ -451,19 +457,19 @@ set self.__traceback__ to tb and return self.</p>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="discord_http.errors.CommandOnCooldown.retry_after">
-<span class="sig-name descname"><span class="pre">retry_after</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><span class="pre">float</span></a></span><a class="headerlink" href="#discord_http.errors.CommandOnCooldown.retry_after" title="Link to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">retry_after</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#float" title="(in Python v3.14)"><span class="pre">float</span></a></span><a class="headerlink" href="#discord_http.errors.CommandOnCooldown.retry_after" title="Link to this definition">¶</a></dt>
 <dd><p>The time in seconds until the cooldown expires.</p>
 </dd></dl>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="discord_http.errors.CommandOnCooldown.retry_after_ts">
-<span class="sig-name descname"><span class="pre">retry_after_ts</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><span class="pre">float</span></a></span><a class="headerlink" href="#discord_http.errors.CommandOnCooldown.retry_after_ts" title="Link to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">retry_after_ts</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#float" title="(in Python v3.14)"><span class="pre">float</span></a></span><a class="headerlink" href="#discord_http.errors.CommandOnCooldown.retry_after_ts" title="Link to this definition">¶</a></dt>
 <dd><p>The timestamp when the cooldown expires.</p>
 </dd></dl>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="discord_http.errors.CommandOnCooldown.discord_format">
-<span class="sig-name descname"><span class="pre">discord_format</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></span><a class="headerlink" href="#discord_http.errors.CommandOnCooldown.discord_format" title="Link to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">discord_format</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></span><a class="headerlink" href="#discord_http.errors.CommandOnCooldown.discord_format" title="Link to this definition">¶</a></dt>
 <dd><p>The Discord timestamp format for the retry after time.</p>
 </dd></dl>
 
@@ -491,7 +497,7 @@ set self.__traceback__ to tb and return self.</p>
 <dl class="py exception">
 <dt class="sig sig-object py" id="discord_http.errors.DiscordException">
 <span class="property"><span class="k"><span class="pre">exception</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">discord_http.errors.</span></span><span class="sig-name descname"><span class="pre">DiscordException</span></span><a class="headerlink" href="#discord_http.errors.DiscordException" title="Link to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/exceptions.html#Exception" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Exception</span></code></a></p>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/builtins/exceptions.html#Exception" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Exception</span></code></a></p>
 <p>Base exception for discord_http.</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="discord_http.errors.DiscordException.add_note">
@@ -545,19 +551,19 @@ set self.__traceback__ to tb and return self.</p>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="discord_http.errors.DiscordServerError.status">
-<span class="sig-name descname"><span class="pre">status</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><span class="pre">int</span></a></span><a class="headerlink" href="#discord_http.errors.DiscordServerError.status" title="Link to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">status</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#int" title="(in Python v3.14)"><span class="pre">int</span></a></span><a class="headerlink" href="#discord_http.errors.DiscordServerError.status" title="Link to this definition">¶</a></dt>
 <dd><p>The HTTP status code.</p>
 </dd></dl>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="discord_http.errors.DiscordServerError.code">
-<span class="sig-name descname"><span class="pre">code</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><span class="pre">int</span></a></span><a class="headerlink" href="#discord_http.errors.DiscordServerError.code" title="Link to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">code</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#int" title="(in Python v3.14)"><span class="pre">int</span></a></span><a class="headerlink" href="#discord_http.errors.DiscordServerError.code" title="Link to this definition">¶</a></dt>
 <dd><p>The error code returned by Discord, if any.</p>
 </dd></dl>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="discord_http.errors.DiscordServerError.text">
-<span class="sig-name descname"><span class="pre">text</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></span><a class="headerlink" href="#discord_http.errors.DiscordServerError.text" title="Link to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">text</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></span><a class="headerlink" href="#discord_http.errors.DiscordServerError.text" title="Link to this definition">¶</a></dt>
 <dd><p>The error message returned by Discord, if any.</p>
 </dd></dl>
 
@@ -600,19 +606,19 @@ set self.__traceback__ to tb and return self.</p>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="discord_http.errors.Forbidden.status">
-<span class="sig-name descname"><span class="pre">status</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><span class="pre">int</span></a></span><a class="headerlink" href="#discord_http.errors.Forbidden.status" title="Link to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">status</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#int" title="(in Python v3.14)"><span class="pre">int</span></a></span><a class="headerlink" href="#discord_http.errors.Forbidden.status" title="Link to this definition">¶</a></dt>
 <dd><p>The HTTP status code.</p>
 </dd></dl>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="discord_http.errors.Forbidden.code">
-<span class="sig-name descname"><span class="pre">code</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><span class="pre">int</span></a></span><a class="headerlink" href="#discord_http.errors.Forbidden.code" title="Link to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">code</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#int" title="(in Python v3.14)"><span class="pre">int</span></a></span><a class="headerlink" href="#discord_http.errors.Forbidden.code" title="Link to this definition">¶</a></dt>
 <dd><p>The error code returned by Discord, if any.</p>
 </dd></dl>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="discord_http.errors.Forbidden.text">
-<span class="sig-name descname"><span class="pre">text</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></span><a class="headerlink" href="#discord_http.errors.Forbidden.text" title="Link to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">text</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></span><a class="headerlink" href="#discord_http.errors.Forbidden.text" title="Link to this definition">¶</a></dt>
 <dd><p>The error message returned by Discord, if any.</p>
 </dd></dl>
 
@@ -642,7 +648,7 @@ set self.__traceback__ to tb and return self.</p>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="discord_http.errors.HTTPException.status">
-<span class="sig-name descname"><span class="pre">status</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><span class="pre">int</span></a></span><a class="headerlink" href="#discord_http.errors.HTTPException.status" title="Link to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">status</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#int" title="(in Python v3.14)"><span class="pre">int</span></a></span><a class="headerlink" href="#discord_http.errors.HTTPException.status" title="Link to this definition">¶</a></dt>
 <dd><p>The HTTP status code.</p>
 </dd></dl>
 
@@ -667,13 +673,13 @@ set self.__traceback__ to tb and return self.</p>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="discord_http.errors.HTTPException.text">
-<span class="sig-name descname"><span class="pre">text</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></span><a class="headerlink" href="#discord_http.errors.HTTPException.text" title="Link to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">text</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></span><a class="headerlink" href="#discord_http.errors.HTTPException.text" title="Link to this definition">¶</a></dt>
 <dd><p>The error message returned by Discord, if any.</p>
 </dd></dl>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="discord_http.errors.HTTPException.code">
-<span class="sig-name descname"><span class="pre">code</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><span class="pre">int</span></a></span><a class="headerlink" href="#discord_http.errors.HTTPException.code" title="Link to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">code</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#int" title="(in Python v3.14)"><span class="pre">int</span></a></span><a class="headerlink" href="#discord_http.errors.HTTPException.code" title="Link to this definition">¶</a></dt>
 <dd><p>The error code returned by Discord, if any.</p>
 </dd></dl>
 
@@ -736,19 +742,19 @@ set self.__traceback__ to tb and return self.</p>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="discord_http.errors.NotFound.status">
-<span class="sig-name descname"><span class="pre">status</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><span class="pre">int</span></a></span><a class="headerlink" href="#discord_http.errors.NotFound.status" title="Link to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">status</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#int" title="(in Python v3.14)"><span class="pre">int</span></a></span><a class="headerlink" href="#discord_http.errors.NotFound.status" title="Link to this definition">¶</a></dt>
 <dd><p>The HTTP status code.</p>
 </dd></dl>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="discord_http.errors.NotFound.code">
-<span class="sig-name descname"><span class="pre">code</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><span class="pre">int</span></a></span><a class="headerlink" href="#discord_http.errors.NotFound.code" title="Link to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">code</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#int" title="(in Python v3.14)"><span class="pre">int</span></a></span><a class="headerlink" href="#discord_http.errors.NotFound.code" title="Link to this definition">¶</a></dt>
 <dd><p>The error code returned by Discord, if any.</p>
 </dd></dl>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="discord_http.errors.NotFound.text">
-<span class="sig-name descname"><span class="pre">text</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></span><a class="headerlink" href="#discord_http.errors.NotFound.text" title="Link to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">text</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></span><a class="headerlink" href="#discord_http.errors.NotFound.text" title="Link to this definition">¶</a></dt>
 <dd><p>The error message returned by Discord, if any.</p>
 </dd></dl>
 
@@ -791,25 +797,80 @@ set self.__traceback__ to tb and return self.</p>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="discord_http.errors.Ratelimited.status">
-<span class="sig-name descname"><span class="pre">status</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><span class="pre">int</span></a></span><a class="headerlink" href="#discord_http.errors.Ratelimited.status" title="Link to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">status</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#int" title="(in Python v3.14)"><span class="pre">int</span></a></span><a class="headerlink" href="#discord_http.errors.Ratelimited.status" title="Link to this definition">¶</a></dt>
 <dd><p>The HTTP status code.</p>
 </dd></dl>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="discord_http.errors.Ratelimited.code">
-<span class="sig-name descname"><span class="pre">code</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><span class="pre">int</span></a></span><a class="headerlink" href="#discord_http.errors.Ratelimited.code" title="Link to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">code</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#int" title="(in Python v3.14)"><span class="pre">int</span></a></span><a class="headerlink" href="#discord_http.errors.Ratelimited.code" title="Link to this definition">¶</a></dt>
 <dd><p>The error code returned by Discord, if any.</p>
 </dd></dl>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="discord_http.errors.Ratelimited.text">
-<span class="sig-name descname"><span class="pre">text</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></span><a class="headerlink" href="#discord_http.errors.Ratelimited.text" title="Link to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">text</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></span><a class="headerlink" href="#discord_http.errors.Ratelimited.text" title="Link to this definition">¶</a></dt>
 <dd><p>The error message returned by Discord, if any.</p>
 </dd></dl>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="discord_http.errors.Ratelimited.request">
 <span class="sig-name descname"><span class="pre">request</span></span><a class="headerlink" href="#discord_http.errors.Ratelimited.request" title="Link to this definition">¶</a></dt>
+<dd><p>The HTTP request that caused the exception.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py exception">
+<dt class="sig sig-object py" id="discord_http.errors.Unauthorized">
+<span class="property"><span class="k"><span class="pre">exception</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">discord_http.errors.</span></span><span class="sig-name descname"><span class="pre">Unauthorized</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">r</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#discord_http.errors.Unauthorized" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#discord_http.errors.HTTPException" title="discord_http.errors.HTTPException"><code class="xref py py-class docutils literal notranslate"><span class="pre">HTTPException</span></code></a></p>
+<p>Raised whenever a HTTP request returns 401 (invalid or revoked token).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>r</strong> (<a class="reference internal" href="http.html#discord_http.http.HTTPResponse" title="discord_http.http.HTTPResponse"><em>HTTPResponse</em></a>)</p>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="discord_http.errors.Unauthorized.add_note">
+<span class="sig-name descname"><span class="pre">add_note</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#discord_http.errors.Unauthorized.add_note" title="Link to this definition">¶</a></dt>
+<dd><p>Exception.add_note(note) –
+add a note to the exception</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.errors.Unauthorized.args">
+<span class="sig-name descname"><span class="pre">args</span></span><a class="headerlink" href="#discord_http.errors.Unauthorized.args" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="discord_http.errors.Unauthorized.with_traceback">
+<span class="sig-name descname"><span class="pre">with_traceback</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#discord_http.errors.Unauthorized.with_traceback" title="Link to this definition">¶</a></dt>
+<dd><p>Exception.with_traceback(tb) –
+set self.__traceback__ to tb and return self.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.errors.Unauthorized.status">
+<span class="sig-name descname"><span class="pre">status</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#int" title="(in Python v3.14)"><span class="pre">int</span></a></span><a class="headerlink" href="#discord_http.errors.Unauthorized.status" title="Link to this definition">¶</a></dt>
+<dd><p>The HTTP status code.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.errors.Unauthorized.code">
+<span class="sig-name descname"><span class="pre">code</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#int" title="(in Python v3.14)"><span class="pre">int</span></a></span><a class="headerlink" href="#discord_http.errors.Unauthorized.code" title="Link to this definition">¶</a></dt>
+<dd><p>The error code returned by Discord, if any.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.errors.Unauthorized.text">
+<span class="sig-name descname"><span class="pre">text</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></span><a class="headerlink" href="#discord_http.errors.Unauthorized.text" title="Link to this definition">¶</a></dt>
+<dd><p>The error message returned by Discord, if any.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.errors.Unauthorized.request">
+<span class="sig-name descname"><span class="pre">request</span></span><a class="headerlink" href="#discord_http.errors.Unauthorized.request" title="Link to this definition">¶</a></dt>
 <dd><p>The HTTP request that caused the exception.</p>
 </dd></dl>
 
@@ -825,6 +886,12 @@ set self.__traceback__ to tb and return self.</p>
 <dd class="field-odd"><p><strong>perms</strong> (<a class="reference internal" href="flags.html#discord_http.flags.Permissions" title="discord_http.flags.Permissions"><em>Permissions</em></a>)</p>
 </dd>
 </dl>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.errors.UserMissingPermissions.permissions">
+<span class="sig-name descname"><span class="pre">permissions</span></span><a class="headerlink" href="#discord_http.errors.UserMissingPermissions.permissions" title="Link to this definition">¶</a></dt>
+<dd><p>The permissions the user is missing.</p>
+</dd></dl>
+
 <dl class="py method">
 <dt class="sig sig-object py" id="discord_http.errors.UserMissingPermissions.add_note">
 <span class="sig-name descname"><span class="pre">add_note</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#discord_http.errors.UserMissingPermissions.add_note" title="Link to this definition">¶</a></dt>
@@ -917,6 +984,7 @@ set self.__traceback__ to tb and return self.</p>
 </ul>
 </li>
 <li><a class="reference internal" href="#discord_http.errors.BotMissingPermissions"><code class="docutils literal notranslate"><span class="pre">BotMissingPermissions</span></code></a><ul>
+<li><a class="reference internal" href="#discord_http.errors.BotMissingPermissions.permissions"><code class="docutils literal notranslate"><span class="pre">BotMissingPermissions.permissions</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.errors.BotMissingPermissions.add_note"><code class="docutils literal notranslate"><span class="pre">BotMissingPermissions.add_note()</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.errors.BotMissingPermissions.args"><code class="docutils literal notranslate"><span class="pre">BotMissingPermissions.args</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.errors.BotMissingPermissions.with_traceback"><code class="docutils literal notranslate"><span class="pre">BotMissingPermissions.with_traceback()</span></code></a></li>
@@ -1006,7 +1074,18 @@ set self.__traceback__ to tb and return self.</p>
 <li><a class="reference internal" href="#discord_http.errors.Ratelimited.request"><code class="docutils literal notranslate"><span class="pre">Ratelimited.request</span></code></a></li>
 </ul>
 </li>
+<li><a class="reference internal" href="#discord_http.errors.Unauthorized"><code class="docutils literal notranslate"><span class="pre">Unauthorized</span></code></a><ul>
+<li><a class="reference internal" href="#discord_http.errors.Unauthorized.add_note"><code class="docutils literal notranslate"><span class="pre">Unauthorized.add_note()</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.errors.Unauthorized.args"><code class="docutils literal notranslate"><span class="pre">Unauthorized.args</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.errors.Unauthorized.with_traceback"><code class="docutils literal notranslate"><span class="pre">Unauthorized.with_traceback()</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.errors.Unauthorized.status"><code class="docutils literal notranslate"><span class="pre">Unauthorized.status</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.errors.Unauthorized.code"><code class="docutils literal notranslate"><span class="pre">Unauthorized.code</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.errors.Unauthorized.text"><code class="docutils literal notranslate"><span class="pre">Unauthorized.text</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.errors.Unauthorized.request"><code class="docutils literal notranslate"><span class="pre">Unauthorized.request</span></code></a></li>
+</ul>
+</li>
 <li><a class="reference internal" href="#discord_http.errors.UserMissingPermissions"><code class="docutils literal notranslate"><span class="pre">UserMissingPermissions</span></code></a><ul>
+<li><a class="reference internal" href="#discord_http.errors.UserMissingPermissions.permissions"><code class="docutils literal notranslate"><span class="pre">UserMissingPermissions.permissions</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.errors.UserMissingPermissions.add_note"><code class="docutils literal notranslate"><span class="pre">UserMissingPermissions.add_note()</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.errors.UserMissingPermissions.args"><code class="docutils literal notranslate"><span class="pre">UserMissingPermissions.args</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.errors.UserMissingPermissions.with_traceback"><code class="docutils literal notranslate"><span class="pre">UserMissingPermissions.with_traceback()</span></code></a></li>

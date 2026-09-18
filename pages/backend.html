@@ -297,7 +297,7 @@ add your own componenets to the server.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">discord_http</span><span class="w"> </span><span class="kn">import</span> <span class="n">Context</span><span class="p">,</span> <span class="n">Client</span>
 
 <span class="n">client</span> <span class="o">=</span> <span class="n">Client</span><span class="p">(</span>
-    <span class="n">token</span><span class="o">=</span><span class="s2">&quot;Your bot token here&quot;</span>
+    <span class="n">token</span><span class="o">=</span><span class="s2">"Your bot token here"</span>
 <span class="p">)</span>
 </pre></div>
 </div>
@@ -333,10 +333,10 @@ Code example will be taking the code above as an expantion of the code.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">aiohttp</span><span class="w"> </span><span class="kn">import</span> <span class="n">web</span>
 
 <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">simple_test</span><span class="p">(</span><span class="n">request</span><span class="p">:</span> <span class="n">web</span><span class="o">.</span><span class="n">Request</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">web</span><span class="o">.</span><span class="n">Response</span><span class="p">:</span>
-    <span class="k">return</span> <span class="n">web</span><span class="o">.</span><span class="n">json_response</span><span class="p">({</span><span class="s2">&quot;hello&quot;</span><span class="p">:</span> <span class="s2">&quot;world&quot;</span><span class="p">})</span>
+    <span class="k">return</span> <span class="n">web</span><span class="o">.</span><span class="n">json_response</span><span class="p">({</span><span class="s2">"hello"</span><span class="p">:</span> <span class="s2">"world"</span><span class="p">})</span>
 
 <span class="n">client</span><span class="o">.</span><span class="n">backend</span><span class="o">.</span><span class="n">router</span><span class="o">.</span><span class="n">add_get</span><span class="p">(</span>
-    <span class="s2">&quot;/test&quot;</span><span class="p">,</span> <span class="n">simple_test</span>
+    <span class="s2">"/test"</span><span class="p">,</span> <span class="n">simple_test</span>
 <span class="p">)</span>
 </pre></div>
 </div>
