@@ -274,7 +274,11 @@ class GatewayClient:
                 _log.error("Error while waiting for a shard to become ready", exc_info=result)
 
         self.bot._shards_ready.set()
-        _log.info("discord.http/gateway is now ready")
+
+        if self.bot.has_any_dispatch("gateway_ready"):
+            self.bot.dispatch("gateway_ready", self.bot)
+        else:
+            _log.info("discord.http/gateway is now ready")
 
     def start(self) -> None:
         """ Start the gateway client. """

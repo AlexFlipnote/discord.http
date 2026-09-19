@@ -236,6 +236,13 @@ Shard events
   By default if the gateway is enabled, they will do ``[  INFO ]`` logs.
   You can in theory listen to the events and simply do nothing to disable the logs.
 
+.. function:: async def on_gateway_ready(client):
+
+  Called once every shard has become ready, meaning the whole gateway connection is now fully ready.
+
+  :param client: :class:`Client` The client object.
+
+
 .. function:: async def on_shard_ready(shard):
 
   Called whenever a shard is now ready
