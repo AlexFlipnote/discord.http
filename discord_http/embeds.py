@@ -451,12 +451,12 @@ class Embed:
         self.url = data.get("url")
         self.type = cast("EmbedTypes", sys.intern(data.get("type", "rich")))
 
-        self.colour = Colour(data["color"]) if data.get("color") is not None else None
+        self.colour = Colour(colour) if (colour := data.get("color")) is not None else None
 
-        self.footer = EmbedFooter.from_dict(data["footer"]) if data.get("footer") else None
-        self.author = EmbedAuthor.from_dict(data["author"]) if data.get("author") else None
-        self.image = EmbedMedia.from_dict(data["image"]) if data.get("image") else None
-        self.thumbnail = EmbedMedia.from_dict(data["thumbnail"]) if data.get("thumbnail") else None
+        self.footer = EmbedFooter.from_dict(footer) if (footer := data.get("footer")) else None
+        self.author = EmbedAuthor.from_dict(author) if (author := data.get("author")) else None
+        self.image = EmbedMedia.from_dict(image) if (image := data.get("image")) else None
+        self.thumbnail = EmbedMedia.from_dict(thumbnail) if (thumbnail := data.get("thumbnail")) else None
 
         self.fields = [
             EmbedField.from_dict(f)

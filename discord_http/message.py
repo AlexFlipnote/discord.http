@@ -790,8 +790,8 @@ class Attachment:
         """ The version of the placeholder, if applicable. """
 
         self.clip_created_at: datetime | None = (
-            utils.parse_time(data["clip_created_at"])
-            if data.get("clip_created_at") else None
+            utils.parse_time(clip_created_at)
+            if (clip_created_at := data.get("clip_created_at")) else None
         )
         """ The time the clip was created, if the attachment is a clip. """
 
@@ -802,8 +802,8 @@ class Attachment:
         """ The users participating in the clip, if the attachment is a clip. """
 
         self.application: Application | None = (
-            self._state.bot.create_application_from_data(data["application"])
-            if data.get("application") else None
+            self._state.bot.create_application_from_data(application)
+            if (application := data.get("application")) else None
         )
         """ The application that created the clip, if applicable. """
 

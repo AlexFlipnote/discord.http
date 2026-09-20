@@ -1236,6 +1236,9 @@ class Parser:
         -------
             The message.
         """
+        if not self.bot.has_any_dispatch("message_create"):
+            return (None,)  # type: ignore[return-value]
+
         return (self._message(data),)
 
     def message_update(self, data: dict) -> tuple[Message]:
@@ -1251,6 +1254,9 @@ class Parser:
         -------
             The message.
         """
+        if not self.bot.has_any_dispatch("message_update"):
+            return (None,)  # type: ignore[return-value]
+
         return (self._message(data),)
 
     def message_delete(self, data: dict) -> tuple[PartialMessage]:
@@ -1536,6 +1542,18 @@ class Parser:
         -------
             The voice state and the voice state.
         """
+        cache_flags = self.bot.cache.cache_flags
+        if (
+            not self.bot.has_any_dispatch("voice_state_update") and
+            not (
+                cache_flags and (
+                    GatewayCacheFlags.voice_states in cache_flags or
+                    GatewayCacheFlags.partial_voice_states in cache_flags
+                )
+            )
+        ):
+            return (None, None)  # type: ignore[return-value]
+
         guild = None
 
         if data.get("guild_id") is not None:
@@ -1761,6 +1779,13 @@ class Parser:
         -------
             The presence.
         """
+        cache_flags = self.bot.cache.cache_flags
+        if (
+            not self.bot.has_any_dispatch("presence_update") and
+            not (cache_flags and GatewayCacheFlags.presences in cache_flags)
+        ):
+            return (None,)  # type: ignore[return-value]
+
         guild_id = int(data["guild_id"])
         guild = self._get_guild_or_partial(guild_id)
 
