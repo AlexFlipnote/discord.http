@@ -1248,7 +1248,7 @@ class PartialGuild(PartialBase):
         from .gateway.flags import GatewayCacheFlags
         guild_id = self.id
 
-        if data.get("channels"):
+        if "channels" in data:
             if GatewayCacheFlags.channels in flags:
                 self._cache_channels = {
                     int(g["id"]): BaseChannel.from_dict(
@@ -1267,7 +1267,7 @@ class PartialGuild(PartialBase):
                     for g in data["channels"]
                 }
 
-        if data.get("members"):
+        if "members" in data:
             if GatewayCacheFlags.members in flags:
                 self._cache_members = {}
                 for g in data["members"]:
@@ -1292,7 +1292,7 @@ class PartialGuild(PartialBase):
                     cache._dedupe_user(member)
                     self._cache_members[member.id] = member
 
-        if data.get("roles"):
+        if "roles" in data:
             if GatewayCacheFlags.roles in flags:
                 self._cache_roles = {
                     int(g["id"]): self._state.bot.create_role_from_data(g, guild=self)
@@ -1308,7 +1308,7 @@ class PartialGuild(PartialBase):
             else:
                 self._cache_roles = {}
 
-        if data.get("emojis"):
+        if "emojis" in data:
             if GatewayCacheFlags.emojis in flags:
                 self._cache_emojis = {
                     int(g["id"]): self._state.bot.create_emoji_from_data(g, guild=self)
@@ -1324,7 +1324,7 @@ class PartialGuild(PartialBase):
             else:
                 self._cache_emojis = {}
 
-        if data.get("stickers"):
+        if "stickers" in data:
             if GatewayCacheFlags.stickers in flags:
                 self._cache_stickers = {
                     int(g["id"]): self._state.bot.create_sticker_from_data(g, guild=self)
@@ -1340,7 +1340,7 @@ class PartialGuild(PartialBase):
             else:
                 self._cache_stickers = {}
 
-        if data.get("threads"):
+        if "threads" in data:
             if GatewayCacheFlags.threads in flags:
                 self._cache_threads = {
                     int(g["id"]): BaseChannel.from_dict(
@@ -1361,7 +1361,7 @@ class PartialGuild(PartialBase):
             else:
                 self._cache_threads = {}
 
-        if data.get("voice_states"):
+        if "voice_states" in data:
             if GatewayCacheFlags.voice_states in flags:
                 self._cache_voice_states = {
                     int(g["user_id"]): VoiceState(
