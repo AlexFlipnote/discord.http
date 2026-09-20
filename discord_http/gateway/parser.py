@@ -7,7 +7,7 @@ from typing import TYPE_CHECKING, overload
 from .. import utils
 from ..audit import AuditLogEntry
 from ..automod import AutoModRule
-from ..channel import BaseChannel, PartialChannel, StageInstance, PartialThread
+from ..channel import BaseChannel, PartialChannel, StageChannel, StageInstance, PartialThread
 from ..emoji import Emoji, EmojiParser
 from ..entitlements import Entitlements, Subscription
 from ..enums import ChannelType
@@ -1604,8 +1604,8 @@ class Parser:
             data=data,
         )
 
-        if guild and (channel := guild.get_channel(int(data["channel_id"]))):
-            channel._stage_instance = stage_instance  # type: ignore # should be fine?
+        if guild and isinstance(channel := guild.get_channel(int(data["channel_id"])), StageChannel):
+            channel._stage_instance = stage_instance
 
         return (stage_instance,)
 
@@ -1628,8 +1628,8 @@ class Parser:
             data=data,
         )
 
-        if guild and (channel := guild.get_channel(int(data["channel_id"]))):
-            channel._stage_instance = stage_instance  # type: ignore # should be fine?
+        if guild and isinstance(channel := guild.get_channel(int(data["channel_id"])), StageChannel):
+            channel._stage_instance = stage_instance
 
         return (stage_instance,)
 
@@ -1652,8 +1652,8 @@ class Parser:
             data=data,
         )
 
-        if guild and (channel := guild.get_channel(int(data["channel_id"]))):
-            channel._stage_instance = None  # type: ignore # should be fine?
+        if guild and isinstance(channel := guild.get_channel(int(data["channel_id"])), StageChannel):
+            channel._stage_instance = None
 
         return (stage_instance,)
 

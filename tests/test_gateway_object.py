@@ -79,6 +79,9 @@ class FakeCache:
     def get_guild(self, gid):
         return self._guild
 
+    def intern_overwrites(self, guild_id, raw_overwrites):
+        return raw_overwrites
+
 
 class FakeBot(_FakeBotBase):
     def __init__(self, state, guild):
@@ -93,6 +96,7 @@ class FakeBot(_FakeBotBase):
 class FakeState:
     def __init__(self, guild):
         self.bot = FakeBot(self, guild)
+        self.cache = self.bot.cache
 
 
 def _thread_data(thread_id: int, parent_id: int) -> dict:

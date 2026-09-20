@@ -20,6 +20,8 @@ __all__ = (
     "PartialEmoji",
 )
 
+_EMPTY_ROLES: tuple[int, ...] = ()
+
 
 class EmojiParser:
     """
@@ -351,7 +353,10 @@ class Emoji(PartialEmoji):
         self.user_id: int | None = None
         """ The ID of the user that created the emoji, if available. """
 
-        self._raw_roles: list[int] = [int(r) for r in data.get("roles", [])]
+        raw_roles = data.get("roles")
+        self._raw_roles: tuple[int, ...] = (
+            tuple(int(r) for r in raw_roles) if raw_roles else _EMPTY_ROLES
+        )
 
         self._from_data(data)
 

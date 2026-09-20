@@ -4092,7 +4092,7 @@ class Guild(PartialGuild):
         self.explicit_content_filter: int = data.get("explicit_content_filter", 0)
         """ The explicit content filter level of the guild. """
 
-        self.features: list[str] = [sys.intern(f) for f in data.get("features", [])]
+        self.features: tuple[str, ...] = state.cache.intern_features(data.get("features"))
         """ The features of the guild. """
 
         self.latest_onboarding_question_id: int | None = utils.get_int(data, "latest_onboarding_question_id")
@@ -4222,7 +4222,7 @@ class Guild(PartialGuild):
         self.default_message_notifications: int = data.get("default_message_notifications", 0)
         self.description: str | None = data.get("description")
         self.explicit_content_filter: int = data.get("explicit_content_filter", 0)
-        self.features: list[str] = [sys.intern(f) for f in data.get("features", [])]
+        self.features: tuple[str, ...] = self._state.cache.intern_features(data.get("features"))
 
         self.incidents_data: GuildIncidentsData | None = None
         if incidents_data := data.get("incidents_data"):

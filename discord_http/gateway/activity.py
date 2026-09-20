@@ -159,6 +159,7 @@ class Activity:
     """ Represents an activity. """
 
     __slots__ = (
+        "_raw_flags",
         "_raw_type",
         "_state",
         "application_id",
@@ -167,7 +168,6 @@ class Activity:
         "created_at",
         "details",
         "emoji",
-        "flags",
         "instance",
         "name",
         "party",
@@ -230,8 +230,7 @@ class Activity:
         self.instance: bool = data.get("instance", False)
         """ Whether the activity is an instance, if any. """
 
-        self.flags: ActivityFlags = ActivityFlags(data.get("flags", 0))
-        """ The flags of the activity, if any. """
+        self._raw_flags: int = data.get("flags", 0)
 
         self.buttons: list[str] = data.get("buttons", [])
         """ The buttons of the activity, if any. """
@@ -277,3 +276,8 @@ class Activity:
     def type(self) -> ActivityType:
         """ The type of the activity. """
         return ActivityType(self._raw_type)
+
+    @property
+    def flags(self) -> ActivityFlags:
+        """ The flags of the activity, if any. """
+        return ActivityFlags(self._raw_flags)

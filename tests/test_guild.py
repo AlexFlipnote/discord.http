@@ -19,6 +19,9 @@ class FakeCache:
     def get_guild(self, guild_id):
         return None
 
+    def intern_features(self, raw_features):
+        return tuple(raw_features or ())
+
 
 class FakeState:
     def __init__(self):

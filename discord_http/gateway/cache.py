@@ -114,7 +114,9 @@ class Cache:
 
     __slots__ = (
         "__activity_assets_pool",
+        "__feature_pool",
         "__guilds",
+        "__overwrite_pools",
         "__role_id_pools",
         "__role_ids_pools",
         "__users",
@@ -140,6 +142,10 @@ class Cache:
         self.__users: "weakref.WeakValueDictionary[int, User]" = weakref.WeakValueDictionary()
         self.__role_id_pools: dict[int, dict[int, int]] = {}
         self.__role_ids_pools: dict[int, dict[tuple[int, ...], tuple[int, ...]]] = {}
+        self.__feature_pool: dict[tuple[str, ...], tuple[str, ...]] = {}
+        self.__overwrite_pools: dict[
+            int, dict[tuple[tuple[int, int, int, int], ...], tuple[tuple[int, int, int, int], ...]]
+        ] = {}
         self.__activity_assets_pool: "weakref.WeakValueDictionary[tuple, ActivityAssets]" = (
             weakref.WeakValueDictionary()
         )
@@ -173,6 +179,53 @@ class Cache:
 
         ids_pool = self.__role_ids_pools.setdefault(guild_id, {})
         return ids_pool.setdefault(role_ids, role_ids)
+
+    def intern_features(self, raw_features: list[str] | None) -> tuple[str, ...]:
+        """
+        Deduplicate a guild's feature tuple against other guilds with the same set.
+
+        Parameters
+        ----------
+        raw_features
+            The raw feature strings from the guild payload
+
+        Returns
+        -------
+            The interned feature tuple
+        """
+        if not raw_features:
+            return ()
+
+        key = tuple(sorted(sys.intern(f) for f in raw_features))
+        return self.__feature_pool.setdefault(key, key)
+
+    def intern_overwrites(
+        self,
+        guild_id: int | None,
+        raw_overwrites: tuple[tuple[int, int, int, int], ...]
+    ) -> tuple[tuple[int, int, int, int], ...]:
+        """
+        Deduplicate a channel's overwrite tuple against other channels in the same guild.
+
+        Parameters
+        ----------
+        guild_id
+            Guild ID the channel belongs to
+        raw_overwrites
+            The raw `(id, type, allow, deny)` overwrite tuples
+
+        Returns
+        -------
+            The interned overwrite tuple
+        """
+        if not raw_overwrites or guild_id is None:
+            return raw_overwrites
+
+        if self.cache_flags is None or GatewayCacheFlags.channels not in self.cache_flags:
+            return raw_overwrites
+
+        pool = self.__overwrite_pools.setdefault(guild_id, {})
+        return pool.setdefault(raw_overwrites, raw_overwrites)
 
     async def calculate_memory_usage(self) -> dict[str, int]:
         """
@@ -374,6 +427,7 @@ class Cache:
 
         self.__role_id_pools.pop(guild_id, None)
         self.__role_ids_pools.pop(guild_id, None)
+        self.__overwrite_pools.pop(guild_id, None)
         return self.__guilds.pop(guild_id, None)
 
     def add_member(

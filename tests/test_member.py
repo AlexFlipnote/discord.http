@@ -17,6 +17,9 @@ class FakeCache:
     def intern_role_ids(self, guild_id, raw_role_ids):
         return tuple(int(r) for r in raw_role_ids)
 
+    def intern_features(self, raw_features):
+        return tuple(raw_features or ())
+
 
 class FakeState:
     def __init__(self):

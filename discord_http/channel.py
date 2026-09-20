@@ -1561,10 +1561,12 @@ class BaseChannel(PartialChannel):
         data: dict,
         guild_id: int | None = None
     ):
+        resolved_guild_id = utils.get_int(data, "guild_id", default=guild_id)
+
         super().__init__(
             state=state,
             id=int(data["id"]),
-            guild_id=utils.get_int(data, "guild_id", default=guild_id)
+            guild_id=resolved_guild_id
         )
 
         self.name: str | None = data.get("name")
@@ -1598,9 +1600,12 @@ class BaseChannel(PartialChannel):
         self._raw_type: int = data["type"]
 
         # Stored as compact int tuples (id, type, allow, deny)
-        self._raw_overwrites: tuple[tuple[int, int, int, int], ...] = tuple(
+        raw_overwrites = tuple(
             (int(g["id"]), int(g["type"]), int(g["allow"]), int(g["deny"]))
             for g in data.get("permission_overwrites", [])
+        )
+        self._raw_overwrites: tuple[tuple[int, int, int, int], ...] = (
+            state.cache.intern_overwrites(resolved_guild_id, raw_overwrites)
         )
 
     def __repr__(self) -> str:
@@ -1673,47 +1678,52 @@ class BaseChannel(PartialChannel):
         -------
             The permissions for the member in the channel.
         """
-        if getattr(self.guild, "owner_id", None) == member.id:
+        guild = self.guild
+
+        if getattr(guild, "owner_id", None) == member.id:
             return Permissions.all()
 
+        default_role = guild.default_role
         base: Permissions = getattr(
-            self.guild.default_role,
+            default_role,
             "permissions",
             Permissions.none()
         )
 
         for r_id in member.role_ids:
-            if (role := self.guild.get_role(r_id)) is None:
+            if (role := guild.get_role(r_id)) is None:
                 continue
             base |= getattr(role, "permissions", Permissions.none())
 
         if Permissions.administrator in base:
             return Permissions.all()
 
-        everyone_id = self.guild.default_role.id
-        member_role_ids = set(member.role_ids)
+        everyone_id = default_role.id
 
-        everyone_ow = None
-        member_ow = None
+        everyone_ow: tuple[int, int] | None = None
+        member_ow: tuple[int, int] | None = None
         allows, denies = 0, 0
 
-        for ow in self.permission_overwrites:
-            target_id = ow.target.id
+        for target_id, target_type, allow, deny in self._raw_overwrites:
             if target_id == everyone_id:
-                everyone_ow = ow
-            elif ow.is_role() and target_id in member_role_ids:
-                allows |= int(ow.allow)
-                denies |= int(ow.deny)
-            elif member_ow is None and ow.is_member() and target_id == member.id:
-                member_ow = ow
+                everyone_ow = (allow, deny)
+            elif target_type == PermissionType.role.value and target_id in member.role_ids:
+                allows |= allow
+                denies |= deny
+            elif (
+                member_ow is None and
+                target_type == PermissionType.member.value and
+                target_id == member.id
+            ):
+                member_ow = (allow, deny)
 
         if everyone_ow:
-            base = base.handle_overwrite(int(everyone_ow.allow), int(everyone_ow.deny))
+            base = base.handle_overwrite(*everyone_ow)
 
         base = base.handle_overwrite(allows, denies)
 
         if member_ow:
-            base = base.handle_overwrite(int(member_ow.allow), int(member_ow.deny))
+            base = base.handle_overwrite(*member_ow)
 
         if member.is_timed_out():
             timeout_perm = (
