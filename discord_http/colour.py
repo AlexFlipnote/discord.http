@@ -64,7 +64,7 @@ class Colour:
 
     def is_light(self) -> bool:
         """ Returns whether the colour is considered light based on perceived luminance. """
-        return not self.is_dark
+        return not self.is_dark()
 
     def to_rgb(self) -> tuple[int, int, int]:
         """ Returns the RGB values of the colour`. """

@@ -6,7 +6,7 @@ import time
 
 from collections.abc import Callable
 from io import BytesIO
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, ClassVar
 
 from .asset import Asset
 from .colour import Colour
@@ -76,6 +76,16 @@ _components_inaccessible = (
     ComponentType.content_inventory_entry,
     ComponentType.checkpoint,
 )
+
+_select_types = (
+    ComponentType.string_select,
+    ComponentType.user_select,
+    ComponentType.role_select,
+    ComponentType.mentionable_select,
+    ComponentType.channel_select,
+)
+
+_special_buttons = (ButtonStyles.link, ButtonStyles.premium)
 
 __all__ = (
     "ActionRow",
@@ -448,7 +458,6 @@ class Button(Item):
         url: str | None = None
     ):
         super().__init__(type=ComponentType.button)
-        special_buttons = (ButtonStyles.link, ButtonStyles.premium)
 
         self.label: str | None = label
         """ The label of the button. """
@@ -490,7 +499,7 @@ class Button(Item):
             case _:
                 self.style = ButtonStyles.primary
 
-        if self.style in special_buttons:
+        if self.style in _special_buttons:
             self.custom_id = None  # Force none for special buttons
 
     def to_dict(self) -> dict:
@@ -1365,6 +1374,7 @@ class InteractionStorage:
         "_timeout_bool",
         "_timeout_expiry",
         "_timeout_task",
+        "_user_ids",
         "_users",
     )
 
@@ -1376,6 +1386,7 @@ class InteractionStorage:
 
         self._call_after: Callable | None = None
         self._users: list["Snowflake"] = []
+        self._user_ids: set[int] = set()
         self._timeout_bool = False
         self._timeout: float | None = None
         self._timeout_expiry: float | None = None
@@ -1459,8 +1470,8 @@ class InteractionStorage:
             return None
 
         if (
-            self._users and
-            ctx.user.id not in [g.id for g in self._users]
+            self._user_ids and
+            ctx.user.id not in self._user_ids
         ):
             return ctx.response.send_message(
                 "You are not allowed to interact with this message",
@@ -1533,6 +1544,7 @@ class InteractionStorage:
 
         if users and isinstance(users, list):
             self._users = [g for g in users if getattr(g, "id", None)]
+            self._user_ids = {g.id for g in self._users}
 
         self._call_after = call_after
         self._timeout = timeout
@@ -1723,7 +1735,6 @@ class ActionRow(Item):
     """ Represents an action row component in a message, containing buttons, selects, and links. """
 
     __slots__ = (
-        "_select_types",
         "components",
     )
 
@@ -1735,14 +1746,6 @@ class ActionRow(Item):
 
         self.components: list[Button | Select | Link] = list(components)
         """ The components contained within the action row. """
-
-        self._select_types: list[ComponentType] = [
-            ComponentType.string_select,
-            ComponentType.user_select,
-            ComponentType.role_select,
-            ComponentType.mentionable_select,
-            ComponentType.channel_select
-        ]
 
     def __repr__(self) -> str:
         return f"<ActionRow components={self.components}>"
@@ -1815,7 +1818,7 @@ class ActionRow(Item):
             raise ValueError("Cannot have an action row with more than 5 components")
         if (
             len(self.components) > 1 and
-            any(g.type in self._select_types for g in self.components)
+            any(g.type in _select_types for g in self.components)
         ):
             raise ValueError("Cannot have an action row with more than two items if any select menu is present")
 
@@ -1824,27 +1827,27 @@ class ActionRow(Item):
             "components": [g.to_dict() for g in self.components]
         }
 
+    _cls_table: ClassVar[dict[int, type]] = {
+        2: Button,
+        3: Select,
+        5: UserSelect,
+        6: RoleSelect,
+        7: MentionableSelect,
+        8: ChannelSelect,
+        9: SectionComponent,
+    }
+
+    _default_value_dropdowns: ClassVar[tuple[type, ...]] = (
+        UserSelect, RoleSelect, MentionableSelect, ChannelSelect,
+    )
+
     @classmethod
     def from_dict(cls, data: dict) -> "ActionRow":
         """ Returns an action row from a dict provided by Discord. """
         items = []
 
-        cls_table = {
-            2: Button,
-            3: Select,
-            5: UserSelect,
-            6: RoleSelect,
-            7: MentionableSelect,
-            8: ChannelSelect,
-            9: SectionComponent,
-        }
-
-        default_value_dropdowns = (
-            UserSelect, RoleSelect, MentionableSelect, ChannelSelect,
-        )
-
         for c in data.get("components", []):
-            cls_ = cls_table[c.get("type", 2)]
+            cls_ = cls._cls_table[c.get("type", 2)]
             if c.get("url", None):
                 cls_ = Link
                 try:
@@ -1857,7 +1860,7 @@ class ActionRow(Item):
             if c.get("id", None):
                 del c["id"]
 
-            if cls_ in default_value_dropdowns:
+            if cls_ in cls._default_value_dropdowns:
                 c["default_values"] = [
                     int(g["id"])
                     for g in c.get("default_values", [])
@@ -2265,6 +2268,32 @@ class View(InteractionStorage):
 
         return [g.to_dict() for g in self.items]
 
+    _cls_table_cache: ClassVar[dict[int, type] | None] = None
+
+    @classmethod
+    def _get_cls_table(cls) -> dict[int, type]:
+        if cls._cls_table_cache is None:
+            cls._cls_table_cache = {
+                1: ActionRow,
+                2: Button,
+                3: Select,
+                5: UserSelect,
+                6: RoleSelect,
+                7: MentionableSelect,
+                8: ChannelSelect,
+                9: SectionComponent,
+                10: TextDisplayComponent,
+                11: ThumbnailComponent,
+                12: MediaGalleryComponent,
+                13: FileComponent,
+                14: SeparatorComponent,
+                16: ContentInventoryEntry,
+                17: ContainerComponent,
+                18: LabelComponent,
+                20: CheckpointComponent
+            }
+        return cls._cls_table_cache
+
     @classmethod
     def from_dict(cls, *, state: "DiscordAPI", data: dict) -> "View":
         """ Returns a view from a dict provided by Discord. """
@@ -2272,25 +2301,7 @@ class View(InteractionStorage):
         if not data.get("components"):
             return View(*[])
 
-        cls_table = {
-            1: ActionRow,
-            2: Button,
-            3: Select,
-            5: UserSelect,
-            6: RoleSelect,
-            7: MentionableSelect,
-            8: ChannelSelect,
-            9: SectionComponent,
-            10: TextDisplayComponent,
-            11: ThumbnailComponent,
-            12: MediaGalleryComponent,
-            13: FileComponent,
-            14: SeparatorComponent,
-            16: ContentInventoryEntry,
-            17: ContainerComponent,
-            18: LabelComponent,
-            20: CheckpointComponent
-        }
+        cls_table = cls._get_cls_table()
 
         def _v2_resolver(c: dict) -> Item:
             raw_type = c.get("type", 1)
