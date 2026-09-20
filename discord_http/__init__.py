@@ -1,5 +1,5 @@
 # ruff: file-ignore[undefined-local-with-import-star, unused-import]
-__version__ = "3.2.1"
+__version__ = "3.2.2"
 
 from .asset import *
 from .audit import *
