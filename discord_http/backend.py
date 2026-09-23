@@ -357,7 +357,7 @@ class DiscordHTTP(web.Application):
 
         if (total_elapsed := delivery_time()) > 3.0:
             _log.warning(
-                f"Interaction {context.id} took {total_elapsed:.2f}s to ack, "
+                f"Interaction {context.id} took {total_elapsed:.2f}s to ACK, "
                 "likely too late for Discord."
             )
 
