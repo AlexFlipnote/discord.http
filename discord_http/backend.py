@@ -323,18 +323,6 @@ class DiscordHTTP(web.Application):
         raw_type = data.get("type", -1)
         data_type = InteractionType(raw_type)
 
-        def delivery_time() -> float:
-            return (utils.utcnow() - context.created_at).total_seconds()
-
-        if data_type != InteractionType.ping and (delivery_lag := delivery_time()) > 3.0:
-            # Discord requires an ack within 3s of the interaction being created.
-            if self.bot.has_any_dispatch("interaction_dropped"):
-                self.bot.dispatch("interaction_dropped", context)
-            else:
-                _log.warning(f"Interaction {context.id} was {delivery_lag - 3.0:.2f}s too late, dropping.")
-
-            return self.jsonify({"error": "interaction delivered too late"}, status=202)
-
         match data_type:
             case InteractionType.ping:
                 return self._handle_ack_ping(context, data)
@@ -354,12 +342,6 @@ class DiscordHTTP(web.Application):
             case _:
                 _log.debug(f"Unhandled interaction received (type: {raw_type})")
                 return self.jsonify({"error": "invalid request body"}, status=400)
-
-        if (total_elapsed := delivery_time()) > 3.0:
-            _log.warning(
-                f"Interaction {context.id} took {total_elapsed:.2f}s to ack, "
-                "likely too late for Discord."
-            )
 
         self._attach_tracking(response, context._response_sent)
         return response
