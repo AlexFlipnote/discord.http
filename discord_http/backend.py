@@ -4,7 +4,6 @@ import logging
 import orjson
 import time
 
-from datetime import datetime
 from cryptography.exceptions import InvalidSignature
 from cryptography.hazmat.primitives.asymmetric.ed25519 import Ed25519PublicKey
 from typing import TYPE_CHECKING
@@ -40,9 +39,6 @@ class DiscordHTTP(web.Application):
     """
 
     def __init__(self, *, client: "Client"):
-        self.uptime: datetime = utils.utcnow()
-        """ The time when the HTTP server was started. """
-
         self.bot: "Client" = client
         """ The bot instance that is using this HTTP server. """
 
@@ -485,6 +481,9 @@ class DiscordHTTP(web.Application):
         if not self.bot.is_ready():
             return self.jsonify({"error": "bot is not ready yet"}, status=503)
 
+        uptime = self.bot.uptime
+        booted_at = utils.utcnow() - uptime
+
         return self.jsonify({
             "@me": {
                 "id": self.bot.user.id,
@@ -492,10 +491,10 @@ class DiscordHTTP(web.Application):
                 "discriminator": self.bot.user.discriminator,
                 "created_at": str(self.bot.user.created_at.isoformat()),
             },
-            "last_reboot": {
-                "datetime": str(self.uptime.astimezone().isoformat()),
-                "timedelta": str(utils.utcnow() - self.uptime),
-                "unix": int(self.uptime.timestamp()),
+            "uptime": {
+                "datetime": str(booted_at.astimezone().isoformat()),
+                "timedelta": str(uptime),
+                "unix": int(booted_at.timestamp()),
             }
         })
 
