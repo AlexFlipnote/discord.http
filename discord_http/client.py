@@ -7,7 +7,7 @@ import time
 
 from aiohttp import web
 from collections.abc import Callable, AsyncIterator, Coroutine
-from datetime import datetime
+from datetime import datetime, timedelta
 from typing import Any, TYPE_CHECKING, TypeVar
 
 from . import utils, __version__
@@ -136,6 +136,8 @@ class Client:
         disable_default_get_path: bool = False,
         debug_events: bool = False
     ):
+        self._raw_boot_time: float = time.perf_counter()
+
         # Setup log instantly
         self.logging_level: int = logging_level
         utils.setup_logger(level=self.logging_level)
@@ -324,7 +326,7 @@ class Client:
         if self.has_any_dispatch("ready"):
             self.dispatch("ready", client)
         else:
-            _log.info("discord.http is now ready")
+            _log.info(f"discord.http is now ready (took {utils.format_small_unit(self.uptime)})")
 
     async def __cleanup(self, _: web.Application | None = None) -> None:
         """ Called when the bot is shutting down. """
@@ -573,6 +575,11 @@ class Client:
             self._shards_ready is not None and
             self._shards_ready.is_set()
         )
+
+    @property
+    def uptime(self) -> timedelta:
+        """ How long it has been since the client was created. """
+        return timedelta(seconds=time.perf_counter() - self._raw_boot_time)
 
     def set_context(
         self,

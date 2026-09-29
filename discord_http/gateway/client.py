@@ -8,6 +8,8 @@ from collections.abc import Coroutine
 from datetime import datetime, UTC
 from typing import TYPE_CHECKING
 
+from .. import utils
+
 from .object import PlayingStatus
 from .shard import Shard
 
@@ -278,7 +280,7 @@ class GatewayClient:
         if self.bot.has_any_dispatch("gateway_ready"):
             self.bot.dispatch("gateway_ready", self.bot)
         else:
-            _log.info("discord.http/gateway is now ready")
+            _log.info(f"discord.http/gateway is now ready (took {utils.format_small_unit(self.bot.uptime)})")
 
     def start(self) -> None:
         """ Start the gateway client. """
