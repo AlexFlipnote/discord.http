@@ -633,7 +633,7 @@ class OnboardingMode(BaseEnum):
 
 class DisplayNameFontType(BaseEnum):
     """ Represents the font type of a user's display name style. """
-    # Aliases
+    # Aliases (aka. the ones actually used)
     gg_sans = 11
     tempo = 12
     sakura = 3
@@ -643,20 +643,28 @@ class DisplayNameFontType(BaseEnum):
     _8bit = 8  # Underscore is only there to be valid
     eightbit = 8
     vampyre = 10
+    monkey_bars = 13
+    mainframe = 14
+    headbang = 15
+    journal = 16
 
     # Code names
     default = 11  # Why is this 11? We'll never know...
-    bangers = 1
-    bio_rhyme = 2
+    bangers = 1  # Deprecated
+    bio_rhyme = 2  # Deprecated
     cherry_bomb = 3
     chicle = 4
-    compagnon = 5
+    compagnon = 5  # Deprecated
     museo_moderno = 6
     neo_castel = 7
     pixelify = 8
-    ribes = 9
+    ribes = 9  # Deprecated
     sinistre = 10
     zilla_slab = 12
+    playpen_sans = 13
+    orbitron = 14
+    new_rocker = 15
+    kalam = 16
 
 
 class DisplayNameEffectType(BaseEnum):
@@ -667,6 +675,14 @@ class DisplayNameEffectType(BaseEnum):
     toon = 4
     pop = 5
     glow = 6
+    prism = 7
+    gummy = 8
+
+    # These mostly falls back to solid
+    test_1 = 1001
+    test_2 = 1002
+    test_3 = 1003
+    test_4 = 1004
 
 
 class VerificationLevel(BaseEnum):
