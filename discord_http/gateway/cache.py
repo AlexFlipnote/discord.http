@@ -5,7 +5,8 @@ import weakref
 from typing import TYPE_CHECKING
 
 from ..channel import BaseChannel
-from ..member import Member
+from ..guild import PartialGuild
+from ..member import Member, PartialMember
 from ..user import User
 from ..voice import VoiceState, PartialVoiceState
 
@@ -17,8 +18,7 @@ if TYPE_CHECKING:
     from ..channel import PartialChannel, PartialThread
     from ..client import Client
     from ..emoji import Emoji
-    from ..guild import PartialGuild, Guild
-    from ..member import PartialMember
+    from ..guild import Guild
     from ..role import PartialRole, Role
     from ..sticker import Sticker
 
@@ -117,8 +117,8 @@ class Cache:
         "__feature_pool",
         "__guilds",
         "__overwrite_pools",
-        "__role_id_pools",
-        "__role_ids_pools",
+        "__role_int_pools",
+        "__role_tuple_pools",
         "__users",
         "_presence_dedup_enabled",
         "_state",
@@ -140,8 +140,9 @@ class Cache:
 
         self.__guilds: dict[int, "PartialGuild | Guild"] = {}
         self.__users: "weakref.WeakValueDictionary[int, User]" = weakref.WeakValueDictionary()
-        self.__role_id_pools: dict[int, dict[int, int]] = {}
-        self.__role_ids_pools: dict[int, dict[tuple[int, ...], tuple[int, ...]]] = {}
+        # Per guild: one shared int object per role ID, and one shared tuple per role combination
+        self.__role_int_pools: dict[int, dict[int, int]] = {}
+        self.__role_tuple_pools: dict[int, dict[tuple[int, ...], tuple[int, ...]]] = {}
         self.__feature_pool: dict[tuple[str, ...], tuple[str, ...]] = {}
         self.__overwrite_pools: dict[
             int, dict[tuple[tuple[int, int, int, int], ...], tuple[tuple[int, int, int, int], ...]]
@@ -174,11 +175,11 @@ class Cache:
         if self.cache_flags is None or GatewayCacheFlags.members not in self.cache_flags:
             return tuple(int(r) for r in raw_role_ids)
 
-        id_pool = self.__role_id_pools.setdefault(guild_id, {})
-        role_ids = tuple(id_pool.setdefault(i, i) for i in map(int, raw_role_ids))
+        int_pool = self.__role_int_pools.setdefault(guild_id, {})
+        role_ids = tuple(int_pool.setdefault(i, i) for i in map(int, raw_role_ids))
 
-        ids_pool = self.__role_ids_pools.setdefault(guild_id, {})
-        return ids_pool.setdefault(role_ids, role_ids)
+        tuple_pool = self.__role_tuple_pools.setdefault(guild_id, {})
+        return tuple_pool.setdefault(role_ids, role_ids)
 
     def intern_features(self, raw_features: list[str] | None) -> tuple[str, ...]:
         """
@@ -226,6 +227,23 @@ class Cache:
 
         pool = self.__overwrite_pools.setdefault(guild_id, {})
         return pool.setdefault(raw_overwrites, raw_overwrites)
+
+    def reset_guild_pools(self, guild_id: int) -> None:
+        """
+        Drop a guild's role-ID and overwrite interning pools.
+
+        Called right before a guild's internal cache is (re)populated from a
+        GUILD_CREATE, so tuples only referenced by the previous generation of
+        cached members/channels don't stay pinned by the pool forever.
+
+        Parameters
+        ----------
+        guild_id
+            Guild ID to reset the pools for
+        """
+        self.__role_int_pools.pop(guild_id, None)
+        self.__role_tuple_pools.pop(guild_id, None)
+        self.__overwrite_pools.pop(guild_id, None)
 
     async def calculate_memory_usage(self) -> dict[str, int]:
         """
@@ -336,7 +354,11 @@ class Cache:
         if GatewayCacheFlags.guilds in self.cache_flags:
             self.__guilds[guild_id] = guild
         elif GatewayCacheFlags.partial_guilds in self.cache_flags:
-            self.__guilds[guild_id] = self.bot.get_partial_guild(guild_id)
+            # Reuse the given object if it already is a bare PartialGuild
+            self.__guilds[guild_id] = (
+                guild if type(guild) is PartialGuild
+                else self.bot.get_partial_guild(guild_id)
+            )
         else:
             # (Partial)Guild is not cached, nowhere to store it
             return None
@@ -425,8 +447,8 @@ class Cache:
         if self.cache_flags is None:
             return None
 
-        self.__role_id_pools.pop(guild_id, None)
-        self.__role_ids_pools.pop(guild_id, None)
+        self.__role_int_pools.pop(guild_id, None)
+        self.__role_tuple_pools.pop(guild_id, None)
         self.__overwrite_pools.pop(guild_id, None)
         return self.__guilds.pop(guild_id, None)
 
@@ -459,15 +481,23 @@ class Cache:
         if GatewayCacheFlags.members in self.cache_flags:
             guild._cache_members[member.id] = member
         elif GatewayCacheFlags.partial_members in self.cache_flags:
-            guild._cache_members[member.id] = self.bot.get_partial_member(
-                member.id, member.guild_id
-            )
+            guild._cache_members[member.id] = self._to_partial_member(member)
         else:
             # Cache bot regardless of cache flags
             if member.id == self.bot.user.id:
                 if isinstance(member, Member):
                     self._dedupe_user(member)
                 guild._cache_members[member.id] = member
+
+    def _to_partial_member(self, member: "Member | PartialMember") -> "PartialMember":
+        """ Turn a member into the `PartialMember` stored by `partial_members` caching, keeping its presence. """
+        if type(member) is PartialMember:
+            return member
+
+        partial = self.bot.get_partial_member(member.id, member.guild_id)
+        if (presence := getattr(member, "presence", None)) is not None:
+            partial.presence = presence
+        return partial
 
     def update_member(self, member: "Member | PartialMember") -> None:
         """
@@ -478,11 +508,25 @@ class Cache:
         member
             The member to update
         """
-        if member.presence is None:
-            guild = self.get_guild(member.guild_id)
-            existing = guild.get_member(member.id) if guild else None
-            if existing is not None and existing.presence is not None:
-                member.presence = existing.presence
+        guild = self.get_guild(member.guild_id)
+        existing = guild.get_member(member.id) if guild else None
+
+        if (
+            member.presence is None and
+            existing is not None and
+            existing.presence is not None
+        ):
+            member.presence = existing.presence
+
+        if (
+            existing is not None and
+            self.cache_flags is not None and
+            GatewayCacheFlags.members not in self.cache_flags and
+            GatewayCacheFlags.partial_members in self.cache_flags
+        ):
+            # A cached PartialMember only holds id/guild_id/presence, none of
+            # which a member update changes, so keep it (and its presence) as-is.
+            return
 
         self.add_member(member, count_member=False)
 
@@ -528,11 +572,11 @@ class Cache:
         if GatewayCacheFlags.presences not in self.cache_flags:
             return
 
-        guild = self.get_guild(presence.guild.id)
+        guild = self.get_guild(presence.guild_id)
         if not guild:
             return
 
-        member = guild.get_member(presence.user.id)
+        member = guild.get_member(presence.user_id)
         if not member:
             return
 

@@ -5,7 +5,7 @@ from datetime import timedelta
 from discord_http import (
     Guild, Role, Member, PartialChannel, TextChannel, VoiceChannel,
     CategoryChannel, ForumTag, Permissions, PermissionOverwrite, PermissionType,
-    utils,
+    utils, ForumChannel, PublicThread, ChannelType,
 )
 
 from _fake_client import FakeBot
@@ -236,6 +236,73 @@ class TestCreateThreadValidation(unittest.IsolatedAsyncioTestCase):
             # FakeState has no `query`, so this proves validation passed
             # and execution reached the actual HTTP call.
             await channel.create_thread("thread", rate_limit_per_user=timedelta(seconds=30))
+
+
+class TestPermissionsForPartialRolesAndPlainInts(unittest.TestCase):
+    def test_role_overwrite_only_applies_to_member_roles(self) -> None:
+        state = FakeState()
+        guild = _make_guild(state)
+        _make_role(state, guild, guild.id, ["view_channel"])
+        _make_role(state, guild, 5)
+        channel = _make_channel(state, guild)
+        member = _make_member(state, guild, role_ids=[5])
+
+        send = int(Permissions.from_names("send_messages"))
+        embed = int(Permissions.from_names("embed_links"))
+        channel._raw_overwrites = (
+            (5, int(PermissionType.role), send, 0),
+            (6, int(PermissionType.role), embed, 0),  # a role the member doesn't have
+        )
+
+        perms = channel.permissions_for(member)
+        self.assertIsInstance(perms, Permissions)
+        self.assertIn("send_messages", perms.to_names())
+        self.assertNotIn("embed_links", perms.to_names())
+
+    def test_member_overwrite_for_someone_else_is_ignored(self) -> None:
+        state = FakeState()
+        guild = _make_guild(state)
+        _make_role(state, guild, guild.id, ["view_channel"])
+        channel = _make_channel(state, guild)
+        member = _make_member(state, guild, member_id=1)
+
+        view = int(Permissions.from_names("view_channel"))
+        channel._raw_overwrites = ((2, int(PermissionType.member), 0, view),)
+        self.assertIn("view_channel", channel.permissions_for(member).to_names())
+
+
+class TestForumChannel(unittest.TestCase):
+    def _forum(self):
+        return ForumChannel(state=FakeState(), data={
+            "id": "300", "type": 15, "guild_id": "100", "name": "forum",
+            "rate_limit_per_user": 5, "last_message_id": "400",
+            "available_tags": [{"id": "1", "name": "bug", "moderated": False, "emoji_id": None, "emoji_name": None}],
+            "default_reaction_emoji": {"emoji_id": None, "emoji_name": None},
+        })
+
+    def test_fields(self) -> None:
+        forum = self._forum()
+        self.assertEqual(forum.type, ChannelType.guild_forum)
+        self.assertEqual(forum.name, "forum")
+        self.assertEqual(forum.guild_id, 100)
+        self.assertEqual(forum.rate_limit_per_user, 5)
+        self.assertEqual(forum.last_message_id, 400)
+        self.assertEqual([t.name for t in forum.tags], ["bug"])
+
+
+class TestPublicThreadFields(unittest.TestCase):
+    def test_fields(self) -> None:
+        thread = PublicThread(state=FakeState(), data={
+            "id": "1", "type": 11, "guild_id": "100", "name": "t",
+            "rate_limit_per_user": None, "last_message_id": "7", "owner_id": "8",
+            "thread_metadata": {"archived": True},
+        })
+        self.assertEqual(thread.name, "t")
+        self.assertEqual(thread.guild_id, 100)
+        self.assertEqual(thread.rate_limit_per_user, 0)
+        self.assertEqual(thread.last_message_id, 7)
+        self.assertEqual(thread.owner_id, 8)
+        self.assertTrue(thread.archived)
 
 
 if __name__ == "__main__":

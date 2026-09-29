@@ -477,10 +477,7 @@ class Button(Item):
         self.style: ButtonStyles | str | int = style
         """ The style of the button. """
 
-        self.custom_id: str | None = (
-            str(custom_id)
-            if custom_id else _garbage_id()
-        )
+        self.custom_id: str | None = str(custom_id) if custom_id else None
         """ The custom ID of the button. """
 
         match style:
@@ -501,6 +498,8 @@ class Button(Item):
 
         if self.style in _special_buttons:
             self.custom_id = None  # Force none for special buttons
+        elif self.custom_id is None:
+            self.custom_id = _garbage_id()
 
     def to_dict(self) -> dict:
         """ Returns a dict representation of the button. """
@@ -1461,6 +1460,13 @@ class InteractionStorage:
         """ Whether the view has timed out. """
         return self._timeout_bool
 
+    def _cancel_timeout_task(self) -> None:
+        """ Cancels the timeout watcher, if one is running. """
+        if self._timeout_task is not None:
+            if not self._timeout_task.done():
+                self._timeout_task.cancel()
+            self._timeout_task = None
+
     async def callback(
         self,
         ctx: "Context"
@@ -1554,13 +1560,14 @@ class InteractionStorage:
             None
         )
 
-        if self._timeout_task and not self._timeout_task.done():
-            self._timeout_task.cancel()
+        self._cancel_timeout_task()
 
-        self._timeout_task = self.loop.create_task(
-            self._timeout_watcher(),
-            name=f"discord.http/view-timeout-watcher-{int(time.time())}"
-        )
+        if timeout is not None:
+            # No watcher is needed when the view never times out on its own
+            self._timeout_task = self.loop.create_task(
+                self._timeout_watcher(),
+                name=f"discord.http/view-timeout-watcher-{int(time.time())}"
+            )
 
         self._update_event(False)
 
@@ -1592,15 +1599,18 @@ class InteractionStorage:
                 self._msg_cache = msg.id
             except Exception as e:
                 _log.warning(f"Failed to fetch origin message: {e}")
+                self._cancel_timeout_task()
                 return None
 
-        ctx.bot._view_storage[self._msg_cache] = self
+        storage_key = self._msg_cache
+        ctx.bot._view_storage[storage_key] = self
         try:
             await self._event.wait()
         finally:
-            if self._timeout_task and not self._timeout_task.done():
-                self._timeout_task.cancel()
-            ctx.bot._view_storage.pop(self._msg_cache, None)
+            self._cancel_timeout_task()
+            # Another view may have re-used the same key since
+            if ctx.bot._view_storage.get(storage_key) is self:
+                del ctx.bot._view_storage[storage_key]
 
         if self.is_timeout():
             return None

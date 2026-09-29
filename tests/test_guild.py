@@ -1,5 +1,6 @@
 import unittest
 
+from types import SimpleNamespace
 from datetime import UTC, datetime
 
 from discord_http import (
@@ -8,7 +9,7 @@ from discord_http import (
     GuildIncidentsData, WelcomeScreen, GuildWidgetSettings, GuildTemplate,
     GuildPreview, GuildOnboarding, OnboardingPromptOption,
     OnboardingPromptType, OnboardingMode, NSFWLevel, PremiumTier, MFALevel,
-    Guild, PartialChannel,
+    Guild, PartialChannel, PartialGuild,
 )
 from discord_http.guild import GuildWidget
 
@@ -304,6 +305,42 @@ class TestPopulateInternalCacheVoiceStates(unittest.TestCase):
 
         self.assertEqual(len(guild._cache_voice_states), 1)
         self.assertIn(111, guild._cache_voice_states)
+
+
+class _MeBot(FakeBot):
+    class _User:
+        id = 4242
+
+    user = _User()
+
+
+class _MeState(FakeState):
+    def __init__(self):
+        self.cache = FakeCache()
+        self.bot = _MeBot(self)
+
+
+class TestPartialGuildMe(unittest.TestCase):
+    """ Regression test: the fallback used the guild's own ID instead of the bot's user ID. """
+
+    def test_falls_back_to_partial_member_of_the_bot(self) -> None:
+        guild = PartialGuild(state=_MeState(), id=1)
+        me = guild.me
+        self.assertEqual(me.id, 4242)
+        self.assertEqual(me.guild_id, 1)
+
+
+class TestGuildRegion(unittest.TestCase):
+    """ Regression test: a missing region used to become "" instead of None. """
+
+    def test_missing_region_is_none(self) -> None:
+        guild = Guild(state=FakeState(), data={"id": "1", "name": "g", "features": []})
+        self.assertIsNone(guild.region)
+
+    def test_present_region(self) -> None:
+        guild = Guild(state=FakeState(), data={"id": "1", "name": "g", "features": [], "region": "europe"})
+        self.assertEqual(guild.region, "europe")
+
 
 
 if __name__ == "__main__":

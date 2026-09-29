@@ -5,7 +5,7 @@ import time
 
 from collections.abc import Callable
 from datetime import datetime, timedelta
-from typing import TYPE_CHECKING, Any, Self, cast
+from typing import TYPE_CHECKING, Any, Self
 
 from . import utils
 from .channel import (
@@ -61,16 +61,13 @@ channel_types = {
     int(ChannelType.guild_stage_voice): StageChannel,
     int(ChannelType.guild_directory): DirectoryChannel,
     int(ChannelType.guild_forum): ForumChannel,
+    int(ChannelType.guild_media): ForumChannel,
 }
 
 __all__ = (
     "Context",
     "InteractionResponse",
 )
-
-
-_none_singletons: dict[type, "_ResolveParser"] = {}
-""" One cached empty instance per `_ResolveParser` subclass. """
 
 
 class _ResolveParser:
@@ -99,12 +96,7 @@ class _ResolveParser:
     @classmethod
     def none(cls, ctx: "Context") -> Self:
         """ With no values. """
-        if (cached := _none_singletons.get(cls)) is not None:
-            return cast("Self", cached)
-
-        instance = cls(ctx, {})
-        _none_singletons[cls] = instance
-        return instance
+        return cls(ctx, {})
 
     @classmethod
     def _from_parsed(cls, parsed_data: dict) -> Self:
@@ -141,7 +133,7 @@ class _ResolveParser:
                     to_append.append(Attachment(state=ctx.bot.state, data=data_))
 
                 case "channels":
-                    to_append.append(channel_types[data_["type"]](state=ctx.bot.state, data=data_))
+                    to_append.append(channel_types.get(data_["type"], BaseChannel)(state=ctx.bot.state, data=data_))
 
                 case "roles":
                     if not ctx.guild:
@@ -224,6 +216,9 @@ class InteractionResponse:
         if call_after:
             if not inspect.iscoroutinefunction(call_after):
                 raise TypeError("call_after must be a coroutine")
+
+            # Create the event now, the backend only tracks the response flush when it exists
+            self._parent._ensure_response_sent_event()
 
             task = self._parent.bot.loop.create_task(
                 self._parent._background_task_manager(call_after),
@@ -669,7 +664,7 @@ class Context:
             if self._guild:
                 channel["guild_id"] = self._guild.id
 
-            self._channel = channel_types[channel["type"]](
+            self._channel = channel_types.get(channel["type"], BaseChannel)(
                 state=self.bot.state,
                 data=channel
             )
@@ -760,9 +755,9 @@ class Context:
             try:
                 # Give Discord enough time to close their connection
                 with self.benchmark.measure("call_after:ack_flush_wait", internal=True):
-                    await asyncio.wait_for(self._response_sent.wait(), timeout=5.0)
+                    await asyncio.wait_for(self._ensure_response_sent_event().wait(), timeout=5.0)
             except TimeoutError:
-                self._response_sent.set()
+                self._ensure_response_sent_event().set()
                 _log.error(
                     f"call_after:{call_after} refused: no response confirmation "
                     "from Discord within 5s (connection likely dropped)"
@@ -780,9 +775,8 @@ class Context:
                     exc_info=e
                 )
 
-    @property
-    def _response_sent(self) -> asyncio.Event:
-        """ The event set once the HTTP response has actually been flushed. """
+    def _ensure_response_sent_event(self) -> asyncio.Event:
+        """ Returns the event set once the HTTP response has been flushed, creating it if needed. """
         if self._response_sent_event is None:
             self._response_sent_event = asyncio.Event()
         return self._response_sent_event
@@ -1303,7 +1297,7 @@ class Context:
 
                     case CommandOptionType.channel:
                         type_id = resolved["channels"][option["value"]]["type"]
-                        kwargs[option["name"]] = channel_types[type_id](
+                        kwargs[option["name"]] = channel_types.get(type_id, BaseChannel)(
                             state=self.bot.state,
                             data=resolved["channels"][option["value"]]
                         )

@@ -7,7 +7,7 @@ import zlib
 
 from aiohttp import WSMsgType, ClientWebSocketResponse, ClientSession
 from collections.abc import Callable
-from datetime import datetime
+from datetime import datetime, UTC
 from typing import Any, TYPE_CHECKING, overload, Literal
 
 from .. import utils
@@ -358,7 +358,7 @@ class Shard:
 
         self._heartbeat_interval: float = 41_250 / 1000  # 41.25 seconds
         self._close_code: int | None = None
-        self._last_activity: datetime = utils.utcnow()
+        self._last_activity_ts: float = time.time()
 
         self._parser_cache = {}
         self._special_handlers: dict[str, tuple[Callable, bool]] = {
@@ -366,6 +366,11 @@ class Shard:
             "GUILD_DELETE": (self._parse_guild_delete, False),
             "GUILD_MEMBERS_CHUNK": (self._parse_guild_members_chunk, True),
         }
+
+    @property
+    def _last_activity(self) -> datetime:
+        """ When the shard last sent or received anything, only built into a datetime when asked for. """
+        return datetime.fromtimestamp(self._last_activity_ts, tz=UTC)
 
     @property
     def url(self) -> str:
@@ -458,7 +463,7 @@ class Shard:
         await self.ws.send_json(message)
 
         self.status.update_send()
-        self._last_activity = utils.utcnow()
+        self._last_activity_ts = time.time()
 
     async def close(
         self,
@@ -490,22 +495,27 @@ class Shard:
         raw_msg
             The message to receive
         """
-        self._last_activity = utils.utcnow()
+        self._last_activity_ts = time.time()
 
         if type(raw_msg) is bytes:
-            self._buffer.extend(raw_msg)
-
             # Discord's zlib-stream suffix
-            if len(raw_msg) < 4 or raw_msg[-4:] != b"\x00\x00\xff\xff":
+            if not raw_msg.endswith(b"\x00\x00\xff\xff"):
+                self._buffer.extend(raw_msg)
                 return
 
-            decompressed_bytes = self._zlib.decompress(self._buffer)
+            if self._buffer:
+                self._buffer.extend(raw_msg)
+                decompressed_bytes = self._zlib.decompress(self._buffer)
+                self._buffer = bytearray()
+            else:
+                # Common case, whole payload in one frame, skip copying it into the buffer
+                decompressed_bytes = self._zlib.decompress(raw_msg)
+
             msg: dict = orjson.loads(decompressed_bytes)
 
             # There has been times it keeps in memory
             # Thanks Python, very cool...
             del decompressed_bytes
-            self._buffer = bytearray()
         else:
             msg: dict = orjson.loads(raw_msg)
 
@@ -820,10 +830,7 @@ class Shard:
                             await self.send_message(PayloadType.heartbeat)
 
                         try:
-                            evt = await asyncio.wait_for(
-                                self.ws.receive(),
-                                timeout=self._heartbeat_interval
-                            )
+                            evt = await self.ws.receive(timeout=self._heartbeat_interval)
 
                         except TimeoutError:
                             if self.status.is_zombied():
@@ -927,6 +934,15 @@ class Shard:
             )
 
     def _guild_needs_chunking(self, guild: "Guild | PartialGuild") -> bool:
+        cache_flags = self.bot.cache.cache_flags
+        caches_members = cache_flags is not None and (
+            GatewayCacheFlags.members in cache_flags or
+            GatewayCacheFlags.partial_members in cache_flags
+        )
+
+        if not caches_members and not self.bot.has_any_dispatch("guild_members_chunk"):
+            return False
+
         return (
             self.bot.chunk_guilds_on_startup and
             not guild.chunked and

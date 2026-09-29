@@ -519,5 +519,37 @@ class TestQuerySelfCorrectsBucketKey(unittest.IsolatedAsyncioTestCase):
         self.assertNotIn("abcXYZ", message)
 
 
+class TestQueryJsonBody(unittest.IsolatedAsyncioTestCase):
+    """ json= bodies are serialized straight to bytes instead of going through aiohttp's json=. """
+
+    def _make_api(self, responses: list[HTTPResponse]) -> DiscordAPI:
+        api = object.__new__(DiscordAPI)
+        api._default_headers = {}
+        api.api_url = "https://discord.test/api/v10"
+        api.base_url = "https://discord.test/api"
+        api._buckets = {}
+        api._bucket_hashes = {}
+        api._global_ratelimit = GlobalRatelimit()
+        api.http = _FakeHTTPClient(responses)
+        return api
+
+    async def test_json_body_is_pre_serialized_to_bytes(self) -> None:
+        captured: dict = {}
+
+        class _Capture(_FakeHTTPClient):
+            async def request(self, method, url, *, res_method="json", **kwargs) -> HTTPResponse:
+                captured.update(kwargs)
+                return await super().request(method, url, res_method=res_method, **kwargs)
+
+        api = self._make_api([])
+        api.http = _Capture([_fake_response()])
+
+        await api.query("POST", "/channels/1/messages", res_method="text", json={"content": "hi"})
+
+        self.assertNotIn("json", captured)
+        self.assertEqual(captured["data"], b'{"content":"hi"}')
+        self.assertEqual(captured["headers"]["Content-Type"], "application/json")
+
+
 if __name__ == "__main__":
     unittest.main()

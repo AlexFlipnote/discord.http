@@ -172,7 +172,7 @@ class VoiceState(PartialVoiceState):
         self.session_id: str = data["session_id"]
         """ The session ID of the voice state. """
 
-        self._member_data: dict | None = data.get("member")
+        self._member_data: "Member | None" = None
 
         self.deaf: bool = data["deaf"]
         """ Whether the user is deafened by the server. """
@@ -220,6 +220,14 @@ class VoiceState(PartialVoiceState):
                 rts_timestamp
             )
 
+        if (member_data := data.get("member")) and (guild := self.guild) is not None:
+            from .member import Member
+
+            if not isinstance(guild.get_member(self.id), Member):
+                self._member_data = self._state.bot.create_member_from_data(
+                    member_data, guild=guild
+                )
+
     @property
     def guild(self) -> "PartialGuild | None":
         """ The guild this voice state is in, if any. Resolved live from cache. """
@@ -247,9 +255,8 @@ class VoiceState(PartialVoiceState):
         """
         The member this voice state belongs to, if any.
 
-        Prefers an already-cached `Member` for this guild (so this doesn't
-        hold its own separate copy of member/user data), falling back to
-        building one from the voice state payload if not cached.
+        Prefers an already-cached `Member` for this guild, falling back to
+        the one built from the voice state payload if not cached.
         """
         if (guild := self.guild) is None:
             return None
@@ -261,9 +268,4 @@ class VoiceState(PartialVoiceState):
             self._member_data = None
             return cached_member
 
-        if self._member_data is None:
-            return None
-
-        return self._state.bot.create_member_from_data(
-            self._member_data, guild=guild
-        )
+        return self._member_data

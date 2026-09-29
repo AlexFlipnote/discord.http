@@ -260,12 +260,12 @@ class TestUpdatePresence(unittest.TestCase):
 
     def test_missing_presences_flag_is_noop(self) -> None:
         cache, _, guild = _cache_with_guild(GatewayCacheFlags.guilds)
-        presence = SimpleNamespace(guild=SimpleNamespace(id=guild.id), user=SimpleNamespace(id=5))
+        presence = SimpleNamespace(guild_id=guild.id, user_id=5)
         cache.update_presence(presence)  # should not raise, no member touched
 
     def test_unknown_guild_is_noop(self) -> None:
         cache = Cache(client=FakeClient(cache_flags=GatewayCacheFlags.presences))
-        presence = SimpleNamespace(guild=SimpleNamespace(id=999), user=SimpleNamespace(id=5))
+        presence = SimpleNamespace(guild_id=999, user_id=5)
         cache.update_presence(presence)  # should not raise
 
     def test_updates_cached_member_presence(self) -> None:
@@ -273,13 +273,13 @@ class TestUpdatePresence(unittest.TestCase):
         calls = []
         member = SimpleNamespace(id=5, _update_presence=lambda p: calls.append(p))
         guild._cache_members[5] = member
-        presence = SimpleNamespace(guild=SimpleNamespace(id=guild.id), user=SimpleNamespace(id=5))
+        presence = SimpleNamespace(guild_id=guild.id, user_id=5)
         cache.update_presence(presence)
         self.assertEqual(calls, [presence])
 
     def test_member_not_cached_is_noop(self) -> None:
         cache, _, guild = _cache_with_guild(GatewayCacheFlags.presences)
-        presence = SimpleNamespace(guild=SimpleNamespace(id=guild.id), user=SimpleNamespace(id=999))
+        presence = SimpleNamespace(guild_id=guild.id, user_id=999)
         cache.update_presence(presence)  # should not raise
 
 
@@ -514,6 +514,44 @@ class TestUpdateVoiceState(unittest.TestCase):
         guild._cache_voice_states[5] = "stale"
         cache.update_voice_state(vs)
         self.assertNotIn(5, guild._cache_voice_states)
+
+
+class TestAddGuildReusesPartial(unittest.TestCase):
+    def test_partial_guild_passed_in_is_stored_as_is(self) -> None:
+        from discord_http.guild import PartialGuild
+
+        cache = Cache(client=FakeClient(cache_flags=GatewayCacheFlags.partial_guilds))
+        guild = PartialGuild(state=None, id=1)
+        self.assertIs(cache.add_guild(1, guild), guild)
+
+
+class TestPartialMemberPresence(unittest.TestCase):
+    def test_add_member_copies_presence_onto_partial(self) -> None:
+        cache, _, guild = _cache_with_guild(GatewayCacheFlags.partial_members)
+        presence = SimpleNamespace(status="online")
+        cache.add_member(SimpleNamespace(id=5, guild_id=guild.id, presence=presence))
+        self.assertIs(guild._cache_members[5].presence, presence)
+
+    def test_update_member_keeps_existing_partial(self) -> None:
+        cache, _, guild = _cache_with_guild(GatewayCacheFlags.partial_members)
+        presence = SimpleNamespace(status="online")
+        existing = SimpleNamespace(id=5, guild_id=guild.id, presence=presence)
+        guild._cache_members[5] = existing
+
+        updated = SimpleNamespace(id=5, guild_id=guild.id, presence=None)
+        cache.update_member(updated)
+        self.assertIs(guild._cache_members[5], existing)
+        self.assertIs(updated.presence, presence)
+
+
+class TestInterningPoolReset(unittest.TestCase):
+    def test_reset_guild_pools_drops_role_id_tuples(self) -> None:
+        cache, _, guild = _cache_with_guild(GatewayCacheFlags.members)
+        first = cache.intern_role_ids(guild.id, ["1", "2"])
+        cache.reset_guild_pools(guild.id)
+        second = cache.intern_role_ids(guild.id, ["1", "2"])
+        self.assertEqual(first, second)
+        self.assertIsNot(first, second)
 
 
 if __name__ == "__main__":

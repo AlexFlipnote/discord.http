@@ -1,6 +1,7 @@
 import unittest
 
-from discord_http import Application, Team, ApplicationRoleConnectionMetadata
+from discord_http import Application, Team, ApplicationRoleConnectionMetadata, Client, User
+from discord_http.user import DisplayNameStyles, Nameplate, PrimaryGuild
 from discord_http.enums import ApplicationRoleConnectionMetadataType, TeamMembershipState
 
 from _fake_client import FakeBot
@@ -65,6 +66,86 @@ class TestApplicationRoleConnectionMetadata(unittest.TestCase):
         payload = metadata.to_dict()
         self.assertEqual(payload["key"], "is_verified")
         self.assertEqual(payload["type"], 7)
+
+
+def _user_data(**overrides):
+    data = {"id": "10", "username": "bob", "discriminator": "0", "avatar": None}
+    data.update(overrides)
+    return data
+
+
+class TestUserParsing(unittest.TestCase):
+    def test_discriminator_zero_becomes_none(self) -> None:
+        self.assertIsNone(User(state=FakeState(), data=_user_data()).discriminator)
+        self.assertEqual(User(state=FakeState(), data=_user_data(discriminator="1234")).discriminator, "1234")
+
+
+class TestUserCopyFrom(unittest.TestCase):
+    def test_copy_from(self) -> None:
+        a = User(state=FakeState(), data=_user_data())
+        b = User(state=FakeState(), data=_user_data(username="new", bot=True))
+        a._copy_from(b)
+        self.assertEqual(a.name, "new")
+        self.assertTrue(a.bot)
+
+
+class TestUserExtras(unittest.TestCase):
+    """ The collectible/style payloads must still build the right objects. """
+
+    def test_everything_unset_has_no_extra(self) -> None:
+        user = User(state=FakeState(), data=_user_data(
+            avatar_decoration_data=None, collectibles=None,
+            display_name_styles=None, primary_guild=None,
+        ))
+        self.assertIsNone(user._extra)
+        self.assertIsNone(user.avatar_decoration)
+        self.assertIsNone(user.nameplate)
+        self.assertIsNone(user.name_style)
+        self.assertIsNone(user.primary_guild)
+
+    def test_avatar_decoration(self) -> None:
+        user = User(state=FakeState(), data=_user_data(
+            avatar_decoration_data={"asset": "a_deco", "sku_id": "55", "expires_at": None},
+        ))
+        deco = user.avatar_decoration
+        self.assertEqual(deco.sku_id, 55)
+        self.assertEqual(deco.asset.key, "a_deco")
+        self.assertTrue(deco.asset.animated)
+
+    def test_nameplate(self) -> None:
+        user = User(state=FakeState(), data=_user_data(collectibles={"nameplate": {
+            "sku_id": "77", "label": "Lbl", "palette": "crimson",
+            "asset": "nameplates/x/", "expires_at": None,
+        }}))
+        plate = user.nameplate
+        self.assertIsInstance(plate, Nameplate)
+        self.assertEqual(plate.sku_id, 77)
+        self.assertEqual(plate.label, "Lbl")
+        self.assertEqual(plate.palette, "crimson")
+        self.assertEqual(plate.asset.url, Nameplate(FakeState(), {
+            "sku_id": "77", "label": "Lbl", "palette": "crimson", "asset": "nameplates/x/",
+        }).asset.url)
+
+    def test_name_style(self) -> None:
+        raw = {"colors": [1, 2], "font_id": 3, "effect_id": 2}
+        user = User(state=FakeState(), data=_user_data(display_name_styles=raw))
+        style = user.name_style
+        self.assertEqual(style.to_dict(), DisplayNameStyles(data=raw).to_dict())
+
+    def test_primary_guild(self) -> None:
+        raw = {"identity_guild_id": "123", "identity_enabled": True, "tag": "ABCD", "badge": "a_badge"}
+        user = User(state=FakeState(), data=_user_data(primary_guild=raw))
+        pg = user.primary_guild
+        expected = PrimaryGuild(state=FakeState(), data=raw)
+        self.assertEqual(pg.guild_id, 123)
+        self.assertEqual(pg.tag, "ABCD")
+        self.assertEqual(pg.badge.url, expected.badge.url)
+
+    def test_names_are_not_interned(self) -> None:
+        # Unique per-user strings should not be pushed into the (immortal) intern table
+        name = "".join(["uniq", "ue_name_", "xyz"])
+        user = User(state=FakeState(), data=_user_data(username=name))
+        self.assertIs(user.name, name)
 
 
 if __name__ == "__main__":

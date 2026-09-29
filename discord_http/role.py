@@ -1,5 +1,3 @@
-import sys
-
 from typing import TYPE_CHECKING
 
 from . import utils
@@ -310,7 +308,7 @@ class Role(PartialRole):
     ):
         super().__init__(state=state, id=int(data["id"]), guild_id=guild.id)
 
-        self.name: str = sys.intern(data["name"])
+        self.name: str = data["name"]
         """ The name of the role. """
 
         self.position: int = int(data["position"])

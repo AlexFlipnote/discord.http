@@ -1417,7 +1417,7 @@ class PartialGuild(PartialBase):
         if member := self.get_member(self._state.bot.user.id):
             return member
 
-        return self.get_partial_member(self.id)
+        return self.get_partial_member(self._state.bot.user.id)
 
     def get_member(self, member_id: int) -> "Member | PartialMember | None":
         """
@@ -4139,7 +4139,7 @@ class Guild(PartialGuild):
         self.public_updates_channel_id: int | None = utils.get_int(data, "public_updates_channel_id")
         """ The ID of the public updates channel, if any. """
 
-        self.region: str | None = sys.intern(data.get("region", ""))
+        self.region: str | None = sys.intern(region) if (region := data.get("region")) else None
         """ The voice region of the guild, if any. """
 
         self.safety_alerts_channel_id: int | None = utils.get_int(data, "safety_alerts_channel_id")
@@ -4244,7 +4244,7 @@ class Guild(PartialGuild):
         self.premium_subscription_count: int = data.get("premium_subscription_count", 0)
         self.premium_tier: PremiumTier = PremiumTier(data.get("premium_tier", 0))
         self.public_updates_channel_id: int | None = utils.get_int(data, "public_updates_channel_id")
-        self.region: str | None = sys.intern(data.get("region", ""))
+        self.region: str | None = sys.intern(region) if (region := data.get("region")) else None
         self.safety_alerts_channel_id: int | None = utils.get_int(data, "safety_alerts_channel_id")
         self.system_channel_flags: int = data.get("system_channel_flags", 0)
         self.system_channel_id: int | None = utils.get_int(data, "system_channel_id")
@@ -4454,13 +4454,12 @@ class Guild(PartialGuild):
         if not role_ids:
             return None
 
-        role_ids_set = set(role_ids)
         top_role: Role | None = None
 
-        for r in self._cache_roles.values():
+        for r_id in role_ids:
+            r = self._cache_roles.get(r_id)
             if (
                 isinstance(r, Role) and
-                r.id in role_ids_set and
                 (top_role is None or r.position > top_role.position)
             ):
                 top_role = r

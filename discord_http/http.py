@@ -10,7 +10,6 @@ import ssl
 import sys
 import time
 
-from aiohttp.client_exceptions import ContentTypeError
 from collections.abc import AsyncIterator
 from multidict import CIMultiDictProxy
 from typing import Any, Self, overload, Literal, TypeVar, Generic, TYPE_CHECKING
@@ -237,12 +236,13 @@ class HTTPClient:
                     r = await res.text()
 
                 case "json":
+                    body = await res.read()
                     try:
-                        r = await res.json(loads=orjson.loads)
-                    except ContentTypeError:
-                        try:
-                            r = orjson.loads(await res.text())
-                        except orjson.JSONDecodeError:
+                        r = orjson.loads(body)
+                    except orjson.JSONDecodeError:
+                        if not body.strip() and res.content_type == "application/json":
+                            r = None
+                        else:
                             # Give up trying, something is really wrong...
                             r = await res.text()
                             res_method = "text"
@@ -822,7 +822,10 @@ class DiscordAPI:
             dict(self._default_headers)
         )
 
-        if res_method != "json":
+        if (json_body := kwargs.pop("json", None)) is not None:
+            kwargs["data"] = orjson.dumps(json_body)
+            headers["Content-Type"] = "application/json"
+        elif res_method != "json":
             headers.pop("Content-Type", None)
 
         if reason := kwargs.pop("reason", None):

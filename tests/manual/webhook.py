@@ -927,25 +927,25 @@ async def test_button(ctx: Context):
             Link(url="https://alexflipnote.dev", label="Test", emoji="👍"),
             Link(
                 url="https://alexflipnote.dev",
-                label="Test, but custom",
-                emoji="<:AlexHeart:785620361118875729>",
+                label="Test, but heart",
+                emoji="❤️",
             ),
             Link(
                 url="https://alexflipnote.dev",
-                label="Test, but animated custom",
-                emoji="<a:aAlexClap:1074318927250870322>",
+                label="Test, but clap",
+                emoji="👏",
             ),
         ),
         ActionRow(
             Link(
                 url="https://alexflipnote.dev",
-                label="Test, but custom",
-                emoji="<:AlexHeart:785620361118875729>",
+                label="Test, but heart",
+                emoji="❤️",
             ),
             Link(
                 url="https://alexflipnote.dev",
-                label="Test, but animated custom",
-                emoji="<a:aAlexClap:1074318927250870322>",
+                label="Test, but clap",
+                emoji="👏",
             )
         )
     )

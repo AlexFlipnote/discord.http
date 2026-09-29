@@ -10,6 +10,7 @@ from ..channel import PartialChannel
 from ..colour import Colour
 from ..emoji import EmojiParser
 from ..enums import ReactionType, AutoModRuleTriggerType, ApplicationCommandPermissionType
+from ..member import Member
 from ..message import PartialMessage
 from ..role import PartialRole
 from ..user import PartialUser
@@ -21,7 +22,7 @@ if TYPE_CHECKING:
     from ..channel import BaseChannel, Thread
     from ..guild import Guild, PartialGuild
     from ..http import DiscordAPI
-    from ..member import Member, PartialMember, PartialThreadMember, ThreadMember
+    from ..member import PartialMember, PartialThreadMember, ThreadMember
     from ..user import User
 
 __all__ = (
@@ -203,17 +204,20 @@ class ChannelPinsUpdate:
 
 
 class Presence:
-    """ Represents a presence update event. """
+    """
+    Represents a presence update event.
+
+    Stores only the IDs, so a cached presence never keeps an old `Member` alive.
+    """
 
     __slots__ = (
         "_state",
         "activities",
         "desktop",
-        "guild",
+        "guild_id",
         "mobile",
         "status",
-        "type",
-        "user",
+        "user_id",
         "web",
     )
 
@@ -221,17 +225,17 @@ class Presence:
         self,
         *,
         state: "DiscordAPI",
-        user: "Member | PartialMember",
-        guild: "PartialGuild | Guild",
-        data: dict
+        data: dict,
+        user_id: int | None = None,
+        guild_id: int | None = None
     ):
         self._state = state
 
-        self.user = user
-        """ The user the presence update is for. """
+        self.user_id: int = user_id if user_id is not None else int(data["user"]["id"])
+        """ The ID of the user the presence update is for. """
 
-        self.guild = guild
-        """ The guild the presence update is for. """
+        self.guild_id: int = guild_id if guild_id is not None else int(data["guild_id"])
+        """ The ID of the guild the presence update is for. """
 
         self.status: StatusType = StatusType[data["status"]]
         """ The status of the presence update. """
@@ -255,12 +259,14 @@ class Presence:
 
     def __repr__(self) -> str:
         return (
-            f"<Presence user={self.user} "
-            f"guild={self.guild} activities={len(self.activities)}>"
+            f"<Presence user_id={self.user_id} "
+            f"guild_id={self.guild_id} activities={len(self.activities)}>"
         )
 
     def _from_data(self, data: dict) -> None:
-        client_status = data.get("client_status", {})
+        if not (client_status := data.get("client_status")):
+            return
+
         if desktop := client_status.get("desktop", None):
             self.desktop = StatusType[desktop]
 
@@ -269,6 +275,28 @@ class Presence:
 
         if web := client_status.get("web", None):
             self.web = StatusType[web]
+
+    @property
+    def guild(self) -> "Guild | PartialGuild":
+        """ The guild the presence update is for. """
+        bot = self._state.bot
+        return bot.cache.get_guild(self.guild_id) or bot.get_partial_guild(self.guild_id)
+
+    @property
+    def user(self) -> "Member | PartialMember":
+        """
+        The user the presence update is for.
+
+        Returns the cached guild member if available, otherwise a partial member.
+        """
+        bot = self._state.bot
+        if (
+            (guild := bot.cache.get_guild(self.guild_id)) is not None and
+            (member := guild.get_member(self.user_id)) is not None
+        ):
+            return member
+
+        return bot.get_partial_member(self.user_id, self.guild_id)
 
 
 class TypingStartEvent:
@@ -509,10 +537,20 @@ class Reaction:
         if burst_colour := data.get("burst_colour"):
             self.burst_colour = Colour.from_hex(burst_colour)
 
-        if member := data.get("member"):
-            self.member = self._state.bot.create_member_from_data(
-                member, guild=self.guild  # type: ignore
-            )
+        if (member := data.get("member")) and self.guild_id:
+            cache_guild = self._state.cache.get_guild(self.guild_id)
+
+            if (
+                cache_guild is not None and
+                isinstance(cached := cache_guild.get_member(self.user_id), Member)
+            ):
+                # Already have an up-to-date full member, no need to build another
+                self.member = cached
+            else:
+                self.member = self._state.bot.create_member_from_data(
+                    member,
+                    guild=cache_guild or self._state.bot.get_partial_guild(self.guild_id)
+                )
 
     @property
     def guild(self) -> "Guild | PartialGuild | None":

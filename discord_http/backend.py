@@ -201,9 +201,6 @@ class DiscordHTTP(web.Application):
             await self._run_after_invoke(ctx)
 
             with ctx.benchmark.measure("backend:response", internal=True):
-                if isinstance(payload, EmptyResponse):
-                    return web.Response(status=202)
-
                 return self.multipart_response(payload)
 
         except Exception as e:
@@ -246,6 +243,15 @@ class DiscordHTTP(web.Application):
             if local_view:
                 with ctx.benchmark.measure("view:callback", internal=True):
                     payload = await local_view.callback(ctx)
+
+                    if payload is None:
+                        if local_view.is_timeout() and ctx.type == InteractionType.message_component:
+                            # Nobody is waiting on this view anymore, silently acknowledge the click
+                            payload = ctx.response.defer()
+                        else:
+                            # The waiting code got the Context back and will respond via the callback endpoint
+                            payload = EmptyResponse()
+
                     return self.multipart_response(payload)
 
             with ctx.benchmark.measure("backend:find_interaction"):
@@ -343,7 +349,9 @@ class DiscordHTTP(web.Application):
                 _log.debug(f"Unhandled interaction received (type: {raw_type})")
                 return self.jsonify({"error": "invalid request body"}, status=400)
 
-        self._attach_tracking(response, context._response_sent)
+        # Only track the flush when a `call_after` is actually waiting on it
+        if context._response_sent_event is not None:
+            self._attach_tracking(response, context._response_sent_event)
         return response
 
     async def _index_webhook_events_endpoint(self, request: web.Request) -> web.Response:
@@ -526,7 +534,7 @@ class DiscordHTTP(web.Application):
         status: int = 200
     ) -> web.Response:
         """
-        Respond with multipart data in a standardized way.
+        Respond to an interaction in a standardized way.
 
         Parameters
         ----------
@@ -542,9 +550,22 @@ class DiscordHTTP(web.Application):
         if body is None:
             raise ValueError("body cannot be None")
 
+        if isinstance(body, EmptyResponse):
+            return web.Response(status=202)
+
+        if (
+            (isinstance(body, MessageResponse) and body.files) or
+            type(body).to_dict is BaseResponse.to_dict
+        ):
+            return web.Response(
+                body=body.to_multipart(),
+                headers={"Content-Type": body.content_type},
+                status=status
+            )
+
         return web.Response(
-            body=body.to_multipart(),
-            headers={"Content-Type": body.content_type},
+            body=orjson.dumps(body.to_dict()),
+            headers={"Content-Type": "application/json"},
             status=status
         )
 

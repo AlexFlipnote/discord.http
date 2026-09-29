@@ -1697,6 +1697,16 @@ class Message(PartialMessage):
     def __str__(self) -> str:
         return self.content or ""
 
+    def _get_cached_member(self, guild: "Guild | PartialGuild | None", user_id: int) -> "Member | None":
+        """ Returns the full member from the guild cache, if cached. """
+        if guild is None:
+            return None
+
+        from .member import Member  # Circular import
+
+        member = guild.get_member(user_id)
+        return member if isinstance(member, Member) else None
+
     def _from_data(self, data: dict) -> None:
         if data.get("components"):
             self.view = View.from_dict(
@@ -1756,20 +1766,31 @@ class Message(PartialMessage):
                 ),
             )
 
-        if member := data.get("member"):
-            self.author = self._state.bot.create_member_from_data(
-                {**member, "user": data["author"]},
-                guild=self.guild  # type: ignore
+        mentions = data.get("mentions")
+        member = data.get("member")
+        guild = self.guild if (member or mentions) and self.guild_id else None
+
+        if member:
+            author = data["author"]
+            self.author = (
+                self._get_cached_member(guild, int(author["id"])) or
+                self._state.bot.create_member_from_data(
+                    {**member, "user": author},
+                    guild=guild  # type: ignore
+                )
             )
         else:
             self.author = self._state.bot.create_user_from_data(data["author"])
 
-        if mentions := data.get("mentions"):
+        if mentions:
             for m in mentions:
-                if m.get("member", None) and self.guild_id:
-                    mention_member = self._state.bot.create_member_from_data(
-                        {**m["member"], "user": m},
-                        guild=self.guild  # type: ignore
+                if m.get("member", None) and guild is not None:
+                    mention_member = (
+                        self._get_cached_member(guild, int(m["id"])) or
+                        self._state.bot.create_member_from_data(
+                            {**m["member"], "user": m},
+                            guild=guild
+                        )
                     )
                     self.mentions.append(mention_member)
 

@@ -681,16 +681,11 @@ class Member(PartialMember):
         -------
             Whether the member has the permission(s)
         """
-        if (
-            Permissions.from_names("administrator") in
-            self.resolved_permissions
-        ):
+        resolved = self.resolved_permissions
+        if Permissions.administrator in resolved:
             return True
 
-        return (
-            Permissions.from_names(*args) in
-            self.resolved_permissions
-        )
+        return Permissions.from_names(*args) in resolved
 
     @property
     def name(self) -> str:

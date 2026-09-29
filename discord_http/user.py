@@ -478,7 +478,7 @@ class User(PartialUser):
     ):
         super().__init__(state=state, id=int(data["id"]))
 
-        self.name: str = sys.intern(data["username"])
+        self.name: str = data["username"]
         """ The name of the user. """
 
         self.bot: bool = data.get("bot", False)
@@ -498,7 +498,7 @@ class User(PartialUser):
             # Instead of showing "0", just make it None....
             self.discriminator = None
 
-        self.global_name: str | None = sys.intern(g) if (g := data.get("global_name")) else None
+        self.global_name: str | None = data.get("global_name") or None
         """ The global name of the user, if any. """
 
         self._from_data(data)

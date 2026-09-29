@@ -1,6 +1,7 @@
 import json
 import time
 import unittest
+import zlib
 
 from discord_http.gateway.client import GatewayClient
 from discord_http.gateway.shard import GatewayRatelimiter, Shard, Status
@@ -265,6 +266,51 @@ class TestShardReconnectBackoff(unittest.IsolatedAsyncioTestCase):
         # Drain the background _delay_ready() task READY spins up, or it leaks
         if shard._ready_task is not None:
             await shard._ready_task
+
+
+class TestShardZlibStream(unittest.IsolatedAsyncioTestCase):
+    """ The single-frame fast path must decode the same as the buffered multi-frame path. """
+
+    def _shard(self) -> Shard:
+        shard = Shard(bot=FakeGatewayBot(), intents=None, shard_id=0, api_version=10)
+        self.seen: list[int] = []
+
+        async def _record(name, event) -> None:
+            self.seen.append(event["s"])
+
+        shard.on_event = _record  # type: ignore[method-assign]
+        return shard
+
+    def _frame(self, compressor, seq: int) -> bytes:
+        payload = json.dumps({"op": 0, "t": "TEST", "s": seq, "d": {"x": 1}}).encode()
+        return compressor.compress(payload) + compressor.flush(zlib.Z_SYNC_FLUSH)
+
+    async def test_single_frames_decode_without_buffering(self) -> None:
+        shard = self._shard()
+        compressor = zlib.compressobj()
+
+        await shard.received_message(self._frame(compressor, 1))
+        await shard.received_message(self._frame(compressor, 2))
+
+        self.assertEqual(self.seen, [1, 2])
+        self.assertEqual(len(shard._buffer), 0)
+
+    async def test_split_frame_is_buffered_until_suffix(self) -> None:
+        shard = self._shard()
+        compressor = zlib.compressobj()
+
+        frame = self._frame(compressor, 7)
+        await shard.received_message(frame[:5])
+        self.assertEqual(self.seen, [])
+        self.assertEqual(len(shard._buffer), 5)
+
+        await shard.received_message(frame[5:])
+        self.assertEqual(self.seen, [7])
+        self.assertEqual(len(shard._buffer), 0)
+
+        # Stream context carries over into the next single-frame message
+        await shard.received_message(self._frame(compressor, 8))
+        self.assertEqual(self.seen, [7, 8])
 
 
 if __name__ == "__main__":

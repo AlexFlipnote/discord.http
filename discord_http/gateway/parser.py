@@ -105,14 +105,14 @@ class GuildMembersChunk:
         """ For any members not found in the chunk search. """
         self.not_found.extend(user_ids)
 
-    def add_members(self, members: list[Member]) -> None:
+    def add_members(self, members: list[Member] | list[PartialMember]) -> None:
         """
         Add member to the chunk.
 
         However if cache is enabled, try to add them to the cache
         """
         if self.collect:
-            self.members.extend(members)
+            self.members.extend(members)  # type: ignore[arg-type]
 
         if self.cache:
             if not self._cache_level:
@@ -134,7 +134,7 @@ class GuildMembersChunk:
 
             elif GatewayCacheFlags.partial_members in self._cache_level:
                 for m in members:
-                    guild._cache_members[m.id] = self._state.bot.get_partial_member(m.id, self.guild_id)
+                    guild._cache_members[m.id] = self._state.cache._to_partial_member(m)
 
     async def wait(self) -> list["Member"]:
         """ Waits for the chunk to be ready. """
@@ -196,7 +196,7 @@ class Parser:
         self,
         guild_id: int,
         nonce: str | None,
-        members: list[Member],
+        members: list[Member] | list[PartialMember],
         completed: bool
     ) -> None:
         if nonce is None:
@@ -274,7 +274,12 @@ class Parser:
             data, populate_cache=populate_cache
         )
 
-    def guild_create(self, data: dict) -> tuple[Guild | PartialGuild]:
+    def guild_create(
+        self,
+        data: dict,
+        *,
+        event_name: str = "guild_create"
+    ) -> tuple[Guild | PartialGuild]:
         """
         Create a guild.
 
@@ -282,29 +287,30 @@ class Parser:
         ----------
         data
             The data to create the guild from
+        event_name
+            The event the guild will be dispatched as, used to check for listeners
 
         Returns
         -------
             The created guild
         """
         guild_id = int(data["id"])
-        cache_flags = self.bot.cache.cache_flags
+        cache = self.bot.cache
+        cache_flags = cache.cache_flags
 
         guild: "Guild | PartialGuild"
-        if (
-            cache_flags is not None and
-            GatewayCacheFlags.guilds not in cache_flags and
-            GatewayCacheFlags.partial_guilds in cache_flags
-        ):
+        if cache_flags is not None and GatewayCacheFlags.guilds in cache_flags:
+            guild = self._guild(data, populate_cache=False)
+        elif cache_flags is not None and GatewayCacheFlags.partial_guilds in cache_flags:
             guild = self.bot.get_partial_guild(guild_id)
         else:
-            guild_will_be_repopulated = (
-                cache_flags is not None and
-                GatewayCacheFlags.guilds in cache_flags
+            guild = self._guild(
+                data,
+                populate_cache=self.bot.has_any_dispatch(event_name)
             )
-            guild = self._guild(data, populate_cache=not guild_will_be_repopulated)
 
-        if cache_guild := self.bot.cache.add_guild(guild_id, guild):
+        if cache_guild := cache.add_guild(guild_id, guild):
+            cache.reset_guild_pools(guild_id)
             cache_guild._populate_internal_cache(data)
 
         return (cache_guild or guild,)
@@ -322,9 +328,17 @@ class Parser:
         -------
             The updated guild
         """
-        guild = self._guild(data)
-        self.bot.cache.update_guild(guild.id, data)
-        return (guild,)
+        guild_id = int(data["id"])
+        cache = self.bot.cache
+
+        if isinstance(cached := cache.get_guild(guild_id), Guild):
+            cache.update_guild(guild_id, data)
+            return (cached,)
+
+        if not self.bot.has_any_dispatch("guild_update"):
+            return (None,)  # type: ignore[return-value]
+
+        return (self._guild(data),)
 
     def guild_delete(self, data: dict) -> tuple[Guild | PartialGuild]:
         """
@@ -497,45 +511,82 @@ class Parser:
         -------
             The chunk of guild members
         """
-        guild = self._get_guild_or_partial(int(data["guild_id"]))
+        guild_id = int(data["guild_id"])
+        nonce = data.get("nonce")
+        completed = data.get("chunk_index", 0) + 1 == data.get("chunk_count", 1)
+        has_listener = self.bot.has_any_dispatch("guild_members_chunk")
+
+        req = self._chunk_requests.get(nonce) if nonce is not None else None
+        if req is not None and req.guild_id != guild_id:
+            req = None
+
+        if not has_listener and (req is None or not req.collect):
+            cache = self.bot.cache
+            cache_flags = cache.cache_flags
+            caches_full = cache_flags is not None and GatewayCacheFlags.members in cache_flags
+            caches_partial = cache_flags is not None and GatewayCacheFlags.partial_members in cache_flags
+
+            if (
+                req is None or
+                not req.cache or
+                not (caches_full or caches_partial) or
+                cache.get_guild(guild_id) is None
+            ):
+                self._process_chunk_request(guild_id, nonce, [], completed)
+                return (None,)  # type: ignore[return-value]
+
+            if not caches_full:
+                partial_members = [
+                    self.bot.get_partial_member(int(g["user"]["id"]), guild_id)
+                    for g in data.get("members", [])
+                ]
+                self._apply_chunk_presences(guild_id, partial_members, data)
+                self._process_chunk_request(guild_id, nonce, partial_members, completed)
+                return (None,)  # type: ignore[return-value]
+
+        guild = self._get_guild_or_partial(guild_id)
 
         members = [
             self.bot.create_member_from_data(g, guild=guild)
             for g in data.get("members", [])
         ]
 
-        presences = data.get("presences", [])
+        self._apply_chunk_presences(guild_id, members, data)
+        self._process_chunk_request(guild_id, nonce, members, completed)
 
-        if presences:
-            temp_dict: dict[int, Member] = {g.id: g for g in members}
-            for g in presences:
-                if not (find_member := temp_dict.get(int(g["user"]["id"]))):
-                    continue
-                find_member._update_presence(Presence(
-                    state=self.bot.state,
-                    user=find_member,
-                    guild=guild,
-                    data=g
-                ))
-
-        self._process_chunk_request(
-            guild.id,
-            data.get("nonce"),
-            members,
-            data.get("chunk_index", 0) + 1 == data.get("chunk_count", 1)
-        )
-
-        if not self.bot.has_any_dispatch("guild_members_chunk"):
+        if not has_listener:
             return (None,)  # type: ignore[return-value]
 
         dispatch_raw = GuildMembersChunk(
             state=self.bot.state,
-            guild_id=guild.id,
+            guild_id=guild_id,
         )
 
         dispatch_raw.add_members(members)
 
         return (dispatch_raw,)
+
+    def _apply_chunk_presences(
+        self,
+        guild_id: int,
+        members: "list[Member] | list[PartialMember]",
+        data: dict
+    ) -> None:
+        if not members or not (presences := data.get("presences")):
+            return
+
+        temp_dict = {m.id: m for m in members}
+        for g in presences:
+            user_id = int(g["user"]["id"])
+            if not (find_member := temp_dict.get(user_id)):
+                continue
+
+            find_member._update_presence(Presence(
+                state=self.bot.state,
+                data=g,
+                user_id=user_id,
+                guild_id=guild_id
+            ))
 
     def rate_limited(self, data: dict) -> tuple[GatewayRateLimited]:
         """
@@ -586,13 +637,9 @@ class Parser:
         -------
             The created guild
         """
-        # In case it came available after boot
-        self.guild_create(data)
-
-        # Now just get the guild from cache if it exists
-        guild = self._get_guild_or_partial(int(data["id"]))
-
-        return (guild,)
+        # In case it came available after boot, this also
+        # returns the cached guild if it exists
+        return self.guild_create(data, event_name="guild_available")
 
     def guild_unavailable(self, data: dict) -> tuple[Guild | PartialGuild]:
         """
@@ -1779,28 +1826,38 @@ class Parser:
         -------
             The presence.
         """
-        cache_flags = self.bot.cache.cache_flags
-        if (
-            not self.bot.has_any_dispatch("presence_update") and
-            not (cache_flags and GatewayCacheFlags.presences in cache_flags)
-        ):
+        cache = self.bot.cache
+        has_listener = self.bot.has_any_dispatch("presence_update")
+        cache_flags = cache.cache_flags
+        if not has_listener and not (cache_flags and GatewayCacheFlags.presences in cache_flags):
             return (None,)  # type: ignore[return-value]
 
         guild_id = int(data["guild_id"])
-        guild = self._get_guild_or_partial(guild_id)
+        user_id = int(data["user"]["id"])
+
+        if not has_listener:
+            if (
+                (guild := cache.get_guild(guild_id)) is None or
+                (member := guild.get_member(user_id)) is None
+            ):
+                return (None,)  # type: ignore[return-value]
+
+            member._update_presence(Presence(
+                state=self.bot.state,
+                data=data,
+                user_id=user_id,
+                guild_id=guild_id
+            ))
+            return (None,)  # type: ignore[return-value]
 
         p = Presence(
             state=self.bot.state,
-            user=self._get_user_or_partial(
-                int(data["user"]["id"]),
-                guild_id,
-                guild=guild
-            ),
-            guild=guild,
-            data=data
+            data=data,
+            user_id=user_id,
+            guild_id=guild_id
         )
 
-        self.bot.cache.update_presence(p)
+        cache.update_presence(p)
 
         return (p,)
 

@@ -1,3 +1,5 @@
+import sys
+
 from typing import TYPE_CHECKING
 from datetime import datetime
 
@@ -81,28 +83,30 @@ class ActivityAssets:
 class ActivityTimestamps:
     """ Represents the timestamps of an activity. """
     __slots__ = (
-        "end",
-        "start",
+        "_raw_end",
+        "_raw_start",
     )
 
     def __init__(self, *, data: dict):
-        self.start: datetime | None = None
-        """ The start time of the activity, if any. """
-
-        self.end: datetime | None = None
-        """ The end time of the activity, if any. """
-
-        self._from_data(data)
+        self._raw_start: int | str | None = data.get("start") or None
+        self._raw_end: int | str | None = data.get("end") or None
 
     def __repr__(self) -> str:
         return f"<ActivityTimestamps start={self.start} end={self.end}>"
 
-    def _from_data(self, data: dict) -> None:
-        if start := data.get("start"):
-            self.start = utils.parse_time(start)
+    @property
+    def start(self) -> datetime | None:
+        """ The start time of the activity, if any. """
+        if not self._raw_start:
+            return None
+        return utils.parse_time(self._raw_start)
 
-        if end := data.get("end"):
-            self.end = utils.parse_time(end)
+    @property
+    def end(self) -> datetime | None:
+        """ The end time of the activity, if any. """
+        if not self._raw_end:
+            return None
+        return utils.parse_time(self._raw_end)
 
 
 class ActivitySecrets:
@@ -159,6 +163,7 @@ class Activity:
     """ Represents an activity. """
 
     __slots__ = (
+        "_raw_created_at",
         "_raw_flags",
         "_raw_type",
         "_state",
@@ -188,7 +193,11 @@ class Activity:
         self._state = state
         self._raw_type: int = data["type"]
 
-        self.name: str = data["name"]
+        name: str = data["name"]
+        if (cache := state.cache) is not None and cache._presence_dedup_enabled:
+            name = sys.intern(name)
+
+        self.name: str = name
         """ The name of the activity. """
 
         self.url: str | None = data.get("url")
@@ -266,8 +275,7 @@ class Activity:
                 data=assets
             )
 
-            cache = self._state.cache
-            if cache._presence_dedup_enabled:
+            if (cache := self._state.cache) is not None and cache._presence_dedup_enabled:
                 built_assets = cache._dedupe_activity_assets(built_assets)
 
             self.assets = built_assets

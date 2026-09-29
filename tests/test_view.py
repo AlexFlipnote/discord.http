@@ -1,4 +1,7 @@
+import asyncio
 import unittest
+
+from unittest import mock
 
 from discord_http import (
     ActionRow, Button, ButtonStyles, CheckboxGroupComponent, ComponentOption,
@@ -333,6 +336,71 @@ class TestModalAddItem(unittest.IsolatedAsyncioTestCase):
         self.assertEqual(payload["title"], "t")
         self.assertEqual(payload["custom_id"], "m")
         self.assertEqual(len(payload["components"]), 1)
+
+
+
+class TestButtonCustomIdGeneration(unittest.TestCase):
+    def test_link_and_premium_do_not_generate_ids(self) -> None:
+        with mock.patch("discord_http.view._garbage_id", side_effect=AssertionError("generated")):
+            self.assertIsNone(Button(style=ButtonStyles.link, url="https://example.com").custom_id)
+            self.assertIsNone(Button(style=ButtonStyles.premium, sku_id=1).custom_id)
+
+    def test_regular_button_still_gets_random_id(self) -> None:
+        custom_id = Button(label="x").custom_id
+        self.assertIsInstance(custom_id, str)
+        self.assertEqual(len(custom_id), 32)
+
+    def test_explicit_custom_id_is_kept(self) -> None:
+        self.assertEqual(Button(label="x", custom_id="mine").custom_id, "mine")
+
+
+class _FakeCtx:
+    def __init__(self, bot, id_: int = 1):
+        self.bot = bot
+        self.id = id_
+        self.message = None
+
+    async def original_response(self):
+        raise RuntimeError("no message")
+
+
+class _FakeBot:
+    def __init__(self):
+        self._view_storage: dict = {}
+
+
+class TestViewWaitStorage(unittest.IsolatedAsyncioTestCase):
+    async def test_no_timeout_watcher_when_timeout_is_none(self) -> None:
+        bot = _FakeBot()
+        view = View()
+        waiter = asyncio.create_task(view.wait(_FakeCtx(bot), timeout=None))
+        await asyncio.sleep(0)
+        self.assertIsNone(view._timeout_task)
+        self.assertIs(bot._view_storage[1], view)
+        view._update_event(True)
+        await waiter
+        self.assertNotIn(1, bot._view_storage)
+
+    async def test_does_not_pop_another_views_entry(self) -> None:
+        bot = _FakeBot()
+        first, second = View(), View()
+        waiter = asyncio.create_task(first.wait(_FakeCtx(bot), timeout=None))
+        await asyncio.sleep(0)
+
+        # A second view re-used the same key before the first one finished
+        bot._view_storage[1] = second
+        first._update_event(True)
+        await waiter
+        self.assertIs(bot._view_storage[1], second)
+
+    async def test_early_return_cancels_timeout_watcher(self) -> None:
+        bot = _FakeBot()
+        view = View()
+        with mock.patch("discord_http.view.asyncio.sleep", new=mock.AsyncMock()):
+            result = await view.wait(_FakeCtx(bot), original_response=True, timeout=60)
+        self.assertIsNone(result)
+        self.assertIsNone(view._timeout_task)
+        self.assertEqual(bot._view_storage, {})
 
 
 if __name__ == "__main__":
