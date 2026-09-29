@@ -1,5 +1,4 @@
 import binascii
-import functools
 import io
 import logging
 import orjson
@@ -366,7 +365,6 @@ def format_small_unit(seconds: float | timedelta) -> str:
     return f"{seconds:.2f}s"
 
 
-@functools.lru_cache(maxsize=8)
 def create_missing_texture(*, size: int = 256, tiles: int = 8) -> bytes:
     """
     Generate a PNG image of the classic magenta and black checkerboard pattern.
