@@ -207,7 +207,8 @@ class TestJoinedAt(unittest.TestCase):
         ts = "2021-05-06T07:08:09.123456+00:00"
         member = _make_member(state, guild, joined_at=ts)
 
-        self.assertEqual(member.joined_at, utils.parse_time(ts))
+        # Packed as epoch milliseconds, so sub-millisecond precision is dropped
+        self.assertEqual(member.joined_at, utils.parse_time("2021-05-06T07:08:09.123+00:00"))
         self.assertIsNotNone(member.joined_at.tzinfo)
 
     def test_missing_is_none(self) -> None:
@@ -223,6 +224,26 @@ class TestJoinedAt(unittest.TestCase):
         self.assertEqual(member.joined_at, when)
         member.joined_at = None
         self.assertIsNone(member.joined_at)
+
+    def test_setter_leaves_other_timestamps(self) -> None:
+        state = FakeState()
+        member = _make_member(
+            state, _make_guild(state),
+            joined_at="2020-01-01T00:00:00+00:00",
+            premium_since="2021-01-01T00:00:00+00:00",
+            communication_disabled_until="2022-01-01T00:00:00+00:00",
+        )
+        member.joined_at = None
+
+        self.assertIsNone(member.joined_at)
+        self.assertEqual(member.premium_since, utils.parse_time("2021-01-01T00:00:00+00:00"))
+        self.assertEqual(member.communication_disabled_until, utils.parse_time("2022-01-01T00:00:00+00:00"))
+
+    def test_other_timestamps_missing_are_none(self) -> None:
+        state = FakeState()
+        member = _make_member(state, _make_guild(state), joined_at="2020-01-01T00:00:00+00:00")
+        self.assertIsNone(member.premium_since)
+        self.assertIsNone(member.communication_disabled_until)
 
 
 class TestTimeout(unittest.TestCase):

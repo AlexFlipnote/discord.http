@@ -288,6 +288,7 @@ class Role(PartialRole):
     _FLAG_AVAILABLE_FOR_PURCHASE = 1 << 4
     _FLAG_GUILD_CONNECTIONS = 1 << 5
     _ROLE_FLAGS_SHIFT = 6  # Discord's own role flags are packed above the internal bits
+    _EMPTY_EXTRA = (None,) * 5
 
     __slots__ = (
         "_extra",
@@ -337,7 +338,7 @@ class Role(PartialRole):
             colours.get("tertiary_color"),
         )
         self._extra: tuple[int | None, int | None, int | None, int | None, int | None] | None = (
-            extra if any(g is not None for g in extra) else None
+            extra if extra != self._EMPTY_EXTRA else None
         )
 
         self.unicode_emoji: str | None = data.get("unicode_emoji")

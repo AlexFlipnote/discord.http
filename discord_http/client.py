@@ -1331,7 +1331,8 @@ class Client:
         self,
         channel_id: int,
         *,
-        guild_id: int | None = None
+        guild_id: int | None = None,
+        parent_id: int | None = None
     ) -> PartialChannel:
         """
         Creates a partial channel object.
@@ -1342,6 +1343,8 @@ class Client:
             Channel ID to create the partial channel object with.
         guild_id
             Guild ID to create the partial channel object with.
+        parent_id
+            ID of the parent channel or category, if any.
 
         Returns
         -------
@@ -1350,7 +1353,8 @@ class Client:
         return PartialChannel(
             state=self.state,
             id=channel_id,
-            guild_id=guild_id
+            guild_id=guild_id,
+            parent_id=parent_id
         )
 
     def create_public_thread_from_data(self, data: dict) -> PublicThread:

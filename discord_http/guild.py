@@ -1299,7 +1299,8 @@ class PartialGuild(PartialBase):
                 self._cache_channels = {
                     int(g["id"]): self._state.bot.get_partial_channel(
                         int(g["id"]),
-                        guild_id=guild_id
+                        guild_id=guild_id,
+                        parent_id=utils.get_int(g, "parent_id")
                     )
                     for g in data["channels"]
                 }
@@ -1391,7 +1392,8 @@ class PartialGuild(PartialBase):
                 self._cache_threads = {
                     int(g["id"]): self._state.bot.get_partial_channel(
                         int(g["id"]),
-                        guild_id=guild_id
+                        guild_id=guild_id,
+                        parent_id=utils.get_int(g, "parent_id")
                     )
                     for g in data["threads"]
                 }
@@ -3325,7 +3327,12 @@ class PartialGuild(PartialBase):
         """
         return self._state.bot.get_partial_role(role_id, self.id)
 
-    def get_partial_channel(self, channel_id: int) -> "PartialChannel":
+    def get_partial_channel(
+        self,
+        channel_id: int,
+        *,
+        parent_id: int | None = None
+    ) -> "PartialChannel":
         """
         Get a partial channel object.
 
@@ -3333,6 +3340,8 @@ class PartialGuild(PartialBase):
         ----------
         channel_id
             The ID of the channel
+        parent_id
+            The ID of the parent channel or category, if any
 
         Returns
         -------
@@ -3340,7 +3349,8 @@ class PartialGuild(PartialBase):
         """
         return self._state.bot.get_partial_channel(
             channel_id,
-            guild_id=self.id
+            guild_id=self.id,
+            parent_id=parent_id
         )
 
     async def fetch_channel(self, channel_id: int) -> "BaseChannel":

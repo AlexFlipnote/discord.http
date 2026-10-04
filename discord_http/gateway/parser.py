@@ -1236,7 +1236,13 @@ class Parser:
             The thread.
         """
         channel = self._channel(data)
-        self.bot.cache.add_thread(channel)
+
+        # Only active threads are kept in cache, Discord never sends a delete for archived ones
+        if getattr(channel, "archived", False):
+            self.bot.cache.remove_thread(channel)
+        else:
+            self.bot.cache.add_thread(channel)
+
         return (channel,)
 
     def thread_delete(self, data: dict) -> tuple[PartialThread]:

@@ -355,7 +355,7 @@ class Emoji(PartialEmoji):
 
         raw_roles = data.get("roles")
         self._raw_roles: tuple[int, ...] = (
-            tuple(int(r) for r in raw_roles) if raw_roles else _EMPTY_ROLES
+            tuple(map(int, raw_roles)) if raw_roles else _EMPTY_ROLES
         )
 
         self._from_data(data)

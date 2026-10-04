@@ -309,6 +309,70 @@ class TestGuildCreateStageInstances(unittest.TestCase):
         self.assertEqual(channel.stage_instance.id, 20)
 
 
+def _thread_data(thread_id=30, parent_id=10, archived=False):
+    return {
+        "id": str(thread_id), "type": 11, "guild_id": "1", "parent_id": str(parent_id),
+        "name": "thread", "owner_id": "5",
+        "thread_metadata": {"archived": archived, "auto_archive_duration": 60, "locked": False},
+    }
+
+
+class TestThreadCacheLifetime(unittest.TestCase):
+    def _setup(self):
+        bot = FakeBot(cache_flags=GatewayCacheFlags.guilds | GatewayCacheFlags.channels | GatewayCacheFlags.threads)
+        parser = Parser(bot=bot)
+        (guild,) = parser.guild_create(_guild_data(
+            channels=[{"id": "10", "type": 0, "name": "general", "guild_id": "1"}],
+        ))
+        return parser, guild
+
+    def test_archiving_removes_thread(self) -> None:
+        parser, guild = self._setup()
+        parser.thread_create(_thread_data())
+        self.assertIsNotNone(guild.get_thread(30))
+
+        parser.thread_update(_thread_data(archived=True))
+        self.assertIsNone(guild.get_thread(30))
+
+    def test_unarchiving_adds_thread_back(self) -> None:
+        parser, guild = self._setup()
+        parser.thread_update(_thread_data(archived=True))
+        self.assertIsNone(guild.get_thread(30))
+
+        parser.thread_update(_thread_data(archived=False))
+        self.assertIsNotNone(guild.get_thread(30))
+
+    def test_deleting_parent_channel_removes_its_threads(self) -> None:
+        parser, guild = self._setup()
+        parser.thread_create(_thread_data(thread_id=30, parent_id=10))
+        parser.thread_create(_thread_data(thread_id=31, parent_id=99))
+
+        parser.channel_delete({"id": "10", "type": 0, "name": "general", "guild_id": "1"})
+        self.assertIsNone(guild.get_thread(30))
+        self.assertIsNotNone(guild.get_thread(31))
+
+    def test_partial_threads_keep_parent_id(self) -> None:
+        bot = FakeBot(cache_flags=GatewayCacheFlags.guilds | GatewayCacheFlags.partial_channels | GatewayCacheFlags.partial_threads)
+        parser = Parser(bot=bot)
+        (guild,) = parser.guild_create(_guild_data(
+            channels=[{"id": "10", "type": 0, "name": "general", "guild_id": "1", "parent_id": "5"}],
+            threads=[_thread_data(thread_id=30, parent_id=10)],
+        ))
+        parser.thread_create(_thread_data(thread_id=31, parent_id=10))
+        self.assertEqual(guild.get_channel(10).parent_id, 5)
+        self.assertEqual(guild.get_thread(30).parent_id, 10)
+        self.assertEqual(guild.get_thread(31).parent_id, 10)
+
+        parser.channel_delete({"id": "10", "type": 0, "name": "general", "guild_id": "1"})
+        self.assertIsNone(guild.get_thread(30))
+        self.assertIsNone(guild.get_thread(31))
+
+    def test_partial_channel_parent_id_is_optional(self) -> None:
+        bot = FakeBot()
+        self.assertIsNone(bot.get_partial_channel(10, guild_id=1).parent_id)
+        self.assertEqual(bot.get_partial_channel(10, guild_id=1, parent_id="5").parent_id, 5)
+
+
 class TestChannelInfo(unittest.TestCase):
     def test_parses_channels(self) -> None:
         bot = FakeBot(cache_flags=GatewayCacheFlags.partial_guilds)

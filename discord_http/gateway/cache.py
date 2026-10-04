@@ -15,7 +15,7 @@ from .flags import GatewayCacheFlags
 if TYPE_CHECKING:
     from collections.abc import Generator
 
-    from ..channel import PartialChannel, PartialThread
+    from ..channel import PartialChannel
     from ..client import Client
     from ..emoji import Emoji
     from ..guild import Guild
@@ -173,7 +173,7 @@ class Cache:
         pool that's never revisited by anything, growing forever for no benefit.
         """
         if self.cache_flags is None or GatewayCacheFlags.members not in self.cache_flags:
-            return tuple(int(r) for r in raw_role_ids)
+            return tuple(map(int, raw_role_ids))
 
         int_pool = self.__role_int_pools.setdefault(guild_id, {})
         role_ids = tuple(int_pool.setdefault(i, i) for i in map(int, raw_role_ids))
@@ -657,7 +657,7 @@ class Cache:
             guild._cache_channels[channel.id] = channel
         elif GatewayCacheFlags.partial_channels in self.cache_flags:
             guild._cache_channels[channel.id] = self.bot.get_partial_channel(
-                channel.id, guild_id=channel.guild_id
+                channel.id, guild_id=channel.guild_id, parent_id=channel.parent_id
             )
 
     def remove_channel(self, channel: "BaseChannel | PartialChannel") -> None:
@@ -679,6 +679,13 @@ class Cache:
             return
 
         guild._cache_channels.pop(channel.id, None)
+
+        # Discord does not send THREAD_DELETE for the threads of a deleted channel
+        if guild._cache_threads:
+            guild._cache_threads = {
+                k: v for k, v in guild._cache_threads.items()
+                if getattr(v, "parent_id", None) != channel.id
+            }
 
     def add_thread(self, thread: "BaseChannel") -> None:
         """
@@ -702,10 +709,10 @@ class Cache:
             guild._cache_threads[thread.id] = thread
         elif GatewayCacheFlags.partial_threads in self.cache_flags:
             guild._cache_threads[thread.id] = self.bot.get_partial_channel(
-                thread.id, guild_id=thread.guild_id
+                thread.id, guild_id=thread.guild_id, parent_id=thread.parent_id
             )
 
-    def remove_thread(self, thread: "PartialThread") -> None:
+    def remove_thread(self, thread: "BaseChannel | PartialChannel") -> None:
         """
         Remove a thread from the cache.
 

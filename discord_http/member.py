@@ -454,8 +454,6 @@ class _MemberExtra(NamedTuple):
     avatar: str | None
     banner: str | None
     avatar_decoration: dict | None
-    communication_disabled_until: str | None
-    premium_since: str | None
     name_style: dict | None
     nameplate: dict | None
 
@@ -467,8 +465,8 @@ class Member(PartialMember):
         "_extra",
         "_raw_flags",
         "_raw_permissions",
+        "_raw_timestamps",
         "_user",
-        "joined_at",
         "nick",
         "pending",
         "role_ids",
@@ -504,9 +502,6 @@ class Member(PartialMember):
         self.nick: str | None = data.get("nick")
         """ The nickname of the member, if available. """
 
-        self.joined_at: datetime | None = None
-        """ The time the member joined the guild, if None, Discord failed to provide data. """
-
         self._from_data(data)
 
     def __repr__(self) -> str:
@@ -519,8 +514,11 @@ class Member(PartialMember):
         return str(self._user)
 
     def _from_data(self, data: dict) -> None:
-        if joined_at := data.get("joined_at"):
-            self.joined_at = utils.parse_time(joined_at)
+        self._raw_timestamps: int = utils.pack_timestamps(
+            data.get("joined_at") or None,
+            data.get("premium_since") or None,
+            data.get("communication_disabled_until") or None
+        )
 
         collectibles = data.get("collectibles", {}) or {}
 
@@ -528,8 +526,6 @@ class Member(PartialMember):
             avatar=data.get("avatar"),
             banner=data.get("banner"),
             avatar_decoration=data.get("avatar_decoration_data"),
-            communication_disabled_until=data.get("communication_disabled_until"),
-            premium_since=data.get("premium_since"),
             name_style=data.get("display_name_styles"),
             nameplate=collectibles.get("nameplate"),
         )
@@ -569,20 +565,23 @@ class Member(PartialMember):
         return AvatarDecoration(self._state, avatar_decoration)
 
     @property
-    def communication_disabled_until(self) -> datetime | None:
-        """ The time until the member is communication disabled (timeout). """
-        timestamp = self._extra.communication_disabled_until if self._extra else None
-        if not timestamp:
-            return None
-        return utils.parse_time(timestamp)
+    def joined_at(self) -> datetime | None:
+        """ The time the member joined the guild, if None, Discord failed to provide data. """
+        return utils.unpack_timestamp(self._raw_timestamps, 0)
+
+    @joined_at.setter
+    def joined_at(self, value: datetime | None) -> None:
+        self._raw_timestamps = utils.repack_timestamp(self._raw_timestamps, 0, value)
 
     @property
     def premium_since(self) -> datetime | None:
         """ The time the member started boosting the guild, if available. """
-        timestamp = self._extra.premium_since if self._extra else None
-        if not timestamp:
-            return None
-        return utils.parse_time(timestamp)
+        return utils.unpack_timestamp(self._raw_timestamps, 1)
+
+    @property
+    def communication_disabled_until(self) -> datetime | None:
+        """ The time until the member is communication disabled (timeout). """
+        return utils.unpack_timestamp(self._raw_timestamps, 2)
 
     @property
     def name_style(self) -> DisplayNameStyles | None:

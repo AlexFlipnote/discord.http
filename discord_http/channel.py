@@ -140,7 +140,8 @@ class PartialChannel(PartialBase):
         *,
         state: "DiscordAPI",
         id: int,  # ruff: ignore[builtin-argument-shadowing]
-        guild_id: int | None = None
+        guild_id: int | None = None,
+        parent_id: int | None = None
     ):
         super().__init__(id=int(id))
         self._state = state
@@ -148,7 +149,7 @@ class PartialChannel(PartialBase):
         self.guild_id: int | None = int(guild_id) if guild_id else None
         """ The ID of the guild the channel belongs to, if any. """
 
-        self.parent_id: int | None = None
+        self.parent_id: int | None = int(parent_id) if parent_id else None
         """ The ID of the parent channel or category, if any. """
 
         self._raw_type: int | None = None
@@ -1894,32 +1895,22 @@ class BaseChannel(PartialChannel):
 class TextChannel(BaseChannel):
     """ Represents a text channel. """
 
-    __slots__ = ("_raw_thread_defaults",)
+    __slots__ = (
+        "default_auto_archive_duration",
+        "default_thread_rate_limit_per_user",
+    )
 
     def __init__(self, *, state: "DiscordAPI", data: dict):
         super().__init__(state=state, data=data)
 
-        # Most channels never set these, so only keep them around when they are
-        thread_defaults = (
-            data.get("default_auto_archive_duration"),
-            data.get("default_thread_rate_limit_per_user") or 0,
-        )
-        self._raw_thread_defaults: tuple[int | None, int] | None = (
-            thread_defaults if thread_defaults != (None, 0) else None
-        )
+        self.default_auto_archive_duration: int | None = data.get("default_auto_archive_duration")
+        """ The default auto archive duration in minutes for newly created threads, if set. """
+
+        self.default_thread_rate_limit_per_user: int = data.get("default_thread_rate_limit_per_user") or 0
+        """ The initial rate limit per user in seconds for newly created threads. """
 
     def __repr__(self) -> str:
         return f"<TextChannel id={self.id} name='{self.name}'>"
-
-    @property
-    def default_auto_archive_duration(self) -> int | None:
-        """ The default auto archive duration in minutes for newly created threads, if set. """
-        return self._raw_thread_defaults[0] if self._raw_thread_defaults else None
-
-    @property
-    def default_thread_rate_limit_per_user(self) -> int:
-        """ The initial rate limit per user in seconds for newly created threads. """
-        return self._raw_thread_defaults[1] if self._raw_thread_defaults else 0
 
     @property
     def type(self) -> ChannelType:
@@ -2316,7 +2307,7 @@ class PublicThread(BaseChannel):
             metadata.get("create_timestamp")
         )
 
-        self.applied_tags: tuple[int, ...] = tuple(int(g) for g in data.get("applied_tags", ()))
+        self.applied_tags: tuple[int, ...] = tuple(map(int, data.get("applied_tags", ())))
         """ The IDs of the tags applied to the thread, only for forum and media threads. """
 
         self.newly_created: bool = data.get("newly_created", False)

@@ -787,6 +787,9 @@ class _MessageExtra(NamedTuple):
     mention_channels: list[dict] | None
 
 
+_EMPTY_MESSAGE_EXTRA = (None,) * len(_MessageExtra._fields)
+
+
 class SharedClientTheme:
     """ Represents a custom client theme shared via a message. """
 
@@ -1813,20 +1816,21 @@ class Message(PartialMessage):
 
         self._raw_flags: int = data.get("flags", 0)
         self._raw_mention_roles: tuple[int, ...] | None = (
-            tuple(int(g) for g in mention_roles)
+            tuple(map(int, mention_roles))
             if (mention_roles := data.get("mention_roles")) is not None else None
         )
 
-        extra = _MessageExtra(
-            position=data.get("position"),
-            activity=data.get("activity"),
-            application=data.get("application"),
-            shared_client_theme=data.get("shared_client_theme"),
-            thread=data.get("thread"),
-            mention_channels=data.get("mention_channels"),
+        # Checked as a plain tuple first, most messages have none of these
+        extra = (
+            data.get("position"),
+            data.get("activity"),
+            data.get("application"),
+            data.get("shared_client_theme"),
+            data.get("thread"),
+            data.get("mention_channels"),
         )
         self._extra: _MessageExtra | None = (
-            extra if any(g is not None for g in extra) else None
+            _MessageExtra._make(extra) if extra != _EMPTY_MESSAGE_EXTRA else None
         )
 
         self.poll: Poll | None = None

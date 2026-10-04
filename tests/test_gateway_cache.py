@@ -46,8 +46,8 @@ class FakeClient:
     def get_partial_member(self, user_id, guild_id):
         return SimpleNamespace(kind="partial_member", id=user_id, guild_id=guild_id)
 
-    def get_partial_channel(self, channel_id, *, guild_id=None):
-        return SimpleNamespace(kind="partial_channel", id=channel_id, guild_id=guild_id)
+    def get_partial_channel(self, channel_id, *, guild_id=None, parent_id=None):
+        return SimpleNamespace(kind="partial_channel", id=channel_id, guild_id=guild_id, parent_id=parent_id)
 
     def get_partial_role(self, role_id, guild_id):
         return SimpleNamespace(kind="partial_role", id=role_id, guild_id=guild_id)
@@ -368,30 +368,30 @@ class TestGetChannelThread(unittest.TestCase):
 class TestAddRemoveChannel(unittest.TestCase):
     def test_none_cache_flags_is_noop(self) -> None:
         cache, _, guild = _cache_with_guild(None)
-        channel = SimpleNamespace(id=1, guild_id=guild.id)
+        channel = SimpleNamespace(id=1, guild_id=guild.id, parent_id=None)
         cache.add_channel(channel)
         self.assertEqual(guild._cache_channels, {})
 
     def test_no_guild_id_is_noop(self) -> None:
         cache, _, _ = _cache_with_guild(GatewayCacheFlags.channels)
-        channel = SimpleNamespace(id=1, guild_id=None)
+        channel = SimpleNamespace(id=1, guild_id=None, parent_id=None)
         cache.add_channel(channel)  # should not raise
 
     def test_channels_flag_stores_full_channel(self) -> None:
         cache, _, guild = _cache_with_guild(GatewayCacheFlags.channels)
-        channel = SimpleNamespace(id=1, guild_id=guild.id)
+        channel = SimpleNamespace(id=1, guild_id=guild.id, parent_id=None)
         cache.add_channel(channel)
         self.assertIs(guild._cache_channels[1], channel)
 
     def test_partial_channels_flag_stores_partial_instead(self) -> None:
         cache, _, guild = _cache_with_guild(GatewayCacheFlags.partial_channels)
-        channel = SimpleNamespace(id=1, guild_id=guild.id)
+        channel = SimpleNamespace(id=1, guild_id=guild.id, parent_id=None)
         cache.add_channel(channel)
         self.assertEqual(guild._cache_channels[1].kind, "partial_channel")
 
     def test_remove_channel_pops_from_cache(self) -> None:
         cache, _, guild = _cache_with_guild(GatewayCacheFlags.channels)
-        channel = SimpleNamespace(id=1, guild_id=guild.id)
+        channel = SimpleNamespace(id=1, guild_id=guild.id, parent_id=None)
         cache.add_channel(channel)
         cache.remove_channel(channel)
         self.assertNotIn(1, guild._cache_channels)
@@ -400,19 +400,19 @@ class TestAddRemoveChannel(unittest.TestCase):
 class TestAddRemoveThread(unittest.TestCase):
     def test_threads_flag_stores_full_thread(self) -> None:
         cache, _, guild = _cache_with_guild(GatewayCacheFlags.threads)
-        thread = SimpleNamespace(id=1, guild_id=guild.id)
+        thread = SimpleNamespace(id=1, guild_id=guild.id, parent_id=None)
         cache.add_thread(thread)
         self.assertIs(guild._cache_threads[1], thread)
 
     def test_partial_threads_flag_stores_partial_instead(self) -> None:
         cache, _, guild = _cache_with_guild(GatewayCacheFlags.partial_threads)
-        thread = SimpleNamespace(id=1, guild_id=guild.id)
+        thread = SimpleNamespace(id=1, guild_id=guild.id, parent_id=None)
         cache.add_thread(thread)
         self.assertEqual(guild._cache_threads[1].kind, "partial_channel")
 
     def test_remove_thread_pops_from_cache(self) -> None:
         cache, _, guild = _cache_with_guild(GatewayCacheFlags.threads)
-        thread = SimpleNamespace(id=1, guild_id=guild.id)
+        thread = SimpleNamespace(id=1, guild_id=guild.id, parent_id=None)
         cache.add_thread(thread)
         cache.remove_thread(thread)
         self.assertNotIn(1, guild._cache_threads)

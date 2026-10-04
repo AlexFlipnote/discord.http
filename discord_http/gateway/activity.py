@@ -82,14 +82,13 @@ class ActivityAssets:
 
 class ActivityTimestamps:
     """ Represents the timestamps of an activity. """
-    __slots__ = (
-        "_raw_end",
-        "_raw_start",
-    )
+    __slots__ = ("_raw_timestamps",)
 
     def __init__(self, *, data: dict):
-        self._raw_start: int | str | None = data.get("start") or None
-        self._raw_end: int | str | None = data.get("end") or None
+        self._raw_timestamps: int = utils.pack_timestamps(
+            data.get("start") or None,
+            data.get("end") or None
+        )
 
     def __repr__(self) -> str:
         return f"<ActivityTimestamps start={self.start} end={self.end}>"
@@ -97,16 +96,12 @@ class ActivityTimestamps:
     @property
     def start(self) -> datetime | None:
         """ The start time of the activity, if any. """
-        if not self._raw_start:
-            return None
-        return utils.parse_time(self._raw_start)
+        return utils.unpack_timestamp(self._raw_timestamps, 0)
 
     @property
     def end(self) -> datetime | None:
         """ The end time of the activity, if any. """
-        if not self._raw_end:
-            return None
-        return utils.parse_time(self._raw_end)
+        return utils.unpack_timestamp(self._raw_timestamps, 1)
 
 
 class ActivitySecrets:
@@ -170,7 +165,6 @@ class Activity:
         "application_id",
         "assets",
         "buttons",
-        "created_at",
         "details",
         "emoji",
         "instance",
@@ -203,8 +197,7 @@ class Activity:
         self.url: str | None = data.get("url")
         """ The URL of the activity, if any. """
 
-        self.created_at: datetime = utils.parse_time(data["created_at"])
-        """ The time the activity was created at. """
+        self._raw_created_at: int | str = data["created_at"]
 
         self.timestamps: ActivityTimestamps | None = None
         """ The timestamps of the activity, if any. """
@@ -284,6 +277,11 @@ class Activity:
     def type(self) -> ActivityType:
         """ The type of the activity. """
         return ActivityType(self._raw_type)
+
+    @property
+    def created_at(self) -> datetime:
+        """ The time the activity was created at. """
+        return utils.parse_time(self._raw_created_at)
 
     @property
     def flags(self) -> ActivityFlags:

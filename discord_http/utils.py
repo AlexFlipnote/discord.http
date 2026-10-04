@@ -30,6 +30,7 @@ if TYPE_CHECKING:
 DISCORD_EPOCH = 1420070400000
 _PACKED_TIMESTAMP_BITS = 42  # Epoch milliseconds fit in 42 bits until the year 2109
 _PACKED_TIMESTAMP_MASK = (1 << _PACKED_TIMESTAMP_BITS) - 1
+_UNIX_EPOCH = datetime(1970, 1, 1, tzinfo=UTC)
 
 # RegEx patterns
 re_channel: re.Pattern = re.compile(r"<#([0-9]{15,20})>")
@@ -570,7 +571,28 @@ def parse_time(ts: str | int) -> datetime:
     raise TypeError(f"ts must be a str or int, not {type(ts)}")
 
 
-def pack_timestamps(*timestamps: "str | datetime | None") -> int:
+def _to_epoch_ms(ts: "str | int | datetime") -> int:
+    """ Converts a timestamp to epoch milliseconds, ints use the same unit detection as `parse_time()`. """
+    # Hot path when building cached objects, so str goes first and skips parse_time()
+    if isinstance(ts, str):
+        ts = datetime.fromisoformat(ts)
+
+    elif isinstance(ts, int):
+        if ts > 1_000_000_000_000_000:  # 10^15, Microseconds
+            return ts // 1000
+        if ts > 1_000_000_000_000:  # 10^12, Milliseconds
+            return ts
+        return ts * 1000
+
+    if ts.tzinfo is None:
+        return int(ts.timestamp() * 1000)
+
+    # Integer maths is both faster than timestamp() and avoids float rounding
+    delta = ts - _UNIX_EPOCH
+    return (delta.days * 86_400 + delta.seconds) * 1000 + delta.microseconds // 1000
+
+
+def pack_timestamps(*timestamps: "str | int | datetime | None") -> int:
     """
     Pack timestamps into a single int, as epoch milliseconds.
 
@@ -587,15 +609,38 @@ def pack_timestamps(*timestamps: "str | datetime | None") -> int:
         The packed timestamps
     """
     packed = 0
+    shift = 0
 
-    for i, ts in enumerate(timestamps):
-        if ts is None:
-            continue
+    for ts in timestamps:
+        if ts is not None:
+            packed |= _to_epoch_ms(ts) << shift
+        shift += _PACKED_TIMESTAMP_BITS
 
-        if isinstance(ts, str):
-            ts = parse_time(ts)
+    return packed
 
-        packed |= int(ts.timestamp() * 1000) << (i * _PACKED_TIMESTAMP_BITS)
+
+def repack_timestamp(packed: int, index: int, ts: "str | int | datetime | None") -> int:
+    """
+    Replace a single timestamp packed by `pack_timestamps()`.
+
+    Parameters
+    ----------
+    packed
+        The packed timestamps
+    index
+        The position of the timestamp when it was packed
+    ts
+        The new timestamp, `None` to unset it
+
+    Returns
+    -------
+        The packed timestamps with the timestamp replaced
+    """
+    shift = index * _PACKED_TIMESTAMP_BITS
+    packed &= ~(_PACKED_TIMESTAMP_MASK << shift)
+
+    if ts is not None:
+        packed |= _to_epoch_ms(ts) << shift
 
     return packed
 

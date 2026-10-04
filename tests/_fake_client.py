@@ -30,8 +30,8 @@ class FakeBot:
     def __init__(self, state):
         self.state = state
 
-    def get_partial_channel(self, channel_id, *, guild_id=None):
-        return PartialChannel(state=self.state, id=channel_id, guild_id=guild_id)
+    def get_partial_channel(self, channel_id, *, guild_id=None, parent_id=None):
+        return PartialChannel(state=self.state, id=channel_id, guild_id=guild_id, parent_id=parent_id)
 
     def get_partial_automod_rule(self, rule_id, guild_id):
         return PartialAutoModRule(state=self.state, id=rule_id, guild_id=guild_id)

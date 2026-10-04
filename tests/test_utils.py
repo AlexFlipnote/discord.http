@@ -449,6 +449,24 @@ class TestPackedTimestamps(unittest.TestCase):
         self.assertEqual(utils.unpack_timestamp(packed, 0), late)
         self.assertEqual(utils.unpack_timestamp(packed, 1), late)
 
+    def test_int_units_match_parse_time(self):
+        expected = datetime(2023, 11, 14, 22, 13, 20, tzinfo=UTC)
+        packed = utils.pack_timestamps(1_700_000_000, 1_700_000_000_000, 1_700_000_000_000_000)
+        for i in range(3):
+            self.assertEqual(utils.unpack_timestamp(packed, i), expected)
+
+    def test_repack_replaces_only_that_index(self):
+        a = datetime(2020, 1, 1, tzinfo=UTC)
+        b = datetime(2021, 1, 1, tzinfo=UTC)
+        c = datetime(2022, 1, 1, tzinfo=UTC)
+        packed = utils.pack_timestamps(a, b, c)
+
+        packed = utils.repack_timestamp(packed, 1, c)
+        self.assertEqual([utils.unpack_timestamp(packed, i) for i in range(3)], [a, c, c])
+
+        packed = utils.repack_timestamp(packed, 1, None)
+        self.assertEqual([utils.unpack_timestamp(packed, i) for i in range(3)], [a, None, c])
+
 
 if __name__ == "__main__":
     unittest.main()
