@@ -2,28 +2,23 @@
 
 A Python library for Discord bots using HTTP interactions, with optional WebSocket support and full cache control.
 
-- Lightweight and memory efficient, built to stay small even in large bots
-- HTTP-first, with the gateway available when you actually need events
-- Respects your cache level, nothing is stored unless you ask for it
-- Act on anything by ID without fetching it first
-- Small, deliberate dependency set, every dependency has to earn its place
-- Supports both guild install and user install bots
-- Fully type-hinted and kept in sync with the Discord API
+- HTTP-first, your bot only does work when someone uses it, turn on the gateway when you actually need events.
+- Nothing is cached unless you ask for it, and what is cached is stored compactly, even in thousands of servers.
+- Act on anything by ID without fetching it first.
+- Offline mode for scripts and cron jobs, use the API without running a bot at all.
+- Plain Python types like `str`, `int` and `datetime`, with builders only where it is genuinely complex, like embeds or components.
+- Supports guild and user installs, fully type-hinted and kept in sync with the Discord API.
+- Small, deliberate dependency set, every dependency has to earn its place.
+- Familiar API for anyone coming from [discord.py](https://github.com/Rapptz/discord.py), so there is little to relearn.
 
-## Why discord.http?
-Most bots only answer slash commands, which does not need a connection to Discord running around the clock. discord.http starts from HTTP interactions, so your bot only works when someone uses it. Need events? Turn on the gateway and choose exactly what gets cached. Whatever you do cache is stored as compactly as possible, so even bots in thousands of servers stay lean.
+## Is it the right fit?
+discord.http is built for bots that mostly answer slash commands, and that care about what they cost to run as they grow. Replies are sent back on the same HTTP request the command arrived on, so the first reply to a command does not even cost an API call. Small bots work just as well, the savings simply add up the more servers you are in.
 
-Coming from [discord.py](https://github.com/Rapptz/discord.py)? The API will feel familiar, so there is little to relearn. (Trust me, I made the jump myself with a 30,000+ line bot, the last thing I wanted was to rewrite everything...)
-
-### Blueprints, not hand-holding
-You stay in control, instead of fighting the library. Arguments and attributes use plain Python types like `str`, `int` and `datetime`, with builders only where an argument is genuinely complex, like embeds or components. No forced abstractions and no opinions on how your bot should be structured, just the building blocks.
-
-> [!NOTE]
-> discord.http does not support voice connections as of now, it may come but, demand is low for now.
+It is probably not the right pick if you need voice connections (not supported for now, demand is low), or you can not host a public HTTPS endpoint (offline mode does not need one, see below).
 
 ## Requirements & Installing
-- Python 3.11 or newer
-- A public HTTPS endpoint for Discord to send interactions to, usually a reverse proxy (nginx, apache2, etc.) in front of your bot
+- Python 3.11 to 3.14
+- A public HTTPS endpoint for Discord to send interactions to, usually a reverse proxy (nginx, apache2, etc.) in front of your bot, not needed for offline mode
 
 Install with `pip install discord.http` (or `python -m pip install discord.http` if `pip` is not on your path).
 
@@ -47,6 +42,23 @@ client.start()
 ```
 
 Want to also listen to gateway events? Pass `enable_gateway=True` to the client along with your desired `intents`.
+
+### Offline mode
+Not every job needs a running bot. `offline_run()` logs in, runs your function once and exits, with no HTTP server, no gateway connection and no public endpoint needed. Great for cron jobs, one-off scripts and admin tools.
+
+```py <!-- DOCS: offline_example -->
+from discord_http import Client
+
+client = Client(
+    token="Your bot token here"
+)
+
+async def main():
+    channel = client.get_partial_channel(123456789012345678)
+    await channel.send("Nightly backup finished!")
+
+client.offline_run(main)
+```
 
 Need further help on how to make Discord API able to send requests to your bot?
 Check out [the documentation](https://discordhttp.alexflipnote.dev/pages/getting_started.html) for more detailed information.

@@ -127,6 +127,19 @@ This what the ``[ INFO ]`` messages mean:
 3. Showing that the bot is now ready to receive interactions from Discord API.
 4. Confirming that the URL you provided in the bot's application page is correct, working and Discord API can reach it.
 
+Offline mode
+------------
+Not every job needs a running bot. ``Client.offline_run()`` logs in, runs your function once and then exits,
+without starting the HTTP server or connecting to the gateway, so none of the hosting steps above are needed.
+This is great for cron jobs, one-off scripts and admin tools:
+
+.. include:: ../../README.md
+  :start-after: <!-- DOCS: offline_example -->
+  :end-before: ```
+  :literal:
+
+Keep in mind that offline mode can only talk to the Discord API, it does not receive any interactions or events.
+
 Python logging
 --------------
 The library uses Python's built-in logging module to log messages.
