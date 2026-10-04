@@ -6,7 +6,7 @@ A Python library for Discord bots using HTTP interactions, with optional WebSock
 - HTTP-first, with the gateway available when you actually need events
 - Respects your cache level, nothing is stored unless you ask for it
 - Act on anything by ID without fetching it first
-- Minimal dependency footprint, only what is truly needed
+- Small, deliberate dependency set, every dependency has to earn its place
 - Supports both guild install and user install bots
 - Fully type-hinted and kept in sync with the Discord API
 
