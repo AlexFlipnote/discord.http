@@ -6,7 +6,7 @@ import operator
 from aiohttp import web
 from collections.abc import Coroutine
 from datetime import datetime, UTC
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Literal
 
 from .. import utils
 
@@ -38,28 +38,28 @@ class GatewayClient:
         shard_ids: list[int] | None = None,
         max_concurrency: int | None = None
     ):
-        self.bot = bot
+        self.bot: "Client" = bot
         """ The bot instance that this gateway client belongs to. """
 
-        self.intents = intents
+        self.intents: "Intents | None" = intents
         """ The intents that the gateway client is using, or `None` if not specified. """
 
-        self.cache_flags = cache_flags
+        self.cache_flags: "GatewayCacheFlags | None" = cache_flags
         """ The cache flags that the gateway client is using, or `None` if not specified. """
 
-        self.automatic_shards = automatic_shards
+        self.automatic_shards: bool = automatic_shards
         """ Whether to automatically determine the number of shards to launch based on the gateway response. """
 
-        self.shard_id = shard_id
+        self.shard_id: int | None = shard_id
         """ The shard ID to launch, or `None` if not specified. """
 
-        self.shard_count = shard_count
+        self.shard_count: int = shard_count
         """ The total number of shards to launch, defaults to 1. """
 
-        self.shard_ids = shard_ids
+        self.shard_ids: list[int] | None = shard_ids
         """ A list of shard IDs to launch, or `None` to launch all shards from 0 to `shard_count - 1`. """
 
-        self.max_concurrency = max_concurrency
+        self.max_concurrency: int | None = max_concurrency
         """ The maximum number of shards to launch concurrently, or `None` to launch all shards at once. """
 
         self.__shards: dict[int, Shard] = {}
@@ -95,6 +95,52 @@ class GatewayClient:
         """
         for shard in self.__shards.values():
             await shard.change_presence(status)
+
+    async def request_soundboard_sounds(self, *guild_ids: "Snowflake | int") -> None:
+        """
+        Requests the soundboard sounds of the guilds, through the shard each guild belongs to.
+
+        The sounds are dispatched in `soundboard_sounds` events, one per guild.
+
+        Parameters
+        ----------
+        guild_ids
+            The guild IDs to request the soundboard sounds for
+        """
+        by_shard: dict[int, list["Snowflake | int"]] = {}
+        for guild_id in guild_ids:
+            by_shard.setdefault(self.shard_by_guild_id(guild_id), []).append(guild_id)
+
+        for shard_id, shard_guild_ids in by_shard.items():
+            shard = self.get_shard(shard_id)
+            if shard is None:
+                raise ValueError(f"Shard {shard_id} is not running on this client")
+            await shard.request_soundboard_sounds(*shard_guild_ids)
+
+    async def request_channel_info(
+        self,
+        guild_id: "Snowflake | int",
+        *,
+        fields: list[Literal["status", "voice_start_time"]] | None = None
+    ) -> None:
+        """
+        Requests the ephemeral channel data of a guild, through the shard the guild belongs to.
+
+        The data is dispatched in a `channel_info` event.
+
+        Parameters
+        ----------
+        guild_id
+            The guild ID to request the channel info for
+        fields
+            The fields to request, defaults to both `status` and `voice_start_time`
+        """
+        shard_id = self.shard_by_guild_id(guild_id)
+        shard = self.get_shard(shard_id)
+        if shard is None:
+            raise ValueError(f"Shard {shard_id} is not running on this client")
+
+        await shard.request_channel_info(guild_id, fields=fields)
 
     async def _index_websocket_status(self, _: web.Request) -> web.Response:
         now = datetime.now(UTC)

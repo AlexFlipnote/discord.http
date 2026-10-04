@@ -33,7 +33,7 @@ from .message import PartialMessage, Message, WebhookMessage
 from .object import Snowflake
 from .role import PartialRole, Role
 from .soundboard import SoundboardSound, PartialSoundboardSound
-from .sticker import PartialSticker, Sticker
+from .sticker import PartialSticker, Sticker, StickerPack
 from .user import User, PartialUser, Application
 from .view import InteractionStorage
 from .voice import PartialVoiceState, VoiceState
@@ -140,6 +140,8 @@ class Client:
 
         # Setup log instantly
         self.logging_level: int = logging_level
+        """ The logging level used by the library. """
+
         utils.setup_logger(level=self.logging_level)
 
         # Cache level, keep them at top
@@ -163,27 +165,58 @@ class Client:
         """ The application object for the bot. """
 
         self.api_version: int = int(api_version)
+        """ The API version used for both HTTP and the gateway. """
+
         self.api_base_url: str = str(api_base_url or "https://discord.com/api")
+        """ The base URL used for API requests. """
+
         self.token: str = token
+        """ The bot token. """
+
         self.automatic_shards: bool = automatic_shards
+        """ Whether the bot is automatically sharded or not. """
+
         self.guild_id: int | None = guild_id
+        """ The guild ID commands are synced to, `None` if synced globally. """
+
         self.sync: bool = sync
+        """ Whether commands are synced on boot or not. """
+
         self.debug_events: bool = debug_events
+        """ Whether events are logged or not, required for `on_raw_*` events. """
+
         self.enable_gateway: bool = enable_gateway
+        """ Whether the gateway is enabled or not. """
+
         self.playing_status: "PlayingStatus | None" = playing_status
+        """ The playing status used when connecting to the gateway, if any. """
+
         self.guild_ready_timeout: float = guild_ready_timeout
+        """ How long to wait for the last GUILD_CREATE before triggering shard ready. """
+
         self.chunk_guilds_on_startup: bool = chunk_guilds_on_startup
+        """ Whether guilds are chunked when booting or not. """
 
         self.intents: Intents | None = intents
+        """ The intents used for the gateway, if any. """
+
         self.gateway_capabilities: "GatewayCapabilities | None" = gateway_capabilities
+        """ The opt-in gateway capabilities sent in the Identify payload, if any. """
+
         self.interaction_path: str | None = interaction_path or "/"
+        """ The path of the interaction endpoint. """
+
         self.webhook_events_path: str | None = webhook_events_path
+        """ The path of the webhook events endpoint, `None` if webhook events are not served. """
+
         self.max_pending_connections: int = max_pending_connections
+        """ The maximum number of queued connections to the interaction endpoint. """
 
         self.gateway: "GatewayClient | None" = None
         """ The gateway client, if enabled. """
 
         self.disable_default_get_path: bool = disable_default_get_path
+        """ Whether the default GET path is disabled or not. """
 
         try:
             self.loop: asyncio.AbstractEventLoop = loop or asyncio.get_running_loop()
@@ -301,8 +334,7 @@ class Client:
         await self.setup_hook()
 
         if self.enable_gateway:
-            # To avoid circular import, import here
-            from .gateway import GatewayClient
+            from .gateway import GatewayClient  # Circular import
             self.gateway = GatewayClient(
                 bot=self,
                 intents=self.intents,
@@ -1132,7 +1164,7 @@ class Client:
 
         Parameters
         ----------
-        func: Callable
+        func
             The function to be called before the command is invoked.
         """
         def decorator(func: Callable) -> Callable:
@@ -1149,7 +1181,7 @@ class Client:
 
         Parameters
         ----------
-        func: Callable
+        func
             The function to be called after the command is invoked.
         """
         def decorator(func: Callable) -> Callable:
@@ -1723,6 +1755,41 @@ class Client:
 
         return await sticker.fetch()
 
+    async def fetch_sticker_packs(self) -> list[StickerPack]:
+        """ Fetches all the standard sticker packs available on Discord. """
+        r = await self.state.query(
+            "GET",
+            "/sticker-packs"
+        )
+
+        return [
+            StickerPack(state=self.state, data=g)
+            for g in r.response["sticker_packs"]
+        ]
+
+    async def fetch_sticker_pack(
+        self,
+        pack_id: int
+    ) -> StickerPack:
+        """
+        Fetches a standard sticker pack.
+
+        Parameters
+        ----------
+        pack_id
+            Sticker pack ID to fetch the sticker pack object with.
+
+        Returns
+        -------
+            The sticker pack object.
+        """
+        r = await self.state.query(
+            "GET",
+            f"/sticker-packs/{pack_id}"
+        )
+
+        return StickerPack(state=self.state, data=r.response)
+
     def get_partial_soundboard_sound(
         self,
         sound_id: int,
@@ -1796,6 +1863,18 @@ class Client:
         )
 
         return await sound.fetch()
+
+    async def fetch_default_soundboard_sounds(self) -> list[SoundboardSound]:
+        """ Fetches the default soundboard sounds that can be used by all users. """
+        r = await self.state.query(
+            "GET",
+            "/soundboard-default-sounds"
+        )
+
+        return [
+            self.create_soundboard_sound_from_data(g)
+            for g in r.response
+        ]
 
     async def fetch_invite(
         self,
@@ -2336,8 +2415,8 @@ class Client:
         exclude_ended
             Whether to exclude ended entitlements or not.
 
-        Returns
-        -------
+        Yields
+        ------
             The entitlement objects.
         """
         params: dict[str, Any] = {
@@ -2522,6 +2601,121 @@ class Client:
         """
         guild = self.get_partial_guild(guild_id)
         return await guild.fetch()
+
+    async def fetch_guilds(
+        self,
+        *,
+        before: "datetime | Snowflake | int | None" = None,
+        after: "datetime | Snowflake | int | None" = None,
+        limit: int | None = 200,
+        with_counts: bool = False,
+        shard: int | None = None
+    ) -> AsyncIterator[Guild]:
+        """
+        Fetches the guilds the bot is in.
+
+        Guilds are partial, only containing `id`, `name`, `icon`,
+        `banner`, `features` and optionally the approximate counts.
+
+        Parameters
+        ----------
+        before
+            Get guilds before this guild ID.
+        after
+            Get guilds after this guild ID.
+        limit
+            The maximum amount of guilds to fetch.
+            `None` will fetch all guilds.
+        with_counts
+            Whether to include `approximate_member_count` and `approximate_presence_count` or not.
+        shard
+            Only fetch the guilds in this shard (`0` to `max_concurrency - 1`).
+            Required if the bot is using large bot sharding, iterate over every shard to get all guilds.
+            This is not the same as the gateway shard ID.
+
+        Yields
+        ------
+            The guild object.
+        """
+        async def _get_guilds(limit: int, **kwargs) -> HTTPResponse[list[dict]]:
+            params: dict[str, Any] = {
+                "limit": limit,
+                "with_counts": "true" if with_counts else "false"
+            }
+
+            if shard is not None:
+                params["shard"] = shard
+
+            for key, value in kwargs.items():
+                if value is None:
+                    continue
+                params[key] = utils.normalize_entity_id(value)
+
+            return await self.state.query(
+                "GET",
+                "/users/@me/guilds",
+                params=params
+            )  # pyright: ignore[reportReturnType]
+
+        async def _after_http(
+            http_limit: int,
+            after_id: int | None,
+            limit: int | None
+        ) -> tuple[list[dict], int | None, int | None]:
+            r = await _get_guilds(limit=http_limit, after=after_id)
+
+            if r.response:
+                if limit is not None:
+                    limit -= len(r.response)
+                after_id = int(r.response[-1]["id"])
+
+            return r.response, after_id, limit
+
+        async def _before_http(
+            http_limit: int,
+            before_id: int | None,
+            limit: int | None
+        ) -> tuple[list[dict], int | None, int | None]:
+            r = await _get_guilds(limit=http_limit, before=before_id)
+
+            if r.response:
+                if limit is not None:
+                    limit -= len(r.response)
+                before_id = int(r.response[0]["id"])
+
+            return r.response, before_id, limit
+
+        # Only used when paginating backwards with both before and after
+        after_bound: int | None = None
+
+        if before:
+            strategy, state = _before_http, utils.normalize_entity_id(before)
+            if after:
+                after_bound = utils.normalize_entity_id(after)
+        else:
+            strategy, state = _after_http, (
+                utils.normalize_entity_id(after) if after else None
+            )
+
+        while True:
+            http_limit: int = 200 if limit is None else min(limit, 200)
+            if http_limit <= 0:
+                break
+
+            strategy: Callable
+            guilds, state, limit = await strategy(http_limit, state, limit)
+
+            if after_bound is not None:
+                filtered = [g for g in guilds if int(g["id"]) > after_bound]
+                reached_bound = len(filtered) < len(guilds)
+            else:
+                filtered, reached_bound = guilds, False
+
+            for g in filtered:
+                yield self.create_guild_from_data(g, populate_cache=False)
+
+            if reached_bound or len(guilds) < 200:
+                break
 
     def create_guild_from_data(self, data: dict, *, populate_cache: bool = True) -> Guild:
         """

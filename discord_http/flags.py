@@ -9,11 +9,13 @@ __all__ = (
     "AttachmentFlags",
     "BaseFlag",
     "ChannelFlags",
+    "EmbedFlags",
     "GuildInviteFlags",
     "GuildMemberFlags",
     "MessageFlags",
     "PermissionOverwrite",
     "Permissions",
+    "RoleFlags",
     "SKUFlags",
     "SystemChannelFlags",
     "UserFlags",
@@ -433,6 +435,20 @@ class AttachmentFlags(BaseFlag):
     is_remix = cast("AttachmentFlags", 1 << 2)
     is_spoiler = cast("AttachmentFlags", 1 << 3)
     is_animated = cast("AttachmentFlags", 1 << 5)
+
+
+class EmbedFlags(BaseFlag):
+    """ Represents the flags of a message embed. """
+    __slots__ = ()
+
+    is_content_inventory_entry = cast("EmbedFlags", 1 << 5)
+
+
+class RoleFlags(BaseFlag):
+    """ Represents the flags of a guild role. """
+    __slots__ = ()
+
+    in_prompt = cast("RoleFlags", 1 << 0)
 
 
 class ApplicationFlags(BaseFlag):

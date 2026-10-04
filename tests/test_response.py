@@ -1,6 +1,7 @@
+import io
 import unittest
 
-from discord_http import Embed, MessageFlags
+from discord_http import Embed, File, MessageFlags, SharedClientTheme
 from discord_http.enums import ResponseType
 from discord_http.response import (
     AutocompleteResponse, DeferResponse, EmptyResponse,
@@ -84,6 +85,51 @@ class TestMessageResponseToDictBranching(unittest.TestCase):
         response = MessageResponse(attachments=None)
         payload = response.to_dict(is_request=True)
         self.assertEqual(payload["attachments"], [])
+
+
+class TestMessageResponseNewFields(unittest.TestCase):
+    def test_sticker_ids_are_stringified(self) -> None:
+        payload = MessageResponse(stickers=[1, 2]).to_dict(is_request=True)
+        self.assertEqual(payload["sticker_ids"], ["1", "2"])
+
+    def test_more_than_3_stickers_raises(self) -> None:
+        with self.assertRaises(ValueError):
+            MessageResponse(stickers=[1, 2, 3, 4])
+
+    def test_enforce_nonce_requires_nonce(self) -> None:
+        payload = MessageResponse(enforce_nonce=True).to_dict(is_request=True)
+        self.assertNotIn("nonce", payload)
+        self.assertNotIn("enforce_nonce", payload)
+
+        payload = MessageResponse(nonce="abc", enforce_nonce=True).to_dict(is_request=True)
+        self.assertEqual(payload["nonce"], "abc")
+        self.assertTrue(payload["enforce_nonce"])
+
+    def test_nonce_over_25_characters_raises(self) -> None:
+        with self.assertRaises(ValueError):
+            MessageResponse(nonce="x" * 26)
+
+    def test_shared_client_theme(self) -> None:
+        theme = SharedClientTheme(colors=["5865F2", 0x7258F2], gradient_angle=90, base_mix=58, base_theme=1)
+        payload = MessageResponse(shared_client_theme=theme).to_dict(is_request=True)
+        self.assertEqual(payload["shared_client_theme"], {
+            "colors": ["5865F2", "7258F2"], "gradient_angle": 90,
+            "base_mix": 58, "base_theme": 1,
+        })
+
+    def test_shared_client_theme_validation(self) -> None:
+        with self.assertRaises(ValueError):
+            SharedClientTheme(colors=[0] * 6)
+        with self.assertRaises(ValueError):
+            SharedClientTheme(colors=[0], gradient_angle=361)
+        with self.assertRaises(ValueError):
+            SharedClientTheme(colors=[0], base_mix=101)
+
+    def test_spoiler_file_sets_is_spoiler(self) -> None:
+        file = File(io.BytesIO(b"x"), "a.png", spoiler=True)
+        payload = MessageResponse(attachments=[file]).to_dict(is_request=True)
+        self.assertTrue(payload["attachments"][0]["is_spoiler"])
+        self.assertEqual(payload["attachments"][0]["filename"], "SPOILER_a.png")
 
 
 class TestAutocompleteResponseTruncation(unittest.TestCase):

@@ -1,10 +1,37 @@
 import unittest
 
-from discord_http import Webhook
+import orjson
+
+from discord_http import AllowedMentions, PartialWebhook, Webhook
 
 
 class FakeState:
     pass
+
+
+class FakeResponse:
+    def __init__(self, response):
+        self.response = response
+
+
+class RecordingState:
+    def __init__(self):
+        self.calls = []
+
+    async def query(self, method, path, **kwargs):
+        self.calls.append((method, path, kwargs))
+        return FakeResponse(None)
+
+
+class FakeBot:
+    _default_allowed_mentions = AllowedMentions()
+
+
+def _payload_json(writer) -> dict:
+    for part, *_ in writer._parts:
+        if part.headers.get("Content-Type") == "application/json":
+            return orjson.loads(part._value)
+    raise AssertionError("payload_json not found")
 
 
 class TestWebhookIdResolution(unittest.TestCase):
@@ -29,6 +56,32 @@ class TestWebhookIdResolution(unittest.TestCase):
             "channel_id": "1", "guild_id": "2", "name": "hook", "token": "tok",
         })
         self.assertEqual(webhook.id, 222)
+
+
+class TestWebhookSendForumThread(unittest.IsolatedAsyncioTestCase):
+    async def test_thread_name_and_applied_tags(self) -> None:
+        state = RecordingState()
+        state.bot = FakeBot()
+        webhook = PartialWebhook(state=state, id=1, token="tok")
+        await webhook.send("hi", thread_name="post", applied_tags=[10, 11], wait=False)
+
+        method, path, kwargs = state.calls[0]
+        self.assertEqual(path, "/webhooks/1/tok")
+        self.assertEqual(kwargs["params"], {})
+
+        payload = _payload_json(kwargs["data"])
+        self.assertEqual(payload["thread_name"], "post")
+        self.assertEqual(payload["applied_tags"], ["10", "11"])
+
+    async def test_query_params(self) -> None:
+        state = RecordingState()
+        state.bot = FakeBot()
+        webhook = PartialWebhook(state=state, id=1, token="tok")
+        await webhook.send("hi", thread_id=5, view=None, wait=False)
+
+        kwargs = state.calls[0][2]
+        self.assertEqual(kwargs["params"], {"thread_id": "5", "with_components": "true"})
+        self.assertNotIn("thread_name", _payload_json(kwargs["data"]))
 
 
 if __name__ == "__main__":

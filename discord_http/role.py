@@ -4,7 +4,7 @@ from . import utils
 from .asset import Asset
 from .colour import Colour
 from .file import File
-from .flags import Permissions, PermissionType
+from .flags import Permissions, PermissionType, RoleFlags
 from .object import PartialBase, Snowflake
 
 if TYPE_CHECKING:
@@ -287,9 +287,10 @@ class Role(PartialRole):
     _FLAG_PREMIUM_SUBSCRIBER = 1 << 3
     _FLAG_AVAILABLE_FOR_PURCHASE = 1 << 4
     _FLAG_GUILD_CONNECTIONS = 1 << 5
+    _ROLE_FLAGS_SHIFT = 6  # Discord's own role flags are packed above the internal bits
 
     __slots__ = (
-        "_extra_ids",
+        "_extra",
         "_flags",
         "_raw_colour",
         "_raw_icon",
@@ -322,16 +323,21 @@ class Role(PartialRole):
             (self._FLAG_MENTIONABLE if data.get("mentionable") else 0) |
             (self._FLAG_PREMIUM_SUBSCRIBER if "premium_subscriber" in tags else 0) |
             (self._FLAG_AVAILABLE_FOR_PURCHASE if "available_for_purchase" in tags else 0) |
-            (self._FLAG_GUILD_CONNECTIONS if "guild_connections" in tags else 0)
+            (self._FLAG_GUILD_CONNECTIONS if "guild_connections" in tags else 0) |
+            (int(data.get("flags") or 0) << self._ROLE_FLAGS_SHIFT)
         )
 
-        extra_ids = (
+        colours: dict = data.get("colors") or {}
+
+        extra = (
             utils.get_int(tags, "bot_id"),
             utils.get_int(tags, "integration_id"),
             utils.get_int(tags, "subscription_listing_id"),
+            colours.get("secondary_color"),
+            colours.get("tertiary_color"),
         )
-        self._extra_ids: tuple[int | None, int | None, int | None] | None = (
-            extra_ids if any(extra_ids) else None
+        self._extra: tuple[int | None, int | None, int | None, int | None, int | None] | None = (
+            extra if any(g is not None for g in extra) else None
         )
 
         self.unicode_emoji: str | None = data.get("unicode_emoji")
@@ -373,6 +379,33 @@ class Role(PartialRole):
         return Colour(self._raw_colour)
 
     @property
+    def secondary_colour(self) -> Colour | None:
+        """ The secondary colour of the role, if it uses gradient colours. """
+        if self._extra is None or self._extra[3] is None:
+            return None
+        return Colour(self._extra[3])
+
+    @property
+    def tertiary_colour(self) -> Colour | None:
+        """ The tertiary colour of the role, if it uses holographic colours. """
+        if self._extra is None or self._extra[4] is None:
+            return None
+        return Colour(self._extra[4])
+
+    @property
+    def colours(self) -> tuple[Colour, ...]:
+        """ All colours of the role, starting with the primary colour. """
+        return tuple(
+            Colour(c) for c in (self._raw_colour, *(self._extra[3:] if self._extra else ()))
+            if c is not None
+        )
+
+    @property
+    def flags(self) -> RoleFlags:
+        """ The flags of the role. """
+        return RoleFlags(self._flags >> self._ROLE_FLAGS_SHIFT)
+
+    @property
     def tags(self) -> dict:
         """ The tags of the role, such as `premium_subscriber`, `available_for_purchase`, `guild_connections`, etc. """
         tags: dict = {}
@@ -384,8 +417,8 @@ class Role(PartialRole):
         if self._flags & self._FLAG_GUILD_CONNECTIONS:
             tags["guild_connections"] = None
 
-        if self._extra_ids is not None:
-            bot_id, integration_id, subscription_listing_id = self._extra_ids
+        if self._extra is not None:
+            bot_id, integration_id, subscription_listing_id = self._extra[:3]
             if bot_id is not None:
                 tags["bot_id"] = str(bot_id)
             if integration_id is not None:
@@ -398,17 +431,17 @@ class Role(PartialRole):
     @property
     def bot_id(self) -> int | None:
         """ The ID of the bot that manages the role, if any. """
-        return self._extra_ids[0] if self._extra_ids is not None else None
+        return self._extra[0] if self._extra is not None else None
 
     @property
     def integration_id(self) -> int | None:
         """ The ID of the integration that manages the role, if any. """
-        return self._extra_ids[1] if self._extra_ids is not None else None
+        return self._extra[1] if self._extra is not None else None
 
     @property
     def subscription_listing_id(self) -> int | None:
         """ The ID of the subscription listing for the role, if any. """
-        return self._extra_ids[2] if self._extra_ids is not None else None
+        return self._extra[2] if self._extra is not None else None
 
     @property
     def icon(self) -> Asset | None:

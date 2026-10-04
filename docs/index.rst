@@ -19,7 +19,7 @@
     discord.http docs
   </h1>
 
-Python library that handles interactions from Discord POST requests.
+A Python library for Discord bots using HTTP interactions, with optional WebSocket support and full cache control.
 
 Getting started
 ---------------

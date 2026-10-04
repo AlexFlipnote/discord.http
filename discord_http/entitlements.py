@@ -387,8 +387,7 @@ class PartialSubscription(PartialBase):
         super().__init__(id=int(id))
         self._state = state
 
-        self._route_sku_id: int = int(sku_id)
-        """ The ID of the SKU to look up this subscription through. """
+        self._route_sku_id: int = int(sku_id)  # The SKU to look up this subscription through
 
     def __repr__(self) -> str:
         return f"<PartialSubscription id={self.id}>"
@@ -442,8 +441,7 @@ class Subscription(PartialBase):
         super().__init__(id=int(data["id"]))
         self._state = state
 
-        self._route_sku_id: int | None = sku_id
-        """ The SKU this subscription was looked up through, only kept around to make `fetch()` work. """
+        self._route_sku_id: int | None = sku_id  # Only kept around to make `fetch()` work
 
         self.user_id: int = int(data["user_id"])
         """ The ID of the user subscribed to the SKU(s). """

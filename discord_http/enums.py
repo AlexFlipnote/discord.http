@@ -17,6 +17,7 @@ __all__ = (
     "AutoModRulePresetType",
     "AutoModRuleTriggerType",
     "BaseEnum",
+    "BaseThemeType",
     "ButtonStyles",
     "ChannelType",
     "CommandOptionType",
@@ -31,6 +32,7 @@ __all__ = (
     "ExpireBehaviour",
     "ForumLayoutType",
     "IntegrationType",
+    "InteractionContextType",
     "InteractionType",
     "InviteTargetType",
     "InviteTargetUsersJobStatusType",
@@ -143,7 +145,7 @@ class BaseEnum(_Enum):
         return self._dispatch(other, "gt")
 
     def __lt__(self, other: Self | str | int) -> bool:
-        """ Less than.  """
+        """ Less than. """
         if isinstance(other, self.__class__):
             return self._value_ < other._value_
         return self._dispatch(other, "lt")
@@ -275,6 +277,22 @@ class IntegrationType(BaseEnum):
     """ Represents the integration type of a command. """
     guild = 0
     user = 1
+
+
+class InteractionContextType(BaseEnum):
+    """ Represents the context where an interaction can be used, or was triggered from. """
+    guild = 0
+    bot_dm = 1
+    private_channel = 2
+
+
+class BaseThemeType(BaseEnum):
+    """ Represents the base theme of a shared client theme. """
+    unset = 0
+    dark = 1
+    light = 2
+    darker = 3
+    midnight = 4
 
 
 class DefaultAvatarType(BaseEnum):

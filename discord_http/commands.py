@@ -22,7 +22,7 @@ from .channel import (
     NewsChannel, BaseChannel, Thread
 )
 from .cooldowns import BucketType, Cooldown, CooldownCache
-from .enums import ApplicationCommandType, CommandOptionType, ChannelType
+from .enums import ApplicationCommandType, CommandOptionType, ChannelType, InteractionContextType
 from .errors import (
     UserMissingPermissions, BotMissingPermissions, CheckFailed,
     InvalidMember, CommandOnCooldown
@@ -81,8 +81,10 @@ __all__ = (
     "Converter",
     "Interaction",
     "Listener",
+    "LocaleContainer",
     "PartialCommand",
     "Range",
+    "SubCommand",
     "SubGroup",
 )
 
@@ -206,13 +208,13 @@ class LocaleContainer:
         name: str,
         description: str | None = None
     ):
-        self.key = key
+        self.key: str = key
         """ The key of the option this localization is for, or "_" for the command itself. """
 
-        self.name = name
+        self.name: str = name
         """ The localized name. """
 
-        self.description = description or "..."
+        self.description: str = description or "..."
         """ The localized description. """
 
 
@@ -261,7 +263,7 @@ class _CommandMeta:
     locales: dict[LocaleTypes, list["LocaleContainer"]] = field(default_factory=dict)
     describe_params: dict[str, str] = field(default_factory=dict)
     file_types: dict[str, list[str]] = field(default_factory=dict)
-    integration_contexts: list[int] | None = None
+    integration_contexts: list[InteractionContextType | int] | None = None
     choices_params: dict[str, dict] = field(default_factory=dict)
     nsfw: bool = False
     default_permissions: Permissions | None = None
@@ -297,7 +299,7 @@ class Command:
         self.id: int | None = None
         """ The ID of the command, None if it's not registered yet. """
 
-        self.command = command
+        self.command: Callable = command
         """ The function that is called when the command is invoked. """
 
         self.cog: "Cog | None" = None
@@ -306,22 +308,22 @@ class Command:
         self.type: int = int(cmd_type)
         """ The type of the command, either 1 for chat input, 2 for user context menu, or 3 for message context menu. """
 
-        self.name = name
+        self.name: str = name
         """ The name of the command. """
 
-        self.description = description
+        self.description: str | None = description
         """ The description of the command, only applicable for chat input commands. """
 
-        self.options = []
+        self.options: list[dict] = []
         """ The options of the command, only applicable for chat input commands. """
 
-        self.parent = parent
+        self.parent: "SubGroup | None" = parent
         """ The parent subcommand group of this command, if it is a subcommand. """
 
-        self.guild_install = guild_install
+        self.guild_install: bool = guild_install
         """ Whether this command should be installed in guilds or not. """
 
-        self.user_install = user_install
+        self.user_install: bool = user_install
         """ Whether this command should be installed for users or not. """
 
         self.list_autocompletes: dict[str, Callable] = {}
@@ -791,13 +793,7 @@ class Command:
         return next((g for g in self.options if g["name"] == name), None)
 
     def to_dict(self) -> dict:
-        """
-        Converts the Discord command to a dict.
-
-        Returns
-        -------
-            The dict of the command.
-        """
+        """ Converts the Discord command to a dict. """
         default_permissions_ = self._meta.default_permissions
 
         integration_types = []
@@ -806,7 +802,10 @@ class Command:
         if self.user_install:
             integration_types.append(1)
 
-        integration_contexts = self._meta.integration_contexts or [0, 1, 2]
+        integration_contexts = [
+            int(g) for g in
+            self._meta.integration_contexts or InteractionContextType
+        ]
 
         data = {
             "type": self.type,
@@ -949,16 +948,16 @@ class SubGroup(Command):
         user_install: bool = False,
         parent: "SubGroup | None" = None
     ):
-        self.name = name
+        self.name: str = name
         """ The name of the subcommand group. """
 
-        self.description = description or "..."  # Only used to make Discord happy
+        self.description: str = description or "..."  # Only used to make Discord happy
         """ The description of the subcommand group. """
 
         self.guild_ids: list[Snowflake | int] = guild_ids or []
         """ A list of guild IDs this subcommand group is in, empty if it's a global subcommand group. """
 
-        self.type = int(ApplicationCommandType.chat_input)
+        self.type: int = int(ApplicationCommandType.chat_input)
         """ The type of the subcommand group, always 1 (chat input). """
 
         self.cog: "Cog | None" = None
@@ -967,10 +966,10 @@ class SubGroup(Command):
         self.subcommands: dict[str, SubCommand | SubGroup] = {}
         """ A mapping of subcommand names to their respective SubCommand or SubGroup objects. """
 
-        self.guild_install = guild_install
+        self.guild_install: bool = guild_install
         """ Whether this subcommand group should be installed in guilds or not. """
 
-        self.user_install = user_install
+        self.user_install: bool = user_install
         """ Whether this subcommand group should be installed for users or not. """
 
         self.parent: "SubGroup | None" = parent
@@ -978,6 +977,7 @@ class SubGroup(Command):
 
         self._meta: _CommandMeta = _CommandMeta()
         self.cooldown: "CooldownCache | None" = self._meta.cooldown
+        """ The cooldown of this subcommand group, if any. """
 
     def __repr__(self) -> str:
         subs = [g for g in self.subcommands.values()]
@@ -1183,10 +1183,10 @@ class Listener:
         name: str,
         coro: Callable
     ):
-        self.name = name
+        self.name: str = name
         """ The name of the event to listen to, e.g. "on_message_create". """
 
-        self.coro = coro
+        self.coro: Callable = coro
         """ The coroutine function that is called when the event is triggered. """
 
         self.cog: "Cog | None" = None
@@ -1689,14 +1689,14 @@ def allow_contexts(
         Weather the command can be used in private DMs.
     """
     def decorator(func: Callable) -> Callable:
-        contexts = []
+        contexts: list[InteractionContextType | int] = []
 
         if guild:
-            contexts.append(0)
+            contexts.append(InteractionContextType.guild)
         if bot_dm:
-            contexts.append(1)
+            contexts.append(InteractionContextType.bot_dm)
         if private_dm:
-            contexts.append(2)
+            contexts.append(InteractionContextType.private_channel)
 
         _get_meta(func).integration_contexts = contexts
 
@@ -1757,7 +1757,7 @@ def guild_only() -> Callable:
     def decorator(func: Callable) -> Callable:
         meta = _get_meta(func)
         meta.checks.append((_guild_only_check, inspect.iscoroutinefunction(_guild_only_check)))
-        meta.integration_contexts = [0]
+        meta.integration_contexts = [InteractionContextType.guild]
         return func
 
     return decorator

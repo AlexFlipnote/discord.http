@@ -52,7 +52,7 @@ class PartialInvite:
     ):
         self._state = state
 
-        self.code = code
+        self.code: str = code
         """ The invite code. """
 
         self.channel_id: int | None = channel_id
@@ -87,13 +87,7 @@ class PartialInvite:
         return self._state.bot.get_partial_channel(self.channel_id, guild_id=self.guild_id)
 
     async def fetch(self) -> "Invite":
-        """
-        Fetches the invite details.
-
-        Returns
-        -------
-            The invite object
-        """
+        """ Fetches the invite details. """
         r = await self._state.query(
             "GET",
             f"/invites/{self.code}"
@@ -102,13 +96,7 @@ class PartialInvite:
         return self._state.bot.create_invite_from_data(r.response)
 
     async def fetch_target_users(self) -> list[PartialUser]:
-        """
-        Fetch the list of users allowed to use this invite.
-
-        Returns
-        -------
-            The users from the target users file
-        """
+        """ Fetch the list of users allowed to use this invite. """
         r = await self._state.query(
             "GET",
             f"/invites/{self.code}/target-users",
@@ -148,14 +136,86 @@ class PartialInvite:
             res_method="text"
         )
 
-    async def fetch_target_users_job_status(self) -> "InviteTargetUsersJobStatus":
+    async def add_target_user(self, user: Snowflake | int) -> None:
         """
-        Fetch the status of the target users file processing job.
+        Add a single user to the list of users allowed to use this invite.
 
-        Returns
-        -------
-            The status of the target users file processing job
+        Parameters
+        ----------
+        user
+            The user to allow to use this invite
         """
+        await self._state.query(
+            "PUT",
+            f"/invites/{self.code}/target-users/{int(user)}",
+            res_method="text"
+        )
+
+    async def remove_target_user(self, user: Snowflake | int) -> None:
+        """
+        Remove a single user from the list of users allowed to use this invite.
+
+        Parameters
+        ----------
+        user
+            The user to remove from this invite
+        """
+        await self._state.query(
+            "DELETE",
+            f"/invites/{self.code}/target-users/{int(user)}",
+            res_method="text"
+        )
+
+    async def bulk_add_target_users(self, user_ids: list[Snowflake | int]) -> None:
+        """
+        Add multiple users to the list of users allowed to use this invite.
+
+        Parameters
+        ----------
+        user_ids
+            The user IDs to allow to use this invite, max 1000
+
+        Raises
+        ------
+        ValueError
+            More than 1000 user IDs were provided
+        """
+        if len(user_ids) > 1000:
+            raise ValueError("user_ids must not exceed 1000 users")
+
+        await self._state.query(
+            "POST",
+            f"/invites/{self.code}/target-users/bulk-add",
+            json={"user_ids": [str(int(g)) for g in user_ids]},
+            res_method="text"
+        )
+
+    async def bulk_remove_target_users(self, user_ids: list[Snowflake | int]) -> None:
+        """
+        Remove multiple users from the list of users allowed to use this invite.
+
+        Parameters
+        ----------
+        user_ids
+            The user IDs to remove from this invite, max 1000
+
+        Raises
+        ------
+        ValueError
+            More than 1000 user IDs were provided
+        """
+        if len(user_ids) > 1000:
+            raise ValueError("user_ids must not exceed 1000 users")
+
+        await self._state.query(
+            "POST",
+            f"/invites/{self.code}/target-users/bulk-delete",
+            json={"user_ids": [str(int(g)) for g in user_ids]},
+            res_method="text"
+        )
+
+    async def fetch_target_users_job_status(self) -> "InviteTargetUsersJobStatus":
+        """ Fetch the status of the target users file processing job. """
         r = await self._state.query(
             "GET",
             f"/invites/{self.code}/target-users/job-status"

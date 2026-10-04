@@ -29,7 +29,7 @@ from .object import (
     Reaction, BulkDeletePayload, ThreadListSyncPayload,
     ThreadMembersUpdatePayload, Presence, AutomodExecution,
     PollVoteEvent, GuildJoinRequest, GuildApplicationCommandPermissions,
-    GatewayRateLimited
+    GatewayRateLimited, ChannelInfo
 )
 
 if TYPE_CHECKING:
@@ -170,7 +170,7 @@ class Parser:
     __slots__ = ("_chunk_requests", "bot",)
 
     def __init__(self, bot: "Client"):
-        self.bot = bot
+        self.bot: "Client" = bot
         """ The bot/client instance that the parser belongs to. """
 
         self._chunk_requests: dict[int | str, GuildMembersChunk] = {}
@@ -312,6 +312,10 @@ class Parser:
         if cache_guild := cache.add_guild(guild_id, guild):
             cache.reset_guild_pools(guild_id)
             cache_guild._populate_internal_cache(data)
+
+            for g in data.get("stage_instances", []):
+                if isinstance(channel := cache_guild.get_channel(int(g["channel_id"])), StageChannel):
+                    channel._stage_instance = StageInstance(state=self.bot.state, data=g)
 
         return (cache_guild or guild,)
 
@@ -922,6 +926,21 @@ class Parser:
             ]
         )
 
+    def soundboard_sounds(self, data: dict) -> tuple[PartialGuild, list[SoundboardSound]]:
+        """
+        Soundboard sounds event, sent in response to `Shard.request_soundboard_sounds`.
+
+        Parameters
+        ----------
+        data
+            Data received from the event.
+
+        Returns
+        -------
+            The tuple of the guild and the sounds.
+        """
+        return self.guild_soundboard_sounds_update(data)
+
     def guild_audit_log_entry_create(self, data: dict) -> tuple[AuditLogEntry]:
         """
         Guild audit log entry create event.
@@ -1119,6 +1138,40 @@ class Parser:
             self._get_guild_or_partial(guild_id),
             self._get_channel_or_partial(channel_id, guild_id),
             data.get("status")
+        )
+
+    def channel_info(self, data: dict) -> tuple[
+        Guild | PartialGuild,
+        list[ChannelInfo]
+    ]:
+        """
+        Channel info event, sent in response to `Shard.request_channel_info`.
+
+        Parameters
+        ----------
+        data
+            Data received from the event.
+
+        Returns
+        -------
+            The guild and the ephemeral data of its channels.
+        """
+        guild_id: int = int(data["guild_id"])
+        guild = self._get_guild_or_partial(guild_id)
+
+        return (
+            guild,
+            [
+                ChannelInfo(
+                    channel=self._get_channel_or_partial(int(g["id"]), guild_id, guild=guild),
+                    status=g.get("status"),
+                    voice_start_time=(
+                        utils.parse_time(g["voice_start_time"])
+                        if g.get("voice_start_time") else None
+                    )
+                )
+                for g in data.get("channels", [])
+            ]
         )
 
     def voice_channel_start_time_update(self, data: dict) -> tuple[

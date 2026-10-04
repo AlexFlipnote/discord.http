@@ -2,7 +2,7 @@ import unittest
 
 from datetime import UTC, datetime
 
-from discord_http import Embed
+from discord_http import Embed, EmbedFlags
 
 
 class TestEmbedFooterValidation(unittest.TestCase):
@@ -104,6 +104,64 @@ class TestEmbedSubObjectRoundTrips(unittest.TestCase):
         self.assertEqual(rebuilt["title"], "t")
         self.assertEqual(rebuilt["color"], 255)
         self.assertEqual(rebuilt["fields"][0]["inline"], False)
+
+
+class TestEmbedReadOnlyFields(unittest.TestCase):
+    def test_parses_provider_video_proxy_urls_and_flags(self) -> None:
+        embed = Embed.from_dict({
+            "type": "video", "flags": 1 << 5,
+            "provider": {"name": "YouTube", "url": "https://youtube.com"},
+            "video": {"url": "https://youtube.com/embed/x", "width": 1280},
+            "author": {"name": "a", "icon_url": "https://a", "proxy_icon_url": "https://p/a"},
+            "footer": {"text": "f", "icon_url": "https://f", "proxy_icon_url": "https://p/f"},
+        })
+        self.assertEqual(embed.provider.name, "YouTube")
+        self.assertEqual(embed.video.url, "https://youtube.com/embed/x")
+        self.assertEqual(embed.author.proxy_icon_url, "https://p/a")
+        self.assertEqual(embed.footer.proxy_icon_url, "https://p/f")
+        self.assertIn(EmbedFlags.is_content_inventory_entry, embed.flags)
+
+    def test_read_only_fields_are_not_sent_back(self) -> None:
+        payload = Embed.from_dict({
+            "title": "t", "flags": 32,
+            "provider": {"name": "p"}, "video": {"url": "https://v"},
+            "author": {"name": "a", "proxy_icon_url": "https://p/a"},
+            "footer": {"text": "f", "proxy_icon_url": "https://p/f"},
+        }).to_dict()
+        for key in ("provider", "video", "flags"):
+            self.assertNotIn(key, payload)
+        self.assertNotIn("proxy_icon_url", payload["author"])
+        self.assertNotIn("proxy_icon_url", payload["footer"])
+
+    def test_defaults_on_new_embed(self) -> None:
+        embed = Embed()
+        self.assertIsNone(embed.provider)
+        self.assertIsNone(embed.video)
+        self.assertEqual(int(embed.flags), 0)
+
+
+class TestEmbedSetters(unittest.TestCase):
+    def test_set_and_remove_chain(self) -> None:
+        now = datetime.now(UTC)
+        embed = (
+            Embed()
+            .set_title("title")
+            .set_description(123)
+            .set_url("https://example.com")
+            .set_timestamp(now)
+        )
+        self.assertEqual(
+            (embed.title, embed.description, embed.url, embed.timestamp),
+            ("title", "123", "https://example.com", now)
+        )
+
+        embed.remove_title().remove_description().remove_url().remove_timestamp()
+        self.assertEqual(embed.to_dict(), {})
+
+    def test_set_none_removes(self) -> None:
+        embed = Embed(title="a", description="b", url="https://example.com")
+        embed.set_title(None).set_description(None).set_url(None).set_timestamp(None)
+        self.assertEqual(embed.to_dict(), {})
 
 
 if __name__ == "__main__":

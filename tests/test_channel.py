@@ -1,11 +1,13 @@
 import unittest
 
 from datetime import timedelta
+from unittest import mock
 
 from discord_http import (
     Guild, Role, Member, PartialChannel, TextChannel, VoiceChannel,
     CategoryChannel, ForumTag, Permissions, PermissionOverwrite, PermissionType,
-    utils, ForumChannel, PublicThread, ChannelType,
+    utils, ForumChannel, PublicThread, ChannelType, GroupDMChannel,
+    VideoQualityType, ForumLayoutType,
 )
 
 from _fake_client import FakeBot
@@ -303,6 +305,103 @@ class TestPublicThreadFields(unittest.TestCase):
         self.assertEqual(thread.last_message_id, 7)
         self.assertEqual(thread.owner_id, 8)
         self.assertTrue(thread.archived)
+        self.assertIsNone(thread.archive_timestamp)
+        self.assertIsNone(thread.create_timestamp)
+        self.assertEqual(thread.applied_tags, ())
+
+    def test_metadata_timestamps(self) -> None:
+        thread = PublicThread(state=FakeState(), data={
+            "id": "1", "type": 11, "guild_id": "100", "name": "t",
+            "applied_tags": ["5", "6"],
+            "thread_metadata": {
+                "archived": False, "locked": True, "invitable": False,
+                "auto_archive_duration": 1440,
+                "archive_timestamp": "2026-01-01T00:00:00+00:00",
+                "create_timestamp": "2025-12-31T00:00:00+00:00",
+            },
+        })
+        self.assertTrue(thread.locked)
+        self.assertFalse(thread.invitable)
+        self.assertEqual(thread.auto_archive_duration, 1440)
+        self.assertEqual(thread.archive_timestamp.year, 2026)
+        self.assertEqual(thread.create_timestamp.year, 2025)
+        self.assertEqual(thread.applied_tags, (5, 6))
+
+
+class FakeResponse:
+    def __init__(self, response):
+        self.response = response
+
+
+class RecordingState(FakeState):
+    def __init__(self, response=None):
+        super().__init__()
+        self.response = response
+        self.calls = []
+
+    async def query(self, method, path, **kwargs):
+        self.calls.append((method, path, kwargs))
+        return FakeResponse(self.response)
+
+
+class TestChannelEndpoints(unittest.IsolatedAsyncioTestCase):
+    async def test_follow_announcement_channel_returns_webhook(self) -> None:
+        state = RecordingState({"channel_id": "1", "webhook_id": "99"})
+        channel = PartialChannel(state=state, id=2)
+        webhook = await channel.follow_announcement_channel(1)
+        self.assertEqual(webhook.id, 99)
+        self.assertEqual(state.calls[0][1], "/channels/1/followers")
+        self.assertEqual(state.calls[0][2]["json"], {"webhook_channel_id": "2"})
+
+    async def test_archived_threads_reads_threads_key(self) -> None:
+        state = RecordingState({
+            "threads": [{"id": "1", "type": 11, "guild_id": "100", "name": "t"}],
+            "members": [], "has_more": False,
+        })
+        threads = await PartialChannel(state=state, id=2).fetch_archived_public_threads(limit=5)
+        self.assertEqual([t.id for t in threads], [1])
+        self.assertEqual(state.calls[0][2]["params"], {"limit": 5})
+
+    async def _create_invite_parts(self, user_ids: list[int]) -> dict:
+        state = RecordingState({"code": "abc", "type": 0})
+        channel = PartialChannel(state=state, id=2)
+        with mock.patch.object(utils.MultipartData, "attach", autospec=True) as attach:
+            await channel.create_invite(user_ids=user_ids)
+        return {call.args[1]: call.args[2] for call in attach.call_args_list}
+
+    async def test_create_invite_user_ids_sent_directly(self) -> None:
+        parts = await self._create_invite_parts([1, 2])
+        self.assertNotIn("target_users_file", parts)
+        self.assertEqual(parts["payload_json"]["target_user_ids"], ["1", "2"])
+
+    async def test_create_invite_user_ids_above_limit_uses_csv(self) -> None:
+        parts = await self._create_invite_parts(list(range(1, 1002)))
+        self.assertNotIn("target_user_ids", parts["payload_json"])
+        self.assertTrue(parts["target_users_file"].startswith("1\n2\n"))
+
+
+class TestChannelFields(unittest.TestCase):
+    def test_voice_video_quality_mode_defaults_to_auto(self) -> None:
+        voice = VoiceChannel(state=FakeState(), data={
+            "id": "2", "type": 2, "bitrate": 64000, "user_limit": 0,
+        })
+        self.assertEqual(voice.video_quality_mode, VideoQualityType.auto)
+
+    def test_forum_defaults(self) -> None:
+        forum = ForumChannel(state=FakeState(), data={
+            "id": "1", "type": 15, "name": "forum",
+            "default_sort_order": None, "default_forum_layout": 2,
+            "default_reaction_emoji": {"emoji_id": None, "emoji_name": "👍"},
+        })
+        self.assertIsNone(forum.default_sort_order)
+        self.assertEqual(forum.default_forum_layout, ForumLayoutType.gallery_view)
+        self.assertEqual(forum.default_reaction_emoji.raw, "👍")
+
+    def test_null_application_id(self) -> None:
+        channel = GroupDMChannel(state=FakeState(), data={
+            "id": "1", "type": 3, "application_id": None,
+        })
+        self.assertIsNone(channel.application_id)
 
 
 if __name__ == "__main__":

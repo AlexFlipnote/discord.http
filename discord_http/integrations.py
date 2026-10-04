@@ -12,6 +12,13 @@ if TYPE_CHECKING:
     from .guild import PartialGuild, Guild
     from .role import PartialRole
 
+__all__ = (
+    "Integration",
+    "IntegrationAccount",
+    "IntegrationApplication",
+    "PartialIntegration",
+)
+
 
 class IntegrationAccount:
     """ Represents an account associated with an integration. """
@@ -86,13 +93,13 @@ class PartialIntegration(PartialBase):
 
     @property
     def guild(self) -> "PartialGuild | Guild":
-        """:class:`PartialGuild` | :class:`Guild`: The guild associated with this integration."""
+        """ The guild associated with this integration. """
         if cache := self._state.cache.get_guild(self.guild_id):
             return cache
 
         return self._state.bot.get_partial_guild(self.guild_id)
 
-    async def delete(self) -> None:
+    async def delete(self, *, reason: str | None = None) -> None:
         """
         Delete this integration for the guild.
 
@@ -100,11 +107,17 @@ class PartialIntegration(PartialBase):
         kicks the associated bot if there is one.
 
         This requires the `MANAGE_GUILD` permission.
+
+        Parameters
+        ----------
+        reason
+            The reason for deleting the integration
         """
         await self._state.query(
             "DELETE",
             f"/guilds/{self.guild.id}/integrations/{self.id}",
-            res_method="text"
+            res_method="text",
+            reason=reason
         )
 
 

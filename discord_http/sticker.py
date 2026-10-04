@@ -1,6 +1,7 @@
 from typing import TYPE_CHECKING
 
 from . import utils
+from .asset import Asset
 from .enums import StickerType, StickerFormatType
 from .object import PartialBase
 
@@ -13,6 +14,7 @@ MISSING = utils.MISSING
 __all__ = (
     "PartialSticker",
     "Sticker",
+    "StickerPack",
 )
 
 
@@ -70,10 +72,6 @@ class PartialSticker(PartialBase):
     def guild(self) -> "Guild | PartialGuild | None":
         """
         The guild this sticker is in.
-
-        Returns
-        -------
-            The guild this sticker is in
 
         Raises
         ------
@@ -310,3 +308,78 @@ class Sticker(PartialSticker):
             raise ValueError("Sticker is not in a guild")
 
         await super().delete(guild_id=self.guild.id, reason=reason)
+
+
+class StickerPack(PartialBase):
+    """ Represents a pack of standard stickers. """
+
+    BANNER_APPLICATION_ID: int = 710982414301790216
+
+    __slots__ = (
+        "_state",
+        "banner_asset_id",
+        "cover_sticker_id",
+        "description",
+        "name",
+        "sku_id",
+        "stickers",
+    )
+
+    def __init__(
+        self,
+        *,
+        state: "DiscordAPI",
+        data: dict
+    ):
+        super().__init__(id=int(data["id"]))
+        self._state = state
+
+        self.name: str = data["name"]
+        """ The name of the sticker pack. """
+
+        self.description: str = data["description"]
+        """ The description of the sticker pack. """
+
+        self.sku_id: int = int(data["sku_id"])
+        """ The ID of the sticker pack's SKU. """
+
+        self.cover_sticker_id: int | None = utils.get_int(data, "cover_sticker_id")
+        """ The ID of the sticker shown as the pack's icon, if any. """
+
+        self.banner_asset_id: int | None = utils.get_int(data, "banner_asset_id")
+        """ The ID of the sticker pack's banner image, if any. """
+
+        self.stickers: list[Sticker] = [
+            self._state.bot.create_sticker_from_data(g)
+            for g in data.get("stickers", [])
+        ]
+        """ The stickers in the pack. """
+
+    def __str__(self) -> str:
+        return self.name
+
+    def __repr__(self) -> str:
+        return f"<StickerPack id={self.id} name='{self.name}'>"
+
+    @property
+    def cover_sticker(self) -> Sticker | None:
+        """ The sticker shown as the pack's icon, if any. """
+        if not self.cover_sticker_id:
+            return None
+
+        return next((
+            g for g in self.stickers
+            if g.id == self.cover_sticker_id
+        ), None)
+
+    @property
+    def banner(self) -> Asset | None:
+        """ The banner of the sticker pack, if any. """
+        if not self.banner_asset_id:
+            return None
+
+        return Asset._from_application_asset(
+            self._state,
+            self.BANNER_APPLICATION_ID,
+            f"store/{self.banner_asset_id}"
+        )

@@ -27,7 +27,7 @@ class Sleeper:
     )
 
     def __init__(self, dt: datetime, *, loop: asyncio.AbstractEventLoop):
-        self.loop = loop
+        self.loop: asyncio.AbstractEventLoop = loop
         """ The event loop that the sleeper is using. """
 
         self.future: asyncio.Future = loop.create_future()
@@ -57,23 +57,11 @@ class Sleeper:
         )
 
     def wait(self) -> asyncio.Future:
-        """
-        Wait for the timer to finish.
-
-        Returns
-        -------
-            The future that is waiting for the timer to finish
-        """
+        """ Wait for the timer to finish. """
         return self.future
 
     def done(self) -> bool:
-        """
-        Returns whether the timer is done or not.
-
-        Returns
-        -------
-            Whether the timer is done or not
-        """
+        """ Returns whether the timer is done or not. """
         return self.future.done()
 
     def cancel(self) -> None:

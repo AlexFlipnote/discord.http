@@ -1,5 +1,5 @@
 # ruff: file-ignore[undefined-local-with-import-star, unused-import]
-__version__ = "3.2.2"
+__version__ = "3.3.0"
 
 from .asset import *
 from .audit import *
@@ -19,6 +19,7 @@ from .file import *
 from .flags import *
 from .guild import *
 from .http import *
+from .integrations import *
 from .invite import *
 from .member import *
 from .mentions import *

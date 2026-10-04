@@ -2,7 +2,7 @@ from datetime import datetime
 from typing import TYPE_CHECKING, Any
 
 from . import utils
-from .object import PartialBase
+from .object import PartialBase, Snowflake
 from .user import PartialUser
 
 MISSING = utils.MISSING
@@ -82,13 +82,16 @@ class PartialVoiceState(PartialBase):
 
         return self._state.bot.get_partial_channel(self.channel_id)
 
+    @property
+    def _route_id(self) -> str:
+        if self.id == self._state.bot.user.id:
+            return "@me"
+
+        return str(self.id)
+
     async def fetch(self) -> "VoiceState":
         """
         Fetches the voice state of the member.
-
-        Returns
-        -------
-            The voice state of the member
 
         Raises
         ------
@@ -101,7 +104,7 @@ class PartialVoiceState(PartialBase):
 
         r = await self._state.query(
             "GET",
-            f"/guilds/{self.guild_id}/voice-states/{self.id}"
+            f"/guilds/{self.guild_id}/voice-states/{self._route_id}"
         )
 
         return VoiceState(
@@ -113,27 +116,55 @@ class PartialVoiceState(PartialBase):
     async def edit(
         self,
         *,
+        channel_id: Snowflake | int = MISSING,
         suppress: bool = MISSING,
+        request_to_speak_timestamp: datetime | None = MISSING,
     ) -> None:
         """
         Updates the voice state of the member.
 
+        If the voice state belongs to the bot, it will update its own voice state.
+
         Parameters
         ----------
+        channel_id
+            The ID of the stage channel the user is currently in
         suppress
             Whether to suppress the user
+        request_to_speak_timestamp
+            When the user requested to speak, or `None` to clear it.
+            Only usable on the bot's own voice state.
+
+        Raises
+        ------
+        ValueError
+            - If the voice state has no guild_id
+            - If `request_to_speak_timestamp` is used on another user's voice state
         """
         if not self.guild_id:
             raise ValueError("Cannot update voice state without guild_id")
 
+        route_id = self._route_id
         data: dict[str, Any] = {}
+
+        if channel_id is not MISSING:
+            data["channel_id"] = str(utils.normalize_entity_id(channel_id))
 
         if suppress is not MISSING:
             data["suppress"] = bool(suppress)
 
+        if request_to_speak_timestamp is not MISSING:
+            if route_id != "@me":
+                raise ValueError("request_to_speak_timestamp can only be used on the bot's own voice state")
+
+            data["request_to_speak_timestamp"] = (
+                request_to_speak_timestamp.isoformat()
+                if request_to_speak_timestamp else None
+            )
+
         await self._state.query(
             "PATCH",
-            f"/guilds/{self.guild_id}/voice-states/{int(self.id)}",
+            f"/guilds/{self.guild_id}/voice-states/{route_id}",
             json=data,
             res_method="text"
         )
@@ -221,7 +252,7 @@ class VoiceState(PartialVoiceState):
             )
 
         if (member_data := data.get("member")) and (guild := self.guild) is not None:
-            from .member import Member
+            from .member import Member  # Circular import
 
             if not isinstance(guild.get_member(self.id), Member):
                 self._member_data = self._state.bot.create_member_from_data(
@@ -261,7 +292,7 @@ class VoiceState(PartialVoiceState):
         if (guild := self.guild) is None:
             return None
 
-        from .member import Member
+        from .member import Member  # Circular import
 
         cached_member = guild.get_member(self.id)
         if isinstance(cached_member, Member):

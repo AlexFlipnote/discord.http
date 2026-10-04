@@ -95,18 +95,6 @@ class TestUtilsTextAndTyping(unittest.TestCase):
         self.assertEqual(utils.escape_markdown(text), "Hello \\*world\\*\\_test\\_")
         self.assertEqual(utils.escape_markdown(text, remove=True), "Hello worldtest")
 
-    def test_plural(self) -> None:
-        self.assertEqual(utils.plural("cat", 1), "cat")
-        self.assertEqual(utils.plural("cat", 2), "cats")
-
-    def test_ordinal(self) -> None:
-        self.assertEqual(utils.ordinal(1), "1st")
-        self.assertEqual(utils.ordinal(2), "2nd")
-        self.assertEqual(utils.ordinal(3), "3rd")
-        self.assertEqual(utils.ordinal(4), "4th")
-        self.assertEqual(utils.ordinal(11), "11th")
-        self.assertEqual(utils.ordinal(22), "22nd")
-
     def test_unwrap_optional(self) -> None:
         self.assertIs(utils.unwrap_optional(Optional[int]), int)  # pyright: ignore[reportArgumentType]
         self.assertIs(utils.unwrap_optional(int), int)
@@ -153,9 +141,6 @@ class TestUtilsGeneral(unittest.TestCase):
         self.assertIn("client_id=123", url)
         self.assertIn("interaction_type=1", url)
         self.assertIn("permissions=8", url)
-
-    def test_divide_chunks(self) -> None:
-        self.assertEqual(utils.divide_chunks([1, 2, 3, 4, 5], 2), [[1, 2], [3, 4], [5]])
 
     def test_add_to_datetime(self) -> None:
         aware = datetime(2024, 1, 1, tzinfo=UTC)
@@ -441,6 +426,28 @@ class TestBenchmark(unittest.TestCase):
         second = bm.measure("dup")
         self.assertIsNot(first, second)
         self.assertIs(bm.results["dup"], second)
+
+
+class TestPackedTimestamps(unittest.TestCase):
+    def test_round_trip(self):
+        packed = utils.pack_timestamps(
+            "2026-10-01T10:00:00.123000+00:00",
+            datetime(2022, 1, 9, 12, 30, tzinfo=UTC),
+        )
+        self.assertEqual(utils.unpack_timestamp(packed, 0), datetime(2026, 10, 1, 10, 0, 0, 123000, tzinfo=UTC))
+        self.assertEqual(utils.unpack_timestamp(packed, 1), datetime(2022, 1, 9, 12, 30, tzinfo=UTC))
+
+    def test_none_is_not_set(self):
+        packed = utils.pack_timestamps(None, "2026-10-01T10:00:00+00:00")
+        self.assertIsNone(utils.unpack_timestamp(packed, 0))
+        self.assertEqual(utils.unpack_timestamp(packed, 1), datetime(2026, 10, 1, 10, tzinfo=UTC))
+        self.assertIsNone(utils.unpack_timestamp(utils.pack_timestamps(None, None), 1))
+
+    def test_fits_until_2109(self):
+        late = datetime(2109, 1, 1, tzinfo=UTC)
+        packed = utils.pack_timestamps(late, late)
+        self.assertEqual(utils.unpack_timestamp(packed, 0), late)
+        self.assertEqual(utils.unpack_timestamp(packed, 1), late)
 
 
 if __name__ == "__main__":

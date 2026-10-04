@@ -28,6 +28,7 @@ from .gateway.flags import Intents
 
 if TYPE_CHECKING:
     from .client import Client
+    from .gateway.cache import Cache
     from .user import Application
 
 MethodTypes = Literal["GET", "POST", "DELETE", "PUT", "HEAD", "PATCH", "OPTIONS"]
@@ -92,19 +93,19 @@ class HTTPResponse(Generic[ResponseT]):
         res_method: ResMethodTypes,
         headers: CIMultiDictProxy[str],
     ):
-        self.status = status
+        self.status: int = status
         """ The HTTP status code of the response. """
 
-        self.response = response
+        self.response: ResponseT = response
         """ The response data, which can be of type str, bytes, or dict depending on the request. """
 
-        self.res_method = res_method
+        self.res_method: ResMethodTypes = res_method
         """ The method used to retrieve the response data. """
 
-        self.reason = reason
+        self.reason: str | None = reason
         """ The reason phrase returned by the server, if any. """
 
-        self.headers = headers
+        self.headers: CIMultiDictProxy[str] = headers
         """ The headers of the response, as a CIMultiDictProxy. """
 
     def __repr__(self) -> str:
@@ -173,7 +174,7 @@ class HTTPClient:
         *,
         res_method: Literal["json"],
         **kwargs
-    ) -> HTTPResponse[dict[Any, Any]]:
+    ) -> HTTPResponse[dict[Any, Any] | list[Any]]:
         ...
 
     @overload
@@ -529,7 +530,7 @@ class DiscordAPI:
         """ The client instance that owns this HTTP client. """
 
         # Aliases
-        self.cache = self.bot.cache
+        self.cache: "Cache" = self.bot.cache
         """ Alias to the client's cache, used for caching guilds, users, etc. """
 
         self.token: str = self.bot.token
@@ -541,7 +542,7 @@ class DiscordAPI:
         if not isinstance(self.api_version, int):
             raise TypeError("api_version must be an integer")
 
-        self.base_url = self.bot.api_base_url
+        self.base_url: str = self.bot.api_base_url
         """ The base URL for the Discord API. """
 
         self.api_url: str = f"{self.base_url}/v{self.api_version}"
@@ -551,10 +552,10 @@ class DiscordAPI:
         """ The HTTP client used to make requests to the Discord API. """
 
         self._default_headers: dict[str, str] = {
-            "User-Agent": "discord.http/{} Python/{} aiohttp/{}".format(
-                __version__,
-                ".".join(str(i) for i in sys.version_info[:3]),
-                aiohttp.__version__
+            "User-Agent": (
+                f"discord.http/{__version__} "
+                f"Python/{'.'.join(str(i) for i in sys.version_info[:3])} "
+                f"aiohttp/{aiohttp.__version__}"
             ),
             "Authorization": f"Bot {self.token}",
             "Content-Type": "application/json"
@@ -969,10 +970,6 @@ class DiscordAPI:
     async def me(self) -> "Application":
         """
         Fetches the bot's user information.
-
-        Returns
-        -------
-            The bot's user object
 
         Raises
         ------

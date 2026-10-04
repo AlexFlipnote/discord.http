@@ -34,6 +34,7 @@ from .message import Message
 from .soundboard import SoundboardSound, PartialSoundboardSound
 from .sticker import Sticker, PartialSticker
 from .voice import VoiceState, PartialVoiceState
+from .webhook import Webhook
 
 if TYPE_CHECKING:
     from .audit import AuditLogEntry
@@ -53,10 +54,12 @@ MISSING = utils.MISSING
 __all__ = (
     "BanEntry",
     "Guild",
+    "GuildChannelPosition",
     "GuildIncidentsData",
     "GuildOnboarding",
     "GuildPreview",
     "GuildTemplate",
+    "GuildVanityURL",
     "GuildWidget",
     "GuildWidgetChannel",
     "GuildWidgetMember",
@@ -132,6 +135,40 @@ class GuildIncidentsData(NamedTuple):
                 if data.get("raid_detected_at") else None
             ),
         )
+
+
+class GuildVanityURL(NamedTuple):
+    """ Represents the vanity URL of a guild. """
+    code: str | None
+    uses: int
+
+
+class GuildChannelPosition(NamedTuple):
+    """ Represents a channel position change, used by `PartialGuild.edit_channel_positions`. """
+    channel: Snowflake | int
+    position: int | None = None
+    parent_id: Snowflake | int | None = MISSING
+    lock_permissions: bool | None = None
+
+    def to_dict(self) -> dict:
+        """ Turns the channel position change into a payload for the API. """
+        payload: dict[str, Any] = {
+            "id": str(utils.normalize_entity_id(self.channel))
+        }
+
+        if self.position is not None:
+            payload["position"] = int(self.position)
+
+        if self.parent_id is not MISSING:
+            payload["parent_id"] = (
+                str(utils.normalize_entity_id(self.parent_id))
+                if self.parent_id is not None else None
+            )
+
+        if self.lock_permissions is not None:
+            payload["lock_permissions"] = bool(self.lock_permissions)
+
+        return payload
 
 
 class ScheduledEventRecurrenceRuleNWeekday(NamedTuple):
@@ -1245,7 +1282,7 @@ class PartialGuild(PartialBase):
         if (flags := self._state.bot._gateway_cache) is None:
             return
 
-        from .gateway.flags import GatewayCacheFlags
+        from .gateway.flags import GatewayCacheFlags  # Circular import
         guild_id = self.id
 
         if "channels" in data:
@@ -1373,7 +1410,7 @@ class PartialGuild(PartialBase):
                 }
 
                 if GatewayCacheFlags.members in flags:
-                    from .member import Member
+                    from .member import Member  # Circular import
                     for user_id, vs in self._cache_voice_states.items():
                         if (
                             isinstance(vs, VoiceState) and
@@ -2318,6 +2355,22 @@ class PartialGuild(PartialBase):
             for data in r.response
         ]
 
+    async def fetch_role_member_counts(self) -> dict[int, int]:
+        """
+        Fetches the amount of members that have each role in the guild.
+
+        The `@everyone` role is not included.
+        """
+        r = await self._state.query(
+            "GET",
+            f"/guilds/{self.id}/roles/member-counts"
+        )
+
+        return {
+            int(role_id): count
+            for role_id, count in r.response.items()
+        }
+
     async def fetch_stickers(self) -> list[Sticker]:
         """ Fetches all the stickers in the guild. """
         r = await self._state.query(
@@ -2366,7 +2419,7 @@ class PartialGuild(PartialBase):
 
         return [
             self._state.bot.create_soundboard_sound_from_data(data, guild=self)
-            for data in r.response
+            for data in r.response["items"]
         ]
 
     async def fetch_ban(self, user: Snowflake | int) -> BanEntry:
@@ -2722,7 +2775,7 @@ class PartialGuild(PartialBase):
             reason=reason
         )
 
-        from .channel import CategoryChannel
+        from .channel import CategoryChannel  # Circular import
         return CategoryChannel(
             state=self._state,
             data=r.response
@@ -2798,7 +2851,7 @@ class PartialGuild(PartialBase):
             reason=reason
         )
 
-        from .channel import TextChannel
+        from .channel import TextChannel  # Circular import
         return TextChannel(
             state=self._state,
             data=r.response
@@ -2880,7 +2933,7 @@ class PartialGuild(PartialBase):
             reason=reason
         )
 
-        from .channel import VoiceChannel
+        from .channel import VoiceChannel  # Circular import
         return VoiceChannel(
             state=self._state,
             data=r.response
@@ -2952,7 +3005,7 @@ class PartialGuild(PartialBase):
             reason=reason
         )
 
-        from .channel import StageChannel
+        from .channel import StageChannel  # Circular import
         return StageChannel(
             state=self._state,
             data=r.response
@@ -3000,7 +3053,7 @@ class PartialGuild(PartialBase):
         name: str,
         *,
         sound: File | bytes,
-        volume: int | None = None,
+        volume: float | None = None,
         emoji_id: str | None = None,
         emoji_name: str | None = None,
         reason: str | None = None
@@ -3015,7 +3068,7 @@ class PartialGuild(PartialBase):
         sound
             File object to create a soundboard sound from
         volume
-            The volume of the soundboard sound
+            The volume of the soundboard sound, from 0 to 1
         emoji_name
             The unicode emoji of the soundboard sound
         emoji_id
@@ -3040,7 +3093,7 @@ class PartialGuild(PartialBase):
         if not mime_type:
             mime_type = utils.mime_type_audio(sound)
 
-        payload: dict[str, str | int] = {
+        payload: dict[str, str | float] = {
             "name": name,
             "sound": f"data:{mime_type};base64,{b64encode(sound).decode('ascii')}"
         }
@@ -3413,13 +3466,7 @@ class PartialGuild(PartialBase):
         return self._state.bot.create_member_from_data(r.response, guild=self)
 
     async def fetch_public_threads(self) -> list["PublicThread"]:
-        """
-        Fetches all the public threads in the guild.
-
-        Returns
-        -------
-            The public threads in the guild
-        """
+        """ Fetches all the public threads in the guild. """
         r = await self._state.query(
             "GET",
             f"/guilds/{self.id}/threads/active"
@@ -3427,7 +3474,7 @@ class PartialGuild(PartialBase):
 
         return [
             self._state.bot.create_public_thread_from_data(data)
-            for data in r.response
+            for data in r.response["threads"]
         ]
 
     async def fetch_members(
@@ -3498,6 +3545,38 @@ class PartialGuild(PartialBase):
 
         return [
             self._state.bot.create_invite_from_data(data)
+            for data in r.response
+        ]
+
+    async def fetch_vanity_url(self) -> GuildVanityURL:
+        """
+        Fetches the vanity URL code of the guild and how many times it has been used.
+
+        Requires the `MANAGE_GUILD` permission.
+        """
+        r = await self._state.query(
+            "GET",
+            f"/guilds/{self.id}/vanity-url"
+        )
+
+        return GuildVanityURL(
+            code=r.response.get("code"),
+            uses=r.response.get("uses", 0)
+        )
+
+    async def fetch_webhooks(self) -> list[Webhook]:
+        """
+        Fetches all the webhooks in the guild.
+
+        Requires the `MANAGE_WEBHOOKS` permission.
+        """
+        r = await self._state.query(
+            "GET",
+            f"/guilds/{self.id}/webhooks"
+        )
+
+        return [
+            Webhook(state=self._state, data=data)
             for data in r.response
         ]
 
@@ -3612,8 +3691,9 @@ class PartialGuild(PartialBase):
         await self._state.query(
             "PUT",
             f"/guilds/{self.id}/bans/{int(member)}",
-            reason=reason,
-            json=payload
+            json=payload,
+            res_method="text",
+            reason=reason
         )
 
     async def unban(
@@ -3677,6 +3757,36 @@ class PartialGuild(PartialBase):
             for data in r.response
         ]
 
+    async def edit_channel_positions(
+        self,
+        *positions: GuildChannelPosition
+    ) -> None:
+        """
+        Edits the positions of multiple channels in the guild.
+
+        Requires the `MANAGE_CHANNELS` permission, and `MANAGE_ROLES` if `lock_permissions` is used.
+        Only one channel per request can have its `parent_id` changed.
+
+        Parameters
+        ----------
+        positions
+            The channel position changes to apply
+
+        Raises
+        ------
+        ValueError
+            No channel positions were provided
+        """
+        if not positions:
+            raise ValueError("At least one channel position must be provided")
+
+        await self._state.query(
+            "PATCH",
+            f"/guilds/{self.id}/channels",
+            json=[g.to_dict() for g in positions],
+            res_method="text"
+        )
+
     async def fetch_audit_logs(
         self,
         *,
@@ -3702,8 +3812,8 @@ class PartialGuild(PartialBase):
         limit
             The maximum amount of messages to fetch.
 
-        Returns
-        -------
+        Yields
+        ------
             The audit logs for the guild
         """
         async def _get_history(limit: int, **kwargs) -> "HTTPResponse[dict]":
@@ -3833,10 +3943,6 @@ class PartialGuild(PartialBase):
         Fetches the integrations for the guild.
 
         This requires the `MANAGE_GUILD` permission.
-
-        Returns
-        -------
-            The integrations in the guild.
         """
         r = await self._state.query(
             "GET",
@@ -4043,6 +4149,7 @@ class Guild(PartialGuild):
         "premium_tier",
         "public_updates_channel_id",
         "region",
+        "rules_channel_id",
         "safety_alerts_channel_id",
         "system_channel_flags",
         "system_channel_id",
@@ -4141,6 +4248,9 @@ class Guild(PartialGuild):
 
         self.region: str | None = sys.intern(region) if (region := data.get("region")) else None
         """ The voice region of the guild, if any. """
+
+        self.rules_channel_id: int | None = utils.get_int(data, "rules_channel_id")
+        """ The ID of the rules channel, if any. """
 
         self.safety_alerts_channel_id: int | None = utils.get_int(data, "safety_alerts_channel_id")
         """ The ID of the safety alerts channel, if any. """
@@ -4245,6 +4355,7 @@ class Guild(PartialGuild):
         self.premium_tier: PremiumTier = PremiumTier(data.get("premium_tier", 0))
         self.public_updates_channel_id: int | None = utils.get_int(data, "public_updates_channel_id")
         self.region: str | None = sys.intern(region) if (region := data.get("region")) else None
+        self.rules_channel_id: int | None = utils.get_int(data, "rules_channel_id")
         self.safety_alerts_channel_id: int | None = utils.get_int(data, "safety_alerts_channel_id")
         self.system_channel_flags: int = data.get("system_channel_flags", 0)
         self.system_channel_id: int | None = utils.get_int(data, "system_channel_id")
@@ -4280,6 +4391,14 @@ class Guild(PartialGuild):
             return None
 
         return self.get_channel(self.system_channel_id) or self.get_partial_channel(self.system_channel_id)
+
+    @property
+    def rules_channel(self) -> "BaseChannel | PartialChannel | None":
+        """ The rules channel of the guild, if any. """
+        if not self.rules_channel_id:
+            return None
+
+        return self.get_channel(self.rules_channel_id) or self.get_partial_channel(self.rules_channel_id)
 
     @property
     def public_updates_channel(self) -> "BaseChannel | PartialChannel | None":

@@ -6,7 +6,9 @@ import warnings
 from discord_http import Client
 from discord_http.channel import BaseChannel, ForumChannel, TextChannel
 from discord_http.context import Context, ResolvedValues, SelectValues, channel_types
-from discord_http.enums import CommandOptionType, ComponentType, InteractionType
+from discord_http.enums import (
+    CommandOptionType, ComponentType, IntegrationType, InteractionContextType, InteractionType,
+)
 from discord_http.member import Member
 from discord_http.message import Message
 from discord_http.user import User
@@ -195,6 +197,32 @@ class TestResolvedValues(_ClientTestCase):
         self.assertEqual(sorted(c.id for c in ctx.modal_values["c"]), [7, 8])  # type: ignore[union-attr]
         self.assertEqual(ctx.modal_values["s"], ["a"])
         self.assertEqual(ctx.modal_values["t"], "text")
+
+
+class TestInteractionMetadata(_ClientTestCase):
+    def test_context_owners_and_size_limit(self) -> None:
+        ctx = Context(
+            self.client,
+            _payload(
+                int(InteractionType.application_command),
+                context=1,
+                authorizing_integration_owners={"0": "0", "1": "42"},
+                attachment_size_limit=10485760,
+            )
+        )
+        self.assertEqual(ctx.context, InteractionContextType.bot_dm)
+        self.assertTrue(ctx.is_bot_dm())
+        self.assertEqual(
+            ctx.authorizing_integration_owners,
+            {IntegrationType.guild: 0, IntegrationType.user: 42}
+        )
+        self.assertEqual(ctx.attachment_size_limit, 10485760)
+
+    def test_defaults_when_absent(self) -> None:
+        ctx = Context(self.client, _payload(int(InteractionType.application_command)))
+        self.assertIsNone(ctx.context)
+        self.assertEqual(ctx.authorizing_integration_owners, {})
+        self.assertEqual(ctx.attachment_size_limit, 0)
 
 
 class TestCallAfterCreatesEvent(_ClientTestCase):

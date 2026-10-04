@@ -172,7 +172,7 @@ class Status:
     )
 
     def __init__(self, shard_id: int):
-        self.shard_id = shard_id
+        self.shard_id: int = shard_id
         """ The ID of the shard. """
 
         self.sequence: int | None = None
@@ -181,7 +181,7 @@ class Status:
         self.session_id: str | None = None
         """ The session ID of the shard, if any. """
 
-        self.gateway = DEFAULT_GATEWAY
+        self.gateway: utils.URL = DEFAULT_GATEWAY
         """ The gateway URL for the shard. """
 
         self.latency: float = float("inf")
@@ -301,7 +301,7 @@ class Shard:
         shard_count: int | None = None,
         debug_events: bool = False,
     ):
-        self.bot = bot
+        self.bot: "Client" = bot
         """ The bot instance that the shard belongs to. """
 
         self.intents: Intents = intents or Intents.none()
@@ -310,19 +310,19 @@ class Shard:
         self.capabilities: GatewayCapabilities | None = bot.gateway_capabilities
         """ The opt-in Gateway capabilities bitfield to send in the Identify payload, if any. """
 
-        self.cache_flags = cache_flags
+        self.cache_flags: GatewayCacheFlags | None = cache_flags
         """ The cache flags that the shard is using, or `None` if not specified. """
 
-        self.api_version = api_version
+        self.api_version: int = api_version
         """ The API version that the shard is using. """
 
-        self.shard_id = shard_id
+        self.shard_id: int = shard_id
         """ The ID of the shard. """
 
-        self.shard_count = shard_count
+        self.shard_count: int | None = shard_count
         """ The total number of shards, or `None` if not specified. """
 
-        self.debug_events = debug_events
+        self.debug_events: bool = debug_events
         """ Whether to debug events or not. """
 
         self.ws: ClientWebSocketResponse | None = None
@@ -332,10 +332,10 @@ class Shard:
         self.session: ClientSession = self.bot.state.http.session  # type: ignore
         """ The HTTP session for the shard. """
 
-        self.parser = Parser(bot)
+        self.parser: Parser = Parser(bot)
         """ The parser for the shard. """
 
-        self.status = Status(shard_id)
+        self.status: Status = Status(shard_id)
         """ The status of the shard. """
 
         self.playing_status: PlayingStatus | None = bot.playing_status
@@ -1178,6 +1178,54 @@ class Shard:
             "op": int(PayloadType.presence),
             "d": status.to_dict()
         })
+
+    async def request_soundboard_sounds(self, *guild_ids: Snowflake | int) -> None:
+        """
+        Requests the soundboard sounds of the guilds.
+
+        The sounds are dispatched in `soundboard_sounds` events, one per guild.
+
+        Parameters
+        ----------
+        guild_ids
+            The guild IDs to request the soundboard sounds for
+        """
+        await self.send_message(
+            {
+                "op": int(PayloadType.request_soundboard_sounds),
+                "d": {"guild_ids": [str(int(g)) for g in guild_ids]}
+            },
+            ratelimit=True
+        )
+
+    async def request_channel_info(
+        self,
+        guild_id: Snowflake | int,
+        *,
+        fields: list[Literal["status", "voice_start_time"]] | None = None
+    ) -> None:
+        """
+        Requests the ephemeral channel data of a guild.
+
+        The data is dispatched in a `channel_info` event.
+
+        Parameters
+        ----------
+        guild_id
+            The guild ID to request the channel info for
+        fields
+            The fields to request, defaults to both `status` and `voice_start_time`
+        """
+        await self.send_message(
+            {
+                "op": int(PayloadType.request_channel_info),
+                "d": {
+                    "guild_id": str(int(guild_id)),
+                    "fields": fields or ["status", "voice_start_time"]
+                }
+            },
+            ratelimit=True
+        )
 
     def payload(self, op: PayloadType) -> dict:
         """

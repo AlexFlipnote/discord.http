@@ -24,7 +24,7 @@ from .mentions import AllowedMentions
 from .object import PartialBase, Snowflake
 from .response import MessageResponse
 from .view import View
-from .webhook import Webhook
+from .webhook import Webhook, PartialWebhook
 
 if TYPE_CHECKING:
     from .guild import Guild, PartialGuild, PartialScheduledEvent
@@ -32,7 +32,8 @@ if TYPE_CHECKING:
     from .invite import Invite
     from .member import Member
     from .member import ThreadMember
-    from .message import PartialMessage, Message, Poll
+    from .message import PartialMessage, Message, MessagePin, Poll, SharedClientTheme
+    from .sticker import PartialSticker
     from .user import PartialUser, User
 
 MISSING = utils.MISSING
@@ -53,9 +54,11 @@ __all__ = (
     "PrivateThread",
     "PublicThread",
     "StageChannel",
+    "StageInstance",
     "StoreChannel",
     "TextChannel",
     "Thread",
+    "Typing",
     "VoiceChannel",
     "VoiceRegion",
 )
@@ -84,10 +87,10 @@ class Typing:
         self.task: asyncio.Task | None = None
         """ The task for the typing loop, if using `async with`. """
 
-        self.loop = state.bot.loop
+        self.loop: asyncio.AbstractEventLoop = state.bot.loop
         """ The event loop to use for the typing indicator. """
 
-        self.channel = channel
+        self.channel: "PartialChannel" = channel
         """ The channel the typing indicator is for. """
 
     def __await__(self) -> Generator[None, None, None]:
@@ -278,30 +281,65 @@ class PartialChannel(PartialBase):
             r.response, guild=self.guild
         )
 
-    async def fetch_pins(self) -> list["Message"]:
+    async def fetch_pins(
+        self,
+        *,
+        before: datetime | None = None,
+        limit: int | None = 50
+    ) -> AsyncIterator["MessagePin"]:
         """
-        Fetch all pinned messages for the channel in question.
+        Fetch the pinned messages for the channel in question, newest pin first.
 
-        Returns
-        -------
-            The list of pinned messages
+        Parameters
+        ----------
+        before
+            Get messages pinned before this timestamp
+        limit
+            The maximum amount of pins to fetch.
+            `None` will fetch all pins.
+
+        Yields
+        ------
+            The pinned message, along with when it was pinned
         """
-        r = await self._state.query(
-            "GET",
-            f"/channels/{self.id}/pins"
-        )
+        from .message import MessagePin  # Circular import
 
-        return [
-            self._state.bot.create_message_from_data(
-                data, guild=self.guild
+        while True:
+            http_limit: int = 50 if limit is None else min(limit, 50)
+            if http_limit <= 0:
+                break
+
+            params: dict[str, int | str] = {"limit": http_limit}
+            if before is not None:
+                params["before"] = before.isoformat()
+
+            r = await self._state.query(
+                "GET",
+                f"/channels/{self.id}/messages/pins",
+                params=params
             )
-            for data in r.response
-        ]
+
+            for data in r.response["items"]:
+                before = utils.parse_time(data["pinned_at"])
+                yield MessagePin(
+                    pinned_at=before,
+                    message=self._state.bot.create_message_from_data(
+                        data["message"], guild=self.guild
+                    )
+                )
+
+            if limit is not None:
+                limit -= len(r.response["items"])
+
+            if not r.response["has_more"]:
+                break
 
     async def follow_announcement_channel(
         self,
-        source_channel_id: Snowflake | int
-    ) -> None:
+        source_channel_id: Snowflake | int,
+        *,
+        reason: str | None = None
+    ) -> PartialWebhook:
         """
         Follow an announcement channel to send messages to the webhook.
 
@@ -309,36 +347,79 @@ class PartialChannel(PartialBase):
         ----------
         source_channel_id
             The channel ID to follow
+        reason
+            The reason for following the announcement channel
+
+        Returns
+        -------
+            The webhook created in this channel for the followed channel
         """
-        await self._state.query(
+        r = await self._state.query(
             "POST",
-            f"/channels/{source_channel_id}/followers",
-            json={"webhook_channel_id": self.id},
-            res_method="text"
+            f"/channels/{int(source_channel_id)}/followers",
+            json={"webhook_channel_id": str(self.id)},
+            reason=reason
         )
 
-    async def fetch_archived_public_threads(self) -> list["PublicThread"]:
+        return self._state.bot.get_partial_webhook(
+            int(r.response["webhook_id"])
+        )
+
+    async def fetch_invites(self) -> list["Invite"]:
+        """ Fetch all the invites for the channel. """
+        r = await self._state.query(
+            "GET",
+            f"/channels/{self.id}/invites"
+        )
+
+        return [
+            self._state.bot.create_invite_from_data(data)
+            for data in r.response
+        ]
+
+    async def fetch_archived_public_threads(
+        self,
+        *,
+        before: datetime | None = None,
+        limit: int | None = None
+    ) -> list["PublicThread"]:
         """
         Fetch all archived public threads.
+
+        Parameters
+        ----------
+        before
+            Only fetch threads archived before this time
+        limit
+            The maximum amount of threads to fetch
 
         Returns
         -------
             The list of public threads
         """
+        params = {}
+        if before is not None:
+            params["before"] = before.isoformat()
+        if limit is not None:
+            params["limit"] = int(limit)
+
         r = await self._state.query(
             "GET",
-            f"/channels/{self.id}/threads/archived/public"
+            f"/channels/{self.id}/threads/archived/public",
+            params=params
         )
 
         return [
             self._state.bot.create_public_thread_from_data(data)
-            for data in r.response
+            for data in r.response["threads"]
         ]
 
     async def fetch_archived_private_threads(
         self,
         *,
-        client: bool = False
+        client: bool = False,
+        before: datetime | None = None,
+        limit: int | None = None
     ) -> list["PrivateThread"]:
         """
         Fetch all archived private threads.
@@ -347,6 +428,10 @@ class PartialChannel(PartialBase):
         ----------
         client
             If it should fetch only where the client is a member of the thread
+        before
+            Only fetch threads archived before this time
+        limit
+            The maximum amount of threads to fetch
 
         Returns
         -------
@@ -356,11 +441,21 @@ class PartialChannel(PartialBase):
         if client:
             path = f"/channels/{self.id}/users/@me/threads/archived/private"
 
-        r = await self._state.query("GET", path)
+        params = {}
+        if before is not None:
+            # The joined endpoint paginates by thread ID instead of archive time
+            params["before"] = (
+                utils.normalize_entity_id(before)
+                if client else before.isoformat()
+            )
+        if limit is not None:
+            params["limit"] = int(limit)
+
+        r = await self._state.query("GET", path, params=params)
 
         return [
             self._state.bot.create_private_thread_from_data(data)
-            for data in r.response
+            for data in r.response["threads"]
         ]
 
     async def create_invite(
@@ -375,6 +470,7 @@ class PartialChannel(PartialBase):
         target_application_id: Snowflake | int | None = None,
         user_ids: list[Snowflake | int] | None = None,
         role_ids: list[Snowflake | int] | None = None,
+        reason: str | None = None,
     ) -> "Invite":
         """
         Create an invite for the channel.
@@ -400,8 +496,12 @@ class PartialChannel(PartialBase):
         user_ids
             The users to be able to use this invite.
             Any users not in this list, will see the invite as "invalid".
+            Up to 1000 users are sent directly, anything above is uploaded
+            as a CSV file and processed in the background by Discord.
         role_ids
             The roles to be able to use this invite
+        reason
+            The reason for creating the invite
 
         Returns
         -------
@@ -428,7 +528,9 @@ class PartialChannel(PartialBase):
         if role_ids is not None:
             payload["role_ids"] = [str(int(role_id)) for role_id in role_ids]
 
-        if user_ids is not None:
+        if user_ids is not None and len(user_ids) <= 1000:
+            payload["target_user_ids"] = [str(int(user_id)) for user_id in user_ids]
+        elif user_ids is not None:
             csv_content = "\n".join(str(int(user_id)) for user_id in user_ids)
             multidata.attach(
                 "target_users_file",
@@ -443,7 +545,8 @@ class PartialChannel(PartialBase):
             "POST",
             f"/channels/{self.id}/invites",
             headers={"Content-Type": multidata.content_type},
-            data=multidata.finish()
+            data=multidata.finish(),
+            reason=reason
         )
 
         return self._state.bot.create_invite_from_data(r.response)
@@ -462,6 +565,10 @@ class PartialChannel(PartialBase):
         poll: "Poll | None" = MISSING,
         flags: MessageFlags | None = MISSING,
         allowed_mentions: AllowedMentions | None = MISSING,
+        stickers: list["PartialSticker | Snowflake | int"] | None = MISSING,
+        nonce: int | str | None = MISSING,
+        enforce_nonce: bool = False,
+        shared_client_theme: "SharedClientTheme | None" = MISSING,
         delete_after: float | None = None
     ) -> "Message":
         """
@@ -491,6 +598,14 @@ class PartialChannel(PartialBase):
             The poll to be sent
         flags
             Flags of the message
+        stickers
+            Stickers from the guild to send with the message, max 3
+        nonce
+            Nonce to verify the message was sent, max 25 characters
+        enforce_nonce
+            Whether the nonce should be enforced, returning the existing message if it was already sent
+        shared_client_theme
+            Client theme to share with the message
         delete_after
             How long to wait before deleting the message
 
@@ -509,6 +624,10 @@ class PartialChannel(PartialBase):
             type=type,
             poll=poll,
             flags=flags,
+            stickers=stickers,
+            nonce=nonce,
+            enforce_nonce=enforce_nonce,
+            shared_client_theme=shared_client_theme,
             allowed_mentions=(
                 allowed_mentions or
                 self._state.bot._default_allowed_mentions
@@ -967,7 +1086,9 @@ class PartialChannel(PartialBase):
         auto_archive_duration: int | None = 4320,
         rate_limit_per_user: int | None = None,
         flags: MessageFlags | None = None,
-        applied_tags: list["ForumTag | int"] | None = None
+        applied_tags: list["ForumTag | int"] | None = None,
+        stickers: list["PartialSticker | Snowflake | int"] | None = None,
+        reason: str | None = None
     ) -> "ForumThread":
         """
         Create a forum or media thread in the channel.
@@ -994,12 +1115,18 @@ class PartialChannel(PartialBase):
             The duration in minutes to automatically archive the thread after recent activity
         rate_limit_per_user
             How long the slowdown should be
+        flags
+            Flags of the message
         applied_tags
             The tags to be applied to the thread
+        stickers
+            Stickers from the guild to send with the message, max 3
+        reason
+            The reason for creating the thread
 
         Returns
         -------
-            _description_
+            The created thread
         """
         payload = {
             "name": name,
@@ -1034,6 +1161,11 @@ class PartialChannel(PartialBase):
         if flags is not None:
             payload["message"]["flags"] = int(flags)
 
+        if stickers is not None:
+            payload["message"]["sticker_ids"] = [
+                str(int(g)) for g in stickers
+            ]
+
         if temp_msg.embeds is not None:
             payload["message"]["embeds"] = [
                 e.to_dict() for e in temp_msg.embeds
@@ -1045,7 +1177,7 @@ class PartialChannel(PartialBase):
             for i, file in enumerate(temp_msg.files):
                 multidata.attach(
                     f"files[{i}]",
-                    file,  # type: ignore
+                    file,
                     filename=file.filename
                 )
 
@@ -1056,12 +1188,14 @@ class PartialChannel(PartialBase):
                 f"/channels/{self.id}/threads",
                 headers={"Content-Type": multidata.content_type},
                 data=multidata.finish(),
+                reason=reason
             )
         else:
             r = await self._state.query(
                 "POST",
                 f"/channels/{self.id}/threads",
-                json=payload
+                json=payload,
+                reason=reason
             )
 
         return self._state.bot.create_forum_thread_from_data(r.response)
@@ -1514,9 +1648,21 @@ class PartialChannel(PartialBase):
             r.response, guild=self.guild
         )
 
-    async def fetch_thread_members(self) -> list["ThreadMember"]:
+    async def fetch_thread_members(
+        self,
+        *,
+        after: Snowflake | int | None = None,
+        limit: int = 100
+    ) -> list["ThreadMember"]:
         """
-        Fetch all thread members.
+        Fetch thread members.
+
+        Parameters
+        ----------
+        after
+            Only fetch thread members after this user ID
+        limit
+            The maximum amount of thread members to fetch (1-100)
 
         Returns
         -------
@@ -1525,10 +1671,14 @@ class PartialChannel(PartialBase):
         if not self.guild:
             raise ValueError("Cannot fetch thread member without guild_id")
 
+        params = {"with_member": "true", "limit": int(limit)}
+        if after is not None:
+            params["after"] = int(after)
+
         r = await self._state.query(
             "GET",
             f"/channels/{self.id}/thread-members",
-            params={"with_member": "true"},
+            params=params,
         )
 
         return [
@@ -1744,13 +1894,32 @@ class BaseChannel(PartialChannel):
 class TextChannel(BaseChannel):
     """ Represents a text channel. """
 
-    __slots__ = ()
+    __slots__ = ("_raw_thread_defaults",)
 
     def __init__(self, *, state: "DiscordAPI", data: dict):
         super().__init__(state=state, data=data)
 
+        # Most channels never set these, so only keep them around when they are
+        thread_defaults = (
+            data.get("default_auto_archive_duration"),
+            data.get("default_thread_rate_limit_per_user") or 0,
+        )
+        self._raw_thread_defaults: tuple[int | None, int] | None = (
+            thread_defaults if thread_defaults != (None, 0) else None
+        )
+
     def __repr__(self) -> str:
         return f"<TextChannel id={self.id} name='{self.name}'>"
+
+    @property
+    def default_auto_archive_duration(self) -> int | None:
+        """ The default auto archive duration in minutes for newly created threads, if set. """
+        return self._raw_thread_defaults[0] if self._raw_thread_defaults else None
+
+    @property
+    def default_thread_rate_limit_per_user(self) -> int:
+        """ The initial rate limit per user in seconds for newly created threads. """
+        return self._raw_thread_defaults[1] if self._raw_thread_defaults else 0
 
     @property
     def type(self) -> ChannelType:
@@ -2096,8 +2265,11 @@ class PublicThread(BaseChannel):
     """ Represents a public thread channel object. """
 
     __slots__ = (
+        "_raw_timestamps",
+        "applied_tags",
         "archived",
         "auto_archive_duration",
+        "invitable",
         "locked",
         "member_count",
         "message_count",
@@ -2135,6 +2307,18 @@ class PublicThread(BaseChannel):
         self.auto_archive_duration: int = metadata.get("auto_archive_duration", 60)
         """ The duration in minutes to automatically archive the thread after recent activity. """
 
+        self.invitable: bool = metadata.get("invitable", True)
+        """ Whether non-moderators can add other non-moderators to the thread, only for private threads. """
+
+        # archive_timestamp, create_timestamp
+        self._raw_timestamps: int = utils.pack_timestamps(
+            metadata.get("archive_timestamp"),
+            metadata.get("create_timestamp")
+        )
+
+        self.applied_tags: tuple[int, ...] = tuple(int(g) for g in data.get("applied_tags", ()))
+        """ The IDs of the tags applied to the thread, only for forum and media threads. """
+
         self.newly_created: bool = data.get("newly_created", False)
         """ Whether the thread was newly created. """
 
@@ -2149,6 +2333,16 @@ class PublicThread(BaseChannel):
 
     def __repr__(self) -> str:
         return f"<PublicThread id={self.id} name='{self.name}'>"
+
+    @property
+    def archive_timestamp(self) -> datetime | None:
+        """ The time the thread's archive status was last changed. """
+        return utils.unpack_timestamp(self._raw_timestamps, 0)
+
+    @property
+    def create_timestamp(self) -> datetime | None:
+        """ The time the thread was created, only available for threads created after 2022-01-09. """
+        return utils.unpack_timestamp(self._raw_timestamps, 1)
 
     @property
     def type(self) -> ChannelType:
@@ -2330,13 +2524,31 @@ class ForumChannel(PublicThread):
 
     __slots__ = (
         "_raw_tags",
+        "default_auto_archive_duration",
+        "default_forum_layout",
         "default_reaction_emoji",
+        "default_sort_order",
+        "default_thread_rate_limit_per_user",
     )
 
     def __init__(self, state: "DiscordAPI", data: dict):
         super().__init__(state=state, data=data)
         self.default_reaction_emoji: EmojiParser | None = None
         """ The default reaction emoji for the forum channel. """
+
+        self.default_auto_archive_duration: int | None = data.get("default_auto_archive_duration")
+        """ The default auto archive duration in minutes for newly created threads, if set. """
+
+        self.default_thread_rate_limit_per_user: int = data.get("default_thread_rate_limit_per_user") or 0
+        """ The initial rate limit per user in seconds for newly created threads. """
+
+        self.default_sort_order: SortOrderType | None = None
+        """ The default sort order of posts, `None` if not set by a channel admin. """
+
+        self.default_forum_layout: ForumLayoutType = ForumLayoutType(
+            data.get("default_forum_layout") or 0
+        )
+        """ The default layout used to display posts. """
 
         self._raw_tags: tuple[tuple[int | None, str, bool, int | None, str | None], ...] = tuple(
             (
@@ -2357,12 +2569,15 @@ class ForumChannel(PublicThread):
     def _from_data(self, data: dict) -> None:
         if default_reaction_emoji := data.get("default_reaction_emoji"):
             target = (
-                default_reaction_emoji.get("id", None) or
-                default_reaction_emoji.get("name", None)
+                default_reaction_emoji.get("emoji_id", None) or
+                default_reaction_emoji.get("emoji_name", None)
             )
 
             if target:
                 self.default_reaction_emoji = EmojiParser(target)
+
+        if (default_sort_order := data.get("default_sort_order")) is not None:
+            self.default_sort_order = SortOrderType(default_sort_order)
 
     @property
     def type(self) -> ChannelType:
@@ -2491,6 +2706,7 @@ class VoiceChannel(BaseChannel):
         "bitrate",
         "rtc_region",
         "user_limit",
+        "video_quality_mode",
     )
 
     def __init__(self, *, state: "DiscordAPI", data: dict):
@@ -2504,6 +2720,11 @@ class VoiceChannel(BaseChannel):
 
         self.rtc_region: str | None = data.get("rtc_region")
         """ The RTC region of the voice channel, if set. """
+
+        self.video_quality_mode: VideoQualityType = VideoQualityType(
+            data.get("video_quality_mode", 1)
+        )
+        """ The camera video quality mode of the voice channel. """
 
     def __repr__(self) -> str:
         return f"<VoiceChannel id={self.id} name='{self.name}'>"
@@ -2701,17 +2922,11 @@ class StageChannel(VoiceChannel):
 
     @property
     def stage_instance(self) -> StageInstance | None:
-        """ The stage instance for this channel, if available and cached."""
+        """ The stage instance for this channel, if available and cached. """
         return self._stage_instance
 
     async def fetch_stage_instance(self) -> StageInstance:
-        """
-        Fetch the stage instance associated with this stage channel.
-
-        Returns
-        -------
-            The stage instance of the channel
-        """
+        """ Fetch the stage instance associated with this stage channel. """
         r = await self._state.query(
             "GET",
             f"/stage-instances/{self.id}"

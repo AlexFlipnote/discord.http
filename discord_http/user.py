@@ -23,7 +23,8 @@ if TYPE_CHECKING:
     from .channel import DMChannel
     from .guild import Guild, PartialGuild
     from .http import DiscordAPI
-    from .message import Message
+    from .message import Message, Poll, SharedClientTheme
+    from .sticker import PartialSticker
 
 MISSING = utils.MISSING
 
@@ -225,7 +226,7 @@ class AvatarDecoration(Snowflake):
         super().__init__(id=int(data["sku_id"]))
         self._state = state
 
-        self.asset = Asset._from_avatar_decoration(
+        self.asset: Asset = Asset._from_avatar_decoration(
             self._state, data["asset"]
         )
         """ The asset of the avatar decoration. """
@@ -299,6 +300,11 @@ class PartialUser(PartialBase):
         type: ResponseType | int = 4,  # ruff: ignore[builtin-argument-shadowing]
         flags: MessageFlags | None = MISSING,
         allowed_mentions: AllowedMentions | None = MISSING,
+        poll: "Poll | None" = MISSING,
+        stickers: list["PartialSticker | Snowflake | int"] | None = MISSING,
+        nonce: int | str | None = MISSING,
+        enforce_nonce: bool = False,
+        shared_client_theme: "SharedClientTheme | None" = MISSING,
         delete_after: float | None = None
     ) -> "Message":
         """
@@ -328,6 +334,16 @@ class PartialUser(PartialBase):
             Flags of the message
         allowed_mentions
             Allowed mentions of the message
+        poll
+            The poll to be sent
+        stickers
+            Stickers from the guild to send with the message, max 3
+        nonce
+            Nonce to verify the message was sent, max 25 characters
+        enforce_nonce
+            Whether the nonce should be enforced, returning the existing message if it was already sent
+        shared_client_theme
+            Client theme to share with the message
         delete_after
             How long to wait before deleting the message
 
@@ -349,6 +365,11 @@ class PartialUser(PartialBase):
             tts=tts,
             type=type,
             flags=flags,
+            poll=poll,
+            stickers=stickers,
+            nonce=nonce,
+            enforce_nonce=enforce_nonce,
+            shared_client_theme=shared_client_theme,
             allowed_mentions=(
                 allowed_mentions or
                 self._state.bot._default_allowed_mentions
@@ -376,7 +397,7 @@ class PartialUser(PartialBase):
             json={"recipient_id": self.id}
         )
 
-        from .channel import DMChannel
+        from .channel import DMChannel  # Circular import
         return DMChannel(
             state=self._state,
             data=r.response

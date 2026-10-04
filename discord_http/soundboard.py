@@ -54,10 +54,6 @@ class PartialSoundboardSound(PartialBase):
         """
         The guild this soundboard sound is in.
 
-        Returns
-        -------
-            The guild this soundboard sound is in
-
         Raises
         ------
         ValueError
@@ -75,10 +71,6 @@ class PartialSoundboardSound(PartialBase):
         """
         Returns the soundboard sound data.
 
-        Returns
-        -------
-            The soundboard sound data
-
         Raises
         ------
         ValueError
@@ -89,7 +81,7 @@ class PartialSoundboardSound(PartialBase):
 
         r = await self._state.query(
             "GET",
-            f"/guild/{self.guild_id}/soundboard-sounds/{self.id}"
+            f"/guilds/{self.guild_id}/soundboard-sounds/{self.id}"
         )
 
         return self._state.bot.create_soundboard_sound_from_data(
@@ -128,7 +120,7 @@ class PartialSoundboardSound(PartialBase):
         self,
         *,
         name: "str | MISSING" = MISSING,
-        volume: "int | MISSING" = MISSING,
+        volume: "float | MISSING" = MISSING,
         emoji_name: "str | MISSING" = MISSING,
         emoji_id: "str | MISSING" = MISSING,
         icon: "File | bytes | MISSING" = MISSING,
@@ -142,7 +134,7 @@ class PartialSoundboardSound(PartialBase):
         name
             The new name of the soundboard sound
         volume
-            The new volume of the soundboard sound
+            The new volume of the soundboard sound, from 0 to 1
         emoji_name
             The new unicode emoji of the soundboard sound
         emoji_id
@@ -228,19 +220,19 @@ class SoundboardSound(PartialSoundboardSound):
         super().__init__(
             state=state,
             id=int(data["sound_id"]),
-            guild_id=guild.id if guild else None
+            guild_id=guild.id if guild else utils.get_int(data, "guild_id")
         )
 
         self.name: str = data["name"]
         """ The name of the soundboard sound. """
 
-        self.volume: int = data["volume"]
+        self.volume: float = data["volume"]
         """ The volume of the soundboard sound. """
 
         self.emoji_id: int | None = utils.get_int(data, "emoji_id")
         """ The ID of the custom emoji used for the soundboard sound, if any. """
 
-        self.emoji_name: int | None = data.get("emoji_name")
+        self.emoji_name: str | None = data.get("emoji_name")
         """ The unicode emoji used for the soundboard sound, if any. """
 
         self.available: bool = data["available"]

@@ -33,19 +33,19 @@ class File:
         duration_secs: float | int | None = None,
         waveform: str | None = None
     ):
-        self.spoiler = spoiler
+        self.spoiler: bool = spoiler
         """ Whether the file is a spoiler. """
 
-        self.title = title
+        self.title: str | None = title
         """ The title of the file, if any. """
 
-        self.description = description
+        self.description: str | None = description
         """ The description of the file, if any. """
 
-        self.duration_secs = duration_secs
+        self.duration_secs: float | int | None = duration_secs
         """ The duration of the file in seconds, if applicable. """
 
-        self.waveform = waveform
+        self.waveform: str | None = waveform
         """ The waveform data for the file, if applicable. """
 
         self._filename = filename
@@ -118,6 +118,8 @@ class File:
             "filename": self.filename
         }
 
+        if self.spoiler:
+            payload["is_spoiler"] = True
         if self.title:
             payload["title"] = self.title
         if self.description:

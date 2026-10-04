@@ -7,7 +7,7 @@ from .enums import ResponseType
 from .file import File
 from .flags import MessageFlags
 from .mentions import AllowedMentions
-from .object import PartialBase
+from .object import PartialBase, Snowflake
 from .response import MessageResponse
 from .user import User
 from .view import View
@@ -83,6 +83,8 @@ class PartialWebhook(PartialBase):
         wait: Literal[False],
         flags: MessageFlags | None = MISSING,
         thread_id: int | None = MISSING,
+        thread_name: str | None = MISSING,
+        applied_tags: list[Snowflake | int] | None = MISSING,
         poll: "Poll | None" = MISSING,
     ) -> None:
         ...
@@ -105,6 +107,8 @@ class PartialWebhook(PartialBase):
         wait: bool = True,
         flags: MessageFlags | None = MISSING,
         thread_id: int | None = MISSING,
+        thread_name: str | None = MISSING,
+        applied_tags: list[Snowflake | int] | None = MISSING,
         poll: "Poll | None" = MISSING,
     ) -> "WebhookMessage":
         ...
@@ -126,6 +130,8 @@ class PartialWebhook(PartialBase):
         wait: bool = True,
         flags: MessageFlags | None = MISSING,
         thread_id: int | None = MISSING,
+        thread_name: str | None = MISSING,
+        applied_tags: list[Snowflake | int] | None = MISSING,
         poll: "Poll | None" = MISSING,
     ) -> "WebhookMessage | None":
         """
@@ -161,6 +167,10 @@ class PartialWebhook(PartialBase):
             Flags of the message
         thread_id
             Thread ID to send the message to
+        thread_name
+            Name of the thread to create, only for forum and media channels
+        applied_tags
+            Tag IDs to apply to the created thread, only for forum and media channels
         poll
             Poll to send with the message
 
@@ -208,7 +218,7 @@ class PartialWebhook(PartialBase):
             for i, file in enumerate(payload.files):
                 multidata.attach(
                     f"file{i}",
-                    file,  # type: ignore
+                    file,
                     filename=file.filename
                 )
 
@@ -219,6 +229,12 @@ class PartialWebhook(PartialBase):
             if not avatar_url.startswith("https://"):
                 raise ValueError("avatar_url must start with https://")
             modified_payload["avatar_url"] = str(avatar_url)
+        if thread_name is not MISSING and thread_name is not None:
+            modified_payload["thread_name"] = str(thread_name)
+        if applied_tags is not MISSING and applied_tags is not None:
+            modified_payload["applied_tags"] = [
+                str(int(g)) for g in applied_tags
+            ]
 
         multidata.attach("payload_json", modified_payload)
 
@@ -341,7 +357,8 @@ class PartialWebhook(PartialBase):
             await self._state.query(
                 "DELETE",
                 f"/webhooks/{self.id}",
-                res_method="text"
+                res_method="text",
+                reason=reason
             )
 
             return

@@ -29,6 +29,7 @@ __all__ = (
     "ApplicationCommandPermission",
     "AutomodExecution",
     "BulkDeletePayload",
+    "ChannelInfo",
     "ChannelPinsUpdate",
     "GatewayRateLimited",
     "GuildApplicationCommandPermissions",
@@ -64,7 +65,7 @@ class PlayingStatus:
         self.since: int | None = None
         """ The timestamp of when the activity started, if applicable. """
 
-        self.name = name
+        self.name: str | None = name
         """ The name of the activity, if any. """
 
         self.status: StatusType | str | int | None = status
@@ -83,7 +84,7 @@ class PlayingStatus:
         elif isinstance(self.type, int):
             self.type = ActivityType(self.type)
 
-        self.url = None
+        self.url: str | None = None
         """ The url of the activity, if any. Only applicable for streaming activities. """
 
         if self.type == ActivityType.streaming:
@@ -826,6 +827,13 @@ class GatewayRateLimited(NamedTuple):
     opcode: int
     retry_after: float
     meta: dict
+
+
+class ChannelInfo(NamedTuple):
+    """ Represents the ephemeral data of a channel, sent in response to a channel info request. """
+    channel: "BaseChannel | PartialChannel"
+    status: str | None
+    voice_start_time: datetime | None
 
 
 class ApplicationCommandPermission:

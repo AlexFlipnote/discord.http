@@ -28,15 +28,16 @@ if TYPE_CHECKING:
     from .object import Snowflake
 
 DISCORD_EPOCH = 1420070400000
-_ORDINAL_SUFFIXES: dict[int, str] = {1: "st", 2: "nd", 3: "rd"}
+_PACKED_TIMESTAMP_BITS = 42  # Epoch milliseconds fit in 42 bits until the year 2109
+_PACKED_TIMESTAMP_MASK = (1 << _PACKED_TIMESTAMP_BITS) - 1
 
 # RegEx patterns
 re_channel: re.Pattern = re.compile(r"<#([0-9]{15,20})>")
 re_role: re.Pattern = re.compile(r"<@&([0-9]{15,20})>")
 re_mention: re.Pattern = re.compile(r"<@!?([0-9]{15,20})>")
+re_slash_command: re.Pattern = re.compile(r"</([\w-]{1,32}(?: [\w-]{1,32}){0,2}):([0-9]{15,20})>")
 re_emoji: re.Pattern = re.compile(r"<(a)?:([a-zA-Z0-9_]+):([0-9]{15,20})>")
 re_common_markdown: re.Pattern = re.compile(r"([_*~`<>|\[\]()#])")
-re_hex: re.Pattern = re.compile(r"^(?:#)?(?:[0-9a-fA-F]{3}){1,2}$")
 re_jump_url: re.Pattern = re.compile(
     r"https:\/\/(?:.*\.)?discord\.com\/channels\/([0-9]{15,20}|@me)\/([0-9]{15,20})(?:\/([0-9]{15,20}))?"
 )
@@ -414,42 +415,6 @@ def create_missing_texture(*, size: int = 256, tiles: int = 8) -> bytes:
     )
 
 
-def find_longest(*string: str) -> int:
-    """
-    Find the length of the longest string.
-
-    Parameters
-    ----------
-    *string
-        The strings to find the longest from
-
-    Returns
-    -------
-        The length of the longest string
-    """
-    return max(len(s) for s in string) if string else 0
-
-
-def shortener(text: str, *, length: int = 64) -> str:
-    """
-    Shorten a string to a specified length, adding ellipsis if necessary.
-
-    Parameters
-    ----------
-    text
-        The string to shorten.
-    length
-        The maximum length of the shortened string.
-
-    Returns
-    -------
-        The shortened string.
-    """
-    if len(text) <= length:
-        return text
-    return text[:length - 3] + "..."
-
-
 def traceback_maker(
     err: Exception,
     *,
@@ -497,37 +462,6 @@ def escape_markdown(text: str, *, remove: bool = False) -> str:
         "" if remove else r"\\\1",
         text
     )
-
-
-def plural(word: str, num: int) -> str:
-    """
-    Return the plural of a word.
-
-    Parameters
-    ----------
-    word
-        The word to pluralize
-    num
-        The number to determine if the word should be pluralized
-    """
-    return f"{word}{'s'[:num ^ 1]}"
-
-
-def ordinal(num: int) -> str:
-    """
-    Return the ordinal of a number.
-
-    Parameters
-    ----------
-    num
-        The number to determine the ordinal suffix
-
-    Returns
-    -------
-        The ordinal of the number
-    """
-    suffix = "th" if 10 <= num % 100 <= 20 else _ORDINAL_SUFFIXES.get(num % 10, "th")
-    return f"{num}{suffix}"
 
 
 def unwrap_optional(annotation: type) -> type:
@@ -636,6 +570,58 @@ def parse_time(ts: str | int) -> datetime:
     raise TypeError(f"ts must be a str or int, not {type(ts)}")
 
 
+def pack_timestamps(*timestamps: "str | datetime | None") -> int:
+    """
+    Pack timestamps into a single int, as epoch milliseconds.
+
+    Used to keep timestamps on cached objects cheaper than storing datetime objects,
+    read them back with `unpack_timestamp()` using the same order.
+
+    Parameters
+    ----------
+    timestamps
+        The timestamps to pack, `None` is stored as not set
+
+    Returns
+    -------
+        The packed timestamps
+    """
+    packed = 0
+
+    for i, ts in enumerate(timestamps):
+        if ts is None:
+            continue
+
+        if isinstance(ts, str):
+            ts = parse_time(ts)
+
+        packed |= int(ts.timestamp() * 1000) << (i * _PACKED_TIMESTAMP_BITS)
+
+    return packed
+
+
+def unpack_timestamp(packed: int, index: int) -> datetime | None:
+    """
+    Unpack a single timestamp packed by `pack_timestamps()`.
+
+    Parameters
+    ----------
+    packed
+        The packed timestamps
+    index
+        The position of the timestamp when it was packed
+
+    Returns
+    -------
+        The datetime of the timestamp, `None` if it was not set
+    """
+    timestamp_ms = (packed >> (index * _PACKED_TIMESTAMP_BITS)) & _PACKED_TIMESTAMP_MASK
+    if not timestamp_ms:
+        return None
+
+    return datetime.fromtimestamp(timestamp_ms / 1000, tz=UTC)
+
+
 def normalize_entity_id(
     entry: "datetime | int | str | Snowflake"
 ) -> int:
@@ -737,38 +723,8 @@ def oauth_url(
     return str(url)
 
 
-def divide_chunks(
-    array: list[Any],
-    n: int
-) -> list[list[Any]]:
-    """
-    Divide a list into chunks.
-
-    Parameters
-    ----------
-    array
-        The list to divide
-    n
-        The amount of chunks to divide the list into
-
-    Returns
-    -------
-        The divided list
-    """
-    return [
-        array[i:i + n]
-        for i in range(0, len(array), n)
-    ]
-
-
 def utcnow() -> datetime:
-    """
-    Alias for `datetime.now(UTC)`.
-
-    Returns
-    -------
-        The current time in UTC
-    """
+    """ Alias for `datetime.now(UTC)`. """
     return datetime.now(UTC)
 
 

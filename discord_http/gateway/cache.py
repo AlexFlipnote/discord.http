@@ -132,10 +132,10 @@ class Cache:
         *,
         client: "Client"
     ):
-        self.bot = client
+        self.bot: "Client" = client
         """ The client that the cache belongs to. """
 
-        self.cache_flags = client._gateway_cache
+        self.cache_flags: GatewayCacheFlags | None = client._gateway_cache
         """ The cache flags that determine what is cached. """
 
         self.__guilds: dict[int, "PartialGuild | Guild"] = {}
@@ -151,17 +151,17 @@ class Cache:
             weakref.WeakValueDictionary()
         )
 
+        # Whether it's worth touching the shared user table at all
         self._user_dedup_enabled: bool = self.cache_flags is not None and (
             GatewayCacheFlags.members in self.cache_flags or
             GatewayCacheFlags.partial_members in self.cache_flags
         )
-        """ Whether it's worth touching the shared user table at all right now. """
 
+        # Whether it's worth touching the shared activity-assets pool at all
         self._presence_dedup_enabled: bool = (
             self.cache_flags is not None and
             GatewayCacheFlags.presences in self.cache_flags
         )
-        """ Whether it's worth touching the shared activity-assets pool at all right now. """
 
     def intern_role_ids(self, guild_id: int, raw_role_ids: list) -> tuple[int, ...]:
         """

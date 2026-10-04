@@ -2,7 +2,10 @@ import unittest
 
 import orjson
 
-from discord_http import Message, PartialUser
+from discord_http import (
+    BaseThemeType, IntegrationType, InteractionType,
+    Message, MessageFlags, PartialChannel, PartialRole, PartialUser
+)
 
 from _fake_client import FakeBot
 
@@ -81,6 +84,161 @@ class TestAttachmentNewFields(unittest.TestCase):
         self.assertEqual(data["flags"], 4)
         self.assertIsInstance(data["flags"], int)
         orjson.dumps(data)  # raises TypeError if any value isn't JSON-serializable
+
+
+class FakeCache:
+    def get_guild(self, guild_id):
+        return None
+
+    def get_channel_thread(self, *, guild_id, channel_id):
+        return None
+
+
+class CachedFakeState(FakeState):
+    cache = FakeCache()
+
+
+class TestMessageMentions(unittest.TestCase):
+    def test_role_mentions_use_mention_roles(self) -> None:
+        # No message content intent, so content is empty
+        message = Message(
+            state=CachedFakeState(),
+            data=_message_data(content="", mention_roles=["10", "11"]),
+        )
+        message.guild_id = 5
+        roles = message.role_mentions
+        self.assertTrue(all(isinstance(r, PartialRole) for r in roles))
+        self.assertEqual([r.id for r in roles], [10, 11])
+
+    def test_role_mentions_fall_back_to_content(self) -> None:
+        message = Message(state=CachedFakeState(), data=_message_data(content="<@&123456789012345678>"))
+        message.guild_id = 5
+        self.assertEqual([r.id for r in message.role_mentions], [123456789012345678])
+
+    def test_channel_mentions_prefer_mention_channels(self) -> None:
+        message = Message(state=CachedFakeState(), data=_message_data(
+            content="<#123456789012345678>",
+            mention_channels=[{"id": "20", "guild_id": "30", "type": 0, "name": "general"}],
+        ))
+        channels = message.channel_mentions
+        self.assertEqual(len(channels), 1)
+        self.assertIsInstance(channels[0], PartialChannel)
+        self.assertEqual((channels[0].id, channels[0].guild_id), (20, 30))
+
+    def test_channel_mentions_from_content(self) -> None:
+        message = Message(state=CachedFakeState(), data=_message_data(content="<#123456789012345678>"))
+        self.assertEqual([c.id for c in message.channel_mentions], [123456789012345678])
+
+
+class TestMessageContentVariants(unittest.TestCase):
+    def test_pretty_content_resolves_known_mentions(self) -> None:
+        message = Message(state=CachedFakeState(), data=_message_data(
+            content="hi <@123456789012345678> and <@!123456789012345678> in <#223456789012345678>",
+            mentions=[{
+                "id": "123456789012345678", "username": "bob",
+                "global_name": "Bobby", "discriminator": "0", "avatar": None,
+            }],
+            mention_channels=[{"id": "223456789012345678", "guild_id": "30", "type": 0, "name": "general"}],
+        ))
+        self.assertEqual(message.pretty_content, "hi @Bobby and @Bobby in #general")
+
+    def test_pretty_content_without_cache(self) -> None:
+        message = Message(state=FakeState(), data=_message_data(
+            content="Hi there <@!86477779717066752> </test_ping:1542872400176226308> </role add:1542872400176226308>",
+            mentions=[{
+                "id": "86477779717066752", "username": "alexflipnote",
+                "global_name": "AlexFlipnote", "discriminator": "0", "avatar": None,
+            }],
+            mention_roles=[],
+        ))
+        self.assertEqual(message.pretty_content, "Hi there @AlexFlipnote /test_ping /role add")
+
+    def test_pretty_content_keeps_unresolved_mentions(self) -> None:
+        content = "<@&323456789012345678> <#423456789012345678> <@523456789012345678>"
+        message = Message(state=CachedFakeState(), data=_message_data(content=content))
+        message.guild_id = 5
+        self.assertEqual(message.pretty_content, content)
+
+    def test_escaped_content(self) -> None:
+        message = Message(state=FakeState(), data=_message_data(content="**bold** <@1> `code`"))
+        self.assertEqual(message.escaped_content, r"\*\*bold\*\* \<@1\> \`code\`")
+
+
+class TestMessageInteractionMetadata(unittest.TestCase):
+    def test_parses_modal_submit_metadata(self) -> None:
+        user = {"id": "3", "username": "bob", "discriminator": "0001", "avatar": None}
+        message = Message(state=FakeState(), data=_message_data(interaction_metadata={
+            "id": "50", "type": 5, "user": user,
+            "authorizing_integration_owners": {"0": "100", "1": "3"},
+            "original_response_message_id": "60",
+            "triggering_interaction_metadata": {
+                "id": "51", "type": 2, "user": user,
+                "authorizing_integration_owners": {"1": "3"},
+                "target_user": {"id": "4", "username": "al", "discriminator": "0001", "avatar": None},
+                "target_message_id": "70",
+            },
+        }))
+        interaction = message.interaction
+        self.assertEqual(interaction.type, InteractionType.modal_submit)
+        self.assertEqual(interaction.authorizing_integration_owners, {
+            IntegrationType.guild: 100, IntegrationType.user: 3,
+        })
+        self.assertEqual(interaction.original_response_message_id, 60)
+        self.assertIsNone(interaction.target_user)
+
+        triggering = interaction.triggering_interaction_metadata
+        self.assertEqual(triggering.id, 51)
+        self.assertEqual(triggering.target_user.id, 4)
+        self.assertEqual(triggering.target_message_id, 70)
+        self.assertIsNone(triggering.triggering_interaction_metadata)
+
+    def test_parses_component_metadata(self) -> None:
+        message = Message(state=FakeState(), data=_message_data(interaction_metadata={
+            "id": "50", "type": 3,
+            "user": {"id": "3", "username": "bob", "discriminator": "0001", "avatar": None},
+            "interacted_message_id": "80",
+        }))
+        self.assertEqual(message.interaction.interacted_message_id, 80)
+        self.assertEqual(message.interaction.authorizing_integration_owners, {})
+
+
+class TestMessageExtraFields(unittest.TestCase):
+    def test_parses_top_level_fields(self) -> None:
+        message = Message(state=FakeState(), data=_message_data(
+            nonce="abc", webhook_id="7", application_id="8", position=4, flags=1 << 2,
+            activity={"type": 1, "party_id": "p"},
+            shared_client_theme={
+                "colors": ["5865F2", "7258F2"], "gradient_angle": 0,
+                "base_mix": 58, "base_theme": 1,
+            },
+        ))
+        self.assertEqual(message.nonce, "abc")
+        self.assertEqual(message.webhook_id, 7)
+        self.assertEqual(message.application_id, 8)
+        self.assertEqual(message.position, 4)
+        self.assertIn(MessageFlags.suppress_embeds, message.flags)
+        self.assertEqual(message.activity.party_id, "p")
+        self.assertEqual(message.shared_client_theme.base_theme, BaseThemeType.dark)
+        self.assertEqual(message.shared_client_theme.to_dict()["colors"], ["5865F2", "7258F2"])
+
+    def test_defaults_when_absent(self) -> None:
+        message = Message(state=FakeState(), data=_message_data())
+        self.assertIsNone(message.nonce)
+        self.assertIsNone(message.webhook_id)
+        self.assertIsNone(message.thread)
+        self.assertIsNone(message.activity)
+        self.assertIsNone(message.shared_client_theme)
+        self.assertEqual(int(message.flags), 0)
+
+    def test_reaction_count_details(self) -> None:
+        message = Message(state=FakeState(), data=_message_data(reactions=[{
+            "count": 3, "me": False, "me_burst": False, "burst_colors": [],
+            "emoji": {"id": None, "name": "x"},
+            "count_details": {"burst": 1, "normal": 2},
+        }]))
+        reaction = message.reactions[0]
+        self.assertEqual(reaction.normal_count, 2)
+        self.assertEqual(reaction.burst_count, 1)
 
 
 if __name__ == "__main__":

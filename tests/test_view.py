@@ -8,7 +8,9 @@ from discord_http import (
     ContainerComponent, Link, Modal, Premium, RadioComponent, Select,
     TextDisplayComponent, View,
 )
-from discord_http.view import CheckpointComponent, LabelComponent, TextInputComponent
+from discord_http.view import (
+    CheckpointComponent, FileComponent, LabelComponent, TextInputComponent, ThumbnailComponent,
+)
 
 
 class TestButtonStyleCoercion(unittest.TestCase):
@@ -267,6 +269,42 @@ class TestViewToDict(unittest.IsolatedAsyncioTestCase):
         view = View(*[ActionRow(Button(custom_id=str(i))) for i in range(41)])
         with self.assertRaises(ValueError):
             view.to_dict()
+
+
+class TestViewFromDictUnfurledMedia(unittest.IsolatedAsyncioTestCase):
+    def _media(self, **overrides) -> dict:
+        data = {"url": "https://cdn.example/a.png", "proxy_url": "https://proxy.example/a.png"}
+        data.update(overrides)
+        return data
+
+    async def test_file_keeps_attachment_id_and_spoiler(self) -> None:
+        view = View.from_dict(state=None, data={"components": [  # type: ignore[arg-type]
+            {"type": 13, "id": 1, "file": self._media(attachment_id="55"), "spoiler": True, "name": "a.png", "size": 3},
+        ]})
+        file = view.items[0]
+        self.assertIsInstance(file, FileComponent)
+        self.assertTrue(file.spoiler)
+        self.assertEqual(file.file.attachment_id, 55)
+
+    async def test_missing_proxy_url_and_attachment_id(self) -> None:
+        view = View.from_dict(state=None, data={"components": [  # type: ignore[arg-type]
+            {"type": 13, "file": {"url": "https://example.com/a.png"}},
+        ]})
+        self.assertIsNone(view.items[0].file.proxy_url)
+        self.assertIsNone(view.items[0].file.attachment_id)
+
+    async def test_section_thumbnail_keeps_description_and_spoiler(self) -> None:
+        view = View.from_dict(state=None, data={"components": [  # type: ignore[arg-type]
+            {"type": 9, "components": [{"type": 10, "content": "hi"}], "accessory": {
+                "type": 11, "media": self._media(), "description": "alt", "spoiler": True,
+            }},
+        ]})
+        accessory = view.items[0].accessory
+        self.assertIsInstance(accessory, ThumbnailComponent)
+        self.assertEqual(accessory.to_dict(), {
+            "type": 11, "media": {"url": "https://cdn.example/a.png"},
+            "description": "alt", "spoiler": True,
+        })
 
 
 class TestLabelComponentToDict(unittest.TestCase):

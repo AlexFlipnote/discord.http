@@ -1,6 +1,6 @@
 import unittest
 
-from discord_http import Role, PartialRole, Colour
+from discord_http import Role, PartialRole, Colour, RoleFlags
 
 
 class FakeState:
@@ -79,6 +79,31 @@ class TestRoleIcon(unittest.TestCase):
         # Asset has no __eq__, so `icon` builds a fresh instance each access -
         # compare the url rather than object identity/equality.
         self.assertEqual(role.display_icon.url, role.icon.url)
+
+
+class TestRoleFlagsAndColours(unittest.TestCase):
+    def test_flags_parsed(self) -> None:
+        role = Role(state=FakeState(), guild=FakeGuild(), data=_role_data(flags=1))
+        self.assertIn(RoleFlags.in_prompt, role.flags)
+
+    def test_flags_default_when_absent(self) -> None:
+        role = Role(state=FakeState(), guild=FakeGuild(), data=_role_data())
+        self.assertNotIn(RoleFlags.in_prompt, role.flags)
+
+    def test_gradient_colours(self) -> None:
+        role = Role(state=FakeState(), guild=FakeGuild(), data=_role_data(color=1, colors={
+            "primary_color": 1, "secondary_color": 2, "tertiary_color": None,
+        }))
+        self.assertEqual(int(role.secondary_colour), 2)
+        self.assertIsNone(role.tertiary_colour)
+        self.assertEqual([int(c) for c in role.colours], [1, 2])
+
+    def test_no_gradient_colours(self) -> None:
+        role = Role(state=FakeState(), guild=FakeGuild(), data=_role_data(color=5, colors={
+            "primary_color": 5, "secondary_color": None, "tertiary_color": None,
+        }))
+        self.assertIsNone(role.secondary_colour)
+        self.assertEqual([int(c) for c in role.colours], [5])
 
 
 class TestRoleEditValidation(unittest.IsolatedAsyncioTestCase):

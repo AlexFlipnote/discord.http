@@ -94,12 +94,16 @@ __all__ = (
     "ChannelSelect",
     "CheckboxComponent",
     "CheckboxGroupComponent",
+    "CheckpointComponent",
     "ComponentOption",
     "ContainerComponent",
+    "ContentInventoryEntry",
     "FileComponent",
     "FileUploadComponent",
     "Item",
+    "LabelComponent",
     "Link",
+    "LockedItem",
     "MediaGalleryComponent",
     "MediaGalleryItem",
     "MentionableSelect",
@@ -128,6 +132,7 @@ class AttachmentComponent:
 
     __slots__ = (
         "_state",
+        "attachment_id",
         "content_type",
         "filename",
         "flags",
@@ -165,8 +170,8 @@ class AttachmentComponent:
         self.url: str = edata["url"]
         """ The URL of the attachment. """
 
-        self.proxy_url: str = edata["proxy_url"]
-        """ The proxied URL of the attachment. """
+        self.proxy_url: str | None = edata.get("proxy_url", None)
+        """ The proxied URL of the attachment, if any. """
 
         self.height: int | None = edata.get("height", None)
         """ The height of the attachment, if any. """
@@ -185,6 +190,12 @@ class AttachmentComponent:
 
         self.flags: int = edata.get("flags", 0)
         """ The flags of the attachment, if any. """
+
+        self.attachment_id: int | None = (
+            int(edata["attachment_id"])
+            if edata.get("attachment_id") else None
+        )
+        """ The ID of the uploaded attachment, if the media was uploaded as one. """
 
     def __str__(self) -> str:
         if self.filename:
@@ -214,7 +225,7 @@ class AttachmentComponent:
         """
         r = await self._state.http.request(
             "GET",
-            self.proxy_url if use_cached else self.url,
+            (self.proxy_url or self.url) if use_cached else self.url,
             res_method="read"
         )
 
@@ -325,6 +336,8 @@ class LockedItem(Item):
 
     def __init__(self, *, type: ComponentType, **kwargs: dict):  # ruff: ignore[builtin-argument-shadowing]
         self.type: ComponentType = type
+        """ The type of the component. """
+
         self._data: dict = kwargs
 
     def __repr__(self) -> str:
@@ -907,7 +920,7 @@ class ChannelSelect(Select):
             channel_types = [channel_types]
 
         # Reason for types is to make sure the ints are valid ChannelTypes
-        self.channel_types = [
+        self.channel_types: list[ChannelType] = [
             ChannelType(int(c)) for c in channel_types
             if isinstance(c, (ChannelType, int))
         ]
@@ -1024,7 +1037,7 @@ class TextDisplayComponent(Item):
     ):
         super().__init__(type=ComponentType.text_display)
 
-        self.content = content
+        self.content: str = content
         """ The content of the text display component. """
 
     def __repr__(self) -> str:
@@ -1056,16 +1069,16 @@ class ComponentOption:
         description: str | None = None,
         default: bool = False
     ):
-        self.label = label
+        self.label: str = label
         """ The label of the option. """
 
-        self.value = value
+        self.value: str = value
         """ The value of the option. """
 
-        self.description = description
+        self.description: str | None = description
         """ The description of the option. """
 
-        self.default = default
+        self.default: bool = default
         """ Whether the option is the default selection. """
 
     def to_dict(self) -> dict:
@@ -1112,7 +1125,7 @@ class RadioComponent(Item):
     ):
         super().__init__(type=ComponentType.radio_group)
 
-        self.options = list(options)
+        self.options: list["ComponentOption"] = list(options)
         """ The options for the radio component. """
 
         self.custom_id: str = custom_id
@@ -1635,7 +1648,7 @@ class ThumbnailComponent(Item):
     ):
         super().__init__(type=ComponentType.thumbnail)
 
-        self.url: Asset | AttachmentComponent | str = str(url)
+        self.url: Asset | AttachmentComponent | str = url
         """ The URL of the thumbnail image. """
 
         self.description: str | None = description
@@ -2325,7 +2338,8 @@ class View(InteractionStorage):
             match raw_type:
                 case int(ComponentType.file):
                     return FileComponent(
-                        file=AttachmentComponent(state=state, data=c)
+                        file=AttachmentComponent(state=state, data=c),
+                        spoiler=c.get("spoiler", False)
                     )
 
                 case int(ComponentType.section):
@@ -2337,7 +2351,11 @@ class View(InteractionStorage):
 
                         acc_obj = Button(**c["accessory"])
                     else:
-                        acc_obj = AttachmentComponent(state=state, data=c["accessory"])
+                        acc_obj = ThumbnailComponent(
+                            AttachmentComponent(state=state, data=c["accessory"]),
+                            description=c["accessory"].get("description", None),
+                            spoiler=c["accessory"].get("spoiler", False)
+                        )
 
                     texts = [
                         TextDisplayComponent(content=inner["content"])
@@ -2409,7 +2427,11 @@ class LabelComponent(Item):
     ):
         super().__init__(type=ComponentType.label)
 
-        self.component = component
+        self.component: (
+            TextInputComponent | Select |
+            FileUploadComponent | RadioComponent | CheckboxGroupComponent |
+            CheckboxComponent
+        ) = component
         """ The component contained within the label. """
 
         self.label: str | None = self.component.label or label

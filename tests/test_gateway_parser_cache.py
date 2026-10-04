@@ -6,9 +6,10 @@ from types import SimpleNamespace
 
 from discord_http.gateway.activity import Activity
 from discord_http.gateway.cache import Cache
+from discord_http.channel import StageChannel
 from discord_http.gateway.enums import StatusType
 from discord_http.gateway.flags import GatewayCacheFlags
-from discord_http.gateway.object import Presence, Reaction
+from discord_http.gateway.object import ChannelInfo, Presence, Reaction
 from discord_http.gateway.parser import Parser, GuildMembersChunk
 from discord_http.guild import Guild, PartialGuild
 from discord_http.member import Member, PartialMember
@@ -288,6 +289,43 @@ class TestReactionMember(unittest.TestCase):
         guild._cache_members[5] = member
         reaction = Reaction(state=bot.state, data=self._data())
         self.assertIs(reaction.member, member)
+
+
+class TestGuildCreateStageInstances(unittest.TestCase):
+    def test_stage_instances_attached_to_cached_stage_channels(self) -> None:
+        bot = FakeBot(cache_flags=GatewayCacheFlags.guilds | GatewayCacheFlags.channels)
+        (guild,) = Parser(bot=bot).guild_create(_guild_data(
+            channels=[{
+                "id": "10", "type": 13, "name": "stage", "guild_id": "1",
+                "bitrate": 64000, "user_limit": 0,
+            }],
+            stage_instances=[{
+                "id": "20", "guild_id": "1", "channel_id": "10", "topic": "hi",
+                "privacy_level": 2, "discoverable_disabled": False,
+            }],
+        ))
+        channel = guild.get_channel(10)
+        self.assertIsInstance(channel, StageChannel)
+        self.assertEqual(channel.stage_instance.id, 20)
+
+
+class TestChannelInfo(unittest.TestCase):
+    def test_parses_channels(self) -> None:
+        bot = FakeBot(cache_flags=GatewayCacheFlags.partial_guilds)
+        (guild, channels) = Parser(bot=bot).channel_info({
+            "guild_id": "1",
+            "channels": [
+                {"id": "2", "status": "chilling", "voice_start_time": 1700000000},
+                {"id": "3", "status": None},
+            ],
+        })
+        self.assertEqual(guild.id, 1)
+        self.assertIsInstance(channels[0], ChannelInfo)
+        self.assertEqual(channels[0].channel.id, 2)
+        self.assertEqual(channels[0].status, "chilling")
+        self.assertEqual(int(channels[0].voice_start_time.timestamp()), 1700000000)
+        self.assertIsNone(channels[1].status)
+        self.assertIsNone(channels[1].voice_start_time)
 
 
 if __name__ == "__main__":

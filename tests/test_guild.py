@@ -9,7 +9,8 @@ from discord_http import (
     GuildIncidentsData, WelcomeScreen, GuildWidgetSettings, GuildTemplate,
     GuildPreview, GuildOnboarding, OnboardingPromptOption,
     OnboardingPromptType, OnboardingMode, NSFWLevel, PremiumTier, MFALevel,
-    Guild, PartialChannel, PartialGuild,
+    Guild, PartialChannel, PartialGuild, GuildChannelPosition, GuildVanityURL,
+    Webhook,
 )
 from discord_http.guild import GuildWidget
 
@@ -340,6 +341,99 @@ class TestGuildRegion(unittest.TestCase):
     def test_present_region(self) -> None:
         guild = Guild(state=FakeState(), data={"id": "1", "name": "g", "features": [], "region": "europe"})
         self.assertEqual(guild.region, "europe")
+
+
+class TestGuildRulesChannel(unittest.TestCase):
+    def test_rules_channel_resolves_to_partial_channel(self) -> None:
+        guild = Guild(state=FakeState(), data={"id": "1", "name": "g", "features": [], "rules_channel_id": "5"})
+        self.assertEqual(guild.rules_channel_id, 5)
+        self.assertEqual(guild.rules_channel.id, 5)
+
+    def test_missing_rules_channel_is_none(self) -> None:
+        guild = Guild(state=FakeState(), data={"id": "1", "name": "g", "features": []})
+        self.assertIsNone(guild.rules_channel)
+
+
+class TestGuildChannelPosition(unittest.TestCase):
+    def test_to_dict_only_includes_set_fields(self) -> None:
+        self.assertEqual(GuildChannelPosition(channel=1).to_dict(), {"id": "1"})
+
+    def test_to_dict_full(self) -> None:
+        pos = GuildChannelPosition(channel=1, position=3, parent_id=2, lock_permissions=True)
+        self.assertEqual(
+            pos.to_dict(),
+            {"id": "1", "position": 3, "parent_id": "2", "lock_permissions": True}
+        )
+
+    def test_to_dict_parent_id_none_moves_out_of_category(self) -> None:
+        pos = GuildChannelPosition(channel=1, parent_id=None)
+        self.assertEqual(pos.to_dict(), {"id": "1", "parent_id": None})
+
+
+class FakeResponse:
+    def __init__(self, response):
+        self.response = response
+
+
+class _QueryState(FakeState):
+    def __init__(self, response=None):
+        super().__init__()
+        self._response = response
+        self.calls = []
+
+    async def query(self, method, path, **kwargs):
+        self.calls.append((method, path, kwargs))
+        return FakeResponse(self._response)
+
+
+class TestPartialGuildEndpoints(unittest.IsolatedAsyncioTestCase):
+    async def test_fetch_role_member_counts(self) -> None:
+        state = _QueryState({"10": 1337, "11": 2})
+        counts = await PartialGuild(state=state, id=1).fetch_role_member_counts()
+        self.assertEqual(counts, {10: 1337, 11: 2})
+        self.assertEqual(state.calls[0][1], "/guilds/1/roles/member-counts")
+
+    async def test_fetch_vanity_url(self) -> None:
+        state = _QueryState({"code": "abc", "uses": 12})
+        vanity = await PartialGuild(state=state, id=1).fetch_vanity_url()
+        self.assertEqual(vanity, GuildVanityURL(code="abc", uses=12))
+
+    async def test_fetch_vanity_url_unset(self) -> None:
+        state = _QueryState({"code": None, "uses": 0})
+        vanity = await PartialGuild(state=state, id=1).fetch_vanity_url()
+        self.assertIsNone(vanity.code)
+
+    async def test_fetch_webhooks(self) -> None:
+        state = _QueryState([{"id": "5", "type": 1, "name": "hook", "channel_id": "6", "guild_id": "1"}])
+        webhooks = await PartialGuild(state=state, id=1).fetch_webhooks()
+        self.assertIsInstance(webhooks[0], Webhook)
+        self.assertEqual(webhooks[0].id, 5)
+        self.assertEqual(state.calls[0][1], "/guilds/1/webhooks")
+
+    async def test_fetch_soundboard_sounds_reads_items(self) -> None:
+        state = _QueryState({"items": [{
+            "name": "Yay", "sound_id": "7", "volume": 1, "emoji_id": None,
+            "emoji_name": None, "guild_id": "1", "available": True
+        }]})
+        sounds = await PartialGuild(state=state, id=1).fetch_soundboard_sounds()
+        self.assertEqual([s.id for s in sounds], [7])
+
+    async def test_edit_channel_positions(self) -> None:
+        state = _QueryState("")
+        await PartialGuild(state=state, id=1).edit_channel_positions(
+            GuildChannelPosition(channel=2, position=0),
+            GuildChannelPosition(channel=3, parent_id=4, lock_permissions=True),
+        )
+        method, path, kwargs = state.calls[0]
+        self.assertEqual((method, path), ("PATCH", "/guilds/1/channels"))
+        self.assertEqual(kwargs["json"], [
+            {"id": "2", "position": 0},
+            {"id": "3", "parent_id": "4", "lock_permissions": True},
+        ])
+
+    async def test_edit_channel_positions_requires_input(self) -> None:
+        with self.assertRaises(ValueError):
+            await PartialGuild(state=_QueryState(), id=1).edit_channel_positions()
 
 
 

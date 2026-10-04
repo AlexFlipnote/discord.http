@@ -22,7 +22,7 @@ from .entitlements import Entitlements
 from .enums import (
     ApplicationCommandType, CommandOptionType,
     ResponseType, ChannelType, InteractionType,
-    ComponentType
+    ComponentType, IntegrationType, InteractionContextType
 )
 from .file import File
 from .flags import Permissions, MessageFlags
@@ -67,6 +67,8 @@ channel_types = {
 __all__ = (
     "Context",
     "InteractionResponse",
+    "ResolvedValues",
+    "SelectValues",
 )
 
 
@@ -521,16 +523,19 @@ class Context:
         "_followup_token",
         "_guild",
         "_original_response",
+        "_raw_authorizing_integration_owners",
         "_raw_resolved",
         "_raw_type",
         "_response_sent_event",
         "app_permissions",
+        "attachment_size_limit",
         "author",
         "benchmark",
         "bot",
         "channel_id",
         "command",
         "command_type",
+        "context",
         "custom_id",
         "entitlements",
         "guild_locale",
@@ -572,7 +577,7 @@ class Context:
         """ The type of the command, if any. """
 
         # Default utilities
-        self.benchmark = utils.Benchmark()
+        self.benchmark: utils.Benchmark = utils.Benchmark()
         """ A utility for benchmarking the time taken to execute code after responding to the interaction. """
 
         # Arguments that gets parsed on runtime
@@ -591,7 +596,7 @@ class Context:
         self.select_values: SelectValues = SelectValues.none(self)
         """ The selected values of the interaction, if any. """
 
-        self.modal_values: dict[str, str | list[Member | Role | BaseChannel | Attachment | str]] = {}
+        self.modal_values: dict[str, str | bool | list[Member | Role | BaseChannel | Attachment | str] | None] = {}
         """ The values of the modal, if any. """
 
         self.options: list[dict] = data_payload.get("options", [])
@@ -628,18 +633,25 @@ class Context:
         self.guild_locale: "LocaleTypes | None" = data.get("guild_locale")
         """ The locale of the guild, if any. """
 
+        self.context: InteractionContextType | None = (
+            InteractionContextType(data["context"])
+            if data.get("context") is not None else None
+        )
+        """ The context where the interaction was triggered from, if any. """
+
+        self._raw_authorizing_integration_owners: dict[str, str] = data.get("authorizing_integration_owners") or {}
+
+        self.attachment_size_limit: int = data.get("attachment_size_limit", 0)
+        """ The attachment size limit in bytes for the interaction. """
+
         self.channel_id: int | None = None
         """ The ID of the channel the interaction was sent in, if applicable. """
 
         self.message: Message | None = None
         """ The message associated with the interaction, if any. """
 
+        # Only the `data` sub-payload, the full payload would pin `message`/`member`/`channel` for the Context's lifetime
         self._data: dict = data_payload
-        """
-        Should not be used, but if you *really* want the raw data, here it is.
-
-        Only the `data` sub-payload - the full payload pins `message`/`member`/`channel` for the Context's lifetime.
-        """
 
         self.author: Member | User | None = None
         """ The author of the message that was interacted with, if any. """
@@ -860,8 +872,23 @@ class Context:
                 "Discord will likely respond with 404 Unknown Webhook to this request."
             )
 
+    @property
+    def authorizing_integration_owners(self) -> dict[IntegrationType, int]:
+        """
+        Mapping of the installation contexts the interaction was authorized for, to the related guild or user ID.
+
+        For `IntegrationType.guild`, the ID is `0` if the interaction was triggered from the bot's DM.
+        """
+        return {
+            IntegrationType(int(k)): int(v)
+            for k, v in self._raw_authorizing_integration_owners.items()
+        }
+
     def is_bot_dm(self) -> bool:
         """ Returns a boolean of whether the interaction was in the bot's DM channel. """
+        if self.context is not None:
+            return self.context == InteractionContextType.bot_dm
+
         return (
             len(self.recipients) == 1 and
             self.bot.user.id in self.recipients
@@ -986,7 +1013,7 @@ class Context:
             for i, file in enumerate(payload.files):
                 multidata.attach(
                     f"file{i}",
-                    file,  # type: ignore
+                    file,
                     filename=file.filename
                 )
 
@@ -1036,7 +1063,8 @@ class Context:
         await self.bot.state.query(
             "POST",
             f"/interactions/{self.id}/{self._followup_token}/callback",
-            json=payload.to_dict()
+            json=payload.to_dict(),
+            res_method="text"
         )
 
     async def create_followup_response(
@@ -1204,7 +1232,8 @@ class Context:
         self._warn_if_expired()
         await self.bot.state.query(
             "DELETE",
-            f"/webhooks/{self.bot.application_id}/{self._followup_token}/messages/@original"
+            f"/webhooks/{self.bot.application_id}/{self._followup_token}/messages/@original",
+            res_method="text"
         )
 
     async def _create_args(self) -> tuple[list[Member | User | Message | None], dict]:

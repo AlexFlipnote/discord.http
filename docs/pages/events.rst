@@ -385,6 +385,17 @@ Intents.guilds
   :param start_time: :class:`datetime.datetime` | ``None`` the new voice session start time, or ``None`` if there is no active session.
 
 
+.. function:: async def on_channel_info(guild, channels):
+
+  Called in response to :meth:`Shard.request_channel_info`
+
+  .. note::
+    Depending on your cache rules, guild and channels[].channel will either return Full or Partial object.
+
+  :param guild: :class:`Guild` | :class:`PartialGuild` object with information about the guild.
+  :param channels: list[:class:`ChannelInfo`] object with the requested status and voice start time of each channel.
+
+
 .. function:: async def on_thread_create(thread):
 
   Called whenever a thread is created
@@ -608,6 +619,17 @@ Intents.guild_expressions
   .. note::
     Depending on your cache rules, sounds[].guild will either return Full or Partial object.
 
+  :param sounds: list[:class:`SoundboardSound`] object with information about the soundboard sounds.
+
+
+.. function:: async def on_soundboard_sounds(guild, sounds):
+
+  Called in response to :meth:`Shard.request_soundboard_sounds`, once per requested guild
+
+  .. note::
+    Depending on your cache rules, guild will either return Full or Partial object.
+
+  :param guild: :class:`Guild` | :class:`PartialGuild` object with information about the guild.
   :param sounds: list[:class:`SoundboardSound`] object with information about the soundboard sounds.
 
 

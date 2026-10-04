@@ -42,7 +42,7 @@ class DiscordHTTP(web.Application):
         self.bot: "Client" = client
         """ The bot instance that is using this HTTP server. """
 
-        self.debug_events = self.bot.debug_events
+        self.debug_events: bool = self.bot.debug_events
         """ Whether to dispatch debug events for interactions received, defaults to False. """
 
         super().__init__(client_max_size=10 * 1024 * 1024)

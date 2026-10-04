@@ -146,7 +146,7 @@ class AutoModRuleAction:
         self.type: AutoModRuleActionType = type
         """ The type of action to take when the auto moderation rule is triggered. """
 
-        self.channel_id = channel_id
+        self.channel_id: Snowflake | int | None = channel_id
         """ The channel to send the alert message to if action type is send_alert_message. """
 
         self.duration_seconds: int | None = duration_seconds

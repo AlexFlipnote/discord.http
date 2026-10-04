@@ -6,11 +6,11 @@ from discord_http import (
     Attachment, Member, Permissions, Role, TextChannel, User, VoiceChannel,
 )
 from discord_http.commands import (
-    Choice, Command, Range, SubGroup, bot_has_permissions,
+    Choice, Command, Range, SubGroup, allow_contexts, bot_has_permissions,
     default_permissions, has_permissions, locales, _get_meta,
     _COMMAND_META_ATTR,
 )
-from discord_http.enums import ChannelType, CommandOptionType
+from discord_http.enums import ChannelType, CommandOptionType, InteractionContextType
 
 
 def _make_command(func, **overrides) -> Command:
@@ -400,6 +400,29 @@ class TestSubGroupOptionsRecursiveStripping(unittest.TestCase):
         option = parent.options[0]
         for key in ("nsfw", "integration_types", "contexts", "default_member_permissions"):
             self.assertNotIn(key, option)
+
+
+class TestIntegrationContexts(unittest.TestCase):
+    def test_default_contexts_are_all_ints(self) -> None:
+        async def f(ctx) -> None:
+            pass
+        self.assertEqual(_make_command(f).to_dict()["contexts"], [0, 1, 2])
+
+    def test_allow_contexts_serialises_to_ints(self) -> None:
+        async def f(ctx) -> None:
+            pass
+        f = allow_contexts(bot_dm=False)(f)
+        self.assertEqual(
+            _get_meta(f).integration_contexts,
+            [InteractionContextType.guild, InteractionContextType.private_channel]
+        )
+        self.assertEqual(_make_command(f).to_dict()["contexts"], [0, 2])
+
+    def test_raw_int_contexts_still_supported(self) -> None:
+        async def f(ctx) -> None:
+            pass
+        _get_meta(f).integration_contexts = [1]
+        self.assertEqual(_make_command(f).to_dict()["contexts"], [1])
 
 
 if __name__ == "__main__":

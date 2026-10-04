@@ -1,4 +1,5 @@
 import asyncio
+import re
 
 from collections.abc import AsyncIterator, Callable
 from datetime import timedelta, datetime
@@ -9,7 +10,10 @@ from . import utils
 from .colour import Colour
 from .embeds import Embed
 from .emoji import EmojiParser
-from .enums import MessageReferenceType, MessageType, InteractionType, ReactionType
+from .enums import (
+    BaseThemeType, IntegrationType, InteractionType,
+    MessageReferenceType, MessageType, ReactionType
+)
 from .errors import HTTPException
 from .file import File
 from .flags import AttachmentFlags, MessageFlags
@@ -22,7 +26,7 @@ from .user import User, PartialUser, Application
 from .view import View
 
 if TYPE_CHECKING:
-    from .channel import BaseChannel, PartialChannel, PublicThread
+    from .channel import BaseChannel, PartialChannel, PublicThread, Thread
     from .guild import Guild, PartialGuild
     from .http import DiscordAPI, HTTPResponse
     from .member import Member
@@ -33,13 +37,18 @@ __all__ = (
     "Attachment",
     "JumpURL",
     "Message",
+    "MessageActivity",
     "MessageCall",
     "MessageInteraction",
+    "MessagePin",
     "MessageReaction",
     "MessageReference",
+    "MessageSnapshot",
     "PartialMessage",
     "Poll",
+    "PollAnswer",
     "RoleSubscriptionData",
+    "SharedClientTheme",
     "WebhookMessage",
 )
 
@@ -48,9 +57,15 @@ class MessageInteraction(PartialBase):
     """ Represents a message interaction. """
 
     __slots__ = (
+        "_raw_authorizing_integration_owners",
         "_raw_type",
         "_state",
+        "interacted_message_id",
         "name",
+        "original_response_message_id",
+        "target_message_id",
+        "target_user",
+        "triggering_interaction_metadata",
         "user",
     )
 
@@ -70,10 +85,41 @@ class MessageInteraction(PartialBase):
         self.user: User = state.bot.create_user_from_data(data["user"])
         """ The user who triggered the interaction. """
 
+        self._raw_authorizing_integration_owners: dict[str, str] = data.get("authorizing_integration_owners") or {}
+
+        self.original_response_message_id: int | None = utils.get_int(data, "original_response_message_id")
+        """ The ID of the original response message, only present on follow-up messages. """
+
+        self.target_user: User | None = (
+            state.bot.create_user_from_data(target_user)
+            if (target_user := data.get("target_user")) else None
+        )
+        """ The user the command was run on, only present on user commands. """
+
+        self.target_message_id: int | None = utils.get_int(data, "target_message_id")
+        """ The ID of the message the command was run on, only present on message commands. """
+
+        self.interacted_message_id: int | None = utils.get_int(data, "interacted_message_id")
+        """ The ID of the message that contained the component, only present on component interactions. """
+
+        self.triggering_interaction_metadata: MessageInteraction | None = (
+            MessageInteraction(state=state, data=triggering)
+            if (triggering := data.get("triggering_interaction_metadata")) else None
+        )
+        """ The interaction that opened the modal, only present on modal submit interactions. """
+
     @property
     def type(self) -> InteractionType:
         """ The type of the interaction. """
         return InteractionType(self._raw_type)
+
+    @property
+    def authorizing_integration_owners(self) -> dict[IntegrationType, int]:
+        """ The installation contexts that authorized the interaction, with the guild or user ID as value. """
+        return {
+            IntegrationType(int(k)): int(v)
+            for k, v in self._raw_authorizing_integration_owners.items()
+        }
 
 
 class MessageReaction:
@@ -90,6 +136,7 @@ class MessageReaction:
         "emoji",
         "me",
         "me_burst",
+        "normal_count",
     )
 
     def __init__(self, *, state: "DiscordAPI", message: "Message", data: dict):
@@ -97,8 +144,13 @@ class MessageReaction:
         self._channel_id = message.channel_id
         self._message_id = message.id
 
+        count_details: dict = data.get("count_details") or {}
+
         self.count: int = int(data["count"])
         """ The number of users that reacted with this emoji. """
+
+        self.normal_count: int = count_details.get("normal", self.count)
+        """ The number of users that reacted with this emoji in normal mode. """
 
         self.me: bool = data.get("me", False)
         """ Whether the bot has reacted with this emoji. """
@@ -112,7 +164,7 @@ class MessageReaction:
         self.burst_me: bool = data.get("burst_me", False)
         """ Whether the bot has reacted with this emoji in burst mode. """
 
-        self.burst_count: int = data.get("burst_count", 0)
+        self.burst_count: int = count_details.get("burst", data.get("burst_count", 0))
         """ The number of users that reacted with this emoji in burst mode. """
 
         self.burst_colors: list[Colour] = [
@@ -177,8 +229,8 @@ class MessageReaction:
         limit
             The maximum number of users to fetch, by default 100
 
-        Returns
-        -------
+        Yields
+        ------
             An async iterator of users who reacted with this emoji.
 
         Yields
@@ -713,6 +765,103 @@ class MessageCall(NamedTuple):
     ended_timestamp: datetime | None
 
 
+class MessagePin(NamedTuple):
+    """ Represents a pinned message in a channel. """
+    pinned_at: datetime
+    message: "Message"
+
+
+class MessageActivity(NamedTuple):
+    """ Represents the Rich Presence activity of a message. """
+    type: int
+    party_id: str | None
+
+
+class _MessageExtra(NamedTuple):
+    """ Raw values for the fields most messages don't have set at all. """
+    position: int | None
+    activity: dict | None
+    application: dict | None
+    shared_client_theme: dict | None
+    thread: dict | None
+    mention_channels: list[dict] | None
+
+
+class SharedClientTheme:
+    """ Represents a custom client theme shared via a message. """
+
+    __slots__ = (
+        "base_mix",
+        "base_theme",
+        "colors",
+        "gradient_angle",
+    )
+
+    def __init__(
+        self,
+        *,
+        colors: list[Colour | int | str],
+        gradient_angle: int = 0,
+        base_mix: int = 100,
+        base_theme: BaseThemeType | int | None = None
+    ):
+        self.colors: list[Colour] = [
+            Colour.from_hex(g) if isinstance(g, str) else Colour(int(g))
+            for g in colors
+        ]
+        """ The colors of the theme. """
+
+        self.gradient_angle: int = gradient_angle
+        """ The direction of the theme colors, between 0 and 360. """
+
+        self.base_mix: int = base_mix
+        """ The intensity of the theme colors, between 0 and 100. """
+
+        self.base_theme: BaseThemeType | None = (
+            BaseThemeType(int(base_theme))
+            if base_theme is not None else None
+        )
+        """ The base mode of the theme, if any. """
+
+        if len(self.colors) > 5:
+            raise ValueError("Cannot have more than 5 colors")
+        if self.gradient_angle not in range(361):
+            raise ValueError("gradient_angle must be between 0 and 360")
+        if self.base_mix not in range(101):
+            raise ValueError("base_mix must be between 0 and 100")
+
+    def __repr__(self) -> str:
+        return f"<SharedClientTheme colors={self.colors} base_theme={self.base_theme}>"
+
+    def to_dict(self) -> dict:
+        """ The shared client theme as a dictionary. """
+        data = {
+            "colors": [f"{int(g):06X}" for g in self.colors],
+            "gradient_angle": self.gradient_angle,
+            "base_mix": self.base_mix
+        }
+
+        if self.base_theme is not None:
+            data["base_theme"] = int(self.base_theme)
+
+        return data
+
+    @classmethod
+    def from_dict(cls, data: dict) -> Self:
+        """ Creates a SharedClientTheme from a dict provided by Discord. """
+        self = cls.__new__(cls)
+
+        self.colors = [Colour.from_hex(g) for g in data.get("colors") or ()]
+        self.gradient_angle = data.get("gradient_angle", 0)
+        self.base_mix = data.get("base_mix", 0)
+        self.base_theme = (
+            BaseThemeType(base_theme)
+            if (base_theme := data.get("base_theme")) is not None else None
+        )
+
+        return self
+
+
 class Attachment:
     """ Represents an attachment in a message. """
 
@@ -777,7 +926,7 @@ class Attachment:
         self.width: int | None = data.get("width")
         """ The width of the attachment, if applicable. """
 
-        self.duration_secs: int | None = data.get("duration_secs")
+        self.duration_secs: float | None = data.get("duration_secs")
         """ The duration of the attachment in seconds, if applicable. """
 
         self.waveform: str | None = data.get("waveform")
@@ -832,7 +981,7 @@ class Attachment:
         )
 
     def is_voice_message(self) -> bool:
-        """:class:`bool`: Whether this attachment is a voice message."""
+        """ Whether this attachment is a voice message. """
         return self.duration_secs is not None and "voice-message" in self.url
 
     async def fetch(self, *, use_cached: bool = False) -> bytes:
@@ -1078,10 +1227,6 @@ class PartialMessage(PartialBase):
         Immediately end the poll, then returns new Message object.
 
         This can only be done if you created it
-
-        Returns
-        -------
-            The message object of the poll
         """
         r = await self._state.query(
             "POST",
@@ -1287,6 +1432,10 @@ class PartialMessage(PartialBase):
         tts: bool | None = False,
         flags: MessageFlags | None = MISSING,
         allowed_mentions: AllowedMentions | None = MISSING,
+        stickers: list[PartialSticker | Snowflake | int] | None = MISSING,
+        nonce: int | str | None = MISSING,
+        enforce_nonce: bool = False,
+        shared_client_theme: SharedClientTheme | None = MISSING,
         delete_after: float | None = None
     ) -> "Message":
         """
@@ -1312,6 +1461,14 @@ class PartialMessage(PartialBase):
             The type of response to the message
         allowed_mentions
             The allowed mentions for the message
+        stickers
+            Stickers from the guild to send with the message, max 3
+        nonce
+            Nonce to verify the message was sent, max 25 characters
+        enforce_nonce
+            Whether the nonce should be enforced, returning the existing message if it was already sent
+        shared_client_theme
+            Client theme to share with the message
         delete_after
             If provided, the message will be deleted after the given number of seconds
         flags
@@ -1330,6 +1487,10 @@ class PartialMessage(PartialBase):
             view=view,
             tts=tts,
             flags=flags,
+            stickers=stickers,
+            nonce=nonce,
+            enforce_nonce=enforce_nonce,
+            shared_client_theme=shared_client_theme,
             allowed_mentions=(
                 allowed_mentions or
                 self._state.bot._default_allowed_mentions
@@ -1369,7 +1530,7 @@ class PartialMessage(PartialBase):
         """
         await self._state.query(
             "PUT",
-            f"/channels/{self.channel.id}/pins/{self.id}",
+            f"/channels/{self.channel.id}/messages/pins/{self.id}",
             res_method="text",
             reason=reason
         )
@@ -1385,7 +1546,7 @@ class PartialMessage(PartialBase):
         """
         await self._state.query(
             "DELETE",
-            f"/channels/{self.channel.id}/pins/{self.id}",
+            f"/channels/{self.channel.id}/messages/pins/{self.id}",
             res_method="text",
             reason=reason
         )
@@ -1581,6 +1742,10 @@ class Message(PartialMessage):
     """ Represents a message object. """
 
     __slots__ = (
+        "_extra",
+        "_raw_flags",
+        "_raw_mention_roles",
+        "application_id",
         "attachments",
         "author",
         "call",
@@ -1590,6 +1755,7 @@ class Message(PartialMessage):
         "interaction",
         "mention_everyone",
         "mentions",
+        "nonce",
         "pinned",
         "poll",
         "reactions",
@@ -1601,6 +1767,7 @@ class Message(PartialMessage):
         "tts",
         "type",
         "view",
+        "webhook_id",
     )
 
     def __init__(
@@ -1634,6 +1801,33 @@ class Message(PartialMessage):
 
         self.tts: bool = data.get("tts", False)
         """ Whether the message is a TTS message or not. """
+
+        self.nonce: int | str | None = data.get("nonce")
+        """ The nonce used to verify the message was sent, if any. """
+
+        self.webhook_id: int | None = utils.get_int(data, "webhook_id")
+        """ The ID of the webhook that sent the message, if any. """
+
+        self.application_id: int | None = utils.get_int(data, "application_id")
+        """ The ID of the application, if the message is an interaction or sent by an application-owned webhook. """
+
+        self._raw_flags: int = data.get("flags", 0)
+        self._raw_mention_roles: tuple[int, ...] | None = (
+            tuple(int(g) for g in mention_roles)
+            if (mention_roles := data.get("mention_roles")) is not None else None
+        )
+
+        extra = _MessageExtra(
+            position=data.get("position"),
+            activity=data.get("activity"),
+            application=data.get("application"),
+            shared_client_theme=data.get("shared_client_theme"),
+            thread=data.get("thread"),
+            mention_channels=data.get("mention_channels"),
+        )
+        self._extra: _MessageExtra | None = (
+            extra if any(g is not None for g in extra) else None
+        )
 
         self.poll: Poll | None = None
         """ The poll associated with the message, if any. """
@@ -1809,6 +2003,115 @@ class Message(PartialMessage):
         )
 
     @property
+    def pretty_content(self) -> str:
+        """
+        Same as content, but mentions are parsed if possible.
+
+        User, role and channel mentions are replaced with their names,
+        slash command mentions with `/command`,
+        mentions that can not be resolved are left as-is.
+        """
+        if not self.content:
+            return self.content
+
+        guild = self.guild if self.guild_id else None
+
+        # Only pinged mentions are listed by Discord, so fall back to cache for the rest
+        users = {u.id: u.display_name for u in self.mentions}
+        roles = {
+            r.id: r.name for r in self.role_mentions
+            if isinstance(r, Role)
+        }
+        channels = {
+            c.id: name for c in self.channel_mentions
+            if (name := getattr(c, "name", None))
+        }
+        if self._extra and self._extra.mention_channels:
+            channels |= {int(g["id"]): g["name"] for g in self._extra.mention_channels}
+
+        def _user(m: re.Match) -> str:
+            user_id = int(m.group(1))
+            if user_id not in users and guild:
+                member = guild.get_member(user_id)
+                if name := getattr(member, "display_name", None):
+                    users[user_id] = name
+            return f"@{users[user_id]}" if user_id in users else m.group(0)
+
+        def _role(m: re.Match) -> str:
+            role_id = int(m.group(1))
+            if role_id not in roles and guild:
+                role = guild.get_role(role_id)
+                if isinstance(role, Role):
+                    roles[role_id] = role.name
+            return f"@{roles[role_id]}" if role_id in roles else m.group(0)
+
+        content = utils.re_mention.sub(_user, self.content)
+        content = utils.re_role.sub(_role, content)
+        content = utils.re_slash_command.sub(r"/\1", content)
+
+        return utils.re_channel.sub(
+            lambda m: (
+                f"#{channels[int(m.group(1))]}"
+                if int(m.group(1)) in channels else m.group(0)
+            ),
+            content
+        )
+
+    @property
+    def escaped_content(self) -> str:
+        """ Same as content, but with markdown characters escaped, showing the message as it was written. """
+        return utils.escape_markdown(self.content)
+
+    @property
+    def flags(self) -> MessageFlags:
+        """ The flags of the message. """
+        return MessageFlags(self._raw_flags)
+
+    @property
+    def thread(self) -> "Thread | None":
+        """ The thread that was started from this message, if any. """
+        thread = self._extra.thread if self._extra else None
+        if not thread:
+            return None
+
+        return self._state.bot.create_thread_from_data(thread)
+
+    @property
+    def position(self) -> int | None:
+        """ The approximate position of the message in a thread, if any. """
+        return self._extra.position if self._extra else None
+
+    @property
+    def activity(self) -> MessageActivity | None:
+        """ The Rich Presence activity of the message, if any. """
+        activity = self._extra.activity if self._extra else None
+        if not activity:
+            return None
+
+        return MessageActivity(
+            type=activity["type"],
+            party_id=activity.get("party_id"),
+        )
+
+    @property
+    def application(self) -> Application | None:
+        """ The Rich Presence application of the message, if any. """
+        application = self._extra.application if self._extra else None
+        if not application:
+            return None
+
+        return self._state.bot.create_application_from_data(application)
+
+    @property
+    def shared_client_theme(self) -> SharedClientTheme | None:
+        """ The client theme shared via the message, if any. """
+        theme = self._extra.shared_client_theme if self._extra else None
+        if not theme:
+            return None
+
+        return SharedClientTheme.from_dict(theme)
+
+    @property
     def emojis(self) -> list[EmojiParser]:
         """ The emojis in the message. """
         return [
@@ -1834,10 +2137,17 @@ class Message(PartialMessage):
         if not self.guild_id:
             return []
 
+        guild = self.guild
+        role_ids = (
+            self._raw_mention_roles
+            if self._raw_mention_roles is not None
+            else utils.re_role.findall(self.content)
+        )
+
         return [
-            self.guild.get_role(int(role_id)) or
+            guild.get_role(int(role_id)) or
             self._state.bot.get_partial_role(int(role_id), guild_id=self.guild_id)
-            for role_id in utils.re_role.findall(self.content)
+            for role_id in role_ids
         ]
 
     @property
@@ -1845,8 +2155,19 @@ class Message(PartialMessage):
         """
         The channel mentions in the message.
 
-        Can return full role object if guild and channel cache is enabled
+        Can return full channel object if guild and channel cache is enabled
         """
+        if self._extra and self._extra.mention_channels:
+            # Only sent on crossposts, where the channels are from another guild
+            return [
+                self._state.cache.get_channel_thread(
+                    guild_id=int(g["guild_id"]),
+                    channel_id=int(g["id"])
+                ) or
+                self._state.bot.get_partial_channel(int(g["id"]), guild_id=int(g["guild_id"]))
+                for g in self._extra.mention_channels
+            ]
+
         guild = self.guild if self.guild_id else None
 
         return [
@@ -1872,14 +2193,14 @@ class Message(PartialMessage):
 class WebhookMessage(Message):
     """ Represents a message sent by a webhook. """
 
-    __slots__ = ("application_id", "token")
+    __slots__ = ("token",)
 
     def __init__(self, *, state: "DiscordAPI", data: dict, application_id: int, token: str):
         super().__init__(state=state, data=data)
-        self.application_id = int(application_id)
+        self.application_id: int = int(application_id)
         """ The ID of the application that created the webhook. """
 
-        self.token = token
+        self.token: str = token
         """ The token of the webhook, used for editing and deleting the message. """
 
     async def edit(

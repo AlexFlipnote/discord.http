@@ -26,11 +26,13 @@ if TYPE_CHECKING:
     from .channel import DMChannel, PartialChannel, Thread
     from .gateway.object import Presence
     from .http import DiscordAPI
-    from .message import Message
+    from .message import Message, Poll, SharedClientTheme
+    from .sticker import PartialSticker
 
 __all__ = (
     "Member",
     "PartialMember",
+    "PartialThreadMember",
     "ThreadMember",
 )
 
@@ -122,6 +124,11 @@ class PartialMember(PartialBase):
         type: ResponseType | int = 4,  # ruff: ignore[builtin-argument-shadowing]
         flags: MessageFlags | None = MISSING,
         allowed_mentions: AllowedMentions | None = MISSING,
+        poll: "Poll | None" = MISSING,
+        stickers: list["PartialSticker | Snowflake | int"] | None = MISSING,
+        nonce: int | str | None = MISSING,
+        enforce_nonce: bool = False,
+        shared_client_theme: "SharedClientTheme | None" = MISSING,
         delete_after: float | None = None
     ) -> "Message":
         """
@@ -151,6 +158,16 @@ class PartialMember(PartialBase):
             Flags of the message
         allowed_mentions
             Allowed mentions of the message
+        poll
+            The poll to be sent
+        stickers
+            Stickers from the guild to send with the message, max 3
+        nonce
+            Nonce to verify the message was sent, max 25 characters
+        enforce_nonce
+            Whether the nonce should be enforced, returning the existing message if it was already sent
+        shared_client_theme
+            Client theme to share with the message
         delete_after
             How long to wait before deleting the message
 
@@ -169,6 +186,11 @@ class PartialMember(PartialBase):
             tts=tts,
             type=type,
             flags=flags,
+            poll=poll,
+            stickers=stickers,
+            nonce=nonce,
+            enforce_nonce=enforce_nonce,
+            shared_client_theme=shared_client_theme,
             allowed_mentions=(
                 allowed_mentions or
                 self._state.bot._default_allowed_mentions
@@ -391,6 +413,7 @@ class PartialMember(PartialBase):
             await self._state.query(
                 "PUT",
                 f"/guilds/{self.guild_id}/members/{self.id}/roles/{int(role)}",
+                res_method="text",
                 reason=reason
             )
 
@@ -416,6 +439,7 @@ class PartialMember(PartialBase):
             await self._state.query(
                 "DELETE",
                 f"/guilds/{self.guild_id}/members/{self.id}/roles/{int(role)}",
+                res_method="text",
                 reason=reason
             )
 
@@ -466,7 +490,6 @@ class Member(PartialMember):
         )
 
         self._user: User = real_user
-        """ The user behind this member. """
 
         self._raw_permissions: int | None = utils.get_int(data, "permissions")
 
@@ -704,14 +727,7 @@ class Member(PartialMember):
 
     @property
     def discriminator(self) -> str | None:
-        """
-        Gives the discriminator of the member if available.
-
-        Returns
-        -------
-            Discriminator of a user who has yet to convert or a bot account.
-            If the user has converted to the new username, this will return None
-        """
+        """ Gives the discriminator of the member if available. """
         return self._user.discriminator
 
     @property
