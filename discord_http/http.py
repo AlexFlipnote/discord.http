@@ -12,7 +12,7 @@ import time
 
 from collections.abc import AsyncIterator
 from multidict import CIMultiDictProxy
-from typing import Any, Self, overload, Literal, TypeVar, Generic, TYPE_CHECKING
+from typing import Self, overload, Literal, TypeVar, Generic, TYPE_CHECKING
 from urllib.parse import quote as url_quote
 
 from . import __version__
@@ -174,7 +174,7 @@ class HTTPClient:
         *,
         res_method: Literal["json"],
         **kwargs
-    ) -> HTTPResponse[dict[Any, Any] | list[Any]]:
+    ) -> HTTPResponse[dict]:
         ...
 
     @overload
@@ -750,7 +750,7 @@ class DiscordAPI:
         *,
         res_method: Literal["json"] = "json",
         **kwargs
-    ) -> HTTPResponse[dict[Any, Any]]:
+    ) -> HTTPResponse[dict]:
         ...
 
     @overload
