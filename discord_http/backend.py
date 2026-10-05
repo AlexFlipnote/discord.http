@@ -67,6 +67,8 @@ class DiscordHTTP(web.Application):
         if self.bot.public_key:
             self.verify_key = Ed25519PublicKey.from_public_bytes(bytes.fromhex(self.bot.public_key))
 
+        self._endpoint_url_noticed: bool = False
+
         # Silence aiohttp access logs
         logging.getLogger("aiohttp.server").setLevel(logging.ERROR)
         logging.getLogger("aiohttp.access").setLevel(logging.ERROR)
@@ -146,6 +148,16 @@ class DiscordHTTP(web.Application):
             self.bot.dispatch("ping", ping)
 
         _log.debug(f"Discord Interactions ACK received ({ping.id})")
+
+        if (
+            not self._endpoint_url_noticed and
+            self.bot.application and
+            not self.bot.application.interactions_endpoint_url
+        ):
+            # Booted without an endpoint URL, so this ping is Discord verifying a newly saved one
+            self._endpoint_url_noticed = True
+            _log.info("Interactions endpoint URL detected, restart the bot to run in HTTP mode")
+
         return self.jsonify(ctx.response.pong())
 
     async def _run_before_invoke(self, ctx: "Context") -> bool:

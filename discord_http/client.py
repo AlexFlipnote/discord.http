@@ -425,7 +425,10 @@ class Client:
 
         if not endpoint_url and not self.disable_http_server:
             # Kept running so Discord can verify an endpoint URL when it is saved
-            _log.warning("HTTP server is still running (disable_http_server=True turns it off)")
+            _log.info(
+                "HTTP server kept running so Discord can verify an endpoint URL "
+                "(disable_http_server=True turns it off)"
+            )
 
         return mode
 
