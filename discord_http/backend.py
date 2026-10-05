@@ -49,6 +49,15 @@ class DiscordHTTP(web.Application):
         self.debug_events: bool = self.bot.debug_events
         """ Whether to dispatch debug events for interactions received, defaults to False. """
 
+        self.host: str | None = None
+        """ The host the HTTP server listens on, `None` until it is started. """
+
+        self.port: int | None = None
+        """ The port the HTTP server listens on, `None` until it is started. """
+
+        self.interaction_path: str = "/"
+        """ The path interactions are received on, always starting with a slash. """
+
         super().__init__(client_max_size=10 * 1024 * 1024)
 
         # Static values
@@ -775,6 +784,8 @@ class DiscordHTTP(web.Application):
             )
             int_path = f"/{int_path}"
 
+        self.host, self.port, self.interaction_path = host, port, int_path
+
         if not self.bot.disable_default_get_path:
             self.router.add_get(int_path, self.index_ping)
 
@@ -791,7 +802,6 @@ class DiscordHTTP(web.Application):
             self.router.add_post(events_path, self._index_webhook_events_endpoint)
 
         try:
-            _log.info(f"Serving on http://{host}:{port}")
             web.run_app(
                 self,
                 host=host,

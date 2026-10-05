@@ -241,15 +241,15 @@ class Client:
 
         try:
             self.loop: asyncio.AbstractEventLoop = loop or asyncio.get_running_loop()
-            _log.info(f"asyncio/uvloop loop found, using it ({self.loop})")
+            _log.debug(f"asyncio/uvloop loop found, using it ({self.loop})")
         except RuntimeError:
             if sys.platform != "win32":
                 import uvloop
                 self.loop: asyncio.AbstractEventLoop = uvloop.new_event_loop()
-                _log.info("asyncio/uvloop loop not found, creating uvloop")
+                _log.debug("asyncio/uvloop loop not found, creating uvloop")
             else:
                 self.loop: asyncio.AbstractEventLoop = asyncio.new_event_loop()
-                _log.info("asyncio loop not found, creating one")
+                _log.debug("asyncio loop not found, creating one")
 
             asyncio.set_event_loop(self.loop)
 
@@ -372,7 +372,6 @@ class Client:
                 cache_flags=self._gateway_cache
             )
             self.gateway.start()
-            _log.info("Starting discord.http/gateway client")
 
         await self._prepare_commands()
 
@@ -388,7 +387,12 @@ class Client:
         if self.has_any_dispatch("ready"):
             self.dispatch("ready", client)
         else:
-            _log.info(f"discord.http is now ready (took {utils.format_small_unit(self.uptime)})")
+            backend = self.backend
+            serving: str = (
+                f" on http://{backend.host}:{backend.port}{backend.interaction_path}"
+                if backend.host is not None else ""
+            )
+            _log.info(f"discord.http is now ready{serving} (took {utils.format_small_unit(self.uptime)})")
 
     def _resolve_connection_mode(self) -> str:
         """
@@ -405,27 +409,19 @@ class Client:
         if not endpoint_url or self.disable_http_server:
             self.enable_gateway = True
 
+        # What each mode means is explained in the README, so only the name is logged
         mode: str
-        description: str
-
-        if endpoint_url and self.disable_http_server:
-            # "Trust me, I know what I am doing" mode: the URL is set, but HTTP is off anyway.
-            # Discord keeps sending interactions to the endpoint URL, this bot only gets gateway events
-            mode, description = ("WS+", "events over the gateway") if self.intents else ("WS", "gateway only")
-        elif not endpoint_url and self.intents:
-            mode, description = "WS+", "interactions and events over the gateway"
-        elif not endpoint_url:
-            # Without intents, interactions are the only thing the gateway sends
-            mode, description = "WS", "interactions over the gateway"
+        if not endpoint_url or self.disable_http_server:
+            # With an endpoint URL and HTTP disabled, it's "Trust me, I know what I am doing" mode,
+            # Discord keeps sending interactions to the URL and this bot only gets gateway events
+            mode = "WS+" if self.intents else "WS"
         elif self.enable_gateway:
-            mode, description = "HTTP+WS", "interactions over HTTP, events over the gateway"
+            mode = "HTTP+WS"
         else:
-            mode, description = "HTTP", "interactions over HTTP"
+            mode = "HTTP"
 
-        if self.disable_http_server:
-            description += ", HTTP server disabled"
-
-        _log.info(f"Running in {mode} mode ({description})")
+        disabled_note: str = " (HTTP server disabled)" if self.disable_http_server else ""
+        _log.info(f"Starting discord.http v{__version__} in {mode} mode{disabled_note}")
 
         if not endpoint_url and not self.disable_http_server:
             # Kept running so Discord can verify an endpoint URL when it is saved
@@ -844,8 +840,6 @@ class Client:
         port
             Port to use, if not provided, it will use `8080`
         """
-        _log.info(f"Starting discord.http (v{__version__})")
-
         # Needed up front to warn about anything a disabled HTTP server would leave unanswered
         self.loop.run_until_complete(self._fetch_application())
 

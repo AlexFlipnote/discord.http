@@ -179,10 +179,9 @@ After all these steps, you should see the following in your terminal:
 
 This what the ``[ INFO ]`` messages mean:
 
-1. Telling you where the bot is broadcasting to, when it comes to the host and port.
-2. Showing if the bot has successfully synced commands with Discord API (it will not show if you have syncing disabled).
-3. Showing that the bot is now ready to receive interactions from Discord API.
-4. Confirming that the URL you provided in the bot's application page is correct, working and Discord API can reach it.
+1. Showing if the bot has successfully synced commands with Discord API (it will not show if you have syncing disabled).
+2. Showing that the bot is now ready to receive interactions from Discord API, and the host and port it is serving on.
+3. Confirming that the URL you provided in the bot's application page is correct, working and Discord API can reach it.
 
 Offline mode
 ------------

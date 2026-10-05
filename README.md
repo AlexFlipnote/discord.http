@@ -66,6 +66,18 @@ async def on_message_create(msg: Message):
 client.start()
 ```
 
+### Connection modes
+On boot, the library picks a mode from your bot's Interactions Endpoint URL and the `intents` you pass, and logs it.
+
+| Mode | Interactions | Gateway events | When |
+|---|---|---|---|
+| `HTTP` | Over HTTP | No | Endpoint URL set |
+| `HTTP+WS` | Over HTTP | Yes | Endpoint URL set, with `intents` |
+| `WS` | Over the gateway | No | No endpoint URL, or `disable_http_server=True` |
+| `WS+` | Over the gateway | Yes | Same as `WS`, with `intents` |
+
+The HTTP server runs in every mode unless `disable_http_server=True` is passed. With that flag and an endpoint URL still set, Discord keeps sending interactions to the URL, so this bot only handles gateway events.
+
 ### Offline mode
 Not every job needs a running bot. `offline_run()` logs in, runs your function once and exits, with no HTTP server, no gateway connection and no public endpoint needed. Great for cron jobs, one-off scripts and admin tools.
 
