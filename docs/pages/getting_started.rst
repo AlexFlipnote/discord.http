@@ -1,18 +1,43 @@
 Getting started
 ===============
-When it comes to ``discord.http``, it is not like the usual websocket bots.
-This library is only for the ``HTTP POST`` requests sent by the Discord API.
-You can of course use this library to do normal Discord actions, however you do not have some familiar intents, like:
+``discord.http`` is built around Discord's HTTP interactions.
+Instead of keeping a connection open, Discord sends every slash command, button click and modal submit
+to your bot as an ``HTTP POST`` request, which your bot then answers.
+When you need more, like knowing when a message is sent or a member joins,
+the gateway (websocket) can be turned on alongside it.
 
-- Able to see the guilds the bot is in
-- Knowing then the bot joins/leaves a server
-- Status changes to people or bots
+How your bot connects
+---------------------
+On boot, the library checks your bot's "Interactions Endpoint URL" and your ``intents``,
+then logs which of these modes it runs in:
 
-Essentially, no intents are available, however there are some you do get, which are:
+.. list-table::
+  :header-rows: 1
 
-- Whenever a slash command is used
-- When someone clicks a button, selects in menu, etc
-- When someone has submitted a modal
+  * - Mode
+    - Interactions
+    - Gateway events
+    - When
+  * - ``HTTP``
+    - Over HTTP
+    - None
+    - The endpoint URL is set
+  * - ``HTTP+WS``
+    - Over HTTP
+    - Yes
+    - The endpoint URL is set, and ``enable_gateway=True`` with ``intents``
+  * - ``WS``
+    - Over the gateway
+    - None
+    - No endpoint URL, and no ``intents``
+  * - ``WS+``
+    - Over the gateway
+    - Yes
+    - No endpoint URL, with ``intents``
+
+The HTTP modes are recommended, the first reply to a command is sent back on the same request
+and no connection has to be kept open just to answer commands.
+The WS modes need no hosting at all, which is great for local development, see :ref:`ws-mode` below.
 
 Requirements
 ------------
@@ -36,11 +61,9 @@ You can do so by going to the `Discord developer page <https://discord.com/devel
 
 .. image:: ../_static/images/getting_started/discord_portal_intro.png
 
-After that, you will need the following information from the bot page:
-
-- Application ID
-- Public key
-- Token
+After that, copy the bot's token from the bot page, it is the only thing the client needs.
+The application ID and public key are fetched automatically when the bot boots.
+You will still need the application ID to invite the bot, as shown below.
 
 .. note::
   Make sure you copy the application ID, not the client ID.
@@ -53,7 +76,7 @@ Creating one for your own bot can be done by using this URL:
 
   https://discord.com/oauth2/authorize?client_id=APPLICATION_ID&scope=bot+applications.commands
 
-The bot will appear to be "offline" whenever you have it on your server and when you are running the bot.
+When running over HTTP only, the bot will appear to be "offline" on your server, even while it is running.
 This is due to the fact that the bot is not using the websocket, which is what makes the bot appear online.
 However you are able to use the bot as normal, and it will respond to slash commands and other interactions.
 
@@ -62,7 +85,7 @@ However you are able to use the bot as normal, and it will respond to slash comm
 
 HTTP Server
 ~~~~~~~~~~~
-Depending on the approach you take, there are multiple ways to host the HTTP server.
+Only needed for the HTTP modes. Depending on the approach you take, there are multiple ways to host the HTTP server.
 For local testing, you can use `ngrok <https://ngrok.com/>`_,
 which is a tool that allows you to expose your local server to the internet.
 
@@ -70,6 +93,30 @@ Planning to host this in a server on production scale?
 You can use `Apache2 <https://httpd.apache.org/>`_ or `NGINX <https://www.nginx.com/>`_.
 For beginners, Apache2 is a nice way to get introduced to hosting, however we recommend
 using NGINX due to its performance overall and its ability to handle more requests.
+
+.. _ws-mode:
+
+No HTTP server? (WS mode)
+~~~~~~~~~~~~~~~~~~~~~~~~~
+Hosting a public HTTPS endpoint is recommended, but not required.
+If the "Interactions Endpoint URL" in your bot's application page is left empty,
+Discord sends interactions over the gateway instead, and the library detects this on boot:
+
+- The gateway is enabled automatically to receive interactions, with a warning in the log
+- The HTTP server is not started at all, unless you use ``webhook_events_path``
+- Your commands do not change, ``return ctx.response.send_message(...)`` works the same way
+
+This is great for local development and for bots that do not want to deal with hosting,
+but it does give up what makes HTTP mode lean:
+
+- The first reply to a command costs an extra request to Discord, so it is slightly slower
+- The bot needs a gateway connection running at all times
+
+.. note::
+  The automatically enabled gateway connects without any intents, which is all interactions need.
+  If you also want gateway events, like ``message_create``, pass ``enable_gateway=True``
+  along with your desired ``intents``, see :ref:`discord.http/gateway <gateway-section>` below.
+  Passing ``enable_gateway=True`` also hides the warning, as the gateway is then intentional.
 
 Quick example
 -------------
@@ -169,6 +216,8 @@ However if you do want to use ``DEBUG``, you can do so by setting the logging le
   It is recommended to only use it for debugging purposes and not in production.
 
 
+.. _gateway-section:
+
 discord.http/gateway
 --------------------
 
@@ -227,7 +276,7 @@ Not to mention that this will also reduce the amount of RAM usage, as the librar
 
   client = Client(
       ...
-      cache_flags=(
+      gateway_cache=(
         GatewayCacheFlags.guilds |
         GatewayCacheFlags.channels |
         ...

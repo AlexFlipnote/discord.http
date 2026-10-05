@@ -2,6 +2,7 @@ import asyncio
 import importlib
 import inspect
 import logging
+import signal
 import sys
 import time
 
@@ -78,7 +79,9 @@ class Client:
     allowed_mentions
         Allowed mentions to use, if not provided, it will use `AllowedMentions.all()`
     enable_gateway
-        Whether to enable the gateway or not, which runs in the background
+        Whether to enable the gateway or not, which runs in the background.
+        It is enabled automatically if the application has no interactions endpoint URL,
+        since Discord then sends interactions over the gateway instead.
     automatic_shards
         Whether to automatically shard the bot or not
     playing_status
@@ -320,18 +323,27 @@ class Client:
             except asyncio.CancelledError:
                 pass
 
-    async def _prepare_bot(self, _app: web.Application | None = None) -> None:
-        """ Run prepare_setup() before boot to make the user set up needed vars. """
+    async def _fetch_application(self) -> None:
+        """ Creates the HTTP session and fetches the application, needed before anything else can run. """
         await self.state.http._create_session()
 
         try:
-            client = await self.update_me()
+            await self.update_me()
         except RuntimeError as e:
             # If this failed, kill the bot, it will fail..
             _log.error(e)
             raise
 
+    async def _prepare_bot(self, _app: web.Application | None = None) -> None:
+        """ Run prepare_setup() before boot to make the user set up needed vars. """
+        if self.application is None:
+            await self._fetch_application()
+
+        client: User = self.user
+
         await self.setup_hook()
+
+        self._resolve_connection_mode()
 
         if self.enable_gateway:
             from .gateway import GatewayClient  # Circular import
@@ -359,6 +371,56 @@ class Client:
             self.dispatch("ready", client)
         else:
             _log.info(f"discord.http is now ready (took {utils.format_small_unit(self.uptime)})")
+
+    def _resolve_connection_mode(self) -> str:
+        """
+        Enables the gateway if interactions can only arrive through it, then logs and returns the connection mode.
+
+        Discord only sends interactions over the gateway when the application has no
+        interactions endpoint URL, so without one the gateway is required to receive them.
+        The mode is either `HTTP`, `HTTP+WS`, `WS` or `WS+`.
+        """
+        endpoint_url: str | None = self.application.interactions_endpoint_url if self.application else None
+
+        if not endpoint_url and not self.enable_gateway:
+            _log.warning("No interactions endpoint URL, using the gateway for interactions (enable_gateway=True hides this)")
+            self.enable_gateway = True
+
+        mode: str
+        description: str
+
+        if not endpoint_url and self.intents:
+            mode, description = "WS+", "interactions and events over the gateway"
+        elif not endpoint_url:
+            # Without intents, interactions are the only thing the gateway sends
+            mode, description = "WS", "interactions over the gateway"
+        elif self.enable_gateway:
+            mode, description = "HTTP+WS", "interactions over HTTP, events over the gateway"
+        else:
+            mode, description = "HTTP", "interactions over HTTP"
+
+        _log.info(f"Running in {mode} mode ({description})")
+        return mode
+
+    def _handle_gateway_interaction(self, data: dict, *, replayed: bool = False) -> None:
+        """
+        Schedules an interaction received over the gateway to be handled in the background.
+
+        Ran as a task so a slow command never blocks the shard from reading events.
+
+        Parameters
+        ----------
+        data
+            The raw interaction payload from `INTERACTION_CREATE`
+        replayed
+            Whether the interaction was replayed by Discord after a resume
+        """
+        task: asyncio.Task = self.loop.create_task(
+            self.backend.handle_gateway_interaction(data, replayed=replayed),
+            name=f"discord.http/gateway/interaction:{data.get('id')}"
+        )
+        self._background_tasks.add(task)
+        task.add_done_callback(self._cleanup_task)
 
     async def __cleanup(self, _: web.Application | None = None) -> None:
         """ Called when the bot is shutting down. """
@@ -740,6 +802,9 @@ class Client:
         """
         Boot up the bot and start the HTTP server.
 
+        If the application has no interactions endpoint URL and no webhook events path is set,
+        the HTTP server is skipped and the bot runs on the gateway alone.
+
         Parameters
         ----------
         host
@@ -748,9 +813,48 @@ class Client:
             Port to use, if not provided, it will use `8080`
         """
         _log.info(f"Starting discord.http (v{__version__})")
+
+        # Needed up front to know if the HTTP server has anything to serve
+        self.loop.run_until_complete(self._fetch_application())
+
+        if not self._needs_http_server():
+            self._run_without_http()
+            return
+
         self.backend.on_startup.append(self._prepare_bot)
         self.backend.on_cleanup.append(self.__cleanup)
         self.backend.start(host=host, port=port)
+
+    def _needs_http_server(self) -> bool:
+        """ Whether the HTTP server is needed, either for interactions or webhook events. """
+        endpoint_url: str | None = self.application.interactions_endpoint_url if self.application else None
+        return bool(endpoint_url or self.webhook_events_path)
+
+    def _run_without_http(self) -> None:
+        """ Runs the bot on the gateway alone, used when interactions arrive over it and nothing else needs HTTP. """
+        if sys.platform != "win32":
+            # Same as aiohttp does for the HTTP server, so stopping the bot still cleans up
+            for sig in (signal.SIGINT, signal.SIGTERM):
+                self.loop.add_signal_handler(sig, self.loop.stop)
+
+        try:
+            self.loop.run_until_complete(self._prepare_bot())
+            self.loop.run_forever()
+        except KeyboardInterrupt:
+            pass
+        finally:
+            try:
+                self.loop.run_until_complete(self.__cleanup())
+
+                # Same as aiohttp does when the HTTP server stops, so no task is left pending
+                remaining: set[asyncio.Task] = asyncio.all_tasks(self.loop)
+                for task in remaining:
+                    task.cancel()
+                self.loop.run_until_complete(asyncio.gather(*remaining, return_exceptions=True))
+
+                self.loop.run_until_complete(self.loop.shutdown_asyncgens())
+            finally:
+                self.loop.close()
 
     async def wait_until_ready(self) -> None:
         """ Waits until the client is ready using `asyncio.Event.wait()`. """

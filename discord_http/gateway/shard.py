@@ -352,6 +352,7 @@ class Shard:
         self._connection = None
         self._should_kill = False
         self._reconnect_attempts: int = 0
+        self._replaying: bool = False
 
         self._buffer: bytearray = bytearray()
         self._zlib: zlib._Decompress = zlib.decompressobj()
@@ -365,6 +366,7 @@ class Shard:
             "GUILD_CREATE": (self._parse_guild_create, True),
             "GUILD_DELETE": (self._parse_guild_delete, False),
             "GUILD_MEMBERS_CHUNK": (self._parse_guild_members_chunk, True),
+            "INTERACTION_CREATE": (self._parse_interaction_create, False),
         }
 
     @property
@@ -397,6 +399,7 @@ class Shard:
         self._identified.clear()
         self._expected_guild_count = 0
         self._guild_create_queue = asyncio.Queue()
+        self._replaying = False
 
         if self._ready_task is not None and not self._ready_task.done():
             self._ready_task.cancel()
@@ -552,6 +555,7 @@ class Shard:
 
                     if self.status.can_resume():
                         _log.debug(f"Shard {self.shard_id} resuming session")
+                        self._replaying = True
                         await self.send_message(PayloadType.resume)
 
                     else:
@@ -578,6 +582,7 @@ class Shard:
 
         match event:
             case "READY":
+                self._replaying = False
                 self.status.update_sequence(msg["s"])
                 self.status.update_ready_data(data)
                 self._expected_guild_count = len(data.get("guilds") or [])
@@ -593,6 +598,7 @@ class Shard:
                 )
 
             case "RESUMED":
+                self._replaying = False
                 self._reconnect_attempts = 0
 
                 if self.bot.has_any_dispatch("shard_resumed"):
@@ -1105,6 +1111,10 @@ class Shard:
             self.bot.dispatch(name, *args)
         except Exception as e:
             _log.error(f"Error while parsing event {name}", exc_info=e)
+
+    def _parse_interaction_create(self, data: dict) -> None:
+        # Only sent when the application has no interactions endpoint URL
+        self.bot._handle_gateway_interaction(data, replayed=self._replaying)
 
     async def _parse_guild_create(self, data: dict) -> None:
         if (unavailable := data.get("unavailable")) is True:

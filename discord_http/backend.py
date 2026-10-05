@@ -17,12 +17,16 @@ from aiohttp.web_exceptions import (
 from . import utils
 from .commands import Command, SubGroup
 from .enums import InteractionType, CommandOptionType, IntegrationType
-from .errors import CheckFailed
+from .errors import CheckFailed, NotFound
 from .response import BaseResponse, Ping, MessageResponse, EmptyResponse
 
 if TYPE_CHECKING:
     from .client import Client
     from .context import Context
+
+InteractionResult = BaseResponse | dict | web.Response
+_INTERACTION_RESPONSE_TIMEOUT = 3.0
+_PING_TYPE = int(InteractionType.ping)  # Converted once, the enum is compared on every interaction
 
 _log = logging.getLogger(__name__)
 
@@ -170,7 +174,7 @@ class DiscordHTTP(web.Application):
         self,
         ctx: "Context",
         data: dict
-    ) -> web.Response:
+    ) -> "InteractionResult":
         """ Used to handle application commands. """
         with ctx.benchmark.measure("backend:before_invoke", internal=True):
             await self._run_before_invoke(ctx)
@@ -196,8 +200,7 @@ class DiscordHTTP(web.Application):
 
             await self._run_after_invoke(ctx)
 
-            with ctx.benchmark.measure("backend:response", internal=True):
-                return self.multipart_response(payload)
+            return payload
 
         except Exception as e:
             if self.bot.has_any_dispatch("interaction_error"):
@@ -209,7 +212,7 @@ class DiscordHTTP(web.Application):
                 )
 
             if (send_error := self.error_messages(ctx, e)) and isinstance(send_error, BaseResponse):
-                return self.jsonify(send_error.to_dict())
+                return send_error
 
             raise HTTPInternalServerError()
 
@@ -217,7 +220,7 @@ class DiscordHTTP(web.Application):
         self,
         ctx: "Context",
         data: dict
-    ) -> web.Response:
+    ) -> "InteractionResult":
         """ Used to handle interactions. """
         await self._run_before_invoke(ctx)
 
@@ -248,7 +251,7 @@ class DiscordHTTP(web.Application):
                             # The waiting code got the Context back and will respond via the callback endpoint
                             payload = EmptyResponse()
 
-                    return self.multipart_response(payload)
+                    return payload
 
             with ctx.benchmark.measure("backend:find_interaction"):
                 intreact = self.bot.find_interaction(custom_id)
@@ -259,7 +262,7 @@ class DiscordHTTP(web.Application):
 
             payload = await intreact.run(ctx)
             await self._run_after_invoke(ctx)
-            return self.multipart_response(payload)
+            return payload
 
         except Exception as e:
             if self.bot.has_any_dispatch("interaction_error"):
@@ -273,7 +276,7 @@ class DiscordHTTP(web.Application):
         self,
         ctx: "Context",
         data: dict
-    ) -> web.Response:
+    ) -> "InteractionResult":
         """ Used to handle autocomplete interactions. """
         _log.debug("Received autocomplete interaction, processing...")
 
@@ -292,10 +295,7 @@ class DiscordHTTP(web.Application):
                 _log.warning("Failed to find focused option in autocomplete")
                 return self.jsonify({"error": "focused option not found"}, status=400)
 
-            result = await cmd.run_autocomplete(ctx, find_focused["name"], find_focused["value"])
-            if isinstance(result, dict):
-                return self.jsonify(result)
-            return result
+            return await cmd.run_autocomplete(ctx, find_focused["name"], find_focused["value"])
 
         except Exception as e:
             if self.bot.has_any_dispatch("interaction_error"):
@@ -322,20 +322,51 @@ class DiscordHTTP(web.Application):
             self.bot.dispatch("raw_interaction", copy.deepcopy(data))
 
         context = self.bot._context(self.bot, data)
-        raw_type = data.get("type", -1)
-        data_type = InteractionType(raw_type)
+
+        if data.get("type") == _PING_TYPE:
+            return self._handle_ack_ping(context, data)
+
+        result: "InteractionResult | None" = await self._run_interaction(context, data)
+        if result is None:
+            return self.jsonify({"error": "invalid request body"}, status=400)
+
+        response: web.Response = self._to_http_response(result)
+
+        # Only track the flush when a `call_after` is actually waiting on it
+        if context._response_sent_event is not None:
+            self._attach_tracking(response, context._response_sent_event)
+        return response
+
+    async def _run_interaction(
+        self,
+        context: "Context",
+        data: dict
+    ) -> "InteractionResult | None":
+        """
+        Runs an interaction, no matter if it arrived over HTTP or the gateway.
+
+        Parameters
+        ----------
+        context
+            The context of the interaction
+        data
+            The raw interaction payload
+
+        Returns
+        -------
+            What to respond to Discord with, `None` if the interaction type is not handled
+        """
+        raw_type: int = data.get("type", -1)
+        data_type: InteractionType = InteractionType(raw_type)
 
         match data_type:
-            case InteractionType.ping:
-                return self._handle_ack_ping(context, data)
-
             case InteractionType.application_command:
                 with context.benchmark.measure("start_end:application_command"):
-                    response = await self._handle_application_command(context, data)
+                    return await self._handle_application_command(context, data)
 
             case InteractionType.message_component | InteractionType.modal_submit:
                 with context.benchmark.measure(f"start_end:{data_type.name}"):
-                    response = await self._handle_interaction(context, data)
+                    return await self._handle_interaction(context, data)
 
             case InteractionType.application_command_autocomplete:
                 with context.benchmark.measure("start_end:autocomplete"):
@@ -343,12 +374,149 @@ class DiscordHTTP(web.Application):
 
             case _:
                 _log.debug(f"Unhandled interaction received (type: {raw_type})")
-                return self.jsonify({"error": "invalid request body"}, status=400)
+                return None
 
-        # Only track the flush when a `call_after` is actually waiting on it
-        if context._response_sent_event is not None:
-            self._attach_tracking(response, context._response_sent_event)
-        return response
+    def _to_http_response(self, result: "InteractionResult") -> web.Response:
+        """
+        Converts the result of an interaction to the HTTP response sent back to Discord.
+
+        Parameters
+        ----------
+        result
+            What to respond to Discord with
+
+        Returns
+        -------
+            The HTTP response to send back
+        """
+        # Most common first, checking against aiohttp's `web.Response` is several times slower
+        if isinstance(result, BaseResponse):
+            return self.multipart_response(result)
+        if isinstance(result, dict):
+            return self.jsonify(result)
+        return result
+
+    async def handle_gateway_interaction(self, data: dict, *, replayed: bool = False) -> None:
+        """
+        Handles an interaction received over the gateway, used when the application has no interactions endpoint URL.
+
+        It runs the exact same way as an HTTP interaction, but the response is
+        sent to Discord's callback endpoint instead of being the HTTP response body.
+
+        Parameters
+        ----------
+        data
+            The raw interaction payload from `INTERACTION_CREATE`
+        replayed
+            Whether the interaction was replayed by Discord after a resume,
+            expired ones are skipped instead of running the command
+        """
+        if self.debug_events and self.bot.has_any_dispatch("raw_interaction"):
+            self.bot.dispatch("raw_interaction", copy.deepcopy(data))
+
+        interaction_id: int = int(data["id"])
+        age: float = self._interaction_age(interaction_id)
+
+        # Only replays are checked, so a drifting system clock never drops live interactions
+        if replayed and age > _INTERACTION_RESPONSE_TIMEOUT:
+            _log.warning(
+                f"Skipped gateway interaction, it was {age:.2f}s old "
+                f"and Discord only accepts a response within {_INTERACTION_RESPONSE_TIMEOUT:.0f}s"
+            )
+            return
+
+        _log.debug(f"Received gateway interaction, {age:.2f}s after Discord created it")
+        context: "Context" = self.bot._context(self.bot, data)
+
+        try:
+            result: "InteractionResult | None" = await self._run_interaction(context, data)
+            await self._send_gateway_response(context, result)
+
+        except NotFound as e:
+            # Discord forgets an interaction 3 seconds after creating it, unless it was responded to
+            _log.warning(
+                f"Gateway interaction could not be responded to, it was "
+                f"{self._interaction_age(interaction_id):.2f}s old "
+                f"(Discord only waits {_INTERACTION_RESPONSE_TIMEOUT:.0f}s): {e.text}"
+            )
+
+        except web.HTTPException as e:
+            # Raised by the shared handlers for the HTTP transport, Discord gets no response here
+            _log.warning(f"Gateway interaction was not responded to ({e.text})")
+
+        except Exception as e:
+            _log.error("Error while handling gateway interaction", exc_info=e)
+
+        finally:
+            # Same as `_attach_tracking`, lets `call_after` know the response went out
+            if context._response_sent_event is not None:
+                context._response_sent_event.set()
+
+    @staticmethod
+    def _interaction_age(interaction_id: int) -> float:
+        """
+        How many seconds ago Discord created the interaction, based on its snowflake ID.
+
+        Parameters
+        ----------
+        interaction_id
+            The ID of the interaction
+
+        Returns
+        -------
+            The age of the interaction in seconds
+        """
+        # Straight from the snowflake, skips building a datetime on every interaction
+        return time.time() - ((interaction_id >> 22) + utils.DISCORD_EPOCH) / 1000
+
+    async def _send_gateway_response(
+        self,
+        context: "Context",
+        result: "InteractionResult | None"
+    ) -> None:
+        """
+        Sends the result of a gateway interaction to Discord's callback endpoint.
+
+        Parameters
+        ----------
+        context
+            The context of the interaction
+        result
+            What to respond to Discord with
+        """
+        if result is None or isinstance(result, EmptyResponse):
+            return
+
+        path: str = f"/interactions/{context.id}/{context._followup_token}/callback"
+
+        if isinstance(result, BaseResponse):
+            if self._is_multipart(result):
+                await self.bot.state.query(
+                    "POST",
+                    path,
+                    data=result.to_multipart(),
+                    headers={"Content-Type": result.content_type},
+                    res_method="text"
+                )
+            else:
+                await self.bot.state.query(
+                    "POST",
+                    path,
+                    json=result.to_dict(),
+                    res_method="text"
+                )
+
+        elif isinstance(result, dict):
+            await self.bot.state.query(
+                "POST",
+                path,
+                json=result,
+                res_method="text"
+            )
+
+        else:
+            # Error responses meant for the HTTP transport, nothing to send Discord here
+            _log.debug(f"Gateway interaction was not responded to (status: {result.status})")
 
     async def _index_webhook_events_endpoint(self, request: web.Request) -> web.Response:
         """
@@ -526,6 +694,25 @@ class DiscordHTTP(web.Application):
             status=status
         )
 
+    @staticmethod
+    def _is_multipart(body: BaseResponse) -> bool:
+        """
+        Whether the response has to be sent as multipart data, like when it has files.
+
+        Parameters
+        ----------
+        body
+            The response to check
+
+        Returns
+        -------
+            Whether the response is sent as multipart data
+        """
+        return (
+            (isinstance(body, MessageResponse) and bool(body.files)) or
+            type(body).to_dict is BaseResponse.to_dict
+        )
+
     def multipart_response(
         self,
         body: BaseResponse | None,
@@ -552,10 +739,7 @@ class DiscordHTTP(web.Application):
         if isinstance(body, EmptyResponse):
             return web.Response(status=202)
 
-        if (
-            (isinstance(body, MessageResponse) and body.files) or
-            type(body).to_dict is BaseResponse.to_dict
-        ):
+        if DiscordHTTP._is_multipart(body):
             return web.Response(
                 body=body.to_multipart(),
                 headers={"Content-Type": body.content_type},
