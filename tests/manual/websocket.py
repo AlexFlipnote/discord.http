@@ -22,7 +22,6 @@ client = Client(
     token=config["token"],
     debug_events=config["debug_events"],
     guild_id=config.get("guild_id", None),
-    enable_gateway=True,
     gateway_capabilities=GatewayCapabilities.private_channel_obfuscation,
     playing_status=PlayingStatus(
         name="Testing status",

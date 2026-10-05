@@ -23,7 +23,7 @@ It is probably not the right pick if you need voice connections (not supported f
 - A public HTTPS endpoint for Discord to send interactions to, usually a reverse proxy (nginx, apache2, etc.) in front of your bot
 
 > [!NOTE]
-> No HTTPS endpoint? Leave the Interactions Endpoint URL empty in your bot's application page and the library auto-detects it, running in websocket-only mode instead (like most other Discord libraries do). Pass `enable_gateway=True` to the client to make it intentional and remove the warning logs for it.
+> No HTTPS endpoint? Leave the Interactions Endpoint URL empty in your bot's application page and the library auto-detects it, receiving interactions over the websocket instead (like most other Discord libraries do). Pass `disable_http_server=True` to the client to not start the HTTP server at all.
 
 ## Installing
 Install with `pip install discord.http` (or `python -m pip install discord.http` if `pip` is not on your path).
@@ -48,7 +48,7 @@ client.start()
 ```
 
 ### With the gateway
-Want to also listen to gateway events? Pass `enable_gateway=True` to the client along with your desired `intents`.
+Want to also listen to gateway events? Pass your desired `intents` to the client, which starts the gateway.
 
 ```py <!-- DOCS: gateway_example -->
 from discord_http import Client, Message
@@ -56,7 +56,6 @@ from discord_http.gateway import Intents
 
 client = Client(
     token="Your bot token here",
-    enable_gateway=True,
     intents=Intents.guild_messages
 )
 

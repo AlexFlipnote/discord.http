@@ -25,7 +25,7 @@ then logs which of these modes it runs in:
   * - ``HTTP+WS``
     - Over HTTP
     - Yes
-    - The endpoint URL is set, and ``enable_gateway=True`` with ``intents``
+    - The endpoint URL is set, with ``intents``
   * - ``WS``
     - Over the gateway
     - None
@@ -35,9 +35,11 @@ then logs which of these modes it runs in:
     - Yes
     - No endpoint URL, with ``intents``
 
+The HTTP server starts in every mode, unless ``disable_http_server=True`` is passed to the client.
+
 The HTTP modes are recommended, the first reply to a command is sent back on the same request
 and no connection has to be kept open just to answer commands.
-The WS modes need no hosting at all, which is great for local development, see :ref:`ws-mode` below.
+The WS modes need no public HTTPS endpoint, which is great for local development, see :ref:`ws-mode` below.
 
 Requirements
 ------------
@@ -85,7 +87,9 @@ However you are able to use the bot as normal, and it will respond to slash comm
 
 HTTP Server
 ~~~~~~~~~~~
-Only needed for the HTTP modes. Depending on the approach you take, there are multiple ways to host the HTTP server.
+Needed for the HTTP modes, and to save the "Interactions Endpoint URL",
+as Discord verifies it against your running bot first.
+Depending on the approach you take, there are multiple ways to host the HTTP server.
 For local testing, you can use `ngrok <https://ngrok.com/>`_,
 which is a tool that allows you to expose your local server to the internet.
 
@@ -96,15 +100,19 @@ using NGINX due to its performance overall and its ability to handle more reques
 
 .. _ws-mode:
 
-No HTTP server? (WS mode)
-~~~~~~~~~~~~~~~~~~~~~~~~~
+No HTTPS endpoint? (WS mode)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 Hosting a public HTTPS endpoint is recommended, but not required.
 If the "Interactions Endpoint URL" in your bot's application page is left empty,
 Discord sends interactions over the gateway instead, and the library detects this on boot:
 
 - The gateway is enabled automatically to receive interactions, with a warning in the log
-- The HTTP server is not started at all, unless you use ``webhook_events_path``
+- The HTTP server still starts, so the URL can be set at any time,
+  Discord sends a request to it to verify it before saving it
 - Your commands do not change, ``return ctx.response.send_message(...)`` works the same way
+
+Not planning to use an HTTP endpoint at all? Pass ``disable_http_server=True`` to the client
+to run on the gateway alone, without starting the HTTP server.
 
 This is great for local development and for bots that do not want to deal with hosting,
 but it does give up what makes HTTP mode lean:
@@ -114,9 +122,8 @@ but it does give up what makes HTTP mode lean:
 
 .. note::
   The automatically enabled gateway connects without any intents, which is all interactions need.
-  If you also want gateway events, like ``message_create``, pass ``enable_gateway=True``
-  along with your desired ``intents``, see :ref:`discord.http/gateway <gateway-section>` below.
-  Passing ``enable_gateway=True`` also hides the warning, as the gateway is then intentional.
+  If you also want gateway events, like ``message_create``, pass your desired ``intents``,
+  see :ref:`discord.http/gateway <gateway-section>` below.
 
 Quick example
 -------------
@@ -157,8 +164,9 @@ So if your domain is ``example.com``, you put that inside the bot's interaction 
 .. image:: ../_static/images/getting_started/interaction_url.png
 
 .. note::
-  If the page refuses to save, it means that your bot is not exposed to the correct URL.
+  If the page refuses to save, it means that your bot is not running or not exposed to the correct URL.
   Discord attempts to ping with the URL you provided, and if it fails, it will not save.
+  This is also why the HTTP server keeps running when no URL is set yet, unless ``disable_http_server=True`` is used.
 
   If the Discord developer page saved successfully, you should see your bot printed an ``[ INFO ]`` message
   telling what has happened. This simply means that you did it all correctly and can now start using the bot.
@@ -221,13 +229,15 @@ However if you do want to use ``DEBUG``, you can do so by setting the logging le
 discord.http/gateway
 --------------------
 
-If you want to use the gateway, you can do so by using the ``enable_gateway`` parameter in the Client
+If you want to use the gateway, pass the ``intents`` you need to the Client, which starts it
 
 .. code-block:: python
 
+  from discord_http.gateway import Intents
+
   client = Client(
       ...
-      enable_gateway=True
+      intents=Intents.guild_messages
   )
 
 .. note::

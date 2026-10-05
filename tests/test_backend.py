@@ -403,61 +403,102 @@ class TestConnectionMode(unittest.TestCase):
         from tests.test_context import close_client
         close_client(self.client)
 
-    def _resolve(self, endpoint_url: str | None, *, gateway: bool, intents=None) -> str:
+    def _resolve(self, endpoint_url: str | None, *, intents=None) -> str:
         from types import SimpleNamespace
 
         self.client.application = SimpleNamespace(interactions_endpoint_url=endpoint_url)
-        self.client.enable_gateway = gateway
+        # Same as Client.__init__, passing intents is what asks for the gateway
         self.client.intents = intents
+        self.client.enable_gateway = intents is not None
         return self.client._resolve_connection_mode()
 
     def test_no_endpoint_with_intents_is_ws_plus(self) -> None:
         from discord_http.gateway import Intents
 
-        self.assertEqual(self._resolve(None, gateway=True, intents=Intents.guild_messages), "WS+")
+        self.assertEqual(self._resolve(None, intents=Intents.guild_messages), "WS+")
 
     def test_no_endpoint_with_empty_intents_is_ws(self) -> None:
         from discord_http.gateway import Intents
 
-        self.assertEqual(self._resolve(None, gateway=True, intents=Intents.none()), "WS")
+        self.assertEqual(self._resolve(None, intents=Intents.none()), "WS")
 
     def test_no_endpoint_enables_gateway(self) -> None:
-        self.assertEqual(self._resolve(None, gateway=False), "WS")
+        self.assertEqual(self._resolve(None), "WS")
         self.assertTrue(self.client.enable_gateway)
 
-    def test_no_endpoint_warns_when_gateway_was_not_enabled(self) -> None:
-        with self.assertLogs("discord_http.client", level="WARNING"):
-            self._resolve(None, gateway=False)
+    def test_intents_alone_enable_gateway(self) -> None:
+        import logging
+        from discord_http import Client
+        from discord_http.gateway import Intents
 
-    def test_explicit_gateway_without_endpoint_is_ws_without_warning(self) -> None:
+        # Same loop as self.client, so tearDown cleans up their background tasks too
+        quiet = {"token": "a.b.c", "loop": self.client.loop, "logging_level": logging.CRITICAL}
+        self.assertTrue(Client(intents=Intents.guilds, **quiet).enable_gateway)
+        self.assertFalse(Client(**quiet).enable_gateway)
+
+    def test_enable_gateway_is_no_longer_accepted(self) -> None:
+        from discord_http import Client
+
+        with self.assertRaises(TypeError):
+            Client(token="a.b.c", enable_gateway=True, loop=self.client.loop)  # type: ignore[call-arg]
+
+    def test_ws_mode_warns_http_server_is_still_running(self) -> None:
+        with self.assertLogs("discord_http.client", level="WARNING") as logs:
+            self._resolve(None)
+        self.assertIn("disable_http_server=True", "\n".join(logs.output))
+
+    def test_ws_mode_with_disabled_http_server_does_not_warn(self) -> None:
+        self.client.disable_http_server = True
         with self.assertNoLogs("discord_http.client", level="WARNING"):
-            self.assertEqual(self._resolve(None, gateway=True), "WS")
+            self._resolve(None)
 
-        # Still nothing to serve over HTTP, so the HTTP server is skipped as well
-        self.assertFalse(self.client._needs_http_server())
+    def test_http_mode_does_not_warn_about_http_server(self) -> None:
+        from discord_http.gateway import Intents
 
-    def test_endpoint_without_gateway_is_http(self) -> None:
-        self.assertEqual(self._resolve("https://example.com", gateway=False), "HTTP")
+        with self.assertNoLogs("discord_http.client", level="WARNING"):
+            self._resolve("https://example.com", intents=Intents.guilds)
+
+    def test_endpoint_without_intents_is_http(self) -> None:
+        self.assertEqual(self._resolve("https://example.com"), "HTTP")
         self.assertFalse(self.client.enable_gateway)
 
-    def test_endpoint_with_gateway_is_http_ws(self) -> None:
-        self.assertEqual(self._resolve("https://example.com", gateway=True), "HTTP+WS")
+    def test_endpoint_with_intents_is_http_ws(self) -> None:
+        from discord_http.gateway import Intents
 
-    def _needs_http(self, endpoint_url: str | None, webhook_events_path: str | None = None) -> bool:
+        self.assertEqual(self._resolve("https://example.com", intents=Intents.guilds), "HTTP+WS")
+
+    def _needs_http(
+        self,
+        endpoint_url: str | None,
+        webhook_events_path: str | None = None,
+        *,
+        disabled: bool = False
+    ) -> bool:
         from types import SimpleNamespace
 
         self.client.application = SimpleNamespace(interactions_endpoint_url=endpoint_url)
         self.client.webhook_events_path = webhook_events_path
+        self.client.disable_http_server = disabled
         return self.client._needs_http_server()
 
-    def test_ws_mode_skips_http_server(self) -> None:
-        self.assertFalse(self._needs_http(None))
+    def test_http_server_runs_without_endpoint(self) -> None:
+        # Discord verifies the URL with a request before saving it, so the server must be up to set one
+        self.assertTrue(self._needs_http(None))
 
     def test_endpoint_needs_http_server(self) -> None:
         self.assertTrue(self._needs_http("https://example.com"))
 
-    def test_webhook_events_still_need_http_server_in_ws_mode(self) -> None:
-        self.assertTrue(self._needs_http(None, webhook_events_path="/events"))
+    def test_disabled_http_server_is_skipped(self) -> None:
+        with self.assertNoLogs("discord_http.client", level="WARNING"):
+            self.assertFalse(self._needs_http(None, disabled=True))
+
+    def test_disabled_http_server_warns_about_endpoint_url(self) -> None:
+        with self.assertLogs("discord_http.client", level="WARNING"):
+            self.assertFalse(self._needs_http("https://example.com", disabled=True))
+
+    def test_disabled_http_server_warns_about_webhook_events(self) -> None:
+        with self.assertLogs("discord_http.client", level="WARNING"):
+            self.assertFalse(self._needs_http(None, webhook_events_path="/events", disabled=True))
 
     def test_ctrl_c_in_ws_mode_cancels_pending_tasks(self) -> None:
         import asyncio

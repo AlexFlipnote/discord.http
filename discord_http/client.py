@@ -82,28 +82,26 @@ class Client:
         Event loop to use, if not provided, it will use `asyncio.get_running_loop()`
     allowed_mentions
         Allowed mentions to use, if not provided, it will use `AllowedMentions.all()`
-    enable_gateway
-        Whether to enable the gateway or not, which runs in the background.
-        It is enabled automatically if the application has no interactions endpoint URL,
-        since Discord then sends interactions over the gateway instead.
     automatic_shards
         Whether to automatically shard the bot or not
     playing_status
         The playing status to use, if not provided, it will use `None`.
-        This is only used if `enable_gateway` is `True`.
+        This is only used when the gateway is running.
     chunk_guilds_on_startup
         Whether to chunk guilds or not when booting, which will reduce the amount of requests
     guild_ready_timeout
         **Gateway**: How long to wait for last GUILD_CREATE to be recieved
         before triggering shard ready
     gateway_cache
-        How the gateway should cache, only used if `enable_gateway` is `True`.
+        How the gateway should cache, only used when the gateway is running.
         Leave empty to use no cache.
     intents
-        Intents to use, only used if `enable_gateway` is `True`
+        Intents to use, passing any starts the gateway to receive their events.
+        The gateway also starts without them if the application has no interactions endpoint URL,
+        since Discord then sends interactions over the gateway instead.
     gateway_capabilities
-        Opt-in Gateway capabilities bitfield to send in the Identify payload, only used if
-        `enable_gateway` is `True`. Currently only used to test upcoming, opt-in Gateway behavior.
+        Opt-in Gateway capabilities bitfield to send in the Identify payload, only used when
+        the gateway is running. Currently only used to test upcoming, opt-in Gateway behavior.
     logging_level
         Logging level to use, if not provided, it will use `logging.INFO`
     debug_events
@@ -117,6 +115,10 @@ class Client:
         Whether to disable the default GET path or not, if not provided, it will use `False`.
         The default GET path only provides information about the bot and when it was last rebooted.
         Usually a great tool to just validate that your bot is online.
+    disable_http_server
+        Whether to never start the HTTP server, if not provided, it will use `False`.
+        Only for bots receiving interactions over the gateway (no interactions endpoint URL).
+        Keep it running while setting the interactions endpoint URL, Discord sends a request to it before saving.
     """
     def __init__(
         self,
@@ -128,7 +130,6 @@ class Client:
         api_base_url: str | None = None,
         loop: asyncio.AbstractEventLoop | None = None,
         allowed_mentions: AllowedMentions | None = None,
-        enable_gateway: bool = False,
         automatic_shards: bool = True,
         max_pending_connections: int = 128,
         global_ratelimit: int = 50,
@@ -142,6 +143,7 @@ class Client:
         gateway_capabilities: "GatewayCapabilities | None" = None,
         logging_level: int = logging.INFO,
         disable_default_get_path: bool = False,
+        disable_http_server: bool = False,
         debug_events: bool = False
     ):
         self._raw_boot_time: float = time.perf_counter()
@@ -193,8 +195,9 @@ class Client:
         self.debug_events: bool = debug_events
         """ Whether events are logged or not, required for `on_raw_*` events. """
 
-        self.enable_gateway: bool = enable_gateway
-        """ Whether the gateway is enabled or not. """
+        # Intents are what ask for the gateway, a missing interactions endpoint URL turns it on later too
+        self.enable_gateway: bool = intents is not None
+        """ Whether the gateway is enabled or not, set from `intents` and the interactions endpoint URL. """
 
         self.playing_status: "PlayingStatus | None" = playing_status
         """ The playing status used when connecting to the gateway, if any. """
@@ -231,6 +234,9 @@ class Client:
 
         self.disable_default_get_path: bool = disable_default_get_path
         """ Whether the default GET path is disabled or not. """
+
+        self.disable_http_server: bool = disable_http_server
+        """ Whether the HTTP server is never started, leaving the bot on the gateway alone. """
 
         try:
             self.loop: asyncio.AbstractEventLoop = loop or asyncio.get_running_loop()
@@ -393,8 +399,7 @@ class Client:
         """
         endpoint_url: str | None = self.application.interactions_endpoint_url if self.application else None
 
-        if not endpoint_url and not self.enable_gateway:
-            _log.warning("No interactions endpoint URL, using the gateway for interactions (enable_gateway=True hides this)")
+        if not endpoint_url:
             self.enable_gateway = True
 
         mode: str
@@ -410,7 +415,15 @@ class Client:
         else:
             mode, description = "HTTP", "interactions over HTTP"
 
+        if not endpoint_url and self.disable_http_server:
+            description += ", HTTP server disabled"
+
         _log.info(f"Running in {mode} mode ({description})")
+
+        if not endpoint_url and not self.disable_http_server:
+            # Kept running so Discord can verify an endpoint URL when it is saved
+            _log.warning("HTTP server is still running (disable_http_server=True turns it off)")
+
         return mode
 
     def _handle_gateway_interaction(self, data: dict, *, replayed: bool = False) -> None:
@@ -813,8 +826,9 @@ class Client:
         """
         Boot up the bot and start the HTTP server.
 
-        If the application has no interactions endpoint URL and no webhook events path is set,
-        the HTTP server is skipped and the bot runs on the gateway alone.
+        The HTTP server always starts, even without an interactions endpoint URL,
+        since Discord needs it running to verify the URL before it can be saved.
+        Pass `disable_http_server=True` to the client to run on the gateway alone.
 
         Parameters
         ----------
@@ -825,7 +839,7 @@ class Client:
         """
         _log.info(f"Starting discord.http (v{__version__})")
 
-        # Needed up front to know if the HTTP server has anything to serve
+        # Needed up front to warn about anything a disabled HTTP server would leave unanswered
         self.loop.run_until_complete(self._fetch_application())
 
         if not self._needs_http_server():
@@ -837,12 +851,28 @@ class Client:
         self.backend.start(host=host, port=port)
 
     def _needs_http_server(self) -> bool:
-        """ Whether the HTTP server is needed, either for interactions or webhook events. """
+        """
+        Whether the HTTP server is started, warns when disabling it leaves something unanswered.
+
+        It runs by default, even without an interactions endpoint URL,
+        since Discord sends a request to the URL to verify it before saving it.
+        """
+        if not self.disable_http_server:
+            return True
+
         endpoint_url: str | None = self.application.interactions_endpoint_url if self.application else None
-        return bool(endpoint_url or self.webhook_events_path)
+        if endpoint_url:
+            _log.warning(
+                "The HTTP server is disabled, but an interactions endpoint URL is set, "
+                "interactions sent to it will not be answered"
+            )
+        if self.webhook_events_path:
+            _log.warning("The HTTP server is disabled, webhook events will not be received")
+
+        return False
 
     def _run_without_http(self) -> None:
-        """ Runs the bot on the gateway alone, used when interactions arrive over it and nothing else needs HTTP. """
+        """ Runs the bot on the gateway alone, used when the HTTP server is disabled with `disable_http_server=True`. """
         if sys.platform != "win32":
             # Same as aiohttp does for the HTTP server, so stopping the bot still cleans up
             for sig in (signal.SIGINT, signal.SIGTERM):

@@ -4,7 +4,7 @@ Module is used to handle all the gateway events.
 While originally, discord.http was only used for the HTTP requests,
 it was later expanded to also handle the gateway events.
 
-To get it working, you will need to use the `enable_gateway` parameter in the Client().
+It starts when `intents` are passed to the Client(), or when the application has no interactions endpoint URL.
 """
 
 # ruff: file-ignore[undefined-local-with-import-star]

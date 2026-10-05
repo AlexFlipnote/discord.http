@@ -74,7 +74,7 @@ Webhook Events
   ``https://yourdomain.com/webhook-events`` (matching the path you chose above). Discord will send a PING to that
   URL to verify it right after you save it.
 
-  Unlike the events in the *Gateway events* category, these do not require ``enable_gateway=True`` and work purely
+  Unlike the events in the *Gateway events* category, these do not require the gateway or ``intents`` and work purely
   over HTTP, the same way Interactions do.
 
 .. function:: async def on_application_authorized(user, guild, scopes, integration_type)
@@ -142,8 +142,7 @@ Gateway events
 
     client = Client(
         ...,
-        enable_gateway=True,
-        # intents=Intents
+        intents=Intents.guilds  # Any intents start the gateway
     )
 
 
