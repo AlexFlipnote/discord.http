@@ -1815,18 +1815,16 @@ class BaseChannel(PartialChannel):
             return Permissions.all()
 
         default_role = guild.default_role
-        base: Permissions = getattr(
-            default_role,
-            "permissions",
-            Permissions.none()
-        )
+
+        # Worked out on the raw ints, only the result is built into a Permissions object
+        base: int = getattr(default_role, "_raw_permissions", 0)
 
         for r_id in member.role_ids:
             if (role := guild.get_role(r_id)) is None:
                 continue
-            base |= getattr(role, "permissions", Permissions.none())
+            base |= getattr(role, "_raw_permissions", 0)
 
-        if Permissions.administrator in base:
+        if base & Permissions.administrator.value:
             return Permissions.all()
 
         everyone_id = default_role.id
@@ -1849,27 +1847,18 @@ class BaseChannel(PartialChannel):
                 member_ow = (allow, deny)
 
         if everyone_ow:
-            base = base.handle_overwrite(*everyone_ow)
+            base = (base & ~everyone_ow[1]) | everyone_ow[0]
 
-        base = base.handle_overwrite(allows, denies)
+        base = (base & ~denies) | allows
 
         if member_ow:
-            base = base.handle_overwrite(*member_ow)
+            base = (base & ~member_ow[1]) | member_ow[0]
 
         if member.is_timed_out():
-            timeout_perm = (
-                Permissions.view_channel |
-                Permissions.read_message_history
-            )
+            # Timed out members keep at most these two, and only if they already had them
+            base &= Permissions.view_channel.value | Permissions.read_message_history.value
 
-            if Permissions.view_channel not in base:
-                timeout_perm &= ~Permissions.view_channel
-            if Permissions.read_message_history not in base:
-                timeout_perm &= ~Permissions.read_message_history
-
-            base = timeout_perm
-
-        return base
+        return Permissions(base)
 
 
 class TextChannel(BaseChannel):

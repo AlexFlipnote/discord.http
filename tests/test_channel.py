@@ -156,6 +156,21 @@ class TestBaseChannelPermissionsFor(unittest.TestCase):
         self.assertNotIn("view_channel", perms.to_names())
         self.assertNotIn("read_message_history", perms.to_names())
 
+    def test_timeout_keeps_only_view_and_history_when_held(self) -> None:
+        state = FakeState()
+        guild = _make_guild(state)
+        _make_role(state, guild, guild.id, ["view_channel", "read_message_history", "send_messages"])
+        channel = _make_channel(state, guild)
+        member = _make_member(
+            state, guild,
+            communication_disabled_until=utils.add_to_datetime(timedelta(hours=1)).isoformat(),
+        )
+
+        self.assertEqual(
+            channel.permissions_for(member),
+            Permissions.from_names("view_channel", "read_message_history"),
+        )
+
 
 class TestForumTag(unittest.TestCase):
     def test_create_defaults_name(self) -> None:
