@@ -300,6 +300,7 @@ class Ratelimit:
     """ Represents a ratelimit bucket. """
 
     __slots__ = (
+        "_cond",
         "_last_request",
         "_lock",
         "_loop",
@@ -339,6 +340,7 @@ class Ratelimit:
         """ The number of requests currently in-flight for this bucket. """
 
         self._lock: asyncio.Lock = asyncio.Lock()
+        self._cond: asyncio.Condition = asyncio.Condition(self._lock)
         self._loop: asyncio.AbstractEventLoop = asyncio.get_running_loop()
         self._last_request: float = self._loop.time()
 
@@ -402,7 +404,8 @@ class Ratelimit:
             self.bucket_reset_epoch = reset_epoch
             self.limit = limit
             self.reset_after = reset_after
-            self.expires = self._loop.time() + self.reset_after
+            # Never shorten a cooldown already set by a longer 429 (e.g. a hidden sub-limit)
+            self.expires = max(self.expires or 0.0, self._loop.time() + self.reset_after)
             self.remaining = calculated_remaining
 
         # Same bucket window
@@ -429,12 +432,19 @@ class Ratelimit:
                 # No tokens? Calculate wait time
                 if self.expires:
                     wait_time = self.expires - now
+                elif self.in_flight > 0:
+                    # Bucket state is unknown until an in-flight request reports back
+                    # (e.g. a fresh bucket's first request), so queue behind it instead
+                    # of guessing - guessing here let entire bursts through at once.
+                    await self._cond.wait()
+                    continue
                 else:
                     # No X-RateLimit-Reset was ever recorded for this bucket (e.g. the
                     # last response was an error like 403 that carries no ratelimit
-                    # headers), so there's nothing to actually wait out.
-                    self.remaining = self.limit
-                    wait_time = 1.0
+                    # headers) and nothing is in flight to learn it from, so let
+                    # exactly one request through as a probe.
+                    self.in_flight += 1
+                    return self
 
                 _log.debug(f"Ratelimit prevented ({self.key}), waiting {max(wait_time, 0):.2f}s...")
 
@@ -445,6 +455,7 @@ class Ratelimit:
         """ When a request is done, decrease the in-flight count. """
         async with self._lock:
             self.in_flight -= 1
+            self._cond.notify_all()
 
 
 class GlobalRatelimit:
@@ -563,7 +574,9 @@ class DiscordAPI:
 
         # Ratelimit handling
         self._buckets: dict[str, Ratelimit] = {}
-        self._global_ratelimit: GlobalRatelimit = GlobalRatelimit()
+        self._global_ratelimit: GlobalRatelimit = GlobalRatelimit(
+            max_requests=self.bot.global_ratelimit
+        )
         self._bucket_hashes: dict[str, tuple[str, float]] = {}
 
         # Background tasks
@@ -630,10 +643,14 @@ class DiscordAPI:
         """
         # Remove query parameters
         base_path = path.partition("?")[0]
-        base_path = _token_route_re.sub(r"/\1/\2/:token", base_path, count=1)
+
+        # Every interaction/webhook token is its own bucket on Discord's side, so keep it raw.
+        if token_match := _token_route_re.match(base_path):
+            prefix = token_match.group(0)
+            remainder = base_path[token_match.end():]
 
         # Keep the major param (guild/channel/webhook id) raw, collapse everything else
-        if major_match := major_param_re.match(base_path):
+        elif major_match := major_param_re.match(base_path):
             prefix = major_match.group(0)
             remainder = base_path[major_match.end():]
         else:
@@ -911,8 +928,13 @@ class DiscordAPI:
                                 _log.warning(f"Ratelimit hit ({fallback_key}), waiting {retry_after}s...")
 
                                 async with ratelimit._lock:
+                                    # Concurrent 429s can carry different retry_after values
+                                    # (route limit vs. a sub-limit), the longest one must win
                                     ratelimit.remaining = 0
-                                    ratelimit.expires = ratelimit._loop.time() + retry_after
+                                    ratelimit.expires = max(
+                                        ratelimit.expires or 0.0,
+                                        ratelimit._loop.time() + retry_after
+                                    )
 
                             continue
 

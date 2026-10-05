@@ -70,6 +70,10 @@ class Client:
     max_pending_connections
         The maximum number of queued connections passed to the interaction URL, by default 128.
         If your bot is receiving a lot of traffic, you might want to increase this value.
+    global_ratelimit
+        How many requests per second the bot may send before it waits on its own, by default 50 (Discord's default).
+        Raise it if Discord granted your bot a higher global rate limit.
+        Interaction and webhook requests are never counted against it.
     api_version
         API version to use for both HTTP and WS, if not provided, it will use the default (10)
     api_base_url
@@ -127,6 +131,7 @@ class Client:
         enable_gateway: bool = False,
         automatic_shards: bool = True,
         max_pending_connections: int = 128,
+        global_ratelimit: int = 50,
         playing_status: "PlayingStatus | None" = None,
         chunk_guilds_on_startup: bool = False,
         guild_ready_timeout: float = 2.0,
@@ -214,6 +219,12 @@ class Client:
 
         self.max_pending_connections: int = max_pending_connections
         """ The maximum number of queued connections to the interaction endpoint. """
+
+        if global_ratelimit < 1:
+            raise ValueError("global_ratelimit must be at least 1")
+
+        self.global_ratelimit: int = int(global_ratelimit)
+        """ The amount of requests per second the bot sends before waiting on its own global rate limit. """
 
         self.gateway: "GatewayClient | None" = None
         """ The gateway client, if enabled. """
