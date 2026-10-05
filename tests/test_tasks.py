@@ -1,4 +1,6 @@
+import itertools
 import unittest
+import unittest.mock
 
 from datetime import time as dtime
 from datetime import timedelta, datetime, UTC
@@ -129,6 +131,75 @@ class TestNextSleepTime(unittest.TestCase):
         now = datetime(2024, 1, 1, 22, 0, tzinfo=UTC)
         result = loop._next_sleep_time(now)
         self.assertEqual(result, datetime(2024, 1, 2, 10, 0, tzinfo=UTC))
+
+
+class TestLooperEarlyWakeup(unittest.IsolatedAsyncioTestCase):
+    async def test_early_wakeup_waits_for_slot_then_runs_once(self) -> None:
+        slot = datetime(2024, 1, 1, 20, 0, 1, tzinfo=UTC)
+        early = slot - timedelta(microseconds=500)
+        # Initial schedule + two early checks, then the clock reaches the slot
+        clock = itertools.chain([early, early, early], itertools.repeat(slot))
+        now = clock.__next__
+        calls: list[datetime] = []
+
+        async def func() -> None:
+            calls.append(now())
+
+        loop = _make_loop(
+            func=func, seconds=None, count=1,
+            time=[dtime(hour, 0, 1) for hour in range(24)],
+        )
+
+        async def fake_sleep(dt: datetime) -> None:
+            pass
+
+        loop._try_sleep_until = fake_sleep  # type: ignore[method-assign]
+        with (
+            unittest.mock.patch("discord_http.tasks.utils.utcnow", side_effect=now),
+            self.assertNoLogs("discord_http", level="WARNING"),
+        ):
+            await loop._looper()
+
+        self.assertEqual(calls, [slot])
+        self.assertEqual(loop._last_loop, slot)
+        self.assertEqual(loop._next_loop, slot + timedelta(hours=1))
+
+
+class TestLooperRetry(unittest.IsolatedAsyncioTestCase):
+    async def test_explicit_time_retries_after_5s_without_double_run(self) -> None:
+        slot = datetime(2024, 1, 1, 20, 0, 1, tzinfo=UTC)
+        clock = [slot - timedelta(minutes=1)]
+        calls: list[datetime] = []
+
+        async def func() -> None:
+            if not calls and clock[0] == slot:
+                calls.append(clock[0])
+                raise OSError("boom")
+            calls.append(clock[0])
+
+        loop = _make_loop(
+            func=func, seconds=None, count=2,
+            time=[dtime(hour, 0, 1) for hour in range(24)],
+        )
+
+        async def fake_sleep_until(dt: datetime) -> None:
+            clock[0] = max(clock[0], dt)
+
+        async def fake_sleep(seconds: float) -> None:
+            clock[0] += timedelta(seconds=seconds)
+
+        loop._try_sleep_until = fake_sleep_until  # type: ignore[method-assign]
+        with (
+            unittest.mock.patch("discord_http.tasks.utils.utcnow", side_effect=lambda: clock[0]),
+            unittest.mock.patch("discord_http.tasks.asyncio.sleep", side_effect=fake_sleep),
+        ):
+            await loop._looper()
+
+        self.assertEqual(calls, [
+            slot,  # Fails
+            slot + timedelta(seconds=5),  # Retry
+            slot + timedelta(hours=1),  # Next slot, once
+        ])
 
 
 class TestExceptionWhitelist(unittest.TestCase):

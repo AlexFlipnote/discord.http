@@ -183,23 +183,23 @@ class Loop:
                 return
 
             while True:
-                if self._is_explicit_time():
+                # A failed run already waited its 5s, retry it now instead of at the next slot
+                if self._is_explicit_time() and not self._last_loop_failed:
                     await self._try_sleep_until(self._next_loop)
+
+                    # Timers can fire slightly before the target (uvloop rounds to ms),
+                    # so top up with at least 1ms per sleep to avoid a 0ms spin
+                    while (remaining := (self._next_loop - utils.utcnow()).total_seconds()) > 0:
+                        await asyncio.sleep(max(remaining, 0.001))
 
                 if not self._last_loop_failed:
                     self._last_loop = self._next_loop
-                    self._next_loop = self._next_sleep_time()
-
-                    while (
-                        self._is_explicit_time() and
-                        self._next_loop <= self._last_loop
-                    ):
-                        _log.warning(
-                            f"task:{self.func.__name__} woke up a bit too early. "
-                            f"Sleeping until {self._next_loop} to avoid drifting."
-                        )
-                        await self._try_sleep_until(self._next_loop)
-                        self._next_loop = self._next_sleep_time()
+                    # Waking exactly on the slot would select it again,
+                    # so always schedule strictly after the slot we just ran
+                    self._next_loop = self._next_sleep_time(max(
+                        utils.utcnow(),
+                        self._last_loop + timedelta(microseconds=1)
+                    ))
 
                 try:
                     await self.func(*args, **kwargs)
