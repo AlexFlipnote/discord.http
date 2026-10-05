@@ -47,6 +47,11 @@ _log = logging.getLogger(__name__)
 
 MISSING = utils.MISSING
 
+# Converted once, compared on every interaction
+_CHAT_INPUT = int(ApplicationCommandType.chat_input)
+_MESSAGE_COMPONENT = int(InteractionType.message_component)
+_MODAL_SUBMIT = int(InteractionType.modal_submit)
+
 channel_types = {
     int(ChannelType.guild_text): TextChannel,
     int(ChannelType.dm): DMChannel,
@@ -78,7 +83,7 @@ class _ResolveParser:
     )
 
     def __init__(self, ctx: "Context", data: dict):
-        self._parsed_data = {
+        self._parsed_data: dict | None = {
             "members": [], "users": [],
             "channels": [], "roles": [],
             "strings": [], "attachments": []
@@ -90,30 +95,62 @@ class _ResolveParser:
         self._parsed_data["strings"] = data.get("data", {}).get("values", [])
 
         resolved = data.get("data", {}).get("resolved", {})
-        data_to_resolve = ("members", "users", "channels", "roles", "attachments")
 
-        for key in data_to_resolve:
-            self._parse_resolved(ctx, key, resolved)
+        # Read once, a guild that is not cached is rebuilt on every read
+        guild = ctx.guild if resolved.get("members") or resolved.get("roles") else None
+
+        for key in ("members", "users", "channels", "roles", "attachments"):
+            if resolved.get(key):
+                self._parse_resolved(ctx, key, resolved, guild)
 
     @classmethod
-    def none(cls, ctx: "Context") -> Self:
+    def none(cls, ctx: "Context") -> Self:  # ruff: ignore[unused-class-method-argument]
         """ With no values. """
-        return cls(ctx, {})
+        return cls._empty()
 
     @classmethod
-    def _from_parsed(cls, parsed_data: dict) -> Self:
+    def _from_parsed(cls, parsed_data: dict | None) -> Self:
         """ Build an instance sharing an already-parsed data dict, skipping a redundant re-parse. """
         self = cls.__new__(cls)
         self._parsed_data = parsed_data
         return self
 
+    @classmethod
+    def _empty(cls) -> Self:
+        """ With no values, skipping the parsing entirely as there is nothing to parse. """
+        self = cls.__new__(cls)
+        # Most interactions resolve nothing, so no dict of empty lists is built for them
+        self._parsed_data = None
+        return self
+
     def is_empty(self) -> bool:
         """ Whether no values were selected. """
-        return not any(self._parsed_data.values())
+        return self._parsed_data is None or not any(self._parsed_data.values())
 
-    def _parse_resolved(self, ctx: "Context", key: str, data: dict) -> None:
-        if not data.get(key):
-            return
+    def _values(self, key: str) -> list:
+        """
+        The parsed values of a kind.
+
+        Parameters
+        ----------
+        key
+            The kind of values, like `members` or `roles`
+
+        Returns
+        -------
+            The parsed values, a new empty list if nothing was parsed
+        """
+        if self._parsed_data is None:
+            return []
+        return self._parsed_data[key]
+
+    def _parse_resolved(
+        self,
+        ctx: "Context",
+        key: str,
+        data: dict,
+        guild: "Guild | PartialGuild | None"
+    ) -> None:
 
         for g in data[key]:
             if key == "members":
@@ -124,9 +161,9 @@ class _ResolveParser:
 
             match key:
                 case "members":
-                    if not ctx.guild:
+                    if not guild:
                         raise ValueError("While parsing members, guild object was not available")
-                    to_append.append(ctx.bot.create_member_from_data(data_, guild=ctx.guild))
+                    to_append.append(ctx.bot.create_member_from_data(data_, guild=guild))
 
                 case "users":
                     to_append.append(ctx.bot.create_user_from_data(data_))
@@ -138,9 +175,9 @@ class _ResolveParser:
                     to_append.append(channel_types.get(data_["type"], BaseChannel)(state=ctx.bot.state, data=data_))
 
                 case "roles":
-                    if not ctx.guild:
+                    if not guild:
                         raise ValueError("While parsing roles, guild object was not available")
-                    to_append.append(ctx.bot.create_role_from_data(data_, guild=ctx.guild))
+                    to_append.append(ctx.bot.create_role_from_data(data_, guild=guild))
 
                 case _:
                     pass
@@ -157,27 +194,27 @@ class ResolvedValues(_ResolveParser):
     @property
     def members(self) -> list[Member]:
         """ The resolved members if any. """
-        return self._parsed_data["members"]
+        return self._values("members")
 
     @property
     def users(self) -> list[User]:
         """ The resolved users if any. """
-        return self._parsed_data["users"]
+        return self._values("users")
 
     @property
     def channels(self) -> list[BaseChannel]:
         """ The resolved channels if any. """
-        return self._parsed_data["channels"]
+        return self._values("channels")
 
     @property
     def roles(self) -> list[Role]:
         """ The resolved roles if any. """
-        return self._parsed_data["roles"]
+        return self._values("roles")
 
     @property
     def attachments(self) -> list[Attachment]:
         """ The resolved attachments if any. """
-        return self._parsed_data["attachments"]
+        return self._values("attachments")
 
 
 class SelectValues(ResolvedValues):
@@ -190,7 +227,7 @@ class SelectValues(ResolvedValues):
     @property
     def strings(self) -> list[str]:
         """ Of strings selected. """
-        return self._parsed_data["strings"]
+        return self._values("strings")
 
 
 class InteractionResponse:
@@ -518,26 +555,26 @@ class Context:
     """ Represents the context of an interaction. """
 
     __slots__ = (
-        "_channel",
         "_data",
         "_followup_token",
-        "_guild",
         "_original_response",
+        "_raw_app_permissions",
         "_raw_authorizing_integration_owners",
+        "_raw_channel",
+        "_raw_command_type",
+        "_raw_context",
         "_raw_resolved",
         "_raw_type",
         "_response_sent_event",
-        "app_permissions",
         "attachment_size_limit",
         "author",
         "benchmark",
         "bot",
         "channel_id",
         "command",
-        "command_type",
-        "context",
         "custom_id",
         "entitlements",
+        "guild_id",
         "guild_locale",
         "id",
         "last_message_id",
@@ -546,7 +583,6 @@ class Context:
         "modal_values",
         "options",
         "recipients",
-        "resolved",
         "response",
         "select_values",
         "user",
@@ -557,8 +593,7 @@ class Context:
         bot: "Client",
         data: dict
     ):
-        self._guild: PartialGuild | None = None
-        self._channel: BaseChannel | None = None
+        self._raw_channel: dict | None = None
         self._response_sent_event: asyncio.Event | None = None
 
         self.bot: "Client" = bot
@@ -571,10 +606,7 @@ class Context:
 
         data_payload: dict = data.get("data") or {}
 
-        self.command_type: ApplicationCommandType = ApplicationCommandType(
-            data_payload.get("type", ApplicationCommandType.chat_input)
-        )
-        """ The type of the command, if any. """
+        self._raw_command_type: int = data_payload.get("type", _CHAT_INPUT)
 
         # Default utilities
         self.benchmark: utils.Benchmark = utils.Benchmark()
@@ -584,16 +616,12 @@ class Context:
         self.command: "Command | None" = None
         """ The command that was executed, if any. """
 
-        self.app_permissions: Permissions = Permissions(int(data.get("app_permissions", 0)))
-        """ The permissions of the application in the guild. """
+        self._raw_app_permissions: int = int(data.get("app_permissions", 0))
 
         self.custom_id: str | None = data_payload.get("custom_id")
         """ The custom ID of the interaction, if any. """
 
-        self.resolved: ResolvedValues = ResolvedValues.none(self)
-        """ The resolved values of the interaction. """
-
-        self.select_values: SelectValues = SelectValues.none(self)
+        self.select_values: SelectValues = SelectValues._empty()
         """ The selected values of the interaction, if any. """
 
         self.modal_values: dict[str, str | bool | list[Member | Role | BaseChannel | Attachment | str] | None] = {}
@@ -633,11 +661,7 @@ class Context:
         self.guild_locale: "LocaleTypes | None" = data.get("guild_locale")
         """ The locale of the guild, if any. """
 
-        self.context: InteractionContextType | None = (
-            InteractionContextType(data["context"])
-            if data.get("context") is not None else None
-        )
-        """ The context where the interaction was triggered from, if any. """
+        self._raw_context: int | None = data.get("context")
 
         self._raw_authorizing_integration_owners: dict[str, str] = data.get("authorizing_integration_owners") or {}
 
@@ -646,6 +670,9 @@ class Context:
 
         self.channel_id: int | None = None
         """ The ID of the channel the interaction was sent in, if applicable. """
+
+        self.guild_id: int | None = None
+        """ The ID of the guild the interaction was sent in, if applicable. """
 
         self.message: Message | None = None
         """ The message associated with the interaction, if any. """
@@ -657,110 +684,107 @@ class Context:
         """ The author of the message that was interacted with, if any. """
 
         # Parse the data, then continue with the rest of the initialization
-        self._from_data(data)
+        guild = self._from_data(data)
 
-        self.user: Member | User = self._parse_user(data)
+        self.user: Member | User = self._parse_user(data, guild)
         """ The user who initiated the interaction. """
 
         self.response: InteractionResponse = InteractionResponse(self)
         """ The response helper for this interaction. """
 
-    def _from_data(self, data: dict) -> None:
+    def _from_data(self, data: dict) -> "Guild | PartialGuild | None":
         if channel_id := data.get("channel_id"):
             self.channel_id = int(channel_id)
 
         if guild_id := data.get("guild_id"):
-            self._guild = self.bot.get_partial_guild(int(guild_id))
+            self.guild_id = int(guild_id)
 
         if channel := data.get("channel"):
-            if self._guild:
-                channel["guild_id"] = self._guild.id
+            if self.guild_id:
+                channel["guild_id"] = self.guild_id
 
-            self._channel = channel_types.get(channel["type"], BaseChannel)(
-                state=self.bot.state,
-                data=channel
-            )
+            # Only built when read, most commands never use it
+            self._raw_channel = channel
+
+        # Read once, a guild that is not cached is rebuilt on every read
+        guild = self.guild
 
         if message := data.get("message"):
             self.message = self.bot.create_message_from_data(
                 message,
-                guild=self._guild
+                guild=guild
             )
         elif first_msg := next(iter(self._raw_resolved.get("messages", {}).values()), None):
             self.message = self.bot.create_message_from_data(
                 first_msg,
-                guild=self._guild
+                guild=guild
             )
-
-        if self._raw_resolved:
-            self.resolved = ResolvedValues(self, data)
 
         if self.message is not None:
             self.author = self.message.author
 
-        match self.type:
-            case InteractionType.message_component:
-                if self._raw_resolved:
-                    self.select_values = SelectValues._from_parsed(self.resolved._parsed_data)
-                else:
-                    self.select_values = SelectValues(self, data)
+        if self._raw_type == _MESSAGE_COMPONENT:
+            self.select_values = SelectValues(self, data)
 
-            case InteractionType.modal_submit:
-                for comp in data["data"]["components"]:
-                    ans = comp.get("component", None)
-                    if not ans:
-                        # This is probably a text component
-                        continue
-                    self.modal_values[ans["custom_id"]] = ans.get("value", None)
+        elif self._raw_type == _MODAL_SUBMIT:
+            resolved = self.resolved
+            for comp in data["data"]["components"]:
+                ans = comp.get("component", None)
+                if not ans:
+                    # This is probably a text component
+                    continue
+                self.modal_values[ans["custom_id"]] = ans.get("value", None)
 
-                    if ans.get("values", None):
-                        match ComponentType(ans["type"]):
-                            case ComponentType.user_select:
-                                self.modal_values[ans["custom_id"]] = [
-                                    g for g in self.resolved.members
-                                    if str(g.id) in ans.get("values", [])
-                                ]
+                if ans.get("values", None):
+                    match ComponentType(ans["type"]):
+                        case ComponentType.user_select:
+                            self.modal_values[ans["custom_id"]] = [
+                                g for g in resolved.members
+                                if str(g.id) in ans.get("values", [])
+                            ]
 
-                            case ComponentType.role_select:
-                                self.modal_values[ans["custom_id"]] = [
-                                    r for r in self.resolved.roles
-                                    if str(r.id) in ans.get("values", [])
-                                ]
+                        case ComponentType.role_select:
+                            self.modal_values[ans["custom_id"]] = [
+                                r for r in resolved.roles
+                                if str(r.id) in ans.get("values", [])
+                            ]
 
-                            case ComponentType.file_upload:
-                                self.modal_values[ans["custom_id"]] = [
-                                    a for a in self.resolved.attachments
-                                    if str(a.id) in ans.get("values", [])
-                                ]
+                        case ComponentType.file_upload:
+                            self.modal_values[ans["custom_id"]] = [
+                                a for a in resolved.attachments
+                                if str(a.id) in ans.get("values", [])
+                            ]
 
-                            case ComponentType.channel_select:
-                                self.modal_values[ans["custom_id"]] = [
-                                    c for c in self.resolved.channels
-                                    if str(c.id) in ans.get("values", [])
-                                ]
+                        case ComponentType.channel_select:
+                            self.modal_values[ans["custom_id"]] = [
+                                c for c in resolved.channels
+                                if str(c.id) in ans.get("values", [])
+                            ]
 
-                            case ComponentType.mentionable_select:
-                                collected_values = []
-                                allowed_ids = set(ans.get("values", []))
+                        case ComponentType.mentionable_select:
+                            collected_values = []
+                            allowed_ids = set(ans.get("values", []))
 
-                                for m in self.resolved.members:
-                                    if str(m.id) in allowed_ids:
-                                        collected_values.append(m)
-                                for r in self.resolved.roles:
-                                    if str(r.id) in allowed_ids:
-                                        collected_values.append(r)
-                                for c in self.resolved.channels:
-                                    if str(c.id) in allowed_ids:
-                                        collected_values.append(c)
-                                self.modal_values[ans["custom_id"]] = collected_values
+                            for m in resolved.members:
+                                if str(m.id) in allowed_ids:
+                                    collected_values.append(m)
+                            for r in resolved.roles:
+                                if str(r.id) in allowed_ids:
+                                    collected_values.append(r)
+                            for c in resolved.channels:
+                                if str(c.id) in allowed_ids:
+                                    collected_values.append(c)
+                            self.modal_values[ans["custom_id"]] = collected_values
 
-                            case _:
-                                # Probably just strings, default to that
-                                self.modal_values[ans["custom_id"]] = (
-                                    ans.get("values", None) or  # If it was text select
-                                    ans.get("value", None) or  # If it was text input
-                                    "discord.http:INVALID"  # It should never reach here...
-                                )
+                        case _:
+                            # Probably just strings, default to that
+                            self.modal_values[ans["custom_id"]] = (
+                                ans.get("values", None) or  # If it was text select
+                                ans.get("value", None) or  # If it was text input
+                                "discord.http:INVALID"  # It should never reach here...
+                            )
+
+        return guild
 
     async def _background_task_manager(self, call_after: Callable) -> None:
         try:
@@ -799,19 +823,61 @@ class Context:
         return InteractionType(self._raw_type)
 
     @property
+    def command_type(self) -> ApplicationCommandType:
+        """ The type of the command, if any. """
+        return ApplicationCommandType(self._raw_command_type)
+
+    @property
+    def app_permissions(self) -> Permissions:
+        """ The permissions of the application in the guild. """
+        return Permissions(self._raw_app_permissions)
+
+    @property
+    def context(self) -> InteractionContextType | None:
+        """ The context where the interaction was triggered from, if any. """
+        if self._raw_context is None:
+            return None
+        return InteractionContextType(self._raw_context)
+
+    @property
+    def resolved(self) -> ResolvedValues:
+        """ The resolved values of the interaction, built from the raw data when read. """
+        if not self._raw_resolved:
+            return ResolvedValues._empty()
+        if self._raw_type == _MESSAGE_COMPONENT:
+            # Select menus already parsed these, so share the same objects instead of parsing again
+            return ResolvedValues._from_parsed(self.select_values._parsed_data)
+        return ResolvedValues(self, {"data": self._data})
+
+    def _payload_channel(self) -> BaseChannel | None:
+        """ The channel sent with the interaction, built from the raw payload when asked for. """
+        if self._raw_channel is None:
+            return None
+        return channel_types.get(self._raw_channel["type"], BaseChannel)(
+            state=self.bot.state,
+            data=self._raw_channel
+        )
+
+    @property
     def guild(self) -> Guild | PartialGuild | None:
         """
         The guild the interaction was made in.
 
         If you are using gateway cache, it can return full object too
         """
-        if not self._guild:
+        if self.guild_id is None:
             return None
 
-        if cache := self.bot.cache.get_guild(self._guild.id):
+        if cache := self.bot.cache.get_guild(self.guild_id):
             return cache
 
-        return self._guild
+        return self._partial_guild()
+
+    def _partial_guild(self) -> PartialGuild | None:
+        """ The partial guild of the interaction, built from its ID when asked for. """
+        if self.guild_id is None:
+            return None
+        return self.bot.get_partial_guild(self.guild_id)
 
     @property
     def channel(self) -> "BaseChannel | PartialChannel | None":
@@ -819,27 +885,27 @@ class Context:
         if not self.channel_id:
             return None
 
-        if self.guild and (cache := self.bot.cache.get_channel_thread(
-            guild_id=self.guild.id,
+        if self.guild_id and (cache := self.bot.cache.get_channel_thread(
+            guild_id=self.guild_id,
             channel_id=self.channel_id
         )):
             return cache
 
-        if self._channel:
+        if channel := self._payload_channel():
             # Prefer the channel from context
-            return self._channel
+            return channel
 
         return self.bot.get_partial_channel(
             self.channel_id,
-            guild_id=self.guild.id if self.guild else None
+            guild_id=self.guild_id
         )
 
     @property
     def channel_type(self) -> ChannelType:
         """ The type of the channel. """
-        if self._channel:
-            return self._channel.type
-        return ChannelType.unknown
+        if self._raw_channel is None:
+            return ChannelType.unknown
+        return ChannelType(self._raw_channel["type"])
 
     @property
     def created_at(self) -> datetime:
@@ -1242,7 +1308,7 @@ class Context:
                 return [], await self._create_args_chat_input()
 
             case ApplicationCommandType.user:
-                if self.resolved.members:
+                if self._raw_resolved.get("members"):
                     first: dict | None = next(
                         iter(self._raw_resolved["members"].values()),
                         None
@@ -1250,7 +1316,7 @@ class Context:
 
                     if not first:
                         raise ValueError("User command detected members, but was unable to parse it")
-                    if not self.guild:
+                    if not (guild := self.guild):
                         raise ValueError("While parsing members, guild was not available")
 
                     first["user"] = next(
@@ -1259,7 +1325,7 @@ class Context:
                     )
 
                     target = self.bot.create_member_from_data(
-                        first, guild=self.guild
+                        first, guild=guild
                     )
 
                 elif self._raw_resolved.get("users", {}):
@@ -1311,12 +1377,12 @@ class Context:
                             member_data = resolved["members"][option["value"]]
                             member_data["user"] = resolved["users"][option["value"]]
 
-                            if not self.guild:
+                            if not (guild := self.guild):
                                 raise ValueError("Guild somehow was not available while parsing Member")
 
                             kwargs[option["name"]] = self.bot.create_member_from_data(
                                 member_data,
-                                guild=self.guild
+                                guild=guild
                             )
 
                         else:
@@ -1338,12 +1404,12 @@ class Context:
                         )
 
                     case CommandOptionType.role:
-                        if not self.guild:
+                        if not (guild := self.guild):
                             raise ValueError("Guild somehow was not available while parsing Role")
 
                         kwargs[option["name"]] = self.bot.create_role_from_data(
                             resolved["roles"][option["value"]],
-                            guild=self.guild
+                            guild=guild
                         )
 
                     case CommandOptionType.string:
@@ -1382,11 +1448,11 @@ class Context:
             self._raw_resolved
         )
 
-    def _parse_user(self, data: dict) -> Member | User:
+    def _parse_user(self, data: dict, guild: "Guild | PartialGuild | None") -> Member | User:
         if data.get("member"):
             return self.bot.create_member_from_data(
                 data["member"],
-                guild=self.guild  # type: ignore
+                guild=guild  # type: ignore
             )
         if data.get("user"):
             return self.bot.create_user_from_data(data["user"])

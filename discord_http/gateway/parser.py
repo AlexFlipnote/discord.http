@@ -696,6 +696,13 @@ class Parser:
             The guild and member that was updated
         """
         guild = self._get_guild_or_partial(int(data["guild_id"]))
+
+        # A cached member is refreshed in place, instead of building a new one only to replace it
+        existing = guild.get_member(int(data["user"]["id"]))
+        if isinstance(existing, Member):
+            existing._update_from_data(data)
+            return (guild, existing)
+
         member = self.bot.create_member_from_data(data, guild=guild)
 
         self.bot.cache.update_member(member)

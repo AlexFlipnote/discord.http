@@ -1746,6 +1746,7 @@ class Message(PartialMessage):
 
     __slots__ = (
         "_extra",
+        "_raw_components",
         "_raw_flags",
         "_raw_mention_roles",
         "application_id",
@@ -1769,7 +1770,6 @@ class Message(PartialMessage):
         "stickers",
         "tts",
         "type",
-        "view",
         "webhook_id",
     )
 
@@ -1863,8 +1863,8 @@ class Message(PartialMessage):
         self.mentions: list["Member | User"] = []
         """ The mentions in the message. """
 
-        self.view: View | None = None
-        """ The components of the message, if any. """
+        # Only built into a View when read, most messages with components are never inspected
+        self._raw_components: list[dict] | None = None
 
         self.edited_timestamp: datetime | None = None
         """ The timestamp of when the message was last edited, if available. """
@@ -1906,11 +1906,8 @@ class Message(PartialMessage):
         return member if isinstance(member, Member) else None
 
     def _from_data(self, data: dict) -> None:
-        if data.get("components"):
-            self.view = View.from_dict(
-                state=self._state,
-                data=data
-            )
+        if components := data.get("components"):
+            self._raw_components = components
 
         if message_reference := data.get("message_reference"):
             self.reference = MessageReference(
@@ -2065,6 +2062,16 @@ class Message(PartialMessage):
     def escaped_content(self) -> str:
         """ Same as content, but with markdown characters escaped, showing the message as it was written. """
         return utils.escape_markdown(self.content)
+
+    @property
+    def view(self) -> View | None:
+        """ The components of the message, if any. """
+        if not self._raw_components:
+            return None
+        return View.from_dict(
+            state=self._state,
+            data={"components": self._raw_components}
+        )
 
     @property
     def flags(self) -> MessageFlags:

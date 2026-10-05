@@ -90,6 +90,20 @@ class TestNoneValuesAreNotShared(_ClientTestCase):
         self.assertIsInstance(SelectValues.none(ctx_b), SelectValues)
 
 
+class TestGuildId(_ClientTestCase):
+    def test_guild_interaction_has_guild_id(self) -> None:
+        ctx = Context(self.client, _payload(2, {"name": "cmd", "type": 1}))
+        self.assertEqual(ctx.guild_id, 100)
+        self.assertEqual(ctx.guild.id, 100)  # type: ignore[union-attr]
+
+    def test_dm_interaction_has_no_guild_id(self) -> None:
+        data = _payload(2, {"name": "cmd", "type": 1}, user=_user("42"))
+        del data["guild_id"], data["member"]
+        ctx = Context(self.client, data)
+        self.assertIsNone(ctx.guild_id)
+        self.assertIsNone(ctx.guild)
+
+
 class TestChannelTypes(_ClientTestCase):
     def test_guild_media_maps_to_forum_channel(self) -> None:
         self.assertIs(channel_types[16], ForumChannel)

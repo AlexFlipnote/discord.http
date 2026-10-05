@@ -464,6 +464,10 @@ class PartialUser(PartialBase):
         return self._state.bot.create_user_from_data(r.response)
 
 
+# Shared stand-in for a missing "collectibles" object, only ever read from
+_NO_COLLECTIBLES: dict = {}
+
+
 class _UserExtra(NamedTuple):
     """ Raw values for the fields most users don't have set at all. """
     banner: str | None
@@ -536,21 +540,43 @@ class User(PartialUser):
         return self.name
 
     def _from_data(self, data: dict) -> None:
-        collectibles = data.get("collectibles", {}) or {}  # Fallback if None
+        # Runs on every member build that refreshes this user, so it avoids any throwaway objects
+        get = data.get
 
-        self._raw_avatar: str | None = data.get("avatar")
-        self._raw_public_flags: int | None = data.get("public_flags")
+        self._raw_avatar: str | None = get("avatar")
+        self._raw_public_flags: int | None = get("public_flags")
 
-        extra = _UserExtra(
-            banner=data.get("banner"),
-            accent_colour=data.get("accent_color"),
-            banner_colour=data.get("banner_color"),
-            avatar_decoration=data.get("avatar_decoration_data"),
-            nameplate=collectibles.get("nameplate"),
-            name_style=data.get("display_name_styles"),
-            primary_guild=data.get("primary_guild"),
+        # Checked as a plain tuple first, most users have none of these
+        extra = (
+            get("banner"),
+            get("accent_color"),
+            get("banner_color"),
+            get("avatar_decoration_data"),
+            (get("collectibles") or _NO_COLLECTIBLES).get("nameplate"),
+            get("display_name_styles"),
+            get("primary_guild"),
         )
-        self._extra: _UserExtra | None = extra if any(extra) else None
+        self._extra: _UserExtra | None = _UserExtra._make(extra) if any(extra) else None
+
+    def _update_from_data(self, data: dict) -> None:
+        """
+        Refreshes the user in place from new data, used to keep one shared user per ID in the cache.
+
+        Parameters
+        ----------
+        data
+            The raw user data
+        """
+        self.name = data["username"]
+        self.bot = data.get("bot", False)
+        self.system = data.get("system", False)
+        self.verified = data.get("verified", False)
+
+        discriminator: str | None = data.get("discriminator")
+        self.discriminator = discriminator if discriminator != "0" else None
+
+        self.global_name = data.get("global_name") or None
+        self._from_data(data)
 
     @property
     def avatar(self) -> Asset | None:

@@ -6,7 +6,6 @@ import posixpath
 import re
 import struct
 import sys
-import time
 import traceback
 import unicodedata
 import zlib
@@ -15,6 +14,7 @@ from aiohttp import MultipartWriter
 from base64 import b64encode
 from collections.abc import Iterator
 from datetime import datetime, timedelta, UTC
+from time import perf_counter
 from types import UnionType
 from typing import Any, TYPE_CHECKING, get_origin, get_args, Union
 from urllib.parse import (
@@ -167,7 +167,6 @@ class BenchmarkEntry:
 
     def __init__(
         self,
-        *,
         internal: bool = False,
         wall_anchor: "datetime | None" = None,
         perf_anchor: float | None = None
@@ -180,18 +179,19 @@ class BenchmarkEntry:
 
         self._wall_anchor: datetime = wall_anchor or utcnow()
         self._perf_anchor: float = (
-            perf_anchor if perf_anchor is not None else time.perf_counter()
+            perf_anchor if perf_anchor is not None else perf_counter()
         )
 
         self._start_perf: float | None = None
         self._end_perf: float | None = None
 
+    # Inlined instead of calling start() and stop(), as several run on every interaction
     def __enter__(self) -> "BenchmarkEntry":
-        self.start()
+        self._start_perf = perf_counter()
         return self
 
     def __exit__(self, *args) -> None:  # ruff: ignore[missing-type-args]
-        self.stop()
+        self._end_perf = perf_counter()
 
     def __repr__(self) -> str:
         return f"<BenchmarkEntry internal={self.internal} elapsed={self.format()}>"
@@ -202,11 +202,11 @@ class BenchmarkEntry:
 
     def start(self) -> None:
         """ Start the benchmark timer. """
-        self._start_perf = time.perf_counter()
+        self._start_perf = perf_counter()
 
     def stop(self) -> None:
         """ Stop the benchmark timer. """
-        self._end_perf = time.perf_counter()
+        self._end_perf = perf_counter()
 
     @property
     def created_at(self) -> "datetime | None":
@@ -228,7 +228,7 @@ class BenchmarkEntry:
         if self._start_perf is None:
             return 0.0
         if self._end_perf is None:
-            return time.perf_counter() - self._start_perf
+            return perf_counter() - self._start_perf
         return self._end_perf - self._start_perf
 
     def format(self) -> str:
@@ -258,7 +258,7 @@ class Benchmark:
         self.results: dict[str, BenchmarkEntry] = {}
         """ A dictionary of benchmark entries, keyed by benchmark name. """
 
-        self._overall_start = time.perf_counter()
+        self._overall_start = perf_counter()
         self._wall_anchor = utcnow()
 
     def measure(self, name: str, *, internal: bool = False) -> BenchmarkEntry:
@@ -279,11 +279,8 @@ class Benchmark:
         -------
             A BenchmarkEntry context manager
         """
-        entry = BenchmarkEntry(
-            internal=internal,
-            wall_anchor=self._wall_anchor,
-            perf_anchor=self._overall_start
-        )
+        # Positional, keyword arguments are noticeably slower and this runs several times per interaction
+        entry: BenchmarkEntry = BenchmarkEntry(internal, self._wall_anchor, self._overall_start)
         self.results[name] = entry
         return entry
 
@@ -572,7 +569,18 @@ def parse_time(ts: str | int) -> datetime:
 
 
 def _to_epoch_ms(ts: "str | int | datetime") -> int:
-    """ Converts a timestamp to epoch milliseconds, ints use the same unit detection as `parse_time()`. """
+    """
+    Converts a timestamp to epoch milliseconds.
+
+    Parameters
+    ----------
+    ts
+        The timestamp to convert, ints use the same unit detection as `parse_time()`
+
+    Returns
+    -------
+        The timestamp as epoch milliseconds
+    """
     # Hot path when building cached objects, so str goes first and skips parse_time()
     if isinstance(ts, str):
         ts = datetime.fromisoformat(ts)
@@ -588,7 +596,7 @@ def _to_epoch_ms(ts: "str | int | datetime") -> int:
         return int(ts.timestamp() * 1000)
 
     # Integer maths is both faster than timestamp() and avoids float rounding
-    delta = ts - _UNIX_EPOCH
+    delta: timedelta = ts - _UNIX_EPOCH
     return (delta.days * 86_400 + delta.seconds) * 1000 + delta.microseconds // 1000
 
 

@@ -292,12 +292,15 @@ Objects in the gateway cache can exist hundreds of thousands of times, so every 
 
 - **Raw values, lazy properties:** Store the cheap raw value (``_raw_*``) and convert it in a property when accessed, instead of building enums, flags or objects up front.
 - **Rarely-set fields:** Group fields that most instances do not have into a single ``NamedTuple`` slot (``_extra``) that is ``None`` when all of them are empty, see ``Member`` and ``Message``.
+  Check for emptiness by comparing against a shared all-``None`` tuple, ``any()`` with a generator is several times slower on hot paths.
 - **Bit-packing:** Pack booleans and small flags into a single int, see ``Role._flags``.
 - **Timestamps:** Store timestamps with ``utils.pack_timestamps()`` and read them back with ``utils.unpack_timestamp()`` in a property, instead of keeping ``datetime`` objects around.
 - **Tuples over lists:** Use tuples for data that does not change, an empty tuple is shared by Python while every empty list is a new object.
 - **Interning:** Values repeated across many objects (feature lists, role IDs, permission overwrites) are deduplicated through the cache's ``intern_*`` helpers.
 
 .. code-block:: python
+
+    _EMPTY_THING_EXTRA = (None,) * len(_ThingExtra._fields)
 
     class Thing(PartialThing):
         """ Represents a thing. """
@@ -307,12 +310,13 @@ Objects in the gateway cache can exist hundreds of thousands of times, so every 
             ...
             self._raw_flags: int = data.get("flags", 0)
 
-            extra = _ThingExtra(
-                position=data.get("position"),
-                thread=data.get("thread"),
+            # Checked as a plain tuple first, most things have none of these
+            extra = (
+                data.get("position"),
+                data.get("thread"),
             )
             self._extra: _ThingExtra | None = (
-                extra if any(g is not None for g in extra) else None
+                _ThingExtra._make(extra) if extra != _EMPTY_THING_EXTRA else None
             )
 
         @property

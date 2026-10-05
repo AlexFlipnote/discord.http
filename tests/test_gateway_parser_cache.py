@@ -317,6 +317,45 @@ def _thread_data(thread_id=30, parent_id=10, archived=False):
     }
 
 
+def _member_data(user_id=5, nick=None, roles=(), username="u"):
+    return {
+        "user": {"id": str(user_id), "username": username, "discriminator": "0", "avatar": None},
+        "roles": [str(r) for r in roles], "flags": 0, "nick": nick,
+        "joined_at": "2021-05-06T07:08:09.123000+00:00", "pending": False,
+    }
+
+
+class TestMemberUpdateInPlace(unittest.TestCase):
+    def _setup(self):
+        bot = FakeBot(cache_flags=GatewayCacheFlags.guilds | GatewayCacheFlags.members)
+        parser = Parser(bot=bot)
+        (guild,) = parser.guild_create(_guild_data(members=[_member_data()]))
+        return parser, guild
+
+    def test_cached_member_is_updated_in_place(self) -> None:
+        parser, guild = self._setup()
+        before = guild.get_member(5)
+
+        (_, updated) = parser.guild_member_update({
+            **_member_data(nick="new", roles=(10, 11), username="renamed"), "guild_id": "1"
+        })
+
+        self.assertIs(updated, before)
+        self.assertIs(guild.get_member(5), before)
+        self.assertEqual(before.nick, "new")
+        self.assertEqual(before.role_ids, (10, 11))
+        self.assertEqual(before.name, "renamed")
+
+    def test_uncached_member_is_built_and_cached(self) -> None:
+        parser, guild = self._setup()
+
+        (_, member) = parser.guild_member_update({**_member_data(user_id=6, nick="fresh"), "guild_id": "1"})
+
+        self.assertIsInstance(member, Member)
+        self.assertIs(guild.get_member(6), member)
+        self.assertEqual(member.nick, "fresh")
+
+
 class TestThreadCacheLifetime(unittest.TestCase):
     def _setup(self):
         bot = FakeBot(cache_flags=GatewayCacheFlags.guilds | GatewayCacheFlags.channels | GatewayCacheFlags.threads)

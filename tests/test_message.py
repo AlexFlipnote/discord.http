@@ -44,6 +44,22 @@ class TestMessageCallParticipants(unittest.TestCase):
         self.assertIsNone(message.call)
 
 
+class TestMessageView(unittest.TestCase):
+    def test_components_build_a_view_when_read(self) -> None:
+        from discord_http import View
+
+        message = Message(state=FakeState(), data=_message_data(components=[
+            {"type": 1, "components": [{"type": 2, "style": 1, "label": "x", "custom_id": "btn"}]}
+        ]))
+        view = message.view
+        self.assertIsInstance(view, View)
+        self.assertEqual(view.to_dict()[0]["components"][0]["custom_id"], "btn")  # type: ignore[union-attr]
+
+    def test_no_components_is_none(self) -> None:
+        self.assertIsNone(Message(state=FakeState(), data=_message_data()).view)
+        self.assertIsNone(Message(state=FakeState(), data=_message_data(components=[])).view)
+
+
 class TestMessageRoleSubscriptionData(unittest.TestCase):
     def test_parses_role_subscription_data(self) -> None:
         message = Message(state=FakeState(), data=_message_data(role_subscription_data={

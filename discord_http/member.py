@@ -522,14 +522,32 @@ class Member(PartialMember):
 
         collectibles = data.get("collectibles", {}) or {}
 
-        extra = _MemberExtra(
-            avatar=data.get("avatar"),
-            banner=data.get("banner"),
-            avatar_decoration=data.get("avatar_decoration_data"),
-            name_style=data.get("display_name_styles"),
-            nameplate=collectibles.get("nameplate"),
+        # Checked as a plain tuple first, most members have none of these
+        extra = (
+            data.get("avatar"),
+            data.get("banner"),
+            data.get("avatar_decoration_data"),
+            data.get("display_name_styles"),
+            collectibles.get("nameplate"),
         )
-        self._extra: _MemberExtra | None = extra if any(extra) else None
+        self._extra: _MemberExtra | None = _MemberExtra._make(extra) if any(extra) else None
+
+    def _update_from_data(self, data: dict) -> None:
+        """
+        Refreshes the member in place from new data, used when a cached member is updated.
+
+        Parameters
+        ----------
+        data
+            The raw member data, including the user
+        """
+        self._user = self._state.bot.create_user_from_data(data["user"])
+        self._raw_permissions = utils.get_int(data, "permissions")
+        self.role_ids = self._state.cache.intern_role_ids(self.guild_id, data["roles"])
+        self._raw_flags = data["flags"]
+        self.pending = data.get("pending", False)
+        self.nick = data.get("nick")
+        self._from_data(data)
 
     @property
     def flags(self) -> GuildMemberFlags:

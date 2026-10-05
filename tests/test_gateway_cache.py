@@ -554,5 +554,24 @@ class TestInterningPoolReset(unittest.TestCase):
         self.assertIsNot(first, second)
 
 
+class TestRoleIdInterning(unittest.TestCase):
+    def test_same_combination_returns_the_same_tuple(self) -> None:
+        cache, _, guild = _cache_with_guild(GatewayCacheFlags.members)
+        first = cache.intern_role_ids(guild.id, ["1100000000000000001", "1100000000000000002"])
+        second = cache.intern_role_ids(guild.id, ["1100000000000000001", "1100000000000000002"])
+        self.assertEqual(first, (1100000000000000001, 1100000000000000002))
+        self.assertIs(first, second)
+
+    def test_different_combinations_share_role_id_ints(self) -> None:
+        cache, _, guild = _cache_with_guild(GatewayCacheFlags.members)
+        a = cache.intern_role_ids(guild.id, ["1100000000000000001", "1100000000000000002"])
+        b = cache.intern_role_ids(guild.id, ["1100000000000000002"])
+        self.assertIs(a[1], b[0])
+
+    def test_no_roles_is_an_empty_tuple(self) -> None:
+        cache, _, guild = _cache_with_guild(GatewayCacheFlags.members)
+        self.assertEqual(cache.intern_role_ids(guild.id, []), ())
+
+
 if __name__ == "__main__":
     unittest.main()

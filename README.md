@@ -14,6 +14,8 @@ A Python library for Discord bots using HTTP interactions, with optional WebSock
 ## Is it the right fit?
 discord.http is built for bots that mostly answer slash commands, and that care about what they cost to run as they grow. Replies are sent back on the same HTTP request the command arrived on, so the first reply to a command does not even cost an API call. Small bots work just as well, the savings simply add up the more servers you are in.
 
+Memory gets the same care, every cache type is opt-in, users are shared between servers, and repeated data like role lists is stored once. A cached member takes about 170 bytes, and a full shard of 2,500 servers holds about 80 MB with servers, channels, roles and emojis cached, or about 15 MB with nothing cached.
+
 It is probably not the right pick if you need voice connections (not supported for now, demand is low).
 
 ## Requirements

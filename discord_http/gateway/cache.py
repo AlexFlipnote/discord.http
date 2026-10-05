@@ -121,6 +121,7 @@ class Cache:
         "__role_tuple_pools",
         "__users",
         "_presence_dedup_enabled",
+        "_role_interning_enabled",
         "_state",
         "_user_dedup_enabled",
         "bot",
@@ -151,6 +152,12 @@ class Cache:
             weakref.WeakValueDictionary()
         )
 
+        # Checked once here, as role IDs are interned on every full member build
+        self._role_interning_enabled: bool = (
+            self.cache_flags is not None and
+            GatewayCacheFlags.members in self.cache_flags
+        )
+
         # Whether it's worth touching the shared user table at all
         self._user_dedup_enabled: bool = self.cache_flags is not None and (
             GatewayCacheFlags.members in self.cache_flags or
@@ -172,14 +179,29 @@ class Cache:
         mention, interaction, audit log entry, ...) would intern its roles into a
         pool that's never revisited by anything, growing forever for no benefit.
         """
-        if self.cache_flags is None or GatewayCacheFlags.members not in self.cache_flags:
+        if not self._role_interning_enabled:
             return tuple(map(int, raw_role_ids))
 
-        int_pool = self.__role_int_pools.setdefault(guild_id, {})
-        role_ids = tuple(int_pool.setdefault(i, i) for i in map(int, raw_role_ids))
+        if not raw_role_ids:
+            return ()
 
-        tuple_pool = self.__role_tuple_pools.setdefault(guild_id, {})
-        return tuple_pool.setdefault(role_ids, role_ids)
+        # get() first, as setdefault() would build a throwaway dict on every call
+        tuple_pool = self.__role_tuple_pools.get(guild_id)
+        if tuple_pool is None:
+            tuple_pool = self.__role_tuple_pools[guild_id] = {}
+
+        # Most members repeat a role combination someone else already has, so check that first
+        ids: tuple[int, ...] = tuple(map(int, raw_role_ids))
+        if (pooled := tuple_pool.get(ids)) is not None:
+            return pooled
+
+        int_pool = self.__role_int_pools.get(guild_id)
+        if int_pool is None:
+            int_pool = self.__role_int_pools[guild_id] = {}
+
+        role_ids = tuple(map(int_pool.setdefault, ids, ids))
+        tuple_pool[role_ids] = role_ids
+        return role_ids
 
     def intern_features(self, raw_features: list[str] | None) -> tuple[str, ...]:
         """
@@ -225,7 +247,10 @@ class Cache:
         if self.cache_flags is None or GatewayCacheFlags.channels not in self.cache_flags:
             return raw_overwrites
 
-        pool = self.__overwrite_pools.setdefault(guild_id, {})
+        pool = self.__overwrite_pools.get(guild_id)
+        if pool is None:
+            pool = self.__overwrite_pools[guild_id] = {}
+
         return pool.setdefault(raw_overwrites, raw_overwrites)
 
     def reset_guild_pools(self, guild_id: int) -> None:
@@ -287,6 +312,28 @@ class Cache:
         if user_id is None:
             return None
         return self.__users.get(user_id)
+
+    def _user_from_data(self, data: dict) -> "User":
+        """
+        Returns the shared user for this ID refreshed with new data, creating it if it is not cached yet.
+
+        Parameters
+        ----------
+        data
+            The raw user data
+
+        Returns
+        -------
+            The shared user
+        """
+        # Refreshed in place, instead of building a new user only to copy it into the cached one
+        if (canonical := self.__users.get(int(data["id"]))) is not None:
+            canonical._update_from_data(data)
+            return canonical
+
+        user: User = User(state=self.bot.state, data=data)
+        self.__users[user.id] = user
+        return user
 
     def _dedupe_plain_user(self, user: "User") -> "User":
         """ Reuse or register the shared canonical `User` for this ID. """

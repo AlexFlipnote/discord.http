@@ -662,27 +662,8 @@ class PartialChannel(PartialBase):
         -------
             The channel class type
         """
-        resolved_type = ChannelType(channel_type)
-
-        match resolved_type:
-            case x if x in (ChannelType.guild_text, ChannelType.guild_news):
-                return TextChannel
-            case ChannelType.guild_voice:
-                return VoiceChannel
-            case ChannelType.guild_category:
-                return CategoryChannel
-            case ChannelType.guild_news_thread:
-                return NewsThread
-            case ChannelType.guild_public_thread:
-                return PublicThread
-            case ChannelType.guild_private_thread:
-                return PrivateThread
-            case ChannelType.guild_stage_voice:
-                return StageChannel
-            case ChannelType.guild_forum:
-                return ForumChannel
-            case _:
-                return BaseChannel
+        # A dict lookup on the raw int, every channel and thread parse goes through here
+        return _CHANNEL_CLASSES.get(channel_type, BaseChannel)
 
     @classmethod
     def from_dict(
@@ -1738,7 +1719,7 @@ class BaseChannel(PartialChannel):
         self.parent_id: int | None = utils.get_int(data, "parent_id")
         """ The ID of the parent channel (if any). """
 
-        self.rate_limit_per_user: int = data.get("rate_limit_per_user", 0)
+        self.rate_limit_per_user: int = data.get("rate_limit_per_user") or 0
         """ The rate limit per user in seconds. """
 
         self._raw_flags: int = data.get("flags", 0)
@@ -2275,16 +2256,14 @@ class PublicThread(BaseChannel):
         self.name: str = data["name"]
         """ The name of the thread. """
 
-        self.message_count: int = utils.get_int(data, "message_count") or 0
+        # Counts are always JSON integers, unlike IDs which are sent as strings
+        self.message_count: int = data.get("message_count") or 0
         """ The number of messages in the thread. """
 
-        self.member_count: int = utils.get_int(data, "member_count") or 0
+        self.member_count: int = data.get("member_count") or 0
         """ The number of members in the thread. """
 
-        self.rate_limit_per_user: int = utils.get_int(data, "rate_limit_per_user") or 0
-        """ The rate limit per user in seconds. """
-
-        self.total_message_sent: int = utils.get_int(data, "total_message_sent") or 0
+        self.total_message_sent: int = data.get("total_message_sent") or 0
         """ The total number of messages sent in the thread. """
 
         metadata: dict = data.get("thread_metadata", {})
@@ -2313,14 +2292,8 @@ class PublicThread(BaseChannel):
         self.newly_created: bool = data.get("newly_created", False)
         """ Whether the thread was newly created. """
 
-        self.guild_id: int | None = utils.get_int(data, "guild_id")
-        """ The ID of the guild the thread belongs to. """
-
         self.owner_id: int | None = utils.get_int(data, "owner_id")
         """ The ID of the user who owns the thread. """
-
-        self.last_message_id: int | None = utils.get_int(data, "last_message_id")
-        """ The ID of the last message in the thread. """
 
     def __repr__(self) -> str:
         return f"<PublicThread id={self.id} name='{self.name}'>"
@@ -2984,3 +2957,17 @@ class StageChannel(VoiceChannel):
             data=r.response,
         )
         return self._stage_instance
+
+
+# Defined last, as it needs every channel class above
+_CHANNEL_CLASSES: dict[int, type[BaseChannel]] = {
+    int(ChannelType.guild_text): TextChannel,
+    int(ChannelType.guild_news): TextChannel,
+    int(ChannelType.guild_voice): VoiceChannel,
+    int(ChannelType.guild_category): CategoryChannel,
+    int(ChannelType.guild_news_thread): NewsThread,
+    int(ChannelType.guild_public_thread): PublicThread,
+    int(ChannelType.guild_private_thread): PrivateThread,
+    int(ChannelType.guild_stage_voice): StageChannel,
+    int(ChannelType.guild_forum): ForumChannel,
+}
