@@ -686,6 +686,35 @@ class TestQuerySelfCorrectsBucketKey(unittest.IsolatedAsyncioTestCase):
             task.cancel()
         await asyncio.gather(*tasks, return_exceptions=True)
 
+    async def test_cleanup_keeps_hash_of_a_bucket_still_in_cooldown(self) -> None:
+        # Dropping the hash after 60s orphaned the cooldown bucket, so the next
+        # crosspost started from a fresh bucket and hit the same hourly 429 again
+        api = self._make_api([
+            _fake_response(bucket_hash="hashABC", reset="100"),
+            _fake_response(bucket_hash="hashABC", reset="100"),
+        ])
+        await api.query("POST", "/channels/1/messages/2/crosspost")
+        await api.query("POST", "/channels/1/messages/3/crosspost")
+
+        rl = api._buckets["POST #hashABC:1"]
+        rl.remaining = 0
+        rl.expires = rl._loop.time() + 3600
+        api._bucket_hashes = {
+            route: (bucket_hash, time.perf_counter() - 120)
+            for route, (bucket_hash, _) in api._bucket_hashes.items()
+        }
+
+        api._clear_old_ratelimits()
+
+        _, key, _ = api._resolve_bucket_key("POST", "/channels/1/messages/4/crosspost")
+        self.assertIs(api.get_ratelimit(key), rl)
+
+    async def test_cleanup_drops_hash_once_no_bucket_uses_it(self) -> None:
+        api = self._make_api([])
+        api._bucket_hashes["POST /channels/:id/messages/:id/crosspost"] = ("hashABC", time.perf_counter() - 120)
+        api._clear_old_ratelimits()
+        self.assertEqual(api._bucket_hashes, {})
+
     async def test_ratelimit_warning_shows_the_normalized_path_not_the_raw_id(self) -> None:
         # Should read as "this counts as one bucket", not the one id that triggered it
         api = self._make_api([

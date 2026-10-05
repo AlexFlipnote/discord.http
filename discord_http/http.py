@@ -609,10 +609,14 @@ class DiscordAPI:
         if to_remove:
             _log.debug(f"Cleaned up {len(to_remove)} old ratelimits, {len(self._buckets)} remaining.")
 
+        # A bucket still in cooldown must stay reachable through its hash, otherwise
+        # the next request falls back to a fresh local-guess bucket and re-hits the 429
+        live_hashes = {bucket.bucket_hash for bucket in self._buckets.values()}
+
         now = time.perf_counter()
         stale_hashes = [
-            route for route, (_, last_seen) in self._bucket_hashes.items()
-            if now - last_seen >= 60
+            route for route, (bucket_hash, last_seen) in self._bucket_hashes.items()
+            if now - last_seen >= 60 and bucket_hash not in live_hashes
         ]
         for route in stale_hashes:
             self._bucket_hashes.pop(route, None)
