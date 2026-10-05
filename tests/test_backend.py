@@ -442,21 +442,23 @@ class TestConnectionMode(unittest.TestCase):
         with self.assertRaises(TypeError):
             Client(token="a.b.c", enable_gateway=True, loop=self.client.loop)  # type: ignore[call-arg]
 
-    def test_ws_mode_warns_http_server_is_still_running(self) -> None:
-        with self.assertLogs("discord_http.client", level="WARNING") as logs:
-            self._resolve(None)
-        self.assertIn("disable_http_server=True", "\n".join(logs.output))
+    def _http_server_notice_logged(self, endpoint_url: str | None, **kwargs) -> bool:
+        # The mode is always logged at INFO, so the notice is looked for among those logs
+        with self.assertLogs("discord_http.client", level="INFO") as logs:
+            self._resolve(endpoint_url, **kwargs)
+        return "disable_http_server=True" in "\n".join(logs.output)
 
-    def test_ws_mode_with_disabled_http_server_does_not_warn(self) -> None:
+    def test_ws_mode_notes_http_server_is_still_running(self) -> None:
+        self.assertTrue(self._http_server_notice_logged(None))
+
+    def test_ws_mode_with_disabled_http_server_has_no_http_server_note(self) -> None:
         self.client.disable_http_server = True
-        with self.assertNoLogs("discord_http.client", level="WARNING"):
-            self._resolve(None)
+        self.assertFalse(self._http_server_notice_logged(None))
 
-    def test_http_mode_does_not_warn_about_http_server(self) -> None:
+    def test_http_mode_has_no_http_server_note(self) -> None:
         from discord_http.gateway import Intents
 
-        with self.assertNoLogs("discord_http.client", level="WARNING"):
-            self._resolve("https://example.com", intents=Intents.guilds)
+        self.assertFalse(self._http_server_notice_logged("https://example.com", intents=Intents.guilds))
 
     def test_disabled_http_server_with_endpoint_and_intents_is_ws_plus(self) -> None:
         # Like a bot that only handles gateway events while another process answers the URL

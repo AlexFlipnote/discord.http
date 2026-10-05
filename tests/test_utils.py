@@ -316,7 +316,8 @@ class TestBenchmarkEntry(unittest.TestCase):
         with entry:
             pass
         d = entry.to_dict()
-        self.assertGreater(d["elapsed"], 0.0)
+        # An empty block can measure 0.0 on clocks with coarse resolution, like on Windows
+        self.assertGreaterEqual(d["elapsed"], 0.0)
         self.assertIsNotNone(d["start_iso"])
         self.assertIsNotNone(d["end_iso"])
 
