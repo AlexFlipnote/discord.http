@@ -52,6 +52,7 @@ _MAJOR_PARAM_ROOTS = ("guilds", "channels", "webhooks", "stage-instances")
 major_param_re = re.compile(r"^/(" + "|".join(_MAJOR_PARAM_ROOTS) + r")/(\d+)(?=/|$)")
 id_segment_re = re.compile(r"(?<=/)\d+(?=/|$)")
 _token_route_re = re.compile(r"^/(interactions|webhooks)/(\d+)/([^/]+)")
+_one_shot_route_re = re.compile(r"^/interactions/\d+/[^/]+/callback$")
 
 
 def _try_json(data: str) -> dict | str:
@@ -755,6 +756,18 @@ class DiscordAPI:
         value = self._buckets[key] = Ratelimit(key)
         return value
 
+    def _release_bucket(self, ratelimit: Ratelimit) -> None:
+        """
+        Drop a bucket that can never be used again, instead of waiting for the cleanup loop.
+
+        Parameters
+        ----------
+        ratelimit
+            The bucket to drop, kept while another request is still using it
+        """
+        if ratelimit.in_flight == 0 and self._buckets.get(ratelimit.key) is ratelimit:
+            del self._buckets[ratelimit.key]
+
     def create_jitter(self) -> float:
         """ Simply returns a random float between 0 and 1. """
         return random.random()
@@ -869,125 +882,129 @@ class DiscordAPI:
         error_tries = 0
         ratelimit_tries = 0
 
-        while True:
-            body = kwargs.get("data")
-            if (error_tries or ratelimit_tries) and isinstance(body, MultipartData):
-                # File streams were already consumed by the previous attempt
-                body.reset()
+        try:
+            while True:
+                body = kwargs.get("data")
+                if (error_tries or ratelimit_tries) and isinstance(body, MultipartData):
+                    # File streams were already consumed by the previous attempt
+                    body.reset()
 
-            if not exempt_from_global:
-                await self._global_ratelimit.acquire()
+                if not exempt_from_global:
+                    await self._global_ratelimit.acquire()
 
-            async with ratelimit:
-                try:
-                    req_start = time.perf_counter()
-                    r: HTTPResponse = await self.http.request(
-                        method, f"{api_url}{path}",
-                        res_method=res_method,
-                        **kwargs
-                    )
-                    req_elapsed = time.perf_counter() - req_start
-                    ratelimit.update(r)
+                async with ratelimit:
+                    try:
+                        req_start = time.perf_counter()
+                        r: HTTPResponse = await self.http.request(
+                            method, f"{api_url}{path}",
+                            res_method=res_method,
+                            **kwargs
+                        )
+                        req_elapsed = time.perf_counter() - req_start
+                        ratelimit.update(r)
 
-                    if new_bucket_hash := r.headers.get("X-RateLimit-Bucket"):
-                        self._bucket_hashes[route_template] = (new_bucket_hash, time.perf_counter())
+                        if new_bucket_hash := r.headers.get("X-RateLimit-Bucket"):
+                            self._bucket_hashes[route_template] = (new_bucket_hash, time.perf_counter())
 
-                    _log.debug(
-                        "HTTP %s (%s): %s (%s/%s, %.2fs until reset, took %.3fs)",
-                        method.upper(), r.status, path,
-                        ratelimit.remaining, ratelimit.limit, ratelimit.reset_after,
-                        req_elapsed
-                    )
+                        _log.debug(
+                            "HTTP %s (%s): %s (%s/%s, %.2fs until reset, took %.3fs)",
+                            method.upper(), r.status, path,
+                            ratelimit.remaining, ratelimit.limit, ratelimit.reset_after,
+                            req_elapsed
+                        )
 
-                    match r.status:
-                        case x if x >= 200 and x <= 299:
-                            return r
+                        match r.status:
+                            case x if x >= 200 and x <= 299:
+                                return r
 
-                        case 429:
-                            response = _try_json(r.response)
+                            case 429:
+                                response = _try_json(r.response)
 
-                            if not isinstance(response, dict):
-                                # For cases where you're ratelimited by CloudFlare
-                                raise Ratelimited(r)
+                                if not isinstance(response, dict):
+                                    # For cases where you're ratelimited by CloudFlare
+                                    raise Ratelimited(r)
 
-                            ratelimit_tries += 1
-                            if ratelimit_tries > 10:
-                                # something is actually wrong, not just normal throttling
-                                _log.error(f"Ratelimit hit ({fallback_key}) 10 times in a row, giving up")
-                                raise Ratelimited(r)
+                                ratelimit_tries += 1
+                                if ratelimit_tries > 10:
+                                    # something is actually wrong, not just normal throttling
+                                    _log.error(f"Ratelimit hit ({fallback_key}) 10 times in a row, giving up")
+                                    raise Ratelimited(r)
 
-                            retry_after: float = response.get("retry_after", 1.0)
+                                retry_after: float = response.get("retry_after", 1.0)
 
-                            if response.get("global", False):
-                                _log.warning(f"Global ratelimit hit, pausing all requests for {retry_after:.2f}s...")
-                                self._global_ratelimit.lock_for(retry_after)
+                                if response.get("global", False):
+                                    _log.warning(f"Global ratelimit hit, pausing all requests for {retry_after:.2f}s...")
+                                    self._global_ratelimit.lock_for(retry_after)
 
-                                if exempt_from_global:
-                                    await asyncio.sleep(retry_after)
-                            else:
-                                _log.warning(f"Ratelimit hit ({fallback_key}), waiting {retry_after}s...")
+                                    if exempt_from_global:
+                                        await asyncio.sleep(retry_after)
+                                else:
+                                    _log.warning(f"Ratelimit hit ({fallback_key}), waiting {retry_after}s...")
 
-                                async with ratelimit._lock:
-                                    # Concurrent 429s can carry different retry_after values
-                                    # (route limit vs. a sub-limit), the longest one must win
-                                    ratelimit.remaining = 0
-                                    ratelimit.expires = max(
-                                        ratelimit.expires or 0.0,
-                                        ratelimit._loop.time() + retry_after
-                                    )
+                                    async with ratelimit._lock:
+                                        # Concurrent 429s can carry different retry_after values
+                                        # (route limit vs. a sub-limit), the longest one must win
+                                        ratelimit.remaining = 0
+                                        ratelimit.expires = max(
+                                            ratelimit.expires or 0.0,
+                                            ratelimit._loop.time() + retry_after
+                                        )
 
-                            continue
+                                continue
 
-                        case x if x in (500, 502, 503, 504):
-                            if error_tries >= 4:  # Give up after 5 tries
-                                raise DiscordServerError(r)
+                            case x if x in (500, 502, 503, 504):
+                                if error_tries >= 4:  # Give up after 5 tries
+                                    raise DiscordServerError(r)
 
+                                _log.debug(
+                                    f"HTTP {method.upper()} {path} got {x}, "
+                                    f"retrying (attempt {error_tries + 1}/5)..."
+                                )
+
+                                # Try again, maybe it will work next time, surely...
+                                await _sleep(error_tries)
+                                error_tries += 1
+                                continue
+
+                            case 400:
+                                response = _try_json(r.response)
+                                if isinstance(response, str):
+                                    raise _HTTP_400_ERROR_TABLE.get(400, HTTPException)(r)
+                                raise _HTTP_400_ERROR_TABLE.get(
+                                    response.get("code", 0),
+                                    HTTPException
+                                )(r)
+
+                            case 401:
+                                _log.error("HTTP 401: The bot token is invalid or was revoked")
+                                raise Unauthorized(r)
+
+                            case 403:
+                                raise Forbidden(r)
+
+                            case 404:
+                                raise NotFound(r)
+
+                            case _:
+                                raise HTTPException(r)
+
+                    except OSError as e:
+                        retryable = (
+                            e.errno in (errno.ECONNRESET, errno.ECONNABORTED, 54) or
+                            isinstance(e, (aiohttp.ConnectionTimeoutError, aiohttp.SocketTimeoutError))
+                        )
+                        if error_tries < 4 and retryable:
                             _log.debug(
-                                f"HTTP {method.upper()} {path} got {x}, "
+                                f"HTTP {method.upper()} {path} hit {e!r}, "
                                 f"retrying (attempt {error_tries + 1}/5)..."
                             )
-
-                            # Try again, maybe it will work next time, surely...
                             await _sleep(error_tries)
                             error_tries += 1
                             continue
-
-                        case 400:
-                            response = _try_json(r.response)
-                            if isinstance(response, str):
-                                raise _HTTP_400_ERROR_TABLE.get(400, HTTPException)(r)
-                            raise _HTTP_400_ERROR_TABLE.get(
-                                response.get("code", 0),
-                                HTTPException
-                            )(r)
-
-                        case 401:
-                            _log.error("HTTP 401: The bot token is invalid or was revoked")
-                            raise Unauthorized(r)
-
-                        case 403:
-                            raise Forbidden(r)
-
-                        case 404:
-                            raise NotFound(r)
-
-                        case _:
-                            raise HTTPException(r)
-
-                except OSError as e:
-                    retryable = (
-                        e.errno in (errno.ECONNRESET, errno.ECONNABORTED, 54) or
-                        isinstance(e, (aiohttp.ConnectionTimeoutError, aiohttp.SocketTimeoutError))
-                    )
-                    if error_tries < 4 and retryable:
-                        _log.debug(
-                            f"HTTP {method.upper()} {path} hit {e!r}, "
-                            f"retrying (attempt {error_tries + 1}/5)..."
-                        )
-                        await _sleep(error_tries)
-                        error_tries += 1
-                        continue
-                    raise
+                        raise
+        finally:
+            if _one_shot_route_re.match(base_path):
+                self._release_bucket(ratelimit)
 
     async def me(self) -> "Application":
         """

@@ -518,6 +518,67 @@ class TestQueryConcurrency(unittest.IsolatedAsyncioTestCase):
         self.assertEqual(await self._run(api, paths), 1)
 
 
+class TestQueryReleasesOneShotBuckets(unittest.IsolatedAsyncioTestCase):
+    """ Every interaction callback has its own token, so its bucket must not outlive the request. """
+
+    def _make_api(self, responses: list[HTTPResponse]) -> DiscordAPI:
+        api = object.__new__(DiscordAPI)
+        api._default_headers = {}
+        api.api_url = "https://discord.test/api/v10"
+        api.base_url = "https://discord.test/api"
+        api._buckets = {}
+        api._bucket_hashes = {}
+        api._global_ratelimit = GlobalRatelimit()
+        api.http = _FakeHTTPClient(responses)
+        return api
+
+    async def test_callback_bucket_is_dropped_after_success(self) -> None:
+        # Discord sends ratelimit headers on callbacks, which used to keep the bucket in a cooldown
+        api = self._make_api([_fake_response(status=204, reset=str(time.time() + 5))])
+        await api.query("POST", "/interactions/111/tokenAAA/callback", res_method="text")
+        self.assertEqual(api._buckets, {})
+
+    async def test_callback_bucket_is_dropped_after_an_error(self) -> None:
+        api = self._make_api([_fake_response(status=404)])
+        with self.assertRaises(Exception):
+            await api.query("POST", "/interactions/111/tokenAAA/callback", res_method="text")
+        self.assertEqual(api._buckets, {})
+
+    async def test_many_callbacks_leave_no_buckets_behind(self) -> None:
+        api = self._make_api([_fake_response(status=204) for _ in range(50)])
+        for i in range(50):
+            await api.query("POST", f"/interactions/{1000 + i}/token{i}/callback", res_method="text")
+        self.assertEqual(api._buckets, {})
+
+    async def test_followup_bucket_is_kept(self) -> None:
+        # Followups reuse their token for up to 15 minutes, so their bucket stays
+        api = self._make_api([_fake_response(status=200)])
+        await api.query("POST", "/webhooks/555/tokenAAA", res_method="text")
+        self.assertEqual(len(api._buckets), 1)
+
+    async def test_callback_bucket_in_use_by_another_request_is_kept(self) -> None:
+        api = object.__new__(DiscordAPI)
+        api._default_headers = {}
+        api.api_url = "https://discord.test/api/v10"
+        api.base_url = "https://discord.test/api"
+        api._buckets = {}
+        api._bucket_hashes = {}
+        api._global_ratelimit = GlobalRatelimit()
+        api.http = _GatedHTTPClient()
+
+        path = "/interactions/111/tokenAAA/callback"
+        first = asyncio.create_task(api.query("POST", path, res_method="text"))
+        for _ in range(20):
+            await asyncio.sleep(0)
+
+        # Pretend a second request on the same token is still running
+        bucket = next(iter(api._buckets.values()))
+        bucket.in_flight += 1
+        api.http.gate.set()
+        await asyncio.wait_for(first, timeout=5)
+        self.assertIs(next(iter(api._buckets.values())), bucket)
+
+
 class TestQuerySelfCorrectsBucketKey(unittest.IsolatedAsyncioTestCase):
     """ End-to-end test of query()'s retry loop wiring _resolve_bucket_key() and
     _bucket_hashes together - the actual behavior change, not just the pure helpers. """
