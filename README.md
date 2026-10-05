@@ -1,6 +1,6 @@
 ![discord.http](https://raw.githubusercontent.com/AlexFlipnote/discord.http/master/.github/branding/banner.png)
 
-A Python library for Discord bots using HTTP interactions, with optional WebSocket support and full cache control.
+An HTTP-first Python library for Discord bots, running on HTTP interactions, the gateway, or both, with full cache control.
 
 - Runs over HTTP, the gateway or both, the library detects which on boot.
 - Nothing is cached unless you ask for it, and what is cached is stored compactly, even in thousands of servers.
