@@ -437,6 +437,25 @@ class MessageResponse(BaseResponse):
             return output
         return {"type": int(self.type), "data": output}
 
+    def to_request(self) -> dict[str, Any]:
+        """
+        The keyword arguments used to send the message to Discord with `DiscordAPI.query()`.
+
+        Plain JSON is sent unless the message has files,
+        since multipart data is a lot slower to build and send.
+
+        Returns
+        -------
+            Either the `json` body, or the multipart `data` and its `headers`
+        """
+        if isinstance(self.files, list) and self.files:
+            return {
+                "data": self.to_multipart(is_request=True),
+                "headers": {"Content-Type": self.content_type}
+            }
+
+        return {"json": self.to_dict(is_request=True)}
+
     def to_multipart(self, is_request: bool = False) -> MultipartWriter:
         """
         The multipart data that is sent to Discord.

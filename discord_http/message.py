@@ -1362,8 +1362,7 @@ class PartialMessage(PartialBase):
         r = await self._state.query(
             "PATCH",
             f"/channels/{self.channel.id}/messages/{self.id}",
-            headers={"Content-Type": payload.content_type},
-            data=payload.to_multipart(is_request=True),
+            **payload.to_request()
         )
 
         return self._state.bot.create_message_from_data(
@@ -1417,8 +1416,7 @@ class PartialMessage(PartialBase):
         r = await self._state.query(
             "POST",
             f"/channels/{int(channel_id)}/messages",
-            data=payload.to_multipart(is_request=True),
-            headers={"Content-Type": payload.content_type}
+            **payload.to_request()
         )
 
         return self._state.bot.create_message_from_data(r.response)
@@ -1511,8 +1509,7 @@ class PartialMessage(PartialBase):
         r = await self._state.query(
             "POST",
             f"/channels/{self.channel_id}/messages",
-            data=payload.to_multipart(is_request=True),
-            headers={"Content-Type": payload.content_type}
+            **payload.to_request()
         )
 
         msg = self._state.bot.create_message_from_data(r.response)
@@ -2267,8 +2264,7 @@ class WebhookMessage(Message):
             "PATCH",
             f"/webhooks/{self.application_id}/{self.token}/messages/{self.id}",
             webhook=True,
-            headers={"Content-Type": payload.content_type},
-            data=payload.to_multipart(is_request=True),
+            **payload.to_request()
         )
 
         return self._state.bot.create_webhook_message_from_data(

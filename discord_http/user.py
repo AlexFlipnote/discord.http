@@ -379,8 +379,7 @@ class PartialUser(PartialBase):
         r = await self._state.query(
             "POST",
             f"/channels/{channel_id}/messages",
-            data=payload.to_multipart(is_request=True),
-            headers={"Content-Type": payload.content_type}
+            **payload.to_request()
         )
 
         msg = self._state.bot.create_message_from_data(r.response)

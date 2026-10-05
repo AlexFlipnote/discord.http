@@ -1215,8 +1215,7 @@ class Context:
         r = await self.bot.state.query(
             "POST",
             f"/webhooks/{self.bot.application_id}/{self._followup_token}",
-            data=payload.to_multipart(is_request=True),
-            headers={"Content-Type": payload.content_type}
+            **payload.to_request()
         )
 
         msg = self.bot.create_webhook_message_from_data(
@@ -1280,8 +1279,7 @@ class Context:
         r = await self.bot.state.query(
             "PATCH",
             f"/webhooks/{self.bot.application_id}/{self._followup_token}/messages/@original",
-            headers={"Content-Type": payload.content_type},
-            data=payload.to_multipart(is_request=True)
+            **payload.to_request()
         )
 
         msg = self.bot.create_webhook_message_from_data(

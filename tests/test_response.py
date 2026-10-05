@@ -132,6 +132,25 @@ class TestMessageResponseNewFields(unittest.TestCase):
         self.assertEqual(payload["attachments"][0]["filename"], "SPOILER_a.png")
 
 
+class TestMessageResponseToRequest(unittest.TestCase):
+    def test_without_files_sends_plain_json(self) -> None:
+        # Multipart is only worth its cost when there are files to upload
+        response = MessageResponse(content="hello", embed=Embed(title="t"))
+        kwargs = response.to_request()
+        self.assertEqual(set(kwargs), {"json"})
+        self.assertEqual(kwargs["json"], response.to_dict(is_request=True))
+
+    def test_cleared_files_still_send_plain_json(self) -> None:
+        kwargs = MessageResponse(content="hello", files=None).to_request()
+        self.assertEqual(set(kwargs), {"json"})
+
+    def test_with_files_sends_multipart(self) -> None:
+        response = MessageResponse(content="hello", file=File(io.BytesIO(b"x"), "a.png"))
+        kwargs = response.to_request()
+        self.assertEqual(set(kwargs), {"data", "headers"})
+        self.assertEqual(kwargs["headers"], {"Content-Type": response.content_type})
+
+
 class TestAutocompleteResponseTruncation(unittest.TestCase):
     def test_truncates_to_25_choices(self) -> None:
         choices = {str(i): str(i) for i in range(30)}
