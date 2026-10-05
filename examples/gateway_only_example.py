@@ -1,9 +1,9 @@
 from discord_http import Context, Client, Message, User
 from discord_http.gateway import Intents, Reaction
 
-# Runs on the gateway alone, without the privileged message content intent.
+# Runs on the gateway alone, no HTTP server or public endpoint needed.
 # Leave the Interactions Endpoint URL empty in your app's settings,
-# so Discord sends interactions over the gateway instead.
+# otherwise Discord keeps sending interactions there instead of the gateway.
 client = Client(
     token="BOT_TOKEN",
     disable_http_server=True,
@@ -28,8 +28,8 @@ async def ping(ctx: Context):
 
 @client.listener()
 async def on_message_create(msg: Message):
-    # Without message content, msg.content is empty in guilds,
-    # unless the bot is mentioned or the message is in DMs
+    # msg.content is empty in guilds without Intents.message_content (privileged),
+    # except for DMs and messages that mention the bot
     if msg.author.bot:
         return
 
@@ -42,5 +42,5 @@ async def on_message_reaction_add(reaction: Reaction):
     print(f"User {reaction.user_id} reacted with {reaction.emoji} on message {reaction.message_id}")
 
 
-# host and port are ignored, since the HTTP server is disabled
+# No host or port, there is no HTTP server to bind
 client.start()
