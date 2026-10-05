@@ -11,25 +11,27 @@ A Python library for Discord bots using HTTP interactions, with optional WebSock
 - Small, deliberate dependency set, every dependency has to earn its place.
 - Familiar API for anyone coming from [discord.py](https://github.com/Rapptz/discord.py), so there is little to relearn.
 
-## Is it the right fit?
-discord.http is built for bots that mostly answer slash commands, and that care about what they cost to run as they grow. Replies are sent back on the same HTTP request the command arrived on, so the first reply to a command does not even cost an API call. Small bots work just as well, the savings simply add up the more servers you are in.
-
-Memory gets the same care, every cache type is opt-in, users are shared between servers, and repeated data like role lists is stored once. A cached member takes about 170 bytes, and a full shard of 2,500 servers holds about 80 MB with servers, channels, roles and emojis cached, or about 15 MB with nothing cached.
-
-It is probably not the right pick if you need voice connections (not supported for now, demand is low).
-
 ## Requirements
 - Python 3.11 to 3.14
-- A public HTTPS endpoint for Discord to send interactions to, usually a reverse proxy (nginx, apache2, etc.) in front of your bot
-
-> [!NOTE]
-> No HTTPS endpoint? Leave the Interactions Endpoint URL empty in your bot's application page and the library auto-detects it, receiving interactions over the websocket instead (like most other Discord libraries do). Pass `disable_http_server=True` to the client to not start the HTTP server at all.
+- Recommended: a public HTTPS endpoint for Discord to send interactions to, usually a reverse proxy (nginx, apache2, etc.) in front of your bot. Without one, interactions arrive over the gateway instead, see [connection modes](#connection-modes) below.
 
 ## Installing
 Install with `pip install discord.http` (or `python -m pip install discord.http` if `pip` is not on your path).
 
 > [!NOTE]
 > Want to test the latest changes before the next release? Install the beta with `git+https://github.com/AlexFlipnote/discord.http@master` instead of `discord.http`. It can be unstable and unreliable, so use it at your own risk.
+
+## Connection modes
+On boot, the library picks a mode from your bot's Interactions Endpoint URL and the `intents` you pass, and logs it.
+
+| Mode | Interactions | Gateway events | When |
+|---|---|---|---|
+| `HTTP` | Over HTTP | No | Endpoint URL set |
+| `HTTP+WS` | Over HTTP | Yes | Endpoint URL set, with `intents` |
+| `WS` | Over the gateway | No | No endpoint URL, or `disable_http_server=True` |
+| `WS+` | Over the gateway | Yes | Same as `WS`, with `intents` |
+
+The HTTP server runs in every mode unless `disable_http_server=True` is passed. With that flag and an endpoint URL still set, Discord keeps sending interactions to the URL, so this bot only handles gateway events.
 
 ## Quick example
 ```py <!-- DOCS: quick_example -->
@@ -66,18 +68,6 @@ async def on_message_create(msg: Message):
 client.start()
 ```
 
-### Connection modes
-On boot, the library picks a mode from your bot's Interactions Endpoint URL and the `intents` you pass, and logs it.
-
-| Mode | Interactions | Gateway events | When |
-|---|---|---|---|
-| `HTTP` | Over HTTP | No | Endpoint URL set |
-| `HTTP+WS` | Over HTTP | Yes | Endpoint URL set, with `intents` |
-| `WS` | Over the gateway | No | No endpoint URL, or `disable_http_server=True` |
-| `WS+` | Over the gateway | Yes | Same as `WS`, with `intents` |
-
-The HTTP server runs in every mode unless `disable_http_server=True` is passed. With that flag and an endpoint URL still set, Discord keeps sending interactions to the URL, so this bot only handles gateway events.
-
 ### Offline mode
 Not every job needs a running bot. `offline_run()` logs in, runs your function once and exits, with no HTTP server, no gateway connection and no public endpoint needed. Great for cron jobs, one-off scripts and admin tools.
 
@@ -95,8 +85,7 @@ async def main():
 client.offline_run(main)
 ```
 
-Need further help on how to make Discord API able to send requests to your bot?
-Check out [the documentation](https://discordhttp.alexflipnote.dev/pages/getting_started.html) for more detailed information.
+Need help with hosting or the endpoint URL? See the [getting started guide](https://discordhttp.alexflipnote.dev/pages/getting_started.html).
 
 ## Contributing
 Contributions are welcome! Have a look at the [contributing guide](https://discordhttp.alexflipnote.dev/pages/contribute.html) and the [style guide](https://discordhttp.alexflipnote.dev/pages/format.html) before opening a pull request.
@@ -106,8 +95,7 @@ Automated tests use Python's built-in `unittest` module, run them from the proje
 - or `python -m unittest discover -s tests -p "test_*.py"`
 
 ## Resources
-- Documentations
-  - [Library documentation](https://discordhttp.alexflipnote.dev)
-  - [Discord API documentation](https://docs.discord.com/developers/intro)
+- [Library documentation](https://discordhttp.alexflipnote.dev)
+- [Discord API documentation](https://docs.discord.com/developers/intro)
 - [Discord server](https://discord.gg/yqb7vATbjH)
 - [discord.http Bot example](https://github.com/AlexFlipnote/discord_bot.http)
