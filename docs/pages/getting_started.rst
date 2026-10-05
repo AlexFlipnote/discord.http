@@ -36,6 +36,8 @@ then logs which of these modes it runs in:
     - No endpoint URL, with ``intents``
 
 The HTTP server starts in every mode, unless ``disable_http_server=True`` is passed to the client.
+That always picks ``WS`` or ``WS+``, even with an endpoint URL set, for bots that only handle
+gateway events while something else answers the URL (Discord keeps sending interactions there).
 
 The HTTP modes are recommended, the first reply to a command is sent back on the same request
 and no connection has to be kept open just to answer commands.

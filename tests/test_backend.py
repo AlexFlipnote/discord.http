@@ -458,6 +458,19 @@ class TestConnectionMode(unittest.TestCase):
         with self.assertNoLogs("discord_http.client", level="WARNING"):
             self._resolve("https://example.com", intents=Intents.guilds)
 
+    def test_disabled_http_server_with_endpoint_and_intents_is_ws_plus(self) -> None:
+        # Like a bot that only handles gateway events while another process answers the URL
+        from discord_http.gateway import Intents
+
+        self.client.disable_http_server = True
+        self.assertEqual(self._resolve("https://example.com", intents=Intents.guild_messages), "WS+")
+        self.assertTrue(self.client.enable_gateway)
+
+    def test_disabled_http_server_with_endpoint_still_runs_the_gateway(self) -> None:
+        self.client.disable_http_server = True
+        self.assertEqual(self._resolve("https://example.com"), "WS")
+        self.assertTrue(self.client.enable_gateway)
+
     def test_endpoint_without_intents_is_http(self) -> None:
         self.assertEqual(self._resolve("https://example.com"), "HTTP")
         self.assertFalse(self.client.enable_gateway)

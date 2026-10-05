@@ -117,7 +117,8 @@ class Client:
         Usually a great tool to just validate that your bot is online.
     disable_http_server
         Whether to never start the HTTP server, if not provided, it will use `False`.
-        Only for bots receiving interactions over the gateway (no interactions endpoint URL).
+        The bot then always runs on the gateway alone, even if an interactions endpoint URL is set,
+        useful for bots that only handle gateway events while something else answers the URL.
         Keep it running while setting the interactions endpoint URL, Discord sends a request to it before saving.
     """
     def __init__(
@@ -391,21 +392,27 @@ class Client:
 
     def _resolve_connection_mode(self) -> str:
         """
-        Enables the gateway if interactions can only arrive through it, then logs and returns the connection mode.
+        Enables the gateway if the bot can only run on it, then logs and returns the connection mode.
 
         Discord only sends interactions over the gateway when the application has no
         interactions endpoint URL, so without one the gateway is required to receive them.
+        A disabled HTTP server always means the gateway, even with an endpoint URL set,
+        for bots that only handle gateway events while something else answers the URL.
         The mode is either `HTTP`, `HTTP+WS`, `WS` or `WS+`.
         """
         endpoint_url: str | None = self.application.interactions_endpoint_url if self.application else None
 
-        if not endpoint_url:
+        if not endpoint_url or self.disable_http_server:
             self.enable_gateway = True
 
         mode: str
         description: str
 
-        if not endpoint_url and self.intents:
+        if endpoint_url and self.disable_http_server:
+            # "Trust me, I know what I am doing" mode: the URL is set, but HTTP is off anyway.
+            # Discord keeps sending interactions to the endpoint URL, this bot only gets gateway events
+            mode, description = ("WS+", "events over the gateway") if self.intents else ("WS", "gateway only")
+        elif not endpoint_url and self.intents:
             mode, description = "WS+", "interactions and events over the gateway"
         elif not endpoint_url:
             # Without intents, interactions are the only thing the gateway sends
@@ -415,7 +422,7 @@ class Client:
         else:
             mode, description = "HTTP", "interactions over HTTP"
 
-        if not endpoint_url and self.disable_http_server:
+        if self.disable_http_server:
             description += ", HTTP server disabled"
 
         _log.info(f"Running in {mode} mode ({description})")
@@ -864,7 +871,7 @@ class Client:
         if endpoint_url:
             _log.warning(
                 "The HTTP server is disabled, but an interactions endpoint URL is set, "
-                "interactions sent to it will not be answered"
+                "interactions sent to it are not answered by this bot"
             )
         if self.webhook_events_path:
             _log.warning("The HTTP server is disabled, webhook events will not be received")
