@@ -319,6 +319,12 @@
 </li>
         <li><a href="gateway/activity.html#discord_http.gateway.activity.Activity">Activity (class in discord_http.gateway.activity)</a>
 </li>
+        <li><a href="api/message.html#discord_http.message.Message.activity">activity (discord_http.message.Message property)</a>
+
+        <ul>
+          <li><a href="api/message.html#discord_http.message.WebhookMessage.activity">(discord_http.message.WebhookMessage property)</a>
+</li>
+        </ul></li>
         <li><a href="gateway/activity.html#discord_http.gateway.activity.ActivityAssets">ActivityAssets (class in discord_http.gateway.activity)</a>
 </li>
         <li><a href="gateway/flags.html#discord_http.gateway.flags.ActivityFlags">ActivityFlags (class in discord_http.gateway.flags)</a>
@@ -356,6 +362,8 @@
 </li>
           <li><a href="api/flags.html#discord_http.flags.ChannelFlags.add_flags">(discord_http.flags.ChannelFlags method)</a>
 </li>
+          <li><a href="api/flags.html#discord_http.flags.EmbedFlags.add_flags">(discord_http.flags.EmbedFlags method)</a>
+</li>
           <li><a href="api/flags.html#discord_http.flags.GuildInviteFlags.add_flags">(discord_http.flags.GuildInviteFlags method)</a>
 </li>
           <li><a href="api/flags.html#discord_http.flags.GuildMemberFlags.add_flags">(discord_http.flags.GuildMemberFlags method)</a>
@@ -363,6 +371,8 @@
           <li><a href="api/flags.html#discord_http.flags.MessageFlags.add_flags">(discord_http.flags.MessageFlags method)</a>
 </li>
           <li><a href="api/flags.html#discord_http.flags.Permissions.add_flags">(discord_http.flags.Permissions method)</a>
+</li>
+          <li><a href="api/flags.html#discord_http.flags.RoleFlags.add_flags">(discord_http.flags.RoleFlags method)</a>
 </li>
           <li><a href="api/flags.html#discord_http.flags.SKUFlags.add_flags">(discord_http.flags.SKUFlags method)</a>
 </li>
@@ -468,6 +478,8 @@
         <ul>
           <li><a href="api/member.html#discord_http.member.PartialMember.add_roles">(discord_http.member.PartialMember method)</a>
 </li>
+          <li><a href="api/member.html#discord_http.member.PartialThreadMember.add_roles">(discord_http.member.PartialThreadMember method)</a>
+</li>
           <li><a href="api/member.html#discord_http.member.ThreadMember.add_roles">(discord_http.member.ThreadMember method)</a>
 </li>
         </ul></li>
@@ -475,6 +487,12 @@
 </li>
         <li><a href="api/backend.html#discord_http.backend.DiscordHTTP.add_subapp">add_subapp() (discord_http.backend.DiscordHTTP method)</a>
 </li>
+        <li><a href="api/invite.html#discord_http.invite.Invite.add_target_user">add_target_user() (discord_http.invite.Invite method)</a>
+
+        <ul>
+          <li><a href="api/invite.html#discord_http.invite.PartialInvite.add_target_user">(discord_http.invite.PartialInvite method)</a>
+</li>
+        </ul></li>
         <li><a href="api/channel.html#discord_http.channel.BaseChannel.add_thread_member">add_thread_member() (discord_http.channel.BaseChannel method)</a>
 
         <ul>
@@ -546,6 +564,8 @@
 </li>
           <li><a href="api/flags.html#discord_http.flags.ChannelFlags.all">(discord_http.flags.ChannelFlags class method)</a>
 </li>
+          <li><a href="api/flags.html#discord_http.flags.EmbedFlags.all">(discord_http.flags.EmbedFlags class method)</a>
+</li>
           <li><a href="api/flags.html#discord_http.flags.GuildInviteFlags.all">(discord_http.flags.GuildInviteFlags class method)</a>
 </li>
           <li><a href="api/flags.html#discord_http.flags.GuildMemberFlags.all">(discord_http.flags.GuildMemberFlags class method)</a>
@@ -553,6 +573,8 @@
           <li><a href="api/flags.html#discord_http.flags.MessageFlags.all">(discord_http.flags.MessageFlags class method)</a>
 </li>
           <li><a href="api/flags.html#discord_http.flags.Permissions.all">(discord_http.flags.Permissions class method)</a>
+</li>
+          <li><a href="api/flags.html#discord_http.flags.RoleFlags.all">(discord_http.flags.RoleFlags class method)</a>
 </li>
           <li><a href="api/flags.html#discord_http.flags.SKUFlags.all">(discord_http.flags.SKUFlags class method)</a>
 </li>
@@ -607,12 +629,16 @@
 </li>
         <li><a href="api/message.html#discord_http.message.Poll.answers">answers (discord_http.message.Poll attribute)</a>
 </li>
+        <li><a href="api/client.html#discord_http.client.Client.api_base_url">api_base_url (discord_http.client.Client attribute)</a>
+</li>
         <li><a href="api/http.html#discord_http.http.DiscordAPI.api_url">api_url (discord_http.http.DiscordAPI attribute)</a>
 </li>
-        <li><a href="api/http.html#discord_http.http.DiscordAPI.api_version">api_version (discord_http.http.DiscordAPI attribute)</a>
+        <li><a href="api/client.html#discord_http.client.Client.api_version">api_version (discord_http.client.Client attribute)</a>
+
+        <ul>
+          <li><a href="api/http.html#discord_http.http.DiscordAPI.api_version">(discord_http.http.DiscordAPI attribute)</a>
 </li>
-    </ul></td>
-    <td style="width: 33%; vertical-align: top;"><ul>
+        </ul></li>
         <li><a href="api/enums.html#discord_http.enums.StickerFormatType.apng">apng (discord_http.enums.StickerFormatType attribute)</a>
 </li>
         <li><a href="api/channel.html#discord_http.channel.BaseChannel.app_permissions">app_permissions (discord_http.channel.BaseChannel property)</a>
@@ -648,9 +674,11 @@
 </li>
           <li><a href="api/channel.html#discord_http.channel.VoiceChannel.app_permissions">(discord_http.channel.VoiceChannel property)</a>
 </li>
-          <li><a href="api/context.html#discord_http.context.Context.app_permissions">(discord_http.context.Context attribute)</a>
+          <li><a href="api/context.html#discord_http.context.Context.app_permissions">(discord_http.context.Context property)</a>
 </li>
         </ul></li>
+    </ul></td>
+    <td style="width: 33%; vertical-align: top;"><ul>
         <li><a href="api/user.html#discord_http.user.Application">Application (class in discord_http.user)</a>
 </li>
         <li><a href="api/client.html#discord_http.client.Client.application">application (discord_http.client.Client attribute)</a>
@@ -665,6 +693,10 @@
           <li><a href="api/integrations.html#discord_http.integrations.Integration.application">(discord_http.integrations.Integration attribute)</a>
 </li>
           <li><a href="api/message.html#discord_http.message.Attachment.application">(discord_http.message.Attachment attribute)</a>
+</li>
+          <li><a href="api/message.html#discord_http.message.Message.application">(discord_http.message.Message property)</a>
+</li>
+          <li><a href="api/message.html#discord_http.message.WebhookMessage.application">(discord_http.message.WebhookMessage property)</a>
 </li>
           <li><a href="api/response.html#discord_http.response.Ping.application">(discord_http.response.Ping property)</a>
 </li>
@@ -702,6 +734,8 @@
 </li>
           <li><a href="api/integrations.html#discord_http.integrations.PartialIntegration.application_id">(discord_http.integrations.PartialIntegration attribute)</a>
 </li>
+          <li><a href="api/message.html#discord_http.message.Message.application_id">(discord_http.message.Message attribute)</a>
+</li>
           <li><a href="api/message.html#discord_http.message.WebhookMessage.application_id">(discord_http.message.WebhookMessage attribute)</a>
 </li>
           <li><a href="api/response.html#discord_http.response.Ping.application_id">(discord_http.response.Ping attribute)</a>
@@ -725,6 +759,20 @@
 </li>
         <li><a href="api/enums.html#discord_http.enums.ApplicationRoleConnectionMetadataType">ApplicationRoleConnectionMetadataType (class in discord_http.enums)</a>
 </li>
+        <li><a href="api/channel.html#discord_http.channel.ForumChannel.applied_tags">applied_tags (discord_http.channel.ForumChannel attribute)</a>
+
+        <ul>
+          <li><a href="api/channel.html#discord_http.channel.ForumThread.applied_tags">(discord_http.channel.ForumThread attribute)</a>
+</li>
+          <li><a href="api/channel.html#discord_http.channel.NewsThread.applied_tags">(discord_http.channel.NewsThread attribute)</a>
+</li>
+          <li><a href="api/channel.html#discord_http.channel.PrivateThread.applied_tags">(discord_http.channel.PrivateThread attribute)</a>
+</li>
+          <li><a href="api/channel.html#discord_http.channel.PublicThread.applied_tags">(discord_http.channel.PublicThread attribute)</a>
+</li>
+          <li><a href="api/channel.html#discord_http.channel.Thread.applied_tags">(discord_http.channel.Thread attribute)</a>
+</li>
+        </ul></li>
         <li><a href="api/user.html#discord_http.user.Application.approximate_guild_count">approximate_guild_count (discord_http.user.Application attribute)</a>
 </li>
         <li><a href="api/guild.html#discord_http.guild.Guild.approximate_member_count">approximate_member_count (discord_http.guild.Guild attribute)</a>
@@ -749,6 +797,20 @@
 </li>
         <li><a href="api/enums.html#discord_http.enums.ScheduledEventRecurrenceMonth.april">april (discord_http.enums.ScheduledEventRecurrenceMonth attribute)</a>
 </li>
+        <li><a href="api/channel.html#discord_http.channel.ForumChannel.archive_timestamp">archive_timestamp (discord_http.channel.ForumChannel property)</a>
+
+        <ul>
+          <li><a href="api/channel.html#discord_http.channel.ForumThread.archive_timestamp">(discord_http.channel.ForumThread property)</a>
+</li>
+          <li><a href="api/channel.html#discord_http.channel.NewsThread.archive_timestamp">(discord_http.channel.NewsThread property)</a>
+</li>
+          <li><a href="api/channel.html#discord_http.channel.PrivateThread.archive_timestamp">(discord_http.channel.PrivateThread property)</a>
+</li>
+          <li><a href="api/channel.html#discord_http.channel.PublicThread.archive_timestamp">(discord_http.channel.PublicThread property)</a>
+</li>
+          <li><a href="api/channel.html#discord_http.channel.Thread.archive_timestamp">(discord_http.channel.Thread property)</a>
+</li>
+        </ul></li>
         <li><a href="api/channel.html#discord_http.channel.ForumChannel.archived">archived (discord_http.channel.ForumChannel attribute)</a>
 
         <ul>
@@ -809,13 +871,23 @@
 </li>
         <li><a href="api/enums.html#discord_http.enums.CommandOptionType.attachment">attachment (discord_http.enums.CommandOptionType attribute)</a>
 </li>
+        <li><a href="api/view.html#discord_http.view.AttachmentComponent.attachment_id">attachment_id (discord_http.view.AttachmentComponent attribute)</a>
+</li>
+        <li><a href="api/context.html#discord_http.context.Context.attachment_size_limit">attachment_size_limit (discord_http.context.Context attribute)</a>
+</li>
         <li><a href="api/view.html#discord_http.view.AttachmentComponent">AttachmentComponent (class in discord_http.view)</a>
 </li>
         <li><a href="api/flags.html#discord_http.flags.AttachmentFlags">AttachmentFlags (class in discord_http.flags)</a>
 </li>
-        <li><a href="api/message.html#discord_http.message.Message.attachments">attachments (discord_http.message.Message attribute)</a>
+        <li><a href="api/context.html#discord_http.context.ResolvedValues.attachments">attachments (discord_http.context.ResolvedValues property)</a>
 
         <ul>
+          <li><a href="api/context.html#discord_http.context.SelectValues.attachments">(discord_http.context.SelectValues property)</a>
+</li>
+          <li><a href="api/message.html#discord_http.message.Message.attachments">(discord_http.message.Message attribute)</a>
+</li>
+          <li><a href="api/message.html#discord_http.message.MessageSnapshot.attachments">(discord_http.message.MessageSnapshot attribute)</a>
+</li>
           <li><a href="api/message.html#discord_http.message.WebhookMessage.attachments">(discord_http.message.WebhookMessage attribute)</a>
 </li>
           <li><a href="api/response.html#discord_http.response.MessageResponse.attachments">(discord_http.response.MessageResponse attribute)</a>
@@ -839,6 +911,12 @@
           <li><a href="api/message.html#discord_http.message.Message.author">(discord_http.message.Message attribute)</a>
 </li>
           <li><a href="api/message.html#discord_http.message.WebhookMessage.author">(discord_http.message.WebhookMessage attribute)</a>
+</li>
+        </ul></li>
+        <li><a href="api/context.html#discord_http.context.Context.authorizing_integration_owners">authorizing_integration_owners (discord_http.context.Context property)</a>
+
+        <ul>
+          <li><a href="api/message.html#discord_http.message.MessageInteraction.authorizing_integration_owners">(discord_http.message.MessageInteraction property)</a>
 </li>
         </ul></li>
         <li><a href="api/enums.html#discord_http.enums.VideoQualityType.auto">auto (discord_http.enums.VideoQualityType attribute)</a>
@@ -880,13 +958,19 @@
         <li><a href="api/commands.html#discord_http.commands.Command.autocomplete">autocomplete() (discord_http.commands.Command method)</a>
 
         <ul>
+          <li><a href="api/commands.html#discord_http.commands.SubCommand.autocomplete">(discord_http.commands.SubCommand method)</a>
+</li>
           <li><a href="api/commands.html#discord_http.commands.SubGroup.autocomplete">(discord_http.commands.SubGroup method)</a>
 </li>
         </ul></li>
         <li><a href="api/response.html#discord_http.response.AutocompleteResponse">AutocompleteResponse (class in discord_http.response)</a>
 </li>
-        <li><a href="gateway/client.html#discord_http.gateway.client.GatewayClient.automatic_shards">automatic_shards (discord_http.gateway.client.GatewayClient attribute)</a>
+        <li><a href="api/client.html#discord_http.client.Client.automatic_shards">automatic_shards (discord_http.client.Client attribute)</a>
+
+        <ul>
+          <li><a href="gateway/client.html#discord_http.gateway.client.GatewayClient.automatic_shards">(discord_http.gateway.client.GatewayClient attribute)</a>
 </li>
+        </ul></li>
         <li><a href="api/flags.html#discord_http.flags.GuildMemberFlags.automod_quarantined_guild_tag">automod_quarantined_guild_tag (discord_http.flags.GuildMemberFlags attribute)</a>
 </li>
         <li><a href="api/flags.html#discord_http.flags.GuildMemberFlags.automod_quarantined_username">automod_quarantined_username (discord_http.flags.GuildMemberFlags attribute)</a>
@@ -968,6 +1052,8 @@
 </li>
           <li><a href="api/member.html#discord_http.member.PartialMember.ban">(discord_http.member.PartialMember method)</a>
 </li>
+          <li><a href="api/member.html#discord_http.member.PartialThreadMember.ban">(discord_http.member.PartialThreadMember method)</a>
+</li>
           <li><a href="api/member.html#discord_http.member.ThreadMember.ban">(discord_http.member.ThreadMember method)</a>
 </li>
         </ul></li>
@@ -984,9 +1070,15 @@
 </li>
           <li><a href="api/member.html#discord_http.member.ThreadMember.banner">(discord_http.member.ThreadMember property)</a>
 </li>
+          <li><a href="api/sticker.html#discord_http.sticker.StickerPack.banner">(discord_http.sticker.StickerPack property)</a>
+</li>
           <li><a href="api/user.html#discord_http.user.User.banner">(discord_http.user.User property)</a>
 </li>
         </ul></li>
+        <li><a href="api/sticker.html#discord_http.sticker.StickerPack.BANNER_APPLICATION_ID">BANNER_APPLICATION_ID (discord_http.sticker.StickerPack attribute)</a>
+</li>
+        <li><a href="api/sticker.html#discord_http.sticker.StickerPack.banner_asset_id">banner_asset_id (discord_http.sticker.StickerPack attribute)</a>
+</li>
         <li><a href="api/user.html#discord_http.user.User.banner_colour">banner_colour (discord_http.user.User property)</a>
 </li>
         <li><a href="api/asset.html#discord_http.asset.Asset.BASE">BASE (discord_http.asset.Asset attribute)</a>
@@ -997,6 +1089,10 @@
           <li><a href="api/invite.html#discord_http.invite.PartialInvite.BASE">(discord_http.invite.PartialInvite attribute)</a>
 </li>
         </ul></li>
+        <li><a href="api/message.html#discord_http.message.SharedClientTheme.base_mix">base_mix (discord_http.message.SharedClientTheme attribute)</a>
+</li>
+        <li><a href="api/message.html#discord_http.message.SharedClientTheme.base_theme">base_theme (discord_http.message.SharedClientTheme attribute)</a>
+</li>
         <li><a href="api/http.html#discord_http.http.DiscordAPI.base_url">base_url (discord_http.http.DiscordAPI attribute)</a>
 </li>
         <li><a href="api/channel.html#discord_http.channel.BaseChannel">BaseChannel (class in discord_http.channel)</a>
@@ -1004,6 +1100,10 @@
         <li><a href="api/enums.html#discord_http.enums.BaseEnum">BaseEnum (class in discord_http.enums)</a>
 </li>
         <li><a href="api/flags.html#discord_http.flags.BaseFlag">BaseFlag (class in discord_http.flags)</a>
+</li>
+        <li><a href="api/response.html#discord_http.response.BaseResponse">BaseResponse (class in discord_http.response)</a>
+</li>
+        <li><a href="api/enums.html#discord_http.enums.BaseThemeType">BaseThemeType (class in discord_http.enums)</a>
 </li>
         <li><a href="api/client.html#discord_http.client.Client.before_invoke">before_invoke() (discord_http.client.Client method)</a>
 </li>
@@ -1087,6 +1187,8 @@
     <td style="width: 33%; vertical-align: top;"><ul>
         <li><a href="api/enums.html#discord_http.enums.AuditLogType.bot_add">bot_add (discord_http.enums.AuditLogType attribute)</a>
 </li>
+        <li><a href="api/enums.html#discord_http.enums.InteractionContextType.bot_dm">bot_dm (discord_http.enums.InteractionContextType attribute)</a>
+</li>
         <li><a href="api/commands.html#discord_http.commands.bot_has_permissions">bot_has_permissions() (in module discord_http.commands)</a>
 </li>
         <li><a href="api/flags.html#discord_http.flags.UserFlags.bot_http_interactions">bot_http_interactions (discord_http.flags.UserFlags attribute)</a>
@@ -1117,6 +1219,12 @@
 </li>
         <li><a href="api/enums.html#discord_http.enums.Locale.bulgarian">bulgarian (discord_http.enums.Locale attribute)</a>
 </li>
+        <li><a href="api/invite.html#discord_http.invite.Invite.bulk_add_target_users">bulk_add_target_users() (discord_http.invite.Invite method)</a>
+
+        <ul>
+          <li><a href="api/invite.html#discord_http.invite.PartialInvite.bulk_add_target_users">(discord_http.invite.PartialInvite method)</a>
+</li>
+        </ul></li>
         <li><a href="api/guild.html#discord_http.guild.Guild.bulk_ban">bulk_ban() (discord_http.guild.Guild method)</a>
 
         <ul>
@@ -1159,6 +1267,12 @@
           <li><a href="api/channel.html#discord_http.channel.Thread.bulk_delete_messages">(discord_http.channel.Thread method)</a>
 </li>
           <li><a href="api/channel.html#discord_http.channel.VoiceChannel.bulk_delete_messages">(discord_http.channel.VoiceChannel method)</a>
+</li>
+        </ul></li>
+        <li><a href="api/invite.html#discord_http.invite.Invite.bulk_remove_target_users">bulk_remove_target_users() (discord_http.invite.Invite method)</a>
+
+        <ul>
+          <li><a href="api/invite.html#discord_http.invite.PartialInvite.bulk_remove_target_users">(discord_http.invite.PartialInvite method)</a>
 </li>
         </ul></li>
         <li><a href="gateway/object.html#discord_http.gateway.object.BulkDeletePayload">BulkDeletePayload (class in discord_http.gateway.object)</a>
@@ -1294,11 +1408,15 @@
 </li>
           <li><a href="api/channel.html#discord_http.channel.StageChannel.channel">(discord_http.channel.StageChannel property)</a>
 </li>
+          <li><a href="api/channel.html#discord_http.channel.StageInstance.channel">(discord_http.channel.StageInstance property)</a>
+</li>
           <li><a href="api/channel.html#discord_http.channel.StoreChannel.channel">(discord_http.channel.StoreChannel property)</a>
 </li>
           <li><a href="api/channel.html#discord_http.channel.TextChannel.channel">(discord_http.channel.TextChannel property)</a>
 </li>
           <li><a href="api/channel.html#discord_http.channel.Thread.channel">(discord_http.channel.Thread property)</a>
+</li>
+          <li><a href="api/channel.html#discord_http.channel.Typing.channel">(discord_http.channel.Typing attribute)</a>
 </li>
           <li><a href="api/channel.html#discord_http.channel.VoiceChannel.channel">(discord_http.channel.VoiceChannel property)</a>
 </li>
@@ -1314,6 +1432,8 @@
 </li>
           <li><a href="gateway/object.html#discord_http.gateway.object.BulkDeletePayload.channel">(discord_http.gateway.object.BulkDeletePayload attribute)</a>
 </li>
+          <li><a href="gateway/object.html#discord_http.gateway.object.ChannelInfo.channel">(discord_http.gateway.object.ChannelInfo attribute)</a>
+</li>
           <li><a href="gateway/object.html#discord_http.gateway.object.ChannelPinsUpdate.channel">(discord_http.gateway.object.ChannelPinsUpdate attribute)</a>
 </li>
           <li><a href="gateway/object.html#discord_http.gateway.object.PollVoteEvent.channel">(discord_http.gateway.object.PollVoteEvent attribute)</a>
@@ -1321,6 +1441,8 @@
           <li><a href="gateway/object.html#discord_http.gateway.object.Reaction.channel">(discord_http.gateway.object.Reaction property)</a>
 </li>
           <li><a href="gateway/object.html#discord_http.gateway.object.TypingStartEvent.channel">(discord_http.gateway.object.TypingStartEvent attribute)</a>
+</li>
+          <li><a href="api/guild.html#discord_http.guild.GuildChannelPosition.channel">(discord_http.guild.GuildChannelPosition attribute)</a>
 </li>
           <li><a href="api/guild.html#discord_http.guild.GuildWidgetChannel.channel">(discord_http.guild.GuildWidgetChannel property)</a>
 </li>
@@ -1373,6 +1495,8 @@
           <li><a href="api/channel.html#discord_http.channel.PrivateThread.channel_id">(discord_http.channel.PrivateThread property)</a>
 </li>
           <li><a href="api/channel.html#discord_http.channel.PublicThread.channel_id">(discord_http.channel.PublicThread property)</a>
+</li>
+          <li><a href="api/channel.html#discord_http.channel.StageInstance.channel_id">(discord_http.channel.StageInstance attribute)</a>
 </li>
           <li><a href="api/channel.html#discord_http.channel.Thread.channel_id">(discord_http.channel.Thread property)</a>
 </li>
@@ -1445,11 +1569,17 @@
 </li>
         <li><a href="api/flags.html#discord_http.flags.ChannelFlags">ChannelFlags (class in discord_http.flags)</a>
 </li>
+        <li><a href="gateway/object.html#discord_http.gateway.object.ChannelInfo">ChannelInfo (class in discord_http.gateway.object)</a>
+</li>
         <li><a href="gateway/object.html#discord_http.gateway.object.ChannelPinsUpdate">ChannelPinsUpdate (class in discord_http.gateway.object)</a>
 </li>
         <li><a href="api/channel.html#discord_http.channel.CategoryChannel.channels">channels (discord_http.channel.CategoryChannel property)</a>
 
         <ul>
+          <li><a href="api/context.html#discord_http.context.ResolvedValues.channels">(discord_http.context.ResolvedValues property)</a>
+</li>
+          <li><a href="api/context.html#discord_http.context.SelectValues.channels">(discord_http.context.SelectValues property)</a>
+</li>
           <li><a href="gateway/flags.html#discord_http.gateway.flags.GatewayCacheFlags.channels">(discord_http.gateway.flags.GatewayCacheFlags attribute)</a>
 </li>
           <li><a href="gateway/object.html#discord_http.gateway.object.ThreadListSyncPayload.channels">(discord_http.gateway.object.ThreadListSyncPayload property)</a>
@@ -1483,6 +1613,8 @@
 </li>
         <li><a href="api/enums.html#discord_http.enums.ComponentType.checkpoint">checkpoint (discord_http.enums.ComponentType attribute)</a>
 </li>
+        <li><a href="api/view.html#discord_http.view.CheckpointComponent">CheckpointComponent (class in discord_http.view)</a>
+</li>
         <li><a href="api/enums.html#discord_http.enums.DisplayNameFontType.cherry_bomb">cherry_bomb (discord_http.enums.DisplayNameFontType attribute)</a>
 </li>
         <li><a href="api/enums.html#discord_http.enums.DisplayNameFontType.chicle">chicle (discord_http.enums.DisplayNameFontType attribute)</a>
@@ -1494,6 +1626,8 @@
         <li><a href="api/response.html#discord_http.response.AutocompleteResponse.choices">choices (discord_http.response.AutocompleteResponse attribute)</a>
 </li>
         <li><a href="api/commands.html#discord_http.commands.choices">choices() (in module discord_http.commands)</a>
+</li>
+        <li><a href="api/client.html#discord_http.client.Client.chunk_guilds_on_startup">chunk_guilds_on_startup (discord_http.client.Client attribute)</a>
 </li>
         <li><a href="api/guild.html#discord_http.guild.Guild.chunked">chunked (discord_http.guild.Guild property)</a>
 
@@ -1536,6 +1670,8 @@
 </li>
           <li><a href="api/guild.html#discord_http.guild.GuildTemplate.code">(discord_http.guild.GuildTemplate attribute)</a>
 </li>
+          <li><a href="api/guild.html#discord_http.guild.GuildVanityURL.code">(discord_http.guild.GuildVanityURL attribute)</a>
+</li>
           <li><a href="api/guild.html#discord_http.guild.PartialGuildTemplate.code">(discord_http.guild.PartialGuildTemplate attribute)</a>
 </li>
           <li><a href="api/invite.html#discord_http.invite.Invite.code">(discord_http.invite.Invite attribute)</a>
@@ -1552,6 +1688,8 @@
 </li>
           <li><a href="api/commands.html#discord_http.commands.Listener.cog">(discord_http.commands.Listener attribute)</a>
 </li>
+          <li><a href="api/commands.html#discord_http.commands.SubCommand.cog">(discord_http.commands.SubCommand attribute)</a>
+</li>
           <li><a href="api/commands.html#discord_http.commands.SubGroup.cog">(discord_http.commands.SubGroup attribute)</a>
 </li>
         </ul></li>
@@ -1560,6 +1698,8 @@
         <li><a href="api/commands.html#discord_http.commands.Cog.cog_unload">cog_unload() (discord_http.commands.Cog method)</a>
 </li>
         <li><a href="api/colour.html#discord_http.colour.Color">Color (class in discord_http.colour)</a>
+</li>
+        <li><a href="api/message.html#discord_http.message.SharedClientTheme.colors">colors (discord_http.message.SharedClientTheme attribute)</a>
 </li>
         <li><a href="api/colour.html#discord_http.colour.Colour">Colour (class in discord_http.colour)</a>
 </li>
@@ -1571,8 +1711,12 @@
           <li><a href="api/view.html#discord_http.view.ContainerComponent.colour">(discord_http.view.ContainerComponent attribute)</a>
 </li>
         </ul></li>
-        <li><a href="api/user.html#discord_http.user.DisplayNameStyles.colours">colours (discord_http.user.DisplayNameStyles attribute)</a>
+        <li><a href="api/role.html#discord_http.role.Role.colours">colours (discord_http.role.Role property)</a>
+
+        <ul>
+          <li><a href="api/user.html#discord_http.user.DisplayNameStyles.colours">(discord_http.user.DisplayNameStyles attribute)</a>
 </li>
+        </ul></li>
         <li><a href="gateway/object.html#discord_http.gateway.object.ThreadListSyncPayload.combined">combined() (discord_http.gateway.object.ThreadListSyncPayload method)</a>
 </li>
         <li><a href="api/commands.html#discord_http.commands.Command">Command (class in discord_http.commands)</a>
@@ -1580,6 +1724,8 @@
         <li><a href="api/commands.html#discord_http.commands.Command.command">command (discord_http.commands.Command attribute)</a>
 
         <ul>
+          <li><a href="api/commands.html#discord_http.commands.SubCommand.command">(discord_http.commands.SubCommand attribute)</a>
+</li>
           <li><a href="api/context.html#discord_http.context.Context.command">(discord_http.context.Context attribute)</a>
 </li>
         </ul></li>
@@ -1591,7 +1737,7 @@
           <li><a href="api/commands.html#discord_http.commands.command">(in module discord_http.commands)</a>
 </li>
         </ul></li>
-        <li><a href="api/context.html#discord_http.context.Context.command_type">command_type (discord_http.context.Context attribute)</a>
+        <li><a href="api/context.html#discord_http.context.Context.command_type">command_type (discord_http.context.Context property)</a>
 </li>
         <li><a href="api/errors.html#discord_http.errors.CommandError">CommandError</a>
 </li>
@@ -1623,6 +1769,8 @@
 </li>
         <li><a href="api/flags.html#discord_http.flags.GuildMemberFlags.completed_onboarding">completed_onboarding (discord_http.flags.GuildMemberFlags attribute)</a>
 </li>
+        <li><a href="api/view.html#discord_http.view.LabelComponent.component">component (discord_http.view.LabelComponent attribute)</a>
+</li>
         <li><a href="api/view.html#discord_http.view.ComponentOption">ComponentOption (class in discord_http.view)</a>
 </li>
         <li><a href="api/view.html#discord_http.view.ActionRow.components">components (discord_http.view.ActionRow attribute)</a>
@@ -1652,6 +1800,8 @@
         <ul>
           <li><a href="api/message.html#discord_http.message.Message.content">(discord_http.message.Message attribute)</a>
 </li>
+          <li><a href="api/message.html#discord_http.message.MessageSnapshot.content">(discord_http.message.MessageSnapshot attribute)</a>
+</li>
           <li><a href="api/message.html#discord_http.message.WebhookMessage.content">(discord_http.message.WebhookMessage attribute)</a>
 </li>
           <li><a href="api/response.html#discord_http.response.MessageResponse.content">(discord_http.response.MessageResponse attribute)</a>
@@ -1666,16 +1816,26 @@
         <ul>
           <li><a href="api/response.html#discord_http.response.AutocompleteResponse.content_type">(discord_http.response.AutocompleteResponse property)</a>
 </li>
+          <li><a href="api/response.html#discord_http.response.BaseResponse.content_type">(discord_http.response.BaseResponse property)</a>
+</li>
           <li><a href="api/response.html#discord_http.response.DeferResponse.content_type">(discord_http.response.DeferResponse property)</a>
 </li>
+          <li><a href="api/response.html#discord_http.response.EmptyResponse.content_type">(discord_http.response.EmptyResponse property)</a>
+</li>
           <li><a href="api/response.html#discord_http.response.MessageResponse.content_type">(discord_http.response.MessageResponse property)</a>
+</li>
+          <li><a href="api/response.html#discord_http.response.ModalResponse.content_type">(discord_http.response.ModalResponse property)</a>
 </li>
           <li><a href="api/view.html#discord_http.view.AttachmentComponent.content_type">(discord_http.view.AttachmentComponent attribute)</a>
 </li>
         </ul></li>
         <li><a href="api/enums.html#discord_http.enums.ContentFilterLevel">ContentFilterLevel (class in discord_http.enums)</a>
 </li>
+        <li><a href="api/view.html#discord_http.view.ContentInventoryEntry">ContentInventoryEntry (class in discord_http.view)</a>
+</li>
         <li><a href="api/context.html#discord_http.context.Context">Context (class in discord_http.context)</a>
+</li>
+        <li><a href="api/context.html#discord_http.context.Context.context">context (discord_http.context.Context property)</a>
 </li>
         <li><a href="api/enums.html#discord_http.enums.MessageType.context_menu_command">context_menu_command (discord_http.enums.MessageType attribute)</a>
 </li>
@@ -1688,6 +1848,8 @@
         <li><a href="api/commands.html#discord_http.commands.Command.cooldown">cooldown (discord_http.commands.Command attribute)</a>
 
         <ul>
+          <li><a href="api/commands.html#discord_http.commands.SubCommand.cooldown">(discord_http.commands.SubCommand attribute)</a>
+</li>
           <li><a href="api/commands.html#discord_http.commands.SubGroup.cooldown">(discord_http.commands.SubGroup attribute)</a>
 </li>
           <li><a href="api/context.html#discord_http.context.Context.cooldown">(discord_http.context.Context property)</a>
@@ -1712,6 +1874,8 @@
 </li>
           <li><a href="api/flags.html#discord_http.flags.ChannelFlags.copy">(discord_http.flags.ChannelFlags method)</a>
 </li>
+          <li><a href="api/flags.html#discord_http.flags.EmbedFlags.copy">(discord_http.flags.EmbedFlags method)</a>
+</li>
           <li><a href="api/flags.html#discord_http.flags.GuildInviteFlags.copy">(discord_http.flags.GuildInviteFlags method)</a>
 </li>
           <li><a href="api/flags.html#discord_http.flags.GuildMemberFlags.copy">(discord_http.flags.GuildMemberFlags method)</a>
@@ -1721,6 +1885,8 @@
           <li><a href="api/flags.html#discord_http.flags.PermissionOverwrite.copy">(discord_http.flags.PermissionOverwrite method)</a>
 </li>
           <li><a href="api/flags.html#discord_http.flags.Permissions.copy">(discord_http.flags.Permissions method)</a>
+</li>
+          <li><a href="api/flags.html#discord_http.flags.RoleFlags.copy">(discord_http.flags.RoleFlags method)</a>
 </li>
           <li><a href="api/flags.html#discord_http.flags.SKUFlags.copy">(discord_http.flags.SKUFlags method)</a>
 </li>
@@ -1744,15 +1910,23 @@
         <ul>
           <li><a href="api/message.html#discord_http.message.MessageReaction.count">(discord_http.message.MessageReaction attribute)</a>
 </li>
+          <li><a href="api/message.html#discord_http.message.PollAnswer.count">(discord_http.message.PollAnswer attribute)</a>
+</li>
           <li><a href="api/tasks.html#discord_http.tasks.Loop.count">(discord_http.tasks.Loop attribute)</a>
 </li>
         </ul></li>
-        <li><a href="gateway/object.html#discord_http.gateway.object.GatewayRateLimited.count">count() (discord_http.gateway.object.GatewayRateLimited method)</a>
+        <li><a href="gateway/object.html#discord_http.gateway.object.ChannelInfo.count">count() (discord_http.gateway.object.ChannelInfo method)</a>
 
         <ul>
+          <li><a href="gateway/object.html#discord_http.gateway.object.GatewayRateLimited.count">(discord_http.gateway.object.GatewayRateLimited method)</a>
+</li>
           <li><a href="api/guild.html#discord_http.guild.BanEntry.count">(discord_http.guild.BanEntry method)</a>
 </li>
+          <li><a href="api/guild.html#discord_http.guild.GuildChannelPosition.count">(discord_http.guild.GuildChannelPosition method)</a>
+</li>
           <li><a href="api/guild.html#discord_http.guild.GuildIncidentsData.count">(discord_http.guild.GuildIncidentsData method)</a>
+</li>
+          <li><a href="api/guild.html#discord_http.guild.GuildVanityURL.count">(discord_http.guild.GuildVanityURL method)</a>
 </li>
           <li><a href="api/guild.html#discord_http.guild.GuildWidgetMember.count">(discord_http.guild.GuildWidgetMember method)</a>
 </li>
@@ -1760,7 +1934,11 @@
 </li>
           <li><a href="api/invite.html#discord_http.invite.InviteTargetUsersJobStatus.count">(discord_http.invite.InviteTargetUsersJobStatus method)</a>
 </li>
+          <li><a href="api/message.html#discord_http.message.MessageActivity.count">(discord_http.message.MessageActivity method)</a>
+</li>
           <li><a href="api/message.html#discord_http.message.MessageCall.count">(discord_http.message.MessageCall method)</a>
+</li>
+          <li><a href="api/message.html#discord_http.message.MessagePin.count">(discord_http.message.MessagePin method)</a>
 </li>
           <li><a href="api/message.html#discord_http.message.RoleSubscriptionData.count">(discord_http.message.RoleSubscriptionData method)</a>
 </li>
@@ -1770,6 +1948,10 @@
         <li><a href="api/entitlements.html#discord_http.entitlements.Subscription.country">country (discord_http.entitlements.Subscription attribute)</a>
 </li>
         <li><a href="api/user.html#discord_http.user.Application.cover_image">cover_image (discord_http.user.Application attribute)</a>
+</li>
+        <li><a href="api/sticker.html#discord_http.sticker.StickerPack.cover_sticker">cover_sticker (discord_http.sticker.StickerPack property)</a>
+</li>
+        <li><a href="api/sticker.html#discord_http.sticker.StickerPack.cover_sticker_id">cover_sticker_id (discord_http.sticker.StickerPack attribute)</a>
 </li>
         <li><a href="api/channel.html#discord_http.channel.ForumTag.create">create() (discord_http.channel.ForumTag class method)</a>
 
@@ -1803,6 +1985,8 @@
 
         <ul>
           <li><a href="api/member.html#discord_http.member.PartialMember.create_dm">(discord_http.member.PartialMember method)</a>
+</li>
+          <li><a href="api/member.html#discord_http.member.PartialThreadMember.create_dm">(discord_http.member.PartialThreadMember method)</a>
 </li>
           <li><a href="api/member.html#discord_http.member.ThreadMember.create_dm">(discord_http.member.ThreadMember method)</a>
 </li>
@@ -2047,6 +2231,20 @@
 </li>
         <li><a href="api/automod.html#discord_http.automod.AutoModRuleAction.create_timeout">create_timeout() (discord_http.automod.AutoModRuleAction class method)</a>
 </li>
+        <li><a href="api/channel.html#discord_http.channel.ForumChannel.create_timestamp">create_timestamp (discord_http.channel.ForumChannel property)</a>
+
+        <ul>
+          <li><a href="api/channel.html#discord_http.channel.ForumThread.create_timestamp">(discord_http.channel.ForumThread property)</a>
+</li>
+          <li><a href="api/channel.html#discord_http.channel.NewsThread.create_timestamp">(discord_http.channel.NewsThread property)</a>
+</li>
+          <li><a href="api/channel.html#discord_http.channel.PrivateThread.create_timestamp">(discord_http.channel.PrivateThread property)</a>
+</li>
+          <li><a href="api/channel.html#discord_http.channel.PublicThread.create_timestamp">(discord_http.channel.PublicThread property)</a>
+</li>
+          <li><a href="api/channel.html#discord_http.channel.Thread.create_timestamp">(discord_http.channel.Thread property)</a>
+</li>
+        </ul></li>
         <li><a href="api/client.html#discord_http.client.Client.create_user_from_data">create_user_from_data() (discord_http.client.Client method)</a>
 </li>
         <li><a href="api/channel.html#discord_http.channel.CategoryChannel.create_voice_channel">create_voice_channel() (discord_http.channel.CategoryChannel method)</a>
@@ -2132,6 +2330,8 @@
 </li>
           <li><a href="api/channel.html#discord_http.channel.StageChannel.created_at">(discord_http.channel.StageChannel property)</a>
 </li>
+          <li><a href="api/channel.html#discord_http.channel.StageInstance.created_at">(discord_http.channel.StageInstance property)</a>
+</li>
           <li><a href="api/channel.html#discord_http.channel.StoreChannel.created_at">(discord_http.channel.StoreChannel property)</a>
 </li>
           <li><a href="api/channel.html#discord_http.channel.TextChannel.created_at">(discord_http.channel.TextChannel property)</a>
@@ -2160,7 +2360,7 @@
 </li>
           <li><a href="api/entitlements.html#discord_http.entitlements.Subscription.created_at">(discord_http.entitlements.Subscription property)</a>
 </li>
-          <li><a href="gateway/activity.html#discord_http.gateway.activity.Activity.created_at">(discord_http.gateway.activity.Activity attribute)</a>
+          <li><a href="gateway/activity.html#discord_http.gateway.activity.Activity.created_at">(discord_http.gateway.activity.Activity property)</a>
 </li>
           <li><a href="api/guild.html#discord_http.guild.Guild.created_at">(discord_http.guild.Guild property)</a>
 </li>
@@ -2192,6 +2392,8 @@
 </li>
           <li><a href="api/member.html#discord_http.member.PartialMember.created_at">(discord_http.member.PartialMember property)</a>
 </li>
+          <li><a href="api/member.html#discord_http.member.PartialThreadMember.created_at">(discord_http.member.PartialThreadMember property)</a>
+</li>
           <li><a href="api/member.html#discord_http.member.ThreadMember.created_at">(discord_http.member.ThreadMember property)</a>
 </li>
           <li><a href="api/message.html#discord_http.message.Message.created_at">(discord_http.message.Message property)</a>
@@ -2219,6 +2421,8 @@
           <li><a href="api/sticker.html#discord_http.sticker.PartialSticker.created_at">(discord_http.sticker.PartialSticker property)</a>
 </li>
           <li><a href="api/sticker.html#discord_http.sticker.Sticker.created_at">(discord_http.sticker.Sticker property)</a>
+</li>
+          <li><a href="api/sticker.html#discord_http.sticker.StickerPack.created_at">(discord_http.sticker.StickerPack property)</a>
 </li>
           <li><a href="api/user.html#discord_http.user.Application.created_at">(discord_http.user.Application property)</a>
 </li>
@@ -2333,6 +2537,10 @@
 </li>
         <li><a href="api/enums.html#discord_http.enums.Locale.danish">danish (discord_http.enums.Locale attribute)</a>
 </li>
+        <li><a href="api/enums.html#discord_http.enums.BaseThemeType.dark">dark (discord_http.enums.BaseThemeType attribute)</a>
+</li>
+        <li><a href="api/enums.html#discord_http.enums.BaseThemeType.darker">darker (discord_http.enums.BaseThemeType attribute)</a>
+</li>
         <li><a href="api/file.html#discord_http.file.File.data">data (discord_http.file.File attribute)</a>
 </li>
         <li><a href="api/enums.html#discord_http.enums.ApplicationRoleConnectionMetadataType.datetime_greater_than_or_equal">datetime_greater_than_or_equal (discord_http.enums.ApplicationRoleConnectionMetadataType attribute)</a>
@@ -2348,7 +2556,11 @@
         <li><a href="api/backend.html#discord_http.backend.DiscordHTTP.debug">debug (discord_http.backend.DiscordHTTP property)</a>
 </li>
         <li><a href="api/backend.html#discord_http.backend.DiscordHTTP.debug_events">debug_events (discord_http.backend.DiscordHTTP attribute)</a>
+
+        <ul>
+          <li><a href="api/client.html#discord_http.client.Client.debug_events">(discord_http.client.Client attribute)</a>
 </li>
+        </ul></li>
         <li><a href="api/enums.html#discord_http.enums.ScheduledEventRecurrenceMonth.december">december (discord_http.enums.ScheduledEventRecurrenceMonth attribute)</a>
 </li>
         <li><a href="api/cooldowns.html#discord_http.cooldowns.BucketType.default">default (discord_http.cooldowns.BucketType attribute)</a>
@@ -2375,10 +2587,18 @@
           <li><a href="api/colour.html#discord_http.colour.Colour.default">(discord_http.colour.Colour class method)</a>
 </li>
         </ul></li>
+        <li><a href="api/channel.html#discord_http.channel.ForumChannel.default_auto_archive_duration">default_auto_archive_duration (discord_http.channel.ForumChannel attribute)</a>
+
+        <ul>
+          <li><a href="api/channel.html#discord_http.channel.TextChannel.default_auto_archive_duration">(discord_http.channel.TextChannel attribute)</a>
+</li>
+        </ul></li>
         <li><a href="api/member.html#discord_http.member.Member.default_avatar">default_avatar (discord_http.member.Member property)</a>
 
         <ul>
           <li><a href="api/member.html#discord_http.member.PartialMember.default_avatar">(discord_http.member.PartialMember property)</a>
+</li>
+          <li><a href="api/member.html#discord_http.member.PartialThreadMember.default_avatar">(discord_http.member.PartialThreadMember property)</a>
 </li>
           <li><a href="api/member.html#discord_http.member.ThreadMember.default_avatar">(discord_http.member.ThreadMember property)</a>
 </li>
@@ -2388,6 +2608,8 @@
 </li>
         </ul></li>
         <li><a href="api/guild.html#discord_http.guild.GuildOnboarding.default_channel_ids">default_channel_ids (discord_http.guild.GuildOnboarding attribute)</a>
+</li>
+        <li><a href="api/channel.html#discord_http.channel.ForumChannel.default_forum_layout">default_forum_layout (discord_http.channel.ForumChannel attribute)</a>
 </li>
         <li><a href="api/guild.html#discord_http.guild.Guild.default_message_notifications">default_message_notifications (discord_http.guild.Guild attribute)</a>
 </li>
@@ -2399,6 +2621,14 @@
 
         <ul>
           <li><a href="api/guild.html#discord_http.guild.PartialGuild.default_role">(discord_http.guild.PartialGuild property)</a>
+</li>
+        </ul></li>
+        <li><a href="api/channel.html#discord_http.channel.ForumChannel.default_sort_order">default_sort_order (discord_http.channel.ForumChannel attribute)</a>
+</li>
+        <li><a href="api/channel.html#discord_http.channel.ForumChannel.default_thread_rate_limit_per_user">default_thread_rate_limit_per_user (discord_http.channel.ForumChannel attribute)</a>
+
+        <ul>
+          <li><a href="api/channel.html#discord_http.channel.TextChannel.default_thread_rate_limit_per_user">(discord_http.channel.TextChannel attribute)</a>
 </li>
         </ul></li>
         <li><a href="api/enums.html#discord_http.enums.DefaultAvatarType">DefaultAvatarType (class in discord_http.enums)</a>
@@ -2449,6 +2679,8 @@
           <li><a href="api/channel.html#discord_http.channel.PublicThread.delete">(discord_http.channel.PublicThread method)</a>
 </li>
           <li><a href="api/channel.html#discord_http.channel.StageChannel.delete">(discord_http.channel.StageChannel method)</a>
+</li>
+          <li><a href="api/channel.html#discord_http.channel.StageInstance.delete">(discord_http.channel.StageInstance method)</a>
 </li>
           <li><a href="api/channel.html#discord_http.channel.StoreChannel.delete">(discord_http.channel.StoreChannel method)</a>
 </li>
@@ -2562,6 +2794,10 @@
         <li><a href="api/commands.html#discord_http.commands.Command.description">description (discord_http.commands.Command attribute)</a>
 
         <ul>
+          <li><a href="api/commands.html#discord_http.commands.LocaleContainer.description">(discord_http.commands.LocaleContainer attribute)</a>
+</li>
+          <li><a href="api/commands.html#discord_http.commands.SubCommand.description">(discord_http.commands.SubCommand attribute)</a>
+</li>
           <li><a href="api/commands.html#discord_http.commands.SubGroup.description">(discord_http.commands.SubGroup attribute)</a>
 </li>
           <li><a href="api/embeds.html#discord_http.embeds.Embed.description">(discord_http.embeds.Embed attribute)</a>
@@ -2588,6 +2824,8 @@
 </li>
           <li><a href="api/sticker.html#discord_http.sticker.Sticker.description">(discord_http.sticker.Sticker attribute)</a>
 </li>
+          <li><a href="api/sticker.html#discord_http.sticker.StickerPack.description">(discord_http.sticker.StickerPack attribute)</a>
+</li>
           <li><a href="api/user.html#discord_http.user.Application.description">(discord_http.user.Application attribute)</a>
 </li>
           <li><a href="api/user.html#discord_http.user.ApplicationRoleConnectionMetadata.description">(discord_http.user.ApplicationRoleConnectionMetadata attribute)</a>
@@ -2601,6 +2839,8 @@
           <li><a href="api/view.html#discord_http.view.ComponentOption.description">(discord_http.view.ComponentOption attribute)</a>
 </li>
           <li><a href="api/view.html#discord_http.view.FileUploadComponent.description">(discord_http.view.FileUploadComponent attribute)</a>
+</li>
+          <li><a href="api/view.html#discord_http.view.LabelComponent.description">(discord_http.view.LabelComponent attribute)</a>
 </li>
           <li><a href="api/view.html#discord_http.view.MediaGalleryItem.description">(discord_http.view.MediaGalleryItem attribute)</a>
 </li>
@@ -2625,6 +2865,8 @@
 </li>
         <li><a href="api/enums.html#discord_http.enums.ButtonStyles.destructive">destructive (discord_http.enums.ButtonStyles attribute)</a>
 </li>
+    </ul></td>
+    <td style="width: 33%; vertical-align: top;"><ul>
         <li><a href="gateway/activity.html#discord_http.gateway.activity.Activity.details">details (discord_http.gateway.activity.Activity attribute)</a>
 </li>
         <li><a href="api/enums.html#discord_http.enums.EntitlementType.developer_gift">developer_gift (discord_http.enums.EntitlementType attribute)</a>
@@ -2637,11 +2879,13 @@
 </li>
         <li><a href="gateway/flags.html#discord_http.gateway.flags.Intents.direct_message_typing">direct_message_typing (discord_http.gateway.flags.Intents attribute)</a>
 </li>
-    </ul></td>
-    <td style="width: 33%; vertical-align: top;"><ul>
         <li><a href="gateway/flags.html#discord_http.gateway.flags.Intents.direct_messages">direct_messages (discord_http.gateway.flags.Intents attribute)</a>
 </li>
         <li><a href="api/channel.html#discord_http.channel.DirectoryChannel">DirectoryChannel (class in discord_http.channel)</a>
+</li>
+        <li><a href="api/client.html#discord_http.client.Client.disable_default_get_path">disable_default_get_path (discord_http.client.Client attribute)</a>
+</li>
+        <li><a href="api/client.html#discord_http.client.Client.disable_http_server">disable_http_server (discord_http.client.Client attribute)</a>
 </li>
         <li><a href="api/enums.html#discord_http.enums.ApplicationEventWebhookStatus.disabled">disabled (discord_http.enums.ApplicationEventWebhookStatus attribute)</a>
 
@@ -2975,6 +3219,8 @@
         <ul>
           <li><a href="api/member.html#discord_http.member.PartialMember.display_avatar">(discord_http.member.PartialMember property)</a>
 </li>
+          <li><a href="api/member.html#discord_http.member.PartialThreadMember.display_avatar">(discord_http.member.PartialThreadMember property)</a>
+</li>
           <li><a href="api/member.html#discord_http.member.ThreadMember.display_avatar">(discord_http.member.ThreadMember property)</a>
 </li>
           <li><a href="api/user.html#discord_http.user.PartialUser.display_avatar">(discord_http.user.PartialUser property)</a>
@@ -3048,6 +3294,8 @@
 </li>
         <li><a href="gateway/enums.html#discord_http.gateway.enums.StatusType.dnd">dnd (discord_http.gateway.enums.StatusType attribute)</a>
 </li>
+        <li><a href="api/channel.html#discord_http.channel.Typing.do_typing_loop">do_typing_loop() (discord_http.channel.Typing method)</a>
+</li>
         <li><a href="api/tasks.html#discord_http.tasks.Sleeper.done">done() (discord_http.tasks.Sleeper method)</a>
 </li>
         <li><a href="api/enums.html#discord_http.enums.OnboardingPromptType.dropdown">dropdown (discord_http.enums.OnboardingPromptType attribute)</a>
@@ -3113,6 +3361,8 @@
 </li>
           <li><a href="api/channel.html#discord_http.channel.StageChannel.edit">(discord_http.channel.StageChannel method)</a>
 </li>
+          <li><a href="api/channel.html#discord_http.channel.StageInstance.edit">(discord_http.channel.StageInstance method)</a>
+</li>
           <li><a href="api/channel.html#discord_http.channel.StoreChannel.edit">(discord_http.channel.StoreChannel method)</a>
 </li>
           <li><a href="api/channel.html#discord_http.channel.TextChannel.edit">(discord_http.channel.TextChannel method)</a>
@@ -3140,6 +3390,8 @@
           <li><a href="api/member.html#discord_http.member.Member.edit">(discord_http.member.Member method)</a>
 </li>
           <li><a href="api/member.html#discord_http.member.PartialMember.edit">(discord_http.member.PartialMember method)</a>
+</li>
+          <li><a href="api/member.html#discord_http.member.PartialThreadMember.edit">(discord_http.member.PartialThreadMember method)</a>
 </li>
           <li><a href="api/member.html#discord_http.member.ThreadMember.edit">(discord_http.member.ThreadMember method)</a>
 </li>
@@ -3174,6 +3426,12 @@
           <li><a href="api/webhook.html#discord_http.webhook.PartialWebhook.edit">(discord_http.webhook.PartialWebhook method)</a>
 </li>
           <li><a href="api/webhook.html#discord_http.webhook.Webhook.edit">(discord_http.webhook.Webhook method)</a>
+</li>
+        </ul></li>
+        <li><a href="api/guild.html#discord_http.guild.Guild.edit_channel_positions">edit_channel_positions() (discord_http.guild.Guild method)</a>
+
+        <ul>
+          <li><a href="api/guild.html#discord_http.guild.PartialGuild.edit_channel_positions">(discord_http.guild.PartialGuild method)</a>
 </li>
         </ul></li>
         <li><a href="api/guild.html#discord_http.guild.Guild.edit_incident_actions">edit_incident_actions() (discord_http.guild.Guild method)</a>
@@ -3215,6 +3473,8 @@
         <li><a href="api/message.html#discord_http.message.Message.edited_timestamp">edited_timestamp (discord_http.message.Message attribute)</a>
 
         <ul>
+          <li><a href="api/message.html#discord_http.message.MessageSnapshot.edited_timestamp">(discord_http.message.MessageSnapshot attribute)</a>
+</li>
           <li><a href="api/message.html#discord_http.message.WebhookMessage.edited_timestamp">(discord_http.message.WebhookMessage attribute)</a>
 </li>
         </ul></li>
@@ -3228,6 +3488,8 @@
 </li>
         <li><a href="api/flags.html#discord_http.flags.Permissions.embed_links">embed_links (discord_http.flags.Permissions attribute)</a>
 </li>
+        <li><a href="api/embeds.html#discord_http.embeds.EmbedAuthor">EmbedAuthor (class in discord_http.embeds)</a>
+</li>
         <li><a href="api/flags.html#discord_http.flags.ApplicationFlags.embedded">embedded (discord_http.flags.ApplicationFlags attribute)</a>
 
         <ul>
@@ -3236,22 +3498,34 @@
         </ul></li>
         <li><a href="api/enums.html#discord_http.enums.InviteTargetType.embedded_application">embedded_application (discord_http.enums.InviteTargetType attribute)</a>
 </li>
+        <li><a href="api/embeds.html#discord_http.embeds.EmbedField">EmbedField (class in discord_http.embeds)</a>
+</li>
+        <li><a href="api/flags.html#discord_http.flags.EmbedFlags">EmbedFlags (class in discord_http.flags)</a>
+</li>
+        <li><a href="api/embeds.html#discord_http.embeds.EmbedFooter">EmbedFooter (class in discord_http.embeds)</a>
+</li>
+        <li><a href="api/embeds.html#discord_http.embeds.EmbedMedia">EmbedMedia (class in discord_http.embeds)</a>
+</li>
+        <li><a href="api/embeds.html#discord_http.embeds.EmbedProvider">EmbedProvider (class in discord_http.embeds)</a>
+</li>
         <li><a href="api/message.html#discord_http.message.Message.embeds">embeds (discord_http.message.Message attribute)</a>
 
         <ul>
+          <li><a href="api/message.html#discord_http.message.MessageSnapshot.embeds">(discord_http.message.MessageSnapshot attribute)</a>
+</li>
           <li><a href="api/message.html#discord_http.message.WebhookMessage.embeds">(discord_http.message.WebhookMessage attribute)</a>
 </li>
           <li><a href="api/response.html#discord_http.response.MessageResponse.embeds">(discord_http.response.MessageResponse attribute)</a>
 </li>
         </ul></li>
+    </ul></td>
+    <td style="width: 33%; vertical-align: top;"><ul>
         <li><a href="api/colour.html#discord_http.colour.Color.emerald">emerald() (discord_http.colour.Color class method)</a>
 
         <ul>
           <li><a href="api/colour.html#discord_http.colour.Colour.emerald">(discord_http.colour.Colour class method)</a>
 </li>
         </ul></li>
-    </ul></td>
-    <td style="width: 33%; vertical-align: top;"><ul>
         <li><a href="api/emoji.html#discord_http.emoji.Emoji">Emoji (class in discord_http.emoji)</a>
 </li>
         <li><a href="gateway/activity.html#discord_http.gateway.activity.Activity.emoji">emoji (discord_http.gateway.activity.Activity attribute)</a>
@@ -3264,6 +3538,8 @@
           <li><a href="api/guild.html#discord_http.guild.WelcomeScreenChannel.emoji">(discord_http.guild.WelcomeScreenChannel property)</a>
 </li>
           <li><a href="api/message.html#discord_http.message.MessageReaction.emoji">(discord_http.message.MessageReaction attribute)</a>
+</li>
+          <li><a href="api/message.html#discord_http.message.PollAnswer.emoji">(discord_http.message.PollAnswer attribute)</a>
 </li>
           <li><a href="api/soundboard.html#discord_http.soundboard.SoundboardSound.emoji">(discord_http.soundboard.SoundboardSound property)</a>
 </li>
@@ -3316,7 +3592,11 @@
         </ul></li>
         <li><a href="api/guild.html#discord_http.guild.Guild.emojis_limit">emojis_limit (discord_http.guild.Guild property)</a>
 </li>
+        <li><a href="api/response.html#discord_http.response.EmptyResponse">EmptyResponse (class in discord_http.response)</a>
+</li>
         <li><a href="api/integrations.html#discord_http.integrations.Integration.enable_emoticons">enable_emoticons (discord_http.integrations.Integration attribute)</a>
+</li>
+        <li><a href="api/client.html#discord_http.client.Client.enable_gateway">enable_gateway (discord_http.client.Client attribute)</a>
 </li>
         <li><a href="api/automod.html#discord_http.automod.AutoModRule.enabled">enabled (discord_http.automod.AutoModRule attribute)</a>
 
@@ -3330,7 +3610,7 @@
           <li><a href="api/integrations.html#discord_http.integrations.Integration.enabled">(discord_http.integrations.Integration attribute)</a>
 </li>
         </ul></li>
-        <li><a href="gateway/activity.html#discord_http.gateway.activity.ActivityTimestamps.end">end (discord_http.gateway.activity.ActivityTimestamps attribute)</a>
+        <li><a href="gateway/activity.html#discord_http.gateway.activity.ActivityTimestamps.end">end (discord_http.gateway.activity.ActivityTimestamps property)</a>
 
         <ul>
           <li><a href="api/guild.html#discord_http.guild.ScheduledEventRecurrenceRule.end">(discord_http.guild.ScheduledEventRecurrenceRule attribute)</a>
@@ -3343,6 +3623,8 @@
         <li><a href="api/enums.html#discord_http.enums.SubscriptionStatus.ending">ending (discord_http.enums.SubscriptionStatus attribute)</a>
 </li>
         <li><a href="api/entitlements.html#discord_http.entitlements.Entitlements.ends_at">ends_at (discord_http.entitlements.Entitlements attribute)</a>
+</li>
+        <li><a href="api/response.html#discord_http.response.MessageResponse.enforce_nonce">enforce_nonce (discord_http.response.MessageResponse attribute)</a>
 </li>
         <li><a href="api/entitlements.html#discord_http.entitlements.Subscription.entitlement_ids">entitlement_ids (discord_http.entitlements.Subscription attribute)</a>
 </li>
@@ -3376,6 +3658,12 @@
 </li>
         <li><a href="api/backend.html#discord_http.backend.DiscordHTTP.error_messages">error_messages() (discord_http.backend.DiscordHTTP method)</a>
 </li>
+        <li><a href="api/message.html#discord_http.message.Message.escaped_content">escaped_content (discord_http.message.Message property)</a>
+
+        <ul>
+          <li><a href="api/message.html#discord_http.message.WebhookMessage.escaped_content">(discord_http.message.WebhookMessage property)</a>
+</li>
+        </ul></li>
         <li><a href="api/automod.html#discord_http.automod.AutoModRule.event_type">event_type (discord_http.automod.AutoModRule attribute)</a>
 </li>
         <li><a href="api/user.html#discord_http.user.Application.event_webhooks_status">event_webhooks_status (discord_http.user.Application attribute)</a>
@@ -3516,6 +3804,8 @@
           <li><a href="api/member.html#discord_http.member.Member.fetch">(discord_http.member.Member method)</a>
 </li>
           <li><a href="api/member.html#discord_http.member.PartialMember.fetch">(discord_http.member.PartialMember method)</a>
+</li>
+          <li><a href="api/member.html#discord_http.member.PartialThreadMember.fetch">(discord_http.member.PartialThreadMember method)</a>
 </li>
           <li><a href="api/member.html#discord_http.member.ThreadMember.fetch">(discord_http.member.ThreadMember method)</a>
 </li>
@@ -3680,6 +3970,8 @@
 </li>
         <li><a href="api/client.html#discord_http.client.Client.fetch_current_application">fetch_current_application() (discord_http.client.Client method)</a>
 </li>
+        <li><a href="api/client.html#discord_http.client.Client.fetch_default_soundboard_sounds">fetch_default_soundboard_sounds() (discord_http.client.Client method)</a>
+</li>
         <li><a href="api/client.html#discord_http.client.Client.fetch_emoji">fetch_emoji() (discord_http.client.Client method)</a>
 
         <ul>
@@ -3710,6 +4002,8 @@
           <li><a href="api/guild.html#discord_http.guild.PartialGuild.fetch_guild_prune_count">(discord_http.guild.PartialGuild method)</a>
 </li>
         </ul></li>
+        <li><a href="api/client.html#discord_http.client.Client.fetch_guilds">fetch_guilds() (discord_http.client.Client method)</a>
+</li>
         <li><a href="api/channel.html#discord_http.channel.BaseChannel.fetch_history">fetch_history() (discord_http.channel.BaseChannel method)</a>
 
         <ul>
@@ -3756,9 +4050,45 @@
         </ul></li>
         <li><a href="api/client.html#discord_http.client.Client.fetch_invite">fetch_invite() (discord_http.client.Client method)</a>
 </li>
-        <li><a href="api/guild.html#discord_http.guild.Guild.fetch_invites">fetch_invites() (discord_http.guild.Guild method)</a>
+        <li><a href="api/channel.html#discord_http.channel.BaseChannel.fetch_invites">fetch_invites() (discord_http.channel.BaseChannel method)</a>
 
         <ul>
+          <li><a href="api/channel.html#discord_http.channel.CategoryChannel.fetch_invites">(discord_http.channel.CategoryChannel method)</a>
+</li>
+          <li><a href="api/channel.html#discord_http.channel.DirectoryChannel.fetch_invites">(discord_http.channel.DirectoryChannel method)</a>
+</li>
+          <li><a href="api/channel.html#discord_http.channel.DMChannel.fetch_invites">(discord_http.channel.DMChannel method)</a>
+</li>
+          <li><a href="api/channel.html#discord_http.channel.ForumChannel.fetch_invites">(discord_http.channel.ForumChannel method)</a>
+</li>
+          <li><a href="api/channel.html#discord_http.channel.ForumThread.fetch_invites">(discord_http.channel.ForumThread method)</a>
+</li>
+          <li><a href="api/channel.html#discord_http.channel.GroupDMChannel.fetch_invites">(discord_http.channel.GroupDMChannel method)</a>
+</li>
+          <li><a href="api/channel.html#discord_http.channel.NewsChannel.fetch_invites">(discord_http.channel.NewsChannel method)</a>
+</li>
+          <li><a href="api/channel.html#discord_http.channel.NewsThread.fetch_invites">(discord_http.channel.NewsThread method)</a>
+</li>
+          <li><a href="api/channel.html#discord_http.channel.PartialChannel.fetch_invites">(discord_http.channel.PartialChannel method)</a>
+</li>
+          <li><a href="api/channel.html#discord_http.channel.PartialThread.fetch_invites">(discord_http.channel.PartialThread method)</a>
+</li>
+          <li><a href="api/channel.html#discord_http.channel.PrivateThread.fetch_invites">(discord_http.channel.PrivateThread method)</a>
+</li>
+          <li><a href="api/channel.html#discord_http.channel.PublicThread.fetch_invites">(discord_http.channel.PublicThread method)</a>
+</li>
+          <li><a href="api/channel.html#discord_http.channel.StageChannel.fetch_invites">(discord_http.channel.StageChannel method)</a>
+</li>
+          <li><a href="api/channel.html#discord_http.channel.StoreChannel.fetch_invites">(discord_http.channel.StoreChannel method)</a>
+</li>
+          <li><a href="api/channel.html#discord_http.channel.TextChannel.fetch_invites">(discord_http.channel.TextChannel method)</a>
+</li>
+          <li><a href="api/channel.html#discord_http.channel.Thread.fetch_invites">(discord_http.channel.Thread method)</a>
+</li>
+          <li><a href="api/channel.html#discord_http.channel.VoiceChannel.fetch_invites">(discord_http.channel.VoiceChannel method)</a>
+</li>
+          <li><a href="api/guild.html#discord_http.guild.Guild.fetch_invites">(discord_http.guild.Guild method)</a>
+</li>
           <li><a href="api/guild.html#discord_http.guild.PartialGuild.fetch_invites">(discord_http.guild.PartialGuild method)</a>
 </li>
         </ul></li>
@@ -3890,6 +4220,12 @@
         </ul></li>
         <li><a href="api/user.html#discord_http.user.Application.fetch_role_connection_metadata">fetch_role_connection_metadata() (discord_http.user.Application method)</a>
 </li>
+        <li><a href="api/guild.html#discord_http.guild.Guild.fetch_role_member_counts">fetch_role_member_counts() (discord_http.guild.Guild method)</a>
+
+        <ul>
+          <li><a href="api/guild.html#discord_http.guild.PartialGuild.fetch_role_member_counts">(discord_http.guild.PartialGuild method)</a>
+</li>
+        </ul></li>
         <li><a href="api/guild.html#discord_http.guild.Guild.fetch_roles">fetch_roles() (discord_http.guild.Guild method)</a>
 
         <ul>
@@ -3904,14 +4240,14 @@
           <li><a href="api/guild.html#discord_http.guild.PartialGuild.fetch_scheduled_event">(discord_http.guild.PartialGuild method)</a>
 </li>
         </ul></li>
+    </ul></td>
+    <td style="width: 33%; vertical-align: top;"><ul>
         <li><a href="api/guild.html#discord_http.guild.Guild.fetch_scheduled_events_list">fetch_scheduled_events_list() (discord_http.guild.Guild method)</a>
 
         <ul>
           <li><a href="api/guild.html#discord_http.guild.PartialGuild.fetch_scheduled_events_list">(discord_http.guild.PartialGuild method)</a>
 </li>
         </ul></li>
-    </ul></td>
-    <td style="width: 33%; vertical-align: top;"><ul>
         <li><a href="api/client.html#discord_http.client.Client.fetch_skus">fetch_skus() (discord_http.client.Client method)</a>
 </li>
         <li><a href="api/client.html#discord_http.client.Client.fetch_soundboard_sound">fetch_soundboard_sound() (discord_http.client.Client method)</a>
@@ -3938,6 +4274,10 @@
           <li><a href="api/guild.html#discord_http.guild.PartialGuild.fetch_sticker">(discord_http.guild.PartialGuild method)</a>
 </li>
         </ul></li>
+        <li><a href="api/client.html#discord_http.client.Client.fetch_sticker_pack">fetch_sticker_pack() (discord_http.client.Client method)</a>
+</li>
+        <li><a href="api/client.html#discord_http.client.Client.fetch_sticker_packs">fetch_sticker_packs() (discord_http.client.Client method)</a>
+</li>
         <li><a href="api/guild.html#discord_http.guild.Guild.fetch_stickers">fetch_stickers() (discord_http.guild.Guild method)</a>
 
         <ul>
@@ -4062,12 +4402,24 @@
           <li><a href="api/message.html#discord_http.message.MessageReaction.fetch_users">(discord_http.message.MessageReaction method)</a>
 </li>
         </ul></li>
+        <li><a href="api/guild.html#discord_http.guild.Guild.fetch_vanity_url">fetch_vanity_url() (discord_http.guild.Guild method)</a>
+
+        <ul>
+          <li><a href="api/guild.html#discord_http.guild.PartialGuild.fetch_vanity_url">(discord_http.guild.PartialGuild method)</a>
+</li>
+        </ul></li>
         <li><a href="api/client.html#discord_http.client.Client.fetch_voice_regions">fetch_voice_regions() (discord_http.client.Client method)</a>
 </li>
         <li><a href="api/client.html#discord_http.client.Client.fetch_voice_state">fetch_voice_state() (discord_http.client.Client method)</a>
 </li>
         <li><a href="api/client.html#discord_http.client.Client.fetch_webhook">fetch_webhook() (discord_http.client.Client method)</a>
 </li>
+        <li><a href="api/guild.html#discord_http.guild.Guild.fetch_webhooks">fetch_webhooks() (discord_http.guild.Guild method)</a>
+
+        <ul>
+          <li><a href="api/guild.html#discord_http.guild.PartialGuild.fetch_webhooks">(discord_http.guild.PartialGuild method)</a>
+</li>
+        </ul></li>
         <li><a href="api/guild.html#discord_http.guild.Guild.fetch_welcome_screen">fetch_welcome_screen() (discord_http.guild.Guild method)</a>
 
         <ul>
@@ -4153,6 +4505,8 @@
 </li>
           <li><a href="api/channel.html#discord_http.channel.VoiceChannel.flags">(discord_http.channel.VoiceChannel property)</a>
 </li>
+          <li><a href="api/embeds.html#discord_http.embeds.Embed.flags">(discord_http.embeds.Embed property)</a>
+</li>
           <li><a href="api/entitlements.html#discord_http.entitlements.SKU.flags">(discord_http.entitlements.SKU property)</a>
 </li>
           <li><a href="gateway/activity.html#discord_http.gateway.activity.Activity.flags">(discord_http.gateway.activity.Activity property)</a>
@@ -4161,13 +4515,21 @@
 </li>
           <li><a href="api/member.html#discord_http.member.Member.flags">(discord_http.member.Member property)</a>
 </li>
+          <li><a href="api/member.html#discord_http.member.PartialThreadMember.flags">(discord_http.member.PartialThreadMember attribute)</a>
+</li>
           <li><a href="api/member.html#discord_http.member.ThreadMember.flags">(discord_http.member.ThreadMember property)</a>
 </li>
           <li><a href="api/message.html#discord_http.message.Attachment.flags">(discord_http.message.Attachment property)</a>
 </li>
+          <li><a href="api/message.html#discord_http.message.Message.flags">(discord_http.message.Message property)</a>
+</li>
+          <li><a href="api/message.html#discord_http.message.WebhookMessage.flags">(discord_http.message.WebhookMessage property)</a>
+</li>
           <li><a href="api/response.html#discord_http.response.DeferResponse.flags">(discord_http.response.DeferResponse attribute)</a>
 </li>
           <li><a href="api/response.html#discord_http.response.MessageResponse.flags">(discord_http.response.MessageResponse attribute)</a>
+</li>
+          <li><a href="api/role.html#discord_http.role.Role.flags">(discord_http.role.Role property)</a>
 </li>
           <li><a href="api/user.html#discord_http.user.Application.flags">(discord_http.user.Application attribute)</a>
 </li>
@@ -4307,11 +4669,25 @@
 </li>
           <li><a href="api/embeds.html#discord_http.embeds.Embed.from_dict">(discord_http.embeds.Embed class method)</a>
 </li>
+          <li><a href="api/embeds.html#discord_http.embeds.EmbedAuthor.from_dict">(discord_http.embeds.EmbedAuthor class method)</a>
+</li>
+          <li><a href="api/embeds.html#discord_http.embeds.EmbedField.from_dict">(discord_http.embeds.EmbedField class method)</a>
+</li>
+          <li><a href="api/embeds.html#discord_http.embeds.EmbedFooter.from_dict">(discord_http.embeds.EmbedFooter class method)</a>
+</li>
+          <li><a href="api/embeds.html#discord_http.embeds.EmbedMedia.from_dict">(discord_http.embeds.EmbedMedia class method)</a>
+</li>
+          <li><a href="api/embeds.html#discord_http.embeds.EmbedProvider.from_dict">(discord_http.embeds.EmbedProvider class method)</a>
+</li>
           <li><a href="api/emoji.html#discord_http.emoji.EmojiParser.from_dict">(discord_http.emoji.EmojiParser class method)</a>
 </li>
           <li><a href="api/flags.html#discord_http.flags.PermissionOverwrite.from_dict">(discord_http.flags.PermissionOverwrite class method)</a>
 </li>
           <li><a href="api/message.html#discord_http.message.Poll.from_dict">(discord_http.message.Poll class method)</a>
+</li>
+          <li><a href="api/message.html#discord_http.message.PollAnswer.from_dict">(discord_http.message.PollAnswer class method)</a>
+</li>
+          <li><a href="api/message.html#discord_http.message.SharedClientTheme.from_dict">(discord_http.message.SharedClientTheme class method)</a>
 </li>
           <li><a href="api/user.html#discord_http.user.ApplicationRoleConnectionMetadata.from_dict">(discord_http.user.ApplicationRoleConnectionMetadata class method)</a>
 </li>
@@ -4347,6 +4723,8 @@
 </li>
           <li><a href="api/flags.html#discord_http.flags.ChannelFlags.from_names">(discord_http.flags.ChannelFlags class method)</a>
 </li>
+          <li><a href="api/flags.html#discord_http.flags.EmbedFlags.from_names">(discord_http.flags.EmbedFlags class method)</a>
+</li>
           <li><a href="api/flags.html#discord_http.flags.GuildInviteFlags.from_names">(discord_http.flags.GuildInviteFlags class method)</a>
 </li>
           <li><a href="api/flags.html#discord_http.flags.GuildMemberFlags.from_names">(discord_http.flags.GuildMemberFlags class method)</a>
@@ -4354,6 +4732,8 @@
           <li><a href="api/flags.html#discord_http.flags.MessageFlags.from_names">(discord_http.flags.MessageFlags class method)</a>
 </li>
           <li><a href="api/flags.html#discord_http.flags.Permissions.from_names">(discord_http.flags.Permissions class method)</a>
+</li>
+          <li><a href="api/flags.html#discord_http.flags.RoleFlags.from_names">(discord_http.flags.RoleFlags class method)</a>
 </li>
           <li><a href="api/flags.html#discord_http.flags.SKUFlags.from_names">(discord_http.flags.SKUFlags class method)</a>
 </li>
@@ -4407,6 +4787,8 @@
         <li><a href="api/enums.html#discord_http.enums.ForumLayoutType.gallery_view">gallery_view (discord_http.enums.ForumLayoutType attribute)</a>
 </li>
         <li><a href="api/client.html#discord_http.client.Client.gateway">gateway (discord_http.client.Client attribute)</a>
+</li>
+        <li><a href="api/client.html#discord_http.client.Client.gateway_capabilities">gateway_capabilities (discord_http.client.Client attribute)</a>
 </li>
         <li><a href="api/flags.html#discord_http.flags.ApplicationFlags.gateway_guild_members">gateway_guild_members (discord_http.flags.ApplicationFlags attribute)</a>
 </li>
@@ -4686,9 +5068,13 @@
           <li><a href="api/user.html#discord_http.user.User.global_nameplate">(discord_http.user.User property)</a>
 </li>
         </ul></li>
+        <li><a href="api/client.html#discord_http.client.Client.global_ratelimit">global_ratelimit (discord_http.client.Client attribute)</a>
+</li>
         <li><a href="api/enums.html#discord_http.enums.DisplayNameEffectType.glow">glow (discord_http.enums.DisplayNameEffectType attribute)</a>
 </li>
         <li><a href="api/enums.html#discord_http.enums.DisplayNameEffectType.gradient">gradient (discord_http.enums.DisplayNameEffectType attribute)</a>
+</li>
+        <li><a href="api/message.html#discord_http.message.SharedClientTheme.gradient_angle">gradient_angle (discord_http.message.SharedClientTheme attribute)</a>
 </li>
         <li><a href="api/enums.html#discord_http.enums.ButtonStyles.gray">gray (discord_http.enums.ButtonStyles attribute)</a>
 
@@ -4767,6 +5153,8 @@
 </li>
           <li><a href="api/channel.html#discord_http.channel.StageChannel.guild">(discord_http.channel.StageChannel property)</a>
 </li>
+          <li><a href="api/channel.html#discord_http.channel.StageInstance.guild">(discord_http.channel.StageInstance property)</a>
+</li>
           <li><a href="api/channel.html#discord_http.channel.StoreChannel.guild">(discord_http.channel.StoreChannel property)</a>
 </li>
           <li><a href="api/channel.html#discord_http.channel.TextChannel.guild">(discord_http.channel.TextChannel property)</a>
@@ -4789,6 +5177,8 @@
 </li>
           <li><a href="api/enums.html#discord_http.enums.IntegrationType.guild">(discord_http.enums.IntegrationType attribute)</a>
 </li>
+          <li><a href="api/enums.html#discord_http.enums.InteractionContextType.guild">(discord_http.enums.InteractionContextType attribute)</a>
+</li>
           <li><a href="api/enums.html#discord_http.enums.InviteType.guild">(discord_http.enums.InviteType attribute)</a>
 </li>
           <li><a href="api/enums.html#discord_http.enums.StickerType.guild">(discord_http.enums.StickerType attribute)</a>
@@ -4805,7 +5195,7 @@
 </li>
           <li><a href="gateway/object.html#discord_http.gateway.object.PollVoteEvent.guild">(discord_http.gateway.object.PollVoteEvent attribute)</a>
 </li>
-          <li><a href="gateway/object.html#discord_http.gateway.object.Presence.guild">(discord_http.gateway.object.Presence attribute)</a>
+          <li><a href="gateway/object.html#discord_http.gateway.object.Presence.guild">(discord_http.gateway.object.Presence property)</a>
 </li>
           <li><a href="gateway/object.html#discord_http.gateway.object.Reaction.guild">(discord_http.gateway.object.Reaction property)</a>
 </li>
@@ -4830,6 +5220,8 @@
           <li><a href="api/member.html#discord_http.member.Member.guild">(discord_http.member.Member property)</a>
 </li>
           <li><a href="api/member.html#discord_http.member.PartialMember.guild">(discord_http.member.PartialMember property)</a>
+</li>
+          <li><a href="api/member.html#discord_http.member.PartialThreadMember.guild">(discord_http.member.PartialThreadMember property)</a>
 </li>
           <li><a href="api/member.html#discord_http.member.ThreadMember.guild">(discord_http.member.ThreadMember property)</a>
 </li>
@@ -4931,6 +5323,8 @@
 </li>
           <li><a href="api/channel.html#discord_http.channel.StageChannel.guild_id">(discord_http.channel.StageChannel attribute)</a>
 </li>
+          <li><a href="api/channel.html#discord_http.channel.StageInstance.guild_id">(discord_http.channel.StageInstance attribute)</a>
+</li>
           <li><a href="api/channel.html#discord_http.channel.StoreChannel.guild_id">(discord_http.channel.StoreChannel attribute)</a>
 </li>
           <li><a href="api/channel.html#discord_http.channel.TextChannel.guild_id">(discord_http.channel.TextChannel attribute)</a>
@@ -4939,7 +5333,11 @@
 </li>
           <li><a href="api/channel.html#discord_http.channel.VoiceChannel.guild_id">(discord_http.channel.VoiceChannel attribute)</a>
 </li>
+          <li><a href="api/client.html#discord_http.client.Client.guild_id">(discord_http.client.Client attribute)</a>
+</li>
           <li><a href="api/commands.html#discord_http.commands.PartialCommand.guild_id">(discord_http.commands.PartialCommand attribute)</a>
+</li>
+          <li><a href="api/context.html#discord_http.context.Context.guild_id">(discord_http.context.Context attribute)</a>
 </li>
           <li><a href="api/emoji.html#discord_http.emoji.Emoji.guild_id">(discord_http.emoji.Emoji attribute)</a>
 </li>
@@ -4948,6 +5346,8 @@
           <li><a href="api/entitlements.html#discord_http.entitlements.Entitlements.guild_id">(discord_http.entitlements.Entitlements attribute)</a>
 </li>
           <li><a href="gateway/object.html#discord_http.gateway.object.GuildApplicationCommandPermissions.guild_id">(discord_http.gateway.object.GuildApplicationCommandPermissions attribute)</a>
+</li>
+          <li><a href="gateway/object.html#discord_http.gateway.object.Presence.guild_id">(discord_http.gateway.object.Presence attribute)</a>
 </li>
           <li><a href="gateway/object.html#discord_http.gateway.object.Reaction.guild_id">(discord_http.gateway.object.Reaction attribute)</a>
 </li>
@@ -4982,6 +5382,8 @@
           <li><a href="api/member.html#discord_http.member.Member.guild_id">(discord_http.member.Member attribute)</a>
 </li>
           <li><a href="api/member.html#discord_http.member.PartialMember.guild_id">(discord_http.member.PartialMember attribute)</a>
+</li>
+          <li><a href="api/member.html#discord_http.member.PartialThreadMember.guild_id">(discord_http.member.PartialThreadMember attribute)</a>
 </li>
           <li><a href="api/member.html#discord_http.member.ThreadMember.guild_id">(discord_http.member.ThreadMember attribute)</a>
 </li>
@@ -5021,6 +5423,8 @@
         <li><a href="api/commands.html#discord_http.commands.Command.guild_ids">guild_ids (discord_http.commands.Command attribute)</a>
 
         <ul>
+          <li><a href="api/commands.html#discord_http.commands.SubCommand.guild_ids">(discord_http.commands.SubCommand attribute)</a>
+</li>
           <li><a href="api/commands.html#discord_http.commands.SubGroup.guild_ids">(discord_http.commands.SubGroup attribute)</a>
 </li>
         </ul></li>
@@ -5035,6 +5439,8 @@
         <li><a href="api/commands.html#discord_http.commands.Command.guild_install">guild_install (discord_http.commands.Command attribute)</a>
 
         <ul>
+          <li><a href="api/commands.html#discord_http.commands.SubCommand.guild_install">(discord_http.commands.SubCommand attribute)</a>
+</li>
           <li><a href="api/commands.html#discord_http.commands.SubGroup.guild_install">(discord_http.commands.SubGroup attribute)</a>
 </li>
         </ul></li>
@@ -5088,6 +5494,8 @@
 </li>
         <li><a href="api/enums.html#discord_http.enums.ChannelType.guild_public_thread">guild_public_thread (discord_http.enums.ChannelType attribute)</a>
 </li>
+        <li><a href="api/client.html#discord_http.client.Client.guild_ready_timeout">guild_ready_timeout (discord_http.client.Client attribute)</a>
+</li>
         <li><a href="api/enums.html#discord_http.enums.AuditLogType.guild_scheduled_event_create">guild_scheduled_event_create (discord_http.enums.AuditLogType attribute)</a>
 </li>
         <li><a href="api/enums.html#discord_http.enums.AuditLogType.guild_scheduled_event_delete">guild_scheduled_event_delete (discord_http.enums.AuditLogType attribute)</a>
@@ -5097,6 +5505,8 @@
         <li><a href="api/enums.html#discord_http.enums.AuditLogType.guild_scheduled_event_exception_delete">guild_scheduled_event_exception_delete (discord_http.enums.AuditLogType attribute)</a>
 </li>
         <li><a href="api/enums.html#discord_http.enums.AuditLogType.guild_scheduled_event_exception_update">guild_scheduled_event_exception_update (discord_http.enums.AuditLogType attribute)</a>
+</li>
+        <li><a href="api/channel.html#discord_http.channel.StageInstance.guild_scheduled_event_id">guild_scheduled_event_id (discord_http.channel.StageInstance attribute)</a>
 </li>
         <li><a href="api/enums.html#discord_http.enums.AuditLogType.guild_scheduled_event_update">guild_scheduled_event_update (discord_http.enums.AuditLogType attribute)</a>
 </li>
@@ -5122,6 +5532,8 @@
 </li>
         <li><a href="gateway/object.html#discord_http.gateway.object.GuildApplicationCommandPermissions">GuildApplicationCommandPermissions (class in discord_http.gateway.object)</a>
 </li>
+        <li><a href="api/guild.html#discord_http.guild.GuildChannelPosition">GuildChannelPosition (class in discord_http.guild)</a>
+</li>
         <li><a href="api/guild.html#discord_http.guild.GuildIncidentsData">GuildIncidentsData (class in discord_http.guild)</a>
 </li>
         <li><a href="api/flags.html#discord_http.flags.GuildInviteFlags">GuildInviteFlags (class in discord_http.flags)</a>
@@ -5144,6 +5556,8 @@
         </ul></li>
         <li><a href="api/guild.html#discord_http.guild.GuildTemplate">GuildTemplate (class in discord_http.guild)</a>
 </li>
+        <li><a href="api/guild.html#discord_http.guild.GuildVanityURL">GuildVanityURL (class in discord_http.guild)</a>
+</li>
         <li><a href="api/guild.html#discord_http.guild.GuildWidget">GuildWidget (class in discord_http.guild)</a>
 </li>
         <li><a href="api/guild.html#discord_http.guild.GuildWidgetChannel">GuildWidgetChannel (class in discord_http.guild)</a>
@@ -5151,6 +5565,8 @@
         <li><a href="api/guild.html#discord_http.guild.GuildWidgetMember">GuildWidgetMember (class in discord_http.guild)</a>
 </li>
         <li><a href="api/guild.html#discord_http.guild.GuildWidgetSettings">GuildWidgetSettings (class in discord_http.guild)</a>
+</li>
+        <li><a href="api/enums.html#discord_http.enums.DisplayNameEffectType.gummy">gummy (discord_http.enums.DisplayNameEffectType attribute)</a>
 </li>
     </ul></td>
   </tr></table>
@@ -5161,6 +5577,8 @@
   <table style="width: 100%" class="indextable genindextable"><tr>
     <td style="width: 33%; vertical-align: top;"><ul>
         <li><a href="api/tasks.html#discord_http.tasks.Sleeper.handle">handle (discord_http.tasks.Sleeper attribute)</a>
+</li>
+        <li><a href="api/backend.html#discord_http.backend.DiscordHTTP.handle_gateway_interaction">handle_gateway_interaction() (discord_http.backend.DiscordHTTP method)</a>
 </li>
         <li><a href="api/tasks.html#discord_http.tasks.Loop.handle_interval">handle_interval() (discord_http.tasks.Loop method)</a>
 </li>
@@ -5194,6 +5612,8 @@
 </li>
         <li><a href="api/enums.html#discord_http.enums.MessageType.hd_streaming_upgraded">hd_streaming_upgraded (discord_http.enums.MessageType attribute)</a>
 </li>
+        <li><a href="api/enums.html#discord_http.enums.DisplayNameFontType.headbang">headbang (discord_http.enums.DisplayNameFontType attribute)</a>
+</li>
         <li><a href="api/http.html#discord_http.http.HTTPResponse.headers">headers (discord_http.http.HTTPResponse attribute)</a>
 </li>
         <li><a href="gateway/enums.html#discord_http.gateway.enums.PayloadType.heartbeat">heartbeat (discord_http.gateway.enums.PayloadType attribute)</a>
@@ -5221,6 +5641,8 @@
         <li><a href="api/enums.html#discord_http.enums.AuditLogType.home_settings_create">home_settings_create (discord_http.enums.AuditLogType attribute)</a>
 </li>
         <li><a href="api/enums.html#discord_http.enums.AuditLogType.home_settings_update">home_settings_update (discord_http.enums.AuditLogType attribute)</a>
+</li>
+        <li><a href="api/backend.html#discord_http.backend.DiscordHTTP.host">host (discord_http.backend.DiscordHTTP attribute)</a>
 </li>
         <li><a href="api/http.html#discord_http.http.DiscordAPI.http">http (discord_http.http.DiscordAPI attribute)</a>
 </li>
@@ -5260,6 +5682,12 @@
           <li><a href="api/user.html#discord_http.user.Team.icon">(discord_http.user.Team attribute)</a>
 </li>
         </ul></li>
+        <li><a href="api/embeds.html#discord_http.embeds.EmbedAuthor.icon_url">icon_url (discord_http.embeds.EmbedAuthor attribute)</a>
+
+        <ul>
+          <li><a href="api/embeds.html#discord_http.embeds.EmbedFooter.icon_url">(discord_http.embeds.EmbedFooter attribute)</a>
+</li>
+        </ul></li>
         <li><a href="api/audit.html#discord_http.audit.AuditLogEntry.id">id (discord_http.audit.AuditLogEntry attribute)</a>
 
         <ul>
@@ -5297,6 +5725,8 @@
 </li>
           <li><a href="api/channel.html#discord_http.channel.StageChannel.id">(discord_http.channel.StageChannel attribute)</a>
 </li>
+          <li><a href="api/channel.html#discord_http.channel.StageInstance.id">(discord_http.channel.StageInstance attribute)</a>
+</li>
           <li><a href="api/channel.html#discord_http.channel.StoreChannel.id">(discord_http.channel.StoreChannel attribute)</a>
 </li>
           <li><a href="api/channel.html#discord_http.channel.TextChannel.id">(discord_http.channel.TextChannel attribute)</a>
@@ -5310,6 +5740,8 @@
           <li><a href="api/commands.html#discord_http.commands.Command.id">(discord_http.commands.Command attribute)</a>
 </li>
           <li><a href="api/commands.html#discord_http.commands.PartialCommand.id">(discord_http.commands.PartialCommand attribute)</a>
+</li>
+          <li><a href="api/commands.html#discord_http.commands.SubCommand.id">(discord_http.commands.SubCommand attribute)</a>
 </li>
           <li><a href="api/commands.html#discord_http.commands.SubGroup.id">(discord_http.commands.SubGroup attribute)</a>
 </li>
@@ -5373,6 +5805,8 @@
 </li>
           <li><a href="api/member.html#discord_http.member.PartialMember.id">(discord_http.member.PartialMember attribute)</a>
 </li>
+          <li><a href="api/member.html#discord_http.member.PartialThreadMember.id">(discord_http.member.PartialThreadMember attribute)</a>
+</li>
           <li><a href="api/member.html#discord_http.member.ThreadMember.id">(discord_http.member.ThreadMember attribute)</a>
 </li>
           <li><a href="api/message.html#discord_http.message.Attachment.id">(discord_http.message.Attachment attribute)</a>
@@ -5382,6 +5816,8 @@
           <li><a href="api/message.html#discord_http.message.MessageInteraction.id">(discord_http.message.MessageInteraction attribute)</a>
 </li>
           <li><a href="api/message.html#discord_http.message.PartialMessage.id">(discord_http.message.PartialMessage attribute)</a>
+</li>
+          <li><a href="api/message.html#discord_http.message.PollAnswer.id">(discord_http.message.PollAnswer attribute)</a>
 </li>
           <li><a href="api/message.html#discord_http.message.WebhookMessage.id">(discord_http.message.WebhookMessage attribute)</a>
 </li>
@@ -5402,6 +5838,8 @@
           <li><a href="api/sticker.html#discord_http.sticker.PartialSticker.id">(discord_http.sticker.PartialSticker attribute)</a>
 </li>
           <li><a href="api/sticker.html#discord_http.sticker.Sticker.id">(discord_http.sticker.Sticker attribute)</a>
+</li>
+          <li><a href="api/sticker.html#discord_http.sticker.StickerPack.id">(discord_http.sticker.StickerPack attribute)</a>
 </li>
           <li><a href="api/user.html#discord_http.user.Application.id">(discord_http.user.Application attribute)</a>
 </li>
@@ -5438,18 +5876,26 @@
 </li>
         <li><a href="api/guild.html#discord_http.guild.OnboardingPrompt.in_onboarding">in_onboarding (discord_http.guild.OnboardingPrompt attribute)</a>
 </li>
+        <li><a href="api/flags.html#discord_http.flags.RoleFlags.in_prompt">in_prompt (discord_http.flags.RoleFlags attribute)</a>
+</li>
         <li><a href="api/enums.html#discord_http.enums.SubscriptionStatus.inactive">inactive (discord_http.enums.SubscriptionStatus attribute)</a>
 </li>
         <li><a href="api/guild.html#discord_http.guild.Guild.incidents_data">incidents_data (discord_http.guild.Guild attribute)</a>
 </li>
         <li><a href="api/enums.html#discord_http.enums.WebhookType.incoming">incoming (discord_http.enums.WebhookType attribute)</a>
 </li>
-        <li><a href="gateway/object.html#discord_http.gateway.object.GatewayRateLimited.index">index() (discord_http.gateway.object.GatewayRateLimited method)</a>
+        <li><a href="gateway/object.html#discord_http.gateway.object.ChannelInfo.index">index() (discord_http.gateway.object.ChannelInfo method)</a>
 
         <ul>
+          <li><a href="gateway/object.html#discord_http.gateway.object.GatewayRateLimited.index">(discord_http.gateway.object.GatewayRateLimited method)</a>
+</li>
           <li><a href="api/guild.html#discord_http.guild.BanEntry.index">(discord_http.guild.BanEntry method)</a>
 </li>
+          <li><a href="api/guild.html#discord_http.guild.GuildChannelPosition.index">(discord_http.guild.GuildChannelPosition method)</a>
+</li>
           <li><a href="api/guild.html#discord_http.guild.GuildIncidentsData.index">(discord_http.guild.GuildIncidentsData method)</a>
+</li>
+          <li><a href="api/guild.html#discord_http.guild.GuildVanityURL.index">(discord_http.guild.GuildVanityURL method)</a>
 </li>
           <li><a href="api/guild.html#discord_http.guild.GuildWidgetMember.index">(discord_http.guild.GuildWidgetMember method)</a>
 </li>
@@ -5459,7 +5905,11 @@
 </li>
           <li><a href="api/invite.html#discord_http.invite.InviteTargetUsersJobStatus.index">(discord_http.invite.InviteTargetUsersJobStatus method)</a>
 </li>
+          <li><a href="api/message.html#discord_http.message.MessageActivity.index">(discord_http.message.MessageActivity method)</a>
+</li>
           <li><a href="api/message.html#discord_http.message.MessageCall.index">(discord_http.message.MessageCall method)</a>
+</li>
+          <li><a href="api/message.html#discord_http.message.MessagePin.index">(discord_http.message.MessagePin method)</a>
 </li>
           <li><a href="api/message.html#discord_http.message.RoleSubscriptionData.index">(discord_http.message.RoleSubscriptionData method)</a>
 </li>
@@ -5467,6 +5917,8 @@
         <li><a href="api/backend.html#discord_http.backend.DiscordHTTP.index_ping">index_ping() (discord_http.backend.DiscordHTTP method)</a>
 </li>
         <li><a href="api/enums.html#discord_http.enums.Locale.indonesian">indonesian (discord_http.enums.Locale attribute)</a>
+</li>
+        <li><a href="api/embeds.html#discord_http.embeds.EmbedField.inline">inline (discord_http.embeds.EmbedField attribute)</a>
 </li>
         <li><a href="api/user.html#discord_http.user.Application.install_params">install_params (discord_http.user.Application attribute)</a>
 </li>
@@ -5510,7 +5962,13 @@
 </li>
         <li><a href="gateway/flags.html#discord_http.gateway.flags.Intents">Intents (class in discord_http.gateway.flags)</a>
 </li>
-        <li><a href="gateway/client.html#discord_http.gateway.client.GatewayClient.intents">intents (discord_http.gateway.client.GatewayClient attribute)</a>
+        <li><a href="api/client.html#discord_http.client.Client.intents">intents (discord_http.client.Client attribute)</a>
+
+        <ul>
+          <li><a href="gateway/client.html#discord_http.gateway.client.GatewayClient.intents">(discord_http.gateway.client.GatewayClient attribute)</a>
+</li>
+        </ul></li>
+        <li><a href="api/message.html#discord_http.message.MessageInteraction.interacted_message_id">interacted_message_id (discord_http.message.MessageInteraction attribute)</a>
 </li>
         <li><a href="api/commands.html#discord_http.commands.Interaction">Interaction (class in discord_http.commands)</a>
 </li>
@@ -5526,7 +5984,15 @@
           <li><a href="api/commands.html#discord_http.commands.interaction">(in module discord_http.commands)</a>
 </li>
         </ul></li>
+        <li><a href="api/backend.html#discord_http.backend.DiscordHTTP.interaction_path">interaction_path (discord_http.backend.DiscordHTTP attribute)</a>
+
+        <ul>
+          <li><a href="api/client.html#discord_http.client.Client.interaction_path">(discord_http.client.Client attribute)</a>
+</li>
+        </ul></li>
         <li><a href="api/enums.html#discord_http.enums.MessageType.interaction_premium_upsell">interaction_premium_upsell (discord_http.enums.MessageType attribute)</a>
+</li>
+        <li><a href="api/enums.html#discord_http.enums.InteractionContextType">InteractionContextType (class in discord_http.enums)</a>
 </li>
         <li><a href="api/context.html#discord_http.context.InteractionResponse">InteractionResponse (class in discord_http.context)</a>
 </li>
@@ -5546,6 +6012,20 @@
 </li>
         <li><a href="api/errors.html#discord_http.errors.InvalidMember">InvalidMember</a>
 </li>
+        <li><a href="api/channel.html#discord_http.channel.ForumChannel.invitable">invitable (discord_http.channel.ForumChannel attribute)</a>
+
+        <ul>
+          <li><a href="api/channel.html#discord_http.channel.ForumThread.invitable">(discord_http.channel.ForumThread attribute)</a>
+</li>
+          <li><a href="api/channel.html#discord_http.channel.NewsThread.invitable">(discord_http.channel.NewsThread attribute)</a>
+</li>
+          <li><a href="api/channel.html#discord_http.channel.PrivateThread.invitable">(discord_http.channel.PrivateThread attribute)</a>
+</li>
+          <li><a href="api/channel.html#discord_http.channel.PublicThread.invitable">(discord_http.channel.PublicThread attribute)</a>
+</li>
+          <li><a href="api/channel.html#discord_http.channel.Thread.invitable">(discord_http.channel.Thread attribute)</a>
+</li>
+        </ul></li>
         <li><a href="api/invite.html#discord_http.invite.Invite">Invite (class in discord_http.invite)</a>
 </li>
         <li><a href="api/enums.html#discord_http.enums.AuditLogType.invite_create">invite_create (discord_http.enums.AuditLogType attribute)</a>
@@ -5584,6 +6064,8 @@
 </li>
         <li><a href="api/entitlements.html#discord_http.entitlements.Entitlements.is_consumed">is_consumed() (discord_http.entitlements.Entitlements method)</a>
 </li>
+        <li><a href="api/flags.html#discord_http.flags.EmbedFlags.is_content_inventory_entry">is_content_inventory_entry (discord_http.flags.EmbedFlags attribute)</a>
+</li>
         <li><a href="api/flags.html#discord_http.flags.MessageFlags.is_crosspost">is_crosspost (discord_http.flags.MessageFlags attribute)</a>
 </li>
         <li><a href="api/colour.html#discord_http.colour.Color.is_dark">is_dark() (discord_http.colour.Color method)</a>
@@ -5612,6 +6094,12 @@
 </li>
         <li><a href="api/integrations.html#discord_http.integrations.IntegrationApplication.is_discoverable">is_discoverable (discord_http.integrations.IntegrationApplication attribute)</a>
 </li>
+        <li><a href="api/context.html#discord_http.context.ResolvedValues.is_empty">is_empty() (discord_http.context.ResolvedValues method)</a>
+
+        <ul>
+          <li><a href="api/context.html#discord_http.context.SelectValues.is_empty">(discord_http.context.SelectValues method)</a>
+</li>
+        </ul></li>
         <li><a href="api/context.html#discord_http.context.Context.is_expired">is_expired() (discord_http.context.Context method)</a>
 </li>
         <li><a href="api/message.html#discord_http.message.Poll.is_finalized">is_finalized (discord_http.message.Poll attribute)</a>
@@ -5830,14 +6318,20 @@
         </ul></li>
     </ul></td>
     <td style="width: 33%; vertical-align: top;"><ul>
-        <li><a href="api/member.html#discord_http.member.ThreadMember.join_timestamp">join_timestamp (discord_http.member.ThreadMember attribute)</a>
-</li>
-        <li><a href="api/member.html#discord_http.member.Member.joined_at">joined_at (discord_http.member.Member attribute)</a>
+        <li><a href="api/member.html#discord_http.member.PartialThreadMember.join_timestamp">join_timestamp (discord_http.member.PartialThreadMember attribute)</a>
 
         <ul>
-          <li><a href="api/member.html#discord_http.member.ThreadMember.joined_at">(discord_http.member.ThreadMember attribute)</a>
+          <li><a href="api/member.html#discord_http.member.ThreadMember.join_timestamp">(discord_http.member.ThreadMember attribute)</a>
 </li>
         </ul></li>
+        <li><a href="api/member.html#discord_http.member.Member.joined_at">joined_at (discord_http.member.Member property)</a>
+
+        <ul>
+          <li><a href="api/member.html#discord_http.member.ThreadMember.joined_at">(discord_http.member.ThreadMember property)</a>
+</li>
+        </ul></li>
+        <li><a href="api/enums.html#discord_http.enums.DisplayNameFontType.journal">journal (discord_http.enums.DisplayNameFontType attribute)</a>
+</li>
         <li><a href="api/backend.html#discord_http.backend.DiscordHTTP.jsonify">jsonify() (discord_http.backend.DiscordHTTP method)</a>
 </li>
         <li><a href="api/enums.html#discord_http.enums.ScheduledEventRecurrenceMonth.july">july (discord_http.enums.ScheduledEventRecurrenceMonth attribute)</a>
@@ -5870,12 +6364,16 @@
   <h2>K</h2>
   <table style="width: 100%" class="indextable genindextable"><tr>
     <td style="width: 33%; vertical-align: top;"><ul>
+        <li><a href="api/enums.html#discord_http.enums.DisplayNameFontType.kalam">kalam (discord_http.enums.DisplayNameFontType attribute)</a>
+</li>
         <li><a href="api/asset.html#discord_http.asset.Asset.key">key (discord_http.asset.Asset attribute)</a>
 
         <ul>
           <li><a href="api/audit.html#discord_http.audit.AuditChange.key">(discord_http.audit.AuditChange attribute)</a>
 </li>
           <li><a href="api/commands.html#discord_http.commands.Choice.key">(discord_http.commands.Choice attribute)</a>
+</li>
+          <li><a href="api/commands.html#discord_http.commands.LocaleContainer.key">(discord_http.commands.LocaleContainer attribute)</a>
 </li>
           <li><a href="api/user.html#discord_http.user.ApplicationRoleConnectionMetadata.key">(discord_http.user.ApplicationRoleConnectionMetadata attribute)</a>
 </li>
@@ -5886,10 +6384,10 @@
 </li>
         <li><a href="api/automod.html#discord_http.automod.AutoModRuleTriggers.keyword_filter">keyword_filter (discord_http.automod.AutoModRuleTriggers attribute)</a>
 </li>
-        <li><a href="api/enums.html#discord_http.enums.AutoModRuleTriggerType.keyword_preset">keyword_preset (discord_http.enums.AutoModRuleTriggerType attribute)</a>
-</li>
     </ul></td>
     <td style="width: 33%; vertical-align: top;"><ul>
+        <li><a href="api/enums.html#discord_http.enums.AutoModRuleTriggerType.keyword_preset">keyword_preset (discord_http.enums.AutoModRuleTriggerType attribute)</a>
+</li>
         <li><a href="api/enums.html#discord_http.enums.ExpireBehaviour.kick">kick (discord_http.enums.ExpireBehaviour attribute)</a>
 </li>
         <li><a href="api/guild.html#discord_http.guild.Guild.kick">kick() (discord_http.guild.Guild method)</a>
@@ -5900,6 +6398,8 @@
           <li><a href="api/member.html#discord_http.member.Member.kick">(discord_http.member.Member method)</a>
 </li>
           <li><a href="api/member.html#discord_http.member.PartialMember.kick">(discord_http.member.PartialMember method)</a>
+</li>
+          <li><a href="api/member.html#discord_http.member.PartialThreadMember.kick">(discord_http.member.PartialThreadMember method)</a>
 </li>
           <li><a href="api/member.html#discord_http.member.ThreadMember.kick">(discord_http.member.ThreadMember method)</a>
 </li>
@@ -5933,6 +6433,8 @@
 </li>
           <li><a href="api/view.html#discord_http.view.FileUploadComponent.label">(discord_http.view.FileUploadComponent attribute)</a>
 </li>
+          <li><a href="api/view.html#discord_http.view.LabelComponent.label">(discord_http.view.LabelComponent attribute)</a>
+</li>
           <li><a href="api/view.html#discord_http.view.Link.label">(discord_http.view.Link attribute)</a>
 </li>
           <li><a href="api/view.html#discord_http.view.MentionableSelect.label">(discord_http.view.MentionableSelect attribute)</a>
@@ -5950,6 +6452,8 @@
           <li><a href="api/view.html#discord_http.view.UserSelect.label">(discord_http.view.UserSelect attribute)</a>
 </li>
         </ul></li>
+        <li><a href="api/view.html#discord_http.view.LabelComponent">LabelComponent (class in discord_http.view)</a>
+</li>
         <li><a href="api/enums.html#discord_http.enums.SeparatorSpacingType.large">large (discord_http.enums.SeparatorSpacingType attribute)</a>
 
         <ul>
@@ -6078,6 +6582,8 @@
         </ul></li>
     </ul></td>
     <td style="width: 33%; vertical-align: top;"><ul>
+        <li><a href="api/enums.html#discord_http.enums.BaseThemeType.light">light (discord_http.enums.BaseThemeType attribute)</a>
+</li>
         <li><a href="api/colour.html#discord_http.colour.Color.light_blurple">light_blurple() (discord_http.colour.Color class method)</a>
 
         <ul>
@@ -6091,6 +6597,8 @@
         <li><a href="api/commands.html#discord_http.commands.Command.list_autocompletes">list_autocompletes (discord_http.commands.Command attribute)</a>
 
         <ul>
+          <li><a href="api/commands.html#discord_http.commands.SubCommand.list_autocompletes">(discord_http.commands.SubCommand attribute)</a>
+</li>
           <li><a href="api/commands.html#discord_http.commands.SubGroup.list_autocompletes">(discord_http.commands.SubGroup attribute)</a>
 </li>
         </ul></li>
@@ -6103,6 +6611,8 @@
 </li>
           <li><a href="api/flags.html#discord_http.flags.ChannelFlags.list_names">(discord_http.flags.ChannelFlags property)</a>
 </li>
+          <li><a href="api/flags.html#discord_http.flags.EmbedFlags.list_names">(discord_http.flags.EmbedFlags property)</a>
+</li>
           <li><a href="api/flags.html#discord_http.flags.GuildInviteFlags.list_names">(discord_http.flags.GuildInviteFlags property)</a>
 </li>
           <li><a href="api/flags.html#discord_http.flags.GuildMemberFlags.list_names">(discord_http.flags.GuildMemberFlags property)</a>
@@ -6110,6 +6620,8 @@
           <li><a href="api/flags.html#discord_http.flags.MessageFlags.list_names">(discord_http.flags.MessageFlags property)</a>
 </li>
           <li><a href="api/flags.html#discord_http.flags.Permissions.list_names">(discord_http.flags.Permissions property)</a>
+</li>
+          <li><a href="api/flags.html#discord_http.flags.RoleFlags.list_names">(discord_http.flags.RoleFlags property)</a>
 </li>
           <li><a href="api/flags.html#discord_http.flags.SKUFlags.list_names">(discord_http.flags.SKUFlags property)</a>
 </li>
@@ -6150,7 +6662,11 @@
 </li>
         <li><a href="api/context.html#discord_http.context.Context.locale">locale (discord_http.context.Context attribute)</a>
 </li>
+        <li><a href="api/commands.html#discord_http.commands.LocaleContainer">LocaleContainer (class in discord_http.commands)</a>
+</li>
         <li><a href="api/commands.html#discord_http.commands.locales">locales() (in module discord_http.commands)</a>
+</li>
+        <li><a href="api/guild.html#discord_http.guild.GuildChannelPosition.lock_permissions">lock_permissions (discord_http.guild.GuildChannelPosition attribute)</a>
 </li>
         <li><a href="api/channel.html#discord_http.channel.ForumChannel.locked">locked (discord_http.channel.ForumChannel attribute)</a>
 
@@ -6166,11 +6682,17 @@
           <li><a href="api/channel.html#discord_http.channel.Thread.locked">(discord_http.channel.Thread attribute)</a>
 </li>
         </ul></li>
+        <li><a href="api/view.html#discord_http.view.LockedItem">LockedItem (class in discord_http.view)</a>
+</li>
+        <li><a href="api/client.html#discord_http.client.Client.logging_level">logging_level (discord_http.client.Client attribute)</a>
+</li>
         <li><a href="api/tasks.html#discord_http.tasks.Loop">Loop (class in discord_http.tasks)</a>
 </li>
         <li><a href="api/backend.html#discord_http.backend.DiscordHTTP.loop">loop (discord_http.backend.DiscordHTTP property)</a>
 
         <ul>
+          <li><a href="api/channel.html#discord_http.channel.Typing.loop">(discord_http.channel.Typing attribute)</a>
+</li>
           <li><a href="api/tasks.html#discord_http.tasks.Sleeper.loop">(discord_http.tasks.Sleeper attribute)</a>
 </li>
           <li><a href="api/view.html#discord_http.view.Modal.loop">(discord_http.view.Modal property)</a>
@@ -6194,6 +6716,8 @@
   <h2>M</h2>
   <table style="width: 100%" class="indextable genindextable"><tr>
     <td style="width: 33%; vertical-align: top;"><ul>
+        <li><a href="api/enums.html#discord_http.enums.DisplayNameFontType.mainframe">mainframe (discord_http.enums.DisplayNameFontType attribute)</a>
+</li>
         <li><a href="api/backend.html#discord_http.backend.DiscordHTTP.make_handler">make_handler() (discord_http.backend.DiscordHTTP method)</a>
 </li>
         <li><a href="api/flags.html#discord_http.flags.Permissions.manage_channels">manage_channels (discord_http.flags.Permissions attribute)</a>
@@ -6236,6 +6760,8 @@
 </li>
         <li><a href="api/guild.html#discord_http.guild.Guild.max_members">max_members (discord_http.guild.Guild attribute)</a>
 </li>
+        <li><a href="api/client.html#discord_http.client.Client.max_pending_connections">max_pending_connections (discord_http.client.Client attribute)</a>
+</li>
         <li><a href="gateway/activity.html#discord_http.gateway.activity.ActivityParty.max_size">max_size (discord_http.gateway.activity.ActivityParty attribute)</a>
 </li>
         <li><a href="api/guild.html#discord_http.guild.Guild.max_stage_video_channel_users">max_stage_video_channel_users (discord_http.guild.Guild attribute)</a>
@@ -6273,6 +6799,8 @@
         <li><a href="api/http.html#discord_http.http.DiscordAPI.me">me() (discord_http.http.DiscordAPI method)</a>
 </li>
         <li><a href="api/message.html#discord_http.message.MessageReaction.me_burst">me_burst (discord_http.message.MessageReaction attribute)</a>
+</li>
+        <li><a href="api/message.html#discord_http.message.PollAnswer.me_voted">me_voted (discord_http.message.PollAnswer attribute)</a>
 </li>
         <li><a href="api/enums.html#discord_http.enums.ComponentType.media_gallery">media_gallery (discord_http.enums.ComponentType attribute)</a>
 </li>
@@ -6352,9 +6880,13 @@
           <li><a href="api/enums.html#discord_http.enums.AutoModRuleEventType.member_update">(discord_http.enums.AutoModRuleEventType attribute)</a>
 </li>
         </ul></li>
-        <li><a href="gateway/flags.html#discord_http.gateway.flags.GatewayCacheFlags.members">members (discord_http.gateway.flags.GatewayCacheFlags attribute)</a>
+        <li><a href="api/context.html#discord_http.context.ResolvedValues.members">members (discord_http.context.ResolvedValues property)</a>
 
         <ul>
+          <li><a href="api/context.html#discord_http.context.SelectValues.members">(discord_http.context.SelectValues property)</a>
+</li>
+          <li><a href="gateway/flags.html#discord_http.gateway.flags.GatewayCacheFlags.members">(discord_http.gateway.flags.GatewayCacheFlags attribute)</a>
+</li>
           <li><a href="gateway/object.html#discord_http.gateway.object.ThreadListSyncPayload.members">(discord_http.gateway.object.ThreadListSyncPayload property)</a>
 </li>
           <li><a href="api/guild.html#discord_http.guild.Guild.members">(discord_http.guild.Guild property)</a>
@@ -6409,11 +6941,15 @@
 </li>
           <li><a href="api/commands.html#discord_http.commands.Command.mention">(discord_http.commands.Command property)</a>
 </li>
+          <li><a href="api/commands.html#discord_http.commands.SubCommand.mention">(discord_http.commands.SubCommand property)</a>
+</li>
           <li><a href="api/commands.html#discord_http.commands.SubGroup.mention">(discord_http.commands.SubGroup property)</a>
 </li>
           <li><a href="api/member.html#discord_http.member.Member.mention">(discord_http.member.Member property)</a>
 </li>
           <li><a href="api/member.html#discord_http.member.PartialMember.mention">(discord_http.member.PartialMember property)</a>
+</li>
+          <li><a href="api/member.html#discord_http.member.PartialThreadMember.mention">(discord_http.member.PartialThreadMember property)</a>
 </li>
           <li><a href="api/member.html#discord_http.member.ThreadMember.mention">(discord_http.member.ThreadMember property)</a>
 </li>
@@ -6441,6 +6977,8 @@
         <li><a href="api/commands.html#discord_http.commands.Command.mention_sub">mention_sub() (discord_http.commands.Command method)</a>
 
         <ul>
+          <li><a href="api/commands.html#discord_http.commands.SubCommand.mention_sub">(discord_http.commands.SubCommand method)</a>
+</li>
           <li><a href="api/commands.html#discord_http.commands.SubGroup.mention_sub">(discord_http.commands.SubGroup method)</a>
 </li>
         </ul></li>
@@ -6480,6 +7018,8 @@
           <li><a href="gateway/object.html#discord_http.gateway.object.Reaction.message">(discord_http.gateway.object.Reaction property)</a>
 </li>
           <li><a href="api/message.html#discord_http.message.JumpURL.message">(discord_http.message.JumpURL property)</a>
+</li>
+          <li><a href="api/message.html#discord_http.message.MessagePin.message">(discord_http.message.MessagePin attribute)</a>
 </li>
           <li><a href="api/message.html#discord_http.message.MessageReference.message">(discord_http.message.MessageReference property)</a>
 </li>
@@ -6536,11 +7076,15 @@
 </li>
         <li><a href="api/enums.html#discord_http.enums.AuditLogType.message_unpin">message_unpin (discord_http.enums.AuditLogType attribute)</a>
 </li>
+        <li><a href="api/message.html#discord_http.message.MessageActivity">MessageActivity (class in discord_http.message)</a>
+</li>
         <li><a href="api/message.html#discord_http.message.MessageCall">MessageCall (class in discord_http.message)</a>
 </li>
         <li><a href="api/flags.html#discord_http.flags.MessageFlags">MessageFlags (class in discord_http.flags)</a>
 </li>
         <li><a href="api/message.html#discord_http.message.MessageInteraction">MessageInteraction (class in discord_http.message)</a>
+</li>
+        <li><a href="api/message.html#discord_http.message.MessagePin">MessagePin (class in discord_http.message)</a>
 </li>
         <li><a href="api/message.html#discord_http.message.MessageReaction">MessageReaction (class in discord_http.message)</a>
 </li>
@@ -6552,6 +7096,8 @@
 </li>
         <li><a href="gateway/object.html#discord_http.gateway.object.BulkDeletePayload.messages">messages (discord_http.gateway.object.BulkDeletePayload attribute)</a>
 </li>
+        <li><a href="api/message.html#discord_http.message.MessageSnapshot">MessageSnapshot (class in discord_http.message)</a>
+</li>
         <li><a href="api/enums.html#discord_http.enums.MessageType">MessageType (class in discord_http.enums)</a>
 </li>
         <li><a href="gateway/object.html#discord_http.gateway.object.GatewayRateLimited.meta">meta (discord_http.gateway.object.GatewayRateLimited attribute)</a>
@@ -6561,6 +7107,8 @@
         <li><a href="api/enums.html#discord_http.enums.MFALevel">MFALevel (class in discord_http.enums)</a>
 </li>
         <li><a href="api/backend.html#discord_http.backend.DiscordHTTP.middlewares">middlewares (discord_http.backend.DiscordHTTP property)</a>
+</li>
+        <li><a href="api/enums.html#discord_http.enums.BaseThemeType.midnight">midnight (discord_http.enums.BaseThemeType attribute)</a>
 </li>
         <li><a href="api/view.html#discord_http.view.TextInputComponent.min_length">min_length (discord_http.view.TextInputComponent attribute)</a>
 </li>
@@ -6585,10 +7133,16 @@
         <li><a href="api/view.html#discord_http.view.Modal">Modal (class in discord_http.view)</a>
 </li>
         <li><a href="api/enums.html#discord_http.enums.ResponseType.modal">modal (discord_http.enums.ResponseType attribute)</a>
+
+        <ul>
+          <li><a href="api/response.html#discord_http.response.ModalResponse.modal">(discord_http.response.ModalResponse attribute)</a>
 </li>
+        </ul></li>
         <li><a href="api/enums.html#discord_http.enums.InteractionType.modal_submit">modal_submit (discord_http.enums.InteractionType attribute)</a>
 </li>
         <li><a href="api/context.html#discord_http.context.Context.modal_values">modal_values (discord_http.context.Context attribute)</a>
+</li>
+        <li><a href="api/response.html#discord_http.response.ModalResponse">ModalResponse (class in discord_http.response)</a>
 </li>
         <li><a href="api/guild.html#discord_http.guild.GuildOnboarding.mode">mode (discord_http.guild.GuildOnboarding attribute)</a>
 </li>
@@ -6683,6 +7237,8 @@
         </ul></li>
         <li><a href="api/enums.html#discord_http.enums.ScheduledEventRecurrenceWeekday.monday">monday (discord_http.enums.ScheduledEventRecurrenceWeekday attribute)</a>
 </li>
+        <li><a href="api/enums.html#discord_http.enums.DisplayNameFontType.monkey_bars">monkey_bars (discord_http.enums.DisplayNameFontType attribute)</a>
+</li>
         <li><a href="api/enums.html#discord_http.enums.ScheduledEventRecurrenceFrequency.monthly">monthly (discord_http.enums.ScheduledEventRecurrenceFrequency attribute)</a>
 </li>
         <li><a href="api/flags.html#discord_http.flags.Permissions.move_members">move_members (discord_http.flags.Permissions attribute)</a>
@@ -6750,9 +7306,19 @@
 </li>
           <li><a href="api/commands.html#discord_http.commands.Listener.name">(discord_http.commands.Listener attribute)</a>
 </li>
+          <li><a href="api/commands.html#discord_http.commands.LocaleContainer.name">(discord_http.commands.LocaleContainer attribute)</a>
+</li>
           <li><a href="api/commands.html#discord_http.commands.PartialCommand.name">(discord_http.commands.PartialCommand attribute)</a>
 </li>
+          <li><a href="api/commands.html#discord_http.commands.SubCommand.name">(discord_http.commands.SubCommand attribute)</a>
+</li>
           <li><a href="api/commands.html#discord_http.commands.SubGroup.name">(discord_http.commands.SubGroup attribute)</a>
+</li>
+          <li><a href="api/embeds.html#discord_http.embeds.EmbedAuthor.name">(discord_http.embeds.EmbedAuthor attribute)</a>
+</li>
+          <li><a href="api/embeds.html#discord_http.embeds.EmbedField.name">(discord_http.embeds.EmbedField attribute)</a>
+</li>
+          <li><a href="api/embeds.html#discord_http.embeds.EmbedProvider.name">(discord_http.embeds.EmbedProvider attribute)</a>
 </li>
           <li><a href="api/emoji.html#discord_http.emoji.Emoji.name">(discord_http.emoji.Emoji attribute)</a>
 </li>
@@ -6768,6 +7334,8 @@
 </li>
           <li><a href="api/flags.html#discord_http.flags.ChannelFlags.name">(discord_http.flags.ChannelFlags property)</a>
 </li>
+          <li><a href="api/flags.html#discord_http.flags.EmbedFlags.name">(discord_http.flags.EmbedFlags property)</a>
+</li>
           <li><a href="api/flags.html#discord_http.flags.GuildInviteFlags.name">(discord_http.flags.GuildInviteFlags property)</a>
 </li>
           <li><a href="api/flags.html#discord_http.flags.GuildMemberFlags.name">(discord_http.flags.GuildMemberFlags property)</a>
@@ -6775,6 +7343,8 @@
           <li><a href="api/flags.html#discord_http.flags.MessageFlags.name">(discord_http.flags.MessageFlags property)</a>
 </li>
           <li><a href="api/flags.html#discord_http.flags.Permissions.name">(discord_http.flags.Permissions property)</a>
+</li>
+          <li><a href="api/flags.html#discord_http.flags.RoleFlags.name">(discord_http.flags.RoleFlags property)</a>
 </li>
           <li><a href="api/flags.html#discord_http.flags.SKUFlags.name">(discord_http.flags.SKUFlags property)</a>
 </li>
@@ -6825,6 +7395,8 @@
           <li><a href="api/sticker.html#discord_http.sticker.PartialSticker.name">(discord_http.sticker.PartialSticker attribute)</a>
 </li>
           <li><a href="api/sticker.html#discord_http.sticker.Sticker.name">(discord_http.sticker.Sticker attribute)</a>
+</li>
+          <li><a href="api/sticker.html#discord_http.sticker.StickerPack.name">(discord_http.sticker.StickerPack attribute)</a>
 </li>
           <li><a href="api/user.html#discord_http.user.Application.name">(discord_http.user.Application attribute)</a>
 </li>
@@ -6880,6 +7452,8 @@
 </li>
           <li><a href="api/enums.html#discord_http.enums.BaseEnum.names">(discord_http.enums.BaseEnum class method)</a>
 </li>
+          <li><a href="api/enums.html#discord_http.enums.BaseThemeType.names">(discord_http.enums.BaseThemeType class method)</a>
+</li>
           <li><a href="api/enums.html#discord_http.enums.ButtonStyles.names">(discord_http.enums.ButtonStyles class method)</a>
 </li>
           <li><a href="api/enums.html#discord_http.enums.ChannelType.names">(discord_http.enums.ChannelType class method)</a>
@@ -6907,6 +7481,8 @@
           <li><a href="api/enums.html#discord_http.enums.ForumLayoutType.names">(discord_http.enums.ForumLayoutType class method)</a>
 </li>
           <li><a href="api/enums.html#discord_http.enums.IntegrationType.names">(discord_http.enums.IntegrationType class method)</a>
+</li>
+          <li><a href="api/enums.html#discord_http.enums.InteractionContextType.names">(discord_http.enums.InteractionContextType class method)</a>
 </li>
           <li><a href="api/enums.html#discord_http.enums.InteractionType.names">(discord_http.enums.InteractionType class method)</a>
 </li>
@@ -6995,6 +7571,8 @@
           <li><a href="api/colour.html#discord_http.colour.Colour.nephritis">(discord_http.colour.Colour class method)</a>
 </li>
         </ul></li>
+        <li><a href="api/enums.html#discord_http.enums.DisplayNameFontType.new_rocker">new_rocker (discord_http.enums.DisplayNameFontType attribute)</a>
+</li>
         <li><a href="api/audit.html#discord_http.audit.AuditChange.new_value">new_value (discord_http.audit.AuditChange attribute)</a>
 </li>
         <li><a href="api/channel.html#discord_http.channel.ForumChannel.newly_created">newly_created (discord_http.channel.ForumChannel attribute)</a>
@@ -7023,6 +7601,14 @@
         </ul></li>
         <li><a href="api/enums.html#discord_http.enums.MessageType.nitro_notification">nitro_notification (discord_http.enums.MessageType attribute)</a>
 </li>
+        <li><a href="api/message.html#discord_http.message.Message.nonce">nonce (discord_http.message.Message attribute)</a>
+
+        <ul>
+          <li><a href="api/message.html#discord_http.message.WebhookMessage.nonce">(discord_http.message.WebhookMessage attribute)</a>
+</li>
+          <li><a href="api/response.html#discord_http.response.MessageResponse.nonce">(discord_http.response.MessageResponse attribute)</a>
+</li>
+        </ul></li>
         <li><a href="api/enums.html#discord_http.enums.MFALevel.none">none (discord_http.enums.MFALevel attribute)</a>
 
         <ul>
@@ -7031,14 +7617,20 @@
           <li><a href="api/enums.html#discord_http.enums.VerificationLevel.none">(discord_http.enums.VerificationLevel attribute)</a>
 </li>
         </ul></li>
-        <li><a href="api/flags.html#discord_http.flags.ApplicationFlags.none">none() (discord_http.flags.ApplicationFlags class method)</a>
+        <li><a href="api/context.html#discord_http.context.ResolvedValues.none">none() (discord_http.context.ResolvedValues class method)</a>
 
         <ul>
+          <li><a href="api/context.html#discord_http.context.SelectValues.none">(discord_http.context.SelectValues class method)</a>
+</li>
+          <li><a href="api/flags.html#discord_http.flags.ApplicationFlags.none">(discord_http.flags.ApplicationFlags class method)</a>
+</li>
           <li><a href="api/flags.html#discord_http.flags.AttachmentFlags.none">(discord_http.flags.AttachmentFlags class method)</a>
 </li>
           <li><a href="api/flags.html#discord_http.flags.BaseFlag.none">(discord_http.flags.BaseFlag class method)</a>
 </li>
           <li><a href="api/flags.html#discord_http.flags.ChannelFlags.none">(discord_http.flags.ChannelFlags class method)</a>
+</li>
+          <li><a href="api/flags.html#discord_http.flags.EmbedFlags.none">(discord_http.flags.EmbedFlags class method)</a>
 </li>
           <li><a href="api/flags.html#discord_http.flags.GuildInviteFlags.none">(discord_http.flags.GuildInviteFlags class method)</a>
 </li>
@@ -7047,6 +7639,8 @@
           <li><a href="api/flags.html#discord_http.flags.MessageFlags.none">(discord_http.flags.MessageFlags class method)</a>
 </li>
           <li><a href="api/flags.html#discord_http.flags.Permissions.none">(discord_http.flags.Permissions class method)</a>
+</li>
+          <li><a href="api/flags.html#discord_http.flags.RoleFlags.none">(discord_http.flags.RoleFlags class method)</a>
 </li>
           <li><a href="api/flags.html#discord_http.flags.SKUFlags.none">(discord_http.flags.SKUFlags class method)</a>
 </li>
@@ -7066,6 +7660,8 @@
 </li>
         </ul></li>
         <li><a href="api/enums.html#discord_http.enums.ReactionType.normal">normal (discord_http.enums.ReactionType attribute)</a>
+</li>
+        <li><a href="api/message.html#discord_http.message.MessageReaction.normal_count">normal_count (discord_http.message.MessageReaction attribute)</a>
 </li>
         <li><a href="gateway/enums.html#discord_http.gateway.enums.ShardCloseType.normal_crash">normal_crash (discord_http.gateway.enums.ShardCloseType attribute)</a>
 </li>
@@ -7188,6 +7784,8 @@
         <ul>
           <li><a href="api/commands.html#discord_http.commands.Command.options">(discord_http.commands.Command attribute)</a>
 </li>
+          <li><a href="api/commands.html#discord_http.commands.SubCommand.options">(discord_http.commands.SubCommand attribute)</a>
+</li>
           <li><a href="api/commands.html#discord_http.commands.SubGroup.options">(discord_http.commands.SubGroup property)</a>
 </li>
           <li><a href="api/context.html#discord_http.context.Context.options">(discord_http.context.Context attribute)</a>
@@ -7219,7 +7817,11 @@
           <li><a href="api/colour.html#discord_http.colour.Colour.orange">(discord_http.colour.Colour class method)</a>
 </li>
         </ul></li>
+        <li><a href="api/enums.html#discord_http.enums.DisplayNameFontType.orbitron">orbitron (discord_http.enums.DisplayNameFontType attribute)</a>
+</li>
         <li><a href="api/context.html#discord_http.context.Context.original_response">original_response() (discord_http.context.Context method)</a>
+</li>
+        <li><a href="api/message.html#discord_http.message.MessageInteraction.original_response_message_id">original_response_message_id (discord_http.message.MessageInteraction attribute)</a>
 </li>
         <li><a href="api/channel.html#discord_http.channel.ForumChannel.owner">owner (discord_http.channel.ForumChannel property)</a>
 
@@ -7314,6 +7916,8 @@
 </li>
           <li><a href="api/commands.html#discord_http.commands.Command.parent">(discord_http.commands.Command attribute)</a>
 </li>
+          <li><a href="api/commands.html#discord_http.commands.SubCommand.parent">(discord_http.commands.SubCommand attribute)</a>
+</li>
           <li><a href="api/commands.html#discord_http.commands.SubGroup.parent">(discord_http.commands.SubGroup attribute)</a>
 </li>
         </ul></li>
@@ -7353,6 +7957,8 @@
           <li><a href="api/channel.html#discord_http.channel.Thread.parent_id">(discord_http.channel.Thread attribute)</a>
 </li>
           <li><a href="api/channel.html#discord_http.channel.VoiceChannel.parent_id">(discord_http.channel.VoiceChannel attribute)</a>
+</li>
+          <li><a href="api/guild.html#discord_http.guild.GuildChannelPosition.parent_id">(discord_http.guild.GuildChannelPosition attribute)</a>
 </li>
         </ul></li>
         <li><a href="gateway/flags.html#discord_http.gateway.flags.GatewayCacheFlags.partial_channels">partial_channels (discord_http.gateway.flags.GatewayCacheFlags attribute)</a>
@@ -7409,6 +8015,8 @@
 </li>
         <li><a href="api/channel.html#discord_http.channel.PartialThread">PartialThread (class in discord_http.channel)</a>
 </li>
+        <li><a href="api/member.html#discord_http.member.PartialThreadMember">PartialThreadMember (class in discord_http.member)</a>
+</li>
         <li><a href="api/user.html#discord_http.user.PartialUser">PartialUser (class in discord_http.user)</a>
 </li>
         <li><a href="api/voice.html#discord_http.voice.PartialVoiceState">PartialVoiceState (class in discord_http.voice)</a>
@@ -7420,6 +8028,8 @@
         <li><a href="api/flags.html#discord_http.flags.UserFlags.partner">partner (discord_http.flags.UserFlags attribute)</a>
 </li>
         <li><a href="gateway/activity.html#discord_http.gateway.activity.Activity.party">party (discord_http.gateway.activity.Activity attribute)</a>
+</li>
+        <li><a href="api/message.html#discord_http.message.MessageActivity.party_id">party_id (discord_http.message.MessageActivity attribute)</a>
 </li>
         <li><a href="gateway/flags.html#discord_http.gateway.flags.ActivityFlags.party_privacy_friends">party_privacy_friends (discord_http.gateway.flags.ActivityFlags attribute)</a>
 </li>
@@ -7555,6 +8165,8 @@
           <li><a href="api/message.html#discord_http.message.WebhookMessage.pinned">(discord_http.message.WebhookMessage attribute)</a>
 </li>
         </ul></li>
+        <li><a href="api/message.html#discord_http.message.MessagePin.pinned_at">pinned_at (discord_http.message.MessagePin attribute)</a>
+</li>
         <li><a href="api/enums.html#discord_http.enums.DisplayNameFontType.pixelify">pixelify (discord_http.enums.DisplayNameFontType attribute)</a>
 </li>
         <li><a href="api/message.html#discord_http.message.Attachment.placeholder">placeholder (discord_http.message.Attachment attribute)</a>
@@ -7585,7 +8197,11 @@
 </li>
         <li><a href="gateway/enums.html#discord_http.gateway.enums.ActivityType.playing">playing (discord_http.gateway.enums.ActivityType attribute)</a>
 </li>
+        <li><a href="api/client.html#discord_http.client.Client.playing_status">playing_status (discord_http.client.Client attribute)</a>
+</li>
         <li><a href="gateway/object.html#discord_http.gateway.object.PlayingStatus">PlayingStatus (class in discord_http.gateway.object)</a>
+</li>
+        <li><a href="api/enums.html#discord_http.enums.DisplayNameFontType.playpen_sans">playpen_sans (discord_http.enums.DisplayNameFontType attribute)</a>
 </li>
         <li><a href="api/colour.html#discord_http.colour.Color.plum_perfect">plum_perfect() (discord_http.colour.Color class method)</a>
 
@@ -7609,6 +8225,8 @@
         </ul></li>
         <li><a href="api/enums.html#discord_http.enums.MessageType.poll_result">poll_result (discord_http.enums.MessageType attribute)</a>
 </li>
+        <li><a href="api/message.html#discord_http.message.PollAnswer">PollAnswer (class in discord_http.message)</a>
+</li>
         <li><a href="gateway/enums.html#discord_http.gateway.enums.PollVoteActionType">PollVoteActionType (class in discord_http.gateway.enums)</a>
 </li>
         <li><a href="gateway/object.html#discord_http.gateway.object.PollVoteEvent">PollVoteEvent (class in discord_http.gateway.object)</a>
@@ -7619,8 +8237,6 @@
           <li><a href="api/colour.html#discord_http.colour.Colour.pomegranate">(discord_http.colour.Colour class method)</a>
 </li>
         </ul></li>
-    </ul></td>
-    <td style="width: 33%; vertical-align: top;"><ul>
         <li><a href="api/enums.html#discord_http.enums.ResponseType.pong">pong (discord_http.enums.ResponseType attribute)</a>
 </li>
         <li><a href="api/context.html#discord_http.context.InteractionResponse.pong">pong() (discord_http.context.InteractionResponse method)</a>
@@ -7630,6 +8246,10 @@
         <li><a href="api/backend.html#discord_http.backend.DiscordHTTP.pop">pop() (discord_http.backend.DiscordHTTP method)</a>
 </li>
         <li><a href="api/backend.html#discord_http.backend.DiscordHTTP.popitem">popitem() (discord_http.backend.DiscordHTTP method)</a>
+</li>
+    </ul></td>
+    <td style="width: 33%; vertical-align: top;"><ul>
+        <li><a href="api/backend.html#discord_http.backend.DiscordHTTP.port">port (discord_http.backend.DiscordHTTP attribute)</a>
 </li>
         <li><a href="api/channel.html#discord_http.channel.BaseChannel.position">position (discord_http.channel.BaseChannel attribute)</a>
 
@@ -7664,7 +8284,13 @@
 </li>
           <li><a href="api/channel.html#discord_http.channel.VoiceChannel.position">(discord_http.channel.VoiceChannel attribute)</a>
 </li>
+          <li><a href="api/guild.html#discord_http.guild.GuildChannelPosition.position">(discord_http.guild.GuildChannelPosition attribute)</a>
+</li>
           <li><a href="api/guild.html#discord_http.guild.GuildWidgetChannel.position">(discord_http.guild.GuildWidgetChannel attribute)</a>
+</li>
+          <li><a href="api/message.html#discord_http.message.Message.position">(discord_http.message.Message property)</a>
+</li>
+          <li><a href="api/message.html#discord_http.message.WebhookMessage.position">(discord_http.message.WebhookMessage property)</a>
 </li>
           <li><a href="api/role.html#discord_http.role.Role.position">(discord_http.role.Role attribute)</a>
 </li>
@@ -7714,6 +8340,8 @@
 </li>
           <li><a href="api/member.html#discord_http.member.PartialMember.presence">(discord_http.member.PartialMember attribute)</a>
 </li>
+          <li><a href="api/member.html#discord_http.member.PartialThreadMember.presence">(discord_http.member.PartialThreadMember attribute)</a>
+</li>
           <li><a href="api/member.html#discord_http.member.ThreadMember.presence">(discord_http.member.ThreadMember attribute)</a>
 </li>
         </ul></li>
@@ -7723,6 +8351,12 @@
 </li>
         <li><a href="api/automod.html#discord_http.automod.AutoModRuleTriggers.presets">presets (discord_http.automod.AutoModRuleTriggers attribute)</a>
 </li>
+        <li><a href="api/message.html#discord_http.message.Message.pretty_content">pretty_content (discord_http.message.Message property)</a>
+
+        <ul>
+          <li><a href="api/message.html#discord_http.message.WebhookMessage.pretty_content">(discord_http.message.WebhookMessage property)</a>
+</li>
+        </ul></li>
         <li><a href="api/cooldowns.html#discord_http.cooldowns.BucketType.pretty_name">pretty_name (discord_http.cooldowns.BucketType property)</a>
 
         <ul>
@@ -7745,6 +8379,8 @@
           <li><a href="api/enums.html#discord_http.enums.AutoModRuleTriggerType.pretty_name">(discord_http.enums.AutoModRuleTriggerType property)</a>
 </li>
           <li><a href="api/enums.html#discord_http.enums.BaseEnum.pretty_name">(discord_http.enums.BaseEnum property)</a>
+</li>
+          <li><a href="api/enums.html#discord_http.enums.BaseThemeType.pretty_name">(discord_http.enums.BaseThemeType property)</a>
 </li>
           <li><a href="api/enums.html#discord_http.enums.ButtonStyles.pretty_name">(discord_http.enums.ButtonStyles property)</a>
 </li>
@@ -7773,6 +8409,8 @@
           <li><a href="api/enums.html#discord_http.enums.ForumLayoutType.pretty_name">(discord_http.enums.ForumLayoutType property)</a>
 </li>
           <li><a href="api/enums.html#discord_http.enums.IntegrationType.pretty_name">(discord_http.enums.IntegrationType property)</a>
+</li>
+          <li><a href="api/enums.html#discord_http.enums.InteractionContextType.pretty_name">(discord_http.enums.InteractionContextType property)</a>
 </li>
           <li><a href="api/enums.html#discord_http.enums.InteractionType.pretty_name">(discord_http.enums.InteractionType property)</a>
 </li>
@@ -7846,6 +8484,8 @@
 </li>
           <li><a href="api/flags.html#discord_http.flags.ChannelFlags.pretty_name">(discord_http.flags.ChannelFlags property)</a>
 </li>
+          <li><a href="api/flags.html#discord_http.flags.EmbedFlags.pretty_name">(discord_http.flags.EmbedFlags property)</a>
+</li>
           <li><a href="api/flags.html#discord_http.flags.GuildInviteFlags.pretty_name">(discord_http.flags.GuildInviteFlags property)</a>
 </li>
           <li><a href="api/flags.html#discord_http.flags.GuildMemberFlags.pretty_name">(discord_http.flags.GuildMemberFlags property)</a>
@@ -7853,6 +8493,8 @@
           <li><a href="api/flags.html#discord_http.flags.MessageFlags.pretty_name">(discord_http.flags.MessageFlags property)</a>
 </li>
           <li><a href="api/flags.html#discord_http.flags.Permissions.pretty_name">(discord_http.flags.Permissions property)</a>
+</li>
+          <li><a href="api/flags.html#discord_http.flags.RoleFlags.pretty_name">(discord_http.flags.RoleFlags property)</a>
 </li>
           <li><a href="api/flags.html#discord_http.flags.SKUFlags.pretty_name">(discord_http.flags.SKUFlags property)</a>
 </li>
@@ -7899,11 +8541,19 @@
 </li>
         <li><a href="api/flags.html#discord_http.flags.Permissions.priority_speaker">priority_speaker (discord_http.flags.Permissions attribute)</a>
 </li>
-        <li><a href="api/guild.html#discord_http.guild.ScheduledEvent.privacy_level">privacy_level (discord_http.guild.ScheduledEvent attribute)</a>
+        <li><a href="api/enums.html#discord_http.enums.DisplayNameEffectType.prism">prism (discord_http.enums.DisplayNameEffectType attribute)</a>
 </li>
+        <li><a href="api/channel.html#discord_http.channel.StageInstance.privacy_level">privacy_level (discord_http.channel.StageInstance attribute)</a>
+
+        <ul>
+          <li><a href="api/guild.html#discord_http.guild.ScheduledEvent.privacy_level">(discord_http.guild.ScheduledEvent attribute)</a>
+</li>
+        </ul></li>
         <li><a href="api/user.html#discord_http.user.Application.privacy_policy_url">privacy_policy_url (discord_http.user.Application attribute)</a>
 </li>
         <li><a href="api/enums.html#discord_http.enums.PrivacyLevelType">PrivacyLevelType (class in discord_http.enums)</a>
+</li>
+        <li><a href="api/enums.html#discord_http.enums.InteractionContextType.private_channel">private_channel (discord_http.enums.InteractionContextType attribute)</a>
 </li>
         <li><a href="gateway/flags.html#discord_http.gateway.flags.GatewayCapabilities.private_channel_obfuscation">private_channel_obfuscation (discord_http.gateway.flags.GatewayCapabilities attribute)</a>
 </li>
@@ -7917,10 +8567,18 @@
 </li>
         <li><a href="api/guild.html#discord_http.guild.GuildOnboarding.prompts">prompts (discord_http.guild.GuildOnboarding attribute)</a>
 </li>
+        <li><a href="api/embeds.html#discord_http.embeds.Embed.provider">provider (discord_http.embeds.Embed attribute)</a>
+</li>
         <li><a href="api/flags.html#discord_http.flags.UserFlags.provisional_account">provisional_account (discord_http.flags.UserFlags attribute)</a>
 </li>
         <li><a href="api/asset.html#discord_http.asset.Asset.PROXY">PROXY (discord_http.asset.Asset attribute)</a>
 </li>
+        <li><a href="api/embeds.html#discord_http.embeds.EmbedAuthor.proxy_icon_url">proxy_icon_url (discord_http.embeds.EmbedAuthor attribute)</a>
+
+        <ul>
+          <li><a href="api/embeds.html#discord_http.embeds.EmbedFooter.proxy_icon_url">(discord_http.embeds.EmbedFooter attribute)</a>
+</li>
+        </ul></li>
         <li><a href="api/message.html#discord_http.message.Attachment.proxy_url">proxy_url (discord_http.message.Attachment attribute)</a>
 
         <ul>
@@ -8026,6 +8684,8 @@
 </li>
           <li><a href="api/enums.html#discord_http.enums.BaseEnum.random">(discord_http.enums.BaseEnum class method)</a>
 </li>
+          <li><a href="api/enums.html#discord_http.enums.BaseThemeType.random">(discord_http.enums.BaseThemeType class method)</a>
+</li>
           <li><a href="api/enums.html#discord_http.enums.ButtonStyles.random">(discord_http.enums.ButtonStyles class method)</a>
 </li>
           <li><a href="api/enums.html#discord_http.enums.ChannelType.random">(discord_http.enums.ChannelType class method)</a>
@@ -8053,6 +8713,8 @@
           <li><a href="api/enums.html#discord_http.enums.ForumLayoutType.random">(discord_http.enums.ForumLayoutType class method)</a>
 </li>
           <li><a href="api/enums.html#discord_http.enums.IntegrationType.random">(discord_http.enums.IntegrationType class method)</a>
+</li>
+          <li><a href="api/enums.html#discord_http.enums.InteractionContextType.random">(discord_http.enums.InteractionContextType class method)</a>
 </li>
           <li><a href="api/enums.html#discord_http.enums.InteractionType.random">(discord_http.enums.InteractionType class method)</a>
 </li>
@@ -8259,6 +8921,8 @@
 </li>
         <li><a href="api/client.html#discord_http.client.Client.remove_command">remove_command() (discord_http.client.Client method)</a>
 </li>
+        <li><a href="api/embeds.html#discord_http.embeds.Embed.remove_description">remove_description() (discord_http.embeds.Embed method)</a>
+</li>
         <li><a href="api/tasks.html#discord_http.tasks.Loop.remove_exception">remove_exception() (discord_http.tasks.Loop method)</a>
 </li>
         <li><a href="api/embeds.html#discord_http.embeds.Embed.remove_field">remove_field() (discord_http.embeds.Embed method)</a>
@@ -8272,6 +8936,8 @@
 </li>
           <li><a href="api/flags.html#discord_http.flags.ChannelFlags.remove_flags">(discord_http.flags.ChannelFlags method)</a>
 </li>
+          <li><a href="api/flags.html#discord_http.flags.EmbedFlags.remove_flags">(discord_http.flags.EmbedFlags method)</a>
+</li>
           <li><a href="api/flags.html#discord_http.flags.GuildInviteFlags.remove_flags">(discord_http.flags.GuildInviteFlags method)</a>
 </li>
           <li><a href="api/flags.html#discord_http.flags.GuildMemberFlags.remove_flags">(discord_http.flags.GuildMemberFlags method)</a>
@@ -8279,6 +8945,8 @@
           <li><a href="api/flags.html#discord_http.flags.MessageFlags.remove_flags">(discord_http.flags.MessageFlags method)</a>
 </li>
           <li><a href="api/flags.html#discord_http.flags.Permissions.remove_flags">(discord_http.flags.Permissions method)</a>
+</li>
+          <li><a href="api/flags.html#discord_http.flags.RoleFlags.remove_flags">(discord_http.flags.RoleFlags method)</a>
 </li>
           <li><a href="api/flags.html#discord_http.flags.SKUFlags.remove_flags">(discord_http.flags.SKUFlags method)</a>
 </li>
@@ -8295,8 +8963,6 @@
           <li><a href="gateway/flags.html#discord_http.gateway.flags.Intents.remove_flags">(discord_http.gateway.flags.Intents method)</a>
 </li>
         </ul></li>
-    </ul></td>
-    <td style="width: 33%; vertical-align: top;"><ul>
         <li><a href="api/embeds.html#discord_http.embeds.Embed.remove_footer">remove_footer() (discord_http.embeds.Embed method)</a>
 </li>
         <li><a href="api/embeds.html#discord_http.embeds.Embed.remove_image">remove_image() (discord_http.embeds.Embed method)</a>
@@ -8305,6 +8971,8 @@
 </li>
         <li><a href="api/client.html#discord_http.client.Client.remove_interaction">remove_interaction() (discord_http.client.Client method)</a>
 </li>
+    </ul></td>
+    <td style="width: 33%; vertical-align: top;"><ul>
         <li><a href="api/view.html#discord_http.view.ActionRow.remove_items">remove_items() (discord_http.view.ActionRow method)</a>
 
         <ul>
@@ -8334,7 +9002,15 @@
         <ul>
           <li><a href="api/member.html#discord_http.member.PartialMember.remove_roles">(discord_http.member.PartialMember method)</a>
 </li>
+          <li><a href="api/member.html#discord_http.member.PartialThreadMember.remove_roles">(discord_http.member.PartialThreadMember method)</a>
+</li>
           <li><a href="api/member.html#discord_http.member.ThreadMember.remove_roles">(discord_http.member.ThreadMember method)</a>
+</li>
+        </ul></li>
+        <li><a href="api/invite.html#discord_http.invite.Invite.remove_target_user">remove_target_user() (discord_http.invite.Invite method)</a>
+
+        <ul>
+          <li><a href="api/invite.html#discord_http.invite.PartialInvite.remove_target_user">(discord_http.invite.PartialInvite method)</a>
 </li>
         </ul></li>
         <li><a href="api/channel.html#discord_http.channel.BaseChannel.remove_thread_member">remove_thread_member() (discord_http.channel.BaseChannel method)</a>
@@ -8376,6 +9052,12 @@
 </li>
         </ul></li>
         <li><a href="api/embeds.html#discord_http.embeds.Embed.remove_thumbnail">remove_thumbnail() (discord_http.embeds.Embed method)</a>
+</li>
+        <li><a href="api/embeds.html#discord_http.embeds.Embed.remove_timestamp">remove_timestamp() (discord_http.embeds.Embed method)</a>
+</li>
+        <li><a href="api/embeds.html#discord_http.embeds.Embed.remove_title">remove_title() (discord_http.embeds.Embed method)</a>
+</li>
+        <li><a href="api/embeds.html#discord_http.embeds.Embed.remove_url">remove_url() (discord_http.embeds.Embed method)</a>
 </li>
         <li><a href="gateway/object.html#discord_http.gateway.object.ThreadMembersUpdatePayload.removed_member_ids">removed_member_ids (discord_http.gateway.object.ThreadMembersUpdatePayload attribute)</a>
 </li>
@@ -8427,9 +9109,13 @@
         </ul></li>
         <li><a href="gateway/enums.html#discord_http.gateway.enums.PayloadType.request_channel_info">request_channel_info (discord_http.gateway.enums.PayloadType attribute)</a>
 </li>
+        <li><a href="gateway/client.html#discord_http.gateway.client.GatewayClient.request_channel_info">request_channel_info() (discord_http.gateway.client.GatewayClient method)</a>
+</li>
         <li><a href="gateway/enums.html#discord_http.gateway.enums.PayloadType.request_guild_members">request_guild_members (discord_http.gateway.enums.PayloadType attribute)</a>
 </li>
         <li><a href="gateway/enums.html#discord_http.gateway.enums.PayloadType.request_soundboard_sounds">request_soundboard_sounds (discord_http.gateway.enums.PayloadType attribute)</a>
+</li>
+        <li><a href="gateway/client.html#discord_http.gateway.client.GatewayClient.request_soundboard_sounds">request_soundboard_sounds() (discord_http.gateway.client.GatewayClient method)</a>
 </li>
         <li><a href="api/flags.html#discord_http.flags.Permissions.request_to_speak">request_to_speak (discord_http.flags.Permissions attribute)</a>
 </li>
@@ -8471,7 +9157,7 @@
         </ul></li>
         <li><a href="api/tasks.html#discord_http.tasks.Loop.reset_exceptions">reset_exceptions() (discord_http.tasks.Loop method)</a>
 </li>
-        <li><a href="api/context.html#discord_http.context.Context.resolved">resolved (discord_http.context.Context attribute)</a>
+        <li><a href="api/context.html#discord_http.context.Context.resolved">resolved (discord_http.context.Context property)</a>
 </li>
         <li><a href="api/message.html#discord_http.message.Message.resolved_forward">resolved_forward (discord_http.message.Message attribute)</a>
 
@@ -8491,6 +9177,8 @@
           <li><a href="api/message.html#discord_http.message.WebhookMessage.resolved_reply">(discord_http.message.WebhookMessage attribute)</a>
 </li>
         </ul></li>
+        <li><a href="api/context.html#discord_http.context.ResolvedValues">ResolvedValues (class in discord_http.context)</a>
+</li>
         <li><a href="api/context.html#discord_http.context.Context.response">response (discord_http.context.Context attribute)</a>
 
         <ul>
@@ -8567,9 +9255,15 @@
 </li>
         <li><a href="api/enums.html#discord_http.enums.AuditLogType.role_update">role_update (discord_http.enums.AuditLogType attribute)</a>
 </li>
-        <li><a href="api/emoji.html#discord_http.emoji.Emoji.roles">roles (discord_http.emoji.Emoji property)</a>
+        <li><a href="api/flags.html#discord_http.flags.RoleFlags">RoleFlags (class in discord_http.flags)</a>
+</li>
+        <li><a href="api/context.html#discord_http.context.ResolvedValues.roles">roles (discord_http.context.ResolvedValues property)</a>
 
         <ul>
+          <li><a href="api/context.html#discord_http.context.SelectValues.roles">(discord_http.context.SelectValues property)</a>
+</li>
+          <li><a href="api/emoji.html#discord_http.emoji.Emoji.roles">(discord_http.emoji.Emoji property)</a>
+</li>
           <li><a href="gateway/flags.html#discord_http.gateway.flags.GatewayCacheFlags.roles">(discord_http.gateway.flags.GatewayCacheFlags attribute)</a>
 </li>
           <li><a href="api/guild.html#discord_http.guild.Guild.roles">(discord_http.guild.Guild property)</a>
@@ -8607,6 +9301,10 @@
 </li>
         <li><a href="gateway/object.html#discord_http.gateway.object.AutomodExecution.rule_trigger_type">rule_trigger_type (discord_http.gateway.object.AutomodExecution attribute)</a>
 </li>
+        <li><a href="api/guild.html#discord_http.guild.Guild.rules_channel">rules_channel (discord_http.guild.Guild property)</a>
+</li>
+        <li><a href="api/guild.html#discord_http.guild.Guild.rules_channel_id">rules_channel_id (discord_http.guild.Guild attribute)</a>
+</li>
         <li><a href="api/commands.html#discord_http.commands.Command.run">run() (discord_http.commands.Command method)</a>
 
         <ul>
@@ -8614,12 +9312,16 @@
 </li>
           <li><a href="api/commands.html#discord_http.commands.Listener.run">(discord_http.commands.Listener method)</a>
 </li>
+          <li><a href="api/commands.html#discord_http.commands.SubCommand.run">(discord_http.commands.SubCommand method)</a>
+</li>
           <li><a href="api/commands.html#discord_http.commands.SubGroup.run">(discord_http.commands.SubGroup method)</a>
 </li>
         </ul></li>
         <li><a href="api/commands.html#discord_http.commands.Command.run_autocomplete">run_autocomplete() (discord_http.commands.Command method)</a>
 
         <ul>
+          <li><a href="api/commands.html#discord_http.commands.SubCommand.run_autocomplete">(discord_http.commands.SubCommand method)</a>
+</li>
           <li><a href="api/commands.html#discord_http.commands.SubGroup.run_autocomplete">(discord_http.commands.SubGroup method)</a>
 </li>
         </ul></li>
@@ -8653,6 +9355,8 @@
         </ul></li>
         <li><a href="api/enums.html#discord_http.enums.ScheduledEventStatusType.scheduled">scheduled (discord_http.enums.ScheduledEventStatusType attribute)</a>
 </li>
+        <li><a href="api/channel.html#discord_http.channel.StageInstance.scheduled_event">scheduled_event (discord_http.channel.StageInstance property)</a>
+</li>
         <li><a href="api/guild.html#discord_http.guild.ScheduledEvent">ScheduledEvent (class in discord_http.guild)</a>
 </li>
         <li><a href="api/enums.html#discord_http.enums.ScheduledEventEntityType">ScheduledEventEntityType (class in discord_http.enums)</a>
@@ -8685,6 +9389,8 @@
         </ul></li>
         <li><a href="api/enums.html#discord_http.enums.ButtonStyles.secondary">secondary (discord_http.enums.ButtonStyles attribute)</a>
 </li>
+        <li><a href="api/role.html#discord_http.role.Role.secondary_colour">secondary_colour (discord_http.role.Role property)</a>
+</li>
         <li><a href="gateway/activity.html#discord_http.gateway.activity.Activity.secrets">secrets (discord_http.gateway.activity.Activity attribute)</a>
 </li>
         <li><a href="api/enums.html#discord_http.enums.ComponentType.section">section (discord_http.enums.ComponentType attribute)</a>
@@ -8694,6 +9400,8 @@
         <li><a href="api/view.html#discord_http.view.Select">Select (class in discord_http.view)</a>
 </li>
         <li><a href="api/context.html#discord_http.context.Context.select_values">select_values (discord_http.context.Context attribute)</a>
+</li>
+        <li><a href="api/context.html#discord_http.context.SelectValues">SelectValues (class in discord_http.context)</a>
 </li>
         <li><a href="api/voice.html#discord_http.voice.VoiceState.self_deaf">self_deaf (discord_http.voice.VoiceState attribute)</a>
 </li>
@@ -8747,6 +9455,8 @@
           <li><a href="api/member.html#discord_http.member.Member.send">(discord_http.member.Member method)</a>
 </li>
           <li><a href="api/member.html#discord_http.member.PartialMember.send">(discord_http.member.PartialMember method)</a>
+</li>
+          <li><a href="api/member.html#discord_http.member.PartialThreadMember.send">(discord_http.member.PartialThreadMember method)</a>
 </li>
           <li><a href="api/member.html#discord_http.member.ThreadMember.send">(discord_http.member.ThreadMember method)</a>
 </li>
@@ -8819,6 +9529,8 @@
 </li>
         <li><a href="api/client.html#discord_http.client.Client.set_context">set_context() (discord_http.client.Client method)</a>
 </li>
+        <li><a href="api/embeds.html#discord_http.embeds.Embed.set_description">set_description() (discord_http.embeds.Embed method)</a>
+</li>
         <li><a href="api/embeds.html#discord_http.embeds.Embed.set_footer">set_footer() (discord_http.embeds.Embed method)</a>
 </li>
         <li><a href="api/embeds.html#discord_http.embeds.Embed.set_image">set_image() (discord_http.embeds.Embed method)</a>
@@ -8863,6 +9575,12 @@
         </ul></li>
         <li><a href="api/embeds.html#discord_http.embeds.Embed.set_thumbnail">set_thumbnail() (discord_http.embeds.Embed method)</a>
 </li>
+        <li><a href="api/embeds.html#discord_http.embeds.Embed.set_timestamp">set_timestamp() (discord_http.embeds.Embed method)</a>
+</li>
+        <li><a href="api/embeds.html#discord_http.embeds.Embed.set_title">set_title() (discord_http.embeds.Embed method)</a>
+</li>
+        <li><a href="api/embeds.html#discord_http.embeds.Embed.set_url">set_url() (discord_http.embeds.Embed method)</a>
+</li>
         <li><a href="api/flags.html#discord_http.flags.Permissions.set_voice_channel_status">set_voice_channel_status (discord_http.flags.Permissions attribute)</a>
 </li>
         <li><a href="api/channel.html#discord_http.channel.StageChannel.set_voice_status">set_voice_status() (discord_http.channel.StageChannel method)</a>
@@ -8886,6 +9604,16 @@
         <li><a href="gateway/client.html#discord_http.gateway.client.GatewayClient.shard_ids">shard_ids (discord_http.gateway.client.GatewayClient attribute)</a>
 </li>
         <li><a href="gateway/enums.html#discord_http.gateway.enums.ShardCloseType">ShardCloseType (class in discord_http.gateway.enums)</a>
+</li>
+        <li><a href="api/message.html#discord_http.message.Message.shared_client_theme">shared_client_theme (discord_http.message.Message property)</a>
+
+        <ul>
+          <li><a href="api/message.html#discord_http.message.WebhookMessage.shared_client_theme">(discord_http.message.WebhookMessage property)</a>
+</li>
+          <li><a href="api/response.html#discord_http.response.MessageResponse.shared_client_theme">(discord_http.response.MessageResponse attribute)</a>
+</li>
+        </ul></li>
+        <li><a href="api/message.html#discord_http.message.SharedClientTheme">SharedClientTheme (class in discord_http.message)</a>
 </li>
         <li><a href="api/user.html#discord_http.user.AvatarDecoration.shop_url">shop_url (discord_http.user.AvatarDecoration property)</a>
 
@@ -8922,6 +9650,8 @@
         <li><a href="api/entitlements.html#discord_http.entitlements.Entitlements.sku_id">sku_id (discord_http.entitlements.Entitlements attribute)</a>
 
         <ul>
+          <li><a href="api/sticker.html#discord_http.sticker.StickerPack.sku_id">(discord_http.sticker.StickerPack attribute)</a>
+</li>
           <li><a href="api/user.html#discord_http.user.AvatarDecoration.sku_id">(discord_http.user.AvatarDecoration property)</a>
 </li>
           <li><a href="api/user.html#discord_http.user.Nameplate.sku_id">(discord_http.user.Nameplate attribute)</a>
@@ -8941,6 +9671,8 @@
 </li>
         <li><a href="api/enums.html#discord_http.enums.SKUType">SKUType (class in discord_http.enums)</a>
 </li>
+    </ul></td>
+    <td style="width: 33%; vertical-align: top;"><ul>
         <li><a href="api/tasks.html#discord_http.tasks.Sleeper">Sleeper (class in discord_http.tasks)</a>
 </li>
         <li><a href="api/entitlements.html#discord_http.entitlements.SKU.slug">slug (discord_http.entitlements.SKU attribute)</a>
@@ -8949,8 +9681,6 @@
           <li><a href="api/user.html#discord_http.user.Application.slug">(discord_http.user.Application attribute)</a>
 </li>
         </ul></li>
-    </ul></td>
-    <td style="width: 33%; vertical-align: top;"><ul>
         <li><a href="api/enums.html#discord_http.enums.AutoModRulePresetType.slurs">slurs (discord_http.enums.AutoModRulePresetType attribute)</a>
 </li>
         <li><a href="api/enums.html#discord_http.enums.SeparatorSpacingType.small">small (discord_http.enums.SeparatorSpacingType attribute)</a>
@@ -9053,9 +9783,11 @@
 </li>
         <li><a href="api/channel.html#discord_http.channel.StageChannel">StageChannel (class in discord_http.channel)</a>
 </li>
+        <li><a href="api/channel.html#discord_http.channel.StageInstance">StageInstance (class in discord_http.channel)</a>
+</li>
         <li><a href="api/enums.html#discord_http.enums.StickerType.standard">standard (discord_http.enums.StickerType attribute)</a>
 </li>
-        <li><a href="gateway/activity.html#discord_http.gateway.activity.ActivityTimestamps.start">start (discord_http.gateway.activity.ActivityTimestamps attribute)</a>
+        <li><a href="gateway/activity.html#discord_http.gateway.activity.ActivityTimestamps.start">start (discord_http.gateway.activity.ActivityTimestamps property)</a>
 
         <ul>
           <li><a href="api/guild.html#discord_http.guild.ScheduledEventRecurrenceRule.start">(discord_http.guild.ScheduledEventRecurrenceRule attribute)</a>
@@ -9104,6 +9836,8 @@
 </li>
           <li><a href="api/errors.html#discord_http.errors.Unauthorized.status">(discord_http.errors.Unauthorized attribute)</a>
 </li>
+          <li><a href="gateway/object.html#discord_http.gateway.object.ChannelInfo.status">(discord_http.gateway.object.ChannelInfo attribute)</a>
+</li>
           <li><a href="gateway/object.html#discord_http.gateway.object.GuildJoinRequest.status">(discord_http.gateway.object.GuildJoinRequest attribute)</a>
 </li>
           <li><a href="gateway/object.html#discord_http.gateway.object.PlayingStatus.status">(discord_http.gateway.object.PlayingStatus attribute)</a>
@@ -9131,6 +9865,8 @@
 </li>
         <li><a href="api/enums.html#discord_http.enums.StickerFormatType">StickerFormatType (class in discord_http.enums)</a>
 </li>
+        <li><a href="api/sticker.html#discord_http.sticker.StickerPack">StickerPack (class in discord_http.sticker)</a>
+</li>
         <li><a href="gateway/flags.html#discord_http.gateway.flags.GatewayCacheFlags.stickers">stickers (discord_http.gateway.flags.GatewayCacheFlags attribute)</a>
 
         <ul>
@@ -9142,7 +9878,13 @@
 </li>
           <li><a href="api/message.html#discord_http.message.Message.stickers">(discord_http.message.Message attribute)</a>
 </li>
+          <li><a href="api/message.html#discord_http.message.MessageSnapshot.stickers">(discord_http.message.MessageSnapshot attribute)</a>
+</li>
           <li><a href="api/message.html#discord_http.message.WebhookMessage.stickers">(discord_http.message.WebhookMessage attribute)</a>
+</li>
+          <li><a href="api/response.html#discord_http.response.MessageResponse.stickers">(discord_http.response.MessageResponse attribute)</a>
+</li>
+          <li><a href="api/sticker.html#discord_http.sticker.StickerPack.stickers">(discord_http.sticker.StickerPack attribute)</a>
 </li>
         </ul></li>
         <li><a href="api/guild.html#discord_http.guild.Guild.stickers_limit">stickers_limit (discord_http.guild.Guild property)</a>
@@ -9169,6 +9911,8 @@
 </li>
         <li><a href="api/enums.html#discord_http.enums.ComponentType.string_select">string_select (discord_http.enums.ComponentType attribute)</a>
 </li>
+        <li><a href="api/context.html#discord_http.context.SelectValues.strings">strings (discord_http.context.SelectValues property)</a>
+</li>
         <li><a href="api/view.html#discord_http.view.Button.style">style (discord_http.view.Button attribute)</a>
 
         <ul>
@@ -9182,6 +9926,8 @@
         <li><a href="api/enums.html#discord_http.enums.CommandOptionType.sub_command">sub_command (discord_http.enums.CommandOptionType attribute)</a>
 </li>
         <li><a href="api/enums.html#discord_http.enums.CommandOptionType.sub_command_group">sub_command_group (discord_http.enums.CommandOptionType attribute)</a>
+</li>
+        <li><a href="api/commands.html#discord_http.commands.SubCommand">SubCommand (class in discord_http.commands)</a>
 </li>
         <li><a href="api/commands.html#discord_http.commands.SubGroup.subcommands">subcommands (discord_http.commands.SubGroup attribute)</a>
 </li>
@@ -9237,8 +9983,12 @@
 </li>
         <li><a href="api/enums.html#discord_http.enums.Locale.swedish">swedish (discord_http.enums.Locale attribute)</a>
 </li>
-        <li><a href="gateway/flags.html#discord_http.gateway.flags.ActivityFlags.sync">sync (discord_http.gateway.flags.ActivityFlags attribute)</a>
+        <li><a href="api/client.html#discord_http.client.Client.sync">sync (discord_http.client.Client attribute)</a>
+
+        <ul>
+          <li><a href="gateway/flags.html#discord_http.gateway.flags.ActivityFlags.sync">(discord_http.gateway.flags.ActivityFlags attribute)</a>
 </li>
+        </ul></li>
         <li><a href="api/guild.html#discord_http.guild.GuildTemplate.sync">sync() (discord_http.guild.GuildTemplate method)</a>
 
         <ul>
@@ -9301,6 +10051,8 @@
         </ul></li>
         <li><a href="api/audit.html#discord_http.audit.AuditLogEntry.target_id">target_id (discord_http.audit.AuditLogEntry attribute)</a>
 </li>
+        <li><a href="api/message.html#discord_http.message.MessageInteraction.target_message_id">target_message_id (discord_http.message.MessageInteraction attribute)</a>
+</li>
         <li><a href="api/enums.html#discord_http.enums.AuditLogType.target_type">target_type (discord_http.enums.AuditLogType property)</a>
 
         <ul>
@@ -9310,6 +10062,12 @@
 </li>
         </ul></li>
         <li><a href="api/invite.html#discord_http.invite.Invite.target_user">target_user (discord_http.invite.Invite attribute)</a>
+
+        <ul>
+          <li><a href="api/message.html#discord_http.message.MessageInteraction.target_user">(discord_http.message.MessageInteraction attribute)</a>
+</li>
+        </ul></li>
+        <li><a href="api/channel.html#discord_http.channel.Typing.task">task (discord_http.channel.Typing attribute)</a>
 </li>
         <li><a href="api/user.html#discord_http.user.Team">Team (class in discord_http.user)</a>
 </li>
@@ -9329,11 +10087,23 @@
 </li>
         <li><a href="api/user.html#discord_http.user.Application.terms_of_service_url">terms_of_service_url (discord_http.user.Application attribute)</a>
 </li>
+        <li><a href="api/role.html#discord_http.role.Role.tertiary_colour">tertiary_colour (discord_http.role.Role property)</a>
+</li>
+        <li><a href="api/enums.html#discord_http.enums.DisplayNameEffectType.test_1">test_1 (discord_http.enums.DisplayNameEffectType attribute)</a>
+</li>
+        <li><a href="api/enums.html#discord_http.enums.DisplayNameEffectType.test_2">test_2 (discord_http.enums.DisplayNameEffectType attribute)</a>
+</li>
+        <li><a href="api/enums.html#discord_http.enums.DisplayNameEffectType.test_3">test_3 (discord_http.enums.DisplayNameEffectType attribute)</a>
+</li>
+        <li><a href="api/enums.html#discord_http.enums.DisplayNameEffectType.test_4">test_4 (discord_http.enums.DisplayNameEffectType attribute)</a>
+</li>
         <li><a href="api/enums.html#discord_http.enums.EntitlementType.test_mode_purchase">test_mode_purchase (discord_http.enums.EntitlementType attribute)</a>
 </li>
-        <li><a href="api/errors.html#discord_http.errors.AutomodBlock.text">text (discord_http.errors.AutomodBlock attribute)</a>
+        <li><a href="api/embeds.html#discord_http.embeds.EmbedFooter.text">text (discord_http.embeds.EmbedFooter attribute)</a>
 
         <ul>
+          <li><a href="api/errors.html#discord_http.errors.AutomodBlock.text">(discord_http.errors.AutomodBlock attribute)</a>
+</li>
           <li><a href="api/errors.html#discord_http.errors.DiscordServerError.text">(discord_http.errors.DiscordServerError attribute)</a>
 </li>
           <li><a href="api/errors.html#discord_http.errors.Forbidden.text">(discord_http.errors.Forbidden attribute)</a>
@@ -9347,6 +10117,8 @@
           <li><a href="api/errors.html#discord_http.errors.Unauthorized.text">(discord_http.errors.Unauthorized attribute)</a>
 </li>
           <li><a href="api/message.html#discord_http.message.Poll.text">(discord_http.message.Poll attribute)</a>
+</li>
+          <li><a href="api/message.html#discord_http.message.PollAnswer.text">(discord_http.message.PollAnswer attribute)</a>
 </li>
         </ul></li>
         <li><a href="api/guild.html#discord_http.guild.Guild.text_channels">text_channels (discord_http.guild.Guild property)</a>
@@ -9376,7 +10148,13 @@
         <li><a href="gateway/object.html#discord_http.gateway.object.ThreadMembersUpdatePayload.thread">thread (discord_http.gateway.object.ThreadMembersUpdatePayload property)</a>
 
         <ul>
+          <li><a href="api/member.html#discord_http.member.PartialThreadMember.thread">(discord_http.member.PartialThreadMember property)</a>
+</li>
           <li><a href="api/member.html#discord_http.member.ThreadMember.thread">(discord_http.member.ThreadMember property)</a>
+</li>
+          <li><a href="api/message.html#discord_http.message.Message.thread">(discord_http.message.Message property)</a>
+</li>
+          <li><a href="api/message.html#discord_http.message.WebhookMessage.thread">(discord_http.message.WebhookMessage property)</a>
 </li>
         </ul></li>
         <li><a href="api/enums.html#discord_http.enums.AuditLogType.thread_create">thread_create (discord_http.enums.AuditLogType attribute)</a>
@@ -9385,8 +10163,12 @@
 </li>
         <li><a href="api/enums.html#discord_http.enums.AuditLogType.thread_delete">thread_delete (discord_http.enums.AuditLogType attribute)</a>
 </li>
-        <li><a href="api/member.html#discord_http.member.ThreadMember.thread_id">thread_id (discord_http.member.ThreadMember attribute)</a>
+        <li><a href="api/member.html#discord_http.member.PartialThreadMember.thread_id">thread_id (discord_http.member.PartialThreadMember attribute)</a>
+
+        <ul>
+          <li><a href="api/member.html#discord_http.member.ThreadMember.thread_id">(discord_http.member.ThreadMember attribute)</a>
 </li>
+        </ul></li>
         <li><a href="api/enums.html#discord_http.enums.MessageType.thread_starter_message">thread_starter_message (discord_http.enums.MessageType attribute)</a>
 </li>
         <li><a href="api/enums.html#discord_http.enums.AuditLogType.thread_update">thread_update (discord_http.enums.AuditLogType attribute)</a>
@@ -9432,6 +10214,8 @@
         <ul>
           <li><a href="gateway/object.html#discord_http.gateway.object.TypingStartEvent.timestamp">(discord_http.gateway.object.TypingStartEvent attribute)</a>
 </li>
+          <li><a href="api/message.html#discord_http.message.MessageSnapshot.timestamp">(discord_http.message.MessageSnapshot attribute)</a>
+</li>
         </ul></li>
         <li><a href="gateway/activity.html#discord_http.gateway.activity.Activity.timestamps">timestamps (discord_http.gateway.activity.Activity attribute)</a>
 </li>
@@ -9464,11 +10248,21 @@
 </li>
           <li><a href="api/commands.html#discord_http.commands.Command.to_dict">(discord_http.commands.Command method)</a>
 </li>
+          <li><a href="api/commands.html#discord_http.commands.SubCommand.to_dict">(discord_http.commands.SubCommand method)</a>
+</li>
           <li><a href="api/commands.html#discord_http.commands.SubGroup.to_dict">(discord_http.commands.SubGroup method)</a>
 </li>
           <li><a href="api/cooldowns.html#discord_http.cooldowns.BucketType.to_dict">(discord_http.cooldowns.BucketType class method)</a>
 </li>
           <li><a href="api/embeds.html#discord_http.embeds.Embed.to_dict">(discord_http.embeds.Embed method)</a>
+</li>
+          <li><a href="api/embeds.html#discord_http.embeds.EmbedAuthor.to_dict">(discord_http.embeds.EmbedAuthor method)</a>
+</li>
+          <li><a href="api/embeds.html#discord_http.embeds.EmbedField.to_dict">(discord_http.embeds.EmbedField method)</a>
+</li>
+          <li><a href="api/embeds.html#discord_http.embeds.EmbedFooter.to_dict">(discord_http.embeds.EmbedFooter method)</a>
+</li>
+          <li><a href="api/embeds.html#discord_http.embeds.EmbedMedia.to_dict">(discord_http.embeds.EmbedMedia method)</a>
 </li>
           <li><a href="api/emoji.html#discord_http.emoji.EmojiParser.to_dict">(discord_http.emoji.EmojiParser method)</a>
 </li>
@@ -9491,6 +10285,8 @@
           <li><a href="api/enums.html#discord_http.enums.AutoModRuleTriggerType.to_dict">(discord_http.enums.AutoModRuleTriggerType class method)</a>
 </li>
           <li><a href="api/enums.html#discord_http.enums.BaseEnum.to_dict">(discord_http.enums.BaseEnum class method)</a>
+</li>
+          <li><a href="api/enums.html#discord_http.enums.BaseThemeType.to_dict">(discord_http.enums.BaseThemeType class method)</a>
 </li>
           <li><a href="api/enums.html#discord_http.enums.ButtonStyles.to_dict">(discord_http.enums.ButtonStyles class method)</a>
 </li>
@@ -9519,6 +10315,8 @@
           <li><a href="api/enums.html#discord_http.enums.ForumLayoutType.to_dict">(discord_http.enums.ForumLayoutType class method)</a>
 </li>
           <li><a href="api/enums.html#discord_http.enums.IntegrationType.to_dict">(discord_http.enums.IntegrationType class method)</a>
+</li>
+          <li><a href="api/enums.html#discord_http.enums.InteractionContextType.to_dict">(discord_http.enums.InteractionContextType class method)</a>
 </li>
           <li><a href="api/enums.html#discord_http.enums.InteractionType.to_dict">(discord_http.enums.InteractionType class method)</a>
 </li>
@@ -9600,6 +10398,8 @@
 </li>
           <li><a href="gateway/object.html#discord_http.gateway.object.PlayingStatus.to_dict">(discord_http.gateway.object.PlayingStatus method)</a>
 </li>
+          <li><a href="api/guild.html#discord_http.guild.GuildChannelPosition.to_dict">(discord_http.guild.GuildChannelPosition method)</a>
+</li>
           <li><a href="api/guild.html#discord_http.guild.OnboardingPrompt.to_dict">(discord_http.guild.OnboardingPrompt method)</a>
 </li>
           <li><a href="api/guild.html#discord_http.guild.OnboardingPromptOption.to_dict">(discord_http.guild.OnboardingPromptOption method)</a>
@@ -9616,11 +10416,21 @@
 </li>
           <li><a href="api/message.html#discord_http.message.Poll.to_dict">(discord_http.message.Poll method)</a>
 </li>
+          <li><a href="api/message.html#discord_http.message.PollAnswer.to_dict">(discord_http.message.PollAnswer method)</a>
+</li>
+          <li><a href="api/message.html#discord_http.message.SharedClientTheme.to_dict">(discord_http.message.SharedClientTheme method)</a>
+</li>
           <li><a href="api/response.html#discord_http.response.AutocompleteResponse.to_dict">(discord_http.response.AutocompleteResponse method)</a>
+</li>
+          <li><a href="api/response.html#discord_http.response.BaseResponse.to_dict">(discord_http.response.BaseResponse method)</a>
 </li>
           <li><a href="api/response.html#discord_http.response.DeferResponse.to_dict">(discord_http.response.DeferResponse method)</a>
 </li>
+          <li><a href="api/response.html#discord_http.response.EmptyResponse.to_dict">(discord_http.response.EmptyResponse method)</a>
+</li>
           <li><a href="api/response.html#discord_http.response.MessageResponse.to_dict">(discord_http.response.MessageResponse method)</a>
+</li>
+          <li><a href="api/response.html#discord_http.response.ModalResponse.to_dict">(discord_http.response.ModalResponse method)</a>
 </li>
           <li><a href="api/user.html#discord_http.user.ApplicationRoleConnectionMetadata.to_dict">(discord_http.user.ApplicationRoleConnectionMetadata method)</a>
 </li>
@@ -9638,9 +10448,13 @@
 </li>
           <li><a href="api/view.html#discord_http.view.CheckboxGroupComponent.to_dict">(discord_http.view.CheckboxGroupComponent method)</a>
 </li>
+          <li><a href="api/view.html#discord_http.view.CheckpointComponent.to_dict">(discord_http.view.CheckpointComponent method)</a>
+</li>
           <li><a href="api/view.html#discord_http.view.ComponentOption.to_dict">(discord_http.view.ComponentOption method)</a>
 </li>
           <li><a href="api/view.html#discord_http.view.ContainerComponent.to_dict">(discord_http.view.ContainerComponent method)</a>
+</li>
+          <li><a href="api/view.html#discord_http.view.ContentInventoryEntry.to_dict">(discord_http.view.ContentInventoryEntry method)</a>
 </li>
           <li><a href="api/view.html#discord_http.view.FileComponent.to_dict">(discord_http.view.FileComponent method)</a>
 </li>
@@ -9648,7 +10462,11 @@
 </li>
           <li><a href="api/view.html#discord_http.view.Item.to_dict">(discord_http.view.Item method)</a>
 </li>
+          <li><a href="api/view.html#discord_http.view.LabelComponent.to_dict">(discord_http.view.LabelComponent method)</a>
+</li>
           <li><a href="api/view.html#discord_http.view.Link.to_dict">(discord_http.view.Link method)</a>
+</li>
+          <li><a href="api/view.html#discord_http.view.LockedItem.to_dict">(discord_http.view.LockedItem method)</a>
 </li>
           <li><a href="api/view.html#discord_http.view.MediaGalleryComponent.to_dict">(discord_http.view.MediaGalleryComponent method)</a>
 </li>
@@ -9695,6 +10513,8 @@
           <li><a href="api/colour.html#discord_http.colour.Colour.to_hex">(discord_http.colour.Colour method)</a>
 </li>
         </ul></li>
+    </ul></td>
+    <td style="width: 33%; vertical-align: top;"><ul>
         <li><a href="api/colour.html#discord_http.colour.Color.to_hsl">to_hsl() (discord_http.colour.Color method)</a>
 
         <ul>
@@ -9710,13 +10530,17 @@
         <li><a href="api/response.html#discord_http.response.AutocompleteResponse.to_multipart">to_multipart() (discord_http.response.AutocompleteResponse method)</a>
 
         <ul>
+          <li><a href="api/response.html#discord_http.response.BaseResponse.to_multipart">(discord_http.response.BaseResponse method)</a>
+</li>
           <li><a href="api/response.html#discord_http.response.DeferResponse.to_multipart">(discord_http.response.DeferResponse method)</a>
+</li>
+          <li><a href="api/response.html#discord_http.response.EmptyResponse.to_multipart">(discord_http.response.EmptyResponse method)</a>
 </li>
           <li><a href="api/response.html#discord_http.response.MessageResponse.to_multipart">(discord_http.response.MessageResponse method)</a>
 </li>
+          <li><a href="api/response.html#discord_http.response.ModalResponse.to_multipart">(discord_http.response.ModalResponse method)</a>
+</li>
         </ul></li>
-    </ul></td>
-    <td style="width: 33%; vertical-align: top;"><ul>
         <li><a href="api/flags.html#discord_http.flags.ApplicationFlags.to_names">to_names() (discord_http.flags.ApplicationFlags method)</a>
 
         <ul>
@@ -9726,6 +10550,8 @@
 </li>
           <li><a href="api/flags.html#discord_http.flags.ChannelFlags.to_names">(discord_http.flags.ChannelFlags method)</a>
 </li>
+          <li><a href="api/flags.html#discord_http.flags.EmbedFlags.to_names">(discord_http.flags.EmbedFlags method)</a>
+</li>
           <li><a href="api/flags.html#discord_http.flags.GuildInviteFlags.to_names">(discord_http.flags.GuildInviteFlags method)</a>
 </li>
           <li><a href="api/flags.html#discord_http.flags.GuildMemberFlags.to_names">(discord_http.flags.GuildMemberFlags method)</a>
@@ -9733,6 +10559,8 @@
           <li><a href="api/flags.html#discord_http.flags.MessageFlags.to_names">(discord_http.flags.MessageFlags method)</a>
 </li>
           <li><a href="api/flags.html#discord_http.flags.Permissions.to_names">(discord_http.flags.Permissions method)</a>
+</li>
+          <li><a href="api/flags.html#discord_http.flags.RoleFlags.to_names">(discord_http.flags.RoleFlags method)</a>
 </li>
           <li><a href="api/flags.html#discord_http.flags.SKUFlags.to_names">(discord_http.flags.SKUFlags method)</a>
 </li>
@@ -9751,15 +10579,19 @@
         </ul></li>
         <li><a href="api/emoji.html#discord_http.emoji.EmojiParser.to_reaction">to_reaction() (discord_http.emoji.EmojiParser method)</a>
 </li>
+        <li><a href="api/response.html#discord_http.response.MessageResponse.to_request">to_request() (discord_http.response.MessageResponse method)</a>
+</li>
         <li><a href="api/colour.html#discord_http.colour.Color.to_rgb">to_rgb() (discord_http.colour.Color method)</a>
 
         <ul>
           <li><a href="api/colour.html#discord_http.colour.Colour.to_rgb">(discord_http.colour.Colour method)</a>
 </li>
         </ul></li>
-        <li><a href="api/http.html#discord_http.http.DiscordAPI.token">token (discord_http.http.DiscordAPI attribute)</a>
+        <li><a href="api/client.html#discord_http.client.Client.token">token (discord_http.client.Client attribute)</a>
 
         <ul>
+          <li><a href="api/http.html#discord_http.http.DiscordAPI.token">(discord_http.http.DiscordAPI attribute)</a>
+</li>
           <li><a href="api/message.html#discord_http.message.WebhookMessage.token">(discord_http.message.WebhookMessage attribute)</a>
 </li>
           <li><a href="api/webhook.html#discord_http.webhook.PartialWebhook.token">(discord_http.webhook.PartialWebhook attribute)</a>
@@ -9800,6 +10632,8 @@
 </li>
           <li><a href="api/channel.html#discord_http.channel.StageChannel.topic">(discord_http.channel.StageChannel attribute)</a>
 </li>
+          <li><a href="api/channel.html#discord_http.channel.StageInstance.topic">(discord_http.channel.StageInstance attribute)</a>
+</li>
           <li><a href="api/channel.html#discord_http.channel.StoreChannel.topic">(discord_http.channel.StoreChannel attribute)</a>
 </li>
           <li><a href="api/channel.html#discord_http.channel.TextChannel.topic">(discord_http.channel.TextChannel attribute)</a>
@@ -9831,6 +10665,8 @@
 </li>
         <li><a href="api/automod.html#discord_http.automod.AutoModRule.trigger_type">trigger_type (discord_http.automod.AutoModRule attribute)</a>
 </li>
+        <li><a href="api/message.html#discord_http.message.MessageInteraction.triggering_interaction_metadata">triggering_interaction_metadata (discord_http.message.MessageInteraction attribute)</a>
+</li>
         <li><a href="api/cooldowns.html#discord_http.cooldowns.BucketType.try_get">try_get() (discord_http.cooldowns.BucketType class method)</a>
 
         <ul>
@@ -9853,6 +10689,8 @@
           <li><a href="api/enums.html#discord_http.enums.AutoModRuleTriggerType.try_get">(discord_http.enums.AutoModRuleTriggerType class method)</a>
 </li>
           <li><a href="api/enums.html#discord_http.enums.BaseEnum.try_get">(discord_http.enums.BaseEnum class method)</a>
+</li>
+          <li><a href="api/enums.html#discord_http.enums.BaseThemeType.try_get">(discord_http.enums.BaseThemeType class method)</a>
 </li>
           <li><a href="api/enums.html#discord_http.enums.ButtonStyles.try_get">(discord_http.enums.ButtonStyles class method)</a>
 </li>
@@ -9881,6 +10719,8 @@
           <li><a href="api/enums.html#discord_http.enums.ForumLayoutType.try_get">(discord_http.enums.ForumLayoutType class method)</a>
 </li>
           <li><a href="api/enums.html#discord_http.enums.IntegrationType.try_get">(discord_http.enums.IntegrationType class method)</a>
+</li>
+          <li><a href="api/enums.html#discord_http.enums.InteractionContextType.try_get">(discord_http.enums.InteractionContextType class method)</a>
 </li>
           <li><a href="api/enums.html#discord_http.enums.InteractionType.try_get">(discord_http.enums.InteractionType class method)</a>
 </li>
@@ -10018,6 +10858,8 @@
 </li>
           <li><a href="api/commands.html#discord_http.commands.Command.type">(discord_http.commands.Command attribute)</a>
 </li>
+          <li><a href="api/commands.html#discord_http.commands.SubCommand.type">(discord_http.commands.SubCommand attribute)</a>
+</li>
           <li><a href="api/commands.html#discord_http.commands.SubGroup.type">(discord_http.commands.SubGroup attribute)</a>
 </li>
           <li><a href="api/context.html#discord_http.context.Context.type">(discord_http.context.Context property)</a>
@@ -10036,8 +10878,6 @@
 </li>
           <li><a href="gateway/object.html#discord_http.gateway.object.PollVoteEvent.type">(discord_http.gateway.object.PollVoteEvent attribute)</a>
 </li>
-          <li><a href="gateway/object.html#discord_http.gateway.object.Presence.type">(discord_http.gateway.object.Presence attribute)</a>
-</li>
           <li><a href="gateway/object.html#discord_http.gateway.object.Reaction.type">(discord_http.gateway.object.Reaction attribute)</a>
 </li>
           <li><a href="api/guild.html#discord_http.guild.OnboardingPrompt.type">(discord_http.guild.OnboardingPrompt attribute)</a>
@@ -10048,9 +10888,13 @@
 </li>
           <li><a href="api/message.html#discord_http.message.Message.type">(discord_http.message.Message attribute)</a>
 </li>
+          <li><a href="api/message.html#discord_http.message.MessageActivity.type">(discord_http.message.MessageActivity attribute)</a>
+</li>
           <li><a href="api/message.html#discord_http.message.MessageInteraction.type">(discord_http.message.MessageInteraction property)</a>
 </li>
           <li><a href="api/message.html#discord_http.message.MessageReference.type">(discord_http.message.MessageReference property)</a>
+</li>
+          <li><a href="api/message.html#discord_http.message.MessageSnapshot.type">(discord_http.message.MessageSnapshot attribute)</a>
 </li>
           <li><a href="api/message.html#discord_http.message.WebhookMessage.type">(discord_http.message.WebhookMessage attribute)</a>
 </li>
@@ -10070,7 +10914,11 @@
 </li>
           <li><a href="api/view.html#discord_http.view.CheckboxGroupComponent.type">(discord_http.view.CheckboxGroupComponent attribute)</a>
 </li>
+          <li><a href="api/view.html#discord_http.view.CheckpointComponent.type">(discord_http.view.CheckpointComponent attribute)</a>
+</li>
           <li><a href="api/view.html#discord_http.view.ContainerComponent.type">(discord_http.view.ContainerComponent attribute)</a>
+</li>
+          <li><a href="api/view.html#discord_http.view.ContentInventoryEntry.type">(discord_http.view.ContentInventoryEntry attribute)</a>
 </li>
           <li><a href="api/view.html#discord_http.view.FileComponent.type">(discord_http.view.FileComponent attribute)</a>
 </li>
@@ -10078,7 +10926,11 @@
 </li>
           <li><a href="api/view.html#discord_http.view.Item.type">(discord_http.view.Item attribute)</a>
 </li>
+          <li><a href="api/view.html#discord_http.view.LabelComponent.type">(discord_http.view.LabelComponent attribute)</a>
+</li>
           <li><a href="api/view.html#discord_http.view.Link.type">(discord_http.view.Link attribute)</a>
+</li>
+          <li><a href="api/view.html#discord_http.view.LockedItem.type">(discord_http.view.LockedItem attribute)</a>
 </li>
           <li><a href="api/view.html#discord_http.view.MediaGalleryComponent.type">(discord_http.view.MediaGalleryComponent attribute)</a>
 </li>
@@ -10105,6 +10957,8 @@
           <li><a href="api/view.html#discord_http.view.UserSelect.type">(discord_http.view.UserSelect attribute)</a>
 </li>
         </ul></li>
+        <li><a href="api/channel.html#discord_http.channel.Typing">Typing (class in discord_http.channel)</a>
+</li>
         <li><a href="api/channel.html#discord_http.channel.BaseChannel.typing">typing() (discord_http.channel.BaseChannel method)</a>
 
         <ul>
@@ -10172,6 +11026,8 @@
 </li>
           <li><a href="api/member.html#discord_http.member.PartialMember.unban">(discord_http.member.PartialMember method)</a>
 </li>
+          <li><a href="api/member.html#discord_http.member.PartialThreadMember.unban">(discord_http.member.PartialThreadMember method)</a>
+</li>
           <li><a href="api/member.html#discord_http.member.ThreadMember.unban">(discord_http.member.ThreadMember method)</a>
 </li>
         </ul></li>
@@ -10195,6 +11051,8 @@
           <li><a href="api/message.html#discord_http.message.WebhookMessage.unpin">(discord_http.message.WebhookMessage method)</a>
 </li>
         </ul></li>
+        <li><a href="api/enums.html#discord_http.enums.BaseThemeType.unset">unset (discord_http.enums.BaseThemeType attribute)</a>
+</li>
         <li><a href="api/enums.html#discord_http.enums.InviteTargetUsersJobStatusType.unspecified">unspecified (discord_http.enums.InviteTargetUsersJobStatusType attribute)</a>
 </li>
         <li><a href="api/backend.html#discord_http.backend.DiscordHTTP.update">update() (discord_http.backend.DiscordHTTP method)</a>
@@ -10213,7 +11071,7 @@
         </ul></li>
         <li><a href="api/guild.html#discord_http.guild.GuildTemplate.updated_at">updated_at (discord_http.guild.GuildTemplate attribute)</a>
 </li>
-        <li><a href="api/backend.html#discord_http.backend.DiscordHTTP.uptime">uptime (discord_http.backend.DiscordHTTP attribute)</a>
+        <li><a href="api/client.html#discord_http.client.Client.uptime">uptime (discord_http.client.Client property)</a>
 </li>
         <li><a href="api/flags.html#discord_http.flags.MessageFlags.urgent">urgent (discord_http.flags.MessageFlags attribute)</a>
 </li>
@@ -10221,6 +11079,12 @@
 
         <ul>
           <li><a href="api/embeds.html#discord_http.embeds.Embed.url">(discord_http.embeds.Embed attribute)</a>
+</li>
+          <li><a href="api/embeds.html#discord_http.embeds.EmbedAuthor.url">(discord_http.embeds.EmbedAuthor attribute)</a>
+</li>
+          <li><a href="api/embeds.html#discord_http.embeds.EmbedMedia.url">(discord_http.embeds.EmbedMedia attribute)</a>
+</li>
+          <li><a href="api/embeds.html#discord_http.embeds.EmbedProvider.url">(discord_http.embeds.EmbedProvider attribute)</a>
 </li>
           <li><a href="api/emoji.html#discord_http.emoji.Emoji.url">(discord_http.emoji.Emoji property)</a>
 </li>
@@ -10320,7 +11184,7 @@
 </li>
           <li><a href="gateway/object.html#discord_http.gateway.object.PollVoteEvent.user">(discord_http.gateway.object.PollVoteEvent attribute)</a>
 </li>
-          <li><a href="gateway/object.html#discord_http.gateway.object.Presence.user">(discord_http.gateway.object.Presence attribute)</a>
+          <li><a href="gateway/object.html#discord_http.gateway.object.Presence.user">(discord_http.gateway.object.Presence property)</a>
 </li>
           <li><a href="gateway/object.html#discord_http.gateway.object.Reaction.user">(discord_http.gateway.object.Reaction property)</a>
 </li>
@@ -10362,12 +11226,16 @@
 </li>
           <li><a href="gateway/object.html#discord_http.gateway.object.GuildJoinRequest.user_id">(discord_http.gateway.object.GuildJoinRequest attribute)</a>
 </li>
+          <li><a href="gateway/object.html#discord_http.gateway.object.Presence.user_id">(discord_http.gateway.object.Presence attribute)</a>
+</li>
           <li><a href="gateway/object.html#discord_http.gateway.object.Reaction.user_id">(discord_http.gateway.object.Reaction attribute)</a>
 </li>
         </ul></li>
         <li><a href="api/commands.html#discord_http.commands.Command.user_install">user_install (discord_http.commands.Command attribute)</a>
 
         <ul>
+          <li><a href="api/commands.html#discord_http.commands.SubCommand.user_install">(discord_http.commands.SubCommand attribute)</a>
+</li>
           <li><a href="api/commands.html#discord_http.commands.SubGroup.user_install">(discord_http.commands.SubGroup attribute)</a>
 </li>
         </ul></li>
@@ -10389,12 +11257,22 @@
 </li>
         <li><a href="api/guild.html#discord_http.guild.GuildWidgetMember.username">username (discord_http.guild.GuildWidgetMember attribute)</a>
 </li>
-        <li><a href="api/mentions.html#discord_http.mentions.AllowedMentions.users">users (discord_http.mentions.AllowedMentions attribute)</a>
+        <li><a href="api/context.html#discord_http.context.ResolvedValues.users">users (discord_http.context.ResolvedValues property)</a>
+
+        <ul>
+          <li><a href="api/context.html#discord_http.context.SelectValues.users">(discord_http.context.SelectValues property)</a>
 </li>
+          <li><a href="api/mentions.html#discord_http.mentions.AllowedMentions.users">(discord_http.mentions.AllowedMentions attribute)</a>
+</li>
+        </ul></li>
         <li><a href="api/view.html#discord_http.view.UserSelect">UserSelect (class in discord_http.view)</a>
 </li>
-        <li><a href="api/invite.html#discord_http.invite.Invite.uses">uses (discord_http.invite.Invite attribute)</a>
+        <li><a href="api/guild.html#discord_http.guild.GuildVanityURL.uses">uses (discord_http.guild.GuildVanityURL attribute)</a>
+
+        <ul>
+          <li><a href="api/invite.html#discord_http.invite.Invite.uses">(discord_http.invite.Invite attribute)</a>
 </li>
+        </ul></li>
     </ul></td>
   </tr></table>
 </section>
@@ -10410,6 +11288,8 @@
 </li>
           <li><a href="api/commands.html#discord_http.commands.Choice.value">(discord_http.commands.Choice attribute)</a>
 </li>
+          <li><a href="api/embeds.html#discord_http.embeds.EmbedField.value">(discord_http.embeds.EmbedField attribute)</a>
+</li>
           <li><a href="api/flags.html#discord_http.flags.ApplicationFlags.value">(discord_http.flags.ApplicationFlags attribute)</a>
 </li>
           <li><a href="api/flags.html#discord_http.flags.AttachmentFlags.value">(discord_http.flags.AttachmentFlags attribute)</a>
@@ -10418,6 +11298,8 @@
 </li>
           <li><a href="api/flags.html#discord_http.flags.ChannelFlags.value">(discord_http.flags.ChannelFlags attribute)</a>
 </li>
+          <li><a href="api/flags.html#discord_http.flags.EmbedFlags.value">(discord_http.flags.EmbedFlags attribute)</a>
+</li>
           <li><a href="api/flags.html#discord_http.flags.GuildInviteFlags.value">(discord_http.flags.GuildInviteFlags attribute)</a>
 </li>
           <li><a href="api/flags.html#discord_http.flags.GuildMemberFlags.value">(discord_http.flags.GuildMemberFlags attribute)</a>
@@ -10425,6 +11307,8 @@
           <li><a href="api/flags.html#discord_http.flags.MessageFlags.value">(discord_http.flags.MessageFlags attribute)</a>
 </li>
           <li><a href="api/flags.html#discord_http.flags.Permissions.value">(discord_http.flags.Permissions attribute)</a>
+</li>
+          <li><a href="api/flags.html#discord_http.flags.RoleFlags.value">(discord_http.flags.RoleFlags attribute)</a>
 </li>
           <li><a href="api/flags.html#discord_http.flags.SKUFlags.value">(discord_http.flags.SKUFlags attribute)</a>
 </li>
@@ -10468,6 +11352,8 @@
 </li>
           <li><a href="api/enums.html#discord_http.enums.BaseEnum.values">(discord_http.enums.BaseEnum class method)</a>
 </li>
+          <li><a href="api/enums.html#discord_http.enums.BaseThemeType.values">(discord_http.enums.BaseThemeType class method)</a>
+</li>
           <li><a href="api/enums.html#discord_http.enums.ButtonStyles.values">(discord_http.enums.ButtonStyles class method)</a>
 </li>
           <li><a href="api/enums.html#discord_http.enums.ChannelType.values">(discord_http.enums.ChannelType class method)</a>
@@ -10495,6 +11381,8 @@
           <li><a href="api/enums.html#discord_http.enums.ForumLayoutType.values">(discord_http.enums.ForumLayoutType class method)</a>
 </li>
           <li><a href="api/enums.html#discord_http.enums.IntegrationType.values">(discord_http.enums.IntegrationType class method)</a>
+</li>
+          <li><a href="api/enums.html#discord_http.enums.InteractionContextType.values">(discord_http.enums.InteractionContextType class method)</a>
 </li>
           <li><a href="api/enums.html#discord_http.enums.InteractionType.values">(discord_http.enums.InteractionType class method)</a>
 </li>
@@ -10603,16 +11491,24 @@
 </li>
         <li><a href="api/enums.html#discord_http.enums.VerificationLevel.very_high">very_high (discord_http.enums.VerificationLevel attribute)</a>
 </li>
+        <li><a href="api/embeds.html#discord_http.embeds.Embed.video">video (discord_http.embeds.Embed attribute)</a>
+</li>
+        <li><a href="api/channel.html#discord_http.channel.StageChannel.video_quality_mode">video_quality_mode (discord_http.channel.StageChannel attribute)</a>
+
+        <ul>
+          <li><a href="api/channel.html#discord_http.channel.VoiceChannel.video_quality_mode">(discord_http.channel.VoiceChannel attribute)</a>
+</li>
+        </ul></li>
         <li><a href="api/enums.html#discord_http.enums.VideoQualityType">VideoQualityType (class in discord_http.enums)</a>
 </li>
         <li><a href="api/enums.html#discord_http.enums.Locale.vietnamese">vietnamese (discord_http.enums.Locale attribute)</a>
 </li>
         <li><a href="api/view.html#discord_http.view.View">View (class in discord_http.view)</a>
 </li>
-        <li><a href="api/message.html#discord_http.message.Message.view">view (discord_http.message.Message attribute)</a>
+        <li><a href="api/message.html#discord_http.message.Message.view">view (discord_http.message.Message property)</a>
 
         <ul>
-          <li><a href="api/message.html#discord_http.message.WebhookMessage.view">(discord_http.message.WebhookMessage attribute)</a>
+          <li><a href="api/message.html#discord_http.message.WebhookMessage.view">(discord_http.message.WebhookMessage property)</a>
 </li>
           <li><a href="api/response.html#discord_http.response.MessageResponse.view">(discord_http.response.MessageResponse attribute)</a>
 </li>
@@ -10640,6 +11536,8 @@
 </li>
         </ul></li>
         <li><a href="gateway/enums.html#discord_http.gateway.enums.PayloadType.voice_ping">voice_ping (discord_http.gateway.enums.PayloadType attribute)</a>
+</li>
+        <li><a href="gateway/object.html#discord_http.gateway.object.ChannelInfo.voice_start_time">voice_start_time (discord_http.gateway.object.ChannelInfo attribute)</a>
 </li>
         <li><a href="gateway/enums.html#discord_http.gateway.enums.PayloadType.voice_state">voice_state (discord_http.gateway.enums.PayloadType attribute)</a>
 </li>
@@ -10691,6 +11589,14 @@
 </li>
         <li><a href="api/enums.html#discord_http.enums.AuditLogType.webhook_delete">webhook_delete (discord_http.enums.AuditLogType attribute)</a>
 </li>
+        <li><a href="api/client.html#discord_http.client.Client.webhook_events_path">webhook_events_path (discord_http.client.Client attribute)</a>
+</li>
+        <li><a href="api/message.html#discord_http.message.Message.webhook_id">webhook_id (discord_http.message.Message attribute)</a>
+
+        <ul>
+          <li><a href="api/message.html#discord_http.message.WebhookMessage.webhook_id">(discord_http.message.WebhookMessage attribute)</a>
+</li>
+        </ul></li>
         <li><a href="api/enums.html#discord_http.enums.AuditLogType.webhook_update">webhook_update (discord_http.enums.AuditLogType attribute)</a>
 </li>
         <li><a href="api/message.html#discord_http.message.WebhookMessage">WebhookMessage (class in discord_http.message)</a>
@@ -10709,14 +11615,14 @@
 </li>
         <li><a href="api/guild.html#discord_http.guild.WelcomeScreenChannel">WelcomeScreenChannel (class in discord_http.guild)</a>
 </li>
+    </ul></td>
+    <td style="width: 33%; vertical-align: top;"><ul>
         <li><a href="api/colour.html#discord_http.colour.Color.whale_shark">whale_shark() (discord_http.colour.Color class method)</a>
 
         <ul>
           <li><a href="api/colour.html#discord_http.colour.Colour.whale_shark">(discord_http.colour.Colour class method)</a>
 </li>
         </ul></li>
-    </ul></td>
-    <td style="width: 33%; vertical-align: top;"><ul>
         <li><a href="api/guild.html#discord_http.guild.Guild.widget_channel">widget_channel (discord_http.guild.Guild property)</a>
 </li>
         <li><a href="api/guild.html#discord_http.guild.Guild.widget_channel_id">widget_channel_id (discord_http.guild.Guild attribute)</a>

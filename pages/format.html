@@ -327,6 +327,15 @@ The reason for this is to improve readability and maintain a consistent structur
     <span class="kn">from</span><span class="w"> </span><span class="nn">.models</span><span class="w"> </span><span class="kn">import</span> <span class="n">User</span>
 </pre></div>
 </div>
+<p>Anything imported under <code class="docutils literal notranslate"><span class="pre">TYPE_CHECKING</span></code> only exists for the type checker, so it must be quoted when used in a type hint (e.g. <code class="docutils literal notranslate"><span class="pre">-&gt;</span> <span class="pre">&quot;User&quot;</span></code>).
+If an object is needed at runtime and importing it at the top would cause a circular import, import it locally inside the function instead and mark it as such:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">_get_cached_member</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">user_id</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">"Member | None"</span><span class="p">:</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">.member</span><span class="w"> </span><span class="kn">import</span> <span class="n">Member</span>  <span class="c1"># Circular import</span>
+
+    <span class="n">member</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">guild</span><span class="o">.</span><span class="n">get_member</span><span class="p">(</span><span class="n">user_id</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">member</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">member</span><span class="p">,</span> <span class="n">Member</span><span class="p">)</span> <span class="k">else</span> <span class="kc">None</span>
+</pre></div>
+</div>
 </section>
 </section>
 <section id="type-hints">
@@ -371,11 +380,36 @@ It used to separate the name from its type (e.g. <code class="docutils literal n
     <span class="o">...</span>
 </pre></div>
 </div>
+<p>When the same exception can be raised for several reasons, list each reason as a bullet:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">edit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">request_to_speak_timestamp</span><span class="p">:</span> <span class="n">datetime</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="n">MISSING</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""</span>
+<span class="sd">    Updates the voice state of the member.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    request_to_speak_timestamp</span>
+<span class="sd">        When the user requested to speak, or `None` to clear it.</span>
+
+<span class="sd">    Raises</span>
+<span class="sd">    ------</span>
+<span class="sd">    ValueError</span>
+<span class="sd">        - If the voice state has no guild_id</span>
+<span class="sd">        - If `request_to_speak_timestamp` is used on another user's voice state</span>
+<span class="sd">    """</span>
+    <span class="o">...</span>
+</pre></div>
+</div>
 <p>For generator and async generator functions, use <code class="docutils literal notranslate"><span class="pre">Yields</span></code> instead of <code class="docutils literal notranslate"><span class="pre">Returns</span></code> to describe each item produced.
 Like <code class="docutils literal notranslate"><span class="pre">Returns</span></code>, it is typeless and has no name, just the description:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">fetch_items</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">AsyncIterator</span><span class="p">[</span><span class="n">Item</span><span class="p">]:</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">fetch_items</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">limit</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="mi">100</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">AsyncIterator</span><span class="p">[</span><span class="n">Item</span><span class="p">]:</span>
 <span class="w">    </span><span class="sd">"""</span>
-<span class="sd">    Fetch all items.</span>
+<span class="sd">    Fetch the items.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    limit</span>
+<span class="sd">        The maximum amount of items to fetch.</span>
+<span class="sd">        `None` will fetch all items.</span>
 
 <span class="sd">    Yields</span>
 <span class="sd">    ------</span>
@@ -384,9 +418,25 @@ Like <code class="docutils literal notranslate"><span class="pre">Returns</span>
     <span class="o">...</span>
 </pre></div>
 </div>
-<p>For simple logic, use a concise one-line docstring:</p>
+<p>Methods and properties that take no parameters (besides <code class="docutils literal notranslate"><span class="pre">self</span></code>) use a one-line docstring, with a space on each side of the text (<code class="docutils literal notranslate"><span class="pre">&quot;&quot;&quot;</span> <span class="pre">Text.</span> <span class="pre">&quot;&quot;&quot;</span></code>).
+Since there are no parameters to document, a <code class="docutils literal notranslate"><span class="pre">Returns</span></code> or <code class="docutils literal notranslate"><span class="pre">Yields</span></code> section would only repeat the summary, so leave it out:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">is_expired</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">""" Returns whether the object has expired. """</span>
+    <span class="o">...</span>
+
+<span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">fetch_all_items</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">AsyncIterator</span><span class="p">[</span><span class="n">Item</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">""" Fetch all items, yielding each one as it is fetched. """</span>
+    <span class="o">...</span>
+</pre></div>
+</div>
+<p>If it needs more explaining, such as required permissions or edge cases, use a multi-line docstring instead.
+It still has no <code class="docutils literal notranslate"><span class="pre">Returns</span></code> or <code class="docutils literal notranslate"><span class="pre">Yields</span></code> section, but <code class="docutils literal notranslate"><span class="pre">Raises</span></code> can be used if it raises anything worth knowing about:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">fetch_webhooks</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="n">Webhook</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">"""</span>
+<span class="sd">    Fetches all the webhooks in the guild.</span>
+
+<span class="sd">    Requires the ``MANAGE_WEBHOOKS`` permission.</span>
+<span class="sd">    """</span>
     <span class="o">...</span>
 </pre></div>
 </div>
@@ -395,6 +445,8 @@ Like <code class="docutils literal notranslate"><span class="pre">Returns</span>
 <h2>Attributes and Slots<a class="headerlink" href="#attributes-and-slots" title="Link to this heading">¶</a></h2>
 <p>To ensure clean documentation, <code class="docutils literal notranslate"><span class="pre">discord_http</span></code> utilizes <code class="docutils literal notranslate"><span class="pre">__slots__</span></code> and <strong>Inline Attribute Docstrings</strong>.
 Of course, there are exceptions to this rule, such as when using <code class="docutils literal notranslate"><span class="pre">dataclasses</span></code> or when defining a class which can be changed by the user, such as a <code class="docutils literal notranslate"><span class="pre">Client</span></code> or <code class="docutils literal notranslate"><span class="pre">Bot</span></code> subclass.
+Classes that only ever exist a handful of times (the client, shards, the HTTP client, registered commands) may also skip <code class="docutils literal notranslate"><span class="pre">__slots__</span></code>,
+as the memory saved is negligible and it would only make them harder to extend.
 However, for all other classes, the following rules apply.</p>
 <p>This rule is in place to make both Sphinx (this page you are looking at now) and IDEs display attributes in a more user-friendly way, as well as to reduce redundancy in documentation.</p>
 <section id="implementation-rules">
@@ -406,6 +458,8 @@ However, for all other classes, the following rules apply.</p>
 <li><p><strong>Inheritance:</strong> Do not re-define inherited slots in subclasses; only define new attributes unique to that class.</p></li>
 <li><p><strong>Type Hints:</strong> All attributes must be fully type-hinted.</p></li>
 <li><p><strong>No Redundancy:</strong> Avoid type hints in docstrings for attributes, as they are already present in the code.</p></li>
+<li><p><strong>Private Attributes:</strong> Private attributes (<code class="docutils literal notranslate"><span class="pre">_raw_*</span></code>, <code class="docutils literal notranslate"><span class="pre">_state</span></code>, etc.) are still slotted and type-hinted, but get no docstring, as they are not part of the public documentation.
+If one needs explaining, use a <code class="docutils literal notranslate"><span class="pre">#</span></code> comment above it instead.</p></li>
 </ol>
 <p>Class docstrings follow the same one-line convention shown in <a class="reference internal" href="#docstrings">Docstrings</a> above, a summary only.
 Since attributes are documented inline rather than in the class body.</p>
@@ -437,6 +491,152 @@ If <code class="docutils literal notranslate"><span class="pre">__slots__</span>
 </pre></div>
 </div>
 </section>
+</section>
+<section id="library-conventions">
+<h2>Library Conventions<a class="headerlink" href="#library-conventions" title="Link to this heading">¶</a></h2>
+<p>Beyond formatting, these are the patterns the library is built around.
+New code should follow them, so it feels like it belongs and keeps memory usage low.</p>
+<section id="partial-and-full-objects">
+<h3>Partial and Full Objects<a class="headerlink" href="#partial-and-full-objects" title="Link to this heading">¶</a></h3>
+<p>Most Discord objects come in two classes: <code class="docutils literal notranslate"><span class="pre">PartialX</span></code> which only knows its ID (and maybe a parent ID), and <code class="docutils literal notranslate"><span class="pre">X(PartialX)</span></code> which holds the full data.
+Any method that only needs the ID to make its request belongs on the partial class, so it works on both partial and full objects without fetching first.
+Only put a method on the full class when it actually needs the full data.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">class</span><span class="w"> </span><span class="nc">PartialGuild</span><span class="p">(</span><span class="n">PartialBase</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">""" Represents a partial guild object. """</span>
+
+    <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">fetch_webhooks</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="n">Webhook</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">""" Fetches all the webhooks in the guild. """</span>
+        <span class="c1"># Only needs self.id, so it lives here and works for Guild too</span>
+        <span class="o">...</span>
+
+<span class="k">class</span><span class="w"> </span><span class="nc">Guild</span><span class="p">(</span><span class="n">PartialGuild</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">""" Represents a guild object. """</span>
+    <span class="o">...</span>
+</pre></div>
+</div>
+</section>
+<section id="naming">
+<h3>Naming<a class="headerlink" href="#naming" title="Link to this heading">¶</a></h3>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">fetch_*</span></code>: makes an HTTP request, and is always <code class="docutils literal notranslate"><span class="pre">async</span></code>.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">get_*</span></code>: reads from the cache, synchronous, returns <code class="docutils literal notranslate"><span class="pre">None</span></code> if not found.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">get_partial_*</span></code>: builds a partial object from an ID, without any request.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">create_*_from_data</span></code>: builds an object from raw API data, used through <code class="docutils literal notranslate"><span class="pre">self._state.bot</span></code> so the cache can be involved.</p></li>
+</ul>
+<p>How a parameter is named decides what it accepts:</p>
+<ul class="simple">
+<li><p>Named after the ID (<code class="docutils literal notranslate"><span class="pre">user_id</span></code>, <code class="docutils literal notranslate"><span class="pre">guild_id</span></code>): typed as <code class="docutils literal notranslate"><span class="pre">int</span></code>, for lookups like <code class="docutils literal notranslate"><span class="pre">fetch_user(user_id)</span></code>.</p></li>
+<li><p>Named after the object (<code class="docutils literal notranslate"><span class="pre">user</span></code>, <code class="docutils literal notranslate"><span class="pre">member</span></code>, <code class="docutils literal notranslate"><span class="pre">role</span></code>): typed as <code class="docutils literal notranslate"><span class="pre">Snowflake</span> <span class="pre">|</span> <span class="pre">int</span></code>, so users can pass either the object or the raw ID.
+Use <code class="docutils literal notranslate"><span class="pre">utils.normalize_entity_id()</span></code> (or <code class="docutils literal notranslate"><span class="pre">int()</span></code>) to turn it into an ID.</p></li>
+</ul>
+</section>
+<section id="missing-vs-none">
+<h3>MISSING vs None<a class="headerlink" href="#missing-vs-none" title="Link to this heading">¶</a></h3>
+<p>For optional parameters that are sent to Discord, such as in <code class="docutils literal notranslate"><span class="pre">edit()</span></code> methods, the default is <code class="docutils literal notranslate"><span class="pre">MISSING</span></code> and not <code class="docutils literal notranslate"><span class="pre">None</span></code>.
+They mean different things: <code class="docutils literal notranslate"><span class="pre">MISSING</span></code> means <em>“not provided, do not send it”</em>, while <code class="docutils literal notranslate"><span class="pre">None</span></code> means <em>“clear this value”</em>.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">edit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="n">MISSING</span><span class="p">,</span> <span class="n">reason</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">"Role"</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">""" ... """</span>
+    <span class="n">payload</span> <span class="o">=</span> <span class="p">{}</span>
+
+    <span class="k">if</span> <span class="n">name</span> <span class="ow">is</span> <span class="ow">not</span> <span class="n">MISSING</span><span class="p">:</span>
+        <span class="n">payload</span><span class="p">[</span><span class="s2">"name"</span><span class="p">]</span> <span class="o">=</span> <span class="n">name</span>  <span class="c1"># None will clear it on Discord's side</span>
+    <span class="o">...</span>
+</pre></div>
+</div>
+</section>
+<section id="http-requests">
+<h3>HTTP Requests<a class="headerlink" href="#http-requests" title="Link to this heading">¶</a></h3>
+<ul class="simple">
+<li><p>Requests go through <code class="docutils literal notranslate"><span class="pre">self._state.query()</span></code>, with one argument per line.</p></li>
+<li><p>Endpoints that return <code class="docutils literal notranslate"><span class="pre">204</span> <span class="pre">No</span> <span class="pre">Content</span></code> must use <code class="docutils literal notranslate"><span class="pre">res_method=&quot;text&quot;</span></code>.</p></li>
+<li><p>Endpoints that support the <code class="docutils literal notranslate"><span class="pre">X-Audit-Log-Reason</span></code> header take a <code class="docutils literal notranslate"><span class="pre">reason:</span> <span class="pre">str</span> <span class="pre">|</span> <span class="pre">None</span> <span class="pre">=</span> <span class="pre">None</span></code> keyword and pass it along.</p></li>
+</ul>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">_state</span><span class="o">.</span><span class="n">query</span><span class="p">(</span>
+    <span class="s2">"PUT"</span><span class="p">,</span>
+    <span class="sa">f</span><span class="s2">"/channels/</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">channel</span><span class="o">.</span><span class="n">id</span><span class="si">}</span><span class="s2">/messages/pins/</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">id</span><span class="si">}</span><span class="s2">"</span><span class="p">,</span>
+    <span class="n">res_method</span><span class="o">=</span><span class="s2">"text"</span><span class="p">,</span>
+    <span class="n">reason</span><span class="o">=</span><span class="n">reason</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+<p>Paginated endpoints are exposed as async iterators with <code class="docutils literal notranslate"><span class="pre">before</span></code>, <code class="docutils literal notranslate"><span class="pre">after</span></code> and <code class="docutils literal notranslate"><span class="pre">limit</span></code> keywords where Discord supports them.
+<code class="docutils literal notranslate"><span class="pre">limit=None</span></code> fetches everything, requesting pages until Discord has no more to give.
+See <code class="docutils literal notranslate"><span class="pre">PartialGuild.fetch_bans()</span></code> or <code class="docutils literal notranslate"><span class="pre">PartialChannel.fetch_history()</span></code> for the reference implementation.</p>
+</section>
+<section id="memory-efficiency">
+<h3>Memory Efficiency<a class="headerlink" href="#memory-efficiency" title="Link to this heading">¶</a></h3>
+<p>Objects in the gateway cache can exist hundreds of thousands of times, so every byte per instance adds up.
+<code class="docutils literal notranslate"><span class="pre">__slots__</span></code> is the baseline, these patterns go further:</p>
+<ul class="simple">
+<li><p><strong>Raw values, lazy properties:</strong> Store the cheap raw value (<code class="docutils literal notranslate"><span class="pre">_raw_*</span></code>) and convert it in a property when accessed, instead of building enums, flags or objects up front.</p></li>
+<li><p><strong>Rarely-set fields:</strong> Group fields that most instances do not have into a single <code class="docutils literal notranslate"><span class="pre">NamedTuple</span></code> slot (<code class="docutils literal notranslate"><span class="pre">_extra</span></code>) that is <code class="docutils literal notranslate"><span class="pre">None</span></code> when all of them are empty, see <code class="docutils literal notranslate"><span class="pre">Member</span></code> and <code class="docutils literal notranslate"><span class="pre">Message</span></code>.
+Check for emptiness by comparing against a shared all-<code class="docutils literal notranslate"><span class="pre">None</span></code> tuple, <code class="docutils literal notranslate"><span class="pre">any()</span></code> with a generator is several times slower on hot paths.</p></li>
+<li><p><strong>Bit-packing:</strong> Pack booleans and small flags into a single int, see <code class="docutils literal notranslate"><span class="pre">Role._flags</span></code>.</p></li>
+<li><p><strong>Timestamps:</strong> Store timestamps with <code class="docutils literal notranslate"><span class="pre">utils.pack_timestamps()</span></code> and read them back with <code class="docutils literal notranslate"><span class="pre">utils.unpack_timestamp()</span></code> in a property, instead of keeping <code class="docutils literal notranslate"><span class="pre">datetime</span></code> objects around.</p></li>
+<li><p><strong>Tuples over lists:</strong> Use tuples for data that does not change, an empty tuple is shared by Python while every empty list is a new object.</p></li>
+<li><p><strong>Interning:</strong> Values repeated across many objects (feature lists, role IDs, permission overwrites) are deduplicated through the cache’s <code class="docutils literal notranslate"><span class="pre">intern_*</span></code> helpers.</p></li>
+</ul>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">_EMPTY_THING_EXTRA</span> <span class="o">=</span> <span class="p">(</span><span class="kc">None</span><span class="p">,)</span> <span class="o">*</span> <span class="nb">len</span><span class="p">(</span><span class="n">_ThingExtra</span><span class="o">.</span><span class="n">_fields</span><span class="p">)</span>
+
+<span class="k">class</span><span class="w"> </span><span class="nc">Thing</span><span class="p">(</span><span class="n">PartialThing</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">""" Represents a thing. """</span>
+    <span class="vm">__slots__</span> <span class="o">=</span> <span class="p">(</span><span class="s2">"_extra"</span><span class="p">,</span> <span class="s2">"_raw_flags"</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">state</span><span class="p">:</span> <span class="s2">"DiscordAPI"</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="nb">dict</span><span class="p">):</span>
+        <span class="o">...</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_raw_flags</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"flags"</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+
+        <span class="c1"># Checked as a plain tuple first, most things have none of these</span>
+        <span class="n">extra</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"position"</span><span class="p">),</span>
+            <span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"thread"</span><span class="p">),</span>
+        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_extra</span><span class="p">:</span> <span class="n">_ThingExtra</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="n">_ThingExtra</span><span class="o">.</span><span class="n">_make</span><span class="p">(</span><span class="n">extra</span><span class="p">)</span> <span class="k">if</span> <span class="n">extra</span> <span class="o">!=</span> <span class="n">_EMPTY_THING_EXTRA</span> <span class="k">else</span> <span class="kc">None</span>
+        <span class="p">)</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">flags</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ThingFlags</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">""" The flags of the thing. """</span>
+        <span class="k">return</span> <span class="n">ThingFlags</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_raw_flags</span><span class="p">)</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">position</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">""" The position of the thing, if any. """</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_extra</span><span class="o">.</span><span class="n">position</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_extra</span> <span class="k">else</span> <span class="kc">None</span>
+</pre></div>
+</div>
+</section>
+<section id="flags">
+<h3>Flags<a class="headerlink" href="#flags" title="Link to this heading">¶</a></h3>
+<p>Flags are checked with <code class="docutils literal notranslate"><span class="pre">in</span></code>, not by accessing the flag as an attribute.
+Accessing it as an attribute returns the class constant, which is always truthy:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">RoleFlags</span><span class="o">.</span><span class="n">in_prompt</span> <span class="ow">in</span> <span class="n">role</span><span class="o">.</span><span class="n">flags</span>  <span class="c1"># Correct</span>
+<span class="n">role</span><span class="o">.</span><span class="n">flags</span><span class="o">.</span><span class="n">in_prompt</span>  <span class="c1"># Wrong, always truthy</span>
+</pre></div>
+</div>
+</section>
+<section id="module-exports">
+<h3>Module Exports<a class="headerlink" href="#module-exports" title="Link to this heading">¶</a></h3>
+<p>Every module defines <code class="docutils literal notranslate"><span class="pre">__all__</span></code> as a tuple, sorted alphabetically (<code class="docutils literal notranslate"><span class="pre">ruff</span></code> enforces the order).
+It lists everything users are meant to import, which is every type they receive from or pass to the library, as most modules are re-exported from the package root.
+Internal plumbing (HTTP sessions, ratelimiters, base storage classes) and helpers used through their module namespace,
+such as the <code class="docutils literal notranslate"><span class="pre">commands.command</span></code> decorators, are left out, as are private names (prefixed with <code class="docutils literal notranslate"><span class="pre">_</span></code>).
+The exceptions are <code class="docutils literal notranslate"><span class="pre">utils</span></code> and <code class="docutils literal notranslate"><span class="pre">tasks</span></code>, which intentionally have no <code class="docutils literal notranslate"><span class="pre">__all__</span></code>, so they are always used through their module (<code class="docutils literal notranslate"><span class="pre">utils.X</span></code>, <code class="docutils literal notranslate"><span class="pre">tasks.loop</span></code>) instead of being imported from the package root.</p>
+</section>
+<section id="comments">
+<h3>Comments<a class="headerlink" href="#comments" title="Link to this heading">¶</a></h3>
+<p>Keep comments sparse. Code should explain <em>what</em> it does by itself, comments are for <em>why</em>,
+such as a Discord quirk, a performance reason or a non-obvious edge case.</p>
+</section>
+</section>
+<section id="before-submitting">
+<h2>Before Submitting<a class="headerlink" href="#before-submitting" title="Link to this heading">¶</a></h2>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">ruff</span> <span class="pre">check</span></code> must pass, the configuration is in <code class="docutils literal notranslate"><span class="pre">pyproject.toml</span></code>.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">python</span> <span class="pre">-m</span> <span class="pre">pytest</span></code> must pass.</p></li>
+<li><p>New parsing or endpoints should come with a test under <code class="docutils literal notranslate"><span class="pre">tests/</span></code>, using the fake client from <code class="docutils literal notranslate"><span class="pre">tests/_fake_client.py</span></code> instead of real requests.</p></li>
+</ul>
 </section>
 </section>
 
@@ -507,6 +707,18 @@ If <code class="docutils literal notranslate"><span class="pre">__slots__</span>
 <li><a class="reference internal" href="#implementation-rules">Implementation Rules</a></li>
 </ul>
 </li>
+<li><a class="reference internal" href="#library-conventions">Library Conventions</a><ul>
+<li><a class="reference internal" href="#partial-and-full-objects">Partial and Full Objects</a></li>
+<li><a class="reference internal" href="#naming">Naming</a></li>
+<li><a class="reference internal" href="#missing-vs-none">MISSING vs None</a></li>
+<li><a class="reference internal" href="#http-requests">HTTP Requests</a></li>
+<li><a class="reference internal" href="#memory-efficiency">Memory Efficiency</a></li>
+<li><a class="reference internal" href="#flags">Flags</a></li>
+<li><a class="reference internal" href="#module-exports">Module Exports</a></li>
+<li><a class="reference internal" href="#comments">Comments</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#before-submitting">Before Submitting</a></li>
 </ul>
 </li>
 </ul>

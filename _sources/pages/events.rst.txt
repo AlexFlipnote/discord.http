@@ -53,17 +53,6 @@ Webhook
   :param data: :class:`dict` raw dictionary with the interaction data sent by Discord.
 
 
-.. function:: async def on_interaction_dropped(ctx)
-
-  Called whenever an interaction is dropped because it arrived too late to be acknowledged in time.
-  Discord requires interactions to be acknowledged within 3 seconds of creation. If it took longer than
-  that just to reach the bot, the interaction is already invalid and is dropped without being processed.
-
-  Using this event will disable the default WARN print given by the library, and instead let you decide what it should do.
-
-  :param ctx: :class:`Context` The context object for the interaction that was dropped.
-
-
 Webhook Events
 --------------
 .. note::
@@ -85,7 +74,7 @@ Webhook Events
   ``https://yourdomain.com/webhook-events`` (matching the path you chose above). Discord will send a PING to that
   URL to verify it right after you save it.
 
-  Unlike the events in the *Gateway events* category, these do not require ``enable_gateway=True`` and work purely
+  Unlike the events in the *Gateway events* category, these do not require the gateway or ``intents`` and work purely
   over HTTP, the same way Interactions do.
 
 .. function:: async def on_application_authorized(user, guild, scopes, integration_type)
@@ -153,8 +142,7 @@ Gateway events
 
     client = Client(
         ...,
-        enable_gateway=True,
-        # intents=Intents
+        intents=Intents.guilds  # Any intents start the gateway
     )
 
 
@@ -396,6 +384,17 @@ Intents.guilds
   :param start_time: :class:`datetime.datetime` | ``None`` the new voice session start time, or ``None`` if there is no active session.
 
 
+.. function:: async def on_channel_info(guild, channels):
+
+  Called in response to :meth:`Shard.request_channel_info`
+
+  .. note::
+    Depending on your cache rules, guild and channels[].channel will either return Full or Partial object.
+
+  :param guild: :class:`Guild` | :class:`PartialGuild` object with information about the guild.
+  :param channels: list[:class:`ChannelInfo`] object with the requested status and voice start time of each channel.
+
+
 .. function:: async def on_thread_create(thread):
 
   Called whenever a thread is created
@@ -619,6 +618,17 @@ Intents.guild_expressions
   .. note::
     Depending on your cache rules, sounds[].guild will either return Full or Partial object.
 
+  :param sounds: list[:class:`SoundboardSound`] object with information about the soundboard sounds.
+
+
+.. function:: async def on_soundboard_sounds(guild, sounds):
+
+  Called in response to :meth:`Shard.request_soundboard_sounds`, once per requested guild
+
+  .. note::
+    Depending on your cache rules, guild will either return Full or Partial object.
+
+  :param guild: :class:`Guild` | :class:`PartialGuild` object with information about the guild.
   :param sounds: list[:class:`SoundboardSound`] object with information about the soundboard sounds.
 
 

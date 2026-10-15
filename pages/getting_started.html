@@ -3,7 +3,7 @@
   <head><meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
     <meta name="color-scheme" content="light dark"><meta name="viewport" content="width=device-width, initial-scale=1" />
-<meta content="Getting started - discord.http docs" property="og:title"><meta content="When it comes to discord.http, it is not like the usual websocket bots. This library is only for the HTTP POST requests sent by the Discord API. You can of cour..." name="description"><meta content="When it comes to discord.http, it is not like the usual websocket bots. This library is only for the HTTP POST requests sent by the Discord API. You can of cour..." property="og:description"><meta property="og:image" content="/_static/favicon.ico"><meta name="theme-color" content="#14bae4"><meta property="og:locale" content="en_GB"><meta name="keywords" content="discord, http, api, interaction, aiohttp, webhook, slash><meta name="revisit-after" content="2 days"><link rel="index" title="Index" href="../genindex.html"><link rel="search" title="Search" href="../search.html"><link rel="next" title="API components" href="api.html"><link rel="prev" title="Getting started" href="../index.html">
+<meta content="Getting started - discord.http docs" property="og:title"><meta content="discord.http is built around Discord’s HTTP interactions. Instead of keeping a connection open, Discord sends every slash command, button click and modal submit..." name="description"><meta content="discord.http is built around Discord’s HTTP interactions. Instead of keeping a connection open, Discord sends every slash command, button click and modal submit..." property="og:description"><meta property="og:image" content="/_static/favicon.ico"><meta name="theme-color" content="#14bae4"><meta property="og:locale" content="en_GB"><meta name="keywords" content="discord, http, api, interaction, aiohttp, webhook, slash><meta name="revisit-after" content="2 days"><link rel="index" title="Index" href="../genindex.html"><link rel="search" title="Search" href="../search.html"><link rel="next" title="API components" href="api.html"><link rel="prev" title="Getting started" href="../index.html">
 
     <link rel="shortcut icon" href="../_static/favicon.ico"><!-- Generated with Sphinx 9.0.4 and Furo 2025.12.19 -->
         <title>Getting started - discord.http docs</title>
@@ -290,20 +290,55 @@
         <article role="main" id="furo-main-content">
           <section id="getting-started">
 <h1>Getting started<a class="headerlink" href="#getting-started" title="Link to this heading">¶</a></h1>
-<p>When it comes to <code class="docutils literal notranslate"><span class="pre">discord.http</span></code>, it is not like the usual websocket bots.
-This library is only for the <code class="docutils literal notranslate"><span class="pre">HTTP</span> <span class="pre">POST</span></code> requests sent by the Discord API.
-You can of course use this library to do normal Discord actions, however you do not have some familiar intents, like:</p>
-<ul class="simple">
-<li><p>Able to see the guilds the bot is in</p></li>
-<li><p>Knowing then the bot joins/leaves a server</p></li>
-<li><p>Status changes to people or bots</p></li>
-</ul>
-<p>Essentially, no intents are available, however there are some you do get, which are:</p>
-<ul class="simple">
-<li><p>Whenever a slash command is used</p></li>
-<li><p>When someone clicks a button, selects in menu, etc</p></li>
-<li><p>When someone has submitted a modal</p></li>
-</ul>
+<p><code class="docutils literal notranslate"><span class="pre">discord.http</span></code> is built around Discord’s HTTP interactions.
+Instead of keeping a connection open, Discord sends every slash command, button click and modal submit
+to your bot as an <code class="docutils literal notranslate"><span class="pre">HTTP</span> <span class="pre">POST</span></code> request, which your bot then answers.
+When you need more, like knowing when a message is sent or a member joins,
+the gateway (websocket) can be turned on alongside it.</p>
+<section id="how-your-bot-connects">
+<h2>How your bot connects<a class="headerlink" href="#how-your-bot-connects" title="Link to this heading">¶</a></h2>
+<p>On boot, the library checks your bot’s “Interactions Endpoint URL” and your <code class="docutils literal notranslate"><span class="pre">intents</span></code>,
+then logs which of these modes it runs in:</p>
+<div class="table-wrapper docutils container">
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Mode</p></th>
+<th class="head"><p>Interactions</p></th>
+<th class="head"><p>Gateway events</p></th>
+<th class="head"><p>When</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">HTTP</span></code></p></td>
+<td><p>Over HTTP</p></td>
+<td><p>None</p></td>
+<td><p>The endpoint URL is set</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">HTTP+WS</span></code></p></td>
+<td><p>Over HTTP</p></td>
+<td><p>Yes</p></td>
+<td><p>The endpoint URL is set, with <code class="docutils literal notranslate"><span class="pre">intents</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">WS</span></code></p></td>
+<td><p>Over the gateway</p></td>
+<td><p>None</p></td>
+<td><p>No endpoint URL, and no <code class="docutils literal notranslate"><span class="pre">intents</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">WS+</span></code></p></td>
+<td><p>Over the gateway</p></td>
+<td><p>Yes</p></td>
+<td><p>No endpoint URL, with <code class="docutils literal notranslate"><span class="pre">intents</span></code></p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>The HTTP server starts in every mode, unless <code class="docutils literal notranslate"><span class="pre">disable_http_server=True</span></code> is passed to the client.
+That always picks <code class="docutils literal notranslate"><span class="pre">WS</span></code> or <code class="docutils literal notranslate"><span class="pre">WS+</span></code>, even with an endpoint URL set, for bots that only handle
+gateway events while something else answers the URL (Discord keeps sending interactions there).</p>
+<p>The HTTP modes are recommended, the first reply to a command is sent back on the same request
+and no connection has to be kept open just to answer commands.
+The WS modes need no public HTTPS endpoint, which is great for local development, see <a class="reference internal" href="#ws-mode"><span class="std std-ref">No HTTPS endpoint? (WS mode)</span></a> below.</p>
+</section>
 <section id="requirements">
 <h2>Requirements<a class="headerlink" href="#requirements" title="Link to this heading">¶</a></h2>
 <section id="python">
@@ -323,12 +358,9 @@ try <code class="docutils literal notranslate"><span class="pre">python</span> <
 <p>If you do not have a bot already on Discord, next step is to create one. (Can also use an existing bot if you have one)
 You can do so by going to the <a class="reference external" href="https://discord.com/developers/applications">Discord developer page</a>.</p>
 <img alt="../_images/discord_portal_intro.png" src="../_images/discord_portal_intro.png" />
-<p>After that, you will need the following information from the bot page:</p>
-<ul class="simple">
-<li><p>Application ID</p></li>
-<li><p>Public key</p></li>
-<li><p>Token</p></li>
-</ul>
+<p>After that, copy the bot’s token from the bot page, it is the only thing the client needs.
+The application ID and public key are fetched automatically when the bot boots.
+You will still need the application ID to invite the bot, as shown below.</p>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
 <p>Make sure you copy the application ID, not the client ID.
@@ -339,7 +371,7 @@ Creating one for your own bot can be done by using this URL:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span>https://discord.com/oauth2/authorize?client_id=APPLICATION_ID&amp;scope=bot+applications.commands
 </pre></div>
 </div>
-<p>The bot will appear to be “offline” whenever you have it on your server and when you are running the bot.
+<p>When running over HTTP only, the bot will appear to be “offline” on your server, even while it is running.
 This is due to the fact that the bot is not using the websocket, which is what makes the bot appear online.
 However you are able to use the bot as normal, and it will respond to slash commands and other interactions.</p>
 <div class="admonition note">
@@ -349,13 +381,41 @@ However you are able to use the bot as normal, and it will respond to slash comm
 </section>
 <section id="http-server">
 <h3>HTTP Server<a class="headerlink" href="#http-server" title="Link to this heading">¶</a></h3>
-<p>Depending on the approach you take, there are multiple ways to host the HTTP server.
+<p>Needed for the HTTP modes, and to save the “Interactions Endpoint URL”,
+as Discord verifies it against your running bot first.
+Depending on the approach you take, there are multiple ways to host the HTTP server.
 For local testing, you can use <a class="reference external" href="https://ngrok.com/">ngrok</a>,
 which is a tool that allows you to expose your local server to the internet.</p>
 <p>Planning to host this in a server on production scale?
 You can use <a class="reference external" href="https://httpd.apache.org/">Apache2</a> or <a class="reference external" href="https://www.nginx.com/">NGINX</a>.
 For beginners, Apache2 is a nice way to get introduced to hosting, however we recommend
 using NGINX due to its performance overall and its ability to handle more requests.</p>
+</section>
+<section id="no-https-endpoint-ws-mode">
+<span id="ws-mode"></span><h3>No HTTPS endpoint? (WS mode)<a class="headerlink" href="#no-https-endpoint-ws-mode" title="Link to this heading">¶</a></h3>
+<p>Hosting a public HTTPS endpoint is recommended, but not required.
+If the “Interactions Endpoint URL” in your bot’s application page is left empty,
+Discord sends interactions over the gateway instead, and the library detects this on boot:</p>
+<ul class="simple">
+<li><p>The gateway is enabled automatically to receive interactions, with a warning in the log</p></li>
+<li><p>The HTTP server still starts, so the URL can be set at any time,
+Discord sends a request to it to verify it before saving it</p></li>
+<li><p>Your commands do not change, <code class="docutils literal notranslate"><span class="pre">return</span> <span class="pre">ctx.response.send_message(...)</span></code> works the same way</p></li>
+</ul>
+<p>Not planning to use an HTTP endpoint at all? Pass <code class="docutils literal notranslate"><span class="pre">disable_http_server=True</span></code> to the client
+to run on the gateway alone, without starting the HTTP server.</p>
+<p>This is great for local development and for bots that do not want to deal with hosting,
+but it does give up what makes HTTP mode lean:</p>
+<ul class="simple">
+<li><p>The first reply to a command costs an extra request to Discord, so it is slightly slower</p></li>
+<li><p>The bot needs a gateway connection running at all times</p></li>
+</ul>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>The automatically enabled gateway connects without any intents, which is all interactions need.
+If you also want gateway events, like <code class="docutils literal notranslate"><span class="pre">message_create</span></code>, pass your desired <code class="docutils literal notranslate"><span class="pre">intents</span></code>,
+see <a class="reference internal" href="#gateway-section"><span class="std std-ref">discord.http/gateway</span></a> below.</p>
+</div>
 </section>
 </section>
 <section id="quick-example">
@@ -400,8 +460,9 @@ So if your domain is <code class="docutils literal notranslate"><span class="pre
 <img alt="../_images/interaction_url.png" src="../_images/interaction_url.png" />
 <div class="admonition note">
 <p class="admonition-title">Note</p>
-<p>If the page refuses to save, it means that your bot is not exposed to the correct URL.
-Discord attempts to ping with the URL you provided, and if it fails, it will not save.</p>
+<p>If the page refuses to save, it means that your bot is not running or not exposed to the correct URL.
+Discord attempts to ping with the URL you provided, and if it fails, it will not save.
+This is also why the HTTP server keeps running when no URL is set yet, unless <code class="docutils literal notranslate"><span class="pre">disable_http_server=True</span></code> is used.</p>
 <p>If the Discord developer page saved successfully, you should see your bot printed an <code class="docutils literal notranslate"><span class="pre">[</span> <span class="pre">INFO</span> <span class="pre">]</span></code> message
 telling what has happened. This simply means that you did it all correctly and can now start using the bot.</p>
 </div>
@@ -409,11 +470,31 @@ telling what has happened. This simply means that you did it all correctly and c
 <img alt="../_images/terminal_output.png" src="../_images/terminal_output.png" />
 <p>This what the <code class="docutils literal notranslate"><span class="pre">[</span> <span class="pre">INFO</span> <span class="pre">]</span></code> messages mean:</p>
 <ol class="arabic simple">
-<li><p>Telling you where the bot is broadcasting to, when it comes to the host and port.</p></li>
 <li><p>Showing if the bot has successfully synced commands with Discord API (it will not show if you have syncing disabled).</p></li>
-<li><p>Showing that the bot is now ready to receive interactions from Discord API.</p></li>
+<li><p>Showing that the bot is now ready to receive interactions from Discord API, and the host and port it is serving on.</p></li>
 <li><p>Confirming that the URL you provided in the bot’s application page is correct, working and Discord API can reach it.</p></li>
 </ol>
+</section>
+<section id="offline-mode">
+<h2>Offline mode<a class="headerlink" href="#offline-mode" title="Link to this heading">¶</a></h2>
+<p>Not every job needs a running bot. <code class="docutils literal notranslate"><span class="pre">Client.offline_run()</span></code> logs in, runs your function once and then exits,
+without starting the HTTP server or connecting to the gateway, so none of the hosting steps above are needed.
+This is great for cron jobs, one-off scripts and admin tools:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">discord_http</span><span class="w"> </span><span class="kn">import</span> <span class="n">Client</span>
+
+<span class="n">client</span> <span class="o">=</span> <span class="n">Client</span><span class="p">(</span>
+    <span class="n">token</span><span class="o">=</span><span class="s2">"Your bot token here"</span>
+<span class="p">)</span>
+
+<span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">main</span><span class="p">():</span>
+    <span class="n">channel</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">get_partial_channel</span><span class="p">(</span><span class="mi">123456789012345678</span><span class="p">)</span>
+    <span class="k">await</span> <span class="n">channel</span><span class="o">.</span><span class="n">send</span><span class="p">(</span><span class="s2">"Nightly backup finished!"</span><span class="p">)</span>
+
+<span class="n">client</span><span class="o">.</span><span class="n">offline_run</span><span class="p">(</span><span class="n">main</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Keep in mind that offline mode can only talk to the Discord API, it does not receive any interactions or events.</p>
 </section>
 <section id="python-logging">
 <h2>Python logging<a class="headerlink" href="#python-logging" title="Link to this heading">¶</a></h2>
@@ -442,11 +523,13 @@ It is recommended to only use it for debugging purposes and not in production.</
 </div>
 </section>
 <section id="discord-http-gateway">
-<h2>discord.http/gateway<a class="headerlink" href="#discord-http-gateway" title="Link to this heading">¶</a></h2>
-<p>If you want to use the gateway, you can do so by using the <code class="docutils literal notranslate"><span class="pre">enable_gateway</span></code> parameter in the Client</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">client</span> <span class="o">=</span> <span class="n">Client</span><span class="p">(</span>
+<span id="gateway-section"></span><h2>discord.http/gateway<a class="headerlink" href="#discord-http-gateway" title="Link to this heading">¶</a></h2>
+<p>If you want to use the gateway, pass the <code class="docutils literal notranslate"><span class="pre">intents</span></code> you need to the Client, which starts it</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">discord_http.gateway</span><span class="w"> </span><span class="kn">import</span> <span class="n">Intents</span>
+
+<span class="n">client</span> <span class="o">=</span> <span class="n">Client</span><span class="p">(</span>
     <span class="o">...</span>
-    <span class="n">enable_gateway</span><span class="o">=</span><span class="kc">True</span>
+    <span class="n">intents</span><span class="o">=</span><span class="n">Intents</span><span class="o">.</span><span class="n">guild_messages</span>
 <span class="p">)</span>
 </pre></div>
 </div>
@@ -489,7 +572,7 @@ Not to mention that this will also reduce the amount of RAM usage, as the librar
 
 <span class="n">client</span> <span class="o">=</span> <span class="n">Client</span><span class="p">(</span>
     <span class="o">...</span>
-    <span class="n">cache_flags</span><span class="o">=</span><span class="p">(</span>
+    <span class="n">gateway_cache</span><span class="o">=</span><span class="p">(</span>
       <span class="n">GatewayCacheFlags</span><span class="o">.</span><span class="n">guilds</span> <span class="o">|</span>
       <span class="n">GatewayCacheFlags</span><span class="o">.</span><span class="n">channels</span> <span class="o">|</span>
       <span class="o">...</span>
@@ -670,13 +753,16 @@ the port in the command mentioned earlier.</p>
           <div class="toc-tree">
             <ul>
 <li><a class="reference internal" href="#">Getting started</a><ul>
+<li><a class="reference internal" href="#how-your-bot-connects">How your bot connects</a></li>
 <li><a class="reference internal" href="#requirements">Requirements</a><ul>
 <li><a class="reference internal" href="#python">Python</a></li>
 <li><a class="reference internal" href="#discord-bot">Discord bot</a></li>
 <li><a class="reference internal" href="#http-server">HTTP Server</a></li>
+<li><a class="reference internal" href="#no-https-endpoint-ws-mode">No HTTPS endpoint? (WS mode)</a></li>
 </ul>
 </li>
 <li><a class="reference internal" href="#quick-example">Quick example</a></li>
+<li><a class="reference internal" href="#offline-mode">Offline mode</a></li>
 <li><a class="reference internal" href="#python-logging">Python logging</a></li>
 <li><a class="reference internal" href="#discord-http-gateway">discord.http/gateway</a><ul>
 <li><a class="reference internal" href="#intents">Intents</a></li>

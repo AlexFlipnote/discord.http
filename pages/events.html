@@ -346,21 +346,7 @@ Using this event will disable the default INFO print given by the library, and i
 In order to use this event, you must have <cite>Client.debug_events</cite> set to True, otherwise it will not be called.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>data</strong> – <a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#dict" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">dict</span></code></a> raw dictionary with the interaction data sent by Discord.</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py">
-<span class="sig-name descname"><span class="pre">async</span> <span class="pre">def</span> <span class="pre">on_interaction_dropped(ctx)</span></span></dt>
-<dd><p>Called whenever an interaction is dropped because it arrived too late to be acknowledged in time.
-Discord requires interactions to be acknowledged within 3 seconds of creation. If it took longer than
-that just to reach the bot, the interaction is already invalid and is dropped without being processed.</p>
-<p>Using this event will disable the default WARN print given by the library, and instead let you decide what it should do.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>ctx</strong> – <code class="xref py py-class docutils literal notranslate"><span class="pre">Context</span></code> The context object for the interaction that was dropped.</p>
+<dd class="field-odd"><p><strong>data</strong> – <a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#dict" title="(in Python v3.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">dict</span></code></a> raw dictionary with the interaction data sent by Discord.</p>
 </dd>
 </dl>
 </dd></dl>
@@ -384,7 +370,7 @@ requests to a <strong>Webhook Events URL</strong>, which is configured independe
 <p>Then, in the Discord Developer Portal, set your application’s <strong>Webhook Events URL</strong> to
 <code class="docutils literal notranslate"><span class="pre">https://yourdomain.com/webhook-events</span></code> (matching the path you chose above). Discord will send a PING to that
 URL to verify it right after you save it.</p>
-<p>Unlike the events in the <em>Gateway events</em> category, these do not require <code class="docutils literal notranslate"><span class="pre">enable_gateway=True</span></code> and work purely
+<p>Unlike the events in the <em>Gateway events</em> category, these do not require the gateway or <code class="docutils literal notranslate"><span class="pre">intents</span></code> and work purely
 over HTTP, the same way Interactions do.</p>
 </div>
 <dl class="py function">
@@ -394,7 +380,7 @@ over HTTP, the same way Interactions do.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>scopes</strong> – list[<a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>] the OAuth2 scopes that were authorized.</p></li>
+<li><p><strong>scopes</strong> – list[<a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>] the OAuth2 scopes that were authorized.</p></li>
 <li><p><strong>user</strong> – <code class="xref py py-class docutils literal notranslate"><span class="pre">User</span></code> object with information about the user that authorized the application.</p></li>
 <li><p><strong>guild</strong> – <code class="xref py py-class docutils literal notranslate"><span class="pre">Guild</span></code> | <code class="docutils literal notranslate"><span class="pre">None</span></code> object with information about the guild the application was installed to, only if it was installed to a guild.</p></li>
 <li><p><strong>integration_type</strong> – <code class="xref py py-class docutils literal notranslate"><span class="pre">IntegrationType</span></code> | <code class="docutils literal notranslate"><span class="pre">None</span></code> whether the app was installed to a guild or to a user account.</p></li>
@@ -422,7 +408,7 @@ into a named event (e.g. Social SDK-only events, which are not usable by bots).
 In order to use this event, you must have <cite>Client.debug_events</cite> set to True, otherwise it will not be called.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>data</strong> – <a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#dict" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">dict</span></code></a> raw dictionary with the webhook event payload sent by Discord.</p>
+<dd class="field-odd"><p><strong>data</strong> – <a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#dict" title="(in Python v3.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">dict</span></code></a> raw dictionary with the webhook event payload sent by Discord.</p>
 </dd>
 </dl>
 </dd></dl>
@@ -445,7 +431,7 @@ a single listener works regardless of which transport is configured.</p>
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>client</strong> – <code class="xref py py-class docutils literal notranslate"><span class="pre">Client</span></code> The client object.</p></li>
-<li><p><strong>error</strong> – <a class="reference external" href="https://docs.python.org/3/builtins/exceptions.html#Exception" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Exception</span></code></a> object with the error that occurred.</p></li>
+<li><p><strong>error</strong> – <a class="reference external" href="https://docs.python.org/3/builtins/exceptions.html#Exception" title="(in Python v3.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Exception</span></code></a> object with the error that occurred.</p></li>
 </ul>
 </dd>
 </dl>
@@ -460,7 +446,7 @@ a single listener works regardless of which transport is configured.</p>
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>ctx</strong> – <code class="xref py py-class docutils literal notranslate"><span class="pre">Context</span></code> The context object.</p></li>
-<li><p><strong>error</strong> – <a class="reference external" href="https://docs.python.org/3/builtins/exceptions.html#Exception" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Exception</span></code></a> object with the error that occurred.</p></li>
+<li><p><strong>error</strong> – <a class="reference external" href="https://docs.python.org/3/builtins/exceptions.html#Exception" title="(in Python v3.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Exception</span></code></a> object with the error that occurred.</p></li>
 </ul>
 </dd>
 </dl>
@@ -477,8 +463,7 @@ a single listener works regardless of which transport is configured.</p>
 
 <span class="n">client</span> <span class="o">=</span> <span class="n">Client</span><span class="p">(</span>
     <span class="o">...</span><span class="p">,</span>
-    <span class="n">enable_gateway</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-    <span class="c1"># intents=Intents</span>
+    <span class="n">intents</span><span class="o">=</span><span class="n">Intents</span><span class="o">.</span><span class="n">guilds</span>  <span class="c1"># Any intents start the gateway</span>
 <span class="p">)</span>
 </pre></div>
 </div>
@@ -818,7 +803,7 @@ You can in theory listen to the events and simply do nothing to disable the logs
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>guild</strong> – <code class="xref py py-class docutils literal notranslate"><span class="pre">Guild</span></code> | <code class="xref py py-class docutils literal notranslate"><span class="pre">PartialGuild</span></code> object with information about the guild.</p></li>
 <li><p><strong>channel</strong> – <code class="xref py py-class docutils literal notranslate"><span class="pre">BaseChannel</span></code> | <code class="xref py py-class docutils literal notranslate"><span class="pre">PartialChannel</span></code> object with information about the voice channel.</p></li>
-<li><p><strong>status</strong> – <a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a> | <code class="docutils literal notranslate"><span class="pre">None</span></code> the new status of the voice channel, or <code class="docutils literal notranslate"><span class="pre">None</span></code> if it was cleared.</p></li>
+<li><p><strong>status</strong> – <a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a> | <code class="docutils literal notranslate"><span class="pre">None</span></code> the new status of the voice channel, or <code class="docutils literal notranslate"><span class="pre">None</span></code> if it was cleared.</p></li>
 </ul>
 </dd>
 </dl>
@@ -837,7 +822,25 @@ You can in theory listen to the events and simply do nothing to disable the logs
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>guild</strong> – <code class="xref py py-class docutils literal notranslate"><span class="pre">Guild</span></code> | <code class="xref py py-class docutils literal notranslate"><span class="pre">PartialGuild</span></code> object with information about the guild.</p></li>
 <li><p><strong>channel</strong> – <code class="xref py py-class docutils literal notranslate"><span class="pre">BaseChannel</span></code> | <code class="xref py py-class docutils literal notranslate"><span class="pre">PartialChannel</span></code> object with information about the voice channel.</p></li>
-<li><p><strong>start_time</strong> – <a class="reference external" href="https://docs.python.org/3/library/datetime.html#datetime.datetime" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">datetime.datetime</span></code></a> | <code class="docutils literal notranslate"><span class="pre">None</span></code> the new voice session start time, or <code class="docutils literal notranslate"><span class="pre">None</span></code> if there is no active session.</p></li>
+<li><p><strong>start_time</strong> – <a class="reference external" href="https://docs.python.org/3/library/datetime.html#datetime.datetime" title="(in Python v3.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">datetime.datetime</span></code></a> | <code class="docutils literal notranslate"><span class="pre">None</span></code> the new voice session start time, or <code class="docutils literal notranslate"><span class="pre">None</span></code> if there is no active session.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py">
+<span class="sig-name descname"><span class="pre">async</span> <span class="pre">def</span> <span class="pre">on_channel_info(guild,</span> <span class="pre">channels):</span></span></dt>
+<dd><p>Called in response to <code class="xref py py-meth docutils literal notranslate"><span class="pre">Shard.request_channel_info()</span></code></p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Depending on your cache rules, guild and channels[].channel will either return Full or Partial object.</p>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>guild</strong> – <code class="xref py py-class docutils literal notranslate"><span class="pre">Guild</span></code> | <code class="xref py py-class docutils literal notranslate"><span class="pre">PartialGuild</span></code> object with information about the guild.</p></li>
+<li><p><strong>channels</strong> – list[<code class="xref py py-class docutils literal notranslate"><span class="pre">ChannelInfo</span></code>] object with the requested status and voice start time of each channel.</p></li>
 </ul>
 </dd>
 </dl>
@@ -1185,6 +1188,24 @@ You can in theory listen to the events and simply do nothing to disable the logs
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>sounds</strong> – list[<code class="xref py py-class docutils literal notranslate"><span class="pre">SoundboardSound</span></code>] object with information about the soundboard sounds.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py">
+<span class="sig-name descname"><span class="pre">async</span> <span class="pre">def</span> <span class="pre">on_soundboard_sounds(guild,</span> <span class="pre">sounds):</span></span></dt>
+<dd><p>Called in response to <code class="xref py py-meth docutils literal notranslate"><span class="pre">Shard.request_soundboard_sounds()</span></code>, once per requested guild</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Depending on your cache rules, guild will either return Full or Partial object.</p>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>guild</strong> – <code class="xref py py-class docutils literal notranslate"><span class="pre">Guild</span></code> | <code class="xref py py-class docutils literal notranslate"><span class="pre">PartialGuild</span></code> object with information about the guild.</p></li>
+<li><p><strong>sounds</strong> – list[<code class="xref py py-class docutils literal notranslate"><span class="pre">SoundboardSound</span></code>] object with information about the soundboard sounds.</p></li>
+</ul>
 </dd>
 </dl>
 </dd></dl>

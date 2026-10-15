@@ -298,7 +298,6 @@
 <li class="toctree-l3"><a class="reference internal" href="../gateway/activity.html#discord_http.gateway.activity.Activity"><code class="docutils literal notranslate"><span class="pre">Activity</span></code></a><ul>
 <li class="toctree-l4"><a class="reference internal" href="../gateway/activity.html#discord_http.gateway.activity.Activity.name"><code class="docutils literal notranslate"><span class="pre">Activity.name</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="../gateway/activity.html#discord_http.gateway.activity.Activity.url"><code class="docutils literal notranslate"><span class="pre">Activity.url</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="../gateway/activity.html#discord_http.gateway.activity.Activity.created_at"><code class="docutils literal notranslate"><span class="pre">Activity.created_at</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="../gateway/activity.html#discord_http.gateway.activity.Activity.timestamps"><code class="docutils literal notranslate"><span class="pre">Activity.timestamps</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="../gateway/activity.html#discord_http.gateway.activity.Activity.application_id"><code class="docutils literal notranslate"><span class="pre">Activity.application_id</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="../gateway/activity.html#discord_http.gateway.activity.Activity.state"><code class="docutils literal notranslate"><span class="pre">Activity.state</span></code></a></li>
@@ -312,6 +311,7 @@
 <li class="toctree-l4"><a class="reference internal" href="../gateway/activity.html#discord_http.gateway.activity.Activity.instance"><code class="docutils literal notranslate"><span class="pre">Activity.instance</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="../gateway/activity.html#discord_http.gateway.activity.Activity.buttons"><code class="docutils literal notranslate"><span class="pre">Activity.buttons</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="../gateway/activity.html#discord_http.gateway.activity.Activity.type"><code class="docutils literal notranslate"><span class="pre">Activity.type</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../gateway/activity.html#discord_http.gateway.activity.Activity.created_at"><code class="docutils literal notranslate"><span class="pre">Activity.created_at</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="../gateway/activity.html#discord_http.gateway.activity.Activity.flags"><code class="docutils literal notranslate"><span class="pre">Activity.flags</span></code></a></li>
 </ul>
 </li>
@@ -357,6 +357,8 @@
 <li class="toctree-l4"><a class="reference internal" href="../gateway/client.html#discord_http.gateway.client.GatewayClient.max_concurrency"><code class="docutils literal notranslate"><span class="pre">GatewayClient.max_concurrency</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="../gateway/client.html#discord_http.gateway.client.GatewayClient.get_shard"><code class="docutils literal notranslate"><span class="pre">GatewayClient.get_shard()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="../gateway/client.html#discord_http.gateway.client.GatewayClient.change_presence"><code class="docutils literal notranslate"><span class="pre">GatewayClient.change_presence()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../gateway/client.html#discord_http.gateway.client.GatewayClient.request_soundboard_sounds"><code class="docutils literal notranslate"><span class="pre">GatewayClient.request_soundboard_sounds()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../gateway/client.html#discord_http.gateway.client.GatewayClient.request_channel_info"><code class="docutils literal notranslate"><span class="pre">GatewayClient.request_channel_info()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="../gateway/client.html#discord_http.gateway.client.GatewayClient.shard_by_guild_id"><code class="docutils literal notranslate"><span class="pre">GatewayClient.shard_by_guild_id()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="../gateway/client.html#discord_http.gateway.client.GatewayClient.start"><code class="docutils literal notranslate"><span class="pre">GatewayClient.start()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="../gateway/client.html#discord_http.gateway.client.GatewayClient.close"><code class="docutils literal notranslate"><span class="pre">GatewayClient.close()</span></code></a></li>
@@ -593,6 +595,14 @@
 <li class="toctree-l4"><a class="reference internal" href="../gateway/object.html#discord_http.gateway.object.BulkDeletePayload.messages"><code class="docutils literal notranslate"><span class="pre">BulkDeletePayload.messages</span></code></a></li>
 </ul>
 </li>
+<li class="toctree-l3"><a class="reference internal" href="../gateway/object.html#discord_http.gateway.object.ChannelInfo"><code class="docutils literal notranslate"><span class="pre">ChannelInfo</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../gateway/object.html#discord_http.gateway.object.ChannelInfo.count"><code class="docutils literal notranslate"><span class="pre">ChannelInfo.count()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../gateway/object.html#discord_http.gateway.object.ChannelInfo.index"><code class="docutils literal notranslate"><span class="pre">ChannelInfo.index()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../gateway/object.html#discord_http.gateway.object.ChannelInfo.channel"><code class="docutils literal notranslate"><span class="pre">ChannelInfo.channel</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../gateway/object.html#discord_http.gateway.object.ChannelInfo.status"><code class="docutils literal notranslate"><span class="pre">ChannelInfo.status</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../gateway/object.html#discord_http.gateway.object.ChannelInfo.voice_start_time"><code class="docutils literal notranslate"><span class="pre">ChannelInfo.voice_start_time</span></code></a></li>
+</ul>
+</li>
 <li class="toctree-l3"><a class="reference internal" href="../gateway/object.html#discord_http.gateway.object.ChannelPinsUpdate"><code class="docutils literal notranslate"><span class="pre">ChannelPinsUpdate</span></code></a><ul>
 <li class="toctree-l4"><a class="reference internal" href="../gateway/object.html#discord_http.gateway.object.ChannelPinsUpdate.channel"><code class="docutils literal notranslate"><span class="pre">ChannelPinsUpdate.channel</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="../gateway/object.html#discord_http.gateway.object.ChannelPinsUpdate.guild"><code class="docutils literal notranslate"><span class="pre">ChannelPinsUpdate.guild</span></code></a></li>
@@ -645,14 +655,15 @@
 </ul>
 </li>
 <li class="toctree-l3"><a class="reference internal" href="../gateway/object.html#discord_http.gateway.object.Presence"><code class="docutils literal notranslate"><span class="pre">Presence</span></code></a><ul>
-<li class="toctree-l4"><a class="reference internal" href="../gateway/object.html#discord_http.gateway.object.Presence.user"><code class="docutils literal notranslate"><span class="pre">Presence.user</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="../gateway/object.html#discord_http.gateway.object.Presence.guild"><code class="docutils literal notranslate"><span class="pre">Presence.guild</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../gateway/object.html#discord_http.gateway.object.Presence.user_id"><code class="docutils literal notranslate"><span class="pre">Presence.user_id</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../gateway/object.html#discord_http.gateway.object.Presence.guild_id"><code class="docutils literal notranslate"><span class="pre">Presence.guild_id</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="../gateway/object.html#discord_http.gateway.object.Presence.status"><code class="docutils literal notranslate"><span class="pre">Presence.status</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="../gateway/object.html#discord_http.gateway.object.Presence.activities"><code class="docutils literal notranslate"><span class="pre">Presence.activities</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="../gateway/object.html#discord_http.gateway.object.Presence.desktop"><code class="docutils literal notranslate"><span class="pre">Presence.desktop</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="../gateway/object.html#discord_http.gateway.object.Presence.mobile"><code class="docutils literal notranslate"><span class="pre">Presence.mobile</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="../gateway/object.html#discord_http.gateway.object.Presence.web"><code class="docutils literal notranslate"><span class="pre">Presence.web</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="../gateway/object.html#discord_http.gateway.object.Presence.type"><code class="docutils literal notranslate"><span class="pre">Presence.type</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../gateway/object.html#discord_http.gateway.object.Presence.guild"><code class="docutils literal notranslate"><span class="pre">Presence.guild</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../gateway/object.html#discord_http.gateway.object.Presence.user"><code class="docutils literal notranslate"><span class="pre">Presence.user</span></code></a></li>
 </ul>
 </li>
 <li class="toctree-l3"><a class="reference internal" href="../gateway/object.html#discord_http.gateway.object.Reaction"><code class="docutils literal notranslate"><span class="pre">Reaction</span></code></a><ul>
