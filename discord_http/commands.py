@@ -395,12 +395,18 @@ class Command:
                         args = get_args(annotation)
 
                 # If it's a union of channel types, handle accordingly
-                if get_origin(raw_annotation) in (Union, UnionType) and all(
+                # NoneType is ignored so "TextChannel | VoiceChannel | None" also works
+                channel_args = [
+                    a for a in get_args(raw_annotation)
+                    if a is not type(None)
+                ]
+
+                if get_origin(raw_annotation) in (Union, UnionType) and channel_args and all(
                     isinstance(a, type) and
-                    a in channel_types for a in get_args(raw_annotation)
+                    a in channel_types for a in channel_args
                 ):
-                    origin = get_args(raw_annotation)[0]  # Just pick the first one, does not matter
-                    for a in get_args(raw_annotation):
+                    origin = channel_args[0]  # Just pick the first one, does not matter
+                    for a in channel_args:
                         channel_options.extend(channel_types[a])
 
                 # If it's a union, and first arg is User, then second is Member
