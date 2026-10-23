@@ -31,6 +31,7 @@ __all__ = (
 
 _SHARED_STATE_ATTR = "_state"
 _YIELD_EVERY = 2000
+_POOL_REBUILD_MIN = 1024
 _IMMUTABLE_LEAF_TYPES = (str, bytes, int, float, bool, complex, type(None))
 _GUILD_CACHE_ATTRS = (
     "_cache_members",
@@ -116,8 +117,10 @@ class Cache:
         "__activity_assets_pool",
         "__feature_pool",
         "__guilds",
+        "__overwrite_pool_limits",
         "__overwrite_pools",
         "__role_int_pools",
+        "__role_pool_limits",
         "__role_tuple_pools",
         "__users",
         "_presence_dedup_enabled",
@@ -148,6 +151,9 @@ class Cache:
         self.__overwrite_pools: dict[
             int, dict[tuple[tuple[int, int, int, int], ...], tuple[tuple[int, int, int, int], ...]]
         ] = {}
+        # Per guild: pool size that triggers the next rebuild, missing means `_POOL_REBUILD_MIN`
+        self.__role_pool_limits: dict[int, int] = {}
+        self.__overwrite_pool_limits: dict[int, int] = {}
         self.__activity_assets_pool: "weakref.WeakValueDictionary[tuple, ActivityAssets]" = (
             weakref.WeakValueDictionary()
         )
@@ -185,15 +191,22 @@ class Cache:
         if not raw_role_ids:
             return ()
 
+        ids: tuple[int, ...] = tuple(map(int, raw_role_ids))
+
         # get() first, as setdefault() would build a throwaway dict on every call
         tuple_pool = self.__role_tuple_pools.get(guild_id)
         if tuple_pool is None:
+            # Nothing ever resets the pool of a guild that isn't cached (e.g. user-installed interactions)
+            if guild_id not in self.__guilds:
+                return ids
             tuple_pool = self.__role_tuple_pools[guild_id] = {}
 
         # Most members repeat a role combination someone else already has, so check that first
-        ids: tuple[int, ...] = tuple(map(int, raw_role_ids))
-        if (pooled := tuple_pool.get(ids)) is not None:
+        elif (pooled := tuple_pool.get(ids)) is not None:
             return pooled
+
+        elif len(tuple_pool) >= self.__role_pool_limits.get(guild_id, _POOL_REBUILD_MIN):
+            tuple_pool = self._rebuild_role_pools(guild_id)
 
         int_pool = self.__role_int_pools.get(guild_id)
         if int_pool is None:
@@ -202,6 +215,30 @@ class Cache:
         role_ids = tuple(map(int_pool.setdefault, ids, ids))
         tuple_pool[role_ids] = role_ids
         return role_ids
+
+    def _rebuild_role_pools(self, guild_id: int) -> dict[tuple[int, ...], tuple[int, ...]]:
+        """
+        Rebuild a guild's role pools from the members still cached, dropping combinations nobody has anymore.
+
+        Parameters
+        ----------
+        guild_id
+            Guild ID to rebuild the pools for
+
+        Returns
+        -------
+            The new role tuple pool
+        """
+        tuple_pool: dict[tuple[int, ...], tuple[int, ...]] = {}
+        if (guild := self.__guilds.get(guild_id)) is not None:
+            for member in guild._cache_members.values():
+                if role_ids := getattr(member, "role_ids", None):
+                    tuple_pool.setdefault(role_ids, role_ids)
+
+        self.__role_tuple_pools[guild_id] = tuple_pool
+        self.__role_int_pools[guild_id] = {i: i for role_ids in tuple_pool for i in role_ids}
+        self.__role_pool_limits[guild_id] = max(_POOL_REBUILD_MIN, len(tuple_pool) * 2)
+        return tuple_pool
 
     def intern_features(self, raw_features: list[str] | None) -> tuple[str, ...]:
         """
@@ -249,9 +286,46 @@ class Cache:
 
         pool = self.__overwrite_pools.get(guild_id)
         if pool is None:
+            # Nothing ever resets the pool of a guild that isn't cached
+            if guild_id not in self.__guilds:
+                return raw_overwrites
             pool = self.__overwrite_pools[guild_id] = {}
 
-        return pool.setdefault(raw_overwrites, raw_overwrites)
+        elif (pooled := pool.get(raw_overwrites)) is not None:
+            return pooled
+
+        elif len(pool) >= self.__overwrite_pool_limits.get(guild_id, _POOL_REBUILD_MIN):
+            pool = self._rebuild_overwrite_pool(guild_id)
+
+        pool[raw_overwrites] = raw_overwrites
+        return raw_overwrites
+
+    def _rebuild_overwrite_pool(
+        self,
+        guild_id: int
+    ) -> dict[tuple[tuple[int, int, int, int], ...], tuple[tuple[int, int, int, int], ...]]:
+        """
+        Rebuild a guild's overwrite pool from the channels and threads still cached.
+
+        Parameters
+        ----------
+        guild_id
+            Guild ID to rebuild the pool for
+
+        Returns
+        -------
+            The new overwrite pool
+        """
+        pool: dict[tuple[tuple[int, int, int, int], ...], tuple[tuple[int, int, int, int], ...]] = {}
+        if (guild := self.__guilds.get(guild_id)) is not None:
+            for channels in (guild._cache_channels, guild._cache_threads):
+                for channel in channels.values():
+                    if overwrites := getattr(channel, "_raw_overwrites", None):
+                        pool.setdefault(overwrites, overwrites)
+
+        self.__overwrite_pools[guild_id] = pool
+        self.__overwrite_pool_limits[guild_id] = max(_POOL_REBUILD_MIN, len(pool) * 2)
+        return pool
 
     def reset_guild_pools(self, guild_id: int) -> None:
         """
@@ -268,7 +342,9 @@ class Cache:
         """
         self.__role_int_pools.pop(guild_id, None)
         self.__role_tuple_pools.pop(guild_id, None)
+        self.__role_pool_limits.pop(guild_id, None)
         self.__overwrite_pools.pop(guild_id, None)
+        self.__overwrite_pool_limits.pop(guild_id, None)
 
     async def calculate_memory_usage(self) -> dict[str, int]:
         """
@@ -494,9 +570,7 @@ class Cache:
         if self.cache_flags is None:
             return None
 
-        self.__role_int_pools.pop(guild_id, None)
-        self.__role_tuple_pools.pop(guild_id, None)
-        self.__overwrite_pools.pop(guild_id, None)
+        self.reset_guild_pools(guild_id)
         return self.__guilds.pop(guild_id, None)
 
     def add_member(

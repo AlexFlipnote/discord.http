@@ -572,6 +572,74 @@ class TestRoleIdInterning(unittest.TestCase):
         cache, _, guild = _cache_with_guild(GatewayCacheFlags.members)
         self.assertEqual(cache.intern_role_ids(guild.id, []), ())
 
+    def test_uncached_guild_gets_no_pool(self) -> None:
+        # e.g. a user-installed interaction from a guild the bot isn't in, nothing would ever reset it
+        cache, _, _ = _cache_with_guild(GatewayCacheFlags.members)
+        self.assertEqual(cache.intern_role_ids(42, ["1", "2"]), (1, 2))
+        self.assertNotIn(42, cache._Cache__role_tuple_pools)
+        self.assertNotIn(42, cache._Cache__role_int_pools)
+
+    def test_full_pool_is_rebuilt_from_cached_members(self) -> None:
+        cache, _, guild = _cache_with_guild(GatewayCacheFlags.members)
+        kept = cache.intern_role_ids(guild.id, ["1"])
+        guild._cache_members[5] = SimpleNamespace(id=5, role_ids=kept)
+
+        # Stale combinations nobody holds anymore, e.g. from role churn across a long resume
+        for i in range(2, 1025):
+            cache.intern_role_ids(guild.id, [str(i)])
+        self.assertEqual(len(cache._Cache__role_tuple_pools[guild.id]), 1024)
+
+        new = cache.intern_role_ids(guild.id, ["5000"])
+        pool = cache._Cache__role_tuple_pools[guild.id]
+        self.assertEqual(set(pool), {kept, new})
+        self.assertIs(pool[kept], kept)
+        self.assertIs(cache.intern_role_ids(guild.id, ["1"]), kept)
+        self.assertEqual(set(cache._Cache__role_int_pools[guild.id]), {1, 5000})
+
+    def test_rebuild_limit_follows_live_size(self) -> None:
+        cache, _, guild = _cache_with_guild(GatewayCacheFlags.members)
+        for i in range(1, 1501):
+            role_ids = cache.intern_role_ids(guild.id, [str(i)])
+            guild._cache_members[i] = SimpleNamespace(id=i, role_ids=role_ids)
+
+        # Every combination is live, so a rebuild keeps them all and doubles the limit
+        self.assertEqual(len(cache._Cache__role_tuple_pools[guild.id]), 1500)
+        self.assertEqual(cache._Cache__role_pool_limits[guild.id], 2048)
+
+    def test_remove_guild_drops_pool_limits(self) -> None:
+        cache, _, guild = _cache_with_guild(GatewayCacheFlags.members | GatewayCacheFlags.guilds)
+        cache._Cache__role_pool_limits[guild.id] = 4096
+        cache._Cache__overwrite_pool_limits[guild.id] = 4096
+        cache.remove_guild(guild.id)
+        self.assertEqual(cache._Cache__role_pool_limits, {})
+        self.assertEqual(cache._Cache__overwrite_pool_limits, {})
+
+
+class TestOverwriteInterning(unittest.TestCase):
+    def test_same_overwrites_return_the_same_tuple(self) -> None:
+        cache, _, guild = _cache_with_guild(GatewayCacheFlags.channels)
+        first = cache.intern_overwrites(guild.id, ((1, 0, 8, 0),))
+        second = cache.intern_overwrites(guild.id, ((1, 0, 8, 0),))
+        self.assertIs(first, second)
+
+    def test_uncached_guild_gets_no_pool(self) -> None:
+        cache, _, _ = _cache_with_guild(GatewayCacheFlags.channels)
+        cache.intern_overwrites(42, ((1, 0, 8, 0),))
+        self.assertNotIn(42, cache._Cache__overwrite_pools)
+
+    def test_full_pool_is_rebuilt_from_cached_channels(self) -> None:
+        cache, _, guild = _cache_with_guild(GatewayCacheFlags.channels)
+        channel_ow = cache.intern_overwrites(guild.id, ((1, 0, 8, 0),))
+        thread_ow = cache.intern_overwrites(guild.id, ((2, 0, 8, 0),))
+        guild._cache_channels[10] = SimpleNamespace(id=10, _raw_overwrites=channel_ow)
+        guild._cache_threads[11] = SimpleNamespace(id=11, _raw_overwrites=thread_ow)
+
+        for i in range(3, 1025):
+            cache.intern_overwrites(guild.id, ((i, 0, 8, 0),))
+
+        new = cache.intern_overwrites(guild.id, ((5000, 0, 8, 0),))
+        self.assertEqual(set(cache._Cache__overwrite_pools[guild.id]), {channel_ow, thread_ow, new})
+
 
 if __name__ == "__main__":
     unittest.main()
