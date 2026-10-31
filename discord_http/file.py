@@ -12,7 +12,6 @@ class File:
 
     __slots__ = (
         "_filename",
-        "_finalizer",
         "_original_pos",
         "_owner",
         "data",
@@ -34,19 +33,19 @@ class File:
         duration_secs: float | int | None = None,
         waveform: str | None = None
     ):
-        self.spoiler = spoiler
+        self.spoiler: bool = spoiler
         """ Whether the file is a spoiler. """
 
-        self.title = title
+        self.title: str | None = title
         """ The title of the file, if any. """
 
-        self.description = description
+        self.description: str | None = description
         """ The description of the file, if any. """
 
-        self.duration_secs = duration_secs
+        self.duration_secs: float | int | None = duration_secs
         """ The duration of the file in seconds, if applicable. """
 
-        self.waveform = waveform
+        self.waveform: str | None = waveform
         """ The waveform data for the file, if applicable. """
 
         self._filename = filename
@@ -54,7 +53,7 @@ class File:
 
         if isinstance(data, (str, Path)):
             self._filename = filename or Path(data).name
-            self.data = open(data, "rb")  # noqa: SIM115
+            self.data = open(data, "rb")  # ruff: ignore[open-file-with-context-handler]
             """ The file data as a file-like object. """
 
             self._owner = True
@@ -80,7 +79,7 @@ class File:
     def __enter__(self) -> "File":
         return self
 
-    def __exit__(self, *args) -> None:  # noqa: ANN002
+    def __exit__(self, *args) -> None:  # ruff: ignore[missing-type-args]
         self.close()
 
     def __del__(self) -> None:
@@ -107,7 +106,7 @@ class File:
 
         Parameters
         ----------
-        index:
+        index
             The index of the file
 
         Returns
@@ -119,6 +118,8 @@ class File:
             "filename": self.filename
         }
 
+        if self.spoiler:
+            payload["is_spoiler"] = True
         if self.title:
             payload["title"] = self.title
         if self.description:

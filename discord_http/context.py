@@ -22,7 +22,7 @@ from .entitlements import Entitlements
 from .enums import (
     ApplicationCommandType, CommandOptionType,
     ResponseType, ChannelType, InteractionType,
-    ComponentType
+    ComponentType, IntegrationType, InteractionContextType
 )
 from .file import File
 from .flags import Permissions, MessageFlags
@@ -47,6 +47,11 @@ _log = logging.getLogger(__name__)
 
 MISSING = utils.MISSING
 
+# Converted once, compared on every interaction
+_CHAT_INPUT = int(ApplicationCommandType.chat_input)
+_MESSAGE_COMPONENT = int(InteractionType.message_component)
+_MODAL_SUBMIT = int(InteractionType.modal_submit)
+
 channel_types = {
     int(ChannelType.guild_text): TextChannel,
     int(ChannelType.dm): DMChannel,
@@ -61,11 +66,14 @@ channel_types = {
     int(ChannelType.guild_stage_voice): StageChannel,
     int(ChannelType.guild_directory): DirectoryChannel,
     int(ChannelType.guild_forum): ForumChannel,
+    int(ChannelType.guild_media): ForumChannel,
 }
 
 __all__ = (
     "Context",
     "InteractionResponse",
+    "ResolvedValues",
+    "SelectValues",
 )
 
 
@@ -75,7 +83,7 @@ class _ResolveParser:
     )
 
     def __init__(self, ctx: "Context", data: dict):
-        self._parsed_data = {
+        self._parsed_data: dict | None = {
             "members": [], "users": [],
             "channels": [], "roles": [],
             "strings": [], "attachments": []
@@ -87,23 +95,62 @@ class _ResolveParser:
         self._parsed_data["strings"] = data.get("data", {}).get("values", [])
 
         resolved = data.get("data", {}).get("resolved", {})
-        data_to_resolve = ("members", "users", "channels", "roles", "attachments")
 
-        for key in data_to_resolve:
-            self._parse_resolved(ctx, key, resolved)
+        # Read once, a guild that is not cached is rebuilt on every read
+        guild = ctx.guild if resolved.get("members") or resolved.get("roles") else None
+
+        for key in ("members", "users", "channels", "roles", "attachments"):
+            if resolved.get(key):
+                self._parse_resolved(ctx, key, resolved, guild)
 
     @classmethod
-    def none(cls, ctx: "Context") -> Self:
+    def none(cls, ctx: "Context") -> Self:  # ruff: ignore[unused-class-method-argument]
         """ With no values. """
-        return cls(ctx, {})
+        return cls._empty()
+
+    @classmethod
+    def _from_parsed(cls, parsed_data: dict | None) -> Self:
+        """ Build an instance sharing an already-parsed data dict, skipping a redundant re-parse. """
+        self = cls.__new__(cls)
+        self._parsed_data = parsed_data
+        return self
+
+    @classmethod
+    def _empty(cls) -> Self:
+        """ With no values, skipping the parsing entirely as there is nothing to parse. """
+        self = cls.__new__(cls)
+        # Most interactions resolve nothing, so no dict of empty lists is built for them
+        self._parsed_data = None
+        return self
 
     def is_empty(self) -> bool:
         """ Whether no values were selected. """
-        return not any(self._parsed_data.values())
+        return self._parsed_data is None or not any(self._parsed_data.values())
 
-    def _parse_resolved(self, ctx: "Context", key: str, data: dict) -> None:
-        if not data.get(key):
-            return
+    def _values(self, key: str) -> list:
+        """
+        The parsed values of a kind.
+
+        Parameters
+        ----------
+        key
+            The kind of values, like `members` or `roles`
+
+        Returns
+        -------
+            The parsed values, a new empty list if nothing was parsed
+        """
+        if self._parsed_data is None:
+            return []
+        return self._parsed_data[key]
+
+    def _parse_resolved(
+        self,
+        ctx: "Context",
+        key: str,
+        data: dict,
+        guild: "Guild | PartialGuild | None"
+    ) -> None:
 
         for g in data[key]:
             if key == "members":
@@ -114,23 +161,23 @@ class _ResolveParser:
 
             match key:
                 case "members":
-                    if not ctx.guild:
+                    if not guild:
                         raise ValueError("While parsing members, guild object was not available")
-                    to_append.append(Member(state=ctx.bot.state, guild=ctx.guild, data=data_))
+                    to_append.append(ctx.bot.create_member_from_data(data_, guild=guild))
 
                 case "users":
-                    to_append.append(User(state=ctx.bot.state, data=data_))
+                    to_append.append(ctx.bot.create_user_from_data(data_))
 
                 case "attachments":
                     to_append.append(Attachment(state=ctx.bot.state, data=data_))
 
                 case "channels":
-                    to_append.append(channel_types[data_["type"]](state=ctx.bot.state, data=data_))
+                    to_append.append(channel_types.get(data_["type"], BaseChannel)(state=ctx.bot.state, data=data_))
 
                 case "roles":
-                    if not ctx.guild:
+                    if not guild:
                         raise ValueError("While parsing roles, guild object was not available")
-                    to_append.append(Role(state=ctx.bot.state, guild=ctx.guild, data=data_))
+                    to_append.append(ctx.bot.create_role_from_data(data_, guild=guild))
 
                 case _:
                     pass
@@ -147,27 +194,27 @@ class ResolvedValues(_ResolveParser):
     @property
     def members(self) -> list[Member]:
         """ The resolved members if any. """
-        return self._parsed_data["members"]
+        return self._values("members")
 
     @property
     def users(self) -> list[User]:
         """ The resolved users if any. """
-        return self._parsed_data["users"]
+        return self._values("users")
 
     @property
     def channels(self) -> list[BaseChannel]:
         """ The resolved channels if any. """
-        return self._parsed_data["channels"]
+        return self._values("channels")
 
     @property
     def roles(self) -> list[Role]:
         """ The resolved roles if any. """
-        return self._parsed_data["roles"]
+        return self._values("roles")
 
     @property
     def attachments(self) -> list[Attachment]:
         """ The resolved attachments if any. """
-        return self._parsed_data["attachments"]
+        return self._values("attachments")
 
 
 class SelectValues(ResolvedValues):
@@ -180,7 +227,7 @@ class SelectValues(ResolvedValues):
     @property
     def strings(self) -> list[str]:
         """ Of strings selected. """
-        return self._parsed_data["strings"]
+        return self._values("strings")
 
 
 class InteractionResponse:
@@ -197,7 +244,7 @@ class InteractionResponse:
 
         Parameters
         ----------
-        call_after:
+        call_after
             A coroutine to run after the response is sent
 
         Raises
@@ -208,6 +255,9 @@ class InteractionResponse:
         if call_after:
             if not inspect.iscoroutinefunction(call_after):
                 raise TypeError("call_after must be a coroutine")
+
+            # Create the event now, the backend only tracks the response flush when it exists
+            self._parent._ensure_response_sent_event()
 
             task = self._parent.bot.loop.create_task(
                 self._parent._background_task_manager(call_after),
@@ -232,13 +282,13 @@ class InteractionResponse:
 
         Parameters
         ----------
-        thinking:
+        thinking
             If the response should show the "thinking" status
-        ephemeral:
+        ephemeral
             If the response should be ephemeral (show only to the user)
-        flags:
+        flags
             The flags of the message (overrides ephemeral)
-        call_after:
+        call_after
             A coroutine to run after the response is sent
 
         Returns
@@ -247,7 +297,7 @@ class InteractionResponse:
 
         Raises
         ------
-        `TypeError`
+        TypeError
             If `call_after` is not a coroutine
         """
         self._call_after_generator(call_after)
@@ -264,9 +314,9 @@ class InteractionResponse:
 
         Parameters
         ----------
-        modal:
+        modal
             The modal to send
-        call_after:
+        call_after
             A coroutine to run after the response is sent
 
         Returns
@@ -275,7 +325,7 @@ class InteractionResponse:
 
         Raises
         ------
-        `TypeError`
+        TypeError
             - If `modal` is not a `Modal` instance
             - If `call_after` is not a coroutine
         """
@@ -295,7 +345,7 @@ class InteractionResponse:
 
         Parameters
         ----------
-        call_after:
+        call_after
             A coroutine to run after the response is sent
 
         Returns
@@ -316,7 +366,7 @@ class InteractionResponse:
         ephemeral: bool | None = False,
         view: View | None = MISSING,
         tts: bool | None = False,
-        type: ResponseType | int = 4,  # noqa: A002
+        type: ResponseType | int = 4,  # ruff: ignore[builtin-argument-shadowing]
         allowed_mentions: AllowedMentions | None = MISSING,
         poll: Poll | None = MISSING,
         flags: MessageFlags | None = MISSING,
@@ -327,31 +377,31 @@ class InteractionResponse:
 
         Parameters
         ----------
-        content:
+        content
             Content of the message
-        embed:
+        embed
             The embed to send
-        embeds:
+        embeds
             Multiple embeds to send
-        file:
+        file
             A file to send
-        files:
+        files
             Multiple files to send
-        ephemeral:
+        ephemeral
             If the message should be ephemeral (show only to the user)
-        view:
+        view
             Components to include in the message
-        tts:
+        tts
             Whether the message should be sent using text-to-speech
-        type:
+        type
             The type of response to send
-        allowed_mentions:
+        allowed_mentions
             Allowed mentions for the message
-        flags:
+        flags
             The flags of the message (overrides ephemeral)
-        poll:
+        poll
             The poll to be sent
-        call_after:
+        call_after
             A coroutine to run after the response is sent
 
         Returns
@@ -360,10 +410,10 @@ class InteractionResponse:
 
         Raises
         ------
-        `ValueError`
+        ValueError
             - If both `embed` and `embeds` are passed
             - If both `file` and `files` are passed
-        `TypeError`
+        TypeError
             If `call_after` is not a coroutine
         """
         self._call_after_generator(call_after)
@@ -404,23 +454,23 @@ class InteractionResponse:
 
         Parameters
         ----------
-        content:
+        content
             Content of the message
-        embed:
+        embed
             Embed to edit the message with
-        embeds:
+        embeds
             Multiple embeds to edit the message with
-        view:
+        view
             Components to include in the message
-        attachment:
+        attachment
             New file to edit the message with
-        attachments:
+        attachments
             Multiple new files to edit the message with
-        allowed_mentions:
+        allowed_mentions
             Allowed mentions for the message
-        flags:
+        flags
             The flags of the message
-        call_after:
+        call_after
             A coroutine to run after the response is sent
 
         Returns
@@ -429,10 +479,10 @@ class InteractionResponse:
 
         Raises
         ------
-        `ValueError`
+        ValueError
             - If both `embed` and `embeds` are passed
             - If both `attachment` and `attachments` are passed
-        `TypeError`
+        TypeError
             If `call_after` is not a coroutine
         """
         self._call_after_generator(call_after)
@@ -461,7 +511,7 @@ class InteractionResponse:
 
         Parameters
         ----------
-        choices:
+        choices
             The choices to send
 
         Returns
@@ -470,7 +520,7 @@ class InteractionResponse:
 
         Raises
         ------
-        `TypeError`
+        TypeError
             - If `choices` is not a `dict`
             - If `choices` is not a `dict[str | int | float, str]`
         """
@@ -505,23 +555,26 @@ class Context:
     """ Represents the context of an interaction. """
 
     __slots__ = (
-        "_channel",
         "_data",
         "_followup_token",
-        "_guild",
         "_original_response",
+        "_raw_app_permissions",
+        "_raw_authorizing_integration_owners",
+        "_raw_channel",
+        "_raw_command_type",
+        "_raw_context",
         "_raw_resolved",
         "_raw_type",
-        "_response_sent",
-        "app_permissions",
+        "_response_sent_event",
+        "attachment_size_limit",
         "author",
         "benchmark",
         "bot",
         "channel_id",
         "command",
-        "command_type",
         "custom_id",
         "entitlements",
+        "guild_id",
         "guild_locale",
         "id",
         "last_message_id",
@@ -530,7 +583,6 @@ class Context:
         "modal_values",
         "options",
         "recipients",
-        "resolved",
         "response",
         "select_values",
         "user",
@@ -541,9 +593,8 @@ class Context:
         bot: "Client",
         data: dict
     ):
-        self._guild: PartialGuild | None = None
-        self._channel: BaseChannel | None = None
-        self._response_sent: asyncio.Event = asyncio.Event()
+        self._raw_channel: dict | None = None
+        self._response_sent_event: asyncio.Event | None = None
 
         self.bot: "Client" = bot
         """ The bot/client instance that the interaction belongs to. """
@@ -555,32 +606,25 @@ class Context:
 
         data_payload: dict = data.get("data") or {}
 
-        self.command_type: ApplicationCommandType = ApplicationCommandType(
-            data_payload.get("type", ApplicationCommandType.chat_input)
-        )
-        """ The type of the command, if any. """
+        self._raw_command_type: int = data_payload.get("type", _CHAT_INPUT)
 
         # Default utilities
-        self.benchmark = utils.Benchmark()
+        self.benchmark: utils.Benchmark = utils.Benchmark()
         """ A utility for benchmarking the time taken to execute code after responding to the interaction. """
 
         # Arguments that gets parsed on runtime
         self.command: "Command | None" = None
         """ The command that was executed, if any. """
 
-        self.app_permissions: Permissions = Permissions(int(data.get("app_permissions", 0)))
-        """ The permissions of the application in the guild. """
+        self._raw_app_permissions: int = int(data.get("app_permissions", 0))
 
         self.custom_id: str | None = data_payload.get("custom_id")
         """ The custom ID of the interaction, if any. """
 
-        self.resolved: ResolvedValues = ResolvedValues.none(self)
-        """ The resolved values of the interaction. """
-
-        self.select_values: SelectValues = SelectValues.none(self)
+        self.select_values: SelectValues = SelectValues._empty()
         """ The selected values of the interaction, if any. """
 
-        self.modal_values: dict[str, str | list[Member | Role | BaseChannel | Attachment | str]] = {}
+        self.modal_values: dict[str, str | bool | list[Member | Role | BaseChannel | Attachment | str] | None] = {}
         """ The values of the modal, if any. """
 
         self.options: list[dict] = data_payload.get("options", [])
@@ -592,7 +636,7 @@ class Context:
         self._raw_resolved: dict = data_payload.get("resolved", {})
 
         self.entitlements: list[Entitlements] = [
-            Entitlements(state=self.bot.state, data=g)
+            self.bot.create_entitlements_from_data(g)
             for g in data.get("entitlements", [])
         ]
         """ The entitlements associated with the interaction. """
@@ -606,7 +650,7 @@ class Context:
             self.last_message_id = int(channel_payload["last_message_id"])
 
         self.recipients: list[User] = [
-            User(state=self.bot.state, data=g)
+            self.bot.create_user_from_data(g)
             for g in channel_payload.get("recipients", [])
         ]
         """ The recipients of the interaction, if any. """
@@ -617,143 +661,147 @@ class Context:
         self.guild_locale: "LocaleTypes | None" = data.get("guild_locale")
         """ The locale of the guild, if any. """
 
+        self._raw_context: int | None = data.get("context")
+
+        self._raw_authorizing_integration_owners: dict[str, str] = data.get("authorizing_integration_owners") or {}
+
+        self.attachment_size_limit: int = data.get("attachment_size_limit", 0)
+        """ The attachment size limit in bytes for the interaction. """
+
         self.channel_id: int | None = None
         """ The ID of the channel the interaction was sent in, if applicable. """
+
+        self.guild_id: int | None = None
+        """ The ID of the guild the interaction was sent in, if applicable. """
 
         self.message: Message | None = None
         """ The message associated with the interaction, if any. """
 
-        self._data: dict = data
-        """ Should not be used, but if you *really* want the raw data, here it is. """
+        # Only the `data` sub-payload, the full payload would pin `message`/`member`/`channel` for the Context's lifetime
+        self._data: dict = data_payload
 
         self.author: Member | User | None = None
         """ The author of the message that was interacted with, if any. """
 
         # Parse the data, then continue with the rest of the initialization
-        self._from_data(data)
+        guild = self._from_data(data)
 
-        self.user: Member | User = self._parse_user(data)
+        self.user: Member | User = self._parse_user(data, guild)
         """ The user who initiated the interaction. """
 
         self.response: InteractionResponse = InteractionResponse(self)
         """ The response helper for this interaction. """
 
-    def _from_data(self, data: dict) -> None:
-        if data.get("channel_id"):
-            self.channel_id = int(data["channel_id"])
+    def _from_data(self, data: dict) -> "Guild | PartialGuild | None":
+        if channel_id := data.get("channel_id"):
+            self.channel_id = int(channel_id)
 
-        if data.get("guild_id"):
-            self._guild = PartialGuild(
-                state=self.bot.state,
-                id=int(data["guild_id"])
+        if guild_id := data.get("guild_id"):
+            self.guild_id = int(guild_id)
+
+        if channel := data.get("channel"):
+            if self.guild_id:
+                channel["guild_id"] = self.guild_id
+
+            # Only built when read, most commands never use it
+            self._raw_channel = channel
+
+        # Read once, a guild that is not cached is rebuilt on every read
+        guild = self.guild
+
+        if message := data.get("message"):
+            self.message = self.bot.create_message_from_data(
+                message,
+                guild=guild
             )
-
-        if data.get("channel"):
-            channel_data = data["channel"]
-            if self._guild:
-                channel_data["guild_id"] = self._guild.id
-
-            self._channel = channel_types[channel_data["type"]](
-                state=self.bot.state,
-                data=channel_data
+        elif first_msg := next(iter(self._raw_resolved.get("messages", {}).values()), None):
+            self.message = self.bot.create_message_from_data(
+                first_msg,
+                guild=guild
             )
-
-        if data.get("message"):
-            self.message = Message(
-                state=self.bot.state,
-                data=data["message"],
-                guild=self._guild
-            )
-        elif self._raw_resolved.get("messages", {}):
-            first_msg = next(iter(self._raw_resolved["messages"].values()), None)
-            if first_msg:
-                self.message = Message(
-                    state=self.bot.state,
-                    data=first_msg,
-                    guild=self._guild
-                )
-
-        if self._raw_resolved:
-            self.resolved = ResolvedValues(self, data)
 
         if self.message is not None:
             self.author = self.message.author
 
-        match self.type:
-            case InteractionType.message_component:
-                self.select_values = SelectValues(self, data)
+        if self._raw_type == _MESSAGE_COMPONENT:
+            self.select_values = SelectValues(self, data)
 
-            case InteractionType.modal_submit:
-                for comp in data["data"]["components"]:
-                    ans = comp.get("component", None)
-                    if not ans:
-                        # This is probably a text component
-                        continue
-                    self.modal_values[ans["custom_id"]] = ans.get("value", None)
+        elif self._raw_type == _MODAL_SUBMIT:
+            resolved = self.resolved
+            for comp in data["data"]["components"]:
+                ans = comp.get("component", None)
+                if not ans:
+                    # This is probably a text component
+                    continue
+                self.modal_values[ans["custom_id"]] = ans.get("value", None)
 
-                    if ans.get("values", None):
-                        match ComponentType(ans["type"]):
-                            case ComponentType.user_select:
-                                self.modal_values[ans["custom_id"]] = [
-                                    g for g in self.resolved.members
-                                    if str(g.id) in ans.get("values", [])
-                                ]
+                if ans.get("values", None):
+                    match ComponentType(ans["type"]):
+                        case ComponentType.user_select:
+                            self.modal_values[ans["custom_id"]] = [
+                                g for g in resolved.members
+                                if str(g.id) in ans.get("values", [])
+                            ]
 
-                            case ComponentType.role_select:
-                                self.modal_values[ans["custom_id"]] = [
-                                    r for r in self.resolved.roles
-                                    if str(r.id) in ans.get("values", [])
-                                ]
+                        case ComponentType.role_select:
+                            self.modal_values[ans["custom_id"]] = [
+                                r for r in resolved.roles
+                                if str(r.id) in ans.get("values", [])
+                            ]
 
-                            case ComponentType.file_upload:
-                                self.modal_values[ans["custom_id"]] = [
-                                    a for a in self.resolved.attachments
-                                    if str(a.id) in ans.get("values", [])
-                                ]
+                        case ComponentType.file_upload:
+                            self.modal_values[ans["custom_id"]] = [
+                                a for a in resolved.attachments
+                                if str(a.id) in ans.get("values", [])
+                            ]
 
-                            case ComponentType.channel_select:
-                                self.modal_values[ans["custom_id"]] = [
-                                    c for c in self.resolved.channels
-                                    if str(c.id) in ans.get("values", [])
-                                ]
+                        case ComponentType.channel_select:
+                            self.modal_values[ans["custom_id"]] = [
+                                c for c in resolved.channels
+                                if str(c.id) in ans.get("values", [])
+                            ]
 
-                            case ComponentType.mentionable_select:
-                                collected_values = []
-                                allowed_ids = set(ans.get("values", []))
+                        case ComponentType.mentionable_select:
+                            collected_values = []
+                            allowed_ids = set(ans.get("values", []))
 
-                                for m in self.resolved.members:
-                                    if str(m.id) in allowed_ids:
-                                        collected_values.append(m)
-                                for r in self.resolved.roles:
-                                    if str(r.id) in allowed_ids:
-                                        collected_values.append(r)
-                                for c in self.resolved.channels:
-                                    if str(c.id) in allowed_ids:
-                                        collected_values.append(c)
-                                self.modal_values[ans["custom_id"]] = collected_values
+                            for m in resolved.members:
+                                if str(m.id) in allowed_ids:
+                                    collected_values.append(m)
+                            for r in resolved.roles:
+                                if str(r.id) in allowed_ids:
+                                    collected_values.append(r)
+                            for c in resolved.channels:
+                                if str(c.id) in allowed_ids:
+                                    collected_values.append(c)
+                            self.modal_values[ans["custom_id"]] = collected_values
 
-                            case _:
-                                # Probably just strings, default to that
-                                self.modal_values[ans["custom_id"]] = (
-                                    ans.get("values", None) or  # If it was text select
-                                    ans.get("value", None) or  # If it was text input
-                                    "discord.http:INVALID"  # It should never reach here...
-                                )
+                        case _:
+                            # Probably just strings, default to that
+                            self.modal_values[ans["custom_id"]] = (
+                                ans.get("values", None) or  # If it was text select
+                                ans.get("value", None) or  # If it was text input
+                                "discord.http:INVALID"  # It should never reach here...
+                            )
+
+        return guild
 
     async def _background_task_manager(self, call_after: Callable) -> None:
         try:
             try:
                 # Give Discord enough time to close their connection
-                await asyncio.wait_for(self._response_sent.wait(), timeout=5.0)
+                with self.benchmark.measure("call_after:ack_flush_wait", internal=True):
+                    await asyncio.wait_for(self._ensure_response_sent_event().wait(), timeout=5.0)
             except TimeoutError:
-                self._response_sent.set()
+                self._ensure_response_sent_event().set()
                 _log.error(
                     f"call_after:{call_after} refused: no response confirmation "
                     "from Discord within 5s (connection likely dropped)"
                 )
                 return
 
-            await call_after()
+            with self.benchmark.measure("call_after:execution"):
+                await call_after()
         except Exception as e:
             if self.bot.has_any_dispatch("interaction_error"):
                 self.bot.dispatch("interaction_error", self, e)
@@ -763,10 +811,52 @@ class Context:
                     exc_info=e
                 )
 
+    def _ensure_response_sent_event(self) -> asyncio.Event:
+        """ Returns the event set once the HTTP response has been flushed, creating it if needed. """
+        if self._response_sent_event is None:
+            self._response_sent_event = asyncio.Event()
+        return self._response_sent_event
+
     @property
     def type(self) -> InteractionType:
         """ The type of the interaction. """
         return InteractionType(self._raw_type)
+
+    @property
+    def command_type(self) -> ApplicationCommandType:
+        """ The type of the command, if any. """
+        return ApplicationCommandType(self._raw_command_type)
+
+    @property
+    def app_permissions(self) -> Permissions:
+        """ The permissions of the application in the guild. """
+        return Permissions(self._raw_app_permissions)
+
+    @property
+    def context(self) -> InteractionContextType | None:
+        """ The context where the interaction was triggered from, if any. """
+        if self._raw_context is None:
+            return None
+        return InteractionContextType(self._raw_context)
+
+    @property
+    def resolved(self) -> ResolvedValues:
+        """ The resolved values of the interaction, built from the raw data when read. """
+        if not self._raw_resolved:
+            return ResolvedValues._empty()
+        if self._raw_type == _MESSAGE_COMPONENT:
+            # Select menus already parsed these, so share the same objects instead of parsing again
+            return ResolvedValues._from_parsed(self.select_values._parsed_data)
+        return ResolvedValues(self, {"data": self._data})
+
+    def _payload_channel(self) -> BaseChannel | None:
+        """ The channel sent with the interaction, built from the raw payload when asked for. """
+        if self._raw_channel is None:
+            return None
+        return channel_types.get(self._raw_channel["type"], BaseChannel)(
+            state=self.bot.state,
+            data=self._raw_channel
+        )
 
     @property
     def guild(self) -> Guild | PartialGuild | None:
@@ -775,14 +865,19 @@ class Context:
 
         If you are using gateway cache, it can return full object too
         """
-        if not self._guild:
+        if self.guild_id is None:
             return None
 
-        cache = self.bot.cache.get_guild(self._guild.id)
-        if cache:
+        if cache := self.bot.cache.get_guild(self.guild_id):
             return cache
 
-        return self._guild
+        return self._partial_guild()
+
+    def _partial_guild(self) -> PartialGuild | None:
+        """ The partial guild of the interaction, built from its ID when asked for. """
+        if self.guild_id is None:
+            return None
+        return self.bot.get_partial_guild(self.guild_id)
 
     @property
     def channel(self) -> "BaseChannel | PartialChannel | None":
@@ -790,31 +885,27 @@ class Context:
         if not self.channel_id:
             return None
 
-        if self.guild:
-            cache = self.bot.cache.get_channel_thread(
-                guild_id=self.guild.id,
-                channel_id=self.channel_id
-            )
+        if self.guild_id and (cache := self.bot.cache.get_channel_thread(
+            guild_id=self.guild_id,
+            channel_id=self.channel_id
+        )):
+            return cache
 
-            if cache:
-                return cache
-
-        if self._channel:
+        if channel := self._payload_channel():
             # Prefer the channel from context
-            return self._channel
+            return channel
 
-        return PartialChannel(
-            state=self.bot.state,
-            id=self.channel_id,
-            guild_id=self.guild.id if self.guild else None
+        return self.bot.get_partial_channel(
+            self.channel_id,
+            guild_id=self.guild_id
         )
 
     @property
     def channel_type(self) -> ChannelType:
         """ The type of the channel. """
-        if self._channel:
-            return self._channel.type
-        return ChannelType.unknown
+        if self._raw_channel is None:
+            return ChannelType.unknown
+        return ChannelType(self._raw_channel["type"])
 
     @property
     def created_at(self) -> datetime:
@@ -824,9 +915,7 @@ class Context:
     @property
     def cooldown(self) -> Cooldown | None:
         """ The context cooldown. """
-        cooldown = self.command.cooldown
-
-        if cooldown is None:
+        if (cooldown := self.command.cooldown) is None:
             return None
 
         return cooldown.get_bucket(
@@ -842,8 +931,30 @@ class Context:
         """ Returns whether the interaction is expired. """
         return utils.utcnow() >= self.expires_at
 
+    def _warn_if_expired(self) -> None:
+        if self.is_expired():
+            _log.warning(
+                f"Interaction {self.id} token expired at {self.expires_at} (15 minutes after creation). "
+                "Discord will likely respond with 404 Unknown Webhook to this request."
+            )
+
+    @property
+    def authorizing_integration_owners(self) -> dict[IntegrationType, int]:
+        """
+        Mapping of the installation contexts the interaction was authorized for, to the related guild or user ID.
+
+        For `IntegrationType.guild`, the ID is `0` if the interaction was triggered from the bot's DM.
+        """
+        return {
+            IntegrationType(int(k)): int(v)
+            for k, v in self._raw_authorizing_integration_owners.items()
+        }
+
     def is_bot_dm(self) -> bool:
         """ Returns a boolean of whether the interaction was in the bot's DM channel. """
+        if self.context is not None:
+            return self.context == InteractionContextType.bot_dm
+
         return (
             len(self.recipients) == 1 and
             self.bot.user.id in self.recipients
@@ -860,9 +971,9 @@ class Context:
 
         Parameters
         ----------
-        thinking:
+        thinking
             Whether the deferred message should show the "thinking" status
-        ephemeral:
+        ephemeral
             Whether the deferred message should be ephemeral
 
         Returns
@@ -881,9 +992,8 @@ class Context:
             json=payload.to_dict()
         )
 
-        return WebhookMessage(
-            state=self.bot.state,
-            data=r.response["resource"]["message"],
+        return self.bot.create_webhook_message_from_data(
+            r.response["resource"]["message"],
             application_id=self.bot.application_id,  # type: ignore
             token=self._followup_token
         )
@@ -899,7 +1009,7 @@ class Context:
         ephemeral: bool | None = False,
         view: View | None = MISSING,
         tts: bool | None = False,
-        type: ResponseType | int = 4,  # noqa: A002
+        type: ResponseType | int = 4,  # ruff: ignore[builtin-argument-shadowing]
         allowed_mentions: AllowedMentions | None = MISSING,
         poll: Poll | None = MISSING,
         flags: MessageFlags | None = MISSING,
@@ -910,35 +1020,35 @@ class Context:
 
         Parameters
         ----------
-        content:
+        content
             Content of the message
-        embed:
+        embed
             Embed of the message
-        embeds:
+        embeds
             Embeds of the message
-        file:
+        file
             File of the message
-        files:
+        files
             Files of the message
-        ephemeral:
+        ephemeral
             Whether the message should be sent as ephemeral
-        view:
+        view
             Components of the message
-        type:
+        type
             Which type of response should be sent
-        allowed_mentions:
+        allowed_mentions
             Allowed mentions of the message
-        wait:
+        wait
             Whether to wait for the message to be sent
-        thread_id:
+        thread_id
             Thread ID to send the message to
-        poll:
+        poll
             Poll to send with the message
-        tts:
+        tts
             Whether the message should be sent as TTS
-        flags:
+        flags
             Flags of the message
-        delete_after:
+        delete_after
             How long to wait before deleting the message
 
         Returns
@@ -969,7 +1079,7 @@ class Context:
             for i, file in enumerate(payload.files):
                 multidata.attach(
                     f"file{i}",
-                    file,  # type: ignore
+                    file,
                     filename=file.filename
                 )
 
@@ -984,9 +1094,8 @@ class Context:
             headers={"Content-Type": multidata.content_type}
         )
 
-        msg = WebhookMessage(
-            state=self.bot.state,
-            data=r.response["resource"]["message"],
+        msg = self.bot.create_webhook_message_from_data(
+            r.response["resource"]["message"],
             application_id=self.bot.application_id,  # type: ignore
             token=self._followup_token
         )
@@ -1004,12 +1113,12 @@ class Context:
 
         Parameters
         ----------
-        modal:
+        modal
             The modal to send
 
         Raises
         ------
-        `TypeError`
+        TypeError
             If `modal` is not a `Modal` instance
         """
         if not isinstance(modal, Modal):
@@ -1020,7 +1129,8 @@ class Context:
         await self.bot.state.query(
             "POST",
             f"/interactions/{self.id}/{self._followup_token}/callback",
-            json=payload.to_dict()
+            json=payload.to_dict(),
+            res_method="text"
         )
 
     async def create_followup_response(
@@ -1034,7 +1144,7 @@ class Context:
         ephemeral: bool | None = False,
         view: View | None = MISSING,
         tts: bool | None = False,
-        type: ResponseType | int = 4,  # noqa: A002
+        type: ResponseType | int = 4,  # ruff: ignore[builtin-argument-shadowing]
         allowed_mentions: AllowedMentions | None = MISSING,
         poll: Poll | None = MISSING,
         flags: MessageFlags | None = MISSING,
@@ -1048,35 +1158,35 @@ class Context:
 
         Parameters
         ----------
-        content:
+        content
             Content of the message
-        embed:
+        embed
             Embed of the message
-        embeds:
+        embeds
             Embeds of the message
-        file:
+        file
             File of the message
-        files:
+        files
             Files of the message
-        ephemeral:
+        ephemeral
             Whether the message should be sent as ephemeral
-        view:
+        view
             Components of the message
-        type:
+        type
             Which type of response should be sent
-        allowed_mentions:
+        allowed_mentions
             Allowed mentions of the message
-        wait:
+        wait
             Whether to wait for the message to be sent
-        thread_id:
+        thread_id
             Thread ID to send the message to
-        poll:
+        poll
             Poll to send with the message
-        tts:
+        tts
             Whether the message should be sent as TTS
-        flags:
+        flags
             Flags of the message
-        delete_after:
+        delete_after
             How long to wait before deleting the message
 
         Returns
@@ -1101,16 +1211,15 @@ class Context:
             )
         )
 
+        self._warn_if_expired()
         r = await self.bot.state.query(
             "POST",
             f"/webhooks/{self.bot.application_id}/{self._followup_token}",
-            data=payload.to_multipart(is_request=True),
-            headers={"Content-Type": payload.content_type}
+            **payload.to_request()
         )
 
-        msg = WebhookMessage(
-            state=self.bot.state,
-            data=r.response,
+        msg = self.bot.create_webhook_message_from_data(
+            r.response,
             application_id=self.bot.application_id,  # type: ignore
             token=self._followup_token
         )
@@ -1124,14 +1233,14 @@ class Context:
         if self._original_response is not None:
             return self._original_response
 
+        self._warn_if_expired()
         r = await self.bot.state.query(
             "GET",
             f"/webhooks/{self.bot.application_id}/{self._followup_token}/messages/@original"
         )
 
-        msg = WebhookMessage(
-            state=self.bot.state,
-            data=r.response,
+        msg = self.bot.create_webhook_message_from_data(
+            r.response,
             application_id=self.bot.application_id,  # type: ignore
             token=self._followup_token
         )
@@ -1166,16 +1275,15 @@ class Context:
             )
         )
 
+        self._warn_if_expired()
         r = await self.bot.state.query(
             "PATCH",
             f"/webhooks/{self.bot.application_id}/{self._followup_token}/messages/@original",
-            headers={"Content-Type": payload.content_type},
-            data=payload.to_multipart(is_request=True)
+            **payload.to_request()
         )
 
-        msg = WebhookMessage(
-            state=self.bot.state,
-            data=r.response,
+        msg = self.bot.create_webhook_message_from_data(
+            r.response,
             application_id=self.bot.application_id,  # type: ignore
             token=self._followup_token
         )
@@ -1185,9 +1293,11 @@ class Context:
 
     async def delete_original_response(self) -> None:
         """ Delete the original response to the interaction. """
+        self._warn_if_expired()
         await self.bot.state.query(
             "DELETE",
-            f"/webhooks/{self.bot.application_id}/{self._followup_token}/messages/@original"
+            f"/webhooks/{self.bot.application_id}/{self._followup_token}/messages/@original",
+            res_method="text"
         )
 
     async def _create_args(self) -> tuple[list[Member | User | Message | None], dict]:
@@ -1196,7 +1306,7 @@ class Context:
                 return [], await self._create_args_chat_input()
 
             case ApplicationCommandType.user:
-                if self.resolved.members:
+                if self._raw_resolved.get("members"):
                     first: dict | None = next(
                         iter(self._raw_resolved["members"].values()),
                         None
@@ -1204,7 +1314,7 @@ class Context:
 
                     if not first:
                         raise ValueError("User command detected members, but was unable to parse it")
-                    if not self.guild:
+                    if not (guild := self.guild):
                         raise ValueError("While parsing members, guild was not available")
 
                     first["user"] = next(
@@ -1212,10 +1322,8 @@ class Context:
                         None
                     )
 
-                    target = Member(
-                        state=self.bot.state,
-                        guild=self.guild,
-                        data=first
+                    target = self.bot.create_member_from_data(
+                        first, guild=guild
                     )
 
                 elif self._raw_resolved.get("users", {}):
@@ -1227,7 +1335,7 @@ class Context:
                     if not first:
                         raise ValueError("User command detected users, but was unable to parse it")
 
-                    target = User(state=self.bot.state, data=first)
+                    target = self.bot.create_user_from_data(first)
 
                 else:
                     raise ValueError("Neither members nor users were detected while parsing user command")
@@ -1267,24 +1375,22 @@ class Context:
                             member_data = resolved["members"][option["value"]]
                             member_data["user"] = resolved["users"][option["value"]]
 
-                            if not self.guild:
+                            if not (guild := self.guild):
                                 raise ValueError("Guild somehow was not available while parsing Member")
 
-                            kwargs[option["name"]] = Member(
-                                state=self.bot.state,
-                                guild=self.guild,
-                                data=member_data
+                            kwargs[option["name"]] = self.bot.create_member_from_data(
+                                member_data,
+                                guild=guild
                             )
 
                         else:
-                            kwargs[option["name"]] = User(
-                                state=self.bot.state,
-                                data=resolved["users"][option["value"]]
+                            kwargs[option["name"]] = self.bot.create_user_from_data(
+                                resolved["users"][option["value"]]
                             )
 
                     case CommandOptionType.channel:
                         type_id = resolved["channels"][option["value"]]["type"]
-                        kwargs[option["name"]] = channel_types[type_id](
+                        kwargs[option["name"]] = channel_types.get(type_id, BaseChannel)(
                             state=self.bot.state,
                             data=resolved["channels"][option["value"]]
                         )
@@ -1296,22 +1402,21 @@ class Context:
                         )
 
                     case CommandOptionType.role:
-                        if not self.guild:
+                        if not (guild := self.guild):
                             raise ValueError("Guild somehow was not available while parsing Role")
 
-                        kwargs[option["name"]] = Role(
-                            state=self.bot.state,
-                            guild=self.guild,
-                            data=resolved["roles"][option["value"]]
+                        kwargs[option["name"]] = self.bot.create_role_from_data(
+                            resolved["roles"][option["value"]],
+                            guild=guild
                         )
 
                     case CommandOptionType.string:
                         kwargs[option["name"]] = option["value"]
 
-                        has_converter = self.command._converters.get(option["name"], None)
-                        if has_converter:
-                            conv_class = has_converter()
-                            if inspect.iscoroutinefunction(conv_class.convert):
+                        if has_converter := self.command._converters.get(option["name"], None):
+                            conv_type, conv_is_coro = has_converter
+                            conv_class = conv_type()
+                            if conv_is_coro:
                                 kwargs[option["name"]] = await conv_class.convert(
                                     self,
                                     option["value"]
@@ -1341,18 +1446,14 @@ class Context:
             self._raw_resolved
         )
 
-    def _parse_user(self, data: dict) -> Member | User:
+    def _parse_user(self, data: dict, guild: "Guild | PartialGuild | None") -> Member | User:
         if data.get("member"):
-            return Member(
-                state=self.bot.state,
-                guild=self.guild,  # type: ignore
-                data=data["member"]
+            return self.bot.create_member_from_data(
+                data["member"],
+                guild=guild  # type: ignore
             )
         if data.get("user"):
-            return User(
-                state=self.bot.state,
-                data=data["user"]
-            )
+            return self.bot.create_user_from_data(data["user"])
         raise ValueError(
             "Neither member nor user was detected while parsing user"
         )

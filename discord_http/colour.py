@@ -64,7 +64,7 @@ class Colour:
 
     def is_light(self) -> bool:
         """ Returns whether the colour is considered light based on perceived luminance. """
-        return not self.is_dark
+        return not self.is_dark()
 
     def to_rgb(self) -> tuple[int, int, int]:
         """ Returns the RGB values of the colour`. """
@@ -137,11 +137,11 @@ class Colour:
 
         Parameters
         ----------
-        r:
+        r
             Red value
-        g:
+        g
             Green value
-        b:
+        b
             Blue value
 
         Returns
@@ -157,7 +157,7 @@ class Colour:
 
         Parameters
         ----------
-        hex_value:
+        hex_value
             The hex string to convert
 
         Returns
@@ -166,7 +166,7 @@ class Colour:
 
         Raises
         ------
-        `ValueError`
+        ValueError
             Invalid hex colour
         """
         hex_value = hex_value.removeprefix("#")
@@ -183,17 +183,17 @@ class Colour:
             raise ValueError(f"Invalid hex colour {hex_value!r}")
 
     @classmethod
-    def from_hsl(cls, h: int, s: int, l: int) -> Self:  # noqa: E741
+    def from_hsl(cls, h: int, s: int, l: int) -> Self:  # ruff: ignore[ambiguous-variable-name]
         """
         Creates a Colour object from HSL values.
 
         Parameters
         ----------
-        h:
+        h
             Hue (0-360)
-        s:
+        s
             Saturation (0-100)
-        l:
+        l
             Lightness (0-100)
 
         Returns
@@ -228,11 +228,11 @@ class Colour:
 
         Parameters
         ----------
-        h:
+        h
             Hue (0-360)
-        s:
+        s
             Saturation (0-100)
-        v:
+        v
             Value (0-100)
 
         Returns
@@ -267,13 +267,13 @@ class Colour:
 
         Parameters
         ----------
-        c:
+        c
             Cyan (0-100)
-        m:
+        m
             Magenta (0-100)
-        y:
+        y
             Yellow (0-100)
-        k:
+        k
             Key/black (0-100)
 
         Returns
@@ -301,7 +301,7 @@ class Colour:
 
         Parameters
         ----------
-        seed:
+        seed
             The seed to use for the random colour to make it deterministic
 
         Returns

@@ -7,13 +7,17 @@ from enum import Enum as _Enum
 from typing import Any, Self
 
 __all__ = (
+    "ApplicationCommandPermissionType",
     "ApplicationCommandType",
+    "ApplicationEventWebhookStatus",
+    "ApplicationRoleConnectionMetadataType",
     "AuditLogType",
     "AutoModRuleActionType",
     "AutoModRuleEventType",
     "AutoModRulePresetType",
     "AutoModRuleTriggerType",
     "BaseEnum",
+    "BaseThemeType",
     "ButtonStyles",
     "ChannelType",
     "CommandOptionType",
@@ -28,23 +32,35 @@ __all__ = (
     "ExpireBehaviour",
     "ForumLayoutType",
     "IntegrationType",
+    "InteractionContextType",
     "InteractionType",
     "InviteTargetType",
+    "InviteTargetUsersJobStatusType",
     "InviteType",
+    "Locale",
     "MFALevel",
     "MessageReferenceType",
     "MessageType",
+    "NSFWLevel",
+    "OnboardingMode",
+    "OnboardingPromptType",
     "PermissionType",
+    "PremiumTier",
     "PrivacyLevelType",
     "ReactionType",
     "ResponseType",
     "SKUType",
     "ScheduledEventEntityType",
+    "ScheduledEventRecurrenceFrequency",
+    "ScheduledEventRecurrenceMonth",
+    "ScheduledEventRecurrenceWeekday",
     "ScheduledEventStatusType",
     "SeparatorSpacingType",
     "SortOrderType",
     "StickerFormatType",
     "StickerType",
+    "SubscriptionStatus",
+    "TeamMembershipState",
     "TextStyles",
     "VerificationLevel",
     "VideoQualityType",
@@ -58,6 +74,39 @@ _OPERATOR_TABLE: dict[str, Callable[[Any, Any], bool]] = {
     "le": operator.le,
     "eq": operator.eq,
 }
+
+_AUDIT_LOG_TARGET_CATEGORY_MAP: dict[int, str] = {
+    -1: "all",
+    73: "channel"
+}
+
+_AUDIT_LOG_TARGET_RANGE_MAP: list[tuple[int, int, str]] = [
+    (0, 9, "guild"),
+    (10, 19, "channel"),
+    (20, 29, "user"),
+    (30, 39, "role"),
+    (40, 49, "invite"),
+    (50, 59, "webhook"),
+    (60, 69, "emoji"),
+    (70, 79, "message"),
+    (80, 82, "integration"),
+    (83, 89, "stage_instance"),
+    (90, 92, "sticker"),
+    (93, 102, "guild_scheduled_event"),
+    (103, 112, "thread"),
+    (113, 121, "integration_or_app_command"),
+    (130, 132, "soundboard_sound"),
+    (140, 142, "auto_moderation"),
+    (143, 146, "user"),
+    (150, 151, "creator_monetization"),
+    (163, 167, "onboarding"),
+    (190, 191, "guild"),
+    (192, 193, "channel"),
+    (200, 202, "guild_scheduled_event"),
+]
+
+_unknown_members: dict[type, "BaseEnum"] = {}
+""" One cached `unknown = -1` pseudo-member per enum class, so unrecognised values don't allocate on every parse. """
 
 
 class BaseEnum(_Enum):
@@ -91,31 +140,53 @@ class BaseEnum(_Enum):
 
     def __gt__(self, other: Self | str | int) -> bool:
         """ Greater than. """
+        if isinstance(other, self.__class__):
+            return self._value_ > other._value_
         return self._dispatch(other, "gt")
 
     def __lt__(self, other: Self | str | int) -> bool:
-        """ Less than.  """
+        """ Less than. """
+        if isinstance(other, self.__class__):
+            return self._value_ < other._value_
         return self._dispatch(other, "lt")
 
     def __ge__(self, other: Self | str | int) -> bool:
         """ Greater than or equal to. """
+        if isinstance(other, self.__class__):
+            return self._value_ >= other._value_
         return self._dispatch(other, "ge")
 
     def __le__(self, other: Self | str | int) -> bool:
         """ Less than or equal to. """
+        if isinstance(other, self.__class__):
+            return self._value_ <= other._value_
         return self._dispatch(other, "le")
 
     def __eq__(self, other: Self | str | int) -> bool:
         """ Equal to. """
+        if isinstance(other, self.__class__):
+            return self._value_ == other._value_
         res = self._dispatch(other, "eq")
         return res if res is not NotImplemented else False
 
     @classmethod
     def _missing_(cls, _value: object) -> "BaseEnum":
-        """ If an invalid enum is provided, return `unknown = -1` """
+        """
+        If an invalid enum is provided, return a fitting `unknown` member.
+
+        The class' own if it declares one (some use a sentinel other than -1),
+        otherwise a cached `unknown = -1` pseudo-member shared by every unrecognised value.
+        """
+        if (real_unknown := cls.__members__.get("unknown")) is not None:
+            return real_unknown
+
+        if (obj := _unknown_members.get(cls)) is not None:
+            return obj
+
         obj = object.__new__(cls)
         obj._name_ = "unknown"
         obj._value_ = -1
+        _unknown_members[cls] = obj
         return obj
 
     @property
@@ -135,9 +206,9 @@ class BaseEnum(_Enum):
 
         Parameters
         ----------
-        key:
+        key
             The name or value of the enum member to retrieve.
-        default:
+        default
             The value to return if the key is not found.
 
         Returns
@@ -172,17 +243,16 @@ class BaseEnum(_Enum):
 
         Parameters
         ----------
-        other:
+        other
             The value to compare against, which can be an enum member, its name, or its value.
-        op_name:
+        op_name
             The name of the operator to use for comparison (e.g., "gt" for greater than).
 
         Returns
         -------
             The result of the comparison if the types are compatible, otherwise NotImplemented.
         """
-        op = _OPERATOR_TABLE.get(op_name)
-        if op is None:
+        if (op := _OPERATOR_TABLE.get(op_name)) is None:
             raise ValueError(f"Invalid operator name: '{op_name}'")
 
         if isinstance(other, str):
@@ -207,6 +277,22 @@ class IntegrationType(BaseEnum):
     """ Represents the integration type of a command. """
     guild = 0
     user = 1
+
+
+class InteractionContextType(BaseEnum):
+    """ Represents the context where an interaction can be used, or was triggered from. """
+    guild = 0
+    bot_dm = 1
+    private_channel = 2
+
+
+class BaseThemeType(BaseEnum):
+    """ Represents the base theme of a shared client theme. """
+    unset = 0
+    dark = 1
+    light = 2
+    darker = 3
+    midnight = 4
 
 
 class DefaultAvatarType(BaseEnum):
@@ -234,11 +320,39 @@ class InviteTargetType(BaseEnum):
     embedded_application = 2
 
 
+class InviteTargetUsersJobStatusType(BaseEnum):
+    """ Represents the status of an invite's target users file processing job. """
+    unspecified = 0
+    processing = 1
+    completed = 2
+    failed = 3
+
+
 class ApplicationCommandType(BaseEnum):
     """ Represents the type of an application command. """
     chat_input = 1
     user = 2
     message = 3
+    primary_entry_point = 4
+
+
+class ApplicationCommandPermissionType(BaseEnum):
+    """ Represents the type of target an application command permission overwrite applies to. """
+    role = 1
+    user = 2
+    channel = 3
+
+
+class ApplicationRoleConnectionMetadataType(BaseEnum):
+    """ Represents the comparison operation of an application role connection metadata record. """
+    integer_less_than_or_equal = 1
+    integer_greater_than_or_equal = 2
+    integer_equal = 3
+    integer_not_equal = 4
+    datetime_less_than_or_equal = 5
+    datetime_greater_than_or_equal = 6
+    boolean_equal = 7
+    boolean_not_equal = 8
 
 
 class ApplicationEventWebhookStatus(BaseEnum):
@@ -246,6 +360,12 @@ class ApplicationEventWebhookStatus(BaseEnum):
     disabled = 1
     enabled = 2
     disabled_by_discord = 3
+
+
+class TeamMembershipState(BaseEnum):
+    """ Represents the membership state of a team member. """
+    invited = 1
+    accepted = 2
 
 
 class ReactionType(BaseEnum):
@@ -352,6 +472,7 @@ class AuditLogType(BaseEnum):
     channel_overwrite_create = 13
     channel_overwrite_update = 14
     channel_overwrite_delete = 15
+    channel_position_update = 16
     member_kick = 20
     member_prune = 21
     member_ban_add = 22
@@ -364,6 +485,7 @@ class AuditLogType(BaseEnum):
     role_create = 30
     role_update = 31
     role_delete = 32
+    role_position_update = 33
     invite_create = 40
     invite_update = 41
     invite_delete = 42
@@ -393,6 +515,9 @@ class AuditLogType(BaseEnum):
     thread_update = 111
     thread_delete = 112
     application_command_permission_update = 121
+    soundboard_sound_create = 130
+    soundboard_sound_update = 131
+    soundboard_sound_delete = 132
     auto_moderation_rule_create = 140
     auto_moderation_rule_update = 141
     auto_moderation_rule_delete = 142
@@ -418,37 +543,12 @@ class AuditLogType(BaseEnum):
     @property
     def target_type(self) -> str | None:
         """ The type of the target of the audit log entry. """
-        category_map: dict[int, str] = {
-            -1: "all",
-            73: "channel"
-        }
-
-        range_map: list[tuple[int, int, str]] = [
-            (0, 9, "guild"),
-            (10, 19, "channel"),
-            (20, 29, "user"),
-            (30, 39, "role"),
-            (40, 49, "invite"),
-            (50, 59, "webhook"),
-            (60, 69, "emoji"),
-            (70, 79, "message"),
-            (80, 82, "integration"),
-            (83, 89, "stage_instance"),
-            (90, 92, "sticker"),
-            (93, 102, "guild_scheduled_event"),
-            (103, 112, "thread"),
-            (113, 121, "integration_or_app_command"),
-            (140, 142, "auto_moderation"),
-            (143, 145, "user"),
-            (146, 151, "creator_monetization")
-        ]
-
-        if self.value in category_map:
-            return category_map[self.value]
+        if self.value in _AUDIT_LOG_TARGET_CATEGORY_MAP:
+            return _AUDIT_LOG_TARGET_CATEGORY_MAP[self.value]
 
         return next((
             category
-            for start, end, category in range_map
+            for start, end, category in _AUDIT_LOG_TARGET_RANGE_MAP
             if start <= self.value <= end
         ), None)
 
@@ -504,20 +604,87 @@ class ScheduledEventStatusType(BaseEnum):
     canceled = 4
 
 
+class ScheduledEventRecurrenceFrequency(BaseEnum):
+    """ Represents the frequency of a scheduled event's recurrence rule. """
+    yearly = 0
+    monthly = 1
+    weekly = 2
+    daily = 3
+
+
+class ScheduledEventRecurrenceWeekday(BaseEnum):
+    """ Represents a weekday used in a scheduled event's recurrence rule. """
+    monday = 0
+    tuesday = 1
+    wednesday = 2
+    thursday = 3
+    friday = 4
+    saturday = 5
+    sunday = 6
+
+
+class ScheduledEventRecurrenceMonth(BaseEnum):
+    """ Represents a month used in a scheduled event's recurrence rule. """
+    january = 1
+    february = 2
+    march = 3
+    april = 4
+    may = 5
+    june = 6
+    july = 7
+    august = 8
+    september = 9
+    october = 10
+    november = 11
+    december = 12
+
+
+class OnboardingPromptType(BaseEnum):
+    """ Represents the type of a guild onboarding prompt. """
+    multiple_choice = 0
+    dropdown = 1
+
+
+class OnboardingMode(BaseEnum):
+    """ Represents the constraint mode of a guild's onboarding. """
+    onboarding_default = 0
+    onboarding_advanced = 1
+
+
 class DisplayNameFontType(BaseEnum):
     """ Represents the font type of a user's display name style. """
+    # Aliases (aka. the ones actually used)
+    gg_sans = 11
+    tempo = 12
+    sakura = 3
+    jellybean = 4
+    modern = 6
+    medieval = 7
+    _8bit = 8  # Underscore is only there to be valid
+    eightbit = 8
+    vampyre = 10
+    monkey_bars = 13
+    mainframe = 14
+    headbang = 15
+    journal = 16
+
+    # Code names
     default = 11  # Why is this 11? We'll never know...
-    bangers = 1
-    bio_rhyme = 2
+    bangers = 1  # Deprecated
+    bio_rhyme = 2  # Deprecated
     cherry_bomb = 3
     chicle = 4
-    compagnon = 5
+    compagnon = 5  # Deprecated
     museo_moderno = 6
     neo_castel = 7
     pixelify = 8
-    ribes = 9
+    ribes = 9  # Deprecated
     sinistre = 10
     zilla_slab = 12
+    playpen_sans = 13
+    orbitron = 14
+    new_rocker = 15
+    kalam = 16
 
 
 class DisplayNameEffectType(BaseEnum):
@@ -528,6 +695,14 @@ class DisplayNameEffectType(BaseEnum):
     toon = 4
     pop = 5
     glow = 6
+    prism = 7
+    gummy = 8
+
+    # These mostly falls back to solid
+    test_1 = 1001
+    test_2 = 1002
+    test_3 = 1003
+    test_4 = 1004
 
 
 class VerificationLevel(BaseEnum):
@@ -537,6 +712,22 @@ class VerificationLevel(BaseEnum):
     medium = 2
     high = 3
     very_high = 4
+
+
+class NSFWLevel(BaseEnum):
+    """ Represents the NSFW level of a guild. """
+    default = 0
+    explicit = 1
+    safe = 2
+    age_restricted = 3
+
+
+class PremiumTier(BaseEnum):
+    """ Represents the premium tier (boost level) of a guild. """
+    none = 0
+    tier_1 = 1
+    tier_2 = 2
+    tier_3 = 3
 
 
 class ExpireBehaviour(BaseEnum):
@@ -678,6 +869,13 @@ class SKUType(BaseEnum):
     consumable = 3
     subscription = 5
     subscription_group = 6
+
+
+class SubscriptionStatus(BaseEnum):
+    """ Represents the status of a subscription. """
+    active = 0
+    inactive = 1
+    ending = 2
 
 
 class InteractionType(BaseEnum):

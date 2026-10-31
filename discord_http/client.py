@@ -2,18 +2,20 @@ import asyncio
 import importlib
 import inspect
 import logging
+import signal
 import sys
 import time
 
 from aiohttp import web
 from collections.abc import Callable, AsyncIterator, Coroutine
-from datetime import datetime
+from datetime import datetime, timedelta
 from typing import Any, TYPE_CHECKING, TypeVar
 
 from . import utils, __version__
+from .audit import AuditLogEntry
 from .automod import PartialAutoModRule, AutoModRule
 from .backend import DiscordHTTP
-from .channel import PartialChannel, BaseChannel, PartialVoiceState, VoiceState
+from .channel import PartialChannel, BaseChannel, PublicThread, PrivateThread, Thread, ForumThread, VoiceRegion
 from .commands import Command, Interaction, Listener, Cog, SubGroup
 from .context import Context
 from .emoji import PartialEmoji, Emoji
@@ -24,21 +26,23 @@ from .file import File
 from .gateway.cache import Cache
 from .guild import PartialGuild, Guild, PartialScheduledEvent, ScheduledEvent
 from .http import DiscordAPI, HTTPResponse
+from .integrations import Integration
 from .invite import PartialInvite, Invite
-from .member import PartialMember, Member
+from .member import PartialMember, Member, ThreadMember, PartialThreadMember
 from .mentions import AllowedMentions
-from .message import PartialMessage, Message
+from .message import PartialMessage, Message, WebhookMessage
 from .object import Snowflake
-from .role import PartialRole
+from .role import PartialRole, Role
 from .soundboard import SoundboardSound, PartialSoundboardSound
-from .sticker import PartialSticker, Sticker
+from .sticker import PartialSticker, Sticker, StickerPack
 from .user import User, PartialUser, Application
 from .view import InteractionStorage
+from .voice import PartialVoiceState, VoiceState
 from .webhook import PartialWebhook, Webhook
 
 if TYPE_CHECKING:
     from .gateway.client import GatewayClient
-    from .gateway.flags import GatewayCacheFlags, Intents
+    from .gateway.flags import GatewayCacheFlags, GatewayCapabilities, Intents
     from .gateway.object import PlayingStatus
     from .voice.client import VoiceClient
 
@@ -58,50 +62,65 @@ class Client:
 
     Parameters
     ----------
-    token: str
+    token
         Discord bot token
-    guild_id: int | None
+    guild_id
         Guild ID to sync commands to, if not provided, it will sync to global
-    sync: bool
+    sync
         Whether to sync commands on boot or not (defaults to `True`)
-    max_pending_connections:
+    max_pending_connections
         The maximum number of queued connections passed to the interaction URL, by default 128.
         If your bot is receiving a lot of traffic, you might want to increase this value.
-    api_version: int
+    global_ratelimit
+        How many requests per second the bot may send before it waits on its own, by default 50 (Discord's default).
+        Raise it if Discord granted your bot a higher global rate limit.
+        Interaction and webhook requests are never counted against it.
+    api_version
         API version to use for both HTTP and WS, if not provided, it will use the default (10)
-    api_base_url: str | None
+    api_base_url
         Base URL to use for the API, if not provided, it will use the default (`https://discord.com/api`)
-    loop: asyncio.AbstractEventLoop | None
+    loop
         Event loop to use, if not provided, it will use `asyncio.get_running_loop()`
-    allowed_mentions: AllowedMentions | None
+    allowed_mentions
         Allowed mentions to use, if not provided, it will use `AllowedMentions.all()`
-    enable_gateway: bool
-        Whether to enable the gateway or not, which runs in the background
-    automatic_shards: bool
+    automatic_shards
         Whether to automatically shard the bot or not
-    playing_status: PlayingStatus | None
+    playing_status
         The playing status to use, if not provided, it will use `None`.
-        This is only used if `enable_gateway` is `True`.
-    chunk_guilds_on_startup: bool
+        This is only used when the gateway is running.
+    chunk_guilds_on_startup
         Whether to chunk guilds or not when booting, which will reduce the amount of requests
-    guild_ready_timeout: float
+    guild_ready_timeout
         **Gateway**: How long to wait for last GUILD_CREATE to be recieved
         before triggering shard ready
-    gateway_cache: GatewayCacheFlags | None
-        How the gateway should cache, only used if `enable_gateway` is `True`.
+    gateway_cache
+        How the gateway should cache, only used when the gateway is running.
         Leave empty to use no cache.
-    intents: Intents | None
-        Intents to use, only used if `enable_gateway` is `True`
-    logging_level: int
+    intents
+        Intents to use, passing any starts the gateway to receive their events.
+        The gateway also starts without them if the application has no interactions endpoint URL,
+        since Discord then sends interactions over the gateway instead.
+    gateway_capabilities
+        Opt-in Gateway capabilities bitfield to send in the Identify payload, only used when
+        the gateway is running. Currently only used to test upcoming, opt-in Gateway behavior.
+    logging_level
         Logging level to use, if not provided, it will use `logging.INFO`
-    debug_events: bool
+    debug_events
         Whether to log events or not, if not provided, `on_raw_*` events will not be useable
-    interaction_path: str | None
+    interaction_path
         Path to the interaction endpoint, if not provided, it will use the default path which is just `/` (aka. root).
-    disable_default_get_path: bool
+    webhook_events_path
+        Path to the webhook events endpoint (configured separately from the interaction endpoint in your app's
+        settings), if not provided, webhook events will not be served.
+    disable_default_get_path
         Whether to disable the default GET path or not, if not provided, it will use `False`.
         The default GET path only provides information about the bot and when it was last rebooted.
         Usually a great tool to just validate that your bot is online.
+    disable_http_server
+        Whether to never start the HTTP server, if not provided, it will use `False`.
+        The bot then always runs on the gateway alone, even if an interactions endpoint URL is set,
+        useful for bots that only handle gateway events while something else answers the URL.
+        Keep it running while setting the interactions endpoint URL, Discord sends a request to it before saving.
     voice_reconnect_attempts: int
         How many times a voice connection will try to fully reconnect after an
         unexpected close before giving up, if not provided, it will use `5`.
@@ -116,51 +135,85 @@ class Client:
         self,
         *,
         token: str,
-        application_id: int | None = None,
-        public_key: str | None = None,
         guild_id: int | None = None,
         sync: bool = True,
         api_version: int = 10,
         api_base_url: str | None = None,
         loop: asyncio.AbstractEventLoop | None = None,
         allowed_mentions: AllowedMentions | None = None,
-        enable_gateway: bool = False,
         automatic_shards: bool = True,
         max_pending_connections: int = 128,
+        global_ratelimit: int = 50,
         playing_status: "PlayingStatus | None" = None,
         chunk_guilds_on_startup: bool = False,
         guild_ready_timeout: float = 2.0,
         gateway_cache: "GatewayCacheFlags | None" = None,
         interaction_path: str | None = None,
+        webhook_events_path: str | None = None,
         intents: "Intents | None" = None,
+        gateway_capabilities: "GatewayCapabilities | None" = None,
         logging_level: int = logging.INFO,
         disable_default_get_path: bool = False,
+        disable_http_server: bool = False,
         debug_events: bool = False,
         voice_reconnect_attempts: int = 5,
         voice_reconnect_base: float = 1.0,
         voice_reconnect_max_delay: float = 30.0
     ):
-        if application_id is not None:
-            _log.warning(
-                "application_id parameter is no longer needed, it will be fetched automatically."
-            )
-        if public_key is not None:
-            _log.warning(
-                "public_key parameter is no longer needed, it will be fetched automatically."
-            )
+        self._raw_boot_time: float = time.perf_counter()
+
+        # Setup log instantly
+        self.logging_level: int = logging_level
+        """ The logging level used by the library. """
+
+        utils.setup_logger(level=self.logging_level)
+
+        # Cache level, keep them at top
+        self._view_storage: dict[str | int, InteractionStorage] = {}
+        self._default_allowed_mentions = allowed_mentions or AllowedMentions.all()
+
+        self._cogs: dict[str, list[Cog]] = {}
+
+        self._before_invoke: tuple[Callable, bool] | None = None
+        self._after_invoke: tuple[Callable, bool] | None = None
+        self._waiting_listeners: dict[str, list[tuple[asyncio.Future, Callable]]] = {}
+        self._background_tasks: set[asyncio.Task] = set()
+        self._voice_clients: dict[int, "VoiceClient"] = {}
+
+        self._global_cmd_checks: list[tuple[Callable, bool]] = []
+        self._gateway_cache: "GatewayCacheFlags | None" = gateway_cache
+        self._ready: asyncio.Event | None = asyncio.Event()
+        self._shards_ready: asyncio.Event | None = asyncio.Event()
+        self._context: Callable[["Client", dict], Context] = Context
 
         self.application: Application | None = None
         """ The application object for the bot. """
 
         self.api_version: int = int(api_version)
+        """ The API version used for both HTTP and the gateway. """
+
         self.api_base_url: str = str(api_base_url or "https://discord.com/api")
+        """ The base URL used for API requests. """
+
         self.token: str = token
+        """ The bot token. """
+
         self.automatic_shards: bool = automatic_shards
+        """ Whether the bot is automatically sharded or not. """
+
         self.guild_id: int | None = guild_id
+        """ The guild ID commands are synced to, `None` if synced globally. """
+
         self.sync: bool = sync
-        self.logging_level: int = logging_level
+        """ Whether commands are synced on boot or not. """
+
         self.debug_events: bool = debug_events
-        self.enable_gateway: bool = enable_gateway
+        """ Whether events are logged or not, required for `on_raw_*` events. """
+
+        # Intents are what ask for the gateway, a missing interactions endpoint URL turns it on later too
+        self.enable_gateway: bool = intents is not None
+        """ Whether the gateway is enabled or not, set from `intents` and the interactions endpoint URL. """
+
         if voice_reconnect_attempts < 0:
             raise ValueError("voice_reconnect_attempts must be >= 0")
         self.voice_reconnect_attempts: int = voice_reconnect_attempts
@@ -176,23 +229,58 @@ class Client:
             raise ValueError("voice_reconnect_max_delay must be > 0")
         self.voice_reconnect_max_delay: float = voice_reconnect_max_delay
         """ The maximum delay, in seconds, for the voice reconnect exponential backoff. """
+
         self.playing_status: "PlayingStatus | None" = playing_status
+        """ The playing status used when connecting to the gateway, if any. """
+
         self.guild_ready_timeout: float = guild_ready_timeout
+        """ How long to wait for the last GUILD_CREATE before triggering shard ready. """
+
         self.chunk_guilds_on_startup: bool = chunk_guilds_on_startup
+        """ Whether guilds are chunked when booting or not. """
 
         self.intents: Intents | None = intents
+        """ The intents used for the gateway, if any. """
+
+        self.gateway_capabilities: "GatewayCapabilities | None" = gateway_capabilities
+        """ The opt-in gateway capabilities sent in the Identify payload, if any. """
+
         self.interaction_path: str | None = interaction_path or "/"
+        """ The path of the interaction endpoint. """
+
+        self.webhook_events_path: str | None = webhook_events_path
+        """ The path of the webhook events endpoint, `None` if webhook events are not served. """
+
         self.max_pending_connections: int = max_pending_connections
+        """ The maximum number of queued connections to the interaction endpoint. """
+
+        if global_ratelimit < 1:
+            raise ValueError("global_ratelimit must be at least 1")
+
+        self.global_ratelimit: int = int(global_ratelimit)
+        """ The amount of requests per second the bot sends before waiting on its own global rate limit. """
 
         self.gateway: "GatewayClient | None" = None
         """ The gateway client, if enabled. """
 
         self.disable_default_get_path: bool = disable_default_get_path
+        """ Whether the default GET path is disabled or not. """
+
+        self.disable_http_server: bool = disable_http_server
+        """ Whether the HTTP server is never started, leaving the bot on the gateway alone. """
 
         try:
             self.loop: asyncio.AbstractEventLoop = loop or asyncio.get_running_loop()
+            _log.debug(f"asyncio/uvloop loop found, using it ({self.loop})")
         except RuntimeError:
-            self.loop: asyncio.AbstractEventLoop = asyncio.new_event_loop()
+            if sys.platform != "win32":
+                import uvloop
+                self.loop: asyncio.AbstractEventLoop = uvloop.new_event_loop()
+                _log.debug("asyncio/uvloop loop not found, creating uvloop")
+            else:
+                self.loop: asyncio.AbstractEventLoop = asyncio.new_event_loop()
+                _log.debug("asyncio loop not found, creating one")
+
             asyncio.set_event_loop(self.loop)
 
         self.commands: dict[str, Command] = {}
@@ -207,12 +295,6 @@ class Client:
         self.interactions_regex: dict[str, Interaction] = {}
         """ The interactions registered to the client with regex. """
 
-        self._global_cmd_checks: list[tuple[Callable, bool]] = []
-        self._gateway_cache: "GatewayCacheFlags | None" = gateway_cache
-        self._ready: asyncio.Event | None = asyncio.Event()
-        self._shards_ready: asyncio.Event | None = asyncio.Event()
-        self._context: Callable[["Client", dict], Context] = Context
-
         self.cache: Cache = Cache(client=self)
         """ The cache for the client, used for caching guilds, users, etc. """
 
@@ -221,19 +303,6 @@ class Client:
 
         self.backend: DiscordHTTP = DiscordHTTP(client=self)
         """ The backend for the client, used for serving HTTP requests. """
-
-        self._view_storage: dict[str | int, InteractionStorage] = {}
-        self._default_allowed_mentions = allowed_mentions or AllowedMentions.all()
-
-        self._cogs: dict[str, list[Cog]] = {}
-
-        self._before_invoke: tuple[Callable, bool] | None = None
-        self._after_invoke: tuple[Callable, bool] | None = None
-        self._waiting_listeners: dict[str, list[tuple[asyncio.Future, Callable]]] = {}
-        self._background_tasks: set[asyncio.Task] = set()
-        self._voice_clients: dict[int, "VoiceClient"] = {}
-
-        utils.setup_logger(level=self.logging_level)
 
     def _cleanup_task(self, task: asyncio.Task) -> None:
         """ A helper function to clean up asyncio tasks properly. """
@@ -283,15 +352,22 @@ class Client:
         """
         self._voice_clients.pop(guild_id, None)
 
+    def _sweep_command_cooldown(self, cmd: Command, now: float) -> None:
+        """ Sweeps the cooldown cache of a command and its subcommands, if any. """
+        if cmd.cooldown is not None:
+            cmd.cooldown._cleanup_cache(now)
+
+        if isinstance(cmd, SubGroup):
+            for subcmd in cmd.subcommands.values():
+                self._sweep_command_cooldown(subcmd, now)
+
     async def _cooldown_cleanup_loop(self) -> None:
         """ Periodically sweeps expired cooldown buckets that accumulate between invocations. """
         while True:
             await asyncio.sleep(300)
             now = time.time()
             for cmd in self.commands.values():
-                if cmd.cooldown is None:
-                    continue
-                cmd.cooldown._cleanup_cache(now)
+                self._sweep_command_cooldown(cmd, now)
 
     async def _run_global_checks(self, ctx: Context) -> bool:
         for g, is_coro in self._global_cmd_checks:
@@ -310,7 +386,7 @@ class Client:
         self,
         listener: "Listener",
         event_name: str,
-        *args, **kwargs,  # noqa: ANN002
+        *args, **kwargs,  # ruff: ignore[missing-type-args]
     ) -> None:
         try:
             if listener.cog is not None:
@@ -319,7 +395,7 @@ class Client:
                 await listener.coro(*args, **kwargs)
 
         except asyncio.CancelledError:
-            pass
+            raise
 
         except Exception as e:
 
@@ -334,36 +410,30 @@ class Client:
             except asyncio.CancelledError:
                 pass
 
-    async def _prepare_bot(self, _app: web.Application | None = None) -> None:
-        """ Run prepare_setup() before boot to make the user set up needed vars. """
+    async def _fetch_application(self) -> None:
+        """ Creates the HTTP session and fetches the application, needed before anything else can run. """
         await self.state.http._create_session()
 
         try:
-            client = await self.update_me()
+            await self.update_me()
         except RuntimeError as e:
-            # Make sure the error is readable and stop HTTP server here
+            # If this failed, kill the bot, it will fail..
             _log.error(e)
-            await self.backend.shutdown()
-            return
+            raise
+
+    async def _prepare_bot(self, _app: web.Application | None = None) -> None:
+        """ Run prepare_setup() before boot to make the user set up needed vars. """
+        if self.application is None:
+            await self._fetch_application()
+
+        client: User = self.user
 
         await self.setup_hook()
-        await self._prepare_commands()
 
-        self.loop.create_task(
-            self._cooldown_cleanup_loop(),
-            name="discord.http/cooldown_cleanup_loop"
-        )
-
-        self._ready.set()
-
-        if self.has_any_dispatch("ready"):
-            self.dispatch("ready", client)
-        else:
-            _log.info("discord.http is now ready")
+        self._resolve_connection_mode()
 
         if self.enable_gateway:
-            # To avoid circular import, import here
-            from .gateway import GatewayClient
+            from .gateway import GatewayClient  # Circular import
             self.gateway = GatewayClient(
                 bot=self,
                 intents=self.intents,
@@ -371,7 +441,85 @@ class Client:
                 cache_flags=self._gateway_cache
             )
             self.gateway.start()
-            _log.info("Starting discord.http/gateway client")
+
+        await self._prepare_commands()
+
+        task = self.loop.create_task(
+            self._cooldown_cleanup_loop(),
+            name="discord.http/cooldown_cleanup_loop"
+        )
+        self._background_tasks.add(task)
+        task.add_done_callback(self._cleanup_task)
+
+        self._ready.set()
+
+        if self.has_any_dispatch("ready"):
+            self.dispatch("ready", client)
+        else:
+            backend = self.backend
+            serving: str = (
+                f" on http://{backend.host}:{backend.port}{backend.interaction_path}"
+                if backend.host is not None else ""
+            )
+            _log.info(f"discord.http is now ready{serving} (took {utils.format_small_unit(self.uptime)})")
+
+    def _resolve_connection_mode(self) -> str:
+        """
+        Enables the gateway if the bot can only run on it, then logs and returns the connection mode.
+
+        Discord only sends interactions over the gateway when the application has no
+        interactions endpoint URL, so without one the gateway is required to receive them.
+        A disabled HTTP server always means the gateway, even with an endpoint URL set,
+        for bots that only handle gateway events while something else answers the URL.
+        The mode is either `HTTP`, `HTTP+WS`, `WS` or `WS+`.
+        """
+        endpoint_url: str | None = self.application.interactions_endpoint_url if self.application else None
+
+        if not endpoint_url or self.disable_http_server:
+            self.enable_gateway = True
+
+        # What each mode means is explained in the README, so only the name is logged
+        mode: str
+        if not endpoint_url or self.disable_http_server:
+            # With an endpoint URL and HTTP disabled, it's "Trust me, I know what I am doing" mode,
+            # Discord keeps sending interactions to the URL and this bot only gets gateway events
+            mode = "WS+" if self.intents else "WS"
+        elif self.enable_gateway:
+            mode = "HTTP+WS"
+        else:
+            mode = "HTTP"
+
+        disabled_note: str = " (HTTP server disabled)" if self.disable_http_server else ""
+        _log.info(f"Starting discord.http v{__version__} in {mode} mode{disabled_note}")
+
+        if not endpoint_url and not self.disable_http_server:
+            # Kept running so Discord can verify an endpoint URL when it is saved
+            _log.info(
+                "HTTP server kept running so Discord can verify an endpoint URL "
+                "(disable_http_server=True turns it off)"
+            )
+
+        return mode
+
+    def _handle_gateway_interaction(self, data: dict, *, replayed: bool = False) -> None:
+        """
+        Schedules an interaction received over the gateway to be handled in the background.
+
+        Ran as a task so a slow command never blocks the shard from reading events.
+
+        Parameters
+        ----------
+        data
+            The raw interaction payload from `INTERACTION_CREATE`
+        replayed
+            Whether the interaction was replayed by Discord after a resume
+        """
+        task: asyncio.Task = self.loop.create_task(
+            self.backend.handle_gateway_interaction(data, replayed=replayed),
+            name=f"discord.http/gateway/interaction:{data.get('id')}"
+        )
+        self._background_tasks.add(task)
+        task.add_done_callback(self._cleanup_task)
 
     async def __cleanup(self, _: web.Application | None = None) -> None:
         """ Called when the bot is shutting down. """
@@ -381,12 +529,16 @@ class Client:
             _log.debug("Shutting down discord.http/gateway...")
             await self.gateway.close()
 
+        if self._background_tasks:
+            for task in self._background_tasks:
+                task.cancel()
+            await asyncio.gather(*self._background_tasks, return_exceptions=True)
+
         await self.state.http._close_session()
 
     def _update_command_ids(self, data: dict) -> None:
         for g in data:
-            cmd = self.commands.get(g["name"], None)
-            if not cmd:
+            if not (cmd := self.commands.get(g["name"], None)):
                 continue
             cmd.id = int(g["id"])
 
@@ -394,7 +546,7 @@ class Client:
         self,
         listener: "Listener",
         event_name: str,
-        *args, **kwargs  # noqa: ANN002
+        *args, **kwargs  # ruff: ignore[missing-type-args]
     ) -> asyncio.Task:
         """ Schedules an event to be dispatched. """
         wrapped = self._run_event(
@@ -446,7 +598,7 @@ class Client:
 
         Parameters
         ----------
-        guild_id:
+        guild_id
             The ID of the guild to get the shard ID of
 
         Returns
@@ -455,7 +607,7 @@ class Client:
 
         Raises
         ------
-        `NotImplementedError`
+        NotImplementedError
             If the gateway is not available
         """
         if not self.gateway:
@@ -480,17 +632,17 @@ class Client:
 
         Parameters
         ----------
-        guild_id:
+        guild_id
             The ID of the guild to query members in
-        query:
+        query
             The query to search for (defaults to an empty string, which will return all members)
-        limit:
+        limit
             The maximum amount of members to return (defaults to 0, which will return all members)
-        presences:
+        presences
             Whether to include presences in the response
-        user_ids:
+        user_ids
             The user IDs to fetch members for
-        shard_id:
+        shard_id
             The shard ID to query the members from
 
         Returns
@@ -499,17 +651,15 @@ class Client:
 
         Raises
         ------
-        `ValueError`
+        ValueError
             - If `shard_id` is not provided
             - If `shard_id` is not valid
         """
         if not self.gateway:
             raise NotImplementedError("gateway is not available")
 
-        if shard_id is None:
-            shard_id = self.get_shard_by_guild_id(guild_id)
-            if shard_id is None:  # Just double check
-                raise ValueError("shard_id must be provided")
+        if shard_id is None and (shard_id := self.get_shard_by_guild_id(guild_id)) is None:  # Just double check
+            raise ValueError("shard_id must be provided")
 
         shard = self.gateway.get_shard(shard_id)
         if not shard:
@@ -564,7 +714,7 @@ class Client:
 
         Raises
         ------
-        `AttributeError`
+        AttributeError
             - If used before the bot is ready
             - If the application does not have a bot user associated with it
         """
@@ -601,7 +751,7 @@ class Client:
 
         Parameters
         ----------
-        guild_id:
+        guild_id
             The ID of the guild to get.
 
         Returns
@@ -623,6 +773,11 @@ class Client:
             self._shards_ready is not None and
             self._shards_ready.is_set()
         )
+
+    @property
+    def uptime(self) -> timedelta:
+        """ How long it has been since the client was created. """
+        return timedelta(seconds=time.perf_counter() - self._raw_boot_time)
 
     def set_context(
         self,
@@ -646,7 +801,7 @@ class Client:
 
         Parameters
         ----------
-        cls:
+        cls
             The context to use for commands.
             Leave empty to use the default context.
         """
@@ -677,7 +832,7 @@ class Client:
 
         Parameters
         ----------
-        cls:
+        cls
             The backend to use for everything.
             Leave empty to use the default backend.
         """
@@ -732,7 +887,7 @@ class Client:
 
         Parameters
         ----------
-        func:
+        func
             The async function to run.
         """
         if not inspect.iscoroutinefunction(func):
@@ -751,17 +906,74 @@ class Client:
         """
         Boot up the bot and start the HTTP server.
 
+        The HTTP server always starts, even without an interactions endpoint URL,
+        since Discord needs it running to verify the URL before it can be saved.
+        Pass `disable_http_server=True` to the client to run on the gateway alone.
+
         Parameters
         ----------
-        host:
+        host
             Host to use, if not provided, it will use `127.0.0.1`
-        port:
+        port
             Port to use, if not provided, it will use `8080`
         """
-        _log.info(f"Starting discord.http (v{__version__})")
+        # Needed up front to warn about anything a disabled HTTP server would leave unanswered
+        self.loop.run_until_complete(self._fetch_application())
+
+        if not self._needs_http_server():
+            self._run_without_http()
+            return
+
         self.backend.on_startup.append(self._prepare_bot)
         self.backend.on_cleanup.append(self.__cleanup)
         self.backend.start(host=host, port=port)
+
+    def _needs_http_server(self) -> bool:
+        """
+        Whether the HTTP server is started, warns when disabling it leaves something unanswered.
+
+        It runs by default, even without an interactions endpoint URL,
+        since Discord sends a request to the URL to verify it before saving it.
+        """
+        if not self.disable_http_server:
+            return True
+
+        endpoint_url: str | None = self.application.interactions_endpoint_url if self.application else None
+        if endpoint_url:
+            _log.warning(
+                "The HTTP server is disabled, but an interactions endpoint URL is set, "
+                "interactions sent to it are not answered by this bot"
+            )
+        if self.webhook_events_path:
+            _log.warning("The HTTP server is disabled, webhook events will not be received")
+
+        return False
+
+    def _run_without_http(self) -> None:
+        """ Runs the bot on the gateway alone, used when the HTTP server is disabled with `disable_http_server=True`. """
+        if sys.platform != "win32":
+            # Same as aiohttp does for the HTTP server, so stopping the bot still cleans up
+            for sig in (signal.SIGINT, signal.SIGTERM):
+                self.loop.add_signal_handler(sig, self.loop.stop)
+
+        try:
+            self.loop.run_until_complete(self._prepare_bot())
+            self.loop.run_forever()
+        except KeyboardInterrupt:
+            pass
+        finally:
+            try:
+                self.loop.run_until_complete(self.__cleanup())
+
+                # Same as aiohttp does when the HTTP server stops, so no task is left pending
+                remaining: set[asyncio.Task] = asyncio.all_tasks(self.loop)
+                for task in remaining:
+                    task.cancel()
+                self.loop.run_until_complete(asyncio.gather(*remaining, return_exceptions=True))
+
+                self.loop.run_until_complete(self.loop.shutdown_asyncgens())
+            finally:
+                self.loop.close()
 
     async def wait_until_ready(self) -> None:
         """ Waits until the client is ready using `asyncio.Event.wait()`. """
@@ -787,18 +999,18 @@ class Client:
         self,
         event_name: str,
         /,
-        *args, **kwargs  # noqa: ANN002
+        *args, **kwargs  # ruff: ignore[missing-type-args]
     ) -> None:
         """
         Dispatches an event to all listeners of that event.
 
         Parameters
         ----------
-        event_name:
+        event_name
             The name of the event to dispatch.
-        *args:
+        *args
             The arguments to pass to the event.
-        **kwargs:
+        **kwargs
             The keyword arguments to pass to the event.
         """
         method = f"on_{event_name.lower()}"
@@ -811,8 +1023,7 @@ class Client:
             )
 
         # Now check if there are any listeners waiting for this event
-        listeners = self._waiting_listeners.get(method, None)
-        if not listeners:
+        if not (listeners := self._waiting_listeners.get(method, None)):
             return
 
         removed = []
@@ -851,14 +1062,15 @@ class Client:
 
         Parameters
         ----------
-        event_name:
+        event_name
             The name of the event to check for.
 
         Returns
         -------
             Whether the bot has any listeners for the event.
         """
-        return bool(self.listeners.get(f"on_{event_name}"))
+        method = f"on_{event_name}"
+        return bool(self.listeners.get(method)) or bool(self._waiting_listeners.get(method))
 
     async def load_extension(
         self,
@@ -869,7 +1081,7 @@ class Client:
 
         Parameters
         ----------
-        package:
+        package
             The package to load the extension from.
         """
         if package in self._cogs:
@@ -880,9 +1092,7 @@ class Client:
         if was_imported:
             lib = importlib.reload(lib)
 
-        setup = getattr(lib, "setup", None)
-
-        if not setup:
+        if not (setup := getattr(lib, "setup", None)):
             raise RuntimeError(f"Cog {package} does not have a setup function")
 
         await setup(self)
@@ -896,7 +1106,7 @@ class Client:
 
         Parameters
         ----------
-        package:
+        package
             The package to unload the extension from.
         """
         if package not in self._cogs:
@@ -916,12 +1126,12 @@ class Client:
 
         Parameters
         ----------
-        package:
+        package
             The package to reload the extension from.
 
         Raises
         ------
-        `RuntimeError`
+        RuntimeError
             - If the extension failed to reload, but the previous state was restored successfully
             - If the extension failed to reload, and the previous state failed to be restored
         """
@@ -962,7 +1172,7 @@ class Client:
 
         Parameters
         ----------
-        cog:
+        cog
             The cog to add to the bot.
         """
         await cog._inject(self)
@@ -973,7 +1183,7 @@ class Client:
 
         Parameters
         ----------
-        cog:
+        cog
             The cog to remove from the bot.
         """
         await cog._eject(self)
@@ -993,11 +1203,11 @@ class Client:
 
         Parameters
         ----------
-        event_name:
+        event_name
             The name of the event to wait for.
-        check:
+        check
             The check to use, by default None.
-        timeout:
+        timeout
             The timeout to use, by default None.
 
         Returns
@@ -1006,7 +1216,7 @@ class Client:
 
         Raises
         ------
-        `TimeoutError`
+        TimeoutError
             If the event was not dispatched within the timeout
         """
         if not self.enable_gateway:
@@ -1016,7 +1226,7 @@ class Client:
         future = self.loop.create_future()
 
         if check is None:
-            def _check(*_) -> bool:  # noqa: ANN002
+            def _check(*_) -> bool:  # ruff: ignore[missing-type-args]
                 return True
             check = _check
 
@@ -1055,15 +1265,15 @@ class Client:
 
         Parameters
         ----------
-        name:
+        name
             Name of the command, if not provided, it will use the function name
-        description:
+        description
             Description of the command, if not provided, it will use the function docstring
-        guild_ids:
+        guild_ids
             List of guild IDs to register the command in
-        user_install:
+        user_install
             Whether the command can be installed by users or not
-        guild_install:
+        guild_install
             Whether the command can be installed by guilds or not
         """
         def decorator(func: Callable) -> Command:
@@ -1101,13 +1311,13 @@ class Client:
 
         Parameters
         ----------
-        name:
+        name
             Name of the command, if not provided, it will use the function name
-        guild_ids:
+        guild_ids
             List of guild IDs to register the command in
-        user_install:
+        user_install
             Whether the command can be installed by users or not
-        guild_install:
+        guild_install
             Whether the command can be installed by guilds or not
         """
         def decorator(func: Callable) -> Command:
@@ -1145,13 +1355,13 @@ class Client:
 
         Parameters
         ----------
-        name:
+        name
             Name of the command, if not provided, it will use the function name
-        guild_ids:
+        guild_ids
             List of guild IDs to register the command in
-        user_install:
+        user_install
             Whether the command can be installed by users or not
-        guild_install:
+        guild_install
             Whether the command can be installed by guilds or not
         """
         def decorator(func: Callable) -> Command:
@@ -1177,7 +1387,7 @@ class Client:
 
         Parameters
         ----------
-        func: Callable
+        func
             The function to be called before the command is invoked.
         """
         def decorator(func: Callable) -> Callable:
@@ -1194,7 +1404,7 @@ class Client:
 
         Parameters
         ----------
-        func: Callable
+        func
             The function to be called after the command is invoked.
         """
         def decorator(func: Callable) -> Callable:
@@ -1214,9 +1424,9 @@ class Client:
 
         Parameters
         ----------
-        name:
+        name
             Name of the group, if not provided, it will use the function name
-        description:
+        description
             Description of the group, if not provided, it will use the function docstring
         """
         def decorator(func: Callable) -> SubGroup:
@@ -1235,7 +1445,7 @@ class Client:
 
         Parameters
         ----------
-        name:
+        name
             Name of the group
 
         Returns
@@ -1259,9 +1469,9 @@ class Client:
 
         Parameters
         ----------
-        custom_id:
+        custom_id
             Custom ID of the interaction
-        regex:
+        regex
             Whether the custom_id is a regex or not
         """
         def decorator(func: Callable) -> Interaction:
@@ -1282,12 +1492,12 @@ class Client:
 
         Parameters
         ----------
-        name:
+        name
             Name of the listener, if not provided, it will use the function name
 
         Raises
         ------
-        `TypeError`
+        TypeError
             - If the listener name is not a string
             - If the listener is not a coroutine function
         """
@@ -1309,15 +1519,20 @@ class Client:
 
     def get_channel(
         self,
-        channel_id: int | None
+        channel_id: int | None,
+        *,
+        guild_id: int | None = None
     ) -> BaseChannel | PartialChannel | None:
         """
         Get a channel object from the cache.
 
         Parameters
         ----------
-        channel_id:
+        channel_id
             The ID of the channel to get.
+        guild_id
+            The ID of the guild the channel belongs to, if known.
+            Providing this avoids a linear scan of every cached guild.
 
         Returns
         -------
@@ -1326,9 +1541,11 @@ class Client:
         if channel_id is None:
             return None
 
+        if guild_id is not None:
+            return self.cache.get_channel(guild_id, channel_id)
+
         for guild in self.guilds:
-            channel = guild.get_channel(channel_id)
-            if channel:
+            if channel := guild.get_channel(channel_id):
                 return channel
 
         return None
@@ -1337,17 +1554,20 @@ class Client:
         self,
         channel_id: int,
         *,
-        guild_id: int | None = None
+        guild_id: int | None = None,
+        parent_id: int | None = None
     ) -> PartialChannel:
         """
         Creates a partial channel object.
 
         Parameters
         ----------
-        channel_id:
+        channel_id
             Channel ID to create the partial channel object with.
-        guild_id:
+        guild_id
             Guild ID to create the partial channel object with.
+        parent_id
+            ID of the parent channel or category, if any.
 
         Returns
         -------
@@ -1356,14 +1576,99 @@ class Client:
         return PartialChannel(
             state=self.state,
             id=channel_id,
-            guild_id=guild_id
+            guild_id=guild_id,
+            parent_id=parent_id
         )
+
+    def create_public_thread_from_data(self, data: dict) -> PublicThread:
+        """
+        Creates a public thread object from raw API/gateway data.
+
+        Parameters
+        ----------
+        data
+            The data to create the public thread object with.
+
+        Returns
+        -------
+            The public thread object.
+        """
+        return PublicThread(state=self.state, data=data)
+
+    def create_private_thread_from_data(self, data: dict) -> PrivateThread:
+        """
+        Creates a private thread object from raw API/gateway data.
+
+        Parameters
+        ----------
+        data
+            The data to create the private thread object with.
+
+        Returns
+        -------
+            The private thread object.
+        """
+        return PrivateThread(state=self.state, data=data)
+
+    def create_thread_from_data(self, data: dict) -> Thread:
+        """
+        Creates a thread object from raw API/gateway data.
+
+        Parameters
+        ----------
+        data
+            The data to create the thread object with.
+
+        Returns
+        -------
+            The thread object.
+        """
+        return Thread(state=self.state, data=data)
+
+    def create_forum_thread_from_data(self, data: dict) -> ForumThread:
+        """
+        Creates a forum thread object from raw API/gateway data.
+
+        Parameters
+        ----------
+        data
+            The data to create the forum thread object with.
+
+        Returns
+        -------
+            The forum thread object.
+        """
+        return ForumThread(state=self.state, data=data)
 
     async def fetch_current_application(self) -> Application:
         """ Fetches and update cache of the current application object. """
         app = await self.state.me()
         self.application = app
         return app
+
+    def create_application_from_data(self, data: dict) -> Application:
+        """
+        Creates an application object from raw API data.
+
+        Parameters
+        ----------
+        data
+            The data to create the application object with.
+
+        Returns
+        -------
+            The application object.
+        """
+        return Application(state=self.state, data=data)
+
+    async def fetch_voice_regions(self) -> list[VoiceRegion]:
+        """ Fetches the list of voice regions available on Discord. """
+        r = await self.state.query("GET", "/voice/regions")
+
+        return [
+            VoiceRegion(data=g)
+            for g in r.response
+        ]
 
     async def fetch_channel(
         self,
@@ -1376,9 +1681,9 @@ class Client:
 
         Parameters
         ----------
-        channel_id:
+        channel_id
             Channel ID to fetch the channel object with.
-        guild_id:
+        guild_id
             Guild ID to fetch the channel object with.
 
         Returns
@@ -1398,9 +1703,9 @@ class Client:
 
         Parameters
         ----------
-        rule_id:
+        rule_id
             The ID of the automod rule
-        guild_id:
+        guild_id
             The Guild ID where it comes from
 
         Returns
@@ -1423,9 +1728,9 @@ class Client:
 
         Parameters
         ----------
-        rule_id:
+        rule_id
             The ID of the automod rule
-        guild_id:
+        guild_id
             The Guild ID where it comes from
 
         Returns
@@ -1451,11 +1756,11 @@ class Client:
 
         Parameters
         ----------
-        invite_code:
+        invite_code
             Invite code to create the partial invite object with.
-        channel_id:
+        channel_id
             Channel ID to create the partial invite object with.
-        guild_id:
+        guild_id
             Guild ID to create the partial invite object with.
 
         Returns
@@ -1481,11 +1786,11 @@ class Client:
 
         Parameters
         ----------
-        member_id:
+        member_id
             The ID of the member to create the partial voice state from
-        guild_id:
+        guild_id
             Guild ID to create the partial voice state from
-        channel_id:
+        channel_id
             Channel ID to create the partial voice state from
 
         Returns
@@ -1509,9 +1814,9 @@ class Client:
 
         Parameters
         ----------
-        member_id:
+        member_id
             The ID of the member to fetch the voice state from
-        guild_id:
+        guild_id
             Guild ID to fetch the voice state from
 
         Returns
@@ -1536,9 +1841,9 @@ class Client:
 
         Parameters
         ----------
-        emoji_id:
+        emoji_id
             Emoji ID to create the partial emoji object with.
-        guild_id:
+        guild_id
             Guild ID of where the emoji comes from.
             If None, it will get the emoji from the application.
 
@@ -1552,6 +1857,28 @@ class Client:
             guild_id=guild_id
         )
 
+    def create_emoji_from_data(
+        self,
+        data: dict,
+        *,
+        guild: "PartialGuild | Guild | None" = None
+    ) -> Emoji:
+        """
+        Creates an emoji object from raw API/gateway data.
+
+        Parameters
+        ----------
+        data
+            The data to create the emoji object with.
+        guild
+            The guild the emoji belongs to. If None, it's an application-owned emoji.
+
+        Returns
+        -------
+            The emoji object.
+        """
+        return Emoji(state=self.state, data=data, guild=guild)
+
     async def fetch_emoji(
         self,
         emoji_id: int,
@@ -1563,9 +1890,9 @@ class Client:
 
         Parameters
         ----------
-        emoji_id:
+        emoji_id
             The ID of the emoji in question
-        guild_id:
+        guild_id
             Guild ID of the emoji.
             If None, it will fetch the emoji from the application
 
@@ -1591,9 +1918,9 @@ class Client:
 
         Parameters
         ----------
-        sticker_id:
+        sticker_id
             Sticker ID to create the partial sticker object with.
-        guild_id:
+        guild_id
             Guild ID to create the partial sticker object with.
 
         Returns
@@ -1606,6 +1933,28 @@ class Client:
             guild_id=guild_id
         )
 
+    def create_sticker_from_data(
+        self,
+        data: dict,
+        *,
+        guild: "PartialGuild | None" = None
+    ) -> Sticker:
+        """
+        Creates a sticker object from raw API/gateway data.
+
+        Parameters
+        ----------
+        data
+            The data to create the sticker object with.
+        guild
+            The guild the sticker belongs to, if any.
+
+        Returns
+        -------
+            The sticker object.
+        """
+        return Sticker(state=self.state, data=data, guild=guild)
+
     async def fetch_sticker(
         self,
         sticker_id: int,
@@ -1617,9 +1966,9 @@ class Client:
 
         Parameters
         ----------
-        sticker_id:
+        sticker_id
             Sticker ID to fetch the sticker object with.
-        guild_id:
+        guild_id
             Guild ID to fetch the sticker object from.
 
         Returns
@@ -1633,6 +1982,41 @@ class Client:
 
         return await sticker.fetch()
 
+    async def fetch_sticker_packs(self) -> list[StickerPack]:
+        """ Fetches all the standard sticker packs available on Discord. """
+        r = await self.state.query(
+            "GET",
+            "/sticker-packs"
+        )
+
+        return [
+            StickerPack(state=self.state, data=g)
+            for g in r.response["sticker_packs"]
+        ]
+
+    async def fetch_sticker_pack(
+        self,
+        pack_id: int
+    ) -> StickerPack:
+        """
+        Fetches a standard sticker pack.
+
+        Parameters
+        ----------
+        pack_id
+            Sticker pack ID to fetch the sticker pack object with.
+
+        Returns
+        -------
+            The sticker pack object.
+        """
+        r = await self.state.query(
+            "GET",
+            f"/sticker-packs/{pack_id}"
+        )
+
+        return StickerPack(state=self.state, data=r.response)
+
     def get_partial_soundboard_sound(
         self,
         sound_id: int,
@@ -1644,9 +2028,9 @@ class Client:
 
         Parameters
         ----------
-        sound_id:
+        sound_id
             Sound ID to create the partial soundboard sound object with.
-        guild_id:
+        guild_id
             Guild ID to create the partial soundboard sound object with.
 
         Returns
@@ -1659,6 +2043,28 @@ class Client:
             guild_id=guild_id
         )
 
+    def create_soundboard_sound_from_data(
+        self,
+        data: dict,
+        *,
+        guild: "PartialGuild | Guild | None" = None
+    ) -> SoundboardSound:
+        """
+        Creates a soundboard sound object from raw API/gateway data.
+
+        Parameters
+        ----------
+        data
+            The data to create the soundboard sound object with.
+        guild
+            The guild the soundboard sound belongs to, if any.
+
+        Returns
+        -------
+            The soundboard sound object.
+        """
+        return SoundboardSound(state=self.state, data=data, guild=guild)
+
     async def fetch_soundboard_sound(
         self,
         sound_id: int,
@@ -1669,9 +2075,9 @@ class Client:
 
         Parameters
         ----------
-        sound_id:
+        sound_id
             Sound ID to fetch the soundboard sound object with.
-        guild_id:
+        guild_id
             Guild ID to fetch the soundboard sound object from.
 
         Returns
@@ -1685,6 +2091,18 @@ class Client:
 
         return await sound.fetch()
 
+    async def fetch_default_soundboard_sounds(self) -> list[SoundboardSound]:
+        """ Fetches the default soundboard sounds that can be used by all users. """
+        r = await self.state.query(
+            "GET",
+            "/soundboard-default-sounds"
+        )
+
+        return [
+            self.create_soundboard_sound_from_data(g)
+            for g in r.response
+        ]
+
     async def fetch_invite(
         self,
         invite_code: str
@@ -1694,7 +2112,7 @@ class Client:
 
         Parameters
         ----------
-        invite_code:
+        invite_code
             Invite code to fetch the invite object with.
 
         Returns
@@ -1703,6 +2121,21 @@ class Client:
         """
         invite = self.get_partial_invite(invite_code)
         return await invite.fetch()
+
+    def create_invite_from_data(self, data: dict) -> Invite:
+        """
+        Creates an invite object from raw API/gateway data.
+
+        Parameters
+        ----------
+        data
+            The data to create the invite object with.
+
+        Returns
+        -------
+            The invite object.
+        """
+        return Invite(state=self.state, data=data)
 
     def get_partial_message(
         self,
@@ -1715,11 +2148,11 @@ class Client:
 
         Parameters
         ----------
-        message_id:
+        message_id
             Message ID to create the partial message object with.
-        channel_id:
+        channel_id
             Channel ID to create the partial message object with.
-        guild_id:
+        guild_id
             Guild ID to create the partial message object with.
 
         Returns
@@ -1744,11 +2177,11 @@ class Client:
 
         Parameters
         ----------
-        message_id:
+        message_id
             Message ID to fetch the message object with.
-        channel_id:
+        channel_id
             Channel ID to fetch the message object with.
-        guild_id:
+        guild_id
             Guild ID to fetch the message object from.
 
         Returns
@@ -1757,6 +2190,28 @@ class Client:
         """
         msg = self.get_partial_message(message_id, channel_id, guild_id)
         return await msg.fetch()
+
+    def create_message_from_data(
+        self,
+        data: dict,
+        *,
+        guild: "PartialGuild | None" = None
+    ) -> Message:
+        """
+        Creates a message object from raw API/gateway data.
+
+        Parameters
+        ----------
+        data
+            The data to create the message object with.
+        guild
+            The guild the message was sent in, if any.
+
+        Returns
+        -------
+            The message object.
+        """
+        return Message(state=self.state, data=data, guild=guild)
 
     def get_partial_webhook(
         self,
@@ -1769,9 +2224,9 @@ class Client:
 
         Parameters
         ----------
-        webhook_id:
+        webhook_id
             Webhook ID to create the partial webhook object with.
-        webhook_token:
+        webhook_token
             Webhook token to create the partial webhook object with.
 
         Returns
@@ -1795,9 +2250,9 @@ class Client:
 
         Parameters
         ----------
-        webhook_id:
+        webhook_id
             Webhook ID to fetch the webhook object with.
-        webhook_token:
+        webhook_token
             Webhook token to fetch the webhook object with.
 
         Returns
@@ -1811,6 +2266,36 @@ class Client:
 
         return await webhook.fetch()
 
+    def create_webhook_message_from_data(
+        self,
+        data: dict,
+        *,
+        application_id: int,
+        token: str
+    ) -> WebhookMessage:
+        """
+        Creates a webhook message object from raw API data.
+
+        Parameters
+        ----------
+        data
+            The data to create the webhook message object with.
+        application_id
+            The ID of the application/webhook that sent the message.
+        token
+            The token of the webhook that sent the message.
+
+        Returns
+        -------
+            The webhook message object.
+        """
+        return WebhookMessage(
+            state=self.state,
+            data=data,
+            application_id=application_id,
+            token=token
+        )
+
     def get_partial_user(
         self,
         user_id: int
@@ -1820,7 +2305,7 @@ class Client:
 
         Parameters
         ----------
-        user_id:
+        user_id
             User ID to create the partial user object with.
 
         Returns
@@ -1841,7 +2326,7 @@ class Client:
 
         Parameters
         ----------
-        user_id:
+        user_id
             User ID to fetch the user object with.
 
         Returns
@@ -1850,6 +2335,23 @@ class Client:
         """
         user = self.get_partial_user(user_id)
         return await user.fetch()
+
+    def create_user_from_data(self, data: dict) -> User:
+        """
+        Creates a user object from raw API/gateway data.
+
+        Parameters
+        ----------
+        data
+            The data to create the user object with.
+
+        Returns
+        -------
+            The user object.
+        """
+        if self.cache._user_dedup_enabled:
+            return self.cache._user_from_data(data)
+        return User(state=self.state, data=data)
 
     def get_partial_member(
         self,
@@ -1861,9 +2363,9 @@ class Client:
 
         Parameters
         ----------
-        user_id:
+        user_id
             User ID to create the partial member object with.
-        guild_id:
+        guild_id
             Guild ID that the member is in.
 
         Returns
@@ -1886,9 +2388,9 @@ class Client:
 
         Parameters
         ----------
-        guild_id:
+        guild_id
             Guild ID that the member is in.
-        user_id:
+        user_id
             User ID to fetch the member object with.
 
         Returns
@@ -1898,6 +2400,57 @@ class Client:
         member = self.get_partial_member(user_id, guild_id)
         return await member.fetch()
 
+    def create_member_from_data(self, data: dict, *, guild: "Guild | PartialGuild") -> Member:
+        """
+        Creates a member object from raw API/gateway data.
+
+        Parameters
+        ----------
+        data
+            The data to create the member object with.
+        guild
+            The guild the member is in.
+
+        Returns
+        -------
+            The member object.
+        """
+        return Member(state=self.state, guild=guild, data=data)
+
+    def create_thread_member_from_data(self, data: dict, *, guild: "PartialGuild") -> ThreadMember:
+        """
+        Creates a thread member object from raw API/gateway data.
+
+        Parameters
+        ----------
+        data
+            The data to create the thread member object with.
+        guild
+            The guild the thread is in.
+
+        Returns
+        -------
+            The thread member object.
+        """
+        return ThreadMember(state=self.state, guild=guild, data=data)
+
+    def create_partial_thread_member_from_data(self, data: dict, *, guild_id: int) -> PartialThreadMember:
+        """
+        Creates a partial thread member object from raw API/gateway data.
+
+        Parameters
+        ----------
+        data
+            The data to create the partial thread member object with.
+        guild_id
+            The ID of the guild the thread is in.
+
+        Returns
+        -------
+            The partial thread member object.
+        """
+        return PartialThreadMember(state=self.state, data=data, guild_id=guild_id)
+
     async def fetch_application_emojis(self) -> list[Emoji]:
         """ Fetches all emojis available to the application. """
         r = await self.state.query(
@@ -1906,7 +2459,7 @@ class Client:
         )
 
         return [
-            Emoji(state=self.state, data=g)
+            self.create_emoji_from_data(g)
             for g in r.response.get("items", [])
         ]
 
@@ -1921,9 +2474,9 @@ class Client:
 
         Parameters
         ----------
-        name:
+        name
             Name of emoji
-        image:
+        image
             The image data to use for the emoji.
 
         Returns
@@ -1939,10 +2492,7 @@ class Client:
             }
         )
 
-        return Emoji(
-            state=self.state,
-            data=r.response
-        )
+        return self.create_emoji_from_data(r.response)
 
     def get_partial_sku(
         self,
@@ -1960,6 +2510,21 @@ class Client:
             id=sku_id
         )
 
+    def create_sku_from_data(self, data: dict) -> SKU:
+        """
+        Creates a SKU object from raw API data.
+
+        Parameters
+        ----------
+        data
+            The data to create the SKU object with.
+
+        Returns
+        -------
+            The SKU object.
+        """
+        return SKU(state=self.state, data=data)
+
     async def fetch_skus(self) -> list[SKU]:
         """ Fetches all SKUs available to the bot. """
         r = await self.state.query(
@@ -1968,7 +2533,7 @@ class Client:
         )
 
         return [
-            SKU(state=self.state, data=g)
+            self.create_sku_from_data(g)
             for g in r.response
         ]
 
@@ -1981,7 +2546,7 @@ class Client:
 
         Parameters
         ----------
-        entitlement_id:
+        entitlement_id
             Entitlement ID to create the partial entitlement object with.
 
         Returns
@@ -2002,7 +2567,7 @@ class Client:
 
         Parameters
         ----------
-        entitlement_id:
+        entitlement_id
             Entitlement ID to fetch the entitlement object with.
 
         Returns
@@ -2011,6 +2576,38 @@ class Client:
         """
         ent = self.get_partial_entitlement(entitlement_id)
         return await ent.fetch()
+
+    def create_entitlements_from_data(self, data: dict) -> Entitlements:
+        """
+        Creates an entitlement object from raw API/gateway data.
+
+        Parameters
+        ----------
+        data
+            The data to create the entitlement object with.
+
+        Returns
+        -------
+            The entitlement object.
+        """
+        return Entitlements(state=self.state, data=data)
+
+    def create_integration_from_data(self, data: dict, *, guild: "Guild | PartialGuild") -> Integration:
+        """
+        Creates an integration object from raw API/gateway data.
+
+        Parameters
+        ----------
+        data
+            The data to create the integration object with.
+        guild
+            The guild the integration belongs to.
+
+        Returns
+        -------
+            The integration object.
+        """
+        return Integration(state=self.state, data=data, guild=guild)
 
     async def fetch_entitlement_list(
         self,
@@ -2028,24 +2625,24 @@ class Client:
 
         Parameters
         ----------
-        user_id:
+        user_id
             Show entitlements for a specific user ID.
-        sku_ids:
+        sku_ids
             Show entitlements for a specific SKU ID.
-        before:
+        before
             Only show entitlements before this entitlement ID.
-        after:
+        after
             Only show entitlements after this entitlement ID.
-        limit:
+        limit
             Limit the amount of entitlements to fetch.
             Use `None` to fetch all entitlements.
-        guild_id:
+        guild_id
             Show entitlements for a specific guild ID.
-        exclude_ended:
+        exclude_ended
             Whether to exclude ended entitlements or not.
 
-        Returns
-        -------
+        Yields
+        ------
             The entitlement objects.
         """
         params: dict[str, Any] = {
@@ -2136,7 +2733,7 @@ class Client:
 
             i = 0
             for ent in messages:
-                yield Entitlements(state=self.state, data=ent)
+                yield self.create_entitlements_from_data(ent)
                 i += 1
 
             if i < 100:
@@ -2152,9 +2749,9 @@ class Client:
 
         Parameters
         ----------
-        event_id:
+        event_id
             The ID of the scheduled event.
-        guild_id:
+        guild_id
             The guild ID of the scheduled event.
 
         Returns
@@ -2177,9 +2774,9 @@ class Client:
 
         Parameters
         ----------
-        event_id:
+        event_id
             The ID of the scheduled event.
-        guild_id:
+        guild_id
             The guild ID of the scheduled event.
 
         Returns
@@ -2200,7 +2797,7 @@ class Client:
 
         Parameters
         ----------
-        guild_id:
+        guild_id
             Guild ID to create the partial guild object with.
 
         Returns
@@ -2221,7 +2818,7 @@ class Client:
 
         Parameters
         ----------
-        guild_id:
+        guild_id
             Guild ID to fetch the guild object with.
 
         Returns
@@ -2230,6 +2827,164 @@ class Client:
         """
         guild = self.get_partial_guild(guild_id)
         return await guild.fetch()
+
+    async def fetch_guilds(
+        self,
+        *,
+        before: "datetime | Snowflake | int | None" = None,
+        after: "datetime | Snowflake | int | None" = None,
+        limit: int | None = 200,
+        with_counts: bool = False,
+        shard: int | None = None
+    ) -> AsyncIterator[Guild]:
+        """
+        Fetches the guilds the bot is in.
+
+        Guilds are partial, only containing `id`, `name`, `icon`,
+        `banner`, `features` and optionally the approximate counts.
+
+        Parameters
+        ----------
+        before
+            Get guilds before this guild ID.
+        after
+            Get guilds after this guild ID.
+        limit
+            The maximum amount of guilds to fetch.
+            `None` will fetch all guilds.
+        with_counts
+            Whether to include `approximate_member_count` and `approximate_presence_count` or not.
+        shard
+            Only fetch the guilds in this shard (`0` to `max_concurrency - 1`).
+            Required if the bot is using large bot sharding, iterate over every shard to get all guilds.
+            This is not the same as the gateway shard ID.
+
+        Yields
+        ------
+            The guild object.
+        """
+        async def _get_guilds(limit: int, **kwargs) -> HTTPResponse[list[dict]]:
+            params: dict[str, Any] = {
+                "limit": limit,
+                "with_counts": "true" if with_counts else "false"
+            }
+
+            if shard is not None:
+                params["shard"] = shard
+
+            for key, value in kwargs.items():
+                if value is None:
+                    continue
+                params[key] = utils.normalize_entity_id(value)
+
+            return await self.state.query(
+                "GET",
+                "/users/@me/guilds",
+                params=params
+            )  # pyright: ignore[reportReturnType]
+
+        async def _after_http(
+            http_limit: int,
+            after_id: int | None,
+            limit: int | None
+        ) -> tuple[list[dict], int | None, int | None]:
+            r = await _get_guilds(limit=http_limit, after=after_id)
+
+            if r.response:
+                if limit is not None:
+                    limit -= len(r.response)
+                after_id = int(r.response[-1]["id"])
+
+            return r.response, after_id, limit
+
+        async def _before_http(
+            http_limit: int,
+            before_id: int | None,
+            limit: int | None
+        ) -> tuple[list[dict], int | None, int | None]:
+            r = await _get_guilds(limit=http_limit, before=before_id)
+
+            if r.response:
+                if limit is not None:
+                    limit -= len(r.response)
+                before_id = int(r.response[0]["id"])
+
+            return r.response, before_id, limit
+
+        # Only used when paginating backwards with both before and after
+        after_bound: int | None = None
+
+        if before:
+            strategy, state = _before_http, utils.normalize_entity_id(before)
+            if after:
+                after_bound = utils.normalize_entity_id(after)
+        else:
+            strategy, state = _after_http, (
+                utils.normalize_entity_id(after) if after else None
+            )
+
+        while True:
+            http_limit: int = 200 if limit is None else min(limit, 200)
+            if http_limit <= 0:
+                break
+
+            strategy: Callable
+            guilds, state, limit = await strategy(http_limit, state, limit)
+
+            if after_bound is not None:
+                filtered = [g for g in guilds if int(g["id"]) > after_bound]
+                reached_bound = len(filtered) < len(guilds)
+            else:
+                filtered, reached_bound = guilds, False
+
+            for g in filtered:
+                yield self.create_guild_from_data(g, populate_cache=False)
+
+            if reached_bound or len(guilds) < 200:
+                break
+
+    def create_guild_from_data(self, data: dict, *, populate_cache: bool = True) -> Guild:
+        """
+        Creates a guild object from raw API/gateway data.
+
+        Parameters
+        ----------
+        data
+            The data to create the guild object with.
+        populate_cache
+            Whether to populate the guild's role/emoji/sticker cache from the data.
+
+        Returns
+        -------
+            The guild object.
+        """
+        return Guild(state=self.state, data=data, populate_cache=populate_cache)
+
+    def create_audit_log_entry_from_data(
+        self,
+        data: dict,
+        *,
+        guild: "PartialGuild | None" = None,
+        users: dict[int, User] | None = None
+    ) -> AuditLogEntry:
+        """
+        Creates an audit log entry object from raw API/gateway data.
+
+        Parameters
+        ----------
+        data
+            The data to create the audit log entry object with.
+        guild
+            The guild the audit log entry belongs to, if already known.
+        users
+            A mapping of user IDs to already-resolved `User` objects, used to
+            avoid re-resolving users referenced multiple times in the same audit log page.
+
+        Returns
+        -------
+            The audit log entry object.
+        """
+        return AuditLogEntry(state=self.state, data=data, guild=guild, users=users)
 
     async def create_guild(
         self,
@@ -2245,11 +3000,11 @@ class Client:
 
         Parameters
         ----------
-        name:
+        name
             The name of the guild
-        icon:
+        icon
             The icon of the guild
-        reason:
+        reason
             The reason for creating the guild
 
         Returns
@@ -2268,10 +3023,7 @@ class Client:
             reason=reason
         )
 
-        return Guild(
-            state=self.state,
-            data=r.response
-        )
+        return self.create_guild_from_data(r.response)
 
     def get_partial_role(
         self,
@@ -2283,9 +3035,9 @@ class Client:
 
         Parameters
         ----------
-        role_id:
+        role_id
             Role ID to create the partial role object with.
-        guild_id:
+        guild_id
             Guild ID that the role is in.
 
         Returns
@@ -2298,6 +3050,23 @@ class Client:
             guild_id=guild_id
         )
 
+    def create_role_from_data(self, data: dict, *, guild: "Guild | PartialGuild") -> Role:
+        """
+        Creates a role object from raw API/gateway data.
+
+        Parameters
+        ----------
+        data
+            The data to create the role object with.
+        guild
+            The guild the role belongs to.
+
+        Returns
+        -------
+            The role object.
+        """
+        return Role(state=self.state, guild=guild, data=data)
+
     def find_interaction(
         self,
         custom_id: str
@@ -2307,7 +3076,7 @@ class Client:
 
         Parameters
         ----------
-        custom_id:
+        custom_id
             The Custom ID to find the interaction with.
             Will automatically convert to regex matching
             if some interaction Custom IDs are regex.
@@ -2316,8 +3085,7 @@ class Client:
         -------
             The interaction that was found if any.
         """
-        inter = self.interactions.get(custom_id, None)
-        if inter:
+        if inter := self.interactions.get(custom_id, None):
             return inter
 
         for _, inter in self.interactions_regex.items():
@@ -2335,7 +3103,7 @@ class Client:
 
         Parameters
         ----------
-        func:
+        func
             The listener to add to the bot.
         """
         self.listeners.setdefault(func.name, []).append(func)
@@ -2350,11 +3118,10 @@ class Client:
 
         Parameters
         ----------
-        func:
+        func
             The listener to remove from the bot.
         """
-        bucket = self.listeners.get(func.name)
-        if bucket:
+        if bucket := self.listeners.get(func.name):
             try:
                 bucket.remove(func)
             except ValueError:
@@ -2371,7 +3138,7 @@ class Client:
 
         Parameters
         ----------
-        func:
+        func
             The command to add to the bot.
         """
         self.commands[func.name] = func
@@ -2386,7 +3153,7 @@ class Client:
 
         Parameters
         ----------
-        func:
+        func
             The command to remove from the bot.
         """
         self.commands.pop(func.name, None)
@@ -2400,7 +3167,7 @@ class Client:
 
         Parameters
         ----------
-        func:
+        func
             The function to add
         """
         self._global_cmd_checks.append((func, inspect.iscoroutinefunction(func)))
@@ -2416,7 +3183,7 @@ class Client:
 
         Parameters
         ----------
-        func:
+        func
             The interaction to add to the bot.
         """
         if func.regex:
@@ -2435,7 +3202,7 @@ class Client:
 
         Parameters
         ----------
-        func:
+        func
             The interaction to remove from the bot.
         """
         if func.regex:

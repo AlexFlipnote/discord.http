@@ -1,0 +1,645 @@
+import unittest
+
+from types import SimpleNamespace
+
+from discord_http.gateway.activity import ActivityAssets
+from discord_http.gateway.cache import Cache
+from discord_http.gateway.flags import GatewayCacheFlags
+
+
+class FakeGuild:
+    def __init__(self, id=1):
+        self.id = id
+        self.member_count = 10
+        self._cache_members = {}
+        self._cache_channels = {}
+        self._cache_threads = {}
+        self._cache_roles = {}
+        self._cache_emojis = {}
+        self._cache_stickers = {}
+        self._cache_voice_states = {}
+        self._updated_with = None
+        self._channel_lookup = {}
+        self._thread_lookup = {}
+
+    def _update(self, data):
+        self._updated_with = data
+
+    def get_channel(self, channel_id):
+        return self._channel_lookup.get(channel_id)
+
+    def get_thread(self, channel_id):
+        return self._thread_lookup.get(channel_id)
+
+    def get_member(self, user_id):
+        return self._cache_members.get(user_id)
+
+
+class FakeClient:
+    def __init__(self, cache_flags=None, bot_user_id=999):
+        self._gateway_cache = cache_flags
+        self.user = SimpleNamespace(id=bot_user_id)
+
+    def get_partial_guild(self, guild_id):
+        return SimpleNamespace(kind="partial_guild", id=guild_id)
+
+    def get_partial_member(self, user_id, guild_id):
+        return SimpleNamespace(kind="partial_member", id=user_id, guild_id=guild_id)
+
+    def get_partial_channel(self, channel_id, *, guild_id=None, parent_id=None):
+        return SimpleNamespace(kind="partial_channel", id=channel_id, guild_id=guild_id, parent_id=parent_id)
+
+    def get_partial_role(self, role_id, guild_id):
+        return SimpleNamespace(kind="partial_role", id=role_id, guild_id=guild_id)
+
+    def get_partial_emoji(self, emoji_id, *, guild_id=None):
+        return SimpleNamespace(kind="partial_emoji", id=emoji_id, guild_id=guild_id)
+
+    def get_partial_sticker(self, sticker_id, *, guild_id=None):
+        return SimpleNamespace(kind="partial_sticker", id=sticker_id, guild_id=guild_id)
+
+    def get_partial_voice_state(self, member_id, *, guild_id=None, channel_id=None):
+        return SimpleNamespace(
+            kind="partial_voice_state", id=member_id,
+            guild_id=guild_id, channel_id=channel_id,
+        )
+
+
+def _cache_with_guild(cache_flags, guild=None):
+    # Seeds the cache's private guild dict directly rather than going through
+    # add_guild(), since add_guild() only stores a guild when the guilds/
+    # partial_guilds flag is set - and most tests here exercise flags for
+    # other resource types (members, channels, roles, ...) with a guild
+    # that must still be resolvable via get_guild().
+    bot = FakeClient(cache_flags=cache_flags)
+    cache = Cache(client=bot)
+    guild = guild or FakeGuild()
+    cache._Cache__guilds[guild.id] = guild
+    return cache, bot, guild
+
+
+class TestAddGuild(unittest.TestCase):
+    def test_none_cache_flags_stores_nothing(self) -> None:
+        bot = FakeClient(cache_flags=None)
+        cache = Cache(client=bot)
+        result = cache.add_guild(1, FakeGuild())
+        self.assertIsNone(result)
+        self.assertIsNone(cache.get_guild(1))
+
+    def test_guilds_flag_stores_full_guild(self) -> None:
+        bot = FakeClient(cache_flags=GatewayCacheFlags.guilds)
+        cache = Cache(client=bot)
+        guild = FakeGuild()
+        result = cache.add_guild(1, guild)
+        self.assertIs(result, guild)
+        self.assertIs(cache.get_guild(1), guild)
+
+    def test_partial_guilds_flag_stores_partial_guild_instead(self) -> None:
+        bot = FakeClient(cache_flags=GatewayCacheFlags.partial_guilds)
+        cache = Cache(client=bot)
+        cache.add_guild(1, FakeGuild())
+        stored = cache.get_guild(1)
+        self.assertEqual(stored.kind, "partial_guild")
+
+    def test_no_relevant_flag_stores_nothing(self) -> None:
+        bot = FakeClient(cache_flags=GatewayCacheFlags.members)
+        cache = Cache(client=bot)
+        result = cache.add_guild(1, FakeGuild())
+        self.assertIsNone(result)
+        self.assertIsNone(cache.get_guild(1))
+
+
+class TestGetGuild(unittest.TestCase):
+    def test_none_guild_id_returns_none(self) -> None:
+        cache = Cache(client=FakeClient(cache_flags=GatewayCacheFlags.guilds))
+        self.assertIsNone(cache.get_guild(None))
+
+    def test_unknown_guild_id_returns_none(self) -> None:
+        cache = Cache(client=FakeClient(cache_flags=GatewayCacheFlags.guilds))
+        self.assertIsNone(cache.get_guild(999))
+
+
+class TestUpdateGuild(unittest.TestCase):
+    def test_none_cache_flags_is_noop(self) -> None:
+        cache, _, guild = _cache_with_guild(None)
+        cache.update_guild(guild.id, {"name": "x"})
+        self.assertIsNone(guild._updated_with)
+
+    def test_unknown_guild_is_noop(self) -> None:
+        cache, _, _ = _cache_with_guild(GatewayCacheFlags.guilds)
+        cache.update_guild(999, {"name": "x"})  # should not raise
+
+    def test_guilds_flag_absent_does_not_update(self) -> None:
+        cache, _, guild = _cache_with_guild(GatewayCacheFlags.partial_guilds)
+        cache.update_guild(guild.id, {"name": "x"})
+        self.assertIsNone(guild._updated_with)
+
+    def test_guilds_flag_present_updates(self) -> None:
+        cache, _, guild = _cache_with_guild(GatewayCacheFlags.guilds)
+        cache.update_guild(guild.id, {"name": "x"})
+        self.assertEqual(guild._updated_with, {"name": "x"})
+
+
+class TestRemoveGuild(unittest.TestCase):
+    def test_none_cache_flags_returns_none(self) -> None:
+        cache, _, guild = _cache_with_guild(None)
+        self.assertIsNone(cache.remove_guild(guild.id))
+
+    def test_removes_and_returns_the_guild(self) -> None:
+        cache, _, guild = _cache_with_guild(GatewayCacheFlags.guilds)
+        removed = cache.remove_guild(guild.id)
+        self.assertIs(removed, guild)
+        self.assertIsNone(cache.get_guild(guild.id))
+
+
+class TestAddMember(unittest.TestCase):
+    def test_none_cache_flags_is_noop(self) -> None:
+        cache, _, guild = _cache_with_guild(None)
+        member = SimpleNamespace(id=5, guild_id=guild.id)
+        cache.add_member(member)
+        self.assertEqual(guild._cache_members, {})
+
+    def test_unknown_guild_is_noop(self) -> None:
+        cache = Cache(client=FakeClient(cache_flags=GatewayCacheFlags.members))
+        member = SimpleNamespace(id=5, guild_id=999)
+        cache.add_member(member)  # should not raise
+
+    def test_members_flag_stores_full_member_and_counts(self) -> None:
+        cache, _, guild = _cache_with_guild(GatewayCacheFlags.members)
+        member = SimpleNamespace(id=5, guild_id=guild.id)
+        cache.add_member(member)
+        self.assertIs(guild._cache_members[5], member)
+        self.assertEqual(guild.member_count, 11)
+
+    def test_count_member_false_does_not_increment(self) -> None:
+        cache, _, guild = _cache_with_guild(GatewayCacheFlags.members)
+        member = SimpleNamespace(id=5, guild_id=guild.id)
+        cache.add_member(member, count_member=False)
+        self.assertEqual(guild.member_count, 10)
+
+    def test_partial_members_flag_stores_partial_instead(self) -> None:
+        cache, _, guild = _cache_with_guild(GatewayCacheFlags.partial_members)
+        member = SimpleNamespace(id=5, guild_id=guild.id)
+        cache.add_member(member)
+        self.assertEqual(guild._cache_members[5].kind, "partial_member")
+
+    def test_bot_own_member_is_always_cached_regardless_of_flags(self) -> None:
+        cache, bot, guild = _cache_with_guild(GatewayCacheFlags.roles)  # unrelated flag
+        member = SimpleNamespace(id=bot.user.id, guild_id=guild.id)
+        cache.add_member(member)
+        self.assertIs(guild._cache_members[bot.user.id], member)
+
+    def test_non_bot_member_not_cached_without_relevant_flags(self) -> None:
+        cache, bot, guild = _cache_with_guild(GatewayCacheFlags.roles)
+        member = SimpleNamespace(id=bot.user.id + 1, guild_id=guild.id)
+        cache.add_member(member)
+        self.assertNotIn(bot.user.id + 1, guild._cache_members)
+
+
+class TestUpdateMember(unittest.TestCase):
+    def test_delegates_to_add_member_without_counting(self) -> None:
+        cache, _, guild = _cache_with_guild(GatewayCacheFlags.members)
+        member = SimpleNamespace(id=5, guild_id=guild.id, presence=None)
+        cache.update_member(member)
+        self.assertIs(guild._cache_members[5], member)
+        self.assertEqual(guild.member_count, 10)
+
+    def test_preserves_existing_presence_when_replacement_has_none(self) -> None:
+        """ Regression test: GUILD_MEMBER_UPDATE never carries presence data, so the
+        freshly built Member always has presence=None. Replacing the cached member
+        wholesale used to silently drop whatever PRESENCE_UPDATE had already set. """
+        cache, _, guild = _cache_with_guild(GatewayCacheFlags.members)
+        presence = SimpleNamespace(status="online")
+        guild._cache_members[5] = SimpleNamespace(id=5, guild_id=guild.id, presence=presence)
+
+        updated_member = SimpleNamespace(id=5, guild_id=guild.id, presence=None)
+        cache.update_member(updated_member)
+
+        self.assertIs(guild._cache_members[5], updated_member)
+        self.assertIs(updated_member.presence, presence)
+
+    def test_does_not_overwrite_presence_already_set_on_replacement(self) -> None:
+        cache, _, guild = _cache_with_guild(GatewayCacheFlags.members)
+        old_presence = SimpleNamespace(status="online")
+        new_presence = SimpleNamespace(status="idle")
+        guild._cache_members[5] = SimpleNamespace(id=5, guild_id=guild.id, presence=old_presence)
+
+        updated_member = SimpleNamespace(id=5, guild_id=guild.id, presence=new_presence)
+        cache.update_member(updated_member)
+
+        self.assertIs(updated_member.presence, new_presence)
+
+
+class TestRemoveMember(unittest.TestCase):
+    def test_none_cache_flags_returns_none(self) -> None:
+        cache, _, guild = _cache_with_guild(None)
+        self.assertIsNone(cache.remove_member(guild.id, 5))
+
+    def test_unknown_guild_returns_none(self) -> None:
+        cache = Cache(client=FakeClient(cache_flags=GatewayCacheFlags.members))
+        self.assertIsNone(cache.remove_member(999, 5))
+
+    def test_decrements_member_count_and_pops(self) -> None:
+        cache, _, guild = _cache_with_guild(GatewayCacheFlags.members)
+        member = SimpleNamespace(id=5, guild_id=guild.id)
+        cache.add_member(member)
+        removed = cache.remove_member(guild.id, 5)
+        self.assertIs(removed, member)
+        self.assertEqual(guild.member_count, 10)
+        self.assertNotIn(5, guild._cache_members)
+
+    def test_missing_member_returns_none(self) -> None:
+        cache, _, guild = _cache_with_guild(GatewayCacheFlags.members)
+        self.assertIsNone(cache.remove_member(guild.id, 999))
+
+
+class TestUpdatePresence(unittest.TestCase):
+    def test_none_cache_flags_is_noop(self) -> None:
+        cache = Cache(client=FakeClient(cache_flags=None))
+        cache.update_presence(None)  # should not raise
+
+    def test_missing_presences_flag_is_noop(self) -> None:
+        cache, _, guild = _cache_with_guild(GatewayCacheFlags.guilds)
+        presence = SimpleNamespace(guild_id=guild.id, user_id=5)
+        cache.update_presence(presence)  # should not raise, no member touched
+
+    def test_unknown_guild_is_noop(self) -> None:
+        cache = Cache(client=FakeClient(cache_flags=GatewayCacheFlags.presences))
+        presence = SimpleNamespace(guild_id=999, user_id=5)
+        cache.update_presence(presence)  # should not raise
+
+    def test_updates_cached_member_presence(self) -> None:
+        cache, _, guild = _cache_with_guild(GatewayCacheFlags.presences)
+        calls = []
+        member = SimpleNamespace(id=5, _update_presence=lambda p: calls.append(p))
+        guild._cache_members[5] = member
+        presence = SimpleNamespace(guild_id=guild.id, user_id=5)
+        cache.update_presence(presence)
+        self.assertEqual(calls, [presence])
+
+    def test_member_not_cached_is_noop(self) -> None:
+        cache, _, guild = _cache_with_guild(GatewayCacheFlags.presences)
+        presence = SimpleNamespace(guild_id=guild.id, user_id=999)
+        cache.update_presence(presence)  # should not raise
+
+
+class TestPresenceDedupEnabled(unittest.TestCase):
+    def test_none_cache_flags_disabled(self) -> None:
+        cache = Cache(client=FakeClient(cache_flags=None))
+        self.assertFalse(cache._presence_dedup_enabled)
+
+    def test_disabled_without_presences_flag(self) -> None:
+        cache = Cache(client=FakeClient(cache_flags=GatewayCacheFlags.members))
+        self.assertFalse(cache._presence_dedup_enabled)
+
+    def test_enabled_with_presences_flag(self) -> None:
+        cache = Cache(client=FakeClient(cache_flags=GatewayCacheFlags.presences))
+        self.assertTrue(cache._presence_dedup_enabled)
+
+
+class TestDedupeActivityAssets(unittest.TestCase):
+    """
+    Members showing the exact same rich-presence assets (same game, same
+    menu/status) should share one `ActivityAssets` instance instead of each
+    holding a byte-identical copy.
+    """
+
+    def _assets(self, **overrides) -> ActivityAssets:
+        data = dict(
+            large_image="a", small_image="b",
+            large_text="Large", small_text="Small",
+        )
+        data.update(overrides)
+        return ActivityAssets(state=None, application_id=1, data=data)
+
+    def test_identical_payload_returns_same_canonical_instance(self) -> None:
+        cache = Cache(client=FakeClient(cache_flags=GatewayCacheFlags.presences))
+        first = self._assets()
+        second = self._assets()
+        self.assertIsNot(first, second)
+
+        self.assertIs(cache._dedupe_activity_assets(first), first)
+        self.assertIs(cache._dedupe_activity_assets(second), first)
+
+    def test_differing_payload_is_not_merged(self) -> None:
+        cache = Cache(client=FakeClient(cache_flags=GatewayCacheFlags.presences))
+        first = self._assets()
+        second = self._assets(large_text="Different")
+
+        self.assertIs(cache._dedupe_activity_assets(first), first)
+        self.assertIs(cache._dedupe_activity_assets(second), second)
+
+
+class TestGetChannel(unittest.TestCase):
+    def test_unknown_guild_returns_none(self) -> None:
+        cache = Cache(client=FakeClient(cache_flags=GatewayCacheFlags.channels))
+        self.assertIsNone(cache.get_channel(999, 1))
+
+    def test_delegates_to_guild_get_channel(self) -> None:
+        cache, _, guild = _cache_with_guild(GatewayCacheFlags.channels)
+        guild._channel_lookup[1] = "the-channel"
+        self.assertEqual(cache.get_channel(guild.id, 1), "the-channel")
+
+
+class TestGetChannelThread(unittest.TestCase):
+    """ Precedence: a match from get_thread() always wins over get_channel(),
+    even if both return something for the same ID. """
+
+    def test_unknown_guild_returns_none(self) -> None:
+        cache = Cache(client=FakeClient(cache_flags=GatewayCacheFlags.channels))
+        self.assertIsNone(cache.get_channel_thread(999, 1))
+
+    def test_neither_found_returns_none(self) -> None:
+        cache, _, guild = _cache_with_guild(GatewayCacheFlags.channels)
+        self.assertIsNone(cache.get_channel_thread(guild.id, 1))
+
+    def test_only_channel_found(self) -> None:
+        cache, _, guild = _cache_with_guild(GatewayCacheFlags.channels)
+        guild._channel_lookup[1] = "the-channel"
+        self.assertEqual(cache.get_channel_thread(guild.id, 1), "the-channel")
+
+    def test_thread_takes_precedence_over_channel(self) -> None:
+        cache, _, guild = _cache_with_guild(GatewayCacheFlags.channels)
+        guild._channel_lookup[1] = "the-channel"
+        guild._thread_lookup[1] = "the-thread"
+        self.assertEqual(cache.get_channel_thread(guild.id, 1), "the-thread")
+
+
+class TestAddRemoveChannel(unittest.TestCase):
+    def test_none_cache_flags_is_noop(self) -> None:
+        cache, _, guild = _cache_with_guild(None)
+        channel = SimpleNamespace(id=1, guild_id=guild.id, parent_id=None)
+        cache.add_channel(channel)
+        self.assertEqual(guild._cache_channels, {})
+
+    def test_no_guild_id_is_noop(self) -> None:
+        cache, _, _ = _cache_with_guild(GatewayCacheFlags.channels)
+        channel = SimpleNamespace(id=1, guild_id=None, parent_id=None)
+        cache.add_channel(channel)  # should not raise
+
+    def test_channels_flag_stores_full_channel(self) -> None:
+        cache, _, guild = _cache_with_guild(GatewayCacheFlags.channels)
+        channel = SimpleNamespace(id=1, guild_id=guild.id, parent_id=None)
+        cache.add_channel(channel)
+        self.assertIs(guild._cache_channels[1], channel)
+
+    def test_partial_channels_flag_stores_partial_instead(self) -> None:
+        cache, _, guild = _cache_with_guild(GatewayCacheFlags.partial_channels)
+        channel = SimpleNamespace(id=1, guild_id=guild.id, parent_id=None)
+        cache.add_channel(channel)
+        self.assertEqual(guild._cache_channels[1].kind, "partial_channel")
+
+    def test_remove_channel_pops_from_cache(self) -> None:
+        cache, _, guild = _cache_with_guild(GatewayCacheFlags.channels)
+        channel = SimpleNamespace(id=1, guild_id=guild.id, parent_id=None)
+        cache.add_channel(channel)
+        cache.remove_channel(channel)
+        self.assertNotIn(1, guild._cache_channels)
+
+
+class TestAddRemoveThread(unittest.TestCase):
+    def test_threads_flag_stores_full_thread(self) -> None:
+        cache, _, guild = _cache_with_guild(GatewayCacheFlags.threads)
+        thread = SimpleNamespace(id=1, guild_id=guild.id, parent_id=None)
+        cache.add_thread(thread)
+        self.assertIs(guild._cache_threads[1], thread)
+
+    def test_partial_threads_flag_stores_partial_instead(self) -> None:
+        cache, _, guild = _cache_with_guild(GatewayCacheFlags.partial_threads)
+        thread = SimpleNamespace(id=1, guild_id=guild.id, parent_id=None)
+        cache.add_thread(thread)
+        self.assertEqual(guild._cache_threads[1].kind, "partial_channel")
+
+    def test_remove_thread_pops_from_cache(self) -> None:
+        cache, _, guild = _cache_with_guild(GatewayCacheFlags.threads)
+        thread = SimpleNamespace(id=1, guild_id=guild.id, parent_id=None)
+        cache.add_thread(thread)
+        cache.remove_thread(thread)
+        self.assertNotIn(1, guild._cache_threads)
+
+
+class TestAddRemoveRole(unittest.TestCase):
+    def test_roles_flag_stores_full_role(self) -> None:
+        cache, _, guild = _cache_with_guild(GatewayCacheFlags.roles)
+        role = SimpleNamespace(id=1, guild_id=guild.id)
+        cache.add_role(role)
+        self.assertIs(guild._cache_roles[1], role)
+
+    def test_partial_roles_flag_stores_partial_instead(self) -> None:
+        cache, _, guild = _cache_with_guild(GatewayCacheFlags.partial_roles)
+        role = SimpleNamespace(id=1, guild_id=guild.id)
+        cache.add_role(role)
+        self.assertEqual(guild._cache_roles[1].kind, "partial_role")
+
+    def test_remove_role_pops_from_cache(self) -> None:
+        cache, _, guild = _cache_with_guild(GatewayCacheFlags.roles)
+        role = SimpleNamespace(id=1, guild_id=guild.id)
+        cache.add_role(role)
+        cache.remove_role(role)
+        self.assertNotIn(1, guild._cache_roles)
+
+
+class TestUpdateEmojis(unittest.TestCase):
+    def test_emojis_flag_stores_full_objects(self) -> None:
+        cache, _, guild = _cache_with_guild(GatewayCacheFlags.emojis)
+        emoji = SimpleNamespace(id=1)
+        cache.update_emojis(guild.id, [emoji])
+        self.assertIs(guild._cache_emojis[1], emoji)
+
+    def test_partial_emojis_flag_stores_partials(self) -> None:
+        cache, _, guild = _cache_with_guild(GatewayCacheFlags.partial_emojis)
+        emoji = SimpleNamespace(id=1)
+        cache.update_emojis(guild.id, [emoji])
+        self.assertEqual(guild._cache_emojis[1].kind, "partial_emoji")
+
+    def test_unknown_guild_is_noop(self) -> None:
+        cache = Cache(client=FakeClient(cache_flags=GatewayCacheFlags.emojis))
+        cache.update_emojis(999, [SimpleNamespace(id=1)])  # should not raise
+
+
+class TestUpdateStickers(unittest.TestCase):
+    def test_stickers_flag_stores_full_objects(self) -> None:
+        cache, _, guild = _cache_with_guild(GatewayCacheFlags.stickers)
+        sticker = SimpleNamespace(id=1)
+        cache.update_stickers(guild.id, [sticker])
+        self.assertIs(guild._cache_stickers[1], sticker)
+
+    def test_partial_stickers_flag_stores_partials(self) -> None:
+        cache, _, guild = _cache_with_guild(GatewayCacheFlags.partial_stickers)
+        sticker = SimpleNamespace(id=1)
+        cache.update_stickers(guild.id, [sticker])
+        self.assertEqual(guild._cache_stickers[1].kind, "partial_sticker")
+
+
+class TestUpdateVoiceState(unittest.TestCase):
+    def test_none_cache_flags_is_noop(self) -> None:
+        cache, _, guild = _cache_with_guild(None)
+        vs = SimpleNamespace(id=5, guild_id=guild.id, channel_id=10)
+        cache.update_voice_state(vs)
+        self.assertEqual(guild._cache_voice_states, {})
+
+    def test_no_guild_id_is_noop(self) -> None:
+        cache = Cache(client=FakeClient(cache_flags=GatewayCacheFlags.voice_states))
+        vs = SimpleNamespace(id=5, guild_id=None, channel_id=10)
+        cache.update_voice_state(vs)  # should not raise
+
+    def test_unknown_guild_is_noop(self) -> None:
+        cache = Cache(client=FakeClient(cache_flags=GatewayCacheFlags.voice_states))
+        vs = SimpleNamespace(id=5, guild_id=999, channel_id=10)
+        cache.update_voice_state(vs)  # should not raise
+
+    def test_voice_states_flag_caches_full_state_when_channel_present(self) -> None:
+        cache, _, guild = _cache_with_guild(GatewayCacheFlags.voice_states)
+        vs = SimpleNamespace(id=5, guild_id=guild.id, channel_id=10)
+        cache.update_voice_state(vs)
+        self.assertIs(guild._cache_voice_states[5], vs)
+
+    def test_channel_id_none_removes_from_cache(self) -> None:
+        cache, _, guild = _cache_with_guild(GatewayCacheFlags.voice_states)
+        vs = SimpleNamespace(id=5, guild_id=guild.id, channel_id=10)
+        cache.update_voice_state(vs)
+        left = SimpleNamespace(id=5, guild_id=guild.id, channel_id=None)
+        cache.update_voice_state(left)
+        self.assertNotIn(5, guild._cache_voice_states)
+
+    def test_partial_voice_states_flag_caches_partial_instead(self) -> None:
+        cache, _, guild = _cache_with_guild(GatewayCacheFlags.partial_voice_states)
+        vs = SimpleNamespace(id=5, guild_id=guild.id, channel_id=10)
+        cache.update_voice_state(vs)
+        self.assertEqual(guild._cache_voice_states[5].kind, "partial_voice_state")
+
+    def test_partial_voice_state_with_no_channel_is_removed(self) -> None:
+        cache, _, guild = _cache_with_guild(GatewayCacheFlags.partial_voice_states)
+        vs = SimpleNamespace(id=5, guild_id=guild.id, channel_id=None)
+        guild._cache_voice_states[5] = "stale"
+        cache.update_voice_state(vs)
+        self.assertNotIn(5, guild._cache_voice_states)
+
+
+class TestAddGuildReusesPartial(unittest.TestCase):
+    def test_partial_guild_passed_in_is_stored_as_is(self) -> None:
+        from discord_http.guild import PartialGuild
+
+        cache = Cache(client=FakeClient(cache_flags=GatewayCacheFlags.partial_guilds))
+        guild = PartialGuild(state=None, id=1)
+        self.assertIs(cache.add_guild(1, guild), guild)
+
+
+class TestPartialMemberPresence(unittest.TestCase):
+    def test_add_member_copies_presence_onto_partial(self) -> None:
+        cache, _, guild = _cache_with_guild(GatewayCacheFlags.partial_members)
+        presence = SimpleNamespace(status="online")
+        cache.add_member(SimpleNamespace(id=5, guild_id=guild.id, presence=presence))
+        self.assertIs(guild._cache_members[5].presence, presence)
+
+    def test_update_member_keeps_existing_partial(self) -> None:
+        cache, _, guild = _cache_with_guild(GatewayCacheFlags.partial_members)
+        presence = SimpleNamespace(status="online")
+        existing = SimpleNamespace(id=5, guild_id=guild.id, presence=presence)
+        guild._cache_members[5] = existing
+
+        updated = SimpleNamespace(id=5, guild_id=guild.id, presence=None)
+        cache.update_member(updated)
+        self.assertIs(guild._cache_members[5], existing)
+        self.assertIs(updated.presence, presence)
+
+
+class TestInterningPoolReset(unittest.TestCase):
+    def test_reset_guild_pools_drops_role_id_tuples(self) -> None:
+        cache, _, guild = _cache_with_guild(GatewayCacheFlags.members)
+        first = cache.intern_role_ids(guild.id, ["1", "2"])
+        cache.reset_guild_pools(guild.id)
+        second = cache.intern_role_ids(guild.id, ["1", "2"])
+        self.assertEqual(first, second)
+        self.assertIsNot(first, second)
+
+
+class TestRoleIdInterning(unittest.TestCase):
+    def test_same_combination_returns_the_same_tuple(self) -> None:
+        cache, _, guild = _cache_with_guild(GatewayCacheFlags.members)
+        first = cache.intern_role_ids(guild.id, ["1100000000000000001", "1100000000000000002"])
+        second = cache.intern_role_ids(guild.id, ["1100000000000000001", "1100000000000000002"])
+        self.assertEqual(first, (1100000000000000001, 1100000000000000002))
+        self.assertIs(first, second)
+
+    def test_different_combinations_share_role_id_ints(self) -> None:
+        cache, _, guild = _cache_with_guild(GatewayCacheFlags.members)
+        a = cache.intern_role_ids(guild.id, ["1100000000000000001", "1100000000000000002"])
+        b = cache.intern_role_ids(guild.id, ["1100000000000000002"])
+        self.assertIs(a[1], b[0])
+
+    def test_no_roles_is_an_empty_tuple(self) -> None:
+        cache, _, guild = _cache_with_guild(GatewayCacheFlags.members)
+        self.assertEqual(cache.intern_role_ids(guild.id, []), ())
+
+    def test_uncached_guild_gets_no_pool(self) -> None:
+        # e.g. a user-installed interaction from a guild the bot isn't in, nothing would ever reset it
+        cache, _, _ = _cache_with_guild(GatewayCacheFlags.members)
+        self.assertEqual(cache.intern_role_ids(42, ["1", "2"]), (1, 2))
+        self.assertNotIn(42, cache._Cache__role_tuple_pools)
+        self.assertNotIn(42, cache._Cache__role_int_pools)
+
+    def test_full_pool_is_rebuilt_from_cached_members(self) -> None:
+        cache, _, guild = _cache_with_guild(GatewayCacheFlags.members)
+        kept = cache.intern_role_ids(guild.id, ["1"])
+        guild._cache_members[5] = SimpleNamespace(id=5, role_ids=kept)
+
+        # Stale combinations nobody holds anymore, e.g. from role churn across a long resume
+        for i in range(2, 1025):
+            cache.intern_role_ids(guild.id, [str(i)])
+        self.assertEqual(len(cache._Cache__role_tuple_pools[guild.id]), 1024)
+
+        new = cache.intern_role_ids(guild.id, ["5000"])
+        pool = cache._Cache__role_tuple_pools[guild.id]
+        self.assertEqual(set(pool), {kept, new})
+        self.assertIs(pool[kept], kept)
+        self.assertIs(cache.intern_role_ids(guild.id, ["1"]), kept)
+        self.assertEqual(set(cache._Cache__role_int_pools[guild.id]), {1, 5000})
+
+    def test_rebuild_limit_follows_live_size(self) -> None:
+        cache, _, guild = _cache_with_guild(GatewayCacheFlags.members)
+        for i in range(1, 1501):
+            role_ids = cache.intern_role_ids(guild.id, [str(i)])
+            guild._cache_members[i] = SimpleNamespace(id=i, role_ids=role_ids)
+
+        # Every combination is live, so a rebuild keeps them all and doubles the limit
+        self.assertEqual(len(cache._Cache__role_tuple_pools[guild.id]), 1500)
+        self.assertEqual(cache._Cache__role_pool_limits[guild.id], 2048)
+
+    def test_remove_guild_drops_pool_limits(self) -> None:
+        cache, _, guild = _cache_with_guild(GatewayCacheFlags.members | GatewayCacheFlags.guilds)
+        cache._Cache__role_pool_limits[guild.id] = 4096
+        cache._Cache__overwrite_pool_limits[guild.id] = 4096
+        cache.remove_guild(guild.id)
+        self.assertEqual(cache._Cache__role_pool_limits, {})
+        self.assertEqual(cache._Cache__overwrite_pool_limits, {})
+
+
+class TestOverwriteInterning(unittest.TestCase):
+    def test_same_overwrites_return_the_same_tuple(self) -> None:
+        cache, _, guild = _cache_with_guild(GatewayCacheFlags.channels)
+        first = cache.intern_overwrites(guild.id, ((1, 0, 8, 0),))
+        second = cache.intern_overwrites(guild.id, ((1, 0, 8, 0),))
+        self.assertIs(first, second)
+
+    def test_uncached_guild_gets_no_pool(self) -> None:
+        cache, _, _ = _cache_with_guild(GatewayCacheFlags.channels)
+        cache.intern_overwrites(42, ((1, 0, 8, 0),))
+        self.assertNotIn(42, cache._Cache__overwrite_pools)
+
+    def test_full_pool_is_rebuilt_from_cached_channels(self) -> None:
+        cache, _, guild = _cache_with_guild(GatewayCacheFlags.channels)
+        channel_ow = cache.intern_overwrites(guild.id, ((1, 0, 8, 0),))
+        thread_ow = cache.intern_overwrites(guild.id, ((2, 0, 8, 0),))
+        guild._cache_channels[10] = SimpleNamespace(id=10, _raw_overwrites=channel_ow)
+        guild._cache_threads[11] = SimpleNamespace(id=11, _raw_overwrites=thread_ow)
+
+        for i in range(3, 1025):
+            cache.intern_overwrites(guild.id, ((i, 0, 8, 0),))
+
+        new = cache.intern_overwrites(guild.id, ((5000, 0, 8, 0),))
+        self.assertEqual(set(cache._Cache__overwrite_pools[guild.id]), {channel_ow, thread_ow, new})
+
+
+if __name__ == "__main__":
+    unittest.main()

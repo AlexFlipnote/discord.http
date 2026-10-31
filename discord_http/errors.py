@@ -23,11 +23,12 @@ __all__ = (
     "OpusError",
     "OpusNotLoaded",
     "Ratelimited",
+    "Unauthorized",
     "UserMissingPermissions",
 )
 
 
-class DiscordException(Exception):  # noqa: N818
+class DiscordException(Exception):  # ruff: ignore[error-suffix-on-exception-name]
     """ Base exception for discord_http. """
 
 
@@ -72,21 +73,25 @@ class CommandOnCooldown(CheckFailed):
 class UserMissingPermissions(CheckFailed):
     """ Raised whenever a user is missing permissions. """
     def __init__(self, perms: Permissions):
-        self.permissions = perms
+        self.permissions: Permissions = perms
+        """ The permissions the user is missing. """
+
         super().__init__(f"Missing permissions: {', '.join(perms.list_names)}")
 
 
 class BotMissingPermissions(CheckFailed):
     """ Raised whenever a bot is missing permissions. """
     def __init__(self, perms: Permissions):
-        self.permissions = perms
+        self.permissions: Permissions = perms
+        """ The permissions the bot is missing. """
+
         super().__init__(f"Bot is missing permissions: {', '.join(perms.list_names)}")
 
 
 class HTTPException(DiscordException):
     """ Base exception for HTTP requests. """
     def __init__(self, r: "HTTPResponse"):
-        self.request = r
+        self.request: "HTTPResponse" = r
         """ The HTTP request that caused the exception. """
 
         self.status: int = r.status
@@ -107,7 +112,12 @@ class HTTPException(DiscordException):
             if r.response.get("errors", None):
                 self.text += f"\n{r.response['errors']}"
         else:
-            self.text: str = str(r.response)
+            response = r.response
+            self.text = (
+                response.decode("utf-8", "replace")
+                if isinstance(response, bytes)
+                else str(response)
+            )
             self.code = 0
 
         error_text = f"HTTP {self.request.status} > {self.request.reason} (code: {self.code})"
@@ -119,6 +129,10 @@ class HTTPException(DiscordException):
 
 class NotFound(HTTPException):
     """ Raised whenever a HTTP request returns 404. """
+
+
+class Unauthorized(HTTPException):
+    """ Raised whenever a HTTP request returns 401 (invalid or revoked token). """
 
 
 class Forbidden(HTTPException):

@@ -14,10 +14,10 @@ class Snowflake:
 
     def __init__(
         self,
-        id: int | str  # noqa: A002
+        id: int | str  # ruff: ignore[builtin-argument-shadowing]
     ):
         try:
-            id = int(id)  # noqa: A001
+            id = int(id)  # ruff: ignore[builtin-variable-shadowing]
         except ValueError:
             raise TypeError(f"id must be an integer or convertible to integer, not {type(id)}")
 
@@ -91,7 +91,7 @@ class PartialBase(Snowflake):
     """
     __slots__ = ()
 
-    def __init__(self, *, id: int):  # noqa: A002
+    def __init__(self, *, id: int):  # ruff: ignore[builtin-argument-shadowing]
         super().__init__(id=int(id))
 
     def __repr__(self) -> str:

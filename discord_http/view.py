@@ -6,7 +6,7 @@ import time
 
 from collections.abc import Callable
 from io import BytesIO
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, ClassVar
 
 from .asset import Asset
 from .colour import Colour
@@ -17,6 +17,7 @@ from .enums import (
 )
 from .errors import HTTPException
 from .file import File
+from .flags import ContentScanFlags
 
 if TYPE_CHECKING:
     from . import Snowflake
@@ -77,6 +78,16 @@ _components_inaccessible = (
     ComponentType.checkpoint,
 )
 
+_select_types = (
+    ComponentType.string_select,
+    ComponentType.user_select,
+    ComponentType.role_select,
+    ComponentType.mentionable_select,
+    ComponentType.channel_select,
+)
+
+_special_buttons = (ButtonStyles.link, ButtonStyles.premium)
+
 __all__ = (
     "ActionRow",
     "AttachmentComponent",
@@ -84,12 +95,16 @@ __all__ = (
     "ChannelSelect",
     "CheckboxComponent",
     "CheckboxGroupComponent",
+    "CheckpointComponent",
     "ComponentOption",
     "ContainerComponent",
+    "ContentInventoryEntry",
     "FileComponent",
     "FileUploadComponent",
     "Item",
+    "LabelComponent",
     "Link",
+    "LockedItem",
     "MediaGalleryComponent",
     "MediaGalleryItem",
     "MentionableSelect",
@@ -117,11 +132,9 @@ class AttachmentComponent:
     """ Represents an attachment component. """
 
     __slots__ = (
-        "_edata",
-        "_file",
-        "_media",
         "_state",
-        "_url",
+        "attachment_id",
+        "content_scan_flags",
         "content_type",
         "filename",
         "flags",
@@ -143,11 +156,8 @@ class AttachmentComponent:
     ):
         self._state = state
 
-        self._file: dict | None = data.get("file")
-        self._media: dict | None = data.get("media")
-
-        self._edata = self._file or self._media
-        if self._edata is None:
+        edata: dict | None = data.get("file") or data.get("media")
+        if edata is None:
             raise ValueError("Either file or media must be provided")
 
         self.spoiler: bool = data.get("spoiler", False)
@@ -159,29 +169,41 @@ class AttachmentComponent:
         self.size: int = data.get("size", 0)
         """ The size of the attachment in bytes. """
 
-        self.url: str = self._edata["url"]
+        self.url: str = edata["url"]
         """ The URL of the attachment. """
 
-        self.proxy_url: str = self._edata["proxy_url"]
-        """ The proxied URL of the attachment. """
+        self.proxy_url: str | None = edata.get("proxy_url", None)
+        """ The proxied URL of the attachment, if any. """
 
-        self.height: int | None = self._edata.get("height", None)
+        self.height: int | None = edata.get("height", None)
         """ The height of the attachment, if any. """
 
-        self.width: int | None = self._edata.get("width", None)
+        self.width: int | None = edata.get("width", None)
         """ The width of the attachment, if any. """
 
-        self.placeholder: str | None = self._edata.get("placeholder", None)
+        self.placeholder: str | None = edata.get("placeholder", None)
         """ The placeholder of the attachment, if any. """
 
-        self.placeholder_version: int | None = self._edata.get("placeholder_version", None)
+        self.placeholder_version: int | None = edata.get("placeholder_version", None)
         """ The placeholder version of the attachment, if any. """
 
-        self.content_type: str | None = self._edata.get("content_type", None)
+        self.content_type: str | None = edata.get("content_type", None)
         """ The content type of the attachment, if any. """
 
-        self.flags: int = self._edata.get("flags", 0)
+        self.flags: int = edata.get("flags", 0)
         """ The flags of the attachment, if any. """
+
+        self.attachment_id: int | None = (
+            int(edata["attachment_id"])
+            if edata.get("attachment_id") else None
+        )
+        """ The ID of the uploaded attachment, if the media was uploaded as one. """
+
+        self.content_scan_flags: ContentScanFlags | None = (
+            ContentScanFlags(edata["content_scan_metadata"].get("flags", 0))
+            if edata.get("content_scan_metadata") else None
+        )
+        """ The flags from Discord's content scanning, if the media has been scanned. """
 
     def __str__(self) -> str:
         if self.filename:
@@ -197,7 +219,7 @@ class AttachmentComponent:
 
         Parameters
         ----------
-        use_cached:
+        use_cached
             Whether to use the cached URL or not, defaults to `False`
 
         Returns
@@ -206,12 +228,12 @@ class AttachmentComponent:
 
         Raises
         ------
-        `HTTPException`
+        HTTPException
             If the request returned anything other than 2XX
         """
         r = await self._state.http.request(
             "GET",
-            self.proxy_url if use_cached else self.url,
+            (self.proxy_url or self.url) if use_cached else self.url,
             res_method="read"
         )
 
@@ -231,10 +253,10 @@ class AttachmentComponent:
 
         Parameters
         ----------
-        path:
+        path
             Path to save the file to, which includes the filename and extension.
             Example: `./path/to/file.png`
-        use_cached:
+        use_cached
             Whether to use the cached URL or not, defaults to `False`
 
         Returns
@@ -256,9 +278,9 @@ class AttachmentComponent:
 
         Parameters
         ----------
-        filename:
+        filename
             Filename for the file, if empty, the attachment's filename will be used
-        spoiler:
+        spoiler
             Weather the file should be marked as a spoiler or not, defaults to `False`
 
         Returns
@@ -302,7 +324,7 @@ class Item:
     def __init__(
         self,
         *,
-        type: ComponentType  # noqa: A002
+        type: ComponentType  # ruff: ignore[builtin-argument-shadowing]
     ):
         self.type: ComponentType = type
         """ The type of the component. """
@@ -320,8 +342,10 @@ class LockedItem(Item):
 
     __slots__ = ("_data",)
 
-    def __init__(self, *, type: ComponentType, **kwargs: dict):  # noqa: A002
+    def __init__(self, *, type: ComponentType, **kwargs: dict):  # ruff: ignore[builtin-argument-shadowing]
         self.type: ComponentType = type
+        """ The type of the component. """
+
         self._data: dict = kwargs
 
     def __repr__(self) -> str:
@@ -455,7 +479,6 @@ class Button(Item):
         url: str | None = None
     ):
         super().__init__(type=ComponentType.button)
-        special_buttons = (ButtonStyles.link, ButtonStyles.premium)
 
         self.label: str | None = label
         """ The label of the button. """
@@ -475,10 +498,7 @@ class Button(Item):
         self.style: ButtonStyles | str | int = style
         """ The style of the button. """
 
-        self.custom_id: str | None = (
-            str(custom_id)
-            if custom_id else _garbage_id()
-        )
+        self.custom_id: str | None = str(custom_id) if custom_id else None
         """ The custom ID of the button. """
 
         match style:
@@ -497,8 +517,10 @@ class Button(Item):
             case _:
                 self.style = ButtonStyles.primary
 
-        if self.style in special_buttons:
+        if self.style in _special_buttons:
             self.custom_id = None  # Force none for special buttons
+        elif self.custom_id is None:
+            self.custom_id = _garbage_id()
 
     def to_dict(self) -> dict:
         """ Returns a dict representation of the button. """
@@ -678,20 +700,20 @@ class Select(Item):
 
         Parameters
         ----------
-        label:
+        label
             Label of the item
-        value:
+        value
             The value of the item, which will be shown on interaction response
-        description:
+        description
             Description of the item
-        emoji:
+        emoji
             Emoji shown on the left side of the item
-        default:
+        default
             Whether the item is selected by default
 
         Raises
         ------
-        `ValueError`
+        ValueError
             If there are more than 25 options
         """
         if len(self._options) >= 25:
@@ -906,7 +928,7 @@ class ChannelSelect(Select):
             channel_types = [channel_types]
 
         # Reason for types is to make sure the ints are valid ChannelTypes
-        self.channel_types = [
+        self.channel_types: list[ChannelType] = [
             ChannelType(int(c)) for c in channel_types
             if isinstance(c, (ChannelType, int))
         ]
@@ -1023,7 +1045,7 @@ class TextDisplayComponent(Item):
     ):
         super().__init__(type=ComponentType.text_display)
 
-        self.content = content
+        self.content: str = content
         """ The content of the text display component. """
 
     def __repr__(self) -> str:
@@ -1055,16 +1077,16 @@ class ComponentOption:
         description: str | None = None,
         default: bool = False
     ):
-        self.label = label
+        self.label: str = label
         """ The label of the option. """
 
-        self.value = value
+        self.value: str = value
         """ The value of the option. """
 
-        self.description = description
+        self.description: str | None = description
         """ The description of the option. """
 
-        self.default = default
+        self.default: bool = default
         """ Whether the option is the default selection. """
 
     def to_dict(self) -> dict:
@@ -1111,7 +1133,7 @@ class RadioComponent(Item):
     ):
         super().__init__(type=ComponentType.radio_group)
 
-        self.options = list(options)
+        self.options: list["ComponentOption"] = list(options)
         """ The options for the radio component. """
 
         self.custom_id: str = custom_id
@@ -1133,13 +1155,13 @@ class RadioComponent(Item):
 
         Parameters
         ----------
-        value:
+        value
             The value of the option, which will be returned on interaction response
-        label:
+        label
             The label of the option, what the user sees
-        description:
+        description
             The description of the option, additional text shown below the label
-        default:
+        default
             Whether the option is the default selection
         """
         if len(self.options) >= 10:
@@ -1222,13 +1244,13 @@ class CheckboxGroupComponent(Item):
 
         Parameters
         ----------
-        value:
+        value
             The value of the option, which will be returned on interaction response
-        label:
+        label
             The label of the option, what the user sees
-        description:
+        description
             The description of the option, additional text shown below the label
-        default:
+        default
             Whether the option is selected by default
         """
         if len(self.options) >= 10:
@@ -1248,10 +1270,11 @@ class CheckboxGroupComponent(Item):
         if not (1 <= len(self.options) <= 10):
             raise ValueError("CheckboxGroupComponent must have between 1 and 10 options")
 
-        if self.max_values is None:
-            # If max_values is not set, set it to the number of options (up to 10)
-            # self.add_item does not automatically update self.max_values
-            self.max_values = min(len(self.options), 10)
+        max_values = (
+            min(len(self.options), 10)
+            if self.max_values is None else
+            self.max_values
+        )
 
         payload = {
             "type": int(self.type),
@@ -1264,10 +1287,10 @@ class CheckboxGroupComponent(Item):
                 raise ValueError("min_values must be between 0 and 10")
             payload["min_values"] = self.min_values
 
-        if isinstance(self.max_values, int):
-            if not (1 <= self.max_values <= 10):
+        if isinstance(max_values, int):
+            if not (1 <= max_values <= 10):
                 raise ValueError("max_values must be between 1 and 10")
-            payload["max_values"] = self.max_values
+            payload["max_values"] = max_values
 
         if self.required:
             payload["required"] = self.required
@@ -1364,23 +1387,26 @@ class InteractionStorage:
     __slots__ = (
         "_call_after",
         "_event_wait",
+        "_loop",
         "_msg_cache",
         "_store_interaction",
         "_timeout",
         "_timeout_bool",
         "_timeout_expiry",
         "_timeout_task",
+        "_user_ids",
         "_users",
-        "loop",
     )
 
     def __init__(self):
-        self._event_wait = asyncio.Event()
+        self._event_wait: asyncio.Event | None = None
+        self._loop: asyncio.AbstractEventLoop | None = None
+
         self._store_interaction: "Context | None" = None
 
-        self.loop = asyncio.get_running_loop()
         self._call_after: Callable | None = None
         self._users: list["Snowflake"] = []
+        self._user_ids: set[int] = set()
         self._timeout_bool = False
         self._timeout: float | None = None
         self._timeout_expiry: float | None = None
@@ -1393,20 +1419,34 @@ class InteractionStorage:
             f"msg={self._msg_cache}>"
         )
 
+    @property
+    def loop(self) -> asyncio.AbstractEventLoop:
+        """ The event loop this storage is running in. """
+        if self._loop is None:
+            self._loop = asyncio.get_running_loop()
+        return self._loop
+
+    @property
+    def _event(self) -> asyncio.Event:
+        """ The event waiter. """
+        if self._event_wait is None:
+            self._event_wait = asyncio.Event()
+        return self._event_wait
+
     def _update_event(self, value: bool) -> None:
         """
         Update the event waiter to either set or clear.
 
         Parameters
         ----------
-        value:
+        value
             `True` means the event is set
             `False` means the event is cleared
         """
         if value is True:
-            self._event_wait.set()
+            self._event.set()
         elif value is False:
-            self._event_wait.clear()
+            self._event.clear()
 
     async def _timeout_watcher(self) -> None:
         """ Watches for the timeout and calls on_timeout when it expires. """
@@ -1416,14 +1456,13 @@ class InteractionStorage:
             if self._timeout_expiry is None:
                 return await self._dispatch_timeout()
 
-            now = time.monotonic()
-            if now >= self._timeout_expiry:
+            if (now := time.monotonic()) >= self._timeout_expiry:
                 return await self._dispatch_timeout()
             await asyncio.sleep(self._timeout_expiry - now)
 
     async def _dispatch_timeout(self) -> None:
         """ Dispatches the timeout event. """
-        if self._event_wait.is_set():
+        if self._event.is_set():
             return
 
         try:
@@ -1442,17 +1481,24 @@ class InteractionStorage:
         """ Whether the view has timed out. """
         return self._timeout_bool
 
+    def _cancel_timeout_task(self) -> None:
+        """ Cancels the timeout watcher, if one is running. """
+        if self._timeout_task is not None:
+            if not self._timeout_task.done():
+                self._timeout_task.cancel()
+            self._timeout_task = None
+
     async def callback(
         self,
         ctx: "Context"
     ) -> "BaseResponse | None":
         """ Called when the view is interacted with. """
-        if not self._call_after:
+        if self.is_timeout():
             return None
 
         if (
-            self._users and
-            ctx.user.id not in [g.id for g in self._users]
+            self._user_ids and
+            ctx.user.id not in self._user_ids
         ):
             return ctx.response.send_message(
                 "You are not allowed to interact with this message",
@@ -1461,6 +1507,10 @@ class InteractionStorage:
 
         self._store_interaction = ctx
         self._update_event(True)
+
+        if not self._call_after:
+            return None
+
         return await self._call_after(ctx)
 
     async def wait(
@@ -1471,7 +1521,7 @@ class InteractionStorage:
         users: list["Snowflake"] | None = None,
         original_response: bool = False,
         custom_id: str | int | None = None,
-        timeout: float = 60,
+        timeout: float | None = 60,
     ) -> "Context | None":
         """
         Tell the command to wait for an interaction response.
@@ -1480,9 +1530,9 @@ class InteractionStorage:
 
         Parameters
         ----------
-        ctx:
+        ctx
             Passing the current context of the bot
-        call_after:
+        call_after
             Coroutine to call after the view is interacted with (will be ignored if timeout)
             The new context does follow with the call_after function, example:
 
@@ -1495,35 +1545,50 @@ class InteractionStorage:
                 async def call_after(ctx):
                     await ctx.response.edit_message(content="Hello world")
 
-        users:
+        users
             List of users that are allowed to interact with the view
-        original_response:
+        original_response
             Whether to force the original response to be used as the message target
-        custom_id:
+        custom_id
             Custom ID of the view, if not provided, it will use Context.id or Context.message
-        timeout:
-            How long it should take until the code simply times out
+        timeout
+            How long it should take until the code simply times out.
+            Set to `None` for the view to never time out on its own.
 
         Returns
         -------
             Returns the new context of the interaction, or `None` if timed out
+
+        Raises
+        ------
+        TypeError
+            If `call_after` is provided and is not a coroutine function
         """
         users = users or []
 
-        if not inspect.iscoroutinefunction(call_after):
-            _log.warning("call_after is not a coroutine function, ignoring...")
-            return None
+        if call_after is not None and not inspect.iscoroutinefunction(call_after):
+            raise TypeError("call_after must be a coroutine function")
 
         if users and isinstance(users, list):
             self._users = [g for g in users if getattr(g, "id", None)]
+            self._user_ids = {g.id for g in self._users}
 
         self._call_after = call_after
         self._timeout = timeout
-        self._timeout_expiry = time.monotonic() + timeout
-        self._timeout_task = self.loop.create_task(
-            self._timeout_watcher(),
-            name=f"discord.http/view-timeout-watcher-{int(time.time())}"
+        self._timeout_expiry = (
+            time.monotonic() + timeout
+            if timeout is not None else
+            None
         )
+
+        self._cancel_timeout_task()
+
+        if timeout is not None:
+            # No watcher is needed when the view never times out on its own
+            self._timeout_task = self.loop.create_task(
+                self._timeout_watcher(),
+                name=f"discord.http/view-timeout-watcher-{int(time.time())}"
+            )
 
         self._update_event(False)
 
@@ -1555,18 +1620,18 @@ class InteractionStorage:
                 self._msg_cache = msg.id
             except Exception as e:
                 _log.warning(f"Failed to fetch origin message: {e}")
+                self._cancel_timeout_task()
                 return None
 
-        ctx.bot._view_storage[self._msg_cache] = self
-        await self._event_wait.wait()
-
-        if self._timeout_task and not self._timeout_task.done():
-            self._timeout_task.cancel()
-
+        storage_key = self._msg_cache
+        ctx.bot._view_storage[storage_key] = self
         try:
-            del ctx.bot._view_storage[self._msg_cache]
-        except KeyError:
-            pass
+            await self._event.wait()
+        finally:
+            self._cancel_timeout_task()
+            # Another view may have re-used the same key since
+            if ctx.bot._view_storage.get(storage_key) is self:
+                del ctx.bot._view_storage[storage_key]
 
         if self.is_timeout():
             return None
@@ -1591,7 +1656,7 @@ class ThumbnailComponent(Item):
     ):
         super().__init__(type=ComponentType.thumbnail)
 
-        self.url: Asset | AttachmentComponent | str = str(url)
+        self.url: Asset | AttachmentComponent | str = url
         """ The URL of the thumbnail image. """
 
         self.description: str | None = description
@@ -1701,7 +1766,6 @@ class ActionRow(Item):
     """ Represents an action row component in a message, containing buttons, selects, and links. """
 
     __slots__ = (
-        "_select_types",
         "components",
     )
 
@@ -1713,14 +1777,6 @@ class ActionRow(Item):
 
         self.components: list[Button | Select | Link] = list(components)
         """ The components contained within the action row. """
-
-        self._select_types: list[ComponentType] = [
-            ComponentType.string_select,
-            ComponentType.user_select,
-            ComponentType.role_select,
-            ComponentType.mentionable_select,
-            ComponentType.channel_select
-        ]
 
     def __repr__(self) -> str:
         return f"<ActionRow components={self.components}>"
@@ -1734,7 +1790,7 @@ class ActionRow(Item):
 
         Parameters
         ----------
-        item:
+        item
             The item to add to the action row
         """
         self.components.append(item)
@@ -1750,9 +1806,9 @@ class ActionRow(Item):
 
         Parameters
         ----------
-        label:
+        label
             Label of the item
-        custom_id:
+        custom_id
             Custom ID of the item
 
         Returns
@@ -1793,7 +1849,7 @@ class ActionRow(Item):
             raise ValueError("Cannot have an action row with more than 5 components")
         if (
             len(self.components) > 1 and
-            any(g.type in self._select_types for g in self.components)
+            any(g.type in _select_types for g in self.components)
         ):
             raise ValueError("Cannot have an action row with more than two items if any select menu is present")
 
@@ -1802,27 +1858,27 @@ class ActionRow(Item):
             "components": [g.to_dict() for g in self.components]
         }
 
+    _cls_table: ClassVar[dict[int, type]] = {
+        2: Button,
+        3: Select,
+        5: UserSelect,
+        6: RoleSelect,
+        7: MentionableSelect,
+        8: ChannelSelect,
+        9: SectionComponent,
+    }
+
+    _default_value_dropdowns: ClassVar[tuple[type, ...]] = (
+        UserSelect, RoleSelect, MentionableSelect, ChannelSelect,
+    )
+
     @classmethod
     def from_dict(cls, data: dict) -> "ActionRow":
         """ Returns an action row from a dict provided by Discord. """
         items = []
 
-        cls_table = {
-            2: Button,
-            3: Select,
-            5: UserSelect,
-            6: RoleSelect,
-            7: MentionableSelect,
-            8: ChannelSelect,
-            9: SectionComponent,
-        }
-
-        default_value_dropdowns = (
-            UserSelect, RoleSelect, MentionableSelect, ChannelSelect,
-        )
-
         for c in data.get("components", []):
-            cls_ = cls_table[c.get("type", 2)]
+            cls_ = cls._cls_table[c.get("type", 2)]
             if c.get("url", None):
                 cls_ = Link
                 try:
@@ -1835,7 +1891,7 @@ class ActionRow(Item):
             if c.get("id", None):
                 del c["id"]
 
-            if cls_ in default_value_dropdowns:
+            if cls_ in cls._default_value_dropdowns:
                 c["default_values"] = [
                     int(g["id"])
                     for g in c.get("default_values", [])
@@ -1911,18 +1967,28 @@ class MediaGalleryComponent(Item):
 
     def add_item(
         self,
-        item: MediaGalleryItem | File | Asset | str
+        item: MediaGalleryItem | AttachmentComponent | File | Asset | str,
+        *,
+        description: str | None = None,
+        spoiler: bool = False
     ) -> None:
         """
         Add items to the media gallery.
 
         Parameters
         ----------
-        item:
+        item
             Items to add to the media gallery
+        description
+            The description of this media
+        spoiler
+            If the media should be marked as spoiler or not
         """
         if len(self.items) >= 10:
             raise ValueError("Cannot have more than 10 items in a media gallery component")
+
+        if not isinstance(item, MediaGalleryItem):
+            item = MediaGalleryItem(item, spoiler=spoiler, description=description)
 
         self.items.append(item)
 
@@ -1934,6 +2000,7 @@ class MediaGalleryComponent(Item):
         payload: list[MediaGalleryItem] = []
 
         for g in self.items:
+            # This is probably useless, will re-check later
             if isinstance(g, File | Asset):
                 payload.append(MediaGalleryItem(g))
             elif isinstance(g, str):
@@ -2044,7 +2111,7 @@ class ContainerComponent(Item):
 
         Parameters
         ----------
-        item:
+        item
             The item to add to the container component
 
         Returns
@@ -2069,7 +2136,7 @@ class ContainerComponent(Item):
 
         Parameters
         ----------
-        index:
+        index
             The index of the item to remove
 
         Returns
@@ -2130,9 +2197,9 @@ class View(InteractionStorage):
 
         Parameters
         ----------
-        label:
+        label
             Label of the item
-        custom_id:
+        custom_id
             Custom ID of the item
 
         Returns
@@ -2160,7 +2227,7 @@ class View(InteractionStorage):
 
         Parameters
         ----------
-        item:
+        item
             The item to add to the view
 
         Returns
@@ -2184,9 +2251,9 @@ class View(InteractionStorage):
 
         Parameters
         ----------
-        label:
+        label
             Label of the item
-        custom_id:
+        custom_id
             Custom ID of the item
 
         Returns
@@ -2232,6 +2299,32 @@ class View(InteractionStorage):
 
         return [g.to_dict() for g in self.items]
 
+    _cls_table_cache: ClassVar[dict[int, type] | None] = None
+
+    @classmethod
+    def _get_cls_table(cls) -> dict[int, type]:
+        if cls._cls_table_cache is None:
+            cls._cls_table_cache = {
+                1: ActionRow,
+                2: Button,
+                3: Select,
+                5: UserSelect,
+                6: RoleSelect,
+                7: MentionableSelect,
+                8: ChannelSelect,
+                9: SectionComponent,
+                10: TextDisplayComponent,
+                11: ThumbnailComponent,
+                12: MediaGalleryComponent,
+                13: FileComponent,
+                14: SeparatorComponent,
+                16: ContentInventoryEntry,
+                17: ContainerComponent,
+                18: LabelComponent,
+                20: CheckpointComponent
+            }
+        return cls._cls_table_cache
+
     @classmethod
     def from_dict(cls, *, state: "DiscordAPI", data: dict) -> "View":
         """ Returns a view from a dict provided by Discord. """
@@ -2239,25 +2332,7 @@ class View(InteractionStorage):
         if not data.get("components"):
             return View(*[])
 
-        cls_table = {
-            1: ActionRow,
-            2: Button,
-            3: Select,
-            5: UserSelect,
-            6: RoleSelect,
-            7: MentionableSelect,
-            8: ChannelSelect,
-            9: SectionComponent,
-            10: TextDisplayComponent,
-            11: ThumbnailComponent,
-            12: MediaGalleryComponent,
-            13: FileComponent,
-            14: SeparatorComponent,
-            16: ContentInventoryEntry,
-            17: ContainerComponent,
-            18: LabelComponent,
-            20: CheckpointComponent
-        }
+        cls_table = cls._get_cls_table()
 
         def _v2_resolver(c: dict) -> Item:
             raw_type = c.get("type", 1)
@@ -2271,7 +2346,8 @@ class View(InteractionStorage):
             match raw_type:
                 case int(ComponentType.file):
                     return FileComponent(
-                        file=AttachmentComponent(state=state, data=c)
+                        file=AttachmentComponent(state=state, data=c),
+                        spoiler=c.get("spoiler", False)
                     )
 
                 case int(ComponentType.section):
@@ -2283,7 +2359,11 @@ class View(InteractionStorage):
 
                         acc_obj = Button(**c["accessory"])
                     else:
-                        acc_obj = AttachmentComponent(state=state, data=c["accessory"])
+                        acc_obj = ThumbnailComponent(
+                            AttachmentComponent(state=state, data=c["accessory"]),
+                            description=c["accessory"].get("description", None),
+                            spoiler=c["accessory"].get("spoiler", False)
+                        )
 
                     texts = [
                         TextDisplayComponent(content=inner["content"])
@@ -2355,7 +2435,11 @@ class LabelComponent(Item):
     ):
         super().__init__(type=ComponentType.label)
 
-        self.component = component
+        self.component: (
+            TextInputComponent | Select |
+            FileUploadComponent | RadioComponent | CheckboxGroupComponent |
+            CheckboxComponent
+        ) = component
         """ The component contained within the label. """
 
         self.label: str | None = self.component.label or label
@@ -2443,11 +2527,11 @@ class Modal(InteractionStorage):
 
         Parameters
         ----------
-        component:
+        component
             The component to add to the modal.
-        label:
+        label
             The label of the component, overwrites component.label
-        description:
+        description
             The description of the component, overwrites component.description, by default None
 
         Returns

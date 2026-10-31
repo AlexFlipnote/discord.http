@@ -1,3 +1,5 @@
+import sys
+
 from typing import TYPE_CHECKING
 from datetime import datetime
 
@@ -23,11 +25,12 @@ __all__ = (
 class ActivityAssets:
     """ Represents the assets of an activity. """
     __slots__ = (
+        "__weakref__",
+        "_raw_large_image",
+        "_raw_small_image",
         "_state",
         "application_id",
-        "large_image",
         "large_text",
-        "small_image",
         "small_text",
     )
 
@@ -43,61 +46,62 @@ class ActivityAssets:
         self.application_id: int = application_id
         """ The ID of the application this activity belongs to. """
 
-        self.large_image: Asset | None = None
-        """ The large image asset of the activity, if any. """
-
         self.large_text: str | None = data.get("large_text")
         """ The text for the large image, if any. """
-
-        self.small_image: Asset | None = None
-        """ The small image asset of the activity, if any. """
 
         self.small_text: str | None = data.get("small_text")
         """ The text for the small image, if any. """
 
-        self._from_data(data)
+        self._raw_large_image: str | None = data.get("large_image")
+        self._raw_small_image: str | None = data.get("small_image")
 
-    def _from_data(self, data: dict) -> None:
-        if data.get("large_image"):
-            self.large_image = Asset._from_activity_asset(
-                state=self._state,
-                activity_id=self.application_id,
-                image=data["large_image"]
-            )
+    @property
+    def large_image(self) -> Asset | None:
+        """ The large image asset of the activity, if any. """
+        if not self._raw_large_image:
+            return None
 
-        if data.get("small_image"):
-            self.small_image = Asset._from_activity_asset(
-                state=self._state,
-                activity_id=self.application_id,
-                image=data["small_image"]
-            )
+        return Asset._from_activity_asset(
+            state=self._state,
+            activity_id=self.application_id,
+            image=self._raw_large_image
+        )
+
+    @property
+    def small_image(self) -> Asset | None:
+        """ The small image asset of the activity, if any. """
+        if not self._raw_small_image:
+            return None
+
+        return Asset._from_activity_asset(
+            state=self._state,
+            activity_id=self.application_id,
+            image=self._raw_small_image
+        )
 
 
 class ActivityTimestamps:
     """ Represents the timestamps of an activity. """
-    __slots__ = (
-        "end",
-        "start",
-    )
+    __slots__ = ("_raw_timestamps",)
 
     def __init__(self, *, data: dict):
-        self.start: datetime | None = None
-        """ The start time of the activity, if any. """
-
-        self.end: datetime | None = None
-        """ The end time of the activity, if any. """
-
-        self._from_data(data)
+        self._raw_timestamps: int = utils.pack_timestamps(
+            data.get("start") or None,
+            data.get("end") or None
+        )
 
     def __repr__(self) -> str:
         return f"<ActivityTimestamps start={self.start} end={self.end}>"
 
-    def _from_data(self, data: dict) -> None:
-        if data.get("start"):
-            self.start = utils.parse_time(data["start"])
+    @property
+    def start(self) -> datetime | None:
+        """ The start time of the activity, if any. """
+        return utils.unpack_timestamp(self._raw_timestamps, 0)
 
-        if data.get("end"):
-            self.end = utils.parse_time(data["end"])
+    @property
+    def end(self) -> datetime | None:
+        """ The end time of the activity, if any. """
+        return utils.unpack_timestamp(self._raw_timestamps, 1)
 
 
 class ActivitySecrets:
@@ -145,24 +149,24 @@ class ActivityParty:
         self.max_size: int | None = None
         """ The maximum size of the party, if any. """
 
-        if data.get("size"):
-            self.current_size = data["size"][0]
-            self.max_size = data["size"][1]
+        if size := data.get("size"):
+            self.current_size = size[0]
+            self.max_size = size[1]
 
 
 class Activity:
     """ Represents an activity. """
 
     __slots__ = (
+        "_raw_created_at",
+        "_raw_flags",
         "_raw_type",
         "_state",
         "application_id",
         "assets",
         "buttons",
-        "created_at",
         "details",
         "emoji",
-        "flags",
         "instance",
         "name",
         "party",
@@ -183,14 +187,17 @@ class Activity:
         self._state = state
         self._raw_type: int = data["type"]
 
-        self.name: str = data["name"]
+        name: str = data["name"]
+        if (cache := state.cache) is not None and cache._presence_dedup_enabled:
+            name = sys.intern(name)
+
+        self.name: str = name
         """ The name of the activity. """
 
         self.url: str | None = data.get("url")
         """ The URL of the activity, if any. """
 
-        self.created_at: datetime = utils.parse_time(data["created_at"])
-        """ The time the activity was created at. """
+        self._raw_created_at: int | str = data["created_at"]
 
         self.timestamps: ActivityTimestamps | None = None
         """ The timestamps of the activity, if any. """
@@ -225,8 +232,7 @@ class Activity:
         self.instance: bool = data.get("instance", False)
         """ Whether the activity is an instance, if any. """
 
-        self.flags: ActivityFlags = ActivityFlags(data.get("flags", 0))
-        """ The flags of the activity, if any. """
+        self._raw_flags: int = data.get("flags", 0)
 
         self.buttons: list[str] = data.get("buttons", [])
         """ The buttons of the activity, if any. """
@@ -240,29 +246,44 @@ class Activity:
         return f"<Activity name={self.name} type={self.type}>"
 
     def _from_data(self, data: dict) -> None:
-        if data.get("timestamps"):
-            self.timestamps = ActivityTimestamps(data=data["timestamps"])
+        if timestamps := data.get("timestamps"):
+            self.timestamps = ActivityTimestamps(data=timestamps)
 
-        if data.get("secrets"):
-            self.secrets = ActivitySecrets(data=data["secrets"])
+        if secrets := data.get("secrets"):
+            self.secrets = ActivitySecrets(data=secrets)
 
-        if data.get("party"):
-            self.party = ActivityParty(data=data["party"])
+        if party := data.get("party"):
+            self.party = ActivityParty(data=party)
 
-        if data.get("emoji"):
-            self.emoji = EmojiParser.from_dict(data["emoji"])
+        if emoji := data.get("emoji"):
+            self.emoji = EmojiParser.from_dict(emoji)
 
         if (
-            data.get("assets") and
+            (assets := data.get("assets")) and
             self.application_id is not None
         ):
-            self.assets = ActivityAssets(
+            built_assets = ActivityAssets(
                 state=self._state,
                 application_id=self.application_id,
-                data=data["assets"]
+                data=assets
             )
+
+            if (cache := self._state.cache) is not None and cache._presence_dedup_enabled:
+                built_assets = cache._dedupe_activity_assets(built_assets)
+
+            self.assets = built_assets
 
     @property
     def type(self) -> ActivityType:
         """ The type of the activity. """
         return ActivityType(self._raw_type)
+
+    @property
+    def created_at(self) -> datetime:
+        """ The time the activity was created at. """
+        return utils.parse_time(self._raw_created_at)
+
+    @property
+    def flags(self) -> ActivityFlags:
+        """ The flags of the activity, if any. """
+        return ActivityFlags(self._raw_flags)

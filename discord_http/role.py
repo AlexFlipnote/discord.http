@@ -1,12 +1,10 @@
-import sys
-
 from typing import TYPE_CHECKING
 
 from . import utils
 from .asset import Asset
 from .colour import Colour
 from .file import File
-from .flags import Permissions, PermissionType
+from .flags import Permissions, PermissionType, RoleFlags
 from .object import PartialBase, Snowflake
 
 if TYPE_CHECKING:
@@ -26,20 +24,20 @@ class PartialRole(PartialBase):
 
     __slots__ = (
         "_state",
-        "_target_type",
         "guild_id",
     )
+
+    _target_type: PermissionType = PermissionType.role
 
     def __init__(
         self,
         *,
         state: "DiscordAPI",
-        id: int,  # noqa: A002
+        id: int,  # ruff: ignore[builtin-argument-shadowing]
         guild_id: int
     ):
         super().__init__(id=int(id))
         self._state = state
-        self._target_type: PermissionType = PermissionType.role
 
         self.guild_id: int = guild_id
         """ The ID of the guild this role is in. """
@@ -53,12 +51,10 @@ class PartialRole(PartialBase):
     @property
     def guild(self) -> "Guild | PartialGuild":
         """ The guild this role is in. """
-        cache = self._state.cache.get_guild(self.guild_id)
-        if cache:
+        if cache := self._state.cache.get_guild(self.guild_id):
             return cache
 
-        from .guild import PartialGuild
-        return PartialGuild(state=self._state, id=self.guild_id)
+        return self._state.bot.get_partial_guild(self.guild_id)
 
     @property
     def mention(self) -> str:
@@ -80,9 +76,9 @@ class PartialRole(PartialBase):
 
         Parameters
         ----------
-        user_id:
+        user_id
             The user ID to add the role to
-        reason:
+        reason
             The reason for adding the role
         """
         await self._state.query(
@@ -103,9 +99,9 @@ class PartialRole(PartialBase):
 
         Parameters
         ----------
-        user_id:
+        user_id
             The user ID to remove the role from
-        reason:
+        reason
             The reason for removing the role
         """
         await self._state.query(
@@ -114,6 +110,36 @@ class PartialRole(PartialBase):
             res_method="text",
             reason=reason
         )
+
+    async def fetch_permissions(
+        self,
+        channel: Snowflake | int | None = None,
+        *,
+        implicit: bool = True
+    ) -> Permissions:
+        """
+        Fetches the role permissions from the API, in the guild or in a channel if one is given.
+
+        Shortcut for `PartialGuild.fetch_role_permissions` and `PartialChannel.fetch_role_permissions`.
+
+        Parameters
+        ----------
+        channel
+            The channel to fetch the permissions in, `None` fetches the guild permissions
+        implicit
+            Whether to apply implicit permission masking for missing `VIEW_CHANNEL` or voice/stage `CONNECT`.
+            Only used when `channel` is given.
+
+        Returns
+        -------
+            The role's permissions
+        """
+        if channel is None:
+            return await self.guild.fetch_role_permissions(self.id)
+
+        return await self._state.bot.get_partial_channel(
+            int(channel), guild_id=self.guild_id
+        ).fetch_role_permissions(self.id, implicit=implicit)
 
     async def delete(
         self,
@@ -125,7 +151,7 @@ class PartialRole(PartialBase):
 
         Parameters
         ----------
-        reason:
+        reason
             The reason for deleting the role
         """
         await self._state.query(
@@ -154,30 +180,30 @@ class PartialRole(PartialBase):
 
         Parameters
         ----------
-        name:
+        name
             The new name of the role
-        color:
+        color
             Alias for colour
-        colour:
+        colour
             The new colour of the role.
             If tuple is provided, it switches to the new gradient role colours.
             The third value must be one of the following:
             - 16761760
             - 11127295
             - 16759788
-        hoist:
+        hoist
             Whether the role should be displayed separately in the sidebar
-        mentionable:
+        mentionable
             Whether the role should be mentionable
-        unicode_emoji:
+        unicode_emoji
             The new unicode emoji of the role
-        positions:
+        positions
             The new position of the role
-        permissions:
+        permissions
             The new permissions for the role
-        icon:
+        icon
             The new icon of the role
-        reason:
+        reason
             The reason for editing the role
 
         Returns
@@ -186,7 +212,7 @@ class PartialRole(PartialBase):
 
         Raises
         ------
-        `ValueError`
+        ValueError
             - If both `unicode_emoji` and `icon` are set
             - If there were no changes applied to the role
             - If position was changed, but Discord API returned invalid data
@@ -261,11 +287,7 @@ class PartialRole(PartialBase):
                     "(Most likely Discord API bug)"
                 )
 
-            role = Role(
-                state=self._state,
-                guild=self.guild,
-                data=find_role
-            )
+            role = self._state.bot.create_role_from_data(find_role, guild=self.guild)
 
         if payload:
             r = await self._state.query(
@@ -275,11 +297,7 @@ class PartialRole(PartialBase):
                 reason=reason
             )
 
-            role = Role(
-                state=self._state,
-                guild=self.guild,
-                data=r.response
-            )
+            role = self._state.bot.create_role_from_data(r.response, guild=self.guild)
 
         if not role:
             raise ValueError(
@@ -293,22 +311,23 @@ class PartialRole(PartialBase):
 class Role(PartialRole):
     """ Represents a role object. """
 
+    _FLAG_HOIST = 1 << 0
+    _FLAG_MANAGED = 1 << 1
+    _FLAG_MENTIONABLE = 1 << 2
+    _FLAG_PREMIUM_SUBSCRIBER = 1 << 3
+    _FLAG_AVAILABLE_FOR_PURCHASE = 1 << 4
+    _FLAG_GUILD_CONNECTIONS = 1 << 5
+    _ROLE_FLAGS_SHIFT = 6  # Discord's own role flags are packed above the internal bits
+    _EMPTY_EXTRA = (None,) * 5
+
     __slots__ = (
-        "_available_for_purchase",
-        "_guild_connections",
-        "_icon",
-        "_premium_subscriber",
-        "bot_id",
-        "colour",
-        "hoist",
-        "integration_id",
-        "managed",
-        "mentionable",
+        "_extra",
+        "_flags",
+        "_raw_colour",
+        "_raw_icon",
+        "_raw_permissions",
         "name",
-        "permissions",
         "position",
-        "subscription_listing_id",
-        "tags",
         "unicode_emoji",
     )
 
@@ -321,46 +340,43 @@ class Role(PartialRole):
     ):
         super().__init__(state=state, id=int(data["id"]), guild_id=guild.id)
 
-        self.name: str = sys.intern(data["name"])
+        self.name: str = data["name"]
         """ The name of the role. """
-
-        self.hoist: bool = data["hoist"]
-        """ Whether the role is displayed separately in the sidebar. """
-
-        self.managed: bool = data.get("managed", False)
-        """ Whether the role is managed by an integration. """
-
-        self.mentionable: bool = data.get("mentionable", False)
-        """ Whether the role is mentionable. """
-
-        self.permissions: Permissions = Permissions(int(data["permissions"]))
-        """ The permissions of the role. """
-
-        self.colour: Colour = Colour(int(data["color"]))
-        """ The colour of the role. """
 
         self.position: int = int(data["position"])
         """ The position of the role in the role hierarchy. """
 
-        self.tags: dict = data.get("tags", {})
-        """ The tags of the role, such as `premium_subscriber`, `available_for_purchase`, `guild_connections`, etc. """
+        tags: dict = data.get("tags", {})
 
-        self.bot_id: int | None = utils.get_int(data, "bot_id")
-        """ The ID of the bot that manages the role, if any. """
+        self._flags: int = (
+            (self._FLAG_HOIST if data["hoist"] else 0) |
+            (self._FLAG_MANAGED if data.get("managed") else 0) |
+            (self._FLAG_MENTIONABLE if data.get("mentionable") else 0) |
+            (self._FLAG_PREMIUM_SUBSCRIBER if "premium_subscriber" in tags else 0) |
+            (self._FLAG_AVAILABLE_FOR_PURCHASE if "available_for_purchase" in tags else 0) |
+            (self._FLAG_GUILD_CONNECTIONS if "guild_connections" in tags else 0) |
+            (int(data.get("flags") or 0) << self._ROLE_FLAGS_SHIFT)
+        )
 
-        self.integration_id: int | None = utils.get_int(data, "integration_id")
-        """ The ID of the integration that manages the role, if any. """
+        colours: dict = data.get("colors") or {}
 
-        self.subscription_listing_id: int | None = utils.get_int(data, "subscription_listing_id")
-        """ The ID of the subscription listing for the role, if any. """
+        extra = (
+            utils.get_int(tags, "bot_id"),
+            utils.get_int(tags, "integration_id"),
+            utils.get_int(tags, "subscription_listing_id"),
+            colours.get("secondary_color"),
+            colours.get("tertiary_color"),
+        )
+        self._extra: tuple[int | None, int | None, int | None, int | None, int | None] | None = (
+            extra if extra != self._EMPTY_EXTRA else None
+        )
 
         self.unicode_emoji: str | None = data.get("unicode_emoji")
         """ The unicode emoji associated with the role, if any. """
 
-        self._premium_subscriber: bool = "premium_subscriber" in self.tags
-        self._available_for_purchase: bool = "available_for_purchase" in self.tags
-        self._guild_connections: bool = "guild_connections" in self.tags
-        self._icon: str | None = data.get("icon")
+        self._raw_icon: str | None = data.get("icon")
+        self._raw_permissions: int = int(data["permissions"])
+        self._raw_colour: int = int(data["color"])
 
     def __str__(self) -> str:
         return self.name
@@ -369,15 +385,105 @@ class Role(PartialRole):
         return f"<Role id={self.id} name='{self.name}'>"
 
     @property
+    def hoist(self) -> bool:
+        """ Whether the role is displayed separately in the sidebar. """
+        return bool(self._flags & self._FLAG_HOIST)
+
+    @property
+    def managed(self) -> bool:
+        """ Whether the role is managed by an integration. """
+        return bool(self._flags & self._FLAG_MANAGED)
+
+    @property
+    def mentionable(self) -> bool:
+        """ Whether the role is mentionable. """
+        return bool(self._flags & self._FLAG_MENTIONABLE)
+
+    @property
+    def permissions(self) -> Permissions:
+        """ The permissions of the role. """
+        return Permissions(self._raw_permissions)
+
+    @property
+    def colour(self) -> Colour:
+        """ The colour of the role. """
+        return Colour(self._raw_colour)
+
+    @property
+    def secondary_colour(self) -> Colour | None:
+        """ The secondary colour of the role, if it uses gradient colours. """
+        if self._extra is None or self._extra[3] is None:
+            return None
+        return Colour(self._extra[3])
+
+    @property
+    def tertiary_colour(self) -> Colour | None:
+        """ The tertiary colour of the role, if it uses holographic colours. """
+        if self._extra is None or self._extra[4] is None:
+            return None
+        return Colour(self._extra[4])
+
+    @property
+    def colours(self) -> tuple[Colour, ...]:
+        """ All colours of the role, starting with the primary colour. """
+        return tuple(
+            Colour(c) for c in (self._raw_colour, *(self._extra[3:] if self._extra else ()))
+            if c is not None
+        )
+
+    @property
+    def flags(self) -> RoleFlags:
+        """ The flags of the role. """
+        return RoleFlags(self._flags >> self._ROLE_FLAGS_SHIFT)
+
+    @property
+    def tags(self) -> dict:
+        """ The tags of the role, such as `premium_subscriber`, `available_for_purchase`, `guild_connections`, etc. """
+        tags: dict = {}
+
+        if self._flags & self._FLAG_PREMIUM_SUBSCRIBER:
+            tags["premium_subscriber"] = None
+        if self._flags & self._FLAG_AVAILABLE_FOR_PURCHASE:
+            tags["available_for_purchase"] = None
+        if self._flags & self._FLAG_GUILD_CONNECTIONS:
+            tags["guild_connections"] = None
+
+        if self._extra is not None:
+            bot_id, integration_id, subscription_listing_id = self._extra[:3]
+            if bot_id is not None:
+                tags["bot_id"] = str(bot_id)
+            if integration_id is not None:
+                tags["integration_id"] = str(integration_id)
+            if subscription_listing_id is not None:
+                tags["subscription_listing_id"] = str(subscription_listing_id)
+
+        return tags
+
+    @property
+    def bot_id(self) -> int | None:
+        """ The ID of the bot that manages the role, if any. """
+        return self._extra[0] if self._extra is not None else None
+
+    @property
+    def integration_id(self) -> int | None:
+        """ The ID of the integration that manages the role, if any. """
+        return self._extra[1] if self._extra is not None else None
+
+    @property
+    def subscription_listing_id(self) -> int | None:
+        """ The ID of the subscription listing for the role, if any. """
+        return self._extra[2] if self._extra is not None else None
+
+    @property
     def icon(self) -> Asset | None:
         """ The icon of the role if it's custom. """
-        if self._icon is None:
+        if self._raw_icon is None:
             return None
 
         return Asset._from_icon(
             state=self._state,
             object_id=self.id,
-            icon_hash=self._icon,
+            icon_hash=self._raw_icon,
             path="role"
         )
 
@@ -396,12 +502,12 @@ class Role(PartialRole):
 
     def is_premium_subscriber(self) -> bool:
         """ Returns whether the role is a premium subscriber. """
-        return self._premium_subscriber
+        return bool(self._flags & self._FLAG_PREMIUM_SUBSCRIBER)
 
     def is_available_for_purchase(self) -> bool:
         """ Returns whether the role is available for purchase. """
-        return self._available_for_purchase
+        return bool(self._flags & self._FLAG_AVAILABLE_FOR_PURCHASE)
 
     def is_guild_connection(self) -> bool:
         """ Returns whether the role is a guild connection. """
-        return self._guild_connections
+        return bool(self._flags & self._FLAG_GUILD_CONNECTIONS)

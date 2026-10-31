@@ -12,17 +12,23 @@ from .view import View, Modal
 
 if TYPE_CHECKING:
     from .http import DiscordAPI
-    from .message import MessageReference, Poll
+    from .message import MessageReference, Poll, SharedClientTheme
+    from .sticker import PartialSticker
     from .user import PartialUser, User
 
 MISSING = utils.MISSING
 
 __all__ = (
     "AutocompleteResponse",
+    "BaseResponse",
     "DeferResponse",
+    "EmptyResponse",
     "MessageResponse",
+    "ModalResponse",
     "Ping",
 )
+
+_MULTIPART_CONTENT_TYPE = f"multipart/form-data; boundary={utils.MultipartData.BOUNDARY}"
 
 
 class Ping(Snowflake):
@@ -62,14 +68,12 @@ class Ping(Snowflake):
     @property
     def application(self) -> "PartialUser":
         """ The partial user object of the application. """
-        from .user import PartialUser
-        return PartialUser(state=self._state, id=self.application_id)
+        return self._state.bot.get_partial_user(self.application_id)
 
     @property
     def user(self) -> "User":
         """ The user object of the bot. """
-        from .user import User
-        return User(state=self._state, data=self._raw_user)
+        return self._state.bot.create_user_from_data(self._raw_user)
 
 
 class BaseResponse:
@@ -83,8 +87,7 @@ class BaseResponse:
     @property
     def content_type(self) -> str:
         """ The content type of the response. """
-        multidata = utils.MultipartData()
-        return multidata.content_type
+        return _MULTIPART_CONTENT_TYPE
 
     def to_dict(self) -> dict:
         """ Default method to convert the response to a `dict`. """
@@ -96,18 +99,7 @@ class BaseResponse:
 
 
 class DeferResponse(BaseResponse):
-    """
-    Represents a response that defers the interaction.
-
-    Parameters
-    ----------
-    thinking: bool
-        Whether the response is thinking or not.
-    ephemeral: bool
-        Whether the response is ephemeral or not.
-    flags: MessageFlags
-        The flags for the response.
-    """
+    """ Represents a response that defers the interaction. """
 
     __slots__ = (
         "ephemeral",
@@ -122,9 +114,14 @@ class DeferResponse(BaseResponse):
         ephemeral: bool = False,
         flags: MessageFlags | None = None,
     ):
-        self.ephemeral = ephemeral
-        self.thinking = thinking
-        self.flags = flags or MessageFlags(0)
+        self.ephemeral: bool = ephemeral
+        """ Whether the response is ephemeral or not. """
+
+        self.thinking: bool = thinking
+        """ Whether the response is thinking or not. """
+
+        self.flags: MessageFlags = flags or MessageFlags(0)
+        """ The flags for the response. """
 
         if self.ephemeral:
             self.flags |= MessageFlags.ephemeral
@@ -150,15 +147,7 @@ class DeferResponse(BaseResponse):
 
 
 class AutocompleteResponse(BaseResponse):
-    """
-    Represents an autocomplete response.
-
-    Parameters
-    ----------
-    choices: dict[Any, str]
-        A dictionary of choices for the autocomplete response.
-        The keys are the values to be sent to Discord, and the values are the names to be displayed to the user.
-    """
+    """ Represents an autocomplete response. """
 
     __slots__ = ("choices",)
 
@@ -166,7 +155,8 @@ class AutocompleteResponse(BaseResponse):
         self,
         choices: dict[Any, str]
     ):
-        self.choices = choices
+        self.choices: dict[Any, str] = choices
+        """ A dictionary of choices, where keys are sent to Discord and values are shown to the user. """
 
     def to_dict(self) -> dict:
         """ Returns the response as a `dict`. """
@@ -189,19 +179,13 @@ class AutocompleteResponse(BaseResponse):
 
 
 class ModalResponse(BaseResponse):
-    """
-    Represents a modal response.
-
-    Parameters
-    ----------
-    modal: Modal
-        The modal to be displayed to the user.
-    """
+    """ Represents a modal response. """
 
     __slots__ = ("modal",)
 
     def __init__(self, modal: Modal):
-        self.modal = modal
+        self.modal: Modal = modal
+        """ The modal to be displayed to the user. """
 
     def to_dict(self) -> dict:
         """ Returns the response as a `dict`. """
@@ -241,53 +225,22 @@ class EmptyResponse(BaseResponse):
 
 
 class MessageResponse(BaseResponse):
-    """
-    Represents a message response.
-
-    Parameters
-    ----------
-    content:
-        The content of the message.
-    file:
-        A single file to be sent with the message.
-    files:
-        A list of files to be sent with the message.
-    embed:
-        A single embed to be sent with the message.
-    embeds:
-        A list of embeds to be sent with the message.
-    attachment:
-        A single attachment to be sent with the message.
-    attachments:
-        A list of attachments to be sent with the message.
-    view:
-        A view to be sent with the message.
-    tts:
-        Whether the message should be sent as a TTS message.
-    allowed_mentions:
-        Allowed mentions for the message.
-    message_reference:
-        A reference to another message, if applicable.
-    poll:
-        A poll to be sent with the message.
-    type:
-        The type of the response. Defaults to `ResponseType.message`.
-    ephemeral:
-        Whether the message should be ephemeral or not.
-    flags:
-        Flags for the message response.
-    """
+    """ Represents a message response. """
 
     __slots__ = (
         "allowed_mentions",
         "attachments",
         "content",
         "embeds",
+        "enforce_nonce",
         "ephemeral",
         "files",
         "flags",
         "message_reference",
+        "nonce",
         "poll",
+        "shared_client_theme",
+        "stickers",
         "tts",
         "type",
         "view",
@@ -308,36 +261,75 @@ class MessageResponse(BaseResponse):
         allowed_mentions: AllowedMentions | None = MISSING,
         message_reference: "MessageReference | None" = MISSING,
         poll: "Poll | None" = MISSING,
-        type: ResponseType | int = 4,  # noqa: A002
+        type: ResponseType | int = 4,  # ruff: ignore[builtin-argument-shadowing]
         ephemeral: bool | None = False,
         flags: MessageFlags | None = MISSING,
+        stickers: "list[PartialSticker | Snowflake | int] | None" = MISSING,
+        nonce: int | str | None = MISSING,
+        enforce_nonce: bool = False,
+        shared_client_theme: "SharedClientTheme | None" = MISSING,
     ):
-        self.content = content
-        self.files = files
-        self.embeds = embeds
-        self.attachments = attachments
-        self.ephemeral = ephemeral
-        self.view = view
-        self.tts = tts
-        self.type = type
-        self.allowed_mentions = allowed_mentions
-        self.message_reference = message_reference
-        self.poll = poll
-        self.flags = flags or MessageFlags(0)
+        self.content: str | None = content
+        """ The content of the message. """
+
+        self.files: list[File] | None = files
+        """ The files to be sent with the message. A single file may be passed via `file` instead. """
+
+        self.embeds: list[Embed] | None = embeds
+        """ The embeds to be sent with the message. A single embed may be passed via `embed` instead. """
+
+        self.attachments: list[File] | None = attachments
+        """ The attachments to be sent with the message. A single attachment may be passed via `attachment` instead. """
+
+        self.ephemeral: bool | None = ephemeral
+        """ Whether the message should be ephemeral or not. """
+
+        self.view: View | None = view
+        """ A view to be sent with the message. """
+
+        self.tts: bool | None = tts
+        """ Whether the message should be sent as a TTS message. """
+
+        self.type: ResponseType | int = type
+        """ The type of the response. Defaults to `ResponseType.message`. """
+
+        self.allowed_mentions: AllowedMentions | None = allowed_mentions
+        """ Allowed mentions for the message. """
+
+        self.message_reference: "MessageReference | None" = message_reference
+        """ A reference to another message, if applicable. """
+
+        self.poll: "Poll | None" = poll
+        """ A poll to be sent with the message. """
+
+        self.flags: MessageFlags = flags or MessageFlags(0)
+        """ Flags for the message response. """
+
+        self.stickers: "list[PartialSticker | Snowflake | int] | None" = stickers
+        """ Stickers from the guild to be sent with the message. """
+
+        self.nonce: int | str | None = nonce
+        """ A nonce to verify the message was sent. """
+
+        self.enforce_nonce: bool = enforce_nonce
+        """ Whether the nonce should be checked for uniqueness. """
+
+        self.shared_client_theme: "SharedClientTheme | None" = shared_client_theme
+        """ A client theme to be shared with the message. """
 
         if file is not MISSING and files is not MISSING:
             raise TypeError("Cannot pass both file and files")
-        if file is not MISSING:
+        if file is not MISSING and file is not None:
             self.files = [file]
 
         if embed is not MISSING and embeds is not MISSING:
             raise TypeError("Cannot pass both embed and embeds")
-        if embed is not MISSING:
+        if embed is not MISSING and embed is not None:
             self.embeds = [embed]
 
         if attachment is not MISSING and attachments is not MISSING:
             raise TypeError("Cannot pass both attachment and attachments")
-        if attachment is not MISSING:
+        if attachment is not MISSING and attachment is not None:
             self.attachments = [attachment]
 
         if embed is None or embeds is None:
@@ -359,13 +351,19 @@ class MessageResponse(BaseResponse):
         if self.ephemeral:
             self.flags |= MessageFlags.ephemeral
 
+        if isinstance(self.stickers, list) and len(self.stickers) > 3:
+            raise ValueError("Cannot send more than 3 stickers")
+
+        if self.nonce is not MISSING and self.nonce is not None and len(str(self.nonce)) > 25:
+            raise ValueError("nonce cannot be longer than 25 characters")
+
     def to_dict(self, is_request: bool = False) -> dict:
         """
         The JSON data that is sent to Discord.
 
         Parameters
         ----------
-        is_request:
+        is_request
             Whether the data is being sent to Discord or not.
 
         Returns
@@ -400,6 +398,19 @@ class MessageResponse(BaseResponse):
         if self.poll is not MISSING:
             output["poll"] = self.poll.to_dict()
 
+        if self.stickers is not MISSING:
+            output["sticker_ids"] = [
+                str(int(g)) for g in self.stickers or ()
+            ]
+
+        if self.nonce is not MISSING and self.nonce is not None:
+            output["nonce"] = self.nonce
+            if self.enforce_nonce:
+                output["enforce_nonce"] = True
+
+        if self.shared_client_theme is not MISSING and self.shared_client_theme is not None:
+            output["shared_client_theme"] = self.shared_client_theme.to_dict()
+
         if self.view is not MISSING:
             if not self.view.items:
                 output["components"] = []
@@ -426,13 +437,32 @@ class MessageResponse(BaseResponse):
             return output
         return {"type": int(self.type), "data": output}
 
+    def to_request(self) -> dict[str, Any]:
+        """
+        The keyword arguments used to send the message to Discord with `DiscordAPI.query()`.
+
+        Plain JSON is sent unless the message has files,
+        since multipart data is a lot slower to build and send.
+
+        Returns
+        -------
+            Either the `json` body, or the multipart `data` and its `headers`
+        """
+        if isinstance(self.files, list) and self.files:
+            return {
+                "data": self.to_multipart(is_request=True),
+                "headers": {"Content-Type": self.content_type}
+            }
+
+        return {"json": self.to_dict(is_request=True)}
+
     def to_multipart(self, is_request: bool = False) -> MultipartWriter:
         """
         The multipart data that is sent to Discord.
 
         Parameters
         ----------
-        is_request:
+        is_request
             Whether the data is being sent to Discord or not.
 
         Returns
@@ -445,7 +475,7 @@ class MessageResponse(BaseResponse):
             for i, file in enumerate(self.files):
                 multidata.attach(
                     f"files[{i}]",
-                    file,  # type: ignore
+                    file,
                     filename=file.filename
                 )
 

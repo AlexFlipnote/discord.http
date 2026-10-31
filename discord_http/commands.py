@@ -4,7 +4,8 @@ import logging
 import re
 import time
 
-from collections.abc import Callable, Coroutine
+from collections.abc import Callable
+from dataclasses import dataclass, field, replace
 from types import UnionType
 from typing import (
     TYPE_CHECKING, Union, Protocol,
@@ -21,7 +22,7 @@ from .channel import (
     NewsChannel, BaseChannel, Thread
 )
 from .cooldowns import BucketType, Cooldown, CooldownCache
-from .enums import ApplicationCommandType, CommandOptionType, ChannelType
+from .enums import ApplicationCommandType, CommandOptionType, ChannelType, InteractionContextType
 from .errors import (
     UserMissingPermissions, BotMissingPermissions, CheckFailed,
     InvalidMember, CommandOnCooldown
@@ -32,6 +33,7 @@ from .message import Attachment
 from .object import PartialBase, Snowflake
 from .response import BaseResponse, AutocompleteResponse
 from .role import Role
+from .tasks import Loop
 from .user import User
 import builtins
 
@@ -79,19 +81,22 @@ __all__ = (
     "Converter",
     "Interaction",
     "Listener",
+    "LocaleContainer",
     "PartialCommand",
     "Range",
+    "SubCommand",
     "SubGroup",
 )
 
 
 class Cog:
     """ Represents a cog, a collection of commands, listeners, and interactions. """
-    def __new__(cls, *args, **kwargs):  # noqa: ANN002, ARG004
+    def __new__(cls, *args, **kwargs):  # ruff: ignore[missing-type-args, unused-static-method-argument]
         """ Create a new cog. """
         commands = {}
         listeners = {}
         interactions = {}
+        loops = {}
 
         for base in reversed(cls.__mro__):
             for _, value in base.__dict__.items():
@@ -111,9 +116,13 @@ class Cog:
                     case x if isinstance(x, Listener):
                         listeners[value.name] = value
 
+                    case x if isinstance(x, Loop):
+                        loops[value.func.__name__] = value
+
         cls._cog_commands: dict[str, "Command"] = commands
         cls._cog_interactions: dict[str, "Interaction"] = interactions
         cls._cog_listeners: dict[str, "Listener"] = listeners
+        cls._cog_loops: dict[str, Loop] = loops
 
         return super().__new__(cls)
 
@@ -158,6 +167,11 @@ class Cog:
         for interaction in self._cog_interactions.values():
             bot.remove_interaction(interaction)
 
+        for name in self._cog_loops:
+            bound_loop = getattr(self, name, None)
+            if isinstance(bound_loop, Loop):
+                bound_loop.cancel()
+
     async def cog_load(self) -> None:
         """ Called before the cog is loaded. """
 
@@ -186,19 +200,21 @@ class PartialCommand(PartialBase):
 class LocaleContainer:
     """ Represents a container for localized names and descriptions. """
 
+    __slots__ = ("description", "key", "name")
+
     def __init__(
         self,
         key: str,
         name: str,
         description: str | None = None
     ):
-        self.key = key
+        self.key: str = key
         """ The key of the option this localization is for, or "_" for the command itself. """
 
-        self.name = name
+        self.name: str = name
         """ The localized name. """
 
-        self.description = description or "..."
+        self.description: str = description or "..."
         """ The localized description. """
 
 
@@ -216,9 +232,9 @@ class Converter(Protocol[ConverterT]):
 
         Parameters
         ----------
-        ctx:
+        ctx
             Context of the bot
-        value:
+        value
             The value returned by the argument in command
 
         Returns
@@ -226,6 +242,45 @@ class Converter(Protocol[ConverterT]):
             Your converted value
         """
         raise NotImplementedError("convert not implemented")
+
+
+@dataclass
+class _CommandMeta:
+    """
+    Typed metadata a decorator attaches to a function.
+
+    A decorator (`@commands.check`, `@commands.cooldown`, etc.) attaches this to a
+    bare function, before it's known whether that function will end up wrapped in a `Command`.
+
+    `Command.__init__` reads this once (via `_get_meta`) and copies each field onto itself,
+    so this class only exists to give decorators one common, typed place to write to instead
+    of inventing a new `func.__whatever__` string attribute per decorator.
+    """
+    checks: list[tuple[Callable, bool]] = field(default_factory=list)
+    before_invoke: tuple[Callable, bool] | None = None
+    after_invoke: tuple[Callable, bool] | None = None
+    cooldown: "CooldownCache | None" = None
+    locales: dict[LocaleTypes, list["LocaleContainer"]] = field(default_factory=dict)
+    describe_params: dict[str, str] = field(default_factory=dict)
+    file_types: dict[str, list[str]] = field(default_factory=dict)
+    integration_contexts: list[InteractionContextType | int] | None = None
+    choices_params: dict[str, dict] = field(default_factory=dict)
+    nsfw: bool = False
+    default_permissions: Permissions | None = None
+    has_permissions: Permissions | None = None
+    bot_has_permissions: Permissions | None = None
+
+
+_COMMAND_META_ATTR = "__discord_http_command_meta__"
+
+
+def _get_meta(func: Callable) -> _CommandMeta:
+    """ Get (or lazily create) the typed `_CommandMeta` attached to a function by decorators. """
+    meta = getattr(func, _COMMAND_META_ATTR, None)
+    if meta is None:
+        meta = _CommandMeta()
+        setattr(func, _COMMAND_META_ATTR, meta)
+    return meta
 
 
 class Command:
@@ -244,7 +299,7 @@ class Command:
         self.id: int | None = None
         """ The ID of the command, None if it's not registered yet. """
 
-        self.command = command
+        self.command: Callable = command
         """ The function that is called when the command is invoked. """
 
         self.cog: "Cog | None" = None
@@ -253,22 +308,22 @@ class Command:
         self.type: int = int(cmd_type)
         """ The type of the command, either 1 for chat input, 2 for user context menu, or 3 for message context menu. """
 
-        self.name = name
+        self.name: str = name
         """ The name of the command. """
 
-        self.description = description
+        self.description: str | None = description
         """ The description of the command, only applicable for chat input commands. """
 
-        self.options = []
+        self.options: list[dict] = []
         """ The options of the command, only applicable for chat input commands. """
 
-        self.parent = parent
+        self.parent: "SubGroup | None" = parent
         """ The parent subcommand group of this command, if it is a subcommand. """
 
-        self.guild_install = guild_install
+        self.guild_install: bool = guild_install
         """ Whether this command should be installed in guilds or not. """
 
-        self.user_install = user_install
+        self.user_install: bool = user_install
         """ Whether this command should be installed for users or not. """
 
         self.list_autocompletes: dict[str, Callable] = {}
@@ -277,11 +332,17 @@ class Command:
         self.guild_ids: list[Snowflake | int] = guild_ids or []
         """ A list of guild IDs this command is in, empty if it's a global command. """
 
-        self._converters: dict[str, builtins.type[Converter]] = {}
+        self._converters: dict[str, tuple[builtins.type[Converter], bool]] = {}
 
         self.__list_choices: list[str] = []
         self.__user_objects: dict[str, builtins.type[Member | User]] = {}
         self.__user_member_objects: list[str] = []
+
+        meta = _get_meta(command)
+        self._meta: _CommandMeta = replace(meta, choices_params=dict(meta.choices_params))
+
+        self.cooldown: "CooldownCache | None" = self._meta.cooldown
+        """ The cooldown rule of the command, if any. """
 
         if self.type == ApplicationCommandType.chat_input:
             if self.description is None:
@@ -320,7 +381,7 @@ class Command:
                 channel_options: list[ChannelType] = []
 
                 # Check if there are multiple types, looking for:
-                # - Union[Any, ...] / Optional[Any] / type | None  # noqa: ERA001
+                # - Union[Any, ...] / Optional[Any] / type | None  # ruff: ignore[commented-out-code]
 
                 if get_origin(annotation) is Union:
                     # Example: Optional[int] -> Union[int, NoneType]
@@ -334,12 +395,18 @@ class Command:
                         args = get_args(annotation)
 
                 # If it's a union of channel types, handle accordingly
-                if get_origin(raw_annotation) in (Union, UnionType) and all(
+                # NoneType is ignored so "TextChannel | VoiceChannel | None" also works
+                channel_args = [
+                    a for a in get_args(raw_annotation)
+                    if a is not type(None)
+                ]
+
+                if get_origin(raw_annotation) in (Union, UnionType) and channel_args and all(
                     isinstance(a, type) and
-                    a in channel_types for a in get_args(raw_annotation)
+                    a in channel_types for a in channel_args
                 ):
-                    origin = get_args(raw_annotation)[0]  # Just pick the first one, does not matter
-                    for a in get_args(raw_annotation):
+                    origin = channel_args[0]  # Just pick the first one, does not matter
+                    for a in channel_args:
                         channel_options.extend(channel_types[a])
 
                 # If it's a union, and first arg is User, then second is Member
@@ -404,10 +471,7 @@ class Command:
                 elif get_origin(annotation) is Literal:
                     ptype = CommandOptionType.string
 
-                    if not getattr(self.command, "__choices_params__", {}):
-                        self.command.__choices_params__ = {}
-
-                    self.command.__choices_params__[parameter.name] = {
+                    self._meta.choices_params[parameter.name] = {
                         str(g): str(g) for g in parameter.annotation.__args__
                     }
 
@@ -450,7 +514,10 @@ class Command:
                     ptype = CommandOptionType.string
 
                 elif isinstance(origin, Converter):
-                    self._converters[parameter.name] = origin  # type: ignore
+                    self._converters[parameter.name] = (  # type: ignore
+                        origin,
+                        inspect.iscoroutinefunction(origin.convert)
+                    )
                     ptype = CommandOptionType.string
 
                 else:
@@ -478,18 +545,13 @@ class Command:
             return f"</{self.name}:{self.id}>"
         return f"`/{self.name}`"
 
-    @property
-    def cooldown(self) -> CooldownCache | None:
-        """ The cooldown rule of the command if available. """
-        return getattr(self.command, "__cooldown__", None)
-
     def mention_sub(self, suffix: str) -> str:
         """
         Returns a mentionable string for a subcommand.
 
         Parameters
         ----------
-        suffix:
+        suffix
             The subcommand name.
 
         Returns
@@ -504,9 +566,10 @@ class Command:
         self,
         context: "Context"
     ) -> BaseResponse:
-        args, kwargs = await context._create_args()
+        with context.benchmark.measure("command:create_args", internal=True):
+            args, kwargs = await context._create_args()
 
-        for name, values in getattr(self.command, "__choices_params__", {}).items():
+        for name, values in self._meta.choices_params.items():
             if name not in kwargs:
                 continue
             if name not in self.__list_choices:
@@ -548,11 +611,7 @@ class Command:
         return result
 
     def _has_permissions(self, ctx: "Context") -> Permissions:
-        perms: Permissions | None = getattr(
-            self.command, "__has_permissions__", None
-        )
-
-        if perms is None:
+        if (perms := self._meta.has_permissions) is None:
             return Permissions(0)
 
         resolved_perms: Permissions | None = getattr(
@@ -571,11 +630,7 @@ class Command:
         ))
 
     def _bot_has_permissions(self, ctx: "Context") -> Permissions:
-        perms: Permissions | None = getattr(
-            self.command, "__bot_has_permissions__", None
-        )
-
-        if perms is None:
+        if (perms := self._meta.bot_has_permissions) is None:
             return Permissions(0)
         if Permissions.administrator in ctx.app_permissions:
             return Permissions(0)
@@ -586,13 +641,9 @@ class Command:
         ))
 
     async def _command_checks(self, ctx: "Context") -> bool:
-        checks: list[Callable] = getattr(
-            self.command, "__checks__", []
-        )
-
-        for g in checks:
+        for g, is_coro in self._meta.checks:
             with ctx.benchmark.measure(f"check:{g.__name__}", internal=True):
-                if inspect.iscoroutinefunction(g):
+                if is_coro:
                     result = await g(ctx)
                 else:
                     result = g(ctx)
@@ -603,15 +654,16 @@ class Command:
         return True
 
     async def _before_invoke(self, ctx: "Context") -> bool:
-        before = getattr(self.command, "__before_invoke__", None)
-        if before is None:
+        if self._meta.before_invoke is None:
             return True
 
+        func, is_coro = self._meta.before_invoke
+
         with ctx.benchmark.measure("before_invoke", internal=True):
-            if inspect.iscoroutinefunction(before):
-                result = await before(ctx)
+            if is_coro:
+                result = await func(ctx)
             else:
-                result = before(ctx)
+                result = func(ctx)
 
         if result is not True:
             raise CheckFailed("Before invoke failed.")
@@ -619,15 +671,16 @@ class Command:
         return True
 
     async def _after_invoke(self, ctx: "Context") -> None:
-        after = getattr(self.command, "__after_invoke__", None)
-        if after is None:
+        if self._meta.after_invoke is None:
             return
 
+        func, is_coro = self._meta.after_invoke
+
         with ctx.benchmark.measure("after_invoke"):
-            if inspect.iscoroutinefunction(after):
-                await after(ctx)
+            if is_coro:
+                await func(ctx)
             else:
-                after(ctx)
+                func(ctx)
 
     def _cooldown_checker(self, ctx: "Context") -> None:
         if self.cooldown is None:
@@ -638,14 +691,14 @@ class Command:
             bucket = self.cooldown.get_bucket(ctx, current)
             retry_after = bucket.update_rate_limit(current)
 
-        if not retry_after:
+        if retry_after is None:
             return  # Not rate limited, good to go
         raise CommandOnCooldown(bucket, retry_after)
 
     async def run(
         self,
         context: "Context",
-        *args,  # noqa: ANN002
+        *args,  # ruff: ignore[missing-type-args]
         **kwargs
     ) -> BaseResponse:
         """
@@ -653,11 +706,11 @@ class Command:
 
         Parameters
         ----------
-        context:
+        context
             The context of the command.
-        *args:
+        *args
             The arguments of the command.
-        **kwargs:
+        **kwargs
             The keyword arguments of the command.
 
         Returns
@@ -666,9 +719,9 @@ class Command:
 
         Raises
         ------
-        `UserMissingPermissions`
+        UserMissingPermissions
             User that ran the command is missing permissions.
-        `BotMissingPermissions`
+        BotMissingPermissions
             Bot is missing permissions.
         """
         # Check before invoke
@@ -678,13 +731,11 @@ class Command:
         await self._command_checks(context)
 
         # Check user permissions
-        perms_user = self._has_permissions(context)
-        if perms_user != Permissions(0):
+        if (perms_user := self._has_permissions(context)) != Permissions(0):
             raise UserMissingPermissions(perms_user)
 
         # Check bot permissions
-        perms_bot = self._bot_has_permissions(context)
-        if perms_bot != Permissions(0):
+        if (perms_bot := self._bot_has_permissions(context)) != Permissions(0):
             raise BotMissingPermissions(perms_bot)
 
         # Check cooldown
@@ -697,7 +748,7 @@ class Command:
                 response = await self.command(context, *args, **kwargs)
 
         # Execute after invoke
-        if getattr(self.command, "__after_invoke__", None):
+        if self._meta.after_invoke is not None:
             task = context.bot.loop.create_task(
                 self._after_invoke(context),
                 name=f"discord.http/after-invoke:{int(time.time())}"
@@ -718,11 +769,11 @@ class Command:
 
         Parameters
         ----------
-        context:
+        context
             Context object for the command
-        name:
+        name
             Name of the option
-        current:
+        current
             Current value of the option
 
         Returns
@@ -731,7 +782,7 @@ class Command:
 
         Raises
         ------
-        `TypeError`
+        TypeError
             Autocomplete must return an AutocompleteResponse object
         """
         with context.benchmark.measure("autocomplete", internal=True):
@@ -748,20 +799,8 @@ class Command:
         return next((g for g in self.options if g["name"] == name), None)
 
     def to_dict(self) -> dict:
-        """
-        Converts the Discord command to a dict.
-
-        Returns
-        -------
-            The dict of the command.
-        """
-        extra_locale = getattr(self.command, "__locales__", {})
-        extra_params = getattr(self.command, "__describe_params__", {})
-        extra_choices = getattr(self.command, "__choices_params__", {})
-        extra_file_types = getattr(self.command, "__file_types__", {})
-        default_permissions_: Permissions | None = getattr(
-            self.command, "__default_permissions__", None
-        )
+        """ Converts the Discord command to a dict. """
+        default_permissions_ = self._meta.default_permissions
 
         integration_types = []
         if self.guild_install:
@@ -769,17 +808,17 @@ class Command:
         if self.user_install:
             integration_types.append(1)
 
-        integration_contexts = getattr(self.command, "__integration_contexts__", [0, 1, 2])
-
-        # Types
-        extra_locale: dict[LocaleTypes, list[LocaleContainer]]
+        integration_contexts = [
+            int(g) for g in
+            self._meta.integration_contexts or InteractionContextType
+        ]
 
         data = {
             "type": self.type,
             "name": self.name,
             "description": self.description,
             "options": self.options,
-            "nsfw": getattr(self.command, "__nsfw__", False),
+            "nsfw": self._meta.nsfw,
             "name_localizations": {},
             "description_localizations": {},
             "contexts": integration_contexts
@@ -788,7 +827,7 @@ class Command:
         if integration_types:
             data["integration_types"] = integration_types
 
-        for key, value in extra_locale.items():
+        for key, value in self._meta.locales.items():
             for loc in value:
                 if loc.key == "_":
                     data["name_localizations"][key] = loc.name
@@ -809,20 +848,20 @@ class Command:
         if default_permissions_:
             data["default_member_permissions"] = str(default_permissions_.value)
 
-        for key, value in extra_file_types.items():
+        for key, value in self._meta.file_types.items():
             opt = self._find_option(key)
             if not opt:
                 continue
             opt["file_types"] = [str(g) for g in value]
 
-        for key, value in extra_params.items():
+        for key, value in self._meta.describe_params.items():
             opt = self._find_option(key)
             if not opt:
                 continue
 
             opt["description"] = value
 
-        for key, value in extra_choices.items():
+        for key, value in self._meta.choices_params.items():
             opt = self._find_option(key)
             if not opt:
                 continue
@@ -846,7 +885,7 @@ class Command:
 
             @commands.command()
             async def ping(ctx, options: str):
-                await ctx.send(f"You chose {options}")
+                return ctx.response.send_message(f"You chose {options}")
 
             @ping.autocomplete("options")
             async def search_autocomplete(ctx, current: str):
@@ -857,7 +896,7 @@ class Command:
 
         Parameters
         ----------
-        name:
+        name
             Name of the option to set as an autocomplete.
         """
         def wrapper(func: Callable) -> Callable:
@@ -915,16 +954,17 @@ class SubGroup(Command):
         user_install: bool = False,
         parent: "SubGroup | None" = None
     ):
-        self.name = name
+        self.name: str = name
         """ The name of the subcommand group. """
 
-        self.description = description or "..."  # Only used to make Discord happy
+        self.description: str = description or "..."  # Only used to make Discord happy
         """ The description of the subcommand group. """
 
         self.guild_ids: list[Snowflake | int] = guild_ids or []
         """ A list of guild IDs this subcommand group is in, empty if it's a global subcommand group. """
 
-        self.type = int(ApplicationCommandType.chat_input)
+        self.type: int = int(ApplicationCommandType.chat_input)
+        """ The type of the subcommand group, always 1 (chat input). """
 
         self.cog: "Cog | None" = None
         """ The cog this subcommand group belongs to, None if it does not belong to a cog. """
@@ -932,14 +972,18 @@ class SubGroup(Command):
         self.subcommands: dict[str, SubCommand | SubGroup] = {}
         """ A mapping of subcommand names to their respective SubCommand or SubGroup objects. """
 
-        self.guild_install = guild_install
+        self.guild_install: bool = guild_install
         """ Whether this subcommand group should be installed in guilds or not. """
 
-        self.user_install = user_install
+        self.user_install: bool = user_install
         """ Whether this subcommand group should be installed for users or not. """
 
         self.parent: "SubGroup | None" = parent
         """ The parent subcommand group of this subcommand group, if it is a nested subcommand group. """
+
+        self._meta: _CommandMeta = _CommandMeta()
+        self.cooldown: "CooldownCache | None" = self._meta.cooldown
+        """ The cooldown of this subcommand group, if any. """
 
     def __repr__(self) -> str:
         subs = [g for g in self.subcommands.values()]
@@ -959,15 +1003,15 @@ class SubGroup(Command):
 
         Parameters
         ----------
-        name:
+        name
             Name of the command (defaults to the function name)
-        description:
+        description
             Description of the command (defaults to the function docstring)
-        guild_ids:
+        guild_ids
             List of guild IDs to register the command in
-        user_install:
+        user_install
             Whether the command can be installed by users or not
-        guild_install:
+        guild_install
             Whether the command can be installed by guilds or not
         """
         def decorator(func: Callable) -> SubCommand:
@@ -996,9 +1040,9 @@ class SubGroup(Command):
 
         Parameters
         ----------
-        name:
+        name
             Name of the subcommand group (defaults to the function name)
-        description:
+        description
             Description of the subcommand group (defaults to the function docstring)
         """
         def decorator(func: Callable) -> "SubGroup":
@@ -1018,7 +1062,7 @@ class SubGroup(Command):
 
         Parameters
         ----------
-        name:
+        name
             Name of the subcommand group
 
         Returns
@@ -1072,6 +1116,7 @@ class Interaction:
         """ Whether the custom ID is a regex pattern or not. """
 
         self.cog: "Cog | None" = None
+        """ The cog this interaction belongs to, None if it does not belong to a cog. """
 
         self._pattern: re.Pattern | None = (
             re.compile(custom_id)
@@ -1092,7 +1137,7 @@ class Interaction:
 
         Parameters
         ----------
-        custom_id:
+        custom_id
             The custom ID to match.
 
         Returns
@@ -1109,7 +1154,7 @@ class Interaction:
 
         Parameters
         ----------
-        context:
+        context
             The context of the interaction.
 
         Returns
@@ -1118,7 +1163,7 @@ class Interaction:
 
         Raises
         ------
-        `TypeError`
+        TypeError
             Interaction must be a Response object
         """
         with context.benchmark.measure("interaction", internal=True):
@@ -1144,10 +1189,10 @@ class Listener:
         name: str,
         coro: Callable
     ):
-        self.name = name
+        self.name: str = name
         """ The name of the event to listen to, e.g. "on_message_create". """
 
-        self.coro = coro
+        self.coro: Callable = coro
         """ The coroutine function that is called when the event is triggered. """
 
         self.cog: "Cog | None" = None
@@ -1156,7 +1201,7 @@ class Listener:
     def __repr__(self) -> str:
         return f"<Listener name='{self.name}'>"
 
-    async def run(self, *args, **kwargs) -> None:  # noqa: ANN002
+    async def run(self, *args, **kwargs) -> None:  # ruff: ignore[missing-type-args]
         """ Runs the listener. """
         if self.cog is not None:
             await self.coro(self.cog, *args, **kwargs)
@@ -1259,11 +1304,11 @@ else:
 
         Parameters
         ----------
-        type:
+        type
             The type of the option (str, int, or float)
-        min:
+        min
             The minimum value (or minimum length for str)
-        max:
+        max
             The maximum value (or maximum length for str), optional
         """
 
@@ -1281,15 +1326,15 @@ def command(
 
     Parameters
     ----------
-    name:
+    name
         Name of the command (defaults to the function name)
-    description:
+    description
         Description of the command (defaults to the function docstring)
-    guild_ids:
+    guild_ids
         List of guild IDs to register the command in
-    user_install:
+    user_install
         Whether the command can be installed by users or not
-    guild_install:
+    guild_install
         Whether the command can be installed by guilds or not
     """
     def decorator(func: Callable) -> Command:
@@ -1321,17 +1366,17 @@ def user_command(
 
         @user_command()
         async def content(ctx, user: Union[Member, User]):
-            await ctx.send(f"Target: {user.name}")
+            return ctx.response.send_message(f"Target: {user.name}")
 
     Parameters
     ----------
-    name:
+    name
         Name of the command (defaults to the function name)
-    guild_ids:
+    guild_ids
         List of guild IDs to register the command in
-    user_install:
+    user_install
         Whether the command can be installed by users or not
-    guild_install:
+    guild_install
         Whether the command can be installed by guilds or not
     """
     def decorator(func: Callable) -> Command:
@@ -1351,7 +1396,7 @@ def cooldown(
     rate: int,
     per: float,
     *,
-    type: BucketType | None = None  # noqa: A002
+    type: BucketType | None = None  # ruff: ignore[builtin-argument-shadowing]
 ) -> Callable[[Callable], Callable]:
     """
     Decorator to set a cooldown for a command.
@@ -1363,27 +1408,25 @@ def cooldown(
         @commands.command()
         @commands.cooldown(1, 5.0)
         async def ping(ctx):
-            await ctx.send("Pong!")
+            return ctx.response.send_message("Pong!")
 
     Parameters
     ----------
-    rate:
+    rate
         The number of times the command can be used within the cooldown period
-    per:
+    per
         The cooldown period in seconds
-    type:
+    type
         The bucket type to use for the cooldown
         If not set, it will be using default, which is a global cooldown
     """
     if type is None:
-        type = BucketType.default  # noqa: A001
+        type = BucketType.default  # ruff: ignore[builtin-variable-shadowing]
     if not isinstance(type, BucketType):
         raise TypeError("Key must be a BucketType")
 
     def decorator(func: Callable) -> Callable:
-        func.__cooldown__ = CooldownCache(
-            Cooldown(rate, per), type
-        )
+        _get_meta(func).cooldown = CooldownCache(Cooldown(rate, per), type)
         return func
 
     return decorator
@@ -1405,17 +1448,17 @@ def message_command(
 
         @message_command()
         async def content(ctx, msg: Message):
-            await ctx.send(f"Content: {msg.content}")
+            return ctx.response.send_message(f"Content: {msg.content}")
 
     Parameters
     ----------
-    name:
+    name
         Name of the command (defaults to the function name)
-    guild_ids:
+    guild_ids
         List of guild IDs to register the command in
-    user_install:
+    user_install
         Whether the command can be installed by users or not
-    guild_install:
+    guild_install
         Whether the command can be installed by guilds or not
     """
     def decorator(func: Callable) -> Command:
@@ -1440,11 +1483,11 @@ def before_invoke(invoke: Callable) -> Callable:
 
     Parameters
     ----------
-    invoke: Callable
+    invoke
         The function to be called before the command is invoked.
     """
     def decorator(func: Callable) -> Callable:
-        func.__before_invoke__ = invoke
+        _get_meta(func).before_invoke = (invoke, inspect.iscoroutinefunction(invoke))
         return func
 
     return decorator
@@ -1458,11 +1501,11 @@ def after_invoke(invoke: Callable) -> Callable:
 
     Parameters
     ----------
-    invoke: Callable
+    invoke
         The function to be called after the command is invoked.
     """
     def decorator(func: Callable) -> Callable:
-        func.__after_invoke__ = invoke
+        _get_meta(func).after_invoke = (invoke, inspect.iscoroutinefunction(invoke))
         return func
 
     return decorator
@@ -1495,11 +1538,11 @@ def locales(
             }
         })
         async def ping(ctx, funny: str):
-            await ctx.send(f"pong {funny}")
+            return ctx.response.send_message(f"pong {funny}")
 
     Parameters
     ----------
-    translations:
+    translations
         The translations for the command name, description, and options.
     """
     def decorator(func: Callable) -> Callable:
@@ -1547,7 +1590,7 @@ def locales(
 
             container[key] = temp_value
 
-        func.__locales__ = container
+        _get_meta(func).locales = container
         return func
 
     return decorator
@@ -1566,15 +1609,15 @@ def group(
 
     Parameters
     ----------
-    name:
+    name
         Name of the command group (defaults to the function name)
-    description:
+    description
         Description of the command group (defaults to the function docstring)
-    guild_ids:
+    guild_ids
         List of guild IDs to register the command group in
-    user_install:
+    user_install
         Whether the command group can be installed by users or not
-    guild_install:
+    guild_install
         Whether the command group can be installed by guilds or not
     """
     def decorator(func: Callable) -> SubGroup:
@@ -1600,10 +1643,10 @@ def describe(**kwargs: str) -> Callable:
         @commands.command()
         @commands.describe(user="User to ping")
         async def ping(ctx, user: Member):
-            await ctx.send(f"Pinged {user.mention}")
+            return ctx.response.send_message(f"Pinged {user.mention}")
     """
     def decorator(func: Callable) -> Callable:
-        func.__describe_params__ = kwargs
+        _get_meta(func).describe_params = kwargs
         return func
 
     return decorator
@@ -1611,7 +1654,7 @@ def describe(**kwargs: str) -> Callable:
 
 def file_types(**kwargs: list[str]) -> Callable:
     """
-    Decorator to set the allowed file types for uploads.
+    Decorator to set the allowed file types for attachments added to commands.
 
     The list can be `image`, `video`, `audio` or any dot-prefixed extensions such as `.pdf`
 
@@ -1625,7 +1668,7 @@ def file_types(**kwargs: list[str]) -> Callable:
             ...
     """
     def decorator(func: Callable) -> Callable:
-        func.__file_types__ = kwargs
+        _get_meta(func).file_types = kwargs
         return func
 
     return decorator
@@ -1644,22 +1687,24 @@ def allow_contexts(
 
     Parameters
     ----------
-    guild:
+    guild
         Weather the command can be used in guilds.
-    bot_dm:
+    bot_dm
         Weather the command can be used in bot DMs.
-    private_dm:
+    private_dm
         Weather the command can be used in private DMs.
     """
     def decorator(func: Callable) -> Callable:
-        func.__integration_contexts__ = []
+        contexts: list[InteractionContextType | int] = []
 
         if guild:
-            func.__integration_contexts__.append(0)
+            contexts.append(InteractionContextType.guild)
         if bot_dm:
-            func.__integration_contexts__.append(1)
+            contexts.append(InteractionContextType.bot_dm)
         if private_dm:
-            func.__integration_contexts__.append(2)
+            contexts.append(InteractionContextType.private_channel)
+
+        _get_meta(func).integration_contexts = contexts
 
         return func
     return decorator
@@ -1687,7 +1732,7 @@ def choices(
             }
         )
         async def ping(ctx, options: Choice[str]):
-            await ctx.send(f"You chose {choice.value}")
+            return ctx.response.send_message(f"You chose {choice.value}")
     """
     def decorator(func: Callable) -> Callable:
         for k, v in kwargs.items():
@@ -1696,7 +1741,7 @@ def choices(
                     f"Choice {k} must be a dict, not a {type(v)}"
                 )
 
-        func.__choices_params__ = kwargs
+        _get_meta(func).choices_params = kwargs
         return func
 
     return decorator
@@ -1716,10 +1761,9 @@ def guild_only() -> Callable:
         return True
 
     def decorator(func: Callable) -> Callable:
-        check_list = getattr(func, "__checks__", [])
-        check_list.append(_guild_only_check)
-        func.__checks__ = check_list
-        func.__integration_contexts__ = [0]
+        meta = _get_meta(func)
+        meta.checks.append((_guild_only_check, inspect.iscoroutinefunction(_guild_only_check)))
+        meta.integration_contexts = [InteractionContextType.guild]
         return func
 
     return decorator
@@ -1728,7 +1772,7 @@ def guild_only() -> Callable:
 def is_nsfw() -> Callable:
     """ Decorator to set a command as NSFW. """
     def decorator(func: Callable) -> Callable:
-        func.__nsfw__ = True
+        _get_meta(func).nsfw = True
         return func
 
     return decorator
@@ -1741,7 +1785,7 @@ def default_permissions(*args: Permissions | str) -> Callable:
             return func
 
         if isinstance(args[0], Permissions):
-            func.__default_permissions__ = args[0]
+            _get_meta(func).default_permissions = args[0]
         else:
             if any(not isinstance(arg, str) for arg in args):
                 raise TypeError(
@@ -1749,7 +1793,7 @@ def default_permissions(*args: Permissions | str) -> Callable:
                     "or only 1 Permissions object"
                 )
 
-            func.__default_permissions__ = Permissions.from_names(
+            _get_meta(func).default_permissions = Permissions.from_names(
                 *args  # type: ignore
             )
 
@@ -1776,7 +1820,7 @@ def has_permissions(*args: Permissions | str) -> Callable:
             return func
 
         if isinstance(args[0], Permissions):
-            func.__has_permissions__ = args[0]
+            _get_meta(func).has_permissions = args[0]
         else:
             if any(not isinstance(arg, str) for arg in args):
                 raise TypeError(
@@ -1784,7 +1828,7 @@ def has_permissions(*args: Permissions | str) -> Callable:
                     "or only 1 Permissions object"
                 )
 
-            func.__has_permissions__ = Permissions.from_names(
+            _get_meta(func).has_permissions = Permissions.from_names(
                 *args  # type: ignore
             )
 
@@ -1811,7 +1855,7 @@ def bot_has_permissions(*args: Permissions | str) -> Callable:
             return func
 
         if isinstance(args[0], Permissions):
-            func.__bot_has_permissions__ = args[0]
+            _get_meta(func).bot_has_permissions = args[0]
         else:
             if any(not isinstance(arg, str) for arg in args):
                 raise TypeError(
@@ -1819,7 +1863,7 @@ def bot_has_permissions(*args: Permissions | str) -> Callable:
                     "or only 1 Permissions object"
                 )
 
-            func.__bot_has_permissions__ = Permissions.from_names(
+            _get_meta(func).bot_has_permissions = Permissions.from_names(
                 *args  # type: ignore
             )
 
@@ -1828,7 +1872,7 @@ def bot_has_permissions(*args: Permissions | str) -> Callable:
     return decorator
 
 
-def check(predicate: Callable | Coroutine) -> Callable:
+def check(predicate: Callable) -> Callable:
     """
     Decorator to set a check for a command.
 
@@ -1845,9 +1889,7 @@ def check(predicate: Callable | Coroutine) -> Callable:
             ...
     """
     def decorator(func: Callable) -> Callable:
-        check_list = getattr(func, "__checks__", [])
-        check_list.append(predicate)
-        func.__checks__ = check_list
+        _get_meta(func).checks.append((predicate, inspect.iscoroutinefunction(predicate)))
         return func
 
     return decorator
@@ -1865,9 +1907,9 @@ def interaction(
 
     Parameters
     ----------
-    custom_id:
+    custom_id
         The custom ID of the interaction. (can be partial, aka. regex)
-    regex:
+    regex
         Whether the custom_id is a regex or not
     """
     def decorator(func: Callable) -> Interaction:
@@ -1886,12 +1928,12 @@ def listener(name: str | None = None) -> Callable:
 
     Parameters
     ----------
-    name:
+    name
         Name of the listener (defaults to the function name)
 
     Raises
     ------
-    `TypeError`
+    TypeError
         - If name was not a string
         - If the listener was not a coroutine function
     """

@@ -4,14 +4,21 @@ from dataclasses import dataclass
 from datetime import datetime
 from typing import Self, Literal, cast
 
+from . import utils
 from .asset import Asset
 from .colour import Colour
+from .flags import EmbedFlags
 
 __all__ = (
     "Embed",
+    "EmbedAuthor",
+    "EmbedField",
+    "EmbedFooter",
+    "EmbedMedia",
+    "EmbedProvider",
 )
 
-EmbedTypes = Literal["rich", "image", "video", "gifv", "article", "link", "poll_result"]
+EmbedTypes = Literal["rich", "image", "video", "gifv", "article", "link", "poll_result", "components"]
 
 
 @dataclass(slots=True)
@@ -20,6 +27,7 @@ class EmbedAuthor:
     name: str
     url: str | None = None
     icon_url: str | None = None
+    proxy_icon_url: str | None = None
 
     def to_dict(self) -> dict:
         """ Returns a dict representation of the embed author. """
@@ -36,7 +44,8 @@ class EmbedAuthor:
         return cls(
             name=data["name"],
             url=data.get("url"),
-            icon_url=data.get("icon_url")
+            icon_url=data.get("icon_url"),
+            proxy_icon_url=data.get("proxy_icon_url")
         )
 
 
@@ -45,6 +54,7 @@ class EmbedFooter:
     """ Represents the footer section of an embed. """
     text: str
     icon_url: str | None = None
+    proxy_icon_url: str | None = None
 
     def to_dict(self) -> dict:
         """ Returns a dict representation of the embed footer. """
@@ -58,7 +68,23 @@ class EmbedFooter:
         """ Creates an EmbedFooter from a dict provided by Discord. """
         return cls(
             text=data["text"],
-            icon_url=data.get("icon_url")
+            icon_url=data.get("icon_url"),
+            proxy_icon_url=data.get("proxy_icon_url")
+        )
+
+
+@dataclass(slots=True)
+class EmbedProvider:
+    """ Represents the provider section of an embed, only sent by Discord. """
+    name: str | None = None
+    url: str | None = None
+
+    @classmethod
+    def from_dict(cls, data: dict) -> Self:
+        """ Creates an EmbedProvider from a dict provided by Discord. """
+        return cls(
+            name=data.get("name"),
+            url=data.get("url")
         )
 
 
@@ -101,17 +127,20 @@ class EmbedMedia:
 class Embed:
     """ Represents a Discord embed. """
     __slots__ = (
+        "_raw_flags",
         "author",
         "colour",
         "description",
         "fields",
         "footer",
         "image",
+        "provider",
         "thumbnail",
         "timestamp",
         "title",
         "type",
         "url",
+        "video",
     )
 
     def __init__(
@@ -162,6 +191,14 @@ class Embed:
         self.fields: list[EmbedField] = []
         """ The fields of the embed, if any. """
 
+        self.provider: EmbedProvider | None = None
+        """ The provider of the embed, only sent by Discord. """
+
+        self.video: EmbedMedia | None = None
+        """ The video of the embed, only sent by Discord. """
+
+        self._raw_flags: int = 0
+
         if self.title is not None:
             self.title = str(self.title)
 
@@ -187,6 +224,11 @@ class Embed:
             total += len(field.name) + len(field.value)
         return total
 
+    @property
+    def flags(self) -> EmbedFlags:
+        """ The flags of the embed. """
+        return EmbedFlags(self._raw_flags)
+
     def copy(self) -> Self:
         """ Returns a copy of the embed. """
         return self.__class__.from_dict(self.to_dict())
@@ -200,7 +242,7 @@ class Embed:
 
         Parameters
         ----------
-        value:
+        value
             The colour to set the embed to.
             If `None`, the colour will be removed
 
@@ -212,13 +254,7 @@ class Embed:
         return self
 
     def remove_colour(self) -> Self:
-        """
-        Remove the colour from the embed.
-
-        Returns
-        -------
-            Returns the embed you are editing
-        """
+        """ Remove the colour from the embed. """
         self.colour = None
         return self
 
@@ -233,9 +269,9 @@ class Embed:
 
         Parameters
         ----------
-        text:
+        text
             The text of the footer
-        icon_url:
+        icon_url
             Icon URL of the footer
 
         Returns
@@ -257,13 +293,7 @@ class Embed:
         return self
 
     def remove_footer(self) -> Self:
-        """
-        Remove the footer from the embed.
-
-        Returns
-        -------
-            Returns the embed you are editing
-        """
+        """ Remove the footer from the embed. """
         self.footer = None
         return self
 
@@ -279,11 +309,11 @@ class Embed:
 
         Parameters
         ----------
-        name:
+        name
             The name of the author
-        url:
+        url
             The URL which the author name will link to
-        icon_url:
+        icon_url
             The icon URL of the author
 
         Returns
@@ -299,13 +329,7 @@ class Embed:
         return self
 
     def remove_author(self) -> Self:
-        """
-        Remove the author from the embed.
-
-        Returns
-        -------
-            Returns the embed you are editing
-        """
+        """ Remove the author from the embed. """
         self.author = None
         return self
 
@@ -319,7 +343,7 @@ class Embed:
 
         Parameters
         ----------
-        url:
+        url
             The URL of the image
 
         Returns
@@ -330,13 +354,7 @@ class Embed:
         return self
 
     def remove_image(self) -> Self:
-        """
-        Remove the image from the embed.
-
-        Returns
-        -------
-            Returns the embed you are editing
-        """
+        """ Remove the image from the embed. """
         self.image = None
         return self
 
@@ -350,7 +368,7 @@ class Embed:
 
         Parameters
         ----------
-        url:
+        url
             The URL of the thumbnail
 
         Returns
@@ -361,14 +379,108 @@ class Embed:
         return self
 
     def remove_thumbnail(self) -> Self:
+        """ Remove the thumbnail from the embed. """
+        self.thumbnail = None
+        return self
+
+    def set_title(
+        self,
+        value: str | None
+    ) -> Self:
         """
-        Remove the thumbnail from the embed.
+        Set the title of the embed.
+
+        Parameters
+        ----------
+        value
+            The title to set the embed to.
+            If `None`, the title will be removed
 
         Returns
         -------
             Returns the embed you are editing
         """
-        self.thumbnail = None
+        self.title = str(value) if value is not None else None
+        return self
+
+    def remove_title(self) -> Self:
+        """ Remove the title from the embed. """
+        self.title = None
+        return self
+
+    def set_description(
+        self,
+        value: str | None
+    ) -> Self:
+        """
+        Set the description of the embed.
+
+        Parameters
+        ----------
+        value
+            The description to set the embed to.
+            If `None`, the description will be removed
+
+        Returns
+        -------
+            Returns the embed you are editing
+        """
+        self.description = str(value) if value is not None else None
+        return self
+
+    def remove_description(self) -> Self:
+        """ Remove the description from the embed. """
+        self.description = None
+        return self
+
+    def set_url(
+        self,
+        value: str | None
+    ) -> Self:
+        """
+        Set the URL of the embed, which the title will link to.
+
+        Parameters
+        ----------
+        value
+            The URL to set the embed to.
+            If `None`, the URL will be removed
+
+        Returns
+        -------
+            Returns the embed you are editing
+        """
+        self.url = str(value) if value is not None else None
+        return self
+
+    def remove_url(self) -> Self:
+        """ Remove the URL from the embed. """
+        self.url = None
+        return self
+
+    def set_timestamp(
+        self,
+        value: datetime | None
+    ) -> Self:
+        """
+        Set the timestamp of the embed.
+
+        Parameters
+        ----------
+        value
+            The timestamp to set the embed to.
+            If `None`, the timestamp will be removed
+
+        Returns
+        -------
+            Returns the embed you are editing
+        """
+        self.timestamp = value
+        return self
+
+    def remove_timestamp(self) -> Self:
+        """ Remove the timestamp from the embed. """
+        self.timestamp = None
         return self
 
     def add_field(
@@ -383,11 +495,11 @@ class Embed:
 
         Parameters
         ----------
-        name:
+        name
             Title of the field
-        value:
+        value
             Description of the field
-        inline:
+        inline
             Whether the field is inline or not
 
         Returns
@@ -411,7 +523,7 @@ class Embed:
 
         Parameters
         ----------
-        index:
+        index
             The index of the field to remove
 
         Returns
@@ -432,7 +544,7 @@ class Embed:
 
         Parameters
         ----------
-        data:
+        data
             The dictionary to create the embed from
 
         Returns
@@ -443,16 +555,22 @@ class Embed:
 
         self.title = data.get("title")
         self.description = data.get("description")
-        self.timestamp = data.get("timestamp")
+        self.timestamp = (
+            utils.parse_time(data["timestamp"])
+            if data.get("timestamp") else None
+        )
         self.url = data.get("url")
         self.type = cast("EmbedTypes", sys.intern(data.get("type", "rich")))
 
-        self.colour = Colour(data["color"]) if data.get("color") is not None else None
+        self.colour = Colour(colour) if (colour := data.get("color")) is not None else None
 
-        self.footer = EmbedFooter.from_dict(data["footer"]) if data.get("footer") else None
-        self.author = EmbedAuthor.from_dict(data["author"]) if data.get("author") else None
-        self.image = EmbedMedia.from_dict(data["image"]) if data.get("image") else None
-        self.thumbnail = EmbedMedia.from_dict(data["thumbnail"]) if data.get("thumbnail") else None
+        self.footer = EmbedFooter.from_dict(footer) if (footer := data.get("footer")) else None
+        self.author = EmbedAuthor.from_dict(author) if (author := data.get("author")) else None
+        self.image = EmbedMedia.from_dict(image) if (image := data.get("image")) else None
+        self.thumbnail = EmbedMedia.from_dict(thumbnail) if (thumbnail := data.get("thumbnail")) else None
+        self.provider = EmbedProvider.from_dict(provider) if (provider := data.get("provider")) else None
+        self.video = EmbedMedia.from_dict(video) if (video := data.get("video")) and video.get("url") else None
+        self._raw_flags = data.get("flags", 0)
 
         self.fields = [
             EmbedField.from_dict(f)

@@ -2,7 +2,7 @@ from datetime import datetime
 from typing import TYPE_CHECKING
 
 from . import utils
-from .enums import EntitlementType, EntitlementOwnerType, SKUType
+from .enums import EntitlementType, EntitlementOwnerType, SKUType, SubscriptionStatus
 from .flags import SKUFlags
 from .guild import Guild, PartialGuild
 from .object import PartialBase, Snowflake
@@ -16,6 +16,8 @@ __all__ = (
     "Entitlements",
     "PartialEntitlements",
     "PartialSKU",
+    "PartialSubscription",
+    "Subscription",
 )
 
 
@@ -28,7 +30,7 @@ class PartialSKU(PartialBase):
         self,
         *,
         state: "DiscordAPI",
-        id: int  # noqa: A002
+        id: int  # ruff: ignore[builtin-argument-shadowing]
     ):
         super().__init__(id=int(id))
         self._state = state
@@ -50,9 +52,9 @@ class PartialSKU(PartialBase):
 
         Parameters
         ----------
-        owner_id:
+        owner_id
             The ID of the owner, can be GuildID or UserID.
-        owner_type:
+        owner_type
             The type of the owner.
 
         Returns
@@ -69,9 +71,94 @@ class PartialSKU(PartialBase):
             }
         )
 
-        return PartialEntitlements(
+        return self._state.bot.get_partial_entitlement(int(r.response["id"]))
+
+    async def fetch_subscriptions(
+        self,
+        user_id: Snowflake | int,
+        *,
+        before: Snowflake | int | None = None,
+        after: Snowflake | int | None = None,
+        limit: int = 50,
+    ) -> list["Subscription"]:
+        """
+        Fetch the subscriptions for this SKU.
+
+        Parameters
+        ----------
+        user_id
+            The user ID to fetch subscriptions for. Required for bot-token requests
+            (only optional when using an OAuth2 access token, which this library does not support).
+        before
+            Consider only subscriptions before given ID
+        after
+            Consider only subscriptions after given ID
+        limit
+            The maximum amount of subscriptions to fetch (1-100)
+
+        Returns
+        -------
+            The subscriptions for this SKU
+        """
+        params: dict[str, int | str] = {
+            "limit": limit,
+            "user_id": str(int(user_id)),
+        }
+
+        if before is not None:
+            params["before"] = str(int(before))
+        if after is not None:
+            params["after"] = str(int(after))
+
+        r = await self._state.query(
+            "GET",
+            f"/skus/{self.id}/subscriptions",
+            params=params
+        )
+
+        return [
+            Subscription(state=self._state, sku_id=self.id, data=g)
+            for g in r.response
+        ]
+
+    async def fetch_subscription(
+        self,
+        subscription_id: Snowflake | int
+    ) -> "Subscription":
+        """
+        Fetch a specific subscription for this SKU.
+
+        Parameters
+        ----------
+        subscription_id
+            The ID of the subscription to fetch
+
+        Returns
+        -------
+            The subscription
+        """
+        return await self.get_partial_subscription(subscription_id).fetch()
+
+    def get_partial_subscription(
+        self,
+        subscription_id: Snowflake | int
+    ) -> "PartialSubscription":
+        """
+        Creates a partial subscription object under this SKU, without fetching it.
+
+        Parameters
+        ----------
+        subscription_id
+            The ID of the subscription
+
+        Returns
+        -------
+            The partial subscription object
+        """
+        return PartialSubscription(
             state=self._state,
-            id=int(r.response["id"])
+            id=int(subscription_id),
+            sku_id=self.id
         )
 
 
@@ -81,7 +168,7 @@ class SKU(PartialSKU):
     __slots__ = (
         "_raw_flags",
         "_raw_type",
-        "application",
+        "application_id",
         "name",
         "slug",
     )
@@ -103,17 +190,19 @@ class SKU(PartialSKU):
         self._raw_type: int = data["type"]
         self._raw_flags: int = data["flags"]
 
-        self.application: PartialUser = PartialUser(
-            state=self._state,
-            id=int(data["application_id"])
-        )
-        """ The application that owns the SKU. """
+        self.application_id: int = int(data["application_id"])
+        """ The ID of the application that owns the SKU. """
 
     def __repr__(self) -> str:
         return f"<SKU id={self.id} name={self.name} type={self.type}>"
 
     def __str__(self) -> str:
         return f"{self.name}"
+
+    @property
+    def application(self) -> PartialUser:
+        """ The application that owns the SKU. """
+        return self._state.bot.get_partial_user(self.application_id)
 
     @property
     def type(self) -> SKUType:
@@ -135,7 +224,7 @@ class PartialEntitlements(PartialBase):
         self,
         *,
         state: "DiscordAPI",
-        id: int  # noqa: A002
+        id: int  # ruff: ignore[builtin-argument-shadowing]
     ):
         super().__init__(id=int(id))
         self._state = state
@@ -153,10 +242,7 @@ class PartialEntitlements(PartialBase):
             f"/applications/{self._state.bot.application_id}/entitlements/{self.id}"
         )
 
-        return Entitlements(
-            state=self._state,
-            data=r.response
-        )
+        return self._state.bot.create_entitlements_from_data(r.response)
 
     async def consume(self) -> None:
         """ Mark the entitlement as consumed. """
@@ -179,15 +265,15 @@ class Entitlements(PartialEntitlements):
     """ Represents an entitlement object. """
     __slots__ = (
         "_data_consumed",
-        "application",
+        "application_id",
         "deleted",
         "ends_at",
         "guild_id",
-        "sku",
+        "sku_id",
         "starts_at",
         "subscription_id",
         "type",
-        "user",
+        "user_id",
     )
 
     def __init__(
@@ -204,8 +290,8 @@ class Entitlements(PartialEntitlements):
         self.type: EntitlementType = EntitlementType(data["type"])
         """ The type of the entitlement. """
 
-        self.user: PartialUser | None = None
-        """ The user that owns the entitlement, if the owner type is user. """
+        self.user_id: int | None = None
+        """ The ID of the user that owns the entitlement, if the owner type is user. """
 
         self.guild_id: int | None = utils.get_int(data, "guild_id")
         """ The guild ID that owns the entitlement, if the owner type is guild. """
@@ -213,17 +299,11 @@ class Entitlements(PartialEntitlements):
         self.subscription_id: int | None = utils.get_int(data, "subscription_id")
         """ The subscription ID that the entitlement belongs to, if any. """
 
-        self.application: PartialUser = PartialUser(
-            state=self._state,
-            id=int(data["application_id"])
-        )
-        """ The application that owns the entitlement. """
+        self.application_id: int = int(data["application_id"])
+        """ The ID of the application that owns the entitlement. """
 
-        self.sku: PartialSKU = PartialSKU(
-            state=self._state,
-            id=int(data["sku_id"])
-        )
-        """ The SKU that the entitlement belongs to. """
+        self.sku_id: int = int(data["sku_id"])
+        """ The ID of the SKU that the entitlement belongs to. """
 
         self.starts_at: datetime | None = None
         """ The time the entitlement starts at, if any. """
@@ -241,14 +321,32 @@ class Entitlements(PartialEntitlements):
         return f"{self.sku}"
 
     def _from_data(self, data: dict) -> None:
-        if data.get("user_id"):
-            self.user = PartialUser(state=self._state, id=int(data["user_id"]))
+        if user_id := data.get("user_id"):
+            self.user_id = int(user_id)
 
-        if data.get("starts_at"):
-            self.starts_at = utils.parse_time(data["starts_at"])
+        if starts_at := data.get("starts_at"):
+            self.starts_at = utils.parse_time(starts_at)
 
-        if data.get("ends_at"):
-            self.ends_at = utils.parse_time(data["ends_at"])
+        if ends_at := data.get("ends_at"):
+            self.ends_at = utils.parse_time(ends_at)
+
+    @property
+    def application(self) -> PartialUser:
+        """ The application that owns the entitlement. """
+        return self._state.bot.get_partial_user(self.application_id)
+
+    @property
+    def sku(self) -> PartialSKU:
+        """ The SKU that the entitlement belongs to. """
+        return self._state.bot.get_partial_sku(self.sku_id)
+
+    @property
+    def user(self) -> PartialUser | None:
+        """ The user that owns the entitlement, if the owner type is user. """
+        if not self.user_id:
+            return None
+
+        return self._state.bot.get_partial_user(self.user_id)
 
     @property
     def guild(self) -> Guild | PartialGuild | None:
@@ -256,13 +354,189 @@ class Entitlements(PartialEntitlements):
         if not self.guild_id:
             return None
 
-        cache = self._state.cache.get_guild(self.guild_id)
-        if cache:
+        if cache := self._state.cache.get_guild(self.guild_id):
             return cache
 
-        from .guild import PartialGuild
-        return PartialGuild(state=self._state, id=self.guild_id)
+        return self._state.bot.get_partial_guild(self.guild_id)
+
+    @property
+    def subscription(self) -> "PartialSubscription | None":
+        """ The partial subscription this entitlement belongs to, if any. """
+        if not self.subscription_id:
+            return None
+
+        return self.sku.get_partial_subscription(self.subscription_id)
 
     def is_consumed(self) -> bool:
         """ Returns whether the entitlement is consumed or not. """
         return bool(self._data_consumed)
+
+
+class PartialSubscription(PartialBase):
+    """ Represents a partial subscription object. """
+
+    __slots__ = ("_route_sku_id", "_state",)
+
+    def __init__(
+        self,
+        *,
+        state: "DiscordAPI",
+        sku_id: int,
+        id: int,  # ruff: ignore[builtin-argument-shadowing]
+    ):
+        super().__init__(id=int(id))
+        self._state = state
+
+        self._route_sku_id: int = int(sku_id)  # The SKU to look up this subscription through
+
+    def __repr__(self) -> str:
+        return f"<PartialSubscription id={self.id}>"
+
+    def __str__(self) -> str:
+        return "PartialSubscription"
+
+    @property
+    def sku(self) -> PartialSKU:
+        """ The SKU this subscription is being looked up through. """
+        return self._state.bot.get_partial_sku(self._route_sku_id)
+
+    async def fetch(self) -> "Subscription":
+        """ Fetches the subscription. """
+        r = await self._state.query(
+            "GET",
+            f"/skus/{self._route_sku_id}/subscriptions/{self.id}"
+        )
+
+        return Subscription(
+            state=self._state,
+            sku_id=self._route_sku_id,
+            data=r.response
+        )
+
+
+class Subscription(PartialBase):
+    """ Represents a subscription object. """
+
+    __slots__ = (
+        "_raw_status",
+        "_route_sku_id",
+        "_state",
+        "canceled_at",
+        "country",
+        "current_period_end",
+        "current_period_start",
+        "entitlement_ids",
+        "renewal_sku_ids",
+        "sku_ids",
+        "user_id",
+    )
+
+    def __init__(
+        self,
+        *,
+        state: "DiscordAPI",
+        data: dict,
+        sku_id: int | None = None,
+    ):
+        super().__init__(id=int(data["id"]))
+        self._state = state
+
+        self._route_sku_id: int | None = sku_id  # Only kept around to make `fetch()` work
+
+        self.user_id: int = int(data["user_id"])
+        """ The ID of the user subscribed to the SKU(s). """
+
+        self.sku_ids: list[int] = [int(g) for g in data.get("sku_ids", [])]
+        """ The SKUs the user is subscribed to. """
+
+        self.entitlement_ids: list[int] = [int(g) for g in data.get("entitlement_ids", [])]
+        """ The entitlements granted for this subscription. """
+
+        self.renewal_sku_ids: list[int] | None = None
+        """ The SKUs the user will be subscribed to at renewal, if any. """
+
+        self.current_period_start: datetime = utils.parse_time(data["current_period_start"])
+        """ The start of the current subscription period. """
+
+        self.current_period_end: datetime = utils.parse_time(data["current_period_end"])
+        """ The end of the current subscription period. """
+
+        self._raw_status: int = data["status"]
+
+        self.canceled_at: datetime | None = None
+        """ The time the subscription was canceled, if any. """
+
+        self.country: str | None = data.get("country")
+        """ The ISO 3166-1 alpha-2 country code of the payment source, if any. """
+
+        self._from_data(data)
+
+    def __repr__(self) -> str:
+        return f"<Subscription id={self.id} status={self.status}>"
+
+    def __str__(self) -> str:
+        return "Subscription"
+
+    def _from_data(self, data: dict) -> None:
+        if (renewal_sku_ids := data.get("renewal_sku_ids")) is not None:
+            self.renewal_sku_ids = [int(g) for g in renewal_sku_ids]
+
+        if canceled_at := data.get("canceled_at"):
+            self.canceled_at = utils.parse_time(canceled_at)
+
+    @property
+    def skus(self) -> list[PartialSKU]:
+        """ The partial SKU objects this subscription applies to. """
+        return [
+            self._state.bot.get_partial_sku(g)
+            for g in self.sku_ids
+        ]
+
+    @property
+    def renewal_skus(self) -> list[PartialSKU]:
+        """ The partial SKU objects the user will be subscribed to at renewal, if any. """
+        return [
+            self._state.bot.get_partial_sku(g)
+            for g in (self.renewal_sku_ids or [])
+        ]
+
+    @property
+    def entitlements(self) -> list[PartialEntitlements]:
+        """ The partial entitlement objects granted for this subscription. """
+        return [
+            self._state.bot.get_partial_entitlement(g)
+            for g in self.entitlement_ids
+        ]
+
+    @property
+    def status(self) -> SubscriptionStatus:
+        """ The status of the subscription. """
+        return SubscriptionStatus(self._raw_status)
+
+    @property
+    def user(self) -> PartialUser:
+        """ The user subscribed to the SKU(s). """
+        return self._state.bot.get_partial_user(self.user_id)
+
+    async def fetch(self) -> "Subscription":
+        """
+        Fetches the latest version of this subscription.
+
+        Raises
+        ------
+        ValueError
+            If no SKU is known to route the request through (should not happen for a
+            subscription that came from the API, which always includes `sku_ids`)
+        """
+        if self._route_sku_id is not None:
+            sku_id = self._route_sku_id
+        elif self.sku_ids:
+            sku_id = self.sku_ids[0]
+        else:
+            raise ValueError("Cannot fetch a subscription with no known SKU to route the request through")
+
+        return await PartialSubscription(
+            state=self._state,
+            id=self.id,
+            sku_id=sku_id
+        ).fetch()

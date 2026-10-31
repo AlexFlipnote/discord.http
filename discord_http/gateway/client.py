@@ -6,7 +6,9 @@ import operator
 from aiohttp import web
 from collections.abc import Coroutine
 from datetime import datetime, UTC
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Literal
+
+from .. import utils
 
 from .object import PlayingStatus
 from .shard import Shard
@@ -36,28 +38,28 @@ class GatewayClient:
         shard_ids: list[int] | None = None,
         max_concurrency: int | None = None
     ):
-        self.bot = bot
+        self.bot: "Client" = bot
         """ The bot instance that this gateway client belongs to. """
 
-        self.intents = intents
+        self.intents: "Intents | None" = intents
         """ The intents that the gateway client is using, or `None` if not specified. """
 
-        self.cache_flags = cache_flags
+        self.cache_flags: "GatewayCacheFlags | None" = cache_flags
         """ The cache flags that the gateway client is using, or `None` if not specified. """
 
-        self.automatic_shards = automatic_shards
+        self.automatic_shards: bool = automatic_shards
         """ Whether to automatically determine the number of shards to launch based on the gateway response. """
 
-        self.shard_id = shard_id
+        self.shard_id: int | None = shard_id
         """ The shard ID to launch, or `None` if not specified. """
 
-        self.shard_count = shard_count
+        self.shard_count: int = shard_count
         """ The total number of shards to launch, defaults to 1. """
 
-        self.shard_ids = shard_ids
+        self.shard_ids: list[int] | None = shard_ids
         """ A list of shard IDs to launch, or `None` to launch all shards from 0 to `shard_count - 1`. """
 
-        self.max_concurrency = max_concurrency
+        self.max_concurrency: int | None = max_concurrency
         """ The maximum number of shards to launch concurrently, or `None` to launch all shards at once. """
 
         self.__shards: dict[int, Shard] = {}
@@ -73,7 +75,7 @@ class GatewayClient:
 
         Parameters
         ----------
-        shard_id:
+        shard_id
             The ID of the shard to get.
 
         Returns
@@ -88,11 +90,57 @@ class GatewayClient:
 
         Parameters
         ----------
-        status:
+        status
             The status to change to.
         """
         for shard in self.__shards.values():
             await shard.change_presence(status)
+
+    async def request_soundboard_sounds(self, *guild_ids: "Snowflake | int") -> None:
+        """
+        Requests the soundboard sounds of the guilds, through the shard each guild belongs to.
+
+        The sounds are dispatched in `soundboard_sounds` events, one per guild.
+
+        Parameters
+        ----------
+        guild_ids
+            The guild IDs to request the soundboard sounds for
+        """
+        by_shard: dict[int, list["Snowflake | int"]] = {}
+        for guild_id in guild_ids:
+            by_shard.setdefault(self.shard_by_guild_id(guild_id), []).append(guild_id)
+
+        for shard_id, shard_guild_ids in by_shard.items():
+            shard = self.get_shard(shard_id)
+            if shard is None:
+                raise ValueError(f"Shard {shard_id} is not running on this client")
+            await shard.request_soundboard_sounds(*shard_guild_ids)
+
+    async def request_channel_info(
+        self,
+        guild_id: "Snowflake | int",
+        *,
+        fields: list[Literal["status", "voice_start_time"]] | None = None
+    ) -> None:
+        """
+        Requests the ephemeral channel data of a guild, through the shard the guild belongs to.
+
+        The data is dispatched in a `channel_info` event.
+
+        Parameters
+        ----------
+        guild_id
+            The guild ID to request the channel info for
+        fields
+            The fields to request, defaults to both `status` and `voice_start_time`
+        """
+        shard_id = self.shard_by_guild_id(guild_id)
+        shard = self.get_shard(shard_id)
+        if shard is None:
+            raise ValueError(f"Shard {shard_id} is not running on this client")
+
+        await shard.request_channel_info(guild_id, fields=fields)
 
     async def _index_websocket_status(self, _: web.Request) -> web.Response:
         now = datetime.now(UTC)
@@ -126,31 +174,67 @@ class GatewayClient:
 
         Parameters
         ----------
-        shard_id:
+        shard_id
             The shard ID to launch
         """
-        try:
-            shard = Shard(
-                bot=self.bot,
-                intents=self.intents,
-                cache_flags=self.cache_flags,
-                shard_id=shard_id,
-                shard_count=self.shard_count,
-                api_version=self.bot.api_version,
-                debug_events=self.bot.debug_events
-            )
+        attempt = 0
+        while True:
+            shard = None
+            try:
+                shard = Shard(
+                    bot=self.bot,
+                    intents=self.intents,
+                    cache_flags=self.cache_flags,
+                    shard_id=shard_id,
+                    shard_count=self.shard_count,
+                    api_version=self.bot.api_version,
+                    debug_events=self.bot.debug_events
+                )
 
-            shard.connect()
+                shard.connect()
+                if (connection := shard._connection) is None:
+                    raise RuntimeError(f"Shard {shard_id} connection was not established")
 
-            while not shard.status.session_id:
-                await asyncio.sleep(0.5)
+                identify_wait = asyncio.ensure_future(shard._identified.wait())
+                try:
+                    done, _ = await asyncio.wait(
+                        {identify_wait, connection},
+                        timeout=30,
+                        return_when=asyncio.FIRST_COMPLETED
+                    )
 
-        except Exception as e:
-            _log.error("Error launching shard, trying again...", exc_info=e)
-            return await self._launch_shard(shard_id)
+                    if identify_wait not in done:
+                        if connection in done:
+                            raise RuntimeError(f"Shard {shard_id} connection ended before it could identify")
+                        raise TimeoutError(f"Shard {shard_id} timed out waiting to identify")
+                finally:
+                    if not identify_wait.done():
+                        identify_wait.cancel()
+                        try:
+                            await identify_wait
+                        except asyncio.CancelledError:
+                            pass
 
-        self.__shards[shard_id] = shard
-        return None
+            except Exception as e:
+                if shard is not None and shard._is_fatal_close():
+                    _log.error(
+                        f"Shard {shard_id} received a fatal close code "
+                        f"({shard._close_code}), aborting startup",
+                        exc_info=e
+                    )
+                    if shard._connection is not None:
+                        shard._connection.cancel()
+                    raise
+
+                _log.error("Error launching shard, trying again...", exc_info=e)
+                if shard is not None and shard._connection is not None:
+                    shard._connection.cancel()
+                attempt += 1
+                await asyncio.sleep(min(2 ** attempt, 30) + self.bot.state.create_jitter())
+                continue
+
+            self.__shards[shard_id] = shard
+            return
 
     def shard_by_guild_id(self, guild_id: "Snowflake | int") -> int:
         """
@@ -158,7 +242,7 @@ class GatewayClient:
 
         Parameters
         ----------
-        guild_id:
+        guild_id
             The ID of the guild to get the shard ID of
 
         Returns
@@ -191,27 +275,38 @@ class GatewayClient:
                 for i in range(0, len(shard_ids), self.max_concurrency)
             ]
 
+            booting: list[asyncio.Task] = []
+
             for i, shard_chunk in enumerate(chunks, start=1):
-                booting: list[Coroutine] = [
-                    self._launch_shard(shard_id)
-                    for shard_id in shard_chunk
-                ]
-
                 _log.debug(f"Launching bucket {i}/{len(chunks)}")
-                await asyncio.gather(*booting)
+                booting.extend(
+                    asyncio.ensure_future(self._launch_shard(shard_id))
+                    for shard_id in shard_chunk
+                )
 
-                if i != len(chunks):
-                    _log.debug(f"Bucket {i}/{len(chunks)} shards launched, waiting (5s/bucket)")
-                    await asyncio.sleep(5)
-                else:
-                    _log.debug(f"Bucket {i}/{len(chunks)} shards launched, last bucket, skipping wait")
+                if i == len(chunks):
+                    break
 
+                if any(
+                    task.done() and not task.cancelled() and task.exception() is not None
+                    for task in booting
+                ):
+                    # A previous bucket already failed fatally, no point pacing
+                    # further buckets for a boot that's already going to error out
+                    _log.debug("A shard failed during startup, stopping further bucket launches")
+                    break
+
+                await asyncio.sleep(5)
+
+            await asyncio.gather(*booting)
             _log.debug(f"All {len(chunks)} bucket(s) have launched a total of {self.shard_count} shard(s)")
 
-        asyncio.create_task(  # noqa: RUF006
+        task = asyncio.create_task(
             self._delay_full_ready(),
             name="discord.http/gateway/delay_full_ready"
         )
+        self.bot._background_tasks.add(task)
+        task.add_done_callback(self.bot._cleanup_task)
 
     async def _delay_full_ready(self) -> None:
         waiting: list[Coroutine] = [
@@ -220,17 +315,27 @@ class GatewayClient:
         ]
 
         # Gather all shards to now wait until they are ready
-        await asyncio.gather(*waiting)
+        # return_exceptions so a future failure in one shard can't orphan the rest
+        results = await asyncio.gather(*waiting, return_exceptions=True)
+        for result in results:
+            if isinstance(result, BaseException):
+                _log.error("Error while waiting for a shard to become ready", exc_info=result)
 
         self.bot._shards_ready.set()
-        _log.info("discord.http/gateway is now ready")
+
+        if self.bot.has_any_dispatch("gateway_ready"):
+            self.bot.dispatch("gateway_ready", self.bot)
+        else:
+            _log.info(f"discord.http/gateway is now ready (took {utils.format_small_unit(self.bot.uptime)})")
 
     def start(self) -> None:
         """ Start the gateway client. """
-        self.bot.loop.create_task(
+        task = self.bot.loop.create_task(
             self._launch_all_shards(),
             name="discord.http/gateway/launch_all_shards"
         )
+        self.bot._background_tasks.add(task)
+        task.add_done_callback(self.bot._cleanup_task)
 
     async def close(self) -> None:
         """ Close the gateway client. """
@@ -256,4 +361,13 @@ class GatewayClient:
         ]
 
         if to_close:
-            await asyncio.wait(to_close)
+            done, pending = await asyncio.wait(to_close, timeout=10.0)
+
+            for fut in pending:
+                fut.cancel()
+
+            for fut in done:
+                if not fut.cancelled() and (exc := fut.exception()):
+                    _log.error("Error while closing a shard", exc_info=exc)
+
+        self.__shards.clear()

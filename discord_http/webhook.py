@@ -1,12 +1,13 @@
 from typing import TYPE_CHECKING, Literal, overload
 
 from . import utils
+from .asset import Asset
 from .embeds import Embed
 from .enums import ResponseType
 from .file import File
 from .flags import MessageFlags
 from .mentions import AllowedMentions
-from .object import PartialBase
+from .object import PartialBase, Snowflake
 from .response import MessageResponse
 from .user import User
 from .view import View
@@ -30,7 +31,6 @@ class PartialWebhook(PartialBase):
 
     __slots__ = (
         "_state",
-        "id",
         "token",
     )
 
@@ -38,7 +38,7 @@ class PartialWebhook(PartialBase):
         self,
         *,
         state: "DiscordAPI",
-        id: int,  # noqa: A002
+        id: int,  # ruff: ignore[builtin-argument-shadowing]
         token: str | None = None
     ):
         super().__init__(id=int(id))
@@ -83,6 +83,8 @@ class PartialWebhook(PartialBase):
         wait: Literal[False],
         flags: MessageFlags | None = MISSING,
         thread_id: int | None = MISSING,
+        thread_name: str | None = MISSING,
+        applied_tags: list[Snowflake | int] | None = MISSING,
         poll: "Poll | None" = MISSING,
     ) -> None:
         ...
@@ -105,6 +107,8 @@ class PartialWebhook(PartialBase):
         wait: bool = True,
         flags: MessageFlags | None = MISSING,
         thread_id: int | None = MISSING,
+        thread_name: str | None = MISSING,
+        applied_tags: list[Snowflake | int] | None = MISSING,
         poll: "Poll | None" = MISSING,
     ) -> "WebhookMessage":
         ...
@@ -121,11 +125,13 @@ class PartialWebhook(PartialBase):
         files: list[File] | None = MISSING,
         ephemeral: bool | None = False,
         view: View | None = MISSING,
-        type: ResponseType | int = 4,  # noqa: A002
+        type: ResponseType | int = 4,  # ruff: ignore[builtin-argument-shadowing]
         allowed_mentions: AllowedMentions | None = MISSING,
         wait: bool = True,
         flags: MessageFlags | None = MISSING,
         thread_id: int | None = MISSING,
+        thread_name: str | None = MISSING,
+        applied_tags: list[Snowflake | int] | None = MISSING,
         poll: "Poll | None" = MISSING,
     ) -> "WebhookMessage | None":
         """
@@ -133,35 +139,39 @@ class PartialWebhook(PartialBase):
 
         Parameters
         ----------
-        content:
+        content
             Content of the message
-        username:
+        username
             Username of the webhook
-        avatar_url:
+        avatar_url
             Avatar URL of the webhook
-        embed:
+        embed
             Embed of the message
-        embeds:
+        embeds
             Embeds of the message
-        file:
+        file
             File of the message
-        files:
+        files
             Files of the message
-        ephemeral:
+        ephemeral
             Whether the message should be sent as ephemeral
-        view:
+        view
             Components of the message
-        type:
+        type
             Which type of response should be sent
-        allowed_mentions:
+        allowed_mentions
             Allowed mentions of the message
-        wait:
+        wait
             Whether to wait for the message to be sent
-        flags:
+        flags
             Flags of the message
-        thread_id:
+        thread_id
             Thread ID to send the message to
-        poll:
+        thread_name
+            Name of the thread to create, only for forum and media channels
+        applied_tags
+            Tag IDs to apply to the created thread, only for forum and media channels
+        poll
             Poll to send with the message
 
         Returns
@@ -170,7 +180,7 @@ class PartialWebhook(PartialBase):
 
         Raises
         ------
-        `ValueError`
+        ValueError
             - If the webhook has no token
             - If `avatar_url` does not start with `https://`
         """
@@ -178,7 +188,7 @@ class PartialWebhook(PartialBase):
             raise ValueError("Cannot send a message with a webhook that has no token")
 
         params = {}
-        if thread_id is not MISSING:
+        if thread_id is not MISSING and thread_id is not None:
             params["thread_id"] = str(thread_id)
         if wait is True:
             params["wait"] = "true"
@@ -208,7 +218,7 @@ class PartialWebhook(PartialBase):
             for i, file in enumerate(payload.files):
                 multidata.attach(
                     f"file{i}",
-                    file,  # type: ignore
+                    file,
                     filename=file.filename
                 )
 
@@ -219,6 +229,12 @@ class PartialWebhook(PartialBase):
             if not avatar_url.startswith("https://"):
                 raise ValueError("avatar_url must start with https://")
             modified_payload["avatar_url"] = str(avatar_url)
+        if thread_name is not MISSING and thread_name is not None:
+            modified_payload["thread_name"] = str(thread_name)
+        if applied_tags is not MISSING and applied_tags is not None:
+            modified_payload["applied_tags"] = [
+                str(int(g)) for g in applied_tags
+            ]
 
         multidata.attach("payload_json", modified_payload)
 
@@ -232,15 +248,97 @@ class PartialWebhook(PartialBase):
         )
 
         if wait is True:
-            from .message import WebhookMessage
-            return WebhookMessage(
-                state=self._state,
-                data=r.response,
+            return self._state.bot.create_webhook_message_from_data(
+                r.response,
                 application_id=self.id,
                 token=self.token
             )
 
         return None
+
+    async def send_slack(
+        self,
+        payload: dict,
+        *,
+        wait: bool = True,
+        thread_id: int | None = MISSING,
+    ) -> None:
+        """
+        Send a Slack-compatible webhook.
+
+        Parameters
+        ----------
+        payload
+            The Slack-formatted payload to send
+        wait
+            Whether to wait for server confirmation of the message send
+        thread_id
+            Thread ID to send the message to
+
+        Raises
+        ------
+        ValueError
+            If the webhook has no token
+        """
+        if self.token is None:
+            raise ValueError("Cannot execute a webhook that has no token")
+
+        params = {}
+        if thread_id is not MISSING and thread_id is not None:
+            params["thread_id"] = str(thread_id)
+        # These endpoints default to wait=true, unlike the regular execute endpoint
+        params["wait"] = "true" if wait else "false"
+
+        await self._state.query(
+            "POST",
+            f"/webhooks/{self.id}/{self.token}/slack",
+            webhook=True,
+            params=params,
+            json=payload,
+            res_method="text"
+        )
+
+    async def send_github(
+        self,
+        payload: dict,
+        *,
+        wait: bool = True,
+        thread_id: int | None = MISSING,
+    ) -> None:
+        """
+        Send a GitHub-compatible webhook.
+
+        Parameters
+        ----------
+        payload
+            The GitHub-formatted payload to send
+        wait
+            Whether to wait for server confirmation of the message send
+        thread_id
+            Thread ID to send the message to
+
+        Raises
+        ------
+        ValueError
+            If the webhook has no token
+        """
+        if self.token is None:
+            raise ValueError("Cannot execute a webhook that has no token")
+
+        params = {}
+        if thread_id is not MISSING and thread_id is not None:
+            params["thread_id"] = str(thread_id)
+        # These endpoints default to wait=true, unlike the regular execute endpoint
+        params["wait"] = "true" if wait else "false"
+
+        await self._state.query(
+            "POST",
+            f"/webhooks/{self.id}/{self.token}/github",
+            webhook=True,
+            params=params,
+            json=payload,
+            res_method="text"
+        )
 
     async def delete(
         self,
@@ -252,14 +350,15 @@ class PartialWebhook(PartialBase):
 
         Parameters
         ----------
-        reason:
+        reason
             The reason for deleting the webhook
         """
         if self.token is None:
             await self._state.query(
                 "DELETE",
                 f"/webhooks/{self.id}",
-                res_method="text"
+                res_method="text",
+                reason=reason
             )
 
             return
@@ -284,13 +383,13 @@ class PartialWebhook(PartialBase):
 
         Parameters
         ----------
-        name:
+        name
             Name of the webhook
-        avatar:
+        avatar
             Avatar of the webhook
-        channel_id:
+        channel_id
             Channel ID to move the webhook to
-        reason:
+        reason
             Reason for the audit log
 
         Returns
@@ -327,8 +426,8 @@ class Webhook(PartialWebhook):
     """ Represents a webhook object. """
 
     __slots__ = (
+        "_raw_avatar",
         "application_id",
-        "avatar",
         "channel_id",
         "guild_id",
         "name",
@@ -343,8 +442,8 @@ class Webhook(PartialWebhook):
         super().__init__(
             state=state,
             id=(
-                self.application_id or
                 utils.get_int(data, "id") or
+                self.application_id or
                 0
             ),
             token=data.get("token")
@@ -353,8 +452,7 @@ class Webhook(PartialWebhook):
         self.name: str | None = data.get("name")
         """ The name of the webhook, if any. """
 
-        self.avatar: str | None = None
-        """ The avatar of the webhook, if any. """
+        self._raw_avatar: str | None = data.get("avatar")
 
         self.url: str | None = data.get("url")
         """ The URL of the webhook, if any. """
@@ -377,11 +475,8 @@ class Webhook(PartialWebhook):
         return self.name or "Unknown"
 
     def _from_data(self, data: dict) -> None:
-        if data.get("user"):
-            self.user = User(
-                state=self._state,
-                data=data["user"]
-            )
+        if user := data.get("user"):
+            self.user = self._state.bot.create_user_from_data(user)
 
     @classmethod
     def from_state(cls, *, state: "DiscordAPI", data: dict) -> "Webhook":
@@ -390,9 +485,9 @@ class Webhook(PartialWebhook):
 
         Parameters
         ----------
-        state:
+        state
             The state to use for the webhook
-        data:
+        data
             The data to use for the webhook
 
         Returns
@@ -407,21 +502,23 @@ class Webhook(PartialWebhook):
         if not self.guild_id:
             return None
 
-        cache = self._state.cache.get_guild(self.guild_id)
-        if cache:
+        if cache := self._state.cache.get_guild(self.guild_id):
             return cache
 
-        from .guild import PartialGuild
-        return PartialGuild(state=self._state, id=self.guild_id)
+        return self._state.bot.get_partial_guild(self.guild_id)
+
+    @property
+    def avatar(self) -> "Asset | None":
+        """ The avatar of the webhook, if any. """
+        if not self._raw_avatar:
+            return None
+
+        return Asset._from_avatar(self._state, self.id, self._raw_avatar)
 
     @property
     def channel(self) -> "PartialChannel | None":
         """ The channel the webhook is in. """
-        if self.channel_id:
-            from .channel import PartialChannel
-            return PartialChannel(
-                state=self._state,
-                id=self.channel_id
-            )
+        if not self.channel_id:
+            return None
 
-        return None
+        return self._state.bot.get_partial_channel(self.channel_id)

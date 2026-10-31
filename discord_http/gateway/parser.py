@@ -7,12 +7,9 @@ from typing import TYPE_CHECKING, overload
 from .. import utils
 from ..audit import AuditLogEntry
 from ..automod import AutoModRule
-from ..channel import (
-    BaseChannel, PartialChannel, PartialThread,
-    PartialVoiceState, StageInstance, VoiceState
-)
+from ..channel import BaseChannel, PartialChannel, StageChannel, StageInstance, PartialThread
 from ..emoji import Emoji, EmojiParser
-from ..entitlements import Entitlements
+from ..entitlements import Entitlements, Subscription
 from ..enums import ChannelType
 from ..guild import Guild, PartialGuild, ScheduledEvent, PartialScheduledEvent
 from ..integrations import Integration, PartialIntegration
@@ -23,14 +20,16 @@ from ..role import Role, PartialRole
 from ..soundboard import PartialSoundboardSound, SoundboardSound
 from ..sticker import Sticker
 from ..user import User, PartialUser
+from ..voice import VoiceState, PartialVoiceState
 
-from .enums import PollVoteActionType
+from .enums import PollVoteActionType, PayloadType
 from .flags import GatewayCacheFlags
 from .object import (
     ChannelPinsUpdate, TypingStartEvent,
     Reaction, BulkDeletePayload, ThreadListSyncPayload,
     ThreadMembersUpdatePayload, Presence, AutomodExecution,
-    PollVoteEvent, GuildJoinRequest
+    PollVoteEvent, GuildJoinRequest, GuildApplicationCommandPermissions,
+    GatewayRateLimited, ChannelInfo
 )
 
 if TYPE_CHECKING:
@@ -49,6 +48,7 @@ class GuildMembersChunk:
         "_state",
         "_waiters",
         "cache",
+        "collect",
         "guild_id",
         "members",
         "nonce",
@@ -60,7 +60,8 @@ class GuildMembersChunk:
         *,
         state: "DiscordAPI",
         guild_id: int,
-        cache: bool = False
+        cache: bool = False,
+        collect: bool = True
     ):
         self._state = state
 
@@ -79,6 +80,9 @@ class GuildMembersChunk:
         self.cache: bool = cache
         """ Whether to cache the members in the chunk, defaults to `False`. """
 
+        self.collect: bool = collect
+        """ Whether to accumulate the parsed `Member` objects on `.members`, defaults to `True`. """
+
         self._waiters: list[asyncio.Future[list[Member]]] = []
 
     def __repr__(self) -> str:
@@ -91,10 +95,7 @@ class GuildMembersChunk:
     @property
     def guild(self) -> "Guild | PartialGuild":
         """ The guild the chunk belongs to. """
-        return self._state.cache.get_guild(self.guild_id) or PartialGuild(
-            state=self._state,
-            id=self.guild_id
-        )
+        return self._state.cache.get_guild(self.guild_id) or self._state.bot.get_partial_guild(self.guild_id)
 
     @property
     def _cache_level(self) -> GatewayCacheFlags | None:
@@ -104,13 +105,14 @@ class GuildMembersChunk:
         """ For any members not found in the chunk search. """
         self.not_found.extend(user_ids)
 
-    def add_members(self, members: list[Member]) -> None:
+    def add_members(self, members: list[Member] | list[PartialMember]) -> None:
         """
         Add member to the chunk.
 
         However if cache is enabled, try to add them to the cache
         """
-        self.members.extend(members)
+        if self.collect:
+            self.members.extend(members)  # type: ignore[arg-type]
 
         if self.cache:
             if not self._cache_level:
@@ -132,11 +134,7 @@ class GuildMembersChunk:
 
             elif GatewayCacheFlags.partial_members in self._cache_level:
                 for m in members:
-                    guild._cache_members[m.id] = PartialMember(
-                        state=self._state,
-                        id=m.id,
-                        guild_id=self.guild_id
-                    )
+                    guild._cache_members[m.id] = self._state.cache._to_partial_member(m)
 
     async def wait(self) -> list["Member"]:
         """ Waits for the chunk to be ready. """
@@ -159,6 +157,12 @@ class GuildMembersChunk:
             if not future.done():
                 future.set_result(self.members)
 
+    def fail(self, exc: BaseException) -> None:
+        """ Fail the chunk request with an exception. """
+        for future in self._waiters:
+            if not future.done():
+                future.set_exception(exc)
+
 
 class Parser:
     """ The parser for the gateway events. """
@@ -166,7 +170,7 @@ class Parser:
     __slots__ = ("_chunk_requests", "bot",)
 
     def __init__(self, bot: "Client"):
-        self.bot = bot
+        self.bot: "Client" = bot
         """ The bot/client instance that the parser belongs to. """
 
         self._chunk_requests: dict[int | str, GuildMembersChunk] = {}
@@ -185,48 +189,50 @@ class Parser:
 
         return (
             self.bot.cache.get_guild(guild_id) or
-            PartialGuild(state=self.bot.state, id=guild_id)
+            self.bot.get_partial_guild(guild_id)
         )
 
     def _process_chunk_request(
         self,
         guild_id: int,
         nonce: str | None,
-        members: list[Member],
+        members: list[Member] | list[PartialMember],
         completed: bool
     ) -> None:
-        to_remove = []
+        if nonce is None:
+            return
 
-        for k, req in self._chunk_requests.items():
-            if req.guild_id == guild_id and req.nonce == nonce:
-                req.add_members(members)
-                if completed:
-                    req.done()
-                    to_remove.append(k)
+        if (
+            (req := self._chunk_requests.get(nonce)) is None or
+            req.guild_id != guild_id
+        ):
+            return
 
-        for k in to_remove:
-            del self._chunk_requests[k]
+        req.add_members(members)
+        if completed:
+            req.done()
+            del self._chunk_requests[nonce]
 
     def _get_channel_or_partial(
         self,
         channel_id: int,
-        guild_id: int | None = None
+        guild_id: int | None = None,
+        *,
+        guild: "PartialGuild | Guild | None" = None
     ) -> "BaseChannel | PartialChannel":
         if not guild_id:
-            return PartialChannel(state=self.bot.state, id=channel_id)
+            return self.bot.get_partial_channel(channel_id)
 
-        guild = self._get_guild_or_partial(guild_id)
-        return guild.get_channel(channel_id) or PartialChannel(
-            state=self.bot.state,
-            id=channel_id,
-            guild_id=guild_id
-        )
+        guild = guild or self._get_guild_or_partial(guild_id)
+        return guild.get_channel(channel_id) or self.bot.get_partial_channel(channel_id, guild_id=guild_id)
 
     @overload
     def _get_user_or_partial(
         self,
         user_id: int,
-        guild_id: None
+        guild_id: None,
+        *,
+        guild: "PartialGuild | Guild | None" = ...
     ) -> "PartialUser | User":
         ...
 
@@ -234,69 +240,82 @@ class Parser:
     def _get_user_or_partial(
         self,
         user_id: int,
-        guild_id: int
+        guild_id: int,
+        *,
+        guild: "PartialGuild | Guild | None" = ...
     ) -> "Member | PartialMember":
         ...
 
     def _get_user_or_partial(
         self,
         user_id: int,
-        guild_id: int | None
+        guild_id: int | None,
+        *,
+        guild: "PartialGuild | Guild | None" = None
     ) -> "PartialUser | User | Member | PartialMember":
-        state = self.bot.state
         if not guild_id:
-            return PartialUser(state=state, id=user_id)
+            return self.bot.get_partial_user(user_id)
 
-        guild = self._get_guild_or_partial(guild_id)
-        return guild.get_member(user_id) or PartialMember(
-            state=state, id=user_id, guild_id=guild.id
-        )
+        guild = guild or self._get_guild_or_partial(guild_id)
+        return guild.get_member(user_id) or self.bot.get_partial_member(user_id, guild.id)
 
     def _get_role_or_partial(
         self,
         role_id: int,
         guild_id: int
     ) -> "Role | PartialRole":
-        state = self.bot.state
+        if cache := self.bot.cache.get_guild(guild_id):
+            return cache.get_role(role_id) or self.bot.get_partial_role(role_id, guild_id)
 
-        cache = self.bot.cache.get_guild(guild_id)
-        if cache:
-            return cache.get_role(role_id) or PartialRole(
-                state=state,
-                id=role_id,
-                guild_id=guild_id
-            )
+        return self.bot.get_partial_role(role_id, guild_id)
 
-        return PartialRole(
-            state=state,
-            id=role_id,
-            guild_id=guild_id
+    def _guild(self, data: dict, *, populate_cache: bool = True) -> Guild:
+        return self.bot.create_guild_from_data(
+            data, populate_cache=populate_cache
         )
 
-    def _guild(self, data: dict) -> Guild:
-        return Guild(
-            state=self.bot.state,
-            data=data
-        )
-
-    def guild_create(self, data: dict) -> tuple[Guild | PartialGuild]:
+    def guild_create(
+        self,
+        data: dict,
+        *,
+        event_name: str = "guild_create"
+    ) -> tuple[Guild | PartialGuild]:
         """
         Create a guild.
 
         Parameters
         ----------
-        data:
+        data
             The data to create the guild from
+        event_name
+            The event the guild will be dispatched as, used to check for listeners
 
         Returns
         -------
             The created guild
         """
-        guild = self._guild(data)
-        cache_guild = self.bot.cache.add_guild(guild.id, guild)
+        guild_id = int(data["id"])
+        cache = self.bot.cache
+        cache_flags = cache.cache_flags
 
-        if cache_guild:
+        guild: "Guild | PartialGuild"
+        if cache_flags is not None and GatewayCacheFlags.guilds in cache_flags:
+            guild = self._guild(data, populate_cache=False)
+        elif cache_flags is not None and GatewayCacheFlags.partial_guilds in cache_flags:
+            guild = self.bot.get_partial_guild(guild_id)
+        else:
+            guild = self._guild(
+                data,
+                populate_cache=self.bot.has_any_dispatch(event_name)
+            )
+
+        if cache_guild := cache.add_guild(guild_id, guild):
+            cache.reset_guild_pools(guild_id)
             cache_guild._populate_internal_cache(data)
+
+            for g in data.get("stage_instances", []):
+                if isinstance(channel := cache_guild.get_channel(int(g["channel_id"])), StageChannel):
+                    channel._stage_instance = StageInstance(state=self.bot.state, data=g)
 
         return (cache_guild or guild,)
 
@@ -306,16 +325,24 @@ class Parser:
 
         Parameters
         ----------
-        data:
+        data
             The data to update the guild from
 
         Returns
         -------
             The updated guild
         """
-        guild = self._guild(data)
-        self.bot.cache.update_guild(guild.id, data)
-        return (guild,)
+        guild_id = int(data["id"])
+        cache = self.bot.cache
+
+        if isinstance(cached := cache.get_guild(guild_id), Guild):
+            cache.update_guild(guild_id, data)
+            return (cached,)
+
+        if not self.bot.has_any_dispatch("guild_update"):
+            return (None,)  # type: ignore[return-value]
+
+        return (self._guild(data),)
 
     def guild_delete(self, data: dict) -> tuple[Guild | PartialGuild]:
         """
@@ -323,7 +350,7 @@ class Parser:
 
         Parameters
         ----------
-        data:
+        data
             The data to delete the guild from
 
         Returns
@@ -334,24 +361,23 @@ class Parser:
         self.bot.cache.remove_guild(guild.id)
         return (guild,)
 
+    def _entitlement(self, data: dict) -> Entitlements:
+        return self.bot.create_entitlements_from_data(data)
+
     def entitlement_create(self, data: dict) -> tuple[Entitlements]:
         """
         Create a new entitlement.
 
         Parameters
         ----------
-        data:
+        data
             The data to create the entitlement from
 
         Returns
         -------
             The created entitlement
         """
-        ent = Entitlements(
-            state=self.bot.state,
-            data=data,
-        )
-        return (ent,)
+        return (self._entitlement(data),)
 
     def entitlement_update(self, data: dict) -> tuple[Entitlements]:
         """
@@ -359,18 +385,122 @@ class Parser:
 
         Parameters
         ----------
-        data:
+        data
             The data to update the entitlement from
 
         Returns
         -------
             The updated entitlement
         """
-        ent = Entitlements(
+        return (self._entitlement(data),)
+
+    def entitlement_delete(self, data: dict) -> tuple[Entitlements]:
+        """
+        Delete an entitlement.
+
+        Parameters
+        ----------
+        data
+            The data to delete the entitlement from
+
+        Returns
+        -------
+            The deleted entitlement
+        """
+        return (self._entitlement(data),)
+
+    def _subscription(self, data: dict) -> Subscription:
+        return Subscription(
             state=self.bot.state,
             data=data,
         )
-        return (ent,)
+
+    def subscription_create(self, data: dict) -> tuple[Subscription]:
+        """
+        Create a new subscription.
+
+        Parameters
+        ----------
+        data
+            The data to create the subscription from
+
+        Returns
+        -------
+            The created subscription
+        """
+        return (self._subscription(data),)
+
+    def subscription_update(self, data: dict) -> tuple[Subscription]:
+        """
+        Update a subscription.
+
+        Parameters
+        ----------
+        data
+            The data to update the subscription from
+
+        Returns
+        -------
+            The updated subscription
+        """
+        return (self._subscription(data),)
+
+    def subscription_delete(self, data: dict) -> tuple[Subscription]:
+        """
+        Delete a subscription.
+
+        Parameters
+        ----------
+        data
+            The data to delete the subscription from
+
+        Returns
+        -------
+            The deleted subscription
+        """
+        return (self._subscription(data),)
+
+    def application_command_permissions_update(
+        self, data: dict
+    ) -> tuple[GuildApplicationCommandPermissions]:
+        """
+        Update the permissions of an application command in a guild.
+
+        Parameters
+        ----------
+        data
+            The data to update the command permissions from
+
+        Returns
+        -------
+            The updated command permissions
+        """
+        return (
+            GuildApplicationCommandPermissions(
+                state=self.bot.state,
+                data=data,
+            ),
+        )
+
+    def user_update(self, data: dict) -> tuple[User]:
+        """
+        Update the current bot's user.
+
+        Parameters
+        ----------
+        data
+            The data to update the user from
+
+        Returns
+        -------
+            The updated user
+        """
+        user = self.bot.create_user_from_data(data)
+
+        if self.bot.application:
+            self.bot.application.bot = user
+
+        return (user,)
 
     def guild_members_chunk(self, data: dict) -> tuple[GuildMembersChunk]:
         """
@@ -378,53 +508,122 @@ class Parser:
 
         Parameters
         ----------
-        data:
+        data
             The data to chunk the guild members from
 
         Returns
         -------
             The chunk of guild members
         """
-        guild = self._get_guild_or_partial(int(data["guild_id"]))
+        guild_id = int(data["guild_id"])
+        nonce = data.get("nonce")
+        completed = data.get("chunk_index", 0) + 1 == data.get("chunk_count", 1)
+        has_listener = self.bot.has_any_dispatch("guild_members_chunk")
+
+        req = self._chunk_requests.get(nonce) if nonce is not None else None
+        if req is not None and req.guild_id != guild_id:
+            req = None
+
+        if not has_listener and (req is None or not req.collect):
+            cache = self.bot.cache
+            cache_flags = cache.cache_flags
+            caches_full = cache_flags is not None and GatewayCacheFlags.members in cache_flags
+            caches_partial = cache_flags is not None and GatewayCacheFlags.partial_members in cache_flags
+
+            if (
+                req is None or
+                not req.cache or
+                not (caches_full or caches_partial) or
+                cache.get_guild(guild_id) is None
+            ):
+                self._process_chunk_request(guild_id, nonce, [], completed)
+                return (None,)  # type: ignore[return-value]
+
+            if not caches_full:
+                partial_members = [
+                    self.bot.get_partial_member(int(g["user"]["id"]), guild_id)
+                    for g in data.get("members", [])
+                ]
+                self._apply_chunk_presences(guild_id, partial_members, data)
+                self._process_chunk_request(guild_id, nonce, partial_members, completed)
+                return (None,)  # type: ignore[return-value]
+
+        guild = self._get_guild_or_partial(guild_id)
 
         members = [
-            Member(
-                state=self.bot.state,
-                guild=guild,
-                data=g
-            ) for g in data.get("members", [])
+            self.bot.create_member_from_data(g, guild=guild)
+            for g in data.get("members", [])
         ]
 
-        presences = data.get("presences", [])
+        self._apply_chunk_presences(guild_id, members, data)
+        self._process_chunk_request(guild_id, nonce, members, completed)
 
-        if presences:
-            temp_dict: dict[int, Member] = {g.id: g for g in members}
-            for g in presences:
-                find_member = temp_dict.get(int(g["user"]["id"]))
-                if not find_member:
-                    continue
-                find_member._update_presence(Presence(
-                    state=self.bot.state,
-                    user=find_member,
-                    guild=guild,
-                    data=g
-                ))
-
-        self._process_chunk_request(
-            guild.id,
-            data.get("nonce"),
-            members,
-            data.get("chunk_index", 0) + 1 == data.get("chunk_count", 1)
-        )
+        if not has_listener:
+            return (None,)  # type: ignore[return-value]
 
         dispatch_raw = GuildMembersChunk(
             state=self.bot.state,
-            guild_id=guild.id,
+            guild_id=guild_id,
         )
 
         dispatch_raw.add_members(members)
 
         return (dispatch_raw,)
+
+    def _apply_chunk_presences(
+        self,
+        guild_id: int,
+        members: "list[Member] | list[PartialMember]",
+        data: dict
+    ) -> None:
+        if not members or not (presences := data.get("presences")):
+            return
+
+        temp_dict = {m.id: m for m in members}
+        for g in presences:
+            user_id = int(g["user"]["id"])
+            if not (find_member := temp_dict.get(user_id)):
+                continue
+
+            find_member._update_presence(Presence(
+                state=self.bot.state,
+                data=g,
+                user_id=user_id,
+                guild_id=guild_id
+            ))
+
+    def rate_limited(self, data: dict) -> tuple[GatewayRateLimited]:
+        """
+        Handle being rate limited on a gateway opcode.
+
+        If this was caused by a pending `Request Guild Members` (opcode 8) call,
+        the matching chunk request (if any) is failed immediately instead of
+        being left to time out.
+
+        Parameters
+        ----------
+        data
+            The data about the rate limit
+
+        Returns
+        -------
+            The rate limit notice
+        """
+        payload = GatewayRateLimited(
+            opcode=data["opcode"],
+            retry_after=data["retry_after"],
+            meta=data.get("meta", {}),
+        )
+
+        if payload.opcode == int(PayloadType.request_guild_members):
+            nonce = payload.meta.get("nonce")
+            if nonce and (req := self._chunk_requests.pop(nonce, None)) is not None:
+                req.fail(RuntimeError(
+                    "Rate limited while requesting guild members "
+                    f"(retry after {payload.retry_after}s)"
+                ))
+
+        return (payload,)
 
     def guild_available(self, data: dict) -> tuple[Guild | PartialGuild]:
         """
@@ -435,20 +634,16 @@ class Parser:
 
         Parameters
         ----------
-        data:
+        data
             The data to create the guild from
 
         Returns
         -------
             The created guild
         """
-        # In case it came available after boot
-        self.guild_create(data)
-
-        # Now just get the guild from cache if it exists
-        guild = self._get_guild_or_partial(int(data["id"]))
-
-        return (guild,)
+        # In case it came available after boot, this also
+        # returns the cached guild if it exists
+        return self.guild_create(data, event_name="guild_available")
 
     def guild_unavailable(self, data: dict) -> tuple[Guild | PartialGuild]:
         """
@@ -456,7 +651,7 @@ class Parser:
 
         Parameters
         ----------
-        data:
+        data
             The data given by Discord when the guild is unavailable
 
         Returns
@@ -473,7 +668,7 @@ class Parser:
 
         Parameters
         ----------
-        data:
+        data
             The member data
 
         Returns
@@ -481,7 +676,7 @@ class Parser:
             The guild and member that was added
         """
         guild = self._get_guild_or_partial(int(data["guild_id"]))
-        member = Member(state=self.bot.state, guild=guild, data=data)
+        member = self.bot.create_member_from_data(data, guild=guild)
 
         self.bot.cache.add_member(member)
 
@@ -493,7 +688,7 @@ class Parser:
 
         Parameters
         ----------
-        data:
+        data
             The member data
 
         Returns
@@ -501,7 +696,14 @@ class Parser:
             The guild and member that was updated
         """
         guild = self._get_guild_or_partial(int(data["guild_id"]))
-        member = Member(state=self.bot.state, guild=guild, data=data)
+
+        # A cached member is refreshed in place, instead of building a new one only to replace it
+        existing = guild.get_member(int(data["user"]["id"]))
+        if isinstance(existing, Member):
+            existing._update_from_data(data)
+            return (guild, existing)
+
+        member = self.bot.create_member_from_data(data, guild=guild)
 
         self.bot.cache.update_member(member)
 
@@ -516,7 +718,7 @@ class Parser:
 
         Parameters
         ----------
-        data:
+        data
             Data about member removed
 
         Returns
@@ -528,10 +730,7 @@ class Parser:
 
         return (
             guild,
-            member or User(
-                state=self.bot.state,
-                data=data["user"]
-            )
+            member or self.bot.create_user_from_data(data["user"])
         )
 
     def guild_ban_add(self, data: dict) -> tuple[Guild | PartialGuild, User]:
@@ -540,7 +739,7 @@ class Parser:
 
         Parameters
         ----------
-        data:
+        data
             The data of banned user
 
         Returns
@@ -551,10 +750,7 @@ class Parser:
 
         return (
             guild,
-            User(
-                state=self.bot.state,
-                data=data["user"]
-            )
+            self.bot.create_user_from_data(data["user"])
         )
 
     def guild_ban_remove(self, data: dict) -> tuple[Guild | PartialGuild, User]:
@@ -563,7 +759,7 @@ class Parser:
 
         Parameters
         ----------
-        data:
+        data
             Data about the user that was unbanned
 
         Returns
@@ -574,10 +770,7 @@ class Parser:
 
         return (
             guild,
-            User(
-                state=self.bot.state,
-                data=data["user"]
-            )
+            self.bot.create_user_from_data(data["user"])
         )
 
     def guild_emojis_update(self, data: dict) -> tuple[Guild | PartialGuild, list[Emoji], list[Emoji]]:
@@ -586,7 +779,7 @@ class Parser:
 
         Parameters
         ----------
-        data:
+        data
             The data of the emojis
 
         Returns
@@ -596,11 +789,7 @@ class Parser:
         guild = self._get_guild_or_partial(int(data["guild_id"]))
 
         emojis_after = [
-            Emoji(
-                state=self.bot.state,
-                guild=guild,
-                data=e
-            )
+            self.bot.create_emoji_from_data(e, guild=guild)
             for e in data["emojis"]
         ]
 
@@ -630,7 +819,7 @@ class Parser:
 
         Parameters
         ----------
-        data:
+        data
             The data received from the event.
 
         Returns
@@ -640,11 +829,7 @@ class Parser:
         guild = self._get_guild_or_partial(int(data["guild_id"]))
 
         stickers_after = [
-            Sticker(
-                state=self.bot.state,
-                guild=guild,
-                data=e
-            )
+            self.bot.create_sticker_from_data(e, guild=guild)
             for e in data["stickers"]
         ]
 
@@ -674,7 +859,7 @@ class Parser:
 
         Parameters
         ----------
-        data:
+        data
             The data received from the event.
 
         Returns
@@ -684,11 +869,7 @@ class Parser:
         guild = self._get_guild_or_partial(int(data["guild_id"]))
 
         return (
-            SoundboardSound(
-                state=self.bot.state,
-                guild=guild,
-                data=data
-            ),
+            self.bot.create_soundboard_sound_from_data(data, guild=guild),
         )
 
     def guild_soundboard_sound_update(self, data: dict) -> tuple[SoundboardSound]:
@@ -697,7 +878,7 @@ class Parser:
 
         Parameters
         ----------
-        data:
+        data
             Data received from the event.
 
         Returns
@@ -707,11 +888,7 @@ class Parser:
         guild = self._get_guild_or_partial(int(data["guild_id"]))
 
         return (
-            SoundboardSound(
-                state=self.bot.state,
-                guild=guild,
-                data=data
-            ),
+            self.bot.create_soundboard_sound_from_data(data, guild=guild),
         )
 
     def guild_soundboard_sound_delete(self, data: dict) -> tuple[PartialSoundboardSound]:
@@ -720,7 +897,7 @@ class Parser:
 
         Parameters
         ----------
-        data:
+        data
             Data received from the event.
 
         Returns
@@ -728,10 +905,8 @@ class Parser:
             The soundboard sound.
         """
         return (
-            PartialSoundboardSound(
-                state=self.bot.state,
-                id=int(data["sound_id"]),
-                guild_id=int(data["guild_id"])
+            self.bot.get_partial_soundboard_sound(
+                int(data["sound_id"]), guild_id=int(data["guild_id"])
             ),
         )
 
@@ -741,7 +916,7 @@ class Parser:
 
         Parameters
         ----------
-        data:
+        data
             Data received from the event.
 
         Returns
@@ -753,14 +928,25 @@ class Parser:
         return (
             guild,
             [
-                SoundboardSound(
-                    state=self.bot.state,
-                    guild=guild,
-                    data=e
-                )
+                self.bot.create_soundboard_sound_from_data(e, guild=guild)
                 for e in data["soundboard_sounds"]
             ]
         )
+
+    def soundboard_sounds(self, data: dict) -> tuple[PartialGuild, list[SoundboardSound]]:
+        """
+        Soundboard sounds event, sent in response to `Shard.request_soundboard_sounds`.
+
+        Parameters
+        ----------
+        data
+            Data received from the event.
+
+        Returns
+        -------
+            The tuple of the guild and the sounds.
+        """
+        return self.guild_soundboard_sounds_update(data)
 
     def guild_audit_log_entry_create(self, data: dict) -> tuple[AuditLogEntry]:
         """
@@ -768,7 +954,7 @@ class Parser:
 
         Parameters
         ----------
-        data:
+        data
             Data received from the event.
 
         Returns
@@ -778,11 +964,7 @@ class Parser:
         guild = self._get_guild_or_partial(int(data["guild_id"]))
 
         return (
-            AuditLogEntry(
-                state=self.bot.state,
-                data=data,
-                guild=guild
-            ),
+            self.bot.create_audit_log_entry_from_data(data, guild=guild),
         )
 
     # NOTE: These are not documented in Discord API......
@@ -793,7 +975,7 @@ class Parser:
 
         Parameters
         ----------
-        data:
+        data
             Data received from the event.
 
         Returns
@@ -808,7 +990,7 @@ class Parser:
 
         Parameters
         ----------
-        data:
+        data
             Data received from the event.
 
         Returns
@@ -831,7 +1013,7 @@ class Parser:
 
         Parameters
         ----------
-        data:
+        data
             Data received from the event.
 
         Returns
@@ -865,7 +1047,7 @@ class Parser:
 
         Parameters
         ----------
-        data:
+        data
             Data received from the event.
 
         Returns
@@ -882,7 +1064,7 @@ class Parser:
 
         Parameters
         ----------
-        data:
+        data
             Data received from the event.
 
         Returns
@@ -899,7 +1081,7 @@ class Parser:
 
         Parameters
         ----------
-        data:
+        data
             Data received from the event.
 
         Returns
@@ -916,7 +1098,7 @@ class Parser:
 
         Parameters
         ----------
-        data:
+        data
             Data received from the event.
 
         Returns
@@ -938,13 +1120,105 @@ class Parser:
             ),
         )
 
+    def voice_channel_status_update(self, data: dict) -> tuple[
+        Guild | PartialGuild | None,
+        BaseChannel | PartialChannel,
+        str | None
+    ]:
+        """
+        Voice channel status update event.
+
+        Parameters
+        ----------
+        data
+            Data received from the event.
+
+        Returns
+        -------
+            The guild the channel is in, the voice channel whose
+            status changed, and the new status (`None` if cleared).
+        """
+        guild_id: int | None = utils.get_int(data, "guild_id")
+        channel_id: int = int(data["id"])
+
+        return (
+            self._get_guild_or_partial(guild_id),
+            self._get_channel_or_partial(channel_id, guild_id),
+            data.get("status")
+        )
+
+    def channel_info(self, data: dict) -> tuple[
+        Guild | PartialGuild,
+        list[ChannelInfo]
+    ]:
+        """
+        Channel info event, sent in response to `Shard.request_channel_info`.
+
+        Parameters
+        ----------
+        data
+            Data received from the event.
+
+        Returns
+        -------
+            The guild and the ephemeral data of its channels.
+        """
+        guild_id: int = int(data["guild_id"])
+        guild = self._get_guild_or_partial(guild_id)
+
+        return (
+            guild,
+            [
+                ChannelInfo(
+                    channel=self._get_channel_or_partial(int(g["id"]), guild_id, guild=guild),
+                    status=g.get("status"),
+                    voice_start_time=(
+                        utils.parse_time(g["voice_start_time"])
+                        if g.get("voice_start_time") else None
+                    )
+                )
+                for g in data.get("channels", [])
+            ]
+        )
+
+    def voice_channel_start_time_update(self, data: dict) -> tuple[
+        Guild | PartialGuild | None,
+        BaseChannel | PartialChannel,
+        datetime | None
+    ]:
+        """
+        Voice channel start time update event.
+
+        Parameters
+        ----------
+        data
+            Data received from the event.
+
+        Returns
+        -------
+            The guild the channel is in, the voice channel whose
+            start time changed, and the new start time (`None` if no active session).
+        """
+        guild_id: int | None = utils.get_int(data, "guild_id")
+        channel_id: int = int(data["id"])
+        start_time: datetime | None = (
+            utils.parse_time(start_time_raw)
+            if (start_time_raw := data.get("voice_start_time")) else None
+        )
+
+        return (
+            self._get_guild_or_partial(guild_id),
+            self._get_channel_or_partial(channel_id, guild_id),
+            start_time,
+        )
+
     def thread_create(self, data: dict) -> tuple[BaseChannel]:
         """
         Thread create event.
 
         Parameters
         ----------
-        data:
+        data
             Data received from the event.
 
         Returns
@@ -961,7 +1235,7 @@ class Parser:
 
         Parameters
         ----------
-        data:
+        data
             Data received from the event.
 
         Returns
@@ -969,7 +1243,13 @@ class Parser:
             The thread.
         """
         channel = self._channel(data)
-        self.bot.cache.add_thread(channel)
+
+        # Only active threads are kept in cache, Discord never sends a delete for archived ones
+        if getattr(channel, "archived", False):
+            self.bot.cache.remove_thread(channel)
+        else:
+            self.bot.cache.add_thread(channel)
+
         return (channel,)
 
     def thread_delete(self, data: dict) -> tuple[PartialThread]:
@@ -978,7 +1258,7 @@ class Parser:
 
         Parameters
         ----------
-        data:
+        data
             Data received from the event.
 
         Returns
@@ -1002,7 +1282,7 @@ class Parser:
 
         Parameters
         ----------
-        data:
+        data
             Data received from the event.
 
         Returns
@@ -1017,7 +1297,7 @@ class Parser:
 
         Parameters
         ----------
-        data:
+        data
             Data received from the event.
 
         Returns
@@ -1025,10 +1305,8 @@ class Parser:
             The thread member.
         """
         return (
-            PartialThreadMember(
-                state=self.bot.state,
-                data=data,
-                guild_id=int(data["guild_id"])
+            self.bot.create_partial_thread_member_from_data(
+                data, guild_id=int(data["guild_id"])
             ),
         )
 
@@ -1038,7 +1316,7 @@ class Parser:
 
         Parameters
         ----------
-        data:
+        data
             Data received from the event.
 
         Returns
@@ -1050,9 +1328,8 @@ class Parser:
     def _message(self, data: dict) -> Message:
         guild_id = int(data["guild_id"]) if "guild_id" in data else None
 
-        return Message(
-            state=self.bot.state,
-            data=data,
+        return self.bot.create_message_from_data(
+            data,
             guild=(
                 self._get_guild_or_partial(guild_id)
                 if guild_id else None
@@ -1065,13 +1342,16 @@ class Parser:
 
         Parameters
         ----------
-        data:
+        data
             Data received from the event.
 
         Returns
         -------
             The message.
         """
+        if not self.bot.has_any_dispatch("message_create"):
+            return (None,)  # type: ignore[return-value]
+
         return (self._message(data),)
 
     def message_update(self, data: dict) -> tuple[Message]:
@@ -1080,13 +1360,16 @@ class Parser:
 
         Parameters
         ----------
-        data:
+        data
             Data received from the event.
 
         Returns
         -------
             The message.
         """
+        if not self.bot.has_any_dispatch("message_update"):
+            return (None,)  # type: ignore[return-value]
+
         return (self._message(data),)
 
     def message_delete(self, data: dict) -> tuple[PartialMessage]:
@@ -1095,13 +1378,16 @@ class Parser:
 
         Parameters
         ----------
-        data:
+        data
             Data received from the event.
 
         Returns
         -------
             The message.
         """
+        if not self.bot.has_any_dispatch("message_delete"):
+            return (None,)  # type: ignore[return-value]
+
         return (
             self.bot.get_partial_message(
                 message_id=int(data["id"]),
@@ -1116,7 +1402,7 @@ class Parser:
 
         Parameters
         ----------
-        data:
+        data
             Data received from the event.
 
         Returns
@@ -1128,14 +1414,16 @@ class Parser:
         ValueError
             If the guild id is not provided by Discord.
         """
-        guild = self._get_guild_or_partial(utils.get_int(data, "guild_id"))
+        if not self.bot.has_any_dispatch("message_delete_bulk"):
+            return (None,)  # type: ignore[return-value]
+
+        if (guild := self._get_guild_or_partial(utils.get_int(data, "guild_id"))) is None:
+            raise ValueError("guild_id somehow was not provided by Discord")
+
         channel = self._get_channel_or_partial(
             int(data["channel_id"]),
             guild_id=guild.id
         )
-
-        if guild is None:
-            raise ValueError("guild_id somehow was not provided by Discord")
 
         return (
             BulkDeletePayload(
@@ -1152,13 +1440,16 @@ class Parser:
 
         Parameters
         ----------
-        data:
+        data
             Data received from the event.
 
         Returns
         -------
             The reaction.
         """
+        if not self.bot.has_any_dispatch("message_reaction_add"):
+            return (None,)  # type: ignore[return-value]
+
         return (
             Reaction(
                 state=self.bot.state,
@@ -1172,13 +1463,16 @@ class Parser:
 
         Parameters
         ----------
-        data:
+        data
             Data received from the event.
 
         Returns
         -------
             The reaction.
         """
+        if not self.bot.has_any_dispatch("message_reaction_remove"):
+            return (None,)  # type: ignore[return-value]
+
         return (
             Reaction(
                 state=self.bot.state,
@@ -1192,19 +1486,21 @@ class Parser:
 
         Parameters
         ----------
-        data:
+        data
             Data received from the event.
 
         Returns
         -------
             The message.
         """
+        if not self.bot.has_any_dispatch("message_reaction_remove_all"):
+            return (None,)  # type: ignore[return-value]
+
         return (
-            PartialMessage(
-                state=self.bot.state,
-                id=int(data["message_id"]),
-                channel_id=int(data["channel_id"]),
-                guild_id=utils.get_int(data, "guild_id")
+            self.bot.get_partial_message(
+                int(data["message_id"]),
+                int(data["channel_id"]),
+                utils.get_int(data, "guild_id")
             ),
         )
 
@@ -1214,18 +1510,20 @@ class Parser:
 
         Parameters
         ----------
-        data:
+        data
             Data received from the event.
 
         Returns
         -------
             The message and the emoji.
         """
-        message = PartialMessage(
-            state=self.bot.state,
-            id=int(data["message_id"]),
-            channel_id=int(data["channel_id"]),
-            guild_id=utils.get_int(data, "guild_id")
+        if not self.bot.has_any_dispatch("message_reaction_remove_emoji"):
+            return (None, None)  # type: ignore[return-value]
+
+        message = self.bot.get_partial_message(
+            int(data["message_id"]),
+            int(data["channel_id"]),
+            utils.get_int(data, "guild_id")
         )
 
         return (
@@ -1239,7 +1537,7 @@ class Parser:
 
         Parameters
         ----------
-        data:
+        data
             Data received from the event.
 
         Returns
@@ -1248,11 +1546,7 @@ class Parser:
         """
         guild = self._get_guild_or_partial(int(data["guild_id"]))
 
-        role = Role(
-            state=self.bot.state,
-            guild=guild,
-            data=data["role"]
-        )
+        role = self.bot.create_role_from_data(data["role"], guild=guild)
 
         self.bot.cache.add_role(role)
         return (role,)
@@ -1263,7 +1557,7 @@ class Parser:
 
         Parameters
         ----------
-        data:
+        data
             Data received from the event.
 
         Returns
@@ -1272,11 +1566,7 @@ class Parser:
         """
         guild = self._get_guild_or_partial(int(data["guild_id"]))
 
-        role = Role(
-            state=self.bot.state,
-            guild=guild,
-            data=data["role"]
-        )
+        role = self.bot.create_role_from_data(data["role"], guild=guild)
 
         self.bot.cache.add_role(role)
         return (role,)
@@ -1287,7 +1577,7 @@ class Parser:
 
         Parameters
         ----------
-        data:
+        data
             Data received from the event.
 
         Returns
@@ -1308,14 +1598,14 @@ class Parser:
 
         Parameters
         ----------
-        data:
+        data
             Data received from the event.
 
         Returns
         -------
             The invite.
         """
-        return (Invite(state=self.bot.state, data=data),)
+        return (self.bot.create_invite_from_data(data),)
 
     def invite_delete(self, data: dict) -> tuple[PartialInvite]:
         """
@@ -1323,7 +1613,7 @@ class Parser:
 
         Parameters
         ----------
-        data:
+        data
             Data received from the event.
 
         Returns
@@ -1362,32 +1652,38 @@ class Parser:
 
         Parameters
         ----------
-        data:
+        data
             Data received from the event.
 
         Returns
         -------
             The voice state and the voice state.
         """
-        channel = None
-        guild = None
-
-        if data.get("channel_id") is not None:
-            channel = self._get_channel_or_partial(
-                int(data["channel_id"]),
-                guild_id=utils.get_int(data, "guild_id")
+        cache_flags = self.bot.cache.cache_flags
+        if (
+            not self.bot.has_any_dispatch("voice_state_update") and
+            not (
+                cache_flags and (
+                    GatewayCacheFlags.voice_states in cache_flags or
+                    GatewayCacheFlags.partial_voice_states in cache_flags
+                )
             )
+        ):
+            return (None, None)  # type: ignore[return-value]
+
+        guild = None
 
         if data.get("guild_id") is not None:
             guild = self._get_guild_or_partial(int(data["guild_id"]))
 
-        before_vs = guild.get_member_voice_state(int(data["user_id"]))
+        before_vs = (
+            guild.get_member_voice_state(int(data["user_id"]))
+            if guild is not None else None
+        )
 
         vs = VoiceState(
             state=self.bot.state,
-            data=data,
-            guild=guild,
-            channel=channel
+            data=data
         )
 
         self.bot.cache.update_voice_state(vs)
@@ -1400,23 +1696,27 @@ class Parser:
 
         Parameters
         ----------
-        data:
+        data
             Data received from the event.
 
         Returns
         -------
             The typing start event.
         """
+        if not self.bot.has_any_dispatch("typing_start"):
+            return (None,)  # type: ignore[return-value]
+
         guild_id: int | None = utils.get_int(data, "guild_id")
         channel_id: int = int(data["channel_id"])
         user_id: int = int(data["user_id"])
         timestamp: datetime = utils.parse_time(data["timestamp"])
+        guild = self._get_guild_or_partial(guild_id)
 
         return (
             TypingStartEvent(
-                guild=self._get_guild_or_partial(guild_id),
-                channel=self._get_channel_or_partial(channel_id, guild_id),
-                user=self._get_user_or_partial(user_id, guild_id),
+                guild=guild,
+                channel=self._get_channel_or_partial(channel_id, guild_id, guild=guild),
+                user=self._get_user_or_partial(user_id, guild_id, guild=guild),
                 timestamp=timestamp
             ),
         )
@@ -1427,7 +1727,7 @@ class Parser:
 
         Parameters
         ----------
-        data:
+        data
             Data received from the event.
 
         Returns
@@ -1438,11 +1738,10 @@ class Parser:
         stage_instance = StageInstance(
             state=self.bot.state,
             data=data,
-            guild=guild
         )
 
-        if guild and (channel := guild.get_channel(int(data["channel_id"]))):
-            channel._stage_instance = stage_instance  # type: ignore # should be fine?
+        if guild and isinstance(channel := guild.get_channel(int(data["channel_id"])), StageChannel):
+            channel._stage_instance = stage_instance
 
         return (stage_instance,)
 
@@ -1452,38 +1751,7 @@ class Parser:
 
         Parameters
         ----------
-        data:
-            Data received from the event.
-
-        Returns
-        -------
-            The stage instance.
-        """
-        guild = self.bot.cache.get_guild(int(data["guild_id"]))
-
-        # try updating the existing stage instance from cache if it exists
-        if (
-            guild and
-            (channel := guild.get_channel(int(data["channel_id"]))) and
-            channel._stage_instance is not None  # type: ignore
-        ):
-            channel._stage_instance._from_data(data)  # type: ignore
-
-        return (
-            StageInstance(
-                state=self.bot.state,
-                data=data,
-                guild=guild
-            ),
-        )
-
-    def stage_instance_delete(self, data: dict) -> tuple[StageInstance]:
-        """
-        Stage instance delete event.
-
-        Parameters
-        ----------
-        data:
+        data
             Data received from the event.
 
         Returns
@@ -1494,11 +1762,34 @@ class Parser:
         stage_instance = StageInstance(
             state=self.bot.state,
             data=data,
-            guild=guild
         )
 
-        if guild and (channel := guild.get_channel(int(data["channel_id"]))):
-            channel._stage_instance = None  # type: ignore # should be fine?
+        if guild and isinstance(channel := guild.get_channel(int(data["channel_id"])), StageChannel):
+            channel._stage_instance = stage_instance
+
+        return (stage_instance,)
+
+    def stage_instance_delete(self, data: dict) -> tuple[StageInstance]:
+        """
+        Stage instance delete event.
+
+        Parameters
+        ----------
+        data
+            Data received from the event.
+
+        Returns
+        -------
+            The stage instance.
+        """
+        guild = self.bot.cache.get_guild(int(data["guild_id"]))
+        stage_instance = StageInstance(
+            state=self.bot.state,
+            data=data,
+        )
+
+        if guild and isinstance(channel := guild.get_channel(int(data["channel_id"])), StageChannel):
+            channel._stage_instance = None
 
         return (stage_instance,)
 
@@ -1508,7 +1799,7 @@ class Parser:
 
         Parameters
         ----------
-        data:
+        data
             Data received from the event.
 
         Returns
@@ -1520,16 +1811,11 @@ class Parser:
         ValueError
             If the guild id is not provided by Discord.
         """
-        guild = self._get_guild_or_partial(int(data.pop("guild_id")))
-        if guild is None:
+        if (guild := self._get_guild_or_partial(int(data.pop("guild_id")))) is None:
             raise ValueError("guild_id somehow was not provided by Discord")
 
         return (
-            Integration(
-                state=self.bot.state,
-                data=data,
-                guild=guild
-            ),
+            self.bot.create_integration_from_data(data, guild=guild),
         )
 
     def integration_update(self, data: dict) -> tuple[Integration]:
@@ -1538,7 +1824,7 @@ class Parser:
 
         Parameters
         ----------
-        data:
+        data
             Data received from the event.
 
         Returns
@@ -1553,7 +1839,7 @@ class Parser:
 
         Parameters
         ----------
-        data:
+        data
             Data received from the event.
 
         Returns
@@ -1584,7 +1870,7 @@ class Parser:
 
         Parameters
         ----------
-        data:
+        data
             Data received from the event.
 
         Returns
@@ -1604,24 +1890,45 @@ class Parser:
 
         Parameters
         ----------
-        data:
+        data
             Data received from the event.
 
         Returns
         -------
             The presence.
         """
+        cache = self.bot.cache
+        has_listener = self.bot.has_any_dispatch("presence_update")
+        cache_flags = cache.cache_flags
+        if not has_listener and not (cache_flags and GatewayCacheFlags.presences in cache_flags):
+            return (None,)  # type: ignore[return-value]
+
+        guild_id = int(data["guild_id"])
+        user_id = int(data["user"]["id"])
+
+        if not has_listener:
+            if (
+                (guild := cache.get_guild(guild_id)) is None or
+                (member := guild.get_member(user_id)) is None
+            ):
+                return (None,)  # type: ignore[return-value]
+
+            member._update_presence(Presence(
+                state=self.bot.state,
+                data=data,
+                user_id=user_id,
+                guild_id=guild_id
+            ))
+            return (None,)  # type: ignore[return-value]
+
         p = Presence(
             state=self.bot.state,
-            user=self._get_user_or_partial(
-                int(data["user"]["id"]),
-                int(data["guild_id"])
-            ),
-            guild=self._get_guild_or_partial(int(data["guild_id"])),
-            data=data
+            data=data,
+            user_id=user_id,
+            guild_id=guild_id
         )
 
-        self.bot.cache.update_presence(p)
+        cache.update_presence(p)
 
         return (p,)
 
@@ -1631,7 +1938,7 @@ class Parser:
 
         Parameters
         ----------
-        data:
+        data
             Data received from the event.
 
         Returns
@@ -1651,7 +1958,7 @@ class Parser:
 
         Parameters
         ----------
-        data:
+        data
             Data received from the event.
 
         Returns
@@ -1671,7 +1978,7 @@ class Parser:
 
         Parameters
         ----------
-        data:
+        data
             Data received from the event.
 
         Returns
@@ -1691,7 +1998,7 @@ class Parser:
 
         Parameters
         ----------
-        data:
+        data
             Data received from the event.
 
         Returns
@@ -1714,7 +2021,7 @@ class Parser:
 
         Parameters
         ----------
-        data:
+        data
             Data received from the event.
 
         Returns
@@ -1727,10 +2034,8 @@ class Parser:
         )
 
         return (
-            PartialScheduledEvent(
-                state=self.bot.state,
-                id=int(data["guild_scheduled_event_id"]),
-                guild_id=int(data["guild_id"])
+            self.bot.get_partial_scheduled_event(
+                int(data["guild_scheduled_event_id"]), int(data["guild_id"])
             ),
             user
         )
@@ -1744,7 +2049,7 @@ class Parser:
 
         Parameters
         ----------
-        data:
+        data
             Data received from the event.
 
         Returns
@@ -1757,10 +2062,8 @@ class Parser:
         )
 
         return (
-            PartialScheduledEvent(
-                state=self.bot.state,
-                id=int(data["guild_scheduled_event_id"]),
-                guild_id=int(data["guild_id"])
+            self.bot.get_partial_scheduled_event(
+                int(data["guild_scheduled_event_id"]), int(data["guild_id"])
             ),
             user
         )
@@ -1771,7 +2074,7 @@ class Parser:
 
         Parameters
         ----------
-        data:
+        data
             Data received from the event.
 
         Returns
@@ -1791,7 +2094,7 @@ class Parser:
 
         Parameters
         ----------
-        data:
+        data
             Data received from the event.
 
         Returns
@@ -1811,7 +2114,7 @@ class Parser:
 
         Parameters
         ----------
-        data:
+        data
             Data received from the event.
 
         Returns
@@ -1831,7 +2134,7 @@ class Parser:
 
         Parameters
         ----------
-        data:
+        data
             Data received from the event.
 
         Returns
@@ -1867,13 +2170,10 @@ class Parser:
     def _message_poll_vote(
         self,
         data: dict,
-        type: PollVoteActionType  # noqa: A002
+        type: PollVoteActionType  # ruff: ignore[builtin-argument-shadowing]
     ) -> PollVoteEvent:
         guild = None
-        user = PartialUser(
-            state=self.bot.state,
-            id=int(data["user_id"])
-        )
+        user = self.bot.get_partial_user(int(data["user_id"]))
 
         if data.get("guild_id") is not None:
             guild = self._get_guild_or_partial(
@@ -1905,7 +2205,7 @@ class Parser:
 
         Parameters
         ----------
-        data:
+        data
             Data received from the event.
 
         Returns
@@ -1925,7 +2225,7 @@ class Parser:
 
         Parameters
         ----------
-        data:
+        data
             Data received from the event.
 
         Returns

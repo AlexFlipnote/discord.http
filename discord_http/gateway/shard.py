@@ -7,14 +7,14 @@ import zlib
 
 from aiohttp import WSMsgType, ClientWebSocketResponse, ClientSession
 from collections.abc import Callable
-from datetime import datetime
+from datetime import datetime, UTC
 from typing import Any, TYPE_CHECKING, overload, Literal
 
 from .. import utils
 from ..object import Snowflake
 
 from .enums import PayloadType, ShardCloseType
-from .flags import GatewayCacheFlags, Intents
+from .flags import GatewayCacheFlags, GatewayCapabilities, Intents
 from .object import PlayingStatus
 from .parser import Parser, GuildMembersChunk
 
@@ -75,15 +75,11 @@ class ShardEventPayload:
 
     def reconnect(self) -> None:
         """ Attempt to reconnect the shard. """
-        try:
+        if self.shard._connection is not None and not self.shard._connection.done():
             self.shard._connection.cancel()
-        except AttributeError:
-            pass
-        except asyncio.CancelledError:
-            pass
-        else:
-            _log.debug(f"Shard {self.shard.shard_id} reconnecting")
-            self.shard.connect()
+
+        _log.debug(f"Shard {self.shard.shard_id} reconnecting")
+        self.shard.connect()
 
 
 class GatewayRatelimiter:
@@ -152,8 +148,7 @@ class GatewayRatelimiter:
     async def block(self) -> None:
         """ Acquires the lock and sleeps if the shard is ratelimited. """
         async with self.lock:
-            retry_after = self.get_delay()
-            if retry_after:
+            if retry_after := self.get_delay():
                 _log.warning(
                     "WebSocket ratelimit hit on ShardID "
                     f"{self.shard_id}, waiting {retry_after:.2f}s..."
@@ -177,7 +172,7 @@ class Status:
     )
 
     def __init__(self, shard_id: int):
-        self.shard_id = shard_id
+        self.shard_id: int = shard_id
         """ The ID of the shard. """
 
         self.sequence: int | None = None
@@ -186,7 +181,7 @@ class Status:
         self.session_id: str | None = None
         """ The session ID of the shard, if any. """
 
-        self.gateway = DEFAULT_GATEWAY
+        self.gateway: utils.URL = DEFAULT_GATEWAY
         """ The gateway URL for the shard. """
 
         self.latency: float = float("inf")
@@ -222,6 +217,18 @@ class Status:
     def can_resume(self) -> bool:
         """ Returns whether the shard can resume its session. """
         return self.session_id is not None
+
+    def is_zombied(self) -> bool:
+        """ Returns whether the last heartbeat we sent was never acknowledged. """
+        if self._last_heartbeat is None:
+            return False
+        return self._last_ack < self._last_heartbeat
+
+    def reset_heartbeat(self) -> None:
+        """ Clears heartbeat/ack tracking, used when a new physical connection is established. """
+        now = time.perf_counter()
+        self._last_ack = now
+        self._last_heartbeat = None
 
     def update_sequence(self, sequence: int) -> None:
         """ Updates the last received sequence number. """
@@ -265,7 +272,7 @@ class Status:
 
         Parameters
         ----------
-        ignore_warning:
+        ignore_warning
             Whether to ignore the warning or not
             (This is only used before the shard is ready)
             ((If I find a way to fix it, I will remove this))
@@ -294,25 +301,28 @@ class Shard:
         shard_count: int | None = None,
         debug_events: bool = False,
     ):
-        self.bot = bot
+        self.bot: "Client" = bot
         """ The bot instance that the shard belongs to. """
 
         self.intents: Intents = intents or Intents.none()
         """ The intents that the shard is using, or `None` if not specified. """
 
-        self.cache_flags = cache_flags
+        self.capabilities: GatewayCapabilities | None = bot.gateway_capabilities
+        """ The opt-in Gateway capabilities bitfield to send in the Identify payload, if any. """
+
+        self.cache_flags: GatewayCacheFlags | None = cache_flags
         """ The cache flags that the shard is using, or `None` if not specified. """
 
-        self.api_version = api_version
+        self.api_version: int = api_version
         """ The API version that the shard is using. """
 
-        self.shard_id = shard_id
+        self.shard_id: int = shard_id
         """ The ID of the shard. """
 
-        self.shard_count = shard_count
+        self.shard_count: int | None = shard_count
         """ The total number of shards, or `None` if not specified. """
 
-        self.debug_events = debug_events
+        self.debug_events: bool = debug_events
         """ Whether to debug events or not. """
 
         self.ws: ClientWebSocketResponse | None = None
@@ -322,30 +332,34 @@ class Shard:
         self.session: ClientSession = self.bot.state.http.session  # type: ignore
         """ The HTTP session for the shard. """
 
-        self.parser = Parser(bot)
+        self.parser: Parser = Parser(bot)
         """ The parser for the shard. """
 
-        self.status = Status(shard_id)
+        self.status: Status = Status(shard_id)
         """ The status of the shard. """
 
         self.playing_status: PlayingStatus | None = bot.playing_status
         """ The playing status of the shard, if any. """
 
         self._ready: asyncio.Event = asyncio.Event()
+        self._identified: asyncio.Event = asyncio.Event()
         self._ready_task: asyncio.Task | None = None
         self._guild_ready_timeout: float = float(bot.guild_ready_timeout)
-        self._guild_create_queue: asyncio.Queue[dict] = asyncio.Queue()
+        self._expected_guild_count: int = 0
+        self._guild_create_queue: "asyncio.Queue[Guild | PartialGuild]" = asyncio.Queue()
         self._ratelimiter: GatewayRatelimiter = GatewayRatelimiter(shard_id)
 
         self._connection = None
         self._should_kill = False
+        self._reconnect_attempts: int = 0
+        self._replaying: bool = False
 
         self._buffer: bytearray = bytearray()
         self._zlib: zlib._Decompress = zlib.decompressobj()
 
         self._heartbeat_interval: float = 41_250 / 1000  # 41.25 seconds
         self._close_code: int | None = None
-        self._last_activity: datetime = utils.utcnow()
+        self._last_activity_ts: float = time.time()
 
         self._parser_cache = {}
         self._special_handlers: dict[str, tuple[Callable, bool]] = {
@@ -354,7 +368,13 @@ class Shard:
             "GUILD_MEMBERS_CHUNK": (self._parse_guild_members_chunk, True),
             "VOICE_STATE_UPDATE": (self._parse_voice_state_update, False),
             "VOICE_SERVER_UPDATE": (self._parse_voice_server_update, False),
+            "INTERACTION_CREATE": (self._parse_interaction_create, False),
         }
+
+    @property
+    def _last_activity(self) -> datetime:
+        """ When the shard last sent or received anything, only built into a datetime when asked for. """
+        return datetime.fromtimestamp(self._last_activity_ts, tz=UTC)
 
     @property
     def url(self) -> str:
@@ -378,16 +398,19 @@ class Shard:
 
         self._close_code = None
         self._ready.clear()
+        self._identified.clear()
+        self._expected_guild_count = 0
         self._guild_create_queue = asyncio.Queue()
+        self._replaying = False
 
         if self._ready_task is not None and not self._ready_task.done():
             self._ready_task.cancel()
             self._ready_task = None
 
         for chunk_request in self.parser._chunk_requests.values():
-            future = chunk_request.get_future()
-            if not future.done():
-                future.cancel()
+            chunk_request.fail(
+                ConnectionResetError("Shard connection was reset while waiting for a member chunk")
+            )
 
         self.parser._chunk_requests.clear()
 
@@ -424,9 +447,9 @@ class Shard:
 
         Parameters
         ----------
-        message:
+        message
             The message to send to the websocket
-        ratelimit:
+        ratelimit
             Whether to ratelimit the message or not
         """
         if isinstance(message, PayloadType):
@@ -445,7 +468,7 @@ class Shard:
         await self.ws.send_json(message)
 
         self.status.update_send()
-        self._last_activity = utils.utcnow()
+        self._last_activity_ts = time.time()
 
     async def close(
         self,
@@ -458,9 +481,9 @@ class Shard:
 
         Parameters
         ----------
-        code:
+        code
             The close code to use
-        kill:
+        kill
             Whether to kill the shard and never reconnect instance
         """
         code = code or 1000
@@ -474,41 +497,42 @@ class Shard:
 
         Parameters
         ----------
-        raw_msg:
+        raw_msg
             The message to receive
         """
-        self._last_activity = utils.utcnow()
+        self._last_activity_ts = time.time()
 
         if type(raw_msg) is bytes:
-            self._buffer.extend(raw_msg)
-
             # Discord's zlib-stream suffix
-            if len(raw_msg) < 4 or raw_msg[-4:] != b"\x00\x00\xff\xff":
+            if not raw_msg.endswith(b"\x00\x00\xff\xff"):
+                self._buffer.extend(raw_msg)
                 return
 
-            decompressed_bytes = self._zlib.decompress(self._buffer)
+            if self._buffer:
+                self._buffer.extend(raw_msg)
+                decompressed_bytes = self._zlib.decompress(self._buffer)
+                self._buffer = bytearray()
+            else:
+                # Common case, whole payload in one frame, skip copying it into the buffer
+                decompressed_bytes = self._zlib.decompress(raw_msg)
+
             msg: dict = orjson.loads(decompressed_bytes)
 
             # There has been times it keeps in memory
             # Thanks Python, very cool...
             del decompressed_bytes
-            self._buffer = bytearray()
         else:
             msg: dict = orjson.loads(raw_msg)
 
-        event = msg.get("t")
-
-        if event:
-            await self.on_event(event, msg)
-
-        op = msg.get("op")
+        op = PayloadType(msg.get("op"))
         data = msg.get("d")
-        seq = msg.get("s")
-
-        if seq is not None:
+        if (seq := msg.get("s")) is not None:
             self.status.update_sequence(seq)
 
         self.status.tick()
+
+        if event := msg.get("t"):
+            await self.on_event(event, msg)
 
         if op != PayloadType.dispatch:
             match op:
@@ -533,6 +557,7 @@ class Shard:
 
                     if self.status.can_resume():
                         _log.debug(f"Shard {self.shard_id} resuming session")
+                        self._replaying = True
                         await self.send_message(PayloadType.resume)
 
                     else:
@@ -540,18 +565,17 @@ class Shard:
                         await self.send_message(PayloadType.identify)
 
                 case PayloadType.invalidate_session:
-                    self._reset_instance()
-
                     if data is True:
-                        _log.error(f"Shard {self.shard_id} session invalidated, not attempting reboot...")
-                        # Add a way to kill shard maybe?
-
-                    elif data is False:
+                        # Session is still resumable, keep session_id/sequence intact
+                        _log.warning(f"Shard {self.shard_id} session invalidated, will attempt to resume")
+                    else:
+                        # Session is no longer resumable, must identify fresh
                         _log.warning(f"Shard {self.shard_id} session invalidated, resetting instance")
+                        self._reset_instance()
 
                     _log.debug(f"Shard {self.shard_id} invalidation data: {msg}")
 
-                    await self.close()
+                    await self.close(code=4000)
 
                 case _:
                     pass  # Not handled, pass for now
@@ -560,8 +584,12 @@ class Shard:
 
         match event:
             case "READY":
+                self._replaying = False
                 self.status.update_sequence(msg["s"])
                 self.status.update_ready_data(data)
+                self._expected_guild_count = len(data.get("guilds") or [])
+                self._identified.set()
+                self._reconnect_attempts = 0
 
                 if self._ready_task is not None and not self._ready_task.done():
                     self._ready_task.cancel()
@@ -572,6 +600,9 @@ class Shard:
                 )
 
             case "RESUMED":
+                self._replaying = False
+                self._reconnect_attempts = 0
+
                 if self.bot.has_any_dispatch("shard_resumed"):
                     self.bot.dispatch(
                         "shard_resumed",
@@ -601,17 +632,17 @@ class Shard:
 
         Parameters
         ----------
-        guild_id:
+        guild_id
             The guild id to send the chunk to
-        query:
+        query
             What to query for, by default None
-        limit:
+        limit
             The limit of members to fetch, by default 0
-        presences:
+        presences
             If to fetch presences, by default False
-        user_ids:
+        user_ids
             UserIDs to find, by default None
-        nonce:
+        nonce
             The nonce to use, by default None
         """
         payload: dict[str, str | int | list[str]] = {
@@ -653,15 +684,15 @@ class Shard:
 
         Parameters
         ----------
-        guild_id:
+        guild_id
             The guild id to query
-        query:
+        query
             The query to use, by default None
-        limit:
+        limit
             The limit of members to fetch, by default 0
-        presences:
+        presences
             If to fetch presences, by default False
-        user_ids:
+        user_ids
             UserIDs to find, by default None
 
         Returns
@@ -671,23 +702,24 @@ class Shard:
         chunker = GuildMembersChunk(state=self.bot.state, guild_id=int(guild_id))
         self.parser._chunk_requests[chunker.nonce] = chunker
 
-        await self.send_guild_members_chunk(
-            guild_id=guild_id,
-            query=query,
-            limit=limit,
-            presences=presences,
-            user_ids=user_ids,
-            nonce=chunker.nonce
-        )
-
         try:
-            return await asyncio.wait_for(chunker.wait(), timeout=30.0)
-        except TimeoutError:
-            _log.warning(
-                "Timed out while waiting for guild members chunk "
-                f"(guild_id={guild_id}, query={query}, limit={limit})"
+            await self.send_guild_members_chunk(
+                guild_id=guild_id,
+                query=query,
+                limit=limit,
+                presences=presences,
+                user_ids=user_ids,
+                nonce=chunker.nonce
             )
-            raise
+
+            try:
+                return await asyncio.wait_for(chunker.wait(), timeout=30.0)
+            except TimeoutError:
+                _log.warning(
+                    "Timed out while waiting for guild members chunk "
+                    f"(guild_id={guild_id}, query={query}, limit={limit})"
+                )
+                raise
         finally:
             self.parser._chunk_requests.pop(chunker.nonce, None)
 
@@ -720,9 +752,9 @@ class Shard:
 
         Parameters
         ----------
-        guild_id:
+        guild_id
             The guild id to chunk
-        wait:
+        wait
             Whether to wait for the chunk to be ready or not
 
         Returns
@@ -731,16 +763,20 @@ class Shard:
         """
         chunker = GuildMembersChunk(
             state=self.bot.state, guild_id=int(guild_id),
-            cache=True
+            cache=True, collect=False
         )
         self.parser._chunk_requests[chunker.nonce] = chunker
 
-        await self.send_guild_members_chunk(
-            guild_id=guild_id,
-            query="",
-            limit=0,
-            nonce=chunker.nonce
-        )
+        try:
+            await self.send_guild_members_chunk(
+                guild_id=guild_id,
+                query="",
+                limit=0,
+                nonce=chunker.nonce
+            )
+        except Exception:
+            self.parser._chunk_requests.pop(chunker.nonce, None)
+            raise
 
         if wait:
             try:
@@ -785,6 +821,7 @@ class Shard:
 
             async with self.session.ws_connect(self.url, **kwargs) as ws:
                 self.ws = ws
+                self.status.reset_heartbeat()
 
                 try:
                     while keep_waiting:
@@ -792,22 +829,30 @@ class Shard:
                             not self.status._last_heartbeat or
                             time.perf_counter() - self.status._last_heartbeat > self._heartbeat_interval
                         ):
+                            if self.status.is_zombied():
+                                raise ConnectionAbortedError(
+                                    f"Shard {self.shard_id} did not receive a heartbeat ACK, connection is zombied"
+                                )
+
                             _log.debug(f"Shard {self.shard_id} heartbeat from if-case")
                             await self.send_message(PayloadType.heartbeat)
 
                         try:
-                            evt = await asyncio.wait_for(
-                                self.ws.receive(),
-                                timeout=self._heartbeat_interval
-                            )
+                            evt = await self.ws.receive(timeout=self._heartbeat_interval)
 
                         except TimeoutError:
+                            if self.status.is_zombied():
+                                raise ConnectionAbortedError(
+                                    f"Shard {self.shard_id} did not receive a heartbeat ACK, connection is zombied"
+                                )
+
                             # No event received, send in case..
                             _log.debug(f"Shard {self.shard_id} heartbeat from except-case")
                             await self.send_message(PayloadType.heartbeat)
 
                         except asyncio.CancelledError:
                             await self.ws.ping()
+                            raise
 
                         else:
                             match evt.type:
@@ -867,6 +912,24 @@ class Shard:
                                 exception=e
                             )
 
+                    # Reset back to 0 only once READY/RESUMED confirms the session actually established
+                    self._reconnect_attempts += 1
+
+                    # First attempt reconnects instantly (the common case: a brief
+                    # blip). Only a second consecutive failure starts backing off.
+                    backoff = (
+                        0.0 if self._reconnect_attempts <= 1
+                        else min(2 ** min(self._reconnect_attempts - 2, 6), 60)
+                    )
+
+                    if backoff:
+                        jitter = backoff * 0.25 * self.bot.state.create_jitter()
+                        _log.debug(
+                            f"Shard {self.shard_id} waiting {backoff + jitter:.2f}s before reconnecting "
+                            f"(attempt {self._reconnect_attempts})"
+                        )
+                        await asyncio.sleep(backoff + jitter)
+
                     self.connect()
 
         except Exception as e:
@@ -879,6 +942,15 @@ class Shard:
             )
 
     def _guild_needs_chunking(self, guild: "Guild | PartialGuild") -> bool:
+        cache_flags = self.bot.cache.cache_flags
+        caches_members = cache_flags is not None and (
+            GatewayCacheFlags.members in cache_flags or
+            GatewayCacheFlags.partial_members in cache_flags
+        )
+
+        if not caches_members and not self.bot.has_any_dispatch("guild_members_chunk"):
+            return False
+
         return (
             self.bot.chunk_guilds_on_startup and
             not guild.chunked and
@@ -893,47 +965,51 @@ class Shard:
 
     async def _chunk_and_dispatch(
         self,
-        guild_data: dict,
+        guild: "Guild | PartialGuild",
         event_name: str
     ) -> None:
-        (parsed_guild,) = self.parser.guild_create(guild_data)
-
-        timeout = self._chunk_timeout(parsed_guild)
+        timeout = self._chunk_timeout(guild)
 
         try:
-            await asyncio.wait_for(self.chunk_guild(parsed_guild.id), timeout=timeout)
+            await asyncio.wait_for(self.chunk_guild(guild.id), timeout=timeout)
         except TimeoutError:
             _log.warning(
                 f"Timed out while waiting for guild members chunk "
-                f"(guild_id={parsed_guild.id}, timeout={timeout})"
+                f"(guild_id={guild.id}, timeout={timeout})"
             )
 
-        self._send_dispatch(event_name, parsed_guild)
+        self._send_dispatch(event_name, guild)
 
     async def _delay_ready(self) -> None:
         """
         Purposfully delays the ready event.
 
-        Then make shard ready when last GUILD_CREATE is received
+        Then make shard ready as soon as every guild reported in the READY
+        payload has sent its GUILD_CREATE, or when GUILD_CREATE traffic goes
+        quiet for `guild_ready_timeout` seconds, whichever happens first.
+        The timeout is only a fallback for a guild stuck unavailable.
         """
+        loop_start = time.perf_counter()
+
         try:
             states: list[tuple[Guild | PartialGuild, asyncio.Future[list[Member]]]] = []
-            while True:
+            received = 0
+            while received < self._expected_guild_count:
                 try:
-                    guild_data = await asyncio.wait_for(
+                    parsed_guild = await asyncio.wait_for(
                         self._guild_create_queue.get(),
                         timeout=self._guild_ready_timeout
                     )
                 except TimeoutError:
                     break  # It's supposed to timeout
                 else:
-                    # Start adding guilds to cache if it's enabled
-                    (parsed_guild,) = self.parser.guild_create(guild_data)
+                    received += 1
 
                     if self._guild_needs_chunking(parsed_guild):
                         future = await self.chunk_guild(parsed_guild.id, wait=False)
                         states.append((parsed_guild, future))
 
+            chunk_start = time.perf_counter()
             for guild, future in states:
                 timeout = self._chunk_timeout(guild)
 
@@ -945,9 +1021,17 @@ class Shard:
                             f"Timed out while waiting for guild members chunk "
                             f"(guild_id={guild.id}, timeout={timeout})"
                         )
+            chunk_time = time.perf_counter() - chunk_start
 
         except asyncio.CancelledError:
-            pass
+            return
+
+        total_time = time.perf_counter() - loop_start
+        _log.debug(
+            f"Shard {self.shard_id} guild sync: {received}/{self._expected_guild_count} guild(s) "
+            f"in {total_time:.3f}s (member chunking: {chunk_time:.3f}s, "
+            "rest was waiting on the socket)"
+        )
 
         self._ready.set()
         self.parser._chunk_requests.clear()
@@ -973,15 +1057,12 @@ class Shard:
 
         Parameters
         ----------
-        name:
+        name
             The name of the event
-        event:
+        event
             The event data
         """
-        data = event.get("d")
-        new_name = name.lower()
-
-        if not data:
+        if not (data := event.get("d")):
             return
 
         if self.debug_events:
@@ -990,21 +1071,35 @@ class Shard:
         # First check special shard-level overrides
         if name in self._special_handlers:
             handler, is_coro = self._special_handlers[name]
-            await handler(data) if is_coro else handler(data)
+            try:
+                await handler(data) if is_coro else handler(data)
+            except Exception as e:
+                _log.error(f"Error while handling event {name}", exc_info=e)
             return
 
-        # Check if parser has the method cached
-        parser_method: Callable[[dict], tuple[Any, ...]] | Literal[False] | None = self._parser_cache.get(new_name)
+        # Check if parser has the method cached (keyed by the original,
+        # un-lowered name so repeat dispatches skip the .lower() call too)
+        cached: tuple[str, Callable[[dict], tuple[Any, ...]] | Literal[False]] | None = self._parser_cache.get(name)
 
-        if parser_method is None:
+        if cached is None:
             # If not, now use getattr to get it and cache it if found
+            new_name = name.lower()
             # Pyright likes to complain here, but the type above is correct
-            parser_method = getattr(self.parser, new_name, False)  # pyright: ignore[reportAssignmentType]
-            self._parser_cache[new_name] = parser_method
+            parser_method: Callable[[dict], tuple[Any, ...]] | Literal[False] = getattr(  # pyright: ignore[reportAssignmentType]
+                self.parser, new_name, False
+            )
+            cached = (new_name, parser_method)
+            self._parser_cache[name] = cached
+
+        new_name, parser_method = cached
 
         if parser_method:
             # Parse data, this will also cache depending on developer flags
-            payload = parser_method(data)
+            try:
+                payload = parser_method(data)
+            except Exception as e:
+                _log.error(f"Error while parsing payload for event {new_name}", exc_info=e)
+                return
 
             # If the developer is listening to the event, dispatch it
             if self.bot.has_any_dispatch(new_name):
@@ -1013,15 +1108,18 @@ class Shard:
                 except Exception as e:
                     _log.error(f"Error while parsing event {new_name}", exc_info=e)
 
-    def _send_dispatch(self, name: str, *args: Any) -> None:  # noqa: ANN401
+    def _send_dispatch(self, name: str, *args: Any) -> None:  # ruff: ignore[any-type]
         try:
             self.bot.dispatch(name, *args)
         except Exception as e:
             _log.error(f"Error while parsing event {name}", exc_info=e)
 
+    def _parse_interaction_create(self, data: dict) -> None:
+        # Only sent when the application has no interactions endpoint URL
+        self.bot._handle_gateway_interaction(data, replayed=self._replaying)
+
     async def _parse_guild_create(self, data: dict) -> None:
-        unavailable = data.get("unavailable")
-        if unavailable is True:
+        if (unavailable := data.get("unavailable")) is True:
             return
 
         if unavailable is False:
@@ -1034,16 +1132,16 @@ class Shard:
             event_name = "guild_create"
 
         if not self._ready.is_set():
-            # We still want to parse GUILD_CREATE
-            # But we do not want to dispatch event just yet
-            self._guild_create_queue.put_nowait(data)
+            self._guild_create_queue.put_nowait(guild)
             return
 
         if self._guild_needs_chunking(guild):
-            asyncio.create_task(  # noqa: RUF006
-                self._chunk_and_dispatch(data, event_name),
+            task = asyncio.create_task(
+                self._chunk_and_dispatch(guild, event_name),
                 name=f"discord.http/gateway/shard-{self.shard_id}/chunk-{guild.id}"
             )
+            self.bot._background_tasks.add(task)
+            task.add_done_callback(self.bot._cleanup_task)
             return
 
         self._send_dispatch(event_name, guild)
@@ -1095,7 +1193,12 @@ class Shard:
 
     def connect(self) -> None:
         """ Connect the websocket. """
-        if self._connection and not self._connection.done():
+        current_task = asyncio.current_task()
+        if (
+            self._connection is not None and
+            self._connection is not current_task and
+            not self._connection.done()
+        ):
             self._connection.cancel()
         self._connection = asyncio.ensure_future(self._socket_manager())
 
@@ -1105,7 +1208,7 @@ class Shard:
 
         Parameters
         ----------
-        status:
+        status
             The status to change to.
         """
         _log.debug(f"Changing presence in Shard {self.shard_id} to {status}")
@@ -1147,13 +1250,61 @@ class Shard:
             }
         })
 
+    async def request_soundboard_sounds(self, *guild_ids: Snowflake | int) -> None:
+        """
+        Requests the soundboard sounds of the guilds.
+
+        The sounds are dispatched in `soundboard_sounds` events, one per guild.
+
+        Parameters
+        ----------
+        guild_ids
+            The guild IDs to request the soundboard sounds for
+        """
+        await self.send_message(
+            {
+                "op": int(PayloadType.request_soundboard_sounds),
+                "d": {"guild_ids": [str(int(g)) for g in guild_ids]}
+            },
+            ratelimit=True
+        )
+
+    async def request_channel_info(
+        self,
+        guild_id: Snowflake | int,
+        *,
+        fields: list[Literal["status", "voice_start_time"]] | None = None
+    ) -> None:
+        """
+        Requests the ephemeral channel data of a guild.
+
+        The data is dispatched in a `channel_info` event.
+
+        Parameters
+        ----------
+        guild_id
+            The guild ID to request the channel info for
+        fields
+            The fields to request, defaults to both `status` and `voice_start_time`
+        """
+        await self.send_message(
+            {
+                "op": int(PayloadType.request_channel_info),
+                "d": {
+                    "guild_id": str(int(guild_id)),
+                    "fields": fields or ["status", "voice_start_time"]
+                }
+            },
+            ratelimit=True
+        )
+
     def payload(self, op: PayloadType) -> dict:
         """
         Returns a payload for the websocket.
 
         Parameters
         ----------
-        op:
+        op
             The op to get the payload for
 
         Returns
@@ -1210,5 +1361,8 @@ class Shard:
 
                 if self.playing_status is not None:
                     payload["d"]["presence"] = self.playing_status.to_dict()
+
+                if self.capabilities is not None:
+                    payload["d"]["capabilities"] = int(self.capabilities)
 
                 return payload

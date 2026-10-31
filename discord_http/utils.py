@@ -7,7 +7,6 @@ import random
 import re
 import struct
 import sys
-import time
 import traceback
 import unicodedata
 import zlib
@@ -16,6 +15,7 @@ from aiohttp import MultipartWriter
 from base64 import b64encode
 from collections.abc import Iterator
 from datetime import datetime, timedelta, UTC
+from time import perf_counter
 from types import UnionType
 from typing import Any, TYPE_CHECKING, get_origin, get_args, Union
 from urllib.parse import (
@@ -29,14 +29,17 @@ if TYPE_CHECKING:
     from .object import Snowflake
 
 DISCORD_EPOCH = 1420070400000
+_PACKED_TIMESTAMP_BITS = 42  # Epoch milliseconds fit in 42 bits until the year 2109
+_PACKED_TIMESTAMP_MASK = (1 << _PACKED_TIMESTAMP_BITS) - 1
+_UNIX_EPOCH = datetime(1970, 1, 1, tzinfo=UTC)
 
 # RegEx patterns
 re_channel: re.Pattern = re.compile(r"<#([0-9]{15,20})>")
 re_role: re.Pattern = re.compile(r"<@&([0-9]{15,20})>")
 re_mention: re.Pattern = re.compile(r"<@!?([0-9]{15,20})>")
+re_slash_command: re.Pattern = re.compile(r"</([\w-]{1,32}(?: [\w-]{1,32}){0,2}):([0-9]{15,20})>")
 re_emoji: re.Pattern = re.compile(r"<(a)?:([a-zA-Z0-9_]+):([0-9]{15,20})>")
 re_common_markdown: re.Pattern = re.compile(r"([_*~`<>|\[\]()#])")
-re_hex: re.Pattern = re.compile(r"^(?:#)?(?:[0-9a-fA-F]{3}){1,2}$")
 re_jump_url: re.Pattern = re.compile(
     r"https:\/\/(?:.*\.)?discord\.com\/channels\/([0-9]{15,20}|@me)\/([0-9]{15,20})(?:\/([0-9]{15,20}))?"
 )
@@ -50,14 +53,20 @@ class MultipartData(MultipartWriter):
     allowing you to attach files, JSON data, and other content seamlessly.
     """
 
-    __slots__ = ("_files_keepalive",)
+    __slots__ = ("_files_keepalive", "_streams_keepalive")
+
+    BOUNDARY = "---------------discord.http"
 
     def __init__(self):
-        super().__init__("form-data", boundary="---------------discord.http")
+        super().__init__("form-data", boundary=self.BOUNDARY)
 
         # Keep a reference to prevent aiohttp from complaining due to race conditions with file-like objects
         # It will be cleared with File.__del__, so it should not cause memory leaks
         self._files_keepalive: list[Any] = []
+
+        # Raw file-like objects passed directly to attach() (not wrapped in File),
+        # kept alongside their original stream position so reset() can rewind them too
+        self._streams_keepalive: list[tuple[Any, int]] = []
 
     @property
     def content_type(self) -> str:
@@ -77,13 +86,13 @@ class MultipartData(MultipartWriter):
 
         Parameters
         ----------
-        name:
+        name
             The name of the form field.
-        data:
+        data
             The data to attach. Can be a File, a file-like object, a dictionary, a string, or bytes.
-        filename:
+        filename
             The filename to use for the attached file, if applicable.
-        content_type:
+        content_type
             The content type of the attached file, if applicable.
         """
         if data is None:
@@ -103,6 +112,14 @@ class MultipartData(MultipartWriter):
             part.set_content_disposition("form-data", name=name)
             part.headers["Content-Type"] = "application/json"
         elif hasattr(data, "read"):
+            seek: Any = getattr(data, "seek", None)
+            tell: Any = getattr(data, "tell", None)
+            if callable(seek) and callable(tell):
+                try:
+                    self._streams_keepalive.append((data, int(tell())))  # pyright: ignore[reportArgumentType]
+                except (OSError, ValueError, TypeError):
+                    pass
+
             part = self.append(data)
             part.set_content_disposition(
                 "form-data",
@@ -126,6 +143,13 @@ class MultipartData(MultipartWriter):
         """ [Legacy] Return the MultipartWriter. """
         return self
 
+    def reset(self) -> None:
+        """ Reset any attached file streams, so this payload can be re-sent after a failed attempt. """
+        for item in self._files_keepalive:
+            item.reset()
+        for stream, original_pos in self._streams_keepalive:
+            stream.seek(original_pos)
+
 
 class BenchmarkEntry:
     """
@@ -136,34 +160,39 @@ class BenchmarkEntry:
 
     __slots__ = (
         "_end_perf",
+        "_perf_anchor",
         "_start_perf",
-        "created_at",
-        "finished_at",
+        "_wall_anchor",
         "internal",
     )
 
-    def __init__(self, *, internal: bool = False) -> None:
+    def __init__(
+        self,
+        internal: bool = False,
+        wall_anchor: "datetime | None" = None,
+        perf_anchor: float | None = None
+    ) -> None:
         self.internal: bool = internal
         """
         Whether this benchmark entry is for internal use (default: False).
         Mostly used to differentiate between user and internal benchmarks.
         """
 
-        self.created_at: datetime | None = None
-        """ The time the benchmark was created. """
-
-        self.finished_at: datetime | None = None
-        """ The time the benchmark was finished. """
+        self._wall_anchor: datetime = wall_anchor or utcnow()
+        self._perf_anchor: float = (
+            perf_anchor if perf_anchor is not None else perf_counter()
+        )
 
         self._start_perf: float | None = None
         self._end_perf: float | None = None
 
+    # Inlined instead of calling start() and stop(), as several run on every interaction
     def __enter__(self) -> "BenchmarkEntry":
-        self.start()
+        self._start_perf = perf_counter()
         return self
 
-    def __exit__(self, *args) -> None:  # noqa: ANN002
-        self.stop()
+    def __exit__(self, *args) -> None:  # ruff: ignore[missing-type-args]
+        self._end_perf = perf_counter()
 
     def __repr__(self) -> str:
         return f"<BenchmarkEntry internal={self.internal} elapsed={self.format()}>"
@@ -174,13 +203,25 @@ class BenchmarkEntry:
 
     def start(self) -> None:
         """ Start the benchmark timer. """
-        self._start_perf = time.perf_counter()
-        self.created_at = utcnow()
+        self._start_perf = perf_counter()
 
     def stop(self) -> None:
         """ Stop the benchmark timer. """
-        self._end_perf = time.perf_counter()
-        self.finished_at = utcnow()
+        self._end_perf = perf_counter()
+
+    @property
+    def created_at(self) -> "datetime | None":
+        """ The time the benchmark was created. """
+        if self._start_perf is None:
+            return None
+        return self._wall_anchor + timedelta(seconds=self._start_perf - self._perf_anchor)
+
+    @property
+    def finished_at(self) -> "datetime | None":
+        """ The time the benchmark was finished. """
+        if self._end_perf is None:
+            return None
+        return self._wall_anchor + timedelta(seconds=self._end_perf - self._perf_anchor)
 
     @property
     def elapsed(self) -> float:
@@ -188,7 +229,7 @@ class BenchmarkEntry:
         if self._start_perf is None:
             return 0.0
         if self._end_perf is None:
-            return time.perf_counter() - self._start_perf
+            return perf_counter() - self._start_perf
         return self._end_perf - self._start_perf
 
     def format(self) -> str:
@@ -212,13 +253,14 @@ class Benchmark:
     Used to benchmark code execution time.
     """
 
-    __slots__ = ("_overall_start", "results",)
+    __slots__ = ("_overall_start", "_wall_anchor", "results",)
 
     def __init__(self):
         self.results: dict[str, BenchmarkEntry] = {}
         """ A dictionary of benchmark entries, keyed by benchmark name. """
 
-        self._overall_start = time.perf_counter()
+        self._overall_start = perf_counter()
+        self._wall_anchor = utcnow()
 
     def measure(self, name: str, *, internal: bool = False) -> BenchmarkEntry:
         """
@@ -228,9 +270,9 @@ class Benchmark:
 
         Parameters
         ----------
-        name:
+        name
             The name of the benchmark entry
-        internal:
+        internal
             Whether this benchmark entry is for internal use (default: False)
             Mostly used to differentiate between user and internal benchmarks
 
@@ -238,7 +280,8 @@ class Benchmark:
         -------
             A BenchmarkEntry context manager
         """
-        entry = BenchmarkEntry(internal=internal)
+        # Positional, keyword arguments are noticeably slower and this runs several times per interaction
+        entry: BenchmarkEntry = BenchmarkEntry(internal, self._wall_anchor, self._overall_start)
         self.results[name] = entry
         return entry
 
@@ -251,7 +294,7 @@ class Benchmark:
 
         Parameters
         ----------
-        prefix:
+        prefix
             The prefix to use for each line, defaults to "➜"
 
         Returns
@@ -355,7 +398,7 @@ def format_small_unit(seconds: float | timedelta) -> str:
 
     Parameters
     ----------
-    seconds: float | timedelta
+    seconds
         The duration in seconds, or a timedelta.
 
     Returns
@@ -370,7 +413,7 @@ def format_small_unit(seconds: float | timedelta) -> str:
     if seconds < 0.000001:  # Nanoseconds
         return f"{seconds * 1e9:.0f}ns"
     if seconds < 0.001:  # Microseconds
-        return f"{seconds * 1e6:.0f}µs"  # noqa: RUF001
+        return f"{seconds * 1e6:.0f}µs"  # ruff: ignore[ambiguous-unicode-character-string]
     if seconds < 1:  # Milliseconds
         return f"{seconds * 1e3:.0f}ms"
     return f"{seconds:.2f}s"
@@ -382,9 +425,9 @@ def create_missing_texture(*, size: int = 256, tiles: int = 8) -> bytes:
 
     Parameters
     ----------
-    size:
+    size
         The width and height of the image, in pixels, defaults to 256
-    tiles:
+    tiles
         The number of tiles across and down the image, defaults to 8
 
     Returns
@@ -414,7 +457,7 @@ def create_missing_texture(*, size: int = 256, tiles: int = 8) -> bytes:
             color = magenta if ((x // tile + y // tile) & 1) == 0 else black
             raw += bytes(color)
 
-    compressed = zlib.compress(bytes(raw), 9)
+    compressed = zlib.compress(raw, 9)
     ihdr = struct.pack(">IIBBBBB", w, h, 8, 6, 0, 0, 0)
 
     return (
@@ -423,42 +466,6 @@ def create_missing_texture(*, size: int = 256, tiles: int = 8) -> bytes:
         chunk(b"IDAT", compressed) +
         chunk(b"IEND", b"")
     )
-
-
-def find_longest(*string: str) -> int:
-    """
-    Find the length of the longest string.
-
-    Parameters
-    ----------
-    *string:
-        The strings to find the longest from
-
-    Returns
-    -------
-        The length of the longest string
-    """
-    return max(len(s) for s in string) if string else 0
-
-
-def shortener(text: str, *, length: int = 64) -> str:
-    """
-    Shorten a string to a specified length, adding ellipsis if necessary.
-
-    Parameters
-    ----------
-    text:
-        The string to shorten.
-    length:
-        The maximum length of the shortened string.
-
-    Returns
-    -------
-        The shortened string.
-    """
-    if len(text) <= length:
-        return text
-    return text[:length - 3] + "..."
 
 
 def traceback_maker(
@@ -473,9 +480,9 @@ def traceback_maker(
 
     Parameters
     ----------
-    err:
+    err
         The error to get the traceback from
-    advance:
+    advance
         Whether to include the traceback or not
 
     Returns
@@ -495,9 +502,9 @@ def escape_markdown(text: str, *, remove: bool = False) -> str:
 
     Parameters
     ----------
-    text:
+    text
         The text to escape
-    remove:
+    remove
         Whether to remove the markdown characters instead of escaping them
 
     Returns
@@ -510,53 +517,20 @@ def escape_markdown(text: str, *, remove: bool = False) -> str:
     )
 
 
-def plural(word: str, num: int) -> str:
-    """
-    Return the plural of a word.
-
-    Parameters
-    ----------
-    word:
-        The word to pluralize
-    num:
-        The number to determine if the word should be pluralized
-    """
-    return f"{word}{'s'[:num ^ 1]}"
-
-
-def ordinal(num: int) -> str:
-    """
-    Return the ordinal of a number.
-
-    Parameters
-    ----------
-    num:
-        The number to determine the ordinal suffix
-
-    Returns
-    -------
-        The ordinal of the number
-    """
-    suffix_list = {1: "st", 2: "nd", 3: "rd"}
-    suffix = "th" if 10 <= num % 100 <= 20 else suffix_list.get(num % 10, "th")
-    return f"{num}{suffix}"
-
-
 def unwrap_optional(annotation: type) -> type:
     """
     Unwraps Optional[T] to T.
 
     Parameters
     ----------
-    annotation:
+    annotation
         The annotation to unwrap, usually a type hint.
 
     Returns
     -------
         The unwrapped annotation
     """
-    origin = get_origin(annotation)
-    if origin is Union or origin is UnionType:
+    if (origin := get_origin(annotation)) is Union or origin is UnionType:
         args = get_args(annotation)
         non_none_args = [a for a in args if a is not type(None)]
         if len(non_none_args) == 1:
@@ -565,14 +539,14 @@ def unwrap_optional(annotation: type) -> type:
 
 
 def snowflake_time(
-    id: "Snowflake | int"  # noqa: A002
+    id: "Snowflake | int"  # ruff: ignore[builtin-argument-shadowing]
 ) -> datetime:
     """
     Get the datetime from a discord snowflak.
 
     Parameters
     ----------
-    id:
+    id
         The snowflake to get the datetime from
 
     Returns
@@ -595,9 +569,9 @@ def time_snowflake(
 
     Parameters
     ----------
-    dt:
+    dt
         The datetime to get the snowflake from
-    high:
+    high
         Whether to get the high snowflake or not
 
     Returns
@@ -606,7 +580,7 @@ def time_snowflake(
 
     Raises
     ------
-    `TypeError`
+    TypeError
         Wrong timestamp type provided
     """
     if not isinstance(dt, datetime):
@@ -624,7 +598,7 @@ def parse_time(ts: str | int) -> datetime:
 
     Parameters
     ----------
-    ts:
+    ts
         The timestamp to parse
 
     Returns
@@ -633,7 +607,7 @@ def parse_time(ts: str | int) -> datetime:
 
     Raises
     ------
-    `TypeError`
+    TypeError
         If the provided timestamp is not a string or int
     """
     if isinstance(ts, int):
@@ -649,6 +623,113 @@ def parse_time(ts: str | int) -> datetime:
     raise TypeError(f"ts must be a str or int, not {type(ts)}")
 
 
+def _to_epoch_ms(ts: "str | int | datetime") -> int:
+    """
+    Converts a timestamp to epoch milliseconds.
+
+    Parameters
+    ----------
+    ts
+        The timestamp to convert, ints use the same unit detection as `parse_time()`
+
+    Returns
+    -------
+        The timestamp as epoch milliseconds
+    """
+    # Hot path when building cached objects, so str goes first and skips parse_time()
+    if isinstance(ts, str):
+        ts = datetime.fromisoformat(ts)
+
+    elif isinstance(ts, int):
+        if ts > 1_000_000_000_000_000:  # 10^15, Microseconds
+            return ts // 1000
+        if ts > 1_000_000_000_000:  # 10^12, Milliseconds
+            return ts
+        return ts * 1000
+
+    if ts.tzinfo is None:
+        return int(ts.timestamp() * 1000)
+
+    # Integer maths is both faster than timestamp() and avoids float rounding
+    delta: timedelta = ts - _UNIX_EPOCH
+    return (delta.days * 86_400 + delta.seconds) * 1000 + delta.microseconds // 1000
+
+
+def pack_timestamps(*timestamps: "str | int | datetime | None") -> int:
+    """
+    Pack timestamps into a single int, as epoch milliseconds.
+
+    Used to keep timestamps on cached objects cheaper than storing datetime objects,
+    read them back with `unpack_timestamp()` using the same order.
+
+    Parameters
+    ----------
+    timestamps
+        The timestamps to pack, `None` is stored as not set
+
+    Returns
+    -------
+        The packed timestamps
+    """
+    packed = 0
+    shift = 0
+
+    for ts in timestamps:
+        if ts is not None:
+            packed |= _to_epoch_ms(ts) << shift
+        shift += _PACKED_TIMESTAMP_BITS
+
+    return packed
+
+
+def repack_timestamp(packed: int, index: int, ts: "str | int | datetime | None") -> int:
+    """
+    Replace a single timestamp packed by `pack_timestamps()`.
+
+    Parameters
+    ----------
+    packed
+        The packed timestamps
+    index
+        The position of the timestamp when it was packed
+    ts
+        The new timestamp, `None` to unset it
+
+    Returns
+    -------
+        The packed timestamps with the timestamp replaced
+    """
+    shift = index * _PACKED_TIMESTAMP_BITS
+    packed &= ~(_PACKED_TIMESTAMP_MASK << shift)
+
+    if ts is not None:
+        packed |= _to_epoch_ms(ts) << shift
+
+    return packed
+
+
+def unpack_timestamp(packed: int, index: int) -> datetime | None:
+    """
+    Unpack a single timestamp packed by `pack_timestamps()`.
+
+    Parameters
+    ----------
+    packed
+        The packed timestamps
+    index
+        The position of the timestamp when it was packed
+
+    Returns
+    -------
+        The datetime of the timestamp, `None` if it was not set
+    """
+    timestamp_ms = (packed >> (index * _PACKED_TIMESTAMP_BITS)) & _PACKED_TIMESTAMP_MASK
+    if not timestamp_ms:
+        return None
+
+    return datetime.fromtimestamp(timestamp_ms / 1000, tz=UTC)
+
+
 def normalize_entity_id(
     entry: "datetime | int | str | Snowflake"
 ) -> int:
@@ -659,7 +740,7 @@ def normalize_entity_id(
 
     Parameters
     ----------
-    entry:
+    entry
         The entry to translate
 
     Returns
@@ -668,7 +749,7 @@ def normalize_entity_id(
 
     Raises
     ------
-    `TypeError`
+    TypeError
         If the entry is not a datetime, int, str, or Snowflake
     """
     match entry:
@@ -698,7 +779,7 @@ def unicode_name(text: str) -> str:
 
     Parameters
     ----------
-    text:
+    text
         The text to get the unicode name from
 
     Returns
@@ -723,13 +804,13 @@ def oauth_url(
 
     Parameters
     ----------
-    client_id:
+    client_id
         Application ID to invite to the server
-    scope:
+    scope
         Changing the scope of the oauth url, default: `bot+applications.commands`
-    user_install:
+    user_install
         Whether the bot is allowed to be installed on the user's account
-    kwargs:
+    kwargs
         The query parameters to add to the url
 
     Returns
@@ -750,38 +831,8 @@ def oauth_url(
     return str(url)
 
 
-def divide_chunks(
-    array: list[Any],
-    n: int
-) -> list[list[Any]]:
-    """
-    Divide a list into chunks.
-
-    Parameters
-    ----------
-    array:
-        The list to divide
-    n:
-        The amount of chunks to divide the list into
-
-    Returns
-    -------
-        The divided list
-    """
-    return [
-        array[i:i + n]
-        for i in range(0, len(array), n)
-    ]
-
-
 def utcnow() -> datetime:
-    """
-    Alias for `datetime.now(UTC)`.
-
-    Returns
-    -------
-        The current time in UTC
-    """
+    """ Alias for `datetime.now(UTC)`. """
     return datetime.now(UTC)
 
 
@@ -793,7 +844,7 @@ def add_to_datetime(
 
     Parameters
     ----------
-    ts:
+    ts
         The timestamp to convert
         - `datetime`: Returns the datetime, but in UTC format
         - `timedelta`: Adds the timedelta to the current time
@@ -805,9 +856,9 @@ def add_to_datetime(
 
     Raises
     ------
-    `ValueError`
+    ValueError
         `datetime` object must be timezone aware
-    `TypeError`
+    TypeError
         Invalid type for timestamp provided
     """
     now = utcnow()
@@ -843,7 +894,7 @@ def mime_type_image(image: bytes) -> str:
 
     Parameters
     ----------
-    image:
+    image
         The image to get the mime type from
 
     Returns
@@ -852,7 +903,7 @@ def mime_type_image(image: bytes) -> str:
 
     Raises
     ------
-    `ValueError`
+    ValueError
         The image bytes provided is not supported sadly
     """
     match image:
@@ -881,7 +932,7 @@ def mime_type_audio(audio: bytes) -> str:
 
     Parameters
     ----------
-    audio:
+    audio
         The audio to get the mime type from
 
     Returns
@@ -890,7 +941,7 @@ def mime_type_audio(audio: bytes) -> str:
 
     Raises
     ------
-    `ValueError`
+    ValueError
         The audio bytes provided is not supported sadly
     """
     match audio:
@@ -913,7 +964,7 @@ def bytes_to_base64(image: File | bytes) -> str:
 
     Parameters
     ----------
-    image:
+    image
         The image to convert to base64
 
     Returns
@@ -922,7 +973,7 @@ def bytes_to_base64(image: File | bytes) -> str:
 
     Raises
     ------
-    `ValueError`
+    ValueError
         The image provided is not supported sadly
     """
     if isinstance(image, File):
@@ -945,18 +996,18 @@ def get_int(
     data: dict,
     key: str,
     *,
-    default: Any | None = None  # noqa: ANN401
+    default: Any | None = None  # ruff: ignore[any-type]
 ) -> int | None:
     """
     Get an integer from a dictionary, similar to `dict.get`.
 
     Parameters
     ----------
-    data:
+    data
         The dictionary to get the integer from
-    key:
+    key
         The key to get the integer from
-    default:
+    default
         The default value to return if the key is not found
 
     Returns
@@ -965,7 +1016,7 @@ def get_int(
 
     Raises
     ------
-    `ValueError`
+    ValueError
         The key returned a non-digit value
     """
     output: str | None = data.get(key)
@@ -1125,7 +1176,7 @@ class URL:
 
         Parameters
         ----------
-        path:
+        path
             The path to join to the URL
 
         Returns
@@ -1148,9 +1199,9 @@ class URL:
 
         Parameters
         ----------
-        username:
+        username
             The new username, or None to remove credentials
-        password:
+        password
             The new password, or None to omit password
 
         Returns
@@ -1172,14 +1223,14 @@ class URL:
 
     def update_query(
         self,
-        **params: Any | list[Any] | tuple[Any, ...] | None  # noqa: ANN401
+        **params: Any | list[Any] | tuple[Any, ...] | None  # ruff: ignore[any-type]
     ) -> "URL":
         """
         Updates query parameters to the URL.
 
         Parameters
         ----------
-        params:
+        params
             The query parameters to update in the URL
             Use `None` to remove a query parameter
 
@@ -1212,11 +1263,11 @@ class URL:
 
         Parameters
         ----------
-        path:
+        path
             The path to set or append to the URL
-        append:
+        append
             Whether to append the path to the existing path or replace it
-        ensure_leading_slash:
+        ensure_leading_slash
             Whether to ensure the resulting path starts with a leading slash
 
         Returns
@@ -1240,7 +1291,7 @@ class URL:
 
         Parameters
         ----------
-        fragment:
+        fragment
             The fragment to add to the URL
 
         Returns
@@ -1255,7 +1306,7 @@ class URL:
 
         Parameters
         ----------
-        scheme:
+        scheme
             The scheme to update in the URL
 
         Returns
@@ -1270,7 +1321,7 @@ class URL:
 
         Parameters
         ----------
-        netloc:
+        netloc
             The netloc to update in the URL
 
         Returns
@@ -1320,7 +1371,7 @@ class DiscordTimestamp:
 
         Parameters
         ----------
-        fmt:
+        fmt
             The format to return the timestamp in
 
         Returns
@@ -1412,7 +1463,7 @@ class _MissingType:
     def __bytes__(self) -> bytes:
         return b""
 
-    def __eq__(self, other) -> bool:  # noqa: ANN001
+    def __eq__(self, other) -> bool:  # ruff: ignore[missing-type-function-argument]
         return isinstance(other, _MissingType)
 
     def __bool__(self) -> bool:
@@ -1461,6 +1512,15 @@ class CustomFormatter(logging.Formatter):
         super().__init__()
         self._datefmt = datefmt
 
+        self._formatters: dict[int, logging.Formatter] = {
+            logging.DEBUG: self._make_formatter("DEBUG", self.grey, self.light_grey),
+            logging.INFO: self._make_formatter("INFO", self.blue, self.light_blue),
+            logging.WARNING: self._make_formatter("WARN", self.yellow, self.light_yellow),
+            logging.ERROR: self._make_formatter("ERROR", self.red, self.light_red),
+            logging.CRITICAL: self._make_formatter("CRIT", self.bold_red, self.light_bold_red),
+        }
+        self._default_formatter = self._make_formatter("OTHER", self.white, self.light_white)
+
     def _prefix_fmt(
         self,
         name: str,
@@ -1476,45 +1536,17 @@ class CustomFormatter(logging.Formatter):
             f"{secondary}]{self.reset}"
         )
 
-    def format(self, record: logging.LogRecord) -> str:
-        """ Format the log. """
-        match record.levelno:
-            case logging.DEBUG:
-                prefix = self._prefix_fmt(
-                    "DEBUG", self.grey, self.light_grey
-                )
-
-            case logging.INFO:
-                prefix = self._prefix_fmt(
-                    "INFO", self.blue, self.light_blue
-                )
-
-            case logging.WARNING:
-                prefix = self._prefix_fmt(
-                    "WARN", self.yellow, self.light_yellow
-                )
-
-            case logging.ERROR:
-                prefix = self._prefix_fmt(
-                    "ERROR", self.red, self.light_red
-                )
-
-            case logging.CRITICAL:
-                prefix = self._prefix_fmt(
-                    "CRIT", self.bold_red, self.light_bold_red
-                )
-
-            case _:
-                prefix = self._prefix_fmt(
-                    "OTHER", self.white, self.light_white
-                )
-
-        formatter = logging.Formatter(
-            f"{prefix} {self.grey}%(asctime)s{self.reset} "
+    def _make_formatter(self, name: str, primary: str, secondary: str) -> logging.Formatter:
+        prefix = self._prefix_fmt(name, primary, secondary)
+        return logging.Formatter(
+            f"{prefix} {self.grey}%(asctime)s.%(msecs)03d{self.reset} "
             f"%(message)s{self.reset}",
             datefmt=self._datefmt
         )
 
+    def format(self, record: logging.LogRecord) -> str:
+        """ Format the log. """
+        formatter = self._formatters.get(record.levelno, self._default_formatter)
         return formatter.format(record)
 
 
@@ -1527,11 +1559,15 @@ def setup_logger(
 
     Parameters
     ----------
-    level:
+    level
         The level of the logger
     """
     lib, _, _ = __name__.partition(".")
     logger = logging.getLogger(lib)
+
+    for existing in logger.handlers[:]:
+        if isinstance(existing, logging.StreamHandler) and isinstance(existing.formatter, CustomFormatter):
+            logger.removeHandler(existing)
 
     handler = logging.StreamHandler(sys.stdout)
     formatter = CustomFormatter(datefmt="%Y-%m-%d %H:%M:%S")

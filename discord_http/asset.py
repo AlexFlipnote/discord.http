@@ -1,6 +1,6 @@
+import asyncio
 import io
 import os
-import sys
 
 from typing import Self, TYPE_CHECKING, Literal
 
@@ -43,10 +43,10 @@ class Asset:
     ):
         self._state = state
 
-        self.url: str = sys.intern(url)
+        self.url: str = url
         """ The URL of the asset. """
 
-        self.key: str = sys.intern(key)
+        self.key: str = key
         """ The key of the asset. """
 
         self.animated: bool = animated
@@ -65,7 +65,7 @@ class Asset:
 
         Parameters
         ----------
-        fallback: bool
+        fallback
             Whether to fallback to a missing texture if the asset returns anything but `HTTP 2XX`.
             Defaults to `False`.
 
@@ -89,18 +89,18 @@ class Asset:
         self,
         path: str,
         *,
-        chunk_size: int = 8192
+        chunk_size: int = 65536
     ) -> int:
         """
         Fetches the file from the attachment URL and saves it locally to the path.
 
         Parameters
         ----------
-        path:
+        path
             Path to save the file to, which includes the filename and extension.
             Example: `./path/to/file.png`
-        chunk_size:
-            The amount of bytes to read at a time. Defaults to 8KB.
+        chunk_size
+            The amount of bytes to read at a time. Defaults to 64KB.
 
         Returns
         -------
@@ -121,7 +121,12 @@ class Asset:
 
         with open(path, "wb") as f:
             async for chunk in self._state.http.stream_request("GET", self.url, chunk_size=chunk_size):
-                await loop.run_in_executor(None, _write_chunk, f, chunk)
+                future = loop.run_in_executor(None, _write_chunk, f, chunk)
+                try:
+                    await asyncio.shield(future)
+                except asyncio.CancelledError:
+                    await asyncio.gather(future, return_exceptions=True)
+                    raise
                 total_bytes += len(chunk)
 
         return total_bytes
@@ -130,16 +135,16 @@ class Asset:
         self,
         *,
         size: int = MISSING,
-        format: AssetFormatTypes = MISSING  # noqa: A002
+        format: AssetFormatTypes = MISSING  # ruff: ignore[builtin-argument-shadowing]
     ) -> Self:
         """
         Replace the asset with new values.
 
         Parameters
         ----------
-        size: `int`
+        size
             The size of the asset
-        format: `AssetFormatTypes`
+        format
             The format of the asset
 
         Returns
@@ -174,14 +179,14 @@ class Asset:
 
     def with_static_format(
         self,
-        format: StaticFormatTypes  # noqa: A002
+        format: StaticFormatTypes  # ruff: ignore[builtin-argument-shadowing]
     ) -> Self:
         """
         Replace the asset with a static format.
 
         Parameters
         ----------
-        format: `StaticFormatTypes`
+        format
             The static format to use
 
         Returns

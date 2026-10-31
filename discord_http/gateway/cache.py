@@ -1,42 +1,443 @@
+import asyncio
+import sys
+import weakref
+
 from typing import TYPE_CHECKING
 
-from ..channel import BaseChannel, PartialVoiceState, VoiceState
+from ..channel import BaseChannel
+from ..guild import PartialGuild
+from ..member import Member, PartialMember
+from ..user import User
+from ..voice import VoiceState, PartialVoiceState
 
 from .flags import GatewayCacheFlags
 
 if TYPE_CHECKING:
-    from ..channel import PartialChannel, PartialThread
+    from collections.abc import Generator
+
+    from ..channel import PartialChannel
     from ..client import Client
     from ..emoji import Emoji
-    from ..guild import PartialGuild, Guild
-    from ..member import PartialMember, Member
+    from ..guild import Guild
     from ..role import PartialRole, Role
     from ..sticker import Sticker
 
+    from .activity import ActivityAssets
     from .object import Presence
 
 __all__ = (
     "Cache",
 )
 
+_SHARED_STATE_ATTR = "_state"
+_YIELD_EVERY = 2000
+_POOL_REBUILD_MIN = 1024
+_IMMUTABLE_LEAF_TYPES = (str, bytes, int, float, bool, complex, type(None))
+_GUILD_CACHE_ATTRS = (
+    "_cache_members",
+    "_cache_channels",
+    "_cache_threads",
+    "_cache_roles",
+    "_cache_emojis",
+    "_cache_soundboard_sounds",
+    "_cache_stickers",
+    "_cache_voice_states",
+)
+
+
+def _iter_slots(cls: type) -> "Generator[str, None, None]":
+    """ Yield every `__slots__` name declared anywhere in a class' MRO, without duplicates. """
+    yielded: set[str] = set()
+    for klass in cls.__mro__:
+        slots = getattr(klass, "__slots__", ())
+        if isinstance(slots, str):
+            slots = (slots,)
+        for name in slots:
+            if name not in yielded:
+                yielded.add(name)
+                yield name
+
+
+async def _deep_sizeof(
+    root: object,
+    seen: set[int],
+    skip: frozenset[str] = frozenset({_SHARED_STATE_ATTR})
+) -> int:
+    """ Roughly estimate the total memory footprint of `root`, in bytes. """
+    total = 0
+    stack: list[object] = [root]
+    since_yield = 0
+
+    while stack:
+        obj = stack.pop()
+
+        since_yield += 1
+        if since_yield >= _YIELD_EVERY:
+            since_yield = 0
+            await asyncio.sleep(0)
+
+        if obj is None or isinstance(obj, _IMMUTABLE_LEAF_TYPES):
+            total += sys.getsizeof(obj)
+            continue
+
+        if isinstance(obj, type):
+            continue
+
+        if (oid := id(obj)) in seen:
+            continue
+        seen.add(oid)
+
+        total += sys.getsizeof(obj)
+
+        if isinstance(obj, (dict, weakref.WeakValueDictionary)):
+            for key, value in list(obj.items()):
+                stack.extend((key, value))
+            continue
+
+        if isinstance(obj, (list, tuple, set, frozenset)):
+            stack.extend(list(obj))
+            continue
+
+        if getattr(type(obj), "__slots__", None) is not None:
+            for name in _iter_slots(type(obj)):
+                if name in skip or name in ("__dict__", "__weakref__"):
+                    continue
+                if (value := getattr(obj, name, None)) is not None:
+                    stack.append(value)
+        elif hasattr(obj, "__dict__"):
+            stack.append(dict(obj.__dict__))
+
+    return total
+
 
 class Cache:
     """ Represents the discord.http/gateway cache. """
 
-    __slots__ = ("__guilds", "_state", "bot", "cache_flags")
+    __slots__ = (
+        "__activity_assets_pool",
+        "__feature_pool",
+        "__guilds",
+        "__overwrite_pool_limits",
+        "__overwrite_pools",
+        "__role_int_pools",
+        "__role_pool_limits",
+        "__role_tuple_pools",
+        "__users",
+        "_presence_dedup_enabled",
+        "_role_interning_enabled",
+        "_state",
+        "_user_dedup_enabled",
+        "bot",
+        "cache_flags",
+    )
 
     def __init__(
         self,
         *,
         client: "Client"
     ):
-        self.bot = client
+        self.bot: "Client" = client
         """ The client that the cache belongs to. """
 
-        self.cache_flags = client._gateway_cache
+        self.cache_flags: GatewayCacheFlags | None = client._gateway_cache
         """ The cache flags that determine what is cached. """
 
         self.__guilds: dict[int, "PartialGuild | Guild"] = {}
+        self.__users: "weakref.WeakValueDictionary[int, User]" = weakref.WeakValueDictionary()
+        # Per guild: one shared int object per role ID, and one shared tuple per role combination
+        self.__role_int_pools: dict[int, dict[int, int]] = {}
+        self.__role_tuple_pools: dict[int, dict[tuple[int, ...], tuple[int, ...]]] = {}
+        self.__feature_pool: dict[tuple[str, ...], tuple[str, ...]] = {}
+        self.__overwrite_pools: dict[
+            int, dict[tuple[tuple[int, int, int, int], ...], tuple[tuple[int, int, int, int], ...]]
+        ] = {}
+        # Per guild: pool size that triggers the next rebuild, missing means `_POOL_REBUILD_MIN`
+        self.__role_pool_limits: dict[int, int] = {}
+        self.__overwrite_pool_limits: dict[int, int] = {}
+        self.__activity_assets_pool: "weakref.WeakValueDictionary[tuple, ActivityAssets]" = (
+            weakref.WeakValueDictionary()
+        )
+
+        # Checked once here, as role IDs are interned on every full member build
+        self._role_interning_enabled: bool = (
+            self.cache_flags is not None and
+            GatewayCacheFlags.members in self.cache_flags
+        )
+
+        # Whether it's worth touching the shared user table at all
+        self._user_dedup_enabled: bool = self.cache_flags is not None and (
+            GatewayCacheFlags.members in self.cache_flags or
+            GatewayCacheFlags.partial_members in self.cache_flags
+        )
+
+        # Whether it's worth touching the shared activity-assets pool at all
+        self._presence_dedup_enabled: bool = (
+            self.cache_flags is not None and
+            GatewayCacheFlags.presences in self.cache_flags
+        )
+
+    def intern_role_ids(self, guild_id: int, raw_role_ids: list) -> tuple[int, ...]:
+        """
+        Deduplicate a member's role-ID tuple against the other members of the same guild.
+
+        Only pools when full `Member` objects are actually retained in the guild's
+        member cache - otherwise every throwaway `Member` (built per message author,
+        mention, interaction, audit log entry, ...) would intern its roles into a
+        pool that's never revisited by anything, growing forever for no benefit.
+        """
+        if not self._role_interning_enabled:
+            return tuple(map(int, raw_role_ids))
+
+        if not raw_role_ids:
+            return ()
+
+        ids: tuple[int, ...] = tuple(map(int, raw_role_ids))
+
+        # get() first, as setdefault() would build a throwaway dict on every call
+        tuple_pool = self.__role_tuple_pools.get(guild_id)
+        if tuple_pool is None:
+            # Nothing ever resets the pool of a guild that isn't cached (e.g. user-installed interactions)
+            if guild_id not in self.__guilds:
+                return ids
+            tuple_pool = self.__role_tuple_pools[guild_id] = {}
+
+        # Most members repeat a role combination someone else already has, so check that first
+        elif (pooled := tuple_pool.get(ids)) is not None:
+            return pooled
+
+        elif len(tuple_pool) >= self.__role_pool_limits.get(guild_id, _POOL_REBUILD_MIN):
+            tuple_pool = self._rebuild_role_pools(guild_id)
+
+        int_pool = self.__role_int_pools.get(guild_id)
+        if int_pool is None:
+            int_pool = self.__role_int_pools[guild_id] = {}
+
+        role_ids = tuple(map(int_pool.setdefault, ids, ids))
+        tuple_pool[role_ids] = role_ids
+        return role_ids
+
+    def _rebuild_role_pools(self, guild_id: int) -> dict[tuple[int, ...], tuple[int, ...]]:
+        """
+        Rebuild a guild's role pools from the members still cached, dropping combinations nobody has anymore.
+
+        Parameters
+        ----------
+        guild_id
+            Guild ID to rebuild the pools for
+
+        Returns
+        -------
+            The new role tuple pool
+        """
+        tuple_pool: dict[tuple[int, ...], tuple[int, ...]] = {}
+        if (guild := self.__guilds.get(guild_id)) is not None:
+            for member in guild._cache_members.values():
+                if role_ids := getattr(member, "role_ids", None):
+                    tuple_pool.setdefault(role_ids, role_ids)
+
+        self.__role_tuple_pools[guild_id] = tuple_pool
+        self.__role_int_pools[guild_id] = {i: i for role_ids in tuple_pool for i in role_ids}
+        self.__role_pool_limits[guild_id] = max(_POOL_REBUILD_MIN, len(tuple_pool) * 2)
+        return tuple_pool
+
+    def intern_features(self, raw_features: list[str] | None) -> tuple[str, ...]:
+        """
+        Deduplicate a guild's feature tuple against other guilds with the same set.
+
+        Parameters
+        ----------
+        raw_features
+            The raw feature strings from the guild payload
+
+        Returns
+        -------
+            The interned feature tuple
+        """
+        if not raw_features:
+            return ()
+
+        key = tuple(sorted(sys.intern(f) for f in raw_features))
+        return self.__feature_pool.setdefault(key, key)
+
+    def intern_overwrites(
+        self,
+        guild_id: int | None,
+        raw_overwrites: tuple[tuple[int, int, int, int], ...]
+    ) -> tuple[tuple[int, int, int, int], ...]:
+        """
+        Deduplicate a channel's overwrite tuple against other channels in the same guild.
+
+        Parameters
+        ----------
+        guild_id
+            Guild ID the channel belongs to
+        raw_overwrites
+            The raw `(id, type, allow, deny)` overwrite tuples
+
+        Returns
+        -------
+            The interned overwrite tuple
+        """
+        if not raw_overwrites or guild_id is None:
+            return raw_overwrites
+
+        if self.cache_flags is None or GatewayCacheFlags.channels not in self.cache_flags:
+            return raw_overwrites
+
+        pool = self.__overwrite_pools.get(guild_id)
+        if pool is None:
+            # Nothing ever resets the pool of a guild that isn't cached
+            if guild_id not in self.__guilds:
+                return raw_overwrites
+            pool = self.__overwrite_pools[guild_id] = {}
+
+        elif (pooled := pool.get(raw_overwrites)) is not None:
+            return pooled
+
+        elif len(pool) >= self.__overwrite_pool_limits.get(guild_id, _POOL_REBUILD_MIN):
+            pool = self._rebuild_overwrite_pool(guild_id)
+
+        pool[raw_overwrites] = raw_overwrites
+        return raw_overwrites
+
+    def _rebuild_overwrite_pool(
+        self,
+        guild_id: int
+    ) -> dict[tuple[tuple[int, int, int, int], ...], tuple[tuple[int, int, int, int], ...]]:
+        """
+        Rebuild a guild's overwrite pool from the channels and threads still cached.
+
+        Parameters
+        ----------
+        guild_id
+            Guild ID to rebuild the pool for
+
+        Returns
+        -------
+            The new overwrite pool
+        """
+        pool: dict[tuple[tuple[int, int, int, int], ...], tuple[tuple[int, int, int, int], ...]] = {}
+        if (guild := self.__guilds.get(guild_id)) is not None:
+            for channels in (guild._cache_channels, guild._cache_threads):
+                for channel in channels.values():
+                    if overwrites := getattr(channel, "_raw_overwrites", None):
+                        pool.setdefault(overwrites, overwrites)
+
+        self.__overwrite_pools[guild_id] = pool
+        self.__overwrite_pool_limits[guild_id] = max(_POOL_REBUILD_MIN, len(pool) * 2)
+        return pool
+
+    def reset_guild_pools(self, guild_id: int) -> None:
+        """
+        Drop a guild's role-ID and overwrite interning pools.
+
+        Called right before a guild's internal cache is (re)populated from a
+        GUILD_CREATE, so tuples only referenced by the previous generation of
+        cached members/channels don't stay pinned by the pool forever.
+
+        Parameters
+        ----------
+        guild_id
+            Guild ID to reset the pools for
+        """
+        self.__role_int_pools.pop(guild_id, None)
+        self.__role_tuple_pools.pop(guild_id, None)
+        self.__role_pool_limits.pop(guild_id, None)
+        self.__overwrite_pools.pop(guild_id, None)
+        self.__overwrite_pool_limits.pop(guild_id, None)
+
+    async def calculate_memory_usage(self) -> dict[str, int]:
+        """
+        Roughly estimate how much memory the cache is currently using in bytes.
+
+        This is a debugging aid, not an exact measurement!
+        """
+        seen: set[int] = set()
+        usage: dict[str, int] = {
+            "guilds": 0,
+            "members": 0,
+            "channels": 0,
+            "threads": 0,
+            "roles": 0,
+            "emojis": 0,
+            "soundboard_sounds": 0,
+            "stickers": 0,
+            "voice_states": 0,
+            "users": 0,
+        }
+
+        usage["users"] = await _deep_sizeof(dict(self.__users), seen)
+
+        guild_skip = frozenset({_SHARED_STATE_ATTR, *_GUILD_CACHE_ATTRS})
+        for guild in list(self.__guilds.values()):
+            usage["guilds"] += await _deep_sizeof(guild, seen, guild_skip)
+            usage["members"] += await _deep_sizeof(guild._cache_members, seen)
+            usage["channels"] += await _deep_sizeof(guild._cache_channels, seen)
+            usage["threads"] += await _deep_sizeof(guild._cache_threads, seen)
+            usage["roles"] += await _deep_sizeof(guild._cache_roles, seen)
+            usage["emojis"] += await _deep_sizeof(guild._cache_emojis, seen)
+            usage["soundboard_sounds"] += await _deep_sizeof(guild._cache_soundboard_sounds, seen)
+            usage["stickers"] += await _deep_sizeof(guild._cache_stickers, seen)
+            usage["voice_states"] += await _deep_sizeof(guild._cache_voice_states, seen)
+
+        usage["total"] = sum(usage.values())
+        return usage
+
+    def get_user(self, user_id: int | None) -> "User | None":
+        """ Returns the shared, deduplicated user from the cache if it exists. """
+        if user_id is None:
+            return None
+        return self.__users.get(user_id)
+
+    def _user_from_data(self, data: dict) -> "User":
+        """
+        Returns the shared user for this ID refreshed with new data, creating it if it is not cached yet.
+
+        Parameters
+        ----------
+        data
+            The raw user data
+
+        Returns
+        -------
+            The shared user
+        """
+        # Refreshed in place, instead of building a new user only to copy it into the cached one
+        if (canonical := self.__users.get(int(data["id"]))) is not None:
+            canonical._update_from_data(data)
+            return canonical
+
+        user: User = User(state=self.bot.state, data=data)
+        self.__users[user.id] = user
+        return user
+
+    def _dedupe_plain_user(self, user: "User") -> "User":
+        """ Reuse or register the shared canonical `User` for this ID. """
+        if (canonical := self.__users.get(user.id)) is not None and canonical is not user:
+            canonical._copy_from(user)
+            return canonical
+
+        self.__users[user.id] = user
+        return user
+
+    def _dedupe_user(self, member: "Member") -> None:
+        """ Point a member's embedded user at the shared canonical `User` instance for that ID. """
+        user = getattr(member, "_user", None)
+        if not isinstance(user, User):
+            return
+
+        member._user = self._dedupe_plain_user(user)
+
+    def _dedupe_activity_assets(self, assets: "ActivityAssets") -> "ActivityAssets":
+        """ Reuse or register the shared canonical `ActivityAssets` for this exact payload. """
+        key = (
+            assets.application_id,
+            assets._raw_large_image,
+            assets._raw_small_image,
+            assets.large_text,
+            assets.small_text,
+        )
+        return self.__activity_assets_pool.setdefault(key, assets)
 
     @property
     def guilds(self) -> list["PartialGuild | Guild"]:
@@ -59,11 +460,11 @@ class Cache:
 
         Parameters
         ----------
-        guild_id:
+        guild_id
             Guild ID to add
-        guild:
+        guild
             The object of the guild
-        data:
+        data
             Data of the guild
 
         Returns
@@ -76,7 +477,11 @@ class Cache:
         if GatewayCacheFlags.guilds in self.cache_flags:
             self.__guilds[guild_id] = guild
         elif GatewayCacheFlags.partial_guilds in self.cache_flags:
-            self.__guilds[guild_id] = self.bot.get_partial_guild(guild_id)
+            # Reuse the given object if it already is a bare PartialGuild
+            self.__guilds[guild_id] = (
+                guild if type(guild) is PartialGuild
+                else self.bot.get_partial_guild(guild_id)
+            )
         else:
             # (Partial)Guild is not cached, nowhere to store it
             return None
@@ -89,9 +494,9 @@ class Cache:
 
         Parameters
         ----------
-        guild_id:
+        guild_id
             Guild ID to update
-        data:
+        data
             Data of the guild
         """
         if self.cache_flags is None:
@@ -113,7 +518,7 @@ class Cache:
 
         Parameters
         ----------
-        voice_state:
+        voice_state
             The voice state to update
         """
         if self.cache_flags is None:
@@ -128,6 +533,12 @@ class Cache:
         vs_update: "VoiceState | PartialVoiceState | None" = None
         if GatewayCacheFlags.voice_states in self.cache_flags:
             vs_update = voice_state
+
+            if (
+                GatewayCacheFlags.members in self.cache_flags and
+                isinstance(guild.get_member(voice_state.id), Member)
+            ):
+                voice_state._member_data = None
 
         elif GatewayCacheFlags.partial_voice_states in self.cache_flags:
             vs_update = self.bot.get_partial_voice_state(
@@ -149,7 +560,7 @@ class Cache:
 
         Parameters
         ----------
-        guild_id:
+        guild_id
             Guild ID to remove
 
         Returns
@@ -159,6 +570,7 @@ class Cache:
         if self.cache_flags is None:
             return None
 
+        self.reset_guild_pools(guild_id)
         return self.__guilds.pop(guild_id, None)
 
     def add_member(
@@ -172,9 +584,9 @@ class Cache:
 
         Parameters
         ----------
-        member:
+        member
             The member to add
-        count_member:
+        count_member
             If the members should be counted or not, by default True
         """
         if self.cache_flags is None:
@@ -190,13 +602,23 @@ class Cache:
         if GatewayCacheFlags.members in self.cache_flags:
             guild._cache_members[member.id] = member
         elif GatewayCacheFlags.partial_members in self.cache_flags:
-            guild._cache_members[member.id] = self.bot.get_partial_member(
-                member.id, member.guild_id
-            )
+            guild._cache_members[member.id] = self._to_partial_member(member)
         else:
             # Cache bot regardless of cache flags
             if member.id == self.bot.user.id:
+                if isinstance(member, Member):
+                    self._dedupe_user(member)
                 guild._cache_members[member.id] = member
+
+    def _to_partial_member(self, member: "Member | PartialMember") -> "PartialMember":
+        """ Turn a member into the `PartialMember` stored by `partial_members` caching, keeping its presence. """
+        if type(member) is PartialMember:
+            return member
+
+        partial = self.bot.get_partial_member(member.id, member.guild_id)
+        if (presence := getattr(member, "presence", None)) is not None:
+            partial.presence = presence
+        return partial
 
     def update_member(self, member: "Member | PartialMember") -> None:
         """
@@ -204,9 +626,29 @@ class Cache:
 
         Parameters
         ----------
-        member:
+        member
             The member to update
         """
+        guild = self.get_guild(member.guild_id)
+        existing = guild.get_member(member.id) if guild else None
+
+        if (
+            member.presence is None and
+            existing is not None and
+            existing.presence is not None
+        ):
+            member.presence = existing.presence
+
+        if (
+            existing is not None and
+            self.cache_flags is not None and
+            GatewayCacheFlags.members not in self.cache_flags and
+            GatewayCacheFlags.partial_members in self.cache_flags
+        ):
+            # A cached PartialMember only holds id/guild_id/presence, none of
+            # which a member update changes, so keep it (and its presence) as-is.
+            return
+
         self.add_member(member, count_member=False)
 
     def remove_member(self, guild_id: int, member_id: int) -> "Member | PartialMember | None":
@@ -215,9 +657,9 @@ class Cache:
 
         Parameters
         ----------
-        guild_id:
+        guild_id
             Guild ID to remove the member from
-        member_id:
+        member_id
             Member ID to remove
 
         Returns
@@ -242,7 +684,7 @@ class Cache:
 
         Parameters
         ----------
-        presence:
+        presence
             The presence to update
         """
         if self.cache_flags is None:
@@ -251,11 +693,11 @@ class Cache:
         if GatewayCacheFlags.presences not in self.cache_flags:
             return
 
-        guild = self.get_guild(presence.guild.id)
+        guild = self.get_guild(presence.guild_id)
         if not guild:
             return
 
-        member = guild.get_member(presence.user.id)
+        member = guild.get_member(presence.user_id)
         if not member:
             return
 
@@ -271,9 +713,9 @@ class Cache:
 
         Parameters
         ----------
-        guild_id:
+        guild_id
             Guild ID to get the channel from
-        channel_id:
+        channel_id
             Channel ID to get
 
         Returns
@@ -296,9 +738,9 @@ class Cache:
 
         Parameters
         ----------
-        guild_id:
+        guild_id
             The Guild ID to get the channel thread from
-        channel_id:
+        channel_id
             The Channel ID to get the channel thread from
 
         Returns
@@ -320,7 +762,7 @@ class Cache:
 
         Parameters
         ----------
-        channel:
+        channel
             The channel to add
         """
         if self.cache_flags is None:
@@ -336,7 +778,7 @@ class Cache:
             guild._cache_channels[channel.id] = channel
         elif GatewayCacheFlags.partial_channels in self.cache_flags:
             guild._cache_channels[channel.id] = self.bot.get_partial_channel(
-                channel.id, guild_id=channel.guild_id
+                channel.id, guild_id=channel.guild_id, parent_id=channel.parent_id
             )
 
     def remove_channel(self, channel: "BaseChannel | PartialChannel") -> None:
@@ -345,7 +787,7 @@ class Cache:
 
         Parameters
         ----------
-        channel:
+        channel
             The channel to remove
         """
         if self.cache_flags is None:
@@ -359,13 +801,20 @@ class Cache:
 
         guild._cache_channels.pop(channel.id, None)
 
+        # Discord does not send THREAD_DELETE for the threads of a deleted channel
+        if guild._cache_threads:
+            guild._cache_threads = {
+                k: v for k, v in guild._cache_threads.items()
+                if getattr(v, "parent_id", None) != channel.id
+            }
+
     def add_thread(self, thread: "BaseChannel") -> None:
         """
         Add a thread to the cache.
 
         Parameters
         ----------
-        thread:
+        thread
             The thread to add
         """
         if self.cache_flags is None:
@@ -381,16 +830,16 @@ class Cache:
             guild._cache_threads[thread.id] = thread
         elif GatewayCacheFlags.partial_threads in self.cache_flags:
             guild._cache_threads[thread.id] = self.bot.get_partial_channel(
-                thread.id, guild_id=thread.guild_id
+                thread.id, guild_id=thread.guild_id, parent_id=thread.parent_id
             )
 
-    def remove_thread(self, thread: "PartialThread") -> None:
+    def remove_thread(self, thread: "BaseChannel | PartialChannel") -> None:
         """
         Remove a thread from the cache.
 
         Parameters
         ----------
-        thread:
+        thread
             The thread to remove
         """
         if self.cache_flags is None:
@@ -410,7 +859,7 @@ class Cache:
 
         Parameters
         ----------
-        role:
+        role
             The role to add
         """
         if self.cache_flags is None:
@@ -433,7 +882,7 @@ class Cache:
 
         Parameters
         ----------
-        role:
+        role
             The role to remove
         """
         if self.cache_flags is None:
@@ -451,9 +900,9 @@ class Cache:
 
         Parameters
         ----------
-        guild_id:
+        guild_id
             Guild ID to update the emojis from
-        emojis:
+        emojis
             The emojis to update
         """
         if self.cache_flags is None:
@@ -481,9 +930,9 @@ class Cache:
 
         Parameters
         ----------
-        guild_id:
+        guild_id
             Guild ID to update the stickers from
-        stickers:
+        stickers
             The stickers to update
         """
         if self.cache_flags is None:

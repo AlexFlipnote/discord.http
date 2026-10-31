@@ -1,0 +1,787 @@
+import asyncio
+import time
+import unittest
+
+from types import SimpleNamespace
+
+from discord_http.http import DiscordAPI, GlobalRatelimit, HTTPResponse, Ratelimit
+from discord_http.utils import MultipartData
+
+
+class TestGlobalRatelimitConstruction(unittest.TestCase):
+    def test_construction_outside_a_running_loop_does_not_raise(self) -> None:
+        # Must not eagerly call get_running_loop() - this can run before any loop exists
+        grl = GlobalRatelimit()
+        self.assertIsNone(grl._loop)
+
+
+class TestClientGlobalRatelimitOption(unittest.IsolatedAsyncioTestCase):
+    def _client(self, **kwargs):
+        import logging
+        from discord_http import Client
+        client = Client(token="a.b.c", logging_level=logging.CRITICAL, **kwargs)
+        for task in client._background_tasks:
+            task.cancel()
+        return client
+
+    async def test_defaults_to_discords_global_limit(self) -> None:
+        client = self._client()
+        self.assertEqual(client.state._global_ratelimit.max, 50)
+
+    async def test_raised_limit_is_passed_to_the_global_ratelimiter(self) -> None:
+        # Bots granted a higher global limit by Discord must not be capped at 50/s
+        client = self._client(global_ratelimit=1200)
+        self.assertEqual(client.state._global_ratelimit.max, 1200)
+        self.assertEqual(client.state._global_ratelimit.remaining, 1200)
+
+    async def test_rejects_limit_below_one(self) -> None:
+        with self.assertRaises(ValueError):
+            self._client(global_ratelimit=0)
+
+
+class TestRatelimit(unittest.IsolatedAsyncioTestCase):
+    async def test_is_inactive_false_when_fresh(self) -> None:
+        rl = Ratelimit("GET /test")
+        self.assertFalse(rl.is_inactive())
+
+    async def test_is_inactive_true_after_idle_window(self) -> None:
+        rl = Ratelimit("GET /test")
+        rl._last_request -= 61
+        self.assertTrue(rl.is_inactive())
+
+    async def test_is_inactive_false_while_in_flight(self) -> None:
+        rl = Ratelimit("GET /test")
+        rl._last_request -= 61
+        rl.in_flight = 1
+        self.assertFalse(rl.is_inactive())
+
+    async def test_is_inactive_false_during_cooldown_window(self) -> None:
+        # Must not evict mid-429-cooldown, or the next request starts falsely-fresh
+        rl = Ratelimit("GET /test")
+        rl._last_request -= 61
+        rl.expires = rl._loop.time() + 30
+        self.assertFalse(rl.is_inactive())
+
+    async def test_is_inactive_true_once_cooldown_expires(self) -> None:
+        rl = Ratelimit("GET /test")
+        rl._last_request -= 61
+        rl.expires = rl._loop.time() - 1
+        self.assertTrue(rl.is_inactive())
+
+    async def test_aenter_aexit_tracks_in_flight(self) -> None:
+        rl = Ratelimit("GET /test")
+        async with rl:
+            self.assertEqual(rl.in_flight, 1)
+            self.assertEqual(rl.remaining, 0)
+        self.assertEqual(rl.in_flight, 0)
+
+    async def test_aenter_waits_until_bucket_resets(self) -> None:
+        rl = Ratelimit("GET /test")
+        rl.remaining = 0
+        rl.expires = rl._loop.time() + 0.2
+
+        start = rl._loop.time()
+        async with rl:
+            pass
+        elapsed = rl._loop.time() - start
+
+        self.assertGreaterEqual(elapsed, 0.15)
+
+    async def test_fresh_bucket_queues_concurrent_requests_behind_the_first(self) -> None:
+        # Regression: waiters used to refill the unknown bucket for each other,
+        # letting a whole burst through at once instead of queueing it
+        rl = Ratelimit("POST /channels/1/messages/:id/crosspost")
+        peak = 0
+
+        async def request() -> None:
+            nonlocal peak
+            async with rl:
+                peak = max(peak, rl.in_flight)
+                await asyncio.sleep(0.01)
+
+        await asyncio.wait_for(asyncio.gather(*(request() for _ in range(16))), 5)
+        self.assertEqual(peak, 1)
+
+    async def test_update_does_not_shorten_a_longer_cooldown(self) -> None:
+        rl = Ratelimit("GET /test")
+        rl.expires = rl._loop.time() + 3600
+
+        rl.update(SimpleNamespace(headers={
+            "X-RateLimit-Reset": "100",
+            "X-RateLimit-Limit": "5",
+            "X-RateLimit-Remaining": "0",
+            "X-RateLimit-Reset-After": "10.0",
+        }))
+
+        self.assertGreater(rl.expires - rl._loop.time(), 3000)
+
+    async def test_update_stores_bucket_hash_from_header(self) -> None:
+        rl = Ratelimit("GET /test")
+        self.assertIsNone(rl.bucket_hash)
+
+        response = SimpleNamespace(headers={
+            "X-RateLimit-Bucket": "abcd1234",
+            "X-RateLimit-Reset": "0",
+            "X-RateLimit-Limit": "5",
+            "X-RateLimit-Remaining": "4",
+            "X-RateLimit-Reset-After": "1.0",
+        })
+        rl.update(response)
+
+        self.assertEqual(rl.bucket_hash, "abcd1234")
+
+    async def test_update_keeps_previous_bucket_hash_when_header_absent(self) -> None:
+        rl = Ratelimit("GET /test")
+        rl.bucket_hash = "abcd1234"
+
+        rl.update(SimpleNamespace(headers={}))
+
+        self.assertEqual(rl.bucket_hash, "abcd1234")
+
+    async def test_update_logs_and_switches_when_bucket_hash_changes(self) -> None:
+        # The actual "notice a divergence" signal bucket_hash exists for
+        rl = Ratelimit("GET /test")
+        rl.bucket_hash = "old-hash"
+
+        with self.assertLogs("discord_http", level="DEBUG") as logs:
+            rl.update(SimpleNamespace(headers={"X-RateLimit-Bucket": "new-hash"}))
+
+        self.assertEqual(rl.bucket_hash, "new-hash")
+        self.assertTrue(any("old-hash" in m and "new-hash" in m for m in logs.output))
+
+
+class TestGlobalRatelimit(unittest.IsolatedAsyncioTestCase):
+    async def test_acquire_consumes_tokens_up_to_max(self) -> None:
+        grl = GlobalRatelimit(max_requests=3, per=10.0)
+        for _ in range(3):
+            await grl.acquire()
+        self.assertEqual(grl.remaining, 0)
+
+    async def test_acquire_blocks_once_exhausted_and_resumes_after_window(self) -> None:
+        grl = GlobalRatelimit(max_requests=1, per=0.2)
+        await grl.acquire()
+
+        start = grl._loop.time()
+        await grl.acquire()  # must wait for the window to roll over
+        elapsed = grl._loop.time() - start
+
+        self.assertGreaterEqual(elapsed, 0.1)
+
+    async def test_lock_for_blocks_every_request_until_it_clears(self) -> None:
+        # A real global 429 must pause ALL requests, not just the one that triggered it
+        grl = GlobalRatelimit(max_requests=5, per=10.0)
+        grl.lock_for(0.2)
+
+        start = grl._loop.time()
+        await grl.acquire()
+        elapsed = grl._loop.time() - start
+
+        self.assertGreaterEqual(elapsed, 0.15)
+
+    async def test_lock_clears_itself_once_expired(self) -> None:
+        grl = GlobalRatelimit(max_requests=5, per=10.0)
+        grl.lock_for(0.05)
+        await asyncio.sleep(0.1)
+
+        await grl.acquire()
+        self.assertIsNone(grl.locked_until)
+
+
+class TestGetBucketKey(unittest.TestCase):
+    def setUp(self) -> None:
+        # _get_bucket_key touches only its arguments, not any instance state,
+        # so a bare instance (skipping __init__) is enough to exercise it.
+        self.api = object.__new__(DiscordAPI)
+
+    def test_normalizes_sub_resource_id(self) -> None:
+        key = self.api._get_bucket_key("GET", "/channels/123/messages/456")
+        self.assertEqual(key, "GET /channels/123/messages/:id")
+
+    def test_leaves_top_level_resource_id_untouched(self) -> None:
+        key = self.api._get_bucket_key("GET", "/guilds/999/channels")
+        self.assertEqual(key, "GET /guilds/999/channels")
+
+    def test_delete_messages_gets_special_suffix(self) -> None:
+        key = self.api._get_bucket_key("DELETE", "/channels/123/messages/456")
+        self.assertEqual(key, "DELETE /channels/123/messages/:id-delete")
+
+    def test_strips_query_parameters(self) -> None:
+        key = self.api._get_bucket_key("GET", "/channels/123/messages?limit=50")
+        self.assertEqual(key, "GET /channels/123/messages")
+
+    def test_unlisted_subresource_route_still_collapses(self) -> None:
+        # The old keyword-list version never collapsed this, fragmenting per event
+        key = self.api._get_bucket_key("GET", "/guilds/999/scheduled-events/555")
+        self.assertEqual(key, "GET /guilds/999/scheduled-events/:id")
+
+    def test_global_route_with_no_major_param_collapses(self) -> None:
+        key = self.api._get_bucket_key("GET", "/stickers/123")
+        self.assertEqual(key, "GET /stickers/:id")
+
+    def test_stage_instances_keeps_channel_id_as_major_param(self) -> None:
+        key = self.api._get_bucket_key("GET", "/stage-instances/321")
+        self.assertEqual(key, "GET /stage-instances/321")
+
+    def test_webhook_route_keeps_webhook_id_and_token_collapses_message_id(self) -> None:
+        key = self.api._get_bucket_key("PATCH", "/webhooks/123456/abcToken123/messages/789")
+        self.assertEqual(key, "PATCH /webhooks/123456/abcToken123/messages/:id")
+
+    def test_mixed_alphanumeric_segment_is_left_untouched(self) -> None:
+        # Only a whole digits-only segment counts as an id
+        key = self.api._get_bucket_key("PATCH", "/webhooks/123456/abcToken123/messages/@original")
+        self.assertEqual(key, "PATCH /webhooks/123456/abcToken123/messages/@original")
+
+    def test_webhook_tokens_get_separate_bucket_keys(self) -> None:
+        # Discord scopes these per token, sharing a key queued unrelated followups behind each other
+        key_a = self.api._get_bucket_key("PATCH", "/webhooks/123456/tokenAAA/messages/@original")
+        key_b = self.api._get_bucket_key("PATCH", "/webhooks/123456/tokenBBB/messages/@original")
+        self.assertNotEqual(key_a, key_b)
+
+    def test_interaction_callbacks_get_separate_bucket_keys(self) -> None:
+        # Before a bucket hash is learned, concurrent interactions must not wait on each other
+        key_a = self.api._get_bucket_key("POST", "/interactions/111/tokenAAA/callback")
+        key_b = self.api._get_bucket_key("POST", "/interactions/222/tokenBBB/callback")
+        self.assertEqual(key_a, "POST /interactions/111/tokenAAA/callback")
+        self.assertNotEqual(key_a, key_b)
+
+
+class TestRouteTemplateAndMajorParam(unittest.TestCase):
+    def setUp(self) -> None:
+        self.api = object.__new__(DiscordAPI)
+
+    def test_route_template_collapses_major_param_too(self) -> None:
+        # Unlike _get_bucket_key, the hash is the same regardless of which guild
+        self.assertEqual(
+            self.api._route_template("GET", "/guilds/999/scheduled-events/555"),
+            "GET /guilds/:id/scheduled-events/:id",
+        )
+
+    def test_route_template_matches_across_different_major_param_values(self) -> None:
+        template_a = self.api._route_template("GET", "/guilds/999/scheduled-events/555")
+        template_b = self.api._route_template("GET", "/guilds/111/scheduled-events/222")
+        self.assertEqual(template_a, template_b)
+
+    def test_route_template_keeps_delete_messages_suffix(self) -> None:
+        self.assertEqual(
+            self.api._route_template("DELETE", "/channels/123/messages/456"),
+            "DELETE /channels/:id/messages/:id-delete",
+        )
+
+    def test_route_template_collapses_webhook_token(self) -> None:
+        # Without this, every webhook followup's unique token fragments the route
+        # template, and the bucket hash for this route shape is never learned/reused
+        template_a = self.api._route_template("PATCH", "/webhooks/123456/tokenAAA/messages/@original")
+        template_b = self.api._route_template("PATCH", "/webhooks/123456/tokenBBB/messages/@original")
+        self.assertEqual(template_a, template_b)
+        self.assertEqual(template_a, "PATCH /webhooks/:id/:token/messages/@original")
+
+    def test_route_template_collapses_interaction_token(self) -> None:
+        template_a = self.api._route_template("POST", "/interactions/111/tokenAAA/callback")
+        template_b = self.api._route_template("POST", "/interactions/222/tokenBBB/callback")
+        self.assertEqual(template_a, template_b)
+        self.assertEqual(template_a, "POST /interactions/:id/:token/callback")
+
+    def test_major_param_value_extracts_the_raw_id(self) -> None:
+        self.assertEqual(self.api._major_param_value("/channels/123/messages/456"), "123")
+
+    def test_major_param_value_empty_when_no_major_param(self) -> None:
+        self.assertEqual(self.api._major_param_value("/stickers/123"), "")
+
+    def test_major_param_value_includes_webhook_token(self) -> None:
+        # Every interaction shares one application/webhook id, so a hash-based
+        # key must stay scoped per-token too, or all interactions would collapse
+        # onto the same local ratelimit bucket.
+        self.assertEqual(
+            self.api._major_param_value("/webhooks/123456/tokenAAA/messages/@original"),
+            "123456:tokenAAA",
+        )
+
+    def test_major_param_value_includes_interaction_token(self) -> None:
+        self.assertEqual(
+            self.api._major_param_value("/interactions/111/tokenAAA/callback"),
+            "111:tokenAAA",
+        )
+
+
+class TestResolveBucketKey(unittest.TestCase):
+    def setUp(self) -> None:
+        self.api = object.__new__(DiscordAPI)
+        self.api._bucket_hashes = {}
+
+    def test_falls_back_to_local_guess_when_hash_unknown(self) -> None:
+        template, key, fallback = self.api._resolve_bucket_key("GET", "/guilds/999/scheduled-events/555")
+        self.assertEqual(template, "GET /guilds/:id/scheduled-events/:id")
+        self.assertEqual(key, "GET /guilds/999/scheduled-events/:id")
+        self.assertEqual(fallback, key)
+
+    def test_uses_learned_hash_once_known(self) -> None:
+        template, _, _ = self.api._resolve_bucket_key("GET", "/guilds/999/scheduled-events/555")
+        self.api._bucket_hashes[template] = ("abcXYZ", time.perf_counter())
+
+        _, key, fallback = self.api._resolve_bucket_key("GET", "/guilds/999/scheduled-events/777")
+        self.assertEqual(key, "GET #abcXYZ:999")
+        self.assertEqual(fallback, "GET /guilds/999/scheduled-events/:id")
+
+    def test_hash_based_key_still_separates_different_major_params(self) -> None:
+        # The hash must not merge buckets across guilds/channels/webhooks
+        template, _, _ = self.api._resolve_bucket_key("GET", "/guilds/999/scheduled-events/555")
+        self.api._bucket_hashes[template] = ("abcXYZ", time.perf_counter())
+
+        _, key_guild_999, _ = self.api._resolve_bucket_key("GET", "/guilds/999/scheduled-events/1")
+        _, key_guild_111, _ = self.api._resolve_bucket_key("GET", "/guilds/111/scheduled-events/2")
+
+        self.assertNotEqual(key_guild_999, key_guild_111)
+
+    def test_hash_based_key_has_no_major_suffix_for_global_routes(self) -> None:
+        template, _, _ = self.api._resolve_bucket_key("GET", "/stickers/123")
+        self.api._bucket_hashes[template] = ("abcXYZ", time.perf_counter())
+
+        _, key, _ = self.api._resolve_bucket_key("GET", "/stickers/456")
+        self.assertEqual(key, "GET #abcXYZ")
+
+    def test_hash_based_key_still_separates_different_webhook_tokens(self) -> None:
+        # Regression: once the route's bucket hash is learned, every interaction
+        # followup shares the same webhook/application id - without the token in
+        # the major param too, they'd all collapse onto one local ratelimit bucket.
+        template, _, _ = self.api._resolve_bucket_key(
+            "PATCH", "/webhooks/123456/tokenAAA/messages/@original"
+        )
+        self.api._bucket_hashes[template] = ("abcXYZ", time.perf_counter())
+
+        _, key_a, _ = self.api._resolve_bucket_key(
+            "PATCH", "/webhooks/123456/tokenAAA/messages/@original"
+        )
+        _, key_b, _ = self.api._resolve_bucket_key(
+            "PATCH", "/webhooks/123456/tokenBBB/messages/@original"
+        )
+
+        self.assertNotEqual(key_a, key_b)
+
+
+class TestGetRatelimitMigration(unittest.IsolatedAsyncioTestCase):
+    async def test_migrates_existing_bucket_state_to_the_new_key(self) -> None:
+        # Used to reset to limit=1 defaults instead of keeping the real known state
+        api = object.__new__(DiscordAPI)
+        api._buckets = {}
+
+        old = api.get_ratelimit("GET /guilds/999/scheduled-events/:id")
+        old.limit = 5
+        old.remaining = 3
+
+        migrated = api.get_ratelimit("GET #abcXYZ:999", migrate_from="GET /guilds/999/scheduled-events/:id")
+
+        self.assertIs(migrated, old)
+        self.assertEqual(migrated.limit, 5)
+        self.assertEqual(migrated.remaining, 3)
+        self.assertEqual(migrated.key, "GET #abcXYZ:999")
+        self.assertNotIn("GET /guilds/999/scheduled-events/:id", api._buckets)
+
+    async def test_no_migration_source_creates_a_fresh_bucket(self) -> None:
+        api = object.__new__(DiscordAPI)
+        api._buckets = {}
+
+        rl = api.get_ratelimit("GET #abcXYZ:999", migrate_from="GET /guilds/999/scheduled-events/:id")
+
+        self.assertEqual(rl.limit, 1)
+        self.assertEqual(rl.remaining, 1)
+
+
+class TestMultipartDataReset(unittest.TestCase):
+    def test_reset_rewinds_attached_file_streams(self) -> None:
+        import io
+
+        from discord_http import File
+
+        buffer = io.BytesIO(b"abcdef")
+        file = File(buffer, filename="sample.bin")
+
+        multidata = MultipartData()
+        multidata.attach("files[0]", file, filename=file.filename)
+
+        file.data.read()  # simulate the first (failed) send consuming the stream
+        self.assertEqual(file.data.read(), b"")
+
+        multidata.reset()
+        self.assertEqual(file.data.read(3), b"abc")
+
+    def test_reset_rewinds_raw_stream_not_wrapped_in_file(self) -> None:
+        import io
+
+        buffer = io.BytesIO(b"abcdef")
+
+        multidata = MultipartData()
+        multidata.attach("files[0]", buffer, filename="raw.bin")
+
+        buffer.read()  # simulate the first (failed) send consuming the stream
+        self.assertEqual(buffer.read(), b"")
+
+        multidata.reset()
+        self.assertEqual(buffer.read(3), b"abc")
+
+
+class _FakeHTTPClient:
+    """ Stands in for HTTPClient in query() tests: replays canned responses in order. """
+    def __init__(self, responses: list[HTTPResponse]):
+        self._responses = list(responses)
+        self.calls: list[tuple[str, str]] = []
+
+    async def request(self, method, url, *, res_method="json", **kwargs) -> HTTPResponse:
+        self.calls.append((method, url))
+        return self._responses.pop(0)
+
+
+def _fake_response(
+    *,
+    bucket_hash: str | None = None,
+    status: int = 200,
+    response: dict | None = None,
+    limit: str = "5",
+    remaining: str = "4",
+    reset: str = "0",
+) -> HTTPResponse:
+    headers = {
+        "X-RateLimit-Limit": limit,
+        "X-RateLimit-Remaining": remaining,
+        "X-RateLimit-Reset": reset,
+        "X-RateLimit-Reset-After": "1.0",
+    }
+    if bucket_hash:
+        headers["X-RateLimit-Bucket"] = bucket_hash
+
+    return HTTPResponse(
+        status=status, response=response if response is not None else {},
+        reason=None, res_method="json", headers=headers,
+    )
+
+
+class _GatedHTTPClient:
+    """ Holds every request open until released, recording how many were in flight at once. """
+    def __init__(self):
+        self.gate = asyncio.Event()
+        self.in_flight = 0
+        self.max_in_flight = 0
+
+    async def request(self, method, url, *, res_method="json", **kwargs) -> HTTPResponse:
+        self.in_flight += 1
+        self.max_in_flight = max(self.max_in_flight, self.in_flight)
+        try:
+            await self.gate.wait()
+        finally:
+            self.in_flight -= 1
+
+        # No ratelimit headers, the worst case where no bucket hash is ever learned
+        return HTTPResponse(status=204, response=None, reason=None, res_method="text", headers={})
+
+
+class TestQueryConcurrency(unittest.IsolatedAsyncioTestCase):
+    """ Requests Discord ratelimits separately must not wait on each other locally. """
+
+    def _make_api(self) -> DiscordAPI:
+        api = object.__new__(DiscordAPI)
+        api._default_headers = {}
+        api.api_url = "https://discord.test/api/v10"
+        api.base_url = "https://discord.test/api"
+        api._buckets = {}
+        api._bucket_hashes = {}
+        api._global_ratelimit = GlobalRatelimit()
+        api.http = _GatedHTTPClient()
+        return api
+
+    async def _run(self, api: DiscordAPI, paths: list[str]) -> int:
+        tasks = [asyncio.create_task(api.query("POST", p, res_method="text")) for p in paths]
+
+        # Let every request get as far as it can before releasing them
+        for _ in range(50):
+            await asyncio.sleep(0)
+            if api.http.in_flight == len(paths):
+                break
+
+        api.http.gate.set()
+        await asyncio.wait_for(asyncio.gather(*tasks), timeout=5)
+        return api.http.max_in_flight
+
+    async def test_interaction_callbacks_on_different_tokens_run_concurrently(self) -> None:
+        api = self._make_api()
+        paths = [f"/interactions/{1000 + i}/token{i}/callback" for i in range(8)]
+        self.assertEqual(await self._run(api, paths), 8)
+
+    async def test_followups_on_different_tokens_run_concurrently(self) -> None:
+        # Every followup shares the application id, only the token tells them apart
+        api = self._make_api()
+        paths = [f"/webhooks/555/token{i}" for i in range(8)]
+        self.assertEqual(await self._run(api, paths), 8)
+
+    async def test_same_unknown_bucket_still_probes_one_at_a_time(self) -> None:
+        # Without ratelimit info for a bucket, only one request goes out until it reports back
+        api = self._make_api()
+        paths = ["/channels/123/messages"] * 4
+        self.assertEqual(await self._run(api, paths), 1)
+
+
+class TestQueryReleasesOneShotBuckets(unittest.IsolatedAsyncioTestCase):
+    """ Every interaction callback has its own token, so its bucket must not outlive the request. """
+
+    def _make_api(self, responses: list[HTTPResponse]) -> DiscordAPI:
+        api = object.__new__(DiscordAPI)
+        api._default_headers = {}
+        api.api_url = "https://discord.test/api/v10"
+        api.base_url = "https://discord.test/api"
+        api._buckets = {}
+        api._bucket_hashes = {}
+        api._global_ratelimit = GlobalRatelimit()
+        api.http = _FakeHTTPClient(responses)
+        return api
+
+    async def test_callback_bucket_is_dropped_after_success(self) -> None:
+        # Discord sends ratelimit headers on callbacks, which used to keep the bucket in a cooldown
+        api = self._make_api([_fake_response(status=204, reset=str(time.time() + 5))])
+        await api.query("POST", "/interactions/111/tokenAAA/callback", res_method="text")
+        self.assertEqual(api._buckets, {})
+
+    async def test_callback_bucket_is_dropped_after_an_error(self) -> None:
+        api = self._make_api([_fake_response(status=404)])
+        with self.assertRaises(Exception):
+            await api.query("POST", "/interactions/111/tokenAAA/callback", res_method="text")
+        self.assertEqual(api._buckets, {})
+
+    async def test_many_callbacks_leave_no_buckets_behind(self) -> None:
+        api = self._make_api([_fake_response(status=204) for _ in range(50)])
+        for i in range(50):
+            await api.query("POST", f"/interactions/{1000 + i}/token{i}/callback", res_method="text")
+        self.assertEqual(api._buckets, {})
+
+    async def test_followup_bucket_is_kept(self) -> None:
+        # Followups reuse their token for up to 15 minutes, so their bucket stays
+        api = self._make_api([_fake_response(status=200)])
+        await api.query("POST", "/webhooks/555/tokenAAA", res_method="text")
+        self.assertEqual(len(api._buckets), 1)
+
+    async def test_callback_bucket_in_use_by_another_request_is_kept(self) -> None:
+        api = object.__new__(DiscordAPI)
+        api._default_headers = {}
+        api.api_url = "https://discord.test/api/v10"
+        api.base_url = "https://discord.test/api"
+        api._buckets = {}
+        api._bucket_hashes = {}
+        api._global_ratelimit = GlobalRatelimit()
+        api.http = _GatedHTTPClient()
+
+        path = "/interactions/111/tokenAAA/callback"
+        first = asyncio.create_task(api.query("POST", path, res_method="text"))
+        for _ in range(20):
+            await asyncio.sleep(0)
+
+        # Pretend a second request on the same token is still running
+        bucket = next(iter(api._buckets.values()))
+        bucket.in_flight += 1
+        api.http.gate.set()
+        await asyncio.wait_for(first, timeout=5)
+        self.assertIs(next(iter(api._buckets.values())), bucket)
+
+
+class TestQuerySelfCorrectsBucketKey(unittest.IsolatedAsyncioTestCase):
+    """ End-to-end test of query()'s retry loop wiring _resolve_bucket_key() and
+    _bucket_hashes together - the actual behavior change, not just the pure helpers. """
+
+    def _make_api(self, responses: list[HTTPResponse]) -> DiscordAPI:
+        api = object.__new__(DiscordAPI)
+        api._default_headers = {}
+        api.api_url = "https://discord.test/api/v10"
+        api.base_url = "https://discord.test/api"
+        api._buckets = {}
+        api._bucket_hashes = {}
+        api._global_ratelimit = GlobalRatelimit()
+        api.http = _FakeHTTPClient(responses)
+        return api
+
+    async def test_first_call_uses_local_guess_and_learns_the_hash(self) -> None:
+        api = self._make_api([_fake_response(bucket_hash="hashABC")])
+
+        await api.query("GET", "/guilds/999/scheduled-events/555")
+
+        bucket_hash, _timestamp = api._bucket_hashes["GET /guilds/:id/scheduled-events/:id"]
+        self.assertEqual(bucket_hash, "hashABC")
+        self.assertIn("GET /guilds/999/scheduled-events/:id", api._buckets)
+
+    async def test_second_call_to_same_route_shape_uses_learned_hash(self) -> None:
+        api = self._make_api([
+            _fake_response(bucket_hash="hashABC"),
+            _fake_response(bucket_hash="hashABC"),
+        ])
+
+        await api.query("GET", "/guilds/999/scheduled-events/555")
+        await api.query("GET", "/guilds/999/scheduled-events/777")
+
+        # Reused the hash-based key instead of fragmenting per event id
+        self.assertIn("GET #hashABC:999", api._buckets)
+
+    async def test_different_guild_still_gets_its_own_bucket_after_hash_learned(self) -> None:
+        api = self._make_api([
+            _fake_response(bucket_hash="hashABC"),  # teaches the hash (local-guess key)
+            _fake_response(bucket_hash="hashABC"),  # already knows the hash by now
+        ])
+
+        await api.query("GET", "/guilds/999/scheduled-events/555")
+        await api.query("GET", "/guilds/111/scheduled-events/1")
+
+        # First call (taught the hash) kept the local guess; second already knew it
+        self.assertIn("GET /guilds/999/scheduled-events/:id", api._buckets)
+        self.assertIn("GET #hashABC:111", api._buckets)
+        self.assertNotIn("GET #hashABC:999", api._buckets)
+
+    async def test_hash_learned_mid_call_does_not_orphan_a_429_cooldown(self) -> None:
+        # Re-resolving the key per retry used to drop the 429 cooldown mid-loop
+        api = self._make_api([
+            _fake_response(status=429, bucket_hash="hashABC", response={
+                "retry_after": 0.05, "global": False,
+            }),
+            _fake_response(status=200, bucket_hash="hashABC"),
+        ])
+
+        start = asyncio.get_running_loop().time()
+        with self.assertLogs("discord_http", level="WARNING"):
+            await api.query("GET", "/guilds/999/scheduled-events/555")
+        elapsed = asyncio.get_running_loop().time() - start
+
+        # __aenter__ floors any wait at ~0.2s; an orphaned cooldown retries near-instantly
+        self.assertGreaterEqual(elapsed, 0.15)
+
+        # Only the local-guess key was ever used - no mid-call switch to a second object
+        self.assertEqual(list(api._buckets), ["GET /guilds/999/scheduled-events/:id"])
+
+    async def test_switching_to_hash_key_preserves_the_bucket_state(self) -> None:
+        # Used to reset to limit=1 instead of carrying over the real known state
+        api = self._make_api([
+            _fake_response(bucket_hash="hashABC", limit="5", remaining="4", reset="100"),
+            _fake_response(bucket_hash="hashABC", limit="5", remaining="3", reset="100"),
+        ])
+
+        await api.query("PATCH", "/channels/570916125672603659/messages/111")
+        await api.query("PATCH", "/channels/570916125672603659/messages/222")
+
+        self.assertEqual(list(api._buckets), ["PATCH #hashABC:570916125672603659"])
+        rl = api._buckets["PATCH #hashABC:570916125672603659"]
+        self.assertEqual(rl.limit, 5)
+        self.assertEqual(rl.remaining, 3)
+
+    async def test_shorter_429_does_not_overwrite_a_longer_one(self) -> None:
+        # Concurrent 429s on one bucket can mix the route limit with a sub-limit
+        # (e.g. crosspost's hourly cap), the longest retry_after must win
+        api = self._make_api([
+            _fake_response(status=429, response={"retry_after": 3600, "global": False}),
+            _fake_response(status=429, response={"retry_after": 0.01, "global": False}),
+        ])
+        rl = api.get_ratelimit("POST /channels/1/messages/:id/crosspost")
+        rl.limit = rl.remaining = 2
+
+        async def request() -> None:
+            await api.query("POST", "/channels/1/messages/2/crosspost")
+
+        with self.assertLogs("discord_http", level="WARNING"):
+            tasks = [asyncio.create_task(request()) for _ in range(2)]
+            await asyncio.sleep(0.1)
+
+        self.assertGreater(rl.expires - rl._loop.time(), 3000)
+        for task in tasks:
+            task.cancel()
+        await asyncio.gather(*tasks, return_exceptions=True)
+
+    async def test_cleanup_keeps_hash_of_a_bucket_still_in_cooldown(self) -> None:
+        # Dropping the hash after 60s orphaned the cooldown bucket, so the next
+        # crosspost started from a fresh bucket and hit the same hourly 429 again
+        api = self._make_api([
+            _fake_response(bucket_hash="hashABC", reset="100"),
+            _fake_response(bucket_hash="hashABC", reset="100"),
+        ])
+        await api.query("POST", "/channels/1/messages/2/crosspost")
+        await api.query("POST", "/channels/1/messages/3/crosspost")
+
+        rl = api._buckets["POST #hashABC:1"]
+        rl.remaining = 0
+        rl.expires = rl._loop.time() + 3600
+        api._bucket_hashes = {
+            route: (bucket_hash, time.perf_counter() - 120)
+            for route, (bucket_hash, _) in api._bucket_hashes.items()
+        }
+
+        api._clear_old_ratelimits()
+
+        _, key, _ = api._resolve_bucket_key("POST", "/channels/1/messages/4/crosspost")
+        self.assertIs(api.get_ratelimit(key), rl)
+
+    async def test_cleanup_drops_hash_once_no_bucket_uses_it(self) -> None:
+        api = self._make_api([])
+        api._bucket_hashes["POST /channels/:id/messages/:id/crosspost"] = ("hashABC", time.perf_counter() - 120)
+        api._clear_old_ratelimits()
+        self.assertEqual(api._bucket_hashes, {})
+
+    async def test_ratelimit_warning_shows_the_normalized_path_not_the_raw_id(self) -> None:
+        # Should read as "this counts as one bucket", not the one id that triggered it
+        api = self._make_api([
+            _fake_response(status=429, response={"retry_after": 0.01, "global": False}),
+            _fake_response(status=200),
+        ])
+
+        with self.assertLogs("discord_http", level="WARNING") as logs:
+            await api.query("GET", "/guilds/999/scheduled-events/555")
+
+        message = "\n".join(logs.output)
+        self.assertIn("GET /guilds/999/scheduled-events/:id", message)
+        self.assertNotIn("555", message)
+
+    async def test_ratelimit_warning_stays_readable_even_once_hash_is_known(self) -> None:
+        # Once the key has switched to the opaque hash internally, must still print the path
+        api = self._make_api([
+            _fake_response(bucket_hash="abcXYZ"),  # teaches the hash
+            _fake_response(
+                status=429, bucket_hash="abcXYZ",
+                response={"retry_after": 0.01, "global": False},
+            ),
+            _fake_response(status=200, bucket_hash="abcXYZ"),
+        ])
+
+        await api.query("GET", "/guilds/999/scheduled-events/555")
+
+        with self.assertLogs("discord_http", level="WARNING") as logs:
+            await api.query("GET", "/guilds/999/scheduled-events/777")
+
+        message = "\n".join(logs.output)
+        self.assertIn("GET /guilds/999/scheduled-events/:id", message)
+        self.assertNotIn("#", message)
+        self.assertNotIn("abcXYZ", message)
+
+
+class TestQueryJsonBody(unittest.IsolatedAsyncioTestCase):
+    """ json= bodies are serialized straight to bytes instead of going through aiohttp's json=. """
+
+    def _make_api(self, responses: list[HTTPResponse]) -> DiscordAPI:
+        api = object.__new__(DiscordAPI)
+        api._default_headers = {}
+        api.api_url = "https://discord.test/api/v10"
+        api.base_url = "https://discord.test/api"
+        api._buckets = {}
+        api._bucket_hashes = {}
+        api._global_ratelimit = GlobalRatelimit()
+        api.http = _FakeHTTPClient(responses)
+        return api
+
+    async def test_json_body_is_pre_serialized_to_bytes(self) -> None:
+        captured: dict = {}
+
+        class _Capture(_FakeHTTPClient):
+            async def request(self, method, url, *, res_method="json", **kwargs) -> HTTPResponse:
+                captured.update(kwargs)
+                return await super().request(method, url, res_method=res_method, **kwargs)
+
+        api = self._make_api([])
+        api.http = _Capture([_fake_response()])
+
+        await api.query("POST", "/channels/1/messages", res_method="text", json={"content": "hi"})
+
+        self.assertNotIn("json", captured)
+        self.assertEqual(captured["data"], b'{"content":"hi"}')
+        self.assertEqual(captured["headers"]["Content-Type"], "application/json")
+
+
+if __name__ == "__main__":
+    unittest.main()

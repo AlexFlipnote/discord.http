@@ -3,7 +3,6 @@ from discord_http.gateway import Intents
 
 client = Client(
     token="BOT_TOKEN",
-    enable_gateway=True,
     intents=(
         Intents.guild_messages |
         Intents.direct_messages

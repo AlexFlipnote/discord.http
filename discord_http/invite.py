@@ -1,21 +1,33 @@
 from datetime import datetime
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, NamedTuple
 
 from . import utils
 from .channel import PartialChannel
-from .enums import InviteType, InviteTargetType
+from .enums import InviteType, InviteTargetType, InviteTargetUsersJobStatusType
 from .flags import GuildInviteFlags
 from .guild import PartialGuild, Guild
+from .object import Snowflake
 from .role import Role
-from .user import User
+from .user import User, PartialUser
 
 if TYPE_CHECKING:
     from .http import DiscordAPI
 
 __all__ = (
     "Invite",
+    "InviteTargetUsersJobStatus",
     "PartialInvite",
 )
+
+
+class InviteTargetUsersJobStatus(NamedTuple):
+    """ Represents the status of an invite's target users file processing job. """
+    status: InviteTargetUsersJobStatusType
+    total_users: int
+    processed_users: int
+    created_at: datetime
+    completed_at: datetime | None
+    error_message: str | None
 
 
 class PartialInvite:
@@ -25,7 +37,6 @@ class PartialInvite:
         "_state",
         "channel_id",
         "code",
-        "guild",
         "guild_id",
     )
 
@@ -41,7 +52,7 @@ class PartialInvite:
     ):
         self._state = state
 
-        self.code = code
+        self.code: str = code
         """ The invite code. """
 
         self.channel_id: int | None = channel_id
@@ -50,9 +61,6 @@ class PartialInvite:
         self.guild_id: int | None = guild_id
         """ The ID of the guild the invite is in, if applicable. """
 
-        self.guild: "Guild | PartialGuild | None" = self._get_guild
-        """ The guild associated with the invite, if applicable. """
-
     def __str__(self) -> str:
         return self.url
 
@@ -60,16 +68,15 @@ class PartialInvite:
         return f"<PartialInvite code='{self.code}'>"
 
     @property
-    def _get_guild(self) -> Guild | PartialGuild | None:
-        """ Used to create the guild object for `Invite.guild`. """
+    def guild(self) -> "Guild | PartialGuild | None":
+        """ The guild associated with the invite, if applicable. Resolved live from cache. """
         if not self.guild_id:
             return None
 
-        cache = self._state.cache.get_guild(self.guild_id)
-        if cache:
+        if cache := self._state.cache.get_guild(self.guild_id):
             return cache
 
-        return PartialGuild(state=self._state, id=self.guild_id)
+        return self._state.bot.get_partial_guild(self.guild_id)
 
     @property
     def channel(self) -> "PartialChannel | None":
@@ -77,28 +84,153 @@ class PartialInvite:
         if not self.channel_id:
             return None
 
-        return PartialChannel(
-            state=self._state,
-            id=self.channel_id,
-            guild_id=self.guild_id
-        )
+        return self._state.bot.get_partial_channel(self.channel_id, guild_id=self.guild_id)
 
     async def fetch(self) -> "Invite":
-        """
-        Fetches the invite details.
-
-        Returns
-        -------
-            The invite object
-        """
+        """ Fetches the invite details. """
         r = await self._state.query(
             "GET",
             f"/invites/{self.code}"
         )
 
-        return Invite(
-            state=self._state,
-            data=r.response
+        return self._state.bot.create_invite_from_data(r.response)
+
+    async def fetch_target_users(self) -> list[PartialUser]:
+        """ Fetch the list of users allowed to use this invite. """
+        r = await self._state.query(
+            "GET",
+            f"/invites/{self.code}/target-users",
+            res_method="text"
+        )
+
+        lines = [g.strip() for g in r.response.splitlines() if g.strip()]
+        if lines and lines[0].lower() == "user_id":
+            lines = lines[1:]
+
+        return [self._state.bot.get_partial_user(int(g)) for g in lines]
+
+    async def edit_target_users(self, user_ids: list[Snowflake | int]) -> None:
+        """
+        Update the list of users allowed to use this invite.
+
+        Parameters
+        ----------
+        user_ids
+            The user IDs to allow to use this invite
+        """
+        multidata = utils.MultipartData()
+
+        csv_content = "\n".join(str(int(g)) for g in user_ids)
+        multidata.attach(
+            "target_users_file",
+            f"{csv_content}\n",
+            filename="target_users_file.csv",
+            content_type="text/csv"
+        )
+
+        await self._state.query(
+            "PUT",
+            f"/invites/{self.code}/target-users",
+            headers={"Content-Type": multidata.content_type},
+            data=multidata.finish(),
+            res_method="text"
+        )
+
+    async def add_target_user(self, user: Snowflake | int) -> None:
+        """
+        Add a single user to the list of users allowed to use this invite.
+
+        Parameters
+        ----------
+        user
+            The user to allow to use this invite
+        """
+        await self._state.query(
+            "PUT",
+            f"/invites/{self.code}/target-users/{int(user)}",
+            res_method="text"
+        )
+
+    async def remove_target_user(self, user: Snowflake | int) -> None:
+        """
+        Remove a single user from the list of users allowed to use this invite.
+
+        Parameters
+        ----------
+        user
+            The user to remove from this invite
+        """
+        await self._state.query(
+            "DELETE",
+            f"/invites/{self.code}/target-users/{int(user)}",
+            res_method="text"
+        )
+
+    async def bulk_add_target_users(self, user_ids: list[Snowflake | int]) -> None:
+        """
+        Add multiple users to the list of users allowed to use this invite.
+
+        Parameters
+        ----------
+        user_ids
+            The user IDs to allow to use this invite, max 1000
+
+        Raises
+        ------
+        ValueError
+            More than 1000 user IDs were provided
+        """
+        if len(user_ids) > 1000:
+            raise ValueError("user_ids must not exceed 1000 users")
+
+        await self._state.query(
+            "POST",
+            f"/invites/{self.code}/target-users/bulk-add",
+            json={"user_ids": [str(int(g)) for g in user_ids]},
+            res_method="text"
+        )
+
+    async def bulk_remove_target_users(self, user_ids: list[Snowflake | int]) -> None:
+        """
+        Remove multiple users from the list of users allowed to use this invite.
+
+        Parameters
+        ----------
+        user_ids
+            The user IDs to remove from this invite, max 1000
+
+        Raises
+        ------
+        ValueError
+            More than 1000 user IDs were provided
+        """
+        if len(user_ids) > 1000:
+            raise ValueError("user_ids must not exceed 1000 users")
+
+        await self._state.query(
+            "POST",
+            f"/invites/{self.code}/target-users/bulk-delete",
+            json={"user_ids": [str(int(g)) for g in user_ids]},
+            res_method="text"
+        )
+
+    async def fetch_target_users_job_status(self) -> "InviteTargetUsersJobStatus":
+        """ Fetch the status of the target users file processing job. """
+        r = await self._state.query(
+            "GET",
+            f"/invites/{self.code}/target-users/job-status"
+        )
+
+        return InviteTargetUsersJobStatus(
+            status=InviteTargetUsersJobStatusType(r.response["status"]),
+            total_users=r.response["total_users"],
+            processed_users=r.response["processed_users"],
+            created_at=utils.parse_time(r.response["created_at"]),
+            completed_at=(
+                utils.parse_time(r.response["completed_at"])
+                if r.response.get("completed_at") else None
+            ),
+            error_message=r.response.get("error_message"),
         )
 
     async def delete(
@@ -111,7 +243,7 @@ class PartialInvite:
 
         Parameters
         ----------
-        reason: `str`
+        reason
             The reason for deleting the invite
 
         Returns
@@ -124,10 +256,7 @@ class PartialInvite:
             reason=reason
         )
 
-        return Invite(
-            state=self._state,
-            data=data.response
-        )
+        return self._state.bot.create_invite_from_data(data.response)
 
     @property
     def url(self) -> str:
@@ -139,13 +268,13 @@ class Invite(PartialInvite):
     """ Represents an invite object. """
 
     __slots__ = (
-        "_account",
+        "_guild_override",
+        "_raw_flags",
         "_raw_type",
         "approximate_member_count",
         "approximate_presence_count",
         "created_at",
         "expires_at",
-        "flags",
         "inviter",
         "max_uses",
         "roles",
@@ -158,6 +287,7 @@ class Invite(PartialInvite):
     def __init__(self, *, state: "DiscordAPI", data: dict):
         super().__init__(state=state, code=data["code"])
 
+        self._guild_override: "Guild | PartialGuild | None" = None
         self._raw_type: int = data["type"]
 
         self.uses: int = data.get("uses", 0)
@@ -193,8 +323,7 @@ class Invite(PartialInvite):
         self.roles: list[Role] = []
         """ The roles a user gets when joining via this invite. """
 
-        self.flags: GuildInviteFlags = GuildInviteFlags.none()
-        """ The flags associated with the invite. """
+        self._raw_flags: int = 0
 
         self.target_type: InviteTargetType | None = None
         """ The target type of the invite, if applicable. """
@@ -214,40 +343,59 @@ class Invite(PartialInvite):
         return f"<Invite code='{self.code}' uses='{self.uses}'>"
 
     def _from_data(self, data: dict) -> None:
-        if data.get("expires_at"):
-            self.expires_at = utils.parse_time(data["expires_at"])
+        if expires_at := data.get("expires_at"):
+            self.expires_at = utils.parse_time(expires_at)
 
-        if data.get("created_at"):
-            self.created_at = utils.parse_time(data["created_at"])
+        if created_at := data.get("created_at"):
+            self.created_at = utils.parse_time(created_at)
 
-        if data.get("inviter"):
-            self.inviter = User(state=self._state, data=data["inviter"])
+        if inviter := data.get("inviter"):
+            self.inviter = self._state.bot.create_user_from_data(inviter)
 
-        if data.get("guild"):
-            try:
-                self.guild = Guild(state=self._state, data=data["guild"])
-            except KeyError:
-                pass
+        if guild := data.get("guild"):
+            cached = self._state.cache.get_guild(self.guild_id) if self.guild_id else None
+            if not isinstance(cached, Guild):
+                # `self.guild` checks `_guild_override` before falling back to a live
+                # cache lookup, so only set it when the cache doesn't already have a
+                # full Guild - otherwise this would just pin a permanent, stale-prone
+                # reference to it for the same result the live lookup already gives.
+                try:
+                    self._guild_override = self._state.bot.create_guild_from_data(guild)
+                except KeyError:
+                    pass
 
-        if data.get("target_type") is not None:
-            self.target_type = InviteTargetType(data["target_type"])
+        if (target_type := data.get("target_type")) is not None:
+            self.target_type = InviteTargetType(target_type)
 
-        if data.get("target_user"):
-            self.target_user = User(state=self._state, data=data["target_user"])
+        if target_user := data.get("target_user"):
+            self.target_user = self._state.bot.create_user_from_data(target_user)
 
-        if data.get("flags"):
-            self.flags = GuildInviteFlags(data["flags"])
+        if flags := data.get("flags"):
+            self._raw_flags = flags
 
-        if data.get("roles") and self.guild:
+        if (roles := data.get("roles")) and (guild := self.guild):
             self.roles = [
-                Role(state=self._state, guild=self.guild, data=role_data)
-                for role_data in data["roles"]
+                self._state.bot.create_role_from_data(role_data, guild=guild)
+                for role_data in roles
             ]
+
+    @property
+    def guild(self) -> "Guild | PartialGuild | None":
+        """ The guild associated with the invite, if applicable. Resolved live from cache. """
+        if self._guild_override is not None:
+            return self._guild_override
+
+        return super().guild
 
     @property
     def type(self) -> InviteType:
         """ The type of the invite. """
         return InviteType(self._raw_type)
+
+    @property
+    def flags(self) -> GuildInviteFlags:
+        """ The flags associated with the invite. """
+        return GuildInviteFlags(self._raw_flags)
 
     def is_vanity(self) -> bool:
         """ Whether the invite is a vanity invite. """

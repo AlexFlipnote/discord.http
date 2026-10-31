@@ -30,7 +30,7 @@ class BucketType(BaseEnum):
 
         Parameters
         ----------
-        ctx:
+        ctx
             The bot context
 
         Returns
@@ -65,7 +65,7 @@ class BucketType(BaseEnum):
 
         Parameters
         ----------
-        ctx:
+        ctx
             The bot context
 
         Returns
@@ -87,7 +87,7 @@ class CooldownCache:
     def __init__(
         self,
         original: "Cooldown",
-        type: BucketType  # noqa: A002
+        type: BucketType  # ruff: ignore[builtin-argument-shadowing]
     ):
         self._cache: dict[int | tuple[int, int], Cooldown] = {}
         self._cooldown: Cooldown = original
@@ -106,7 +106,7 @@ class CooldownCache:
 
         Parameters
         ----------
-        ctx:
+        ctx
             Context to create the key for.
 
         Returns
@@ -124,7 +124,7 @@ class CooldownCache:
 
         Parameters
         ----------
-        current:
+        current
             Current time to check the cache for.
         """
         current = current or time.time()
@@ -146,9 +146,9 @@ class CooldownCache:
 
         Parameters
         ----------
-        ctx:
+        ctx
             Context to get the bucket for.
-        current:
+        current
             Current time to check the bucket for.
 
         Returns
@@ -158,14 +158,17 @@ class CooldownCache:
         if self._type is BucketType.default:
             return self._cooldown
 
-        self._cleanup_cache(current)
+        current = current or time.time()
         key = self._bucket_key(ctx)
 
-        if key not in self._cache:
+        bucket = self._cache.get(key)
+        if bucket is not None and current > bucket._last + bucket.per:
+            del self._cache[key]
+            bucket = None
+
+        if bucket is None:
             bucket = self.create_bucket()
             self._cache[key] = bucket
-        else:
-            bucket = self._cache[key]
 
         return bucket
 
@@ -181,11 +184,11 @@ class CooldownCache:
 
         Parameters
         ----------
-        ctx:
+        ctx
             Context to update the rate limit for.
-        current:
+        current
             Current time to update the rate limit for.
-        tokens:
+        tokens
             Amount of tokens to remove from the rate limit.
 
         Returns
@@ -231,7 +234,7 @@ class Cooldown:
 
         Parameters
         ----------
-        current:
+        current
             The current time to check the tokens for.
 
         Returns
@@ -255,7 +258,7 @@ class Cooldown:
 
         Parameters
         ----------
-        current:
+        current
             The current time to check the retry after for.
 
         Returns
@@ -281,9 +284,9 @@ class Cooldown:
 
         Parameters
         ----------
-        current:
+        current
             The current time to update the rate limit for.
-        tokens:
+        tokens
             Amount of tokens to remove from the rate limit.
 
         Returns

@@ -2,29 +2,37 @@ import time
 
 from collections.abc import Iterator
 from datetime import datetime
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, NamedTuple
 
 from .. import utils
 from ..automod import AutoModRuleAction, PartialAutoModRule
+from ..channel import PartialChannel
 from ..colour import Colour
 from ..emoji import EmojiParser
-from ..enums import ReactionType, AutoModRuleTriggerType
+from ..enums import ReactionType, AutoModRuleTriggerType, ApplicationCommandPermissionType
+from ..member import Member
 from ..message import PartialMessage
+from ..role import PartialRole
+from ..user import PartialUser
 
 from .activity import Activity
 from .enums import StatusType, PollVoteActionType, ActivityType
 
 if TYPE_CHECKING:
-    from ..channel import BaseChannel, PartialChannel, Thread
+    from ..channel import BaseChannel, Thread
     from ..guild import Guild, PartialGuild
     from ..http import DiscordAPI
-    from ..member import Member, PartialMember, PartialThreadMember, ThreadMember
-    from ..user import User, PartialUser
+    from ..member import PartialMember, PartialThreadMember, ThreadMember
+    from ..user import User
 
 __all__ = (
+    "ApplicationCommandPermission",
     "AutomodExecution",
     "BulkDeletePayload",
+    "ChannelInfo",
     "ChannelPinsUpdate",
+    "GatewayRateLimited",
+    "GuildApplicationCommandPermissions",
     "GuildJoinRequest",
     "PlayingStatus",
     "PollVoteEvent",
@@ -51,13 +59,13 @@ class PlayingStatus:
         *,
         name: str | None = None,
         status: StatusType | str | int | None = None,
-        type: ActivityType | str | int | None = None,  # noqa: A002
+        type: ActivityType | str | int | None = None,  # ruff: ignore[builtin-argument-shadowing]
         url: str | None = None,
     ):
         self.since: int | None = None
         """ The timestamp of when the activity started, if applicable. """
 
-        self.name = name
+        self.name: str | None = name
         """ The name of the activity, if any. """
 
         self.status: StatusType | str | int | None = status
@@ -76,7 +84,7 @@ class PlayingStatus:
         elif isinstance(self.type, int):
             self.type = ActivityType(self.type)
 
-        self.url = None
+        self.url: str | None = None
         """ The url of the activity, if any. Only applicable for streaming activities. """
 
         if self.type == ActivityType.streaming:
@@ -162,16 +170,11 @@ class GuildJoinRequest:
         self._from_data(data)
 
     def _from_data(self, data: dict) -> None:
-        request = data.get("request", {})
-        if request:
+        if request := data.get("request", {}):
             self.user_id = utils.get_int(request, "user_id")
 
-            if request.get("user", None):
-                from ..user import User
-                self.user = User(
-                    state=self._state,
-                    data=request["user"]
-                )
+            if user := request.get("user", None):
+                self.user = self._state.bot.create_user_from_data(user)
 
             self.rejection_reason = request.get("rejection_reason", None)
 
@@ -202,17 +205,20 @@ class ChannelPinsUpdate:
 
 
 class Presence:
-    """ Represents a presence update event. """
+    """
+    Represents a presence update event.
+
+    Stores only the IDs, so a cached presence never keeps an old `Member` alive.
+    """
 
     __slots__ = (
         "_state",
         "activities",
         "desktop",
-        "guild",
+        "guild_id",
         "mobile",
         "status",
-        "type",
-        "user",
+        "user_id",
         "web",
     )
 
@@ -220,17 +226,17 @@ class Presence:
         self,
         *,
         state: "DiscordAPI",
-        user: "Member | PartialMember",
-        guild: "PartialGuild | Guild",
-        data: dict
+        data: dict,
+        user_id: int | None = None,
+        guild_id: int | None = None
     ):
         self._state = state
 
-        self.user = user
-        """ The user the presence update is for. """
+        self.user_id: int = user_id if user_id is not None else int(data["user"]["id"])
+        """ The ID of the user the presence update is for. """
 
-        self.guild = guild
-        """ The guild the presence update is for. """
+        self.guild_id: int = guild_id if guild_id is not None else int(data["guild_id"])
+        """ The ID of the guild the presence update is for. """
 
         self.status: StatusType = StatusType[data["status"]]
         """ The status of the presence update. """
@@ -254,20 +260,44 @@ class Presence:
 
     def __repr__(self) -> str:
         return (
-            f"<Presence user={self.user} "
-            f"guild={self.guild} activities={len(self.activities)}>"
+            f"<Presence user_id={self.user_id} "
+            f"guild_id={self.guild_id} activities={len(self.activities)}>"
         )
 
     def _from_data(self, data: dict) -> None:
-        client_status = data.get("client_status", {})
-        if client_status.get("desktop", None):
-            self.desktop = StatusType[client_status["desktop"]]
+        if not (client_status := data.get("client_status")):
+            return
 
-        if client_status.get("mobile", None):
-            self.mobile = StatusType[client_status["mobile"]]
+        if desktop := client_status.get("desktop", None):
+            self.desktop = StatusType[desktop]
 
-        if client_status.get("web", None):
-            self.web = StatusType[client_status["web"]]
+        if mobile := client_status.get("mobile", None):
+            self.mobile = StatusType[mobile]
+
+        if web := client_status.get("web", None):
+            self.web = StatusType[web]
+
+    @property
+    def guild(self) -> "Guild | PartialGuild":
+        """ The guild the presence update is for. """
+        bot = self._state.bot
+        return bot.cache.get_guild(self.guild_id) or bot.get_partial_guild(self.guild_id)
+
+    @property
+    def user(self) -> "Member | PartialMember":
+        """
+        The user the presence update is for.
+
+        Returns the cached guild member if available, otherwise a partial member.
+        """
+        bot = self._state.bot
+        if (
+            (guild := bot.cache.get_guild(self.guild_id)) is not None and
+            (member := guild.get_member(self.user_id)) is not None
+        ):
+            return member
+
+        return bot.get_partial_member(self.user_id, self.guild_id)
 
 
 class TypingStartEvent:
@@ -373,10 +403,16 @@ class AutomodExecution:
     @property
     def rule(self) -> PartialAutoModRule:
         """ A partial object of automod rule. """
-        return PartialAutoModRule(
-            state=self._state,
-            id=self.rule_id,
-            guild_id=self.guild.id
+        return self._state.bot.get_partial_automod_rule(self.rule_id, self.guild.id)
+
+    @property
+    def message(self) -> "PartialMessage | None":
+        """ The partial message that triggered the automod execution, if applicable. """
+        if not self.message_id or not self.channel:
+            return None
+
+        return self._state.bot.get_partial_message(
+            self.message_id, self.channel.id, self.guild.id
         )
 
 
@@ -388,7 +424,7 @@ class PollVoteEvent:
         "answer_id",
         "channel",
         "guild",
-        "message",
+        "message_id",
         "type",
         "user",
     )
@@ -400,7 +436,7 @@ class PollVoteEvent:
         user: "Member | PartialMember | PartialUser",
         channel: "PartialChannel",
         guild: "PartialGuild | None",
-        type: PollVoteActionType,  # noqa: A002
+        type: PollVoteActionType,  # ruff: ignore[builtin-argument-shadowing]
         data: dict
     ):
         self._state = state
@@ -414,13 +450,8 @@ class PollVoteEvent:
         self.channel: "PartialChannel" = channel
         """ The channel the poll is in. """
 
-        self.message: PartialMessage = PartialMessage(
-            state=self._state,
-            id=int(data["message_id"]),
-            channel_id=self.channel.id,
-            guild_id=self.guild.id if self.guild else None
-        )
-        """ The message the poll is in. """
+        self.message_id: int = int(data["message_id"])
+        """ The ID of the message the poll is in. """
 
         self.type: PollVoteActionType = type
         """ The type of the poll vote action, either "vote" or "unvote". """
@@ -432,6 +463,15 @@ class PollVoteEvent:
         return (
             f"<PollVoteEvent user={self.user} "
             f"answer={self.answer_id} type={self.type}>"
+        )
+
+    @property
+    def message(self) -> "PartialMessage":
+        """ The message the poll is in. """
+        return self._state.bot.get_partial_message(
+            self.message_id,
+            self.channel.id,
+            self.guild.id if self.guild else None
         )
 
 
@@ -495,16 +535,23 @@ class Reaction:
         )
 
     def _from_data(self, data: dict) -> None:
-        if data.get("burst_colour"):
-            self.burst_colour = Colour.from_hex(data["burst_colour"])
+        if burst_colour := data.get("burst_colour"):
+            self.burst_colour = Colour.from_hex(burst_colour)
 
-        if data.get("member"):
-            from ..member import Member
-            self.member = Member(
-                state=self._state,
-                guild=self.guild,  # type: ignore
-                data=data["member"]
-            )
+        if (member := data.get("member")) and self.guild_id:
+            cache_guild = self._state.cache.get_guild(self.guild_id)
+
+            if (
+                cache_guild is not None and
+                isinstance(cached := cache_guild.get_member(self.user_id), Member)
+            ):
+                # Already have an up-to-date full member, no need to build another
+                self.member = cached
+            else:
+                self.member = self._state.bot.create_member_from_data(
+                    member,
+                    guild=cache_guild or self._state.bot.get_partial_guild(self.guild_id)
+                )
 
     @property
     def guild(self) -> "Guild | PartialGuild | None":
@@ -512,12 +559,10 @@ class Reaction:
         if not self.guild_id:
             return None
 
-        cache = self._state.cache.get_guild(self.guild_id)
-        if cache:
+        if cache := self._state.cache.get_guild(self.guild_id):
             return cache
 
-        from ..guild import PartialGuild
-        return PartialGuild(state=self._state, id=self.guild_id)
+        return self._state.bot.get_partial_guild(self.guild_id)
 
     @property
     def channel(self) -> "PartialChannel | None":
@@ -538,11 +583,8 @@ class Reaction:
             if cache:
                 return cache
 
-        from ..channel import PartialChannel
-        return PartialChannel(
-            state=self._state,
-            id=self.channel_id,
-            guild_id=self.guild_id
+        return self._state.bot.get_partial_channel(
+            self.channel_id, guild_id=self.guild_id
         )
 
     @property
@@ -551,12 +593,22 @@ class Reaction:
         if not self.channel_id or not self.message_id:
             return None
 
-        return PartialMessage(
-            state=self._state,
-            channel_id=self.channel_id,
-            guild_id=self.guild_id,
-            id=self.message_id
+        return self._state.bot.get_partial_message(
+            self.message_id, self.channel_id, self.guild_id
         )
+
+    @property
+    def user(self) -> "PartialUser":
+        """ The partial user that made the reaction. """
+        return self._state.bot.get_partial_user(self.user_id)
+
+    @property
+    def message_author(self) -> "PartialUser | None":
+        """ The partial user that authored the message, if available. """
+        if not self.message_author_id:
+            return None
+
+        return self._state.bot.get_partial_user(self.message_author_id)
 
 
 class BulkDeletePayload:
@@ -586,12 +638,7 @@ class BulkDeletePayload:
         """ The channel the messages were deleted in. """
 
         self.messages: list[PartialMessage] = [
-            PartialMessage(
-                state=self._state,
-                id=int(g),
-                guild_id=guild.id,
-                channel_id=channel.id,
-            )
+            self._state.bot.get_partial_message(int(g), channel.id, guild.id)
             for g in data["ids"]
         ]
         """ The messages that were deleted. """
@@ -641,10 +688,10 @@ class ThreadListSyncPayload:
         if not self._threads:
             return []
 
-        from ..channel import Thread
-
-        state = self._state
-        return [Thread(state=state, data=t) for t in self._threads]
+        return [
+            self._state.bot.create_thread_from_data(t)
+            for t in self._threads
+        ]
 
     @property
     def members(self) -> list["PartialThreadMember"]:
@@ -652,15 +699,10 @@ class ThreadListSyncPayload:
         if not self._members:
             return []
 
-        from ..member import PartialThreadMember
-
         guild = self.guild
-        state = self._state
         return [
-            PartialThreadMember(
-                state=state,
-                data=m,
-                guild_id=guild.id,
+            self._state.bot.create_partial_thread_member_from_data(
+                m, guild_id=guild.id
             )
             for m in self._members
         ]
@@ -700,7 +742,7 @@ class ThreadListSyncPayload:
 
             thread_members = []
             for member in members:
-                if member.id == thread.id:
+                if member.thread_id == thread.id:
                     thread_members.append(member)
 
             yield (parent_channel, (thread, thread_members))
@@ -760,14 +802,8 @@ class ThreadMembersUpdatePayload:
         guild = self.guild
         state = self._state
 
-        from ..member import ThreadMember
-
         return [
-            ThreadMember(
-                state=state,
-                guild=guild,
-                data=m,
-            )
+            state.bot.create_thread_member_from_data(m, guild=guild)
             for m in self._added_members
         ]
 
@@ -784,3 +820,105 @@ class ThreadMembersUpdatePayload:
 
     def __repr__(self) -> str:
         return f"<ThreadMembersUpdatePayload id={self.id} guild_id={self.guild_id}>"
+
+
+class GatewayRateLimited(NamedTuple):
+    """ Represents a gateway opcode rate limit notice. """
+    opcode: int
+    retry_after: float
+    meta: dict
+
+
+class ChannelInfo(NamedTuple):
+    """ Represents the ephemeral data of a channel, sent in response to a channel info request. """
+    channel: "BaseChannel | PartialChannel"
+    status: str | None
+    voice_start_time: datetime | None
+
+
+class ApplicationCommandPermission:
+    """ Represents a single permission overwrite for an application command in a guild. """
+
+    __slots__ = (
+        "id",
+        "permission",
+        "target",
+        "type",
+    )
+
+    def __init__(self, *, state: "DiscordAPI", guild_id: int, data: dict):
+        self.id: int = int(data["id"])
+        """ The ID of the role, user, or channel this permission applies to. """
+
+        self.target: "PartialRole | PartialUser | PartialChannel | None" = None
+        """
+        The resolved target of the permission, based on `id` and `type`.
+
+        `None` if `id` is one of Discord's special constants instead of a real
+        entity (`@everyone` for all members when `type` is user, or `guild_id - 1`
+        for all channels when `type` is channel).
+        """
+
+        self.type: ApplicationCommandPermissionType = ApplicationCommandPermissionType(data["type"])
+        """ Whether `id` refers to a role, a user, or a channel. """
+
+        self.permission: bool = data["permission"]
+        """ Whether the command is allowed (`True`) or denied (`False`) for the target. """
+
+        match self.type:
+            case ApplicationCommandPermissionType.role:
+                # The literal @everyone role's ID always equals guild_id, so
+                # this is a real role - no special constant to guard against.
+                self.target = state.bot.get_partial_role(self.id, guild_id)
+            case ApplicationCommandPermissionType.user:
+                if self.id != guild_id:  # guild_id itself means "all members"
+                    self.target = state.bot.get_partial_user(self.id)
+            case ApplicationCommandPermissionType.channel:
+                if self.id != guild_id - 1:  # guild_id - 1 means "all channels"
+                    self.target = state.bot.get_partial_channel(self.id, guild_id=guild_id)
+
+    def __repr__(self) -> str:
+        return f"<ApplicationCommandPermission id={self.id} type={self.type} permission={self.permission}>"
+
+
+class GuildApplicationCommandPermissions:
+    """ Represents the permissions for an application command (or all commands) in a guild. """
+
+    __slots__ = (
+        "_state",
+        "application_id",
+        "guild_id",
+        "id",
+        "permissions",
+    )
+
+    def __init__(self, *, state: "DiscordAPI", data: dict):
+        self._state = state
+
+        self.id: int = int(data["id"])
+        """ The ID of the command, or the application ID if these are the guild's default command permissions. """
+
+        self.application_id: int = int(data["application_id"])
+        """ The ID of the application the command belongs to. """
+
+        self.guild_id: int = int(data["guild_id"])
+        """ The ID of the guild the permissions are set in. """
+
+        self.permissions: list[ApplicationCommandPermission] = [
+            ApplicationCommandPermission(state=state, guild_id=self.guild_id, data=g)
+            for g in data.get("permissions", [])
+        ]
+        """ The permission overwrites for the command. """
+
+    def __repr__(self) -> str:
+        return f"<GuildApplicationCommandPermissions id={self.id} guild_id={self.guild_id}>"
+
+    @property
+    def guild(self) -> "PartialGuild":
+        """ The guild the permissions are set in. """
+        bot = self._state.bot
+        return bot.cache.get_guild(self.guild_id) or bot.get_partial_guild(self.guild_id)
+
+    def is_default(self) -> bool:
+        """ Whether these are the guild's default command permissions, rather than for one specific command. """
+        return self.id == self.application_id

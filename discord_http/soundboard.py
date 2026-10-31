@@ -5,6 +5,7 @@ from .file import File
 from .object import PartialBase
 
 if TYPE_CHECKING:
+    from .emoji import PartialEmoji
     from .guild import PartialGuild, Guild
     from .http import DiscordAPI
 
@@ -22,21 +23,17 @@ class PartialSoundboardSound(PartialBase):
     __slots__ = (
         "_state",
         "guild_id",
-        "sound_id",
     )
 
     def __init__(
         self,
         *,
         state: "DiscordAPI",
-        id: int,  # noqa: A002
+        id: int,  # ruff: ignore[builtin-argument-shadowing]
         guild_id: int | None = None
     ):
         super().__init__(id=int(id))
         self._state = state
-
-        self.sound_id: int = self.id
-        """ The ID of the soundboard sound. """
 
         self.guild_id: int | None = guild_id
         """ The ID of the guild this soundboard sound is in, if any. """
@@ -48,40 +45,35 @@ class PartialSoundboardSound(PartialBase):
         return "PartialSoundboardSound"
 
     @property
+    def sound_id(self) -> int:
+        """ The ID of the soundboard sound (alias of `id`). """
+        return self.id
+
+    @property
     def guild(self) -> "Guild | PartialGuild | None":
         """
         The guild this soundboard sound is in.
 
-        Returns
-        -------
-            The guild this soundboard sound is in
-
         Raises
         ------
-        `ValueError`
+        ValueError
             guild_id is not defined, unable to create PartialGuild
         """
         if not self.guild_id:
             return None
 
-        cache = self._state.cache.get_guild(self.guild_id)
-        if cache:
+        if cache := self._state.cache.get_guild(self.guild_id):
             return cache
 
-        from .guild import PartialGuild
-        return PartialGuild(state=self._state, id=self.guild_id)
+        return self._state.bot.get_partial_guild(self.guild_id)
 
     async def fetch(self) -> "SoundboardSound":
         """
         Returns the soundboard sound data.
 
-        Returns
-        -------
-            The soundboard sound data
-
         Raises
         ------
-        `ValueError`
+        ValueError
             Soundboard sound does not belong to a guild
         """
         if self.guild is None:
@@ -89,13 +81,11 @@ class PartialSoundboardSound(PartialBase):
 
         r = await self._state.query(
             "GET",
-            f"/guild/{self.guild_id}/soundboard-sounds/{self.id}"
+            f"/guilds/{self.guild_id}/soundboard-sounds/{self.id}"
         )
 
-        return SoundboardSound(
-            state=self._state,
-            data=r.response,
-            guild=self.guild,
+        return self._state.bot.create_soundboard_sound_from_data(
+            r.response, guild=self.guild
         )
 
     async def delete(
@@ -108,12 +98,12 @@ class PartialSoundboardSound(PartialBase):
 
         Parameters
         ----------
-        reason:
+        reason
             The reason for deleting the soundboard sound
 
         Raises
         ------
-        `ValueError`
+        ValueError
             Soundboard sound does not belong to a guild
         """
         if self.guild_id is None:
@@ -130,7 +120,7 @@ class PartialSoundboardSound(PartialBase):
         self,
         *,
         name: "str | MISSING" = MISSING,
-        volume: "int | MISSING" = MISSING,
+        volume: "float | MISSING" = MISSING,
         emoji_name: "str | MISSING" = MISSING,
         emoji_id: "str | MISSING" = MISSING,
         icon: "File | bytes | MISSING" = MISSING,
@@ -141,17 +131,17 @@ class PartialSoundboardSound(PartialBase):
 
         Parameters
         ----------
-        name:
+        name
             The new name of the soundboard sound
-        volume:
-            The new volume of the soundboard sound
-        emoji_name:
+        volume
+            The new volume of the soundboard sound, from 0 to 1
+        emoji_name
             The new unicode emoji of the soundboard sound
-        emoji_id:
+        emoji_id
             The ID of the new custom emoji of the soundboard sound
-        icon:
+        icon
             The new icon of the soundboard sound
-        reason:
+        reason
             The reason for editing the soundboard sound
 
         Returns
@@ -160,7 +150,7 @@ class PartialSoundboardSound(PartialBase):
 
         Raises
         ------
-        `ValueError`
+        ValueError
             - If both `emoji_name` and `emoji_id` are set
             - If there were no changes applied to the soundboard sound
             - Soundboard sound does not belong to a guild
@@ -196,10 +186,8 @@ class PartialSoundboardSound(PartialBase):
                 reason=reason
             )
 
-            sound = SoundboardSound(
-                state=self._state,
-                guild=self.guild,
-                data=r.response
+            sound = self._state.bot.create_soundboard_sound_from_data(
+                r.response, guild=self.guild
             )
 
         if not sound:
@@ -232,19 +220,19 @@ class SoundboardSound(PartialSoundboardSound):
         super().__init__(
             state=state,
             id=int(data["sound_id"]),
-            guild_id=guild.id if guild else None
+            guild_id=guild.id if guild else utils.get_int(data, "guild_id")
         )
 
         self.name: str = data["name"]
         """ The name of the soundboard sound. """
 
-        self.volume: int = data["volume"]
+        self.volume: float = data["volume"]
         """ The volume of the soundboard sound. """
 
         self.emoji_id: int | None = utils.get_int(data, "emoji_id")
         """ The ID of the custom emoji used for the soundboard sound, if any. """
 
-        self.emoji_name: int | None = data.get("emoji_name")
+        self.emoji_name: str | None = data.get("emoji_name")
         """ The unicode emoji used for the soundboard sound, if any. """
 
         self.available: bool = data["available"]
@@ -255,3 +243,11 @@ class SoundboardSound(PartialSoundboardSound):
 
     def __repr__(self) -> str:
         return f"<SoundboardSound id={self.id} name='{self.name}'>"
+
+    @property
+    def emoji(self) -> "PartialEmoji | None":
+        """ The partial custom emoji used for the soundboard sound, if any. """
+        if not self.emoji_id:
+            return None
+
+        return self._state.bot.get_partial_emoji(self.emoji_id, guild_id=self.guild_id)

@@ -53,6 +53,61 @@ Webhook
   :param data: :class:`dict` raw dictionary with the interaction data sent by Discord.
 
 
+Webhook Events
+--------------
+.. note::
+  Webhook Events are a separate feature from Interactions and Gateway events. Discord sends them as plain HTTP
+  requests to a **Webhook Events URL**, which is configured independently from your Interactions Endpoint URL.
+
+  To receive them, set ``webhook_events_path`` when creating your client (it is ``None``/disabled by default):
+
+  .. code-block:: python
+
+    from discord_http import Client
+
+    client = Client(
+        ...,
+        webhook_events_path="/webhook-events"
+    )
+
+  Then, in the Discord Developer Portal, set your application's **Webhook Events URL** to
+  ``https://yourdomain.com/webhook-events`` (matching the path you chose above). Discord will send a PING to that
+  URL to verify it right after you save it.
+
+  Unlike the events in the *Gateway events* category, these do not require the gateway or ``intents`` and work purely
+  over HTTP, the same way Interactions do.
+
+.. function:: async def on_application_authorized(user, guild, scopes, integration_type)
+
+  Called whenever a user authorizes (installs) the application.
+
+  :param scopes: list[:class:`str`] the OAuth2 scopes that were authorized.
+  :param user: :class:`User` object with information about the user that authorized the application.
+  :param guild: :class:`Guild` | ``None`` object with information about the guild the application was installed to, only if it was installed to a guild.
+  :param integration_type: :class:`IntegrationType` | ``None`` whether the app was installed to a guild or to a user account.
+
+
+.. function:: async def on_application_deauthorized(user)
+
+  Called whenever a user removes (deauthorizes) the application.
+
+  :param user: :class:`User` object with information about the user that deauthorized the application.
+
+
+.. function:: async def on_raw_webhook_event(data)
+
+  Called whenever any webhook event payload is received from Discord, including ones the library does not turn
+  into a named event (e.g. Social SDK-only events, which are not usable by bots).
+  In order to use this event, you must have `Client.debug_events` set to True, otherwise it will not be called.
+
+  :param data: :class:`dict` raw dictionary with the webhook event payload sent by Discord.
+
+.. note::
+  ``on_entitlement_create``, ``on_entitlement_update`` and ``on_entitlement_delete`` (documented under *Global
+  events*) are also dispatched here whenever Discord delivers them as Webhook Events instead of Gateway events, so
+  a single listener works regardless of which transport is configured.
+
+
 Errors
 ------
 .. function:: async def on_event_error(client, error)
@@ -87,8 +142,7 @@ Gateway events
 
     client = Client(
         ...,
-        enable_gateway=True,
-        # intents=Intents
+        intents=Intents.guilds  # Any intents start the gateway
     )
 
 
@@ -109,6 +163,59 @@ Global events
   :param entitlement: :class:`Entitlements` object with information about the entitlement.
 
 
+.. function:: async def on_entitlement_delete(entitlement):
+
+  Called whenever an entitlement is deleted
+
+  :param entitlement: :class:`Entitlements` object with information about the entitlement.
+
+
+.. function:: async def on_subscription_create(subscription):
+
+  Called whenever a subscription is created
+
+  :param subscription: :class:`Subscription` object with information about the subscription.
+
+
+.. function:: async def on_subscription_update(subscription):
+
+  Called whenever a subscription is updated
+
+  :param subscription: :class:`Subscription` object with information about the subscription.
+
+
+.. function:: async def on_subscription_delete(subscription):
+
+  Called whenever a subscription is deleted
+
+  :param subscription: :class:`Subscription` object with information about the subscription.
+
+
+.. function:: async def on_user_update(user):
+
+  Called whenever the bot's own user is updated
+
+  :param user: :class:`User` object with the updated information about the bot's user.
+
+
+.. function:: async def on_application_command_permissions_update(permissions):
+
+  Called whenever the permissions of an application command are updated in a guild
+
+  :param permissions: :class:`GuildApplicationCommandPermissions` object with information about the updated permissions.
+
+
+.. function:: async def on_rate_limited(payload):
+
+  Called whenever the shard gets rate limited on a gateway opcode (currently only opcode 8, Request Guild Members).
+
+  .. note::
+    If this was caused by a pending `chunk_guild`/`fetch_members` call, that call's waiter is failed immediately
+    with a `RuntimeError` instead of only timing out after 30 seconds.
+
+  :param payload: :class:`GatewayRateLimited` object with information about the rate limit.
+
+
 Shard events
 ~~~~~~~~~~~~
 
@@ -116,6 +223,13 @@ Shard events
   These events are only provided if discord.http/gateway is enabled.
   By default if the gateway is enabled, they will do ``[  INFO ]`` logs.
   You can in theory listen to the events and simply do nothing to disable the logs.
+
+.. function:: async def on_gateway_ready(client):
+
+  Called once every shard has become ready, meaning the whole gateway connection is now fully ready.
+
+  :param client: :class:`Client` The client object.
+
 
 .. function:: async def on_shard_ready(shard):
 
@@ -244,6 +358,41 @@ Intents.guilds
   Called whenever a channel's pins are updated
 
   :param payload: :class:`ChannelPinsUpdate` object with information about the pins.
+
+
+.. function:: async def on_voice_channel_status_update(guild, channel, status):
+
+  Called whenever a voice channel's status is updated
+
+  .. note::
+    Depending on your cache rules, channel will either return Full or Partial object.
+
+  :param guild: :class:`Guild` | :class:`PartialGuild` object with information about the guild.
+  :param channel: :class:`BaseChannel` | :class:`PartialChannel` object with information about the voice channel.
+  :param status: :class:`str` | ``None`` the new status of the voice channel, or ``None`` if it was cleared.
+
+
+.. function:: async def on_voice_channel_start_time_update(guild, channel, start_time):
+
+  Called whenever a voice channel's session start time is updated
+
+  .. note::
+    Depending on your cache rules, channel will either return Full or Partial object.
+
+  :param guild: :class:`Guild` | :class:`PartialGuild` object with information about the guild.
+  :param channel: :class:`BaseChannel` | :class:`PartialChannel` object with information about the voice channel.
+  :param start_time: :class:`datetime.datetime` | ``None`` the new voice session start time, or ``None`` if there is no active session.
+
+
+.. function:: async def on_channel_info(guild, channels):
+
+  Called in response to :meth:`Shard.request_channel_info`
+
+  .. note::
+    Depending on your cache rules, guild and channels[].channel will either return Full or Partial object.
+
+  :param guild: :class:`Guild` | :class:`PartialGuild` object with information about the guild.
+  :param channels: list[:class:`ChannelInfo`] object with the requested status and voice start time of each channel.
 
 
 .. function:: async def on_thread_create(thread):
@@ -469,6 +618,17 @@ Intents.guild_expressions
   .. note::
     Depending on your cache rules, sounds[].guild will either return Full or Partial object.
 
+  :param sounds: list[:class:`SoundboardSound`] object with information about the soundboard sounds.
+
+
+.. function:: async def on_soundboard_sounds(guild, sounds):
+
+  Called in response to :meth:`Shard.request_soundboard_sounds`, once per requested guild
+
+  .. note::
+    Depending on your cache rules, guild will either return Full or Partial object.
+
+  :param guild: :class:`Guild` | :class:`PartialGuild` object with information about the guild.
   :param sounds: list[:class:`SoundboardSound`] object with information about the soundboard sounds.
 
 

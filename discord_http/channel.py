@@ -1,11 +1,13 @@
 # flake8: noqa: E731
 import asyncio
 import builtins
+import itertools
 import time
 
+from collections import deque
 from collections.abc import AsyncIterator, Callable, Generator
 from datetime import datetime, timedelta
-from typing import TYPE_CHECKING, Any, Self, overload, Literal
+from typing import TYPE_CHECKING, Self, overload, Literal
 
 from . import utils
 from .embeds import Embed
@@ -14,7 +16,7 @@ from .errors import NotFound
 from .enums import (
     ChannelType, ResponseType, VideoQualityType,
     SortOrderType, ForumLayoutType, PrivacyLevelType,
-    InviteTargetType
+    InviteTargetType, PermissionType
 )
 from .file import File
 from .flags import PermissionOverwrite, ChannelFlags, Permissions, MessageFlags
@@ -22,7 +24,7 @@ from .mentions import AllowedMentions
 from .object import PartialBase, Snowflake
 from .response import MessageResponse
 from .view import View
-from .webhook import Webhook
+from .webhook import Webhook, PartialWebhook
 
 if TYPE_CHECKING:
     from .guild import Guild, PartialGuild, PartialScheduledEvent
@@ -30,7 +32,8 @@ if TYPE_CHECKING:
     from .invite import Invite
     from .member import Member
     from .member import ThreadMember
-    from .message import PartialMessage, Message, Poll
+    from .message import PartialMessage, Message, MessagePin, Poll, SharedClientTheme
+    from .sticker import PartialSticker
     from .user import PartialUser, User
     from .voice.client import VoiceClient
 
@@ -49,16 +52,16 @@ __all__ = (
     "NewsThread",
     "PartialChannel",
     "PartialThread",
-    "PartialVoiceState",
     "PrivateThread",
     "PublicThread",
     "StageChannel",
+    "StageInstance",
     "StoreChannel",
     "TextChannel",
     "Thread",
+    "Typing",
     "VoiceChannel",
     "VoiceRegion",
-    "VoiceState",
 )
 
 
@@ -85,10 +88,10 @@ class Typing:
         self.task: asyncio.Task | None = None
         """ The task for the typing loop, if using `async with`. """
 
-        self.loop = state.bot.loop
+        self.loop: asyncio.AbstractEventLoop = state.bot.loop
         """ The event loop to use for the typing indicator. """
 
-        self.channel = channel
+        self.channel: "PartialChannel" = channel
         """ The channel the typing indicator is for. """
 
     def __await__(self) -> Generator[None, None, None]:
@@ -102,7 +105,7 @@ class Typing:
         )
         self.task.add_done_callback(_typing_done_callback)
 
-    async def __aexit__(self, *args) -> None:  # noqa: ANN002
+    async def __aexit__(self, *args) -> None:  # ruff: ignore[missing-type-args]
         if self.task:
             self.task.cancel()
 
@@ -137,8 +140,9 @@ class PartialChannel(PartialBase):
         self,
         *,
         state: "DiscordAPI",
-        id: int,  # noqa: A002
-        guild_id: int | None = None
+        id: int,  # ruff: ignore[builtin-argument-shadowing]
+        guild_id: int | None = None,
+        parent_id: int | None = None
     ):
         super().__init__(id=int(id))
         self._state = state
@@ -146,7 +150,7 @@ class PartialChannel(PartialBase):
         self.guild_id: int | None = int(guild_id) if guild_id else None
         """ The ID of the guild the channel belongs to, if any. """
 
-        self.parent_id: int | None = None
+        self.parent_id: int | None = int(parent_id) if parent_id else None
         """ The ID of the parent channel or category, if any. """
 
         self._raw_type: int | None = None
@@ -179,12 +183,10 @@ class PartialChannel(PartialBase):
         if not self.guild_id:
             return None
 
-        cache = self._state.cache.get_guild(self.guild_id)
-        if cache:
+        if cache := self._state.cache.get_guild(self.guild_id):
             return cache
 
-        from .guild import PartialGuild
-        return PartialGuild(state=self._state, id=self.guild_id)
+        return self._state.bot.get_partial_guild(self.guild_id)
 
     @property
     def channel(self) -> "BaseChannel | CategoryChannel | PartialChannel | None":
@@ -202,11 +204,7 @@ class PartialChannel(PartialBase):
             if cache:
                 return cache
 
-        return PartialChannel(
-            state=self._state,
-            id=self.id,
-            guild_id=self.guild_id
-        )
+        return self._state.bot.get_partial_channel(self.id, guild_id=self.guild_id)
 
     @property
     def parent(self) -> "BaseChannel | CategoryChannel | PartialChannel | None":
@@ -227,13 +225,9 @@ class PartialChannel(PartialBase):
             if cache:
                 return cache
 
-        return PartialChannel(
-            state=self._state,
-            id=self.parent_id,
-            guild_id=self.guild_id
-        )
+        return self._state.bot.get_partial_channel(self.parent_id, guild_id=self.guild_id)
 
-    def permissions_for(self, member: "Member") -> Permissions:  # noqa: ARG002
+    def permissions_for(self, member: "Member") -> Permissions:  # ruff: ignore[unused-method-argument]
         """
         Returns the permissions for a member in the channel.
 
@@ -241,7 +235,7 @@ class PartialChannel(PartialBase):
 
         Parameters
         ----------
-        member:
+        member
             The member to get the permissions for.
 
         Returns
@@ -256,19 +250,15 @@ class PartialChannel(PartialBase):
 
         Parameters
         ----------
-        message_id:
+        message_id
             The message ID to get the partial message from
 
         Returns
         -------
             The partial message object
         """
-        from .message import PartialMessage
-        return PartialMessage(
-            state=self._state,
-            channel_id=self.id,
-            guild_id=self.guild_id,
-            id=message_id,
+        return self._state.bot.get_partial_message(
+            message_id, self.id, self.guild_id
         )
 
     async def fetch_message(self, message_id: int) -> "Message":
@@ -277,7 +267,7 @@ class PartialChannel(PartialBase):
 
         Parameters
         ----------
-        message_id:
+        message_id
             The message ID to fetch
 
         Returns
@@ -289,89 +279,161 @@ class PartialChannel(PartialBase):
             f"/channels/{self.id}/messages/{message_id}"
         )
 
-        from .message import Message
-        return Message(
-            state=self._state,
-            data=r.response,
-            guild=self.guild
+        return self._state.bot.create_message_from_data(
+            r.response, guild=self.guild
         )
 
-    async def fetch_pins(self) -> list["Message"]:
+    async def fetch_pins(
+        self,
+        *,
+        before: datetime | None = None,
+        limit: int | None = 50
+    ) -> AsyncIterator["MessagePin"]:
         """
-        Fetch all pinned messages for the channel in question.
+        Fetch the pinned messages for the channel in question, newest pin first.
 
-        Returns
-        -------
-            The list of pinned messages
+        Parameters
+        ----------
+        before
+            Get messages pinned before this timestamp
+        limit
+            The maximum amount of pins to fetch.
+            `None` will fetch all pins.
+
+        Yields
+        ------
+            The pinned message, along with when it was pinned
         """
-        r = await self._state.query(
-            "GET",
-            f"/channels/{self.id}/pins"
-        )
+        from .message import MessagePin  # Circular import
 
-        from .message import Message
-        return [
-            Message(
-                state=self._state,
-                data=data,
-                guild=self.guild
+        while True:
+            http_limit: int = 50 if limit is None else min(limit, 50)
+            if http_limit <= 0:
+                break
+
+            params: dict[str, int | str] = {"limit": http_limit}
+            if before is not None:
+                params["before"] = before.isoformat()
+
+            r = await self._state.query(
+                "GET",
+                f"/channels/{self.id}/messages/pins",
+                params=params
             )
-            for data in r.response
-        ]
+
+            for data in r.response["items"]:
+                before = utils.parse_time(data["pinned_at"])
+                yield MessagePin(
+                    pinned_at=before,
+                    message=self._state.bot.create_message_from_data(
+                        data["message"], guild=self.guild
+                    )
+                )
+
+            if limit is not None:
+                limit -= len(r.response["items"])
+
+            if not r.response["has_more"]:
+                break
 
     async def follow_announcement_channel(
         self,
-        source_channel_id: Snowflake | int
-    ) -> None:
+        source_channel_id: Snowflake | int,
+        *,
+        reason: str | None = None
+    ) -> PartialWebhook:
         """
         Follow an announcement channel to send messages to the webhook.
 
         Parameters
         ----------
-        source_channel_id:
+        source_channel_id
             The channel ID to follow
+        reason
+            The reason for following the announcement channel
+
+        Returns
+        -------
+            The webhook created in this channel for the followed channel
         """
-        await self._state.query(
+        r = await self._state.query(
             "POST",
-            f"/channels/{source_channel_id}/followers",
-            json={"webhook_channel_id": self.id},
-            res_method="text"
+            f"/channels/{int(source_channel_id)}/followers",
+            json={"webhook_channel_id": str(self.id)},
+            reason=reason
         )
 
-    async def fetch_archived_public_threads(self) -> list["PublicThread"]:
+        return self._state.bot.get_partial_webhook(
+            int(r.response["webhook_id"])
+        )
+
+    async def fetch_invites(self) -> list["Invite"]:
+        """ Fetch all the invites for the channel. """
+        r = await self._state.query(
+            "GET",
+            f"/channels/{self.id}/invites"
+        )
+
+        return [
+            self._state.bot.create_invite_from_data(data)
+            for data in r.response
+        ]
+
+    async def fetch_archived_public_threads(
+        self,
+        *,
+        before: datetime | None = None,
+        limit: int | None = None
+    ) -> list["PublicThread"]:
         """
         Fetch all archived public threads.
+
+        Parameters
+        ----------
+        before
+            Only fetch threads archived before this time
+        limit
+            The maximum amount of threads to fetch
 
         Returns
         -------
             The list of public threads
         """
+        params = {}
+        if before is not None:
+            params["before"] = before.isoformat()
+        if limit is not None:
+            params["limit"] = int(limit)
+
         r = await self._state.query(
             "GET",
-            f"/channels/{self.id}/threads/archived/public"
+            f"/channels/{self.id}/threads/archived/public",
+            params=params
         )
 
-        from .channel import PublicThread
         return [
-            PublicThread(
-                state=self._state,
-                data=data
-            )
-            for data in r.response
+            self._state.bot.create_public_thread_from_data(data)
+            for data in r.response["threads"]
         ]
 
     async def fetch_archived_private_threads(
         self,
         *,
-        client: bool = False
+        client: bool = False,
+        before: datetime | None = None,
+        limit: int | None = None
     ) -> list["PrivateThread"]:
         """
         Fetch all archived private threads.
 
         Parameters
         ----------
-        client:
+        client
             If it should fetch only where the client is a member of the thread
+        before
+            Only fetch threads archived before this time
+        limit
+            The maximum amount of threads to fetch
 
         Returns
         -------
@@ -381,15 +443,21 @@ class PartialChannel(PartialBase):
         if client:
             path = f"/channels/{self.id}/users/@me/threads/archived/private"
 
-        r = await self._state.query("GET", path)
-
-        from .channel import PrivateThread
-        return [
-            PrivateThread(
-                state=self._state,
-                data=data
+        params = {}
+        if before is not None:
+            # The joined endpoint paginates by thread ID instead of archive time
+            params["before"] = (
+                utils.normalize_entity_id(before)
+                if client else before.isoformat()
             )
-            for data in r.response
+        if limit is not None:
+            params["limit"] = int(limit)
+
+        r = await self._state.query("GET", path, params=params)
+
+        return [
+            self._state.bot.create_private_thread_from_data(data)
+            for data in r.response["threads"]
         ]
 
     async def create_invite(
@@ -404,33 +472,38 @@ class PartialChannel(PartialBase):
         target_application_id: Snowflake | int | None = None,
         user_ids: list[Snowflake | int] | None = None,
         role_ids: list[Snowflake | int] | None = None,
+        reason: str | None = None,
     ) -> "Invite":
         """
         Create an invite for the channel.
 
         Parameters
         ----------
-        max_age:
+        max_age
             How long the invite should last
-        max_uses:
+        max_uses
             The maximum amount of uses for the invite
-        temporary:
+        temporary
             If the invite should be temporary
-        unique:
+        unique
             If the invite should be unique
-        target_type:
+        target_type
             The type of target for this voice channel invite
-        target_user_id:
+        target_user_id
             The ID of the user whose stream to display for this invite.
             (Requiresd if target_type is `InviteTargetType.stream`)
-        target_application_id:
+        target_application_id
             The ID of the embedded application to open for this invite.
             (Requiresd if target_type is `InviteTargetType.embedded_application`)
-        user_ids:
+        user_ids
             The users to be able to use this invite.
             Any users not in this list, will see the invite as "invalid".
-        role_ids:
+            Up to 1000 users are sent directly, anything above is uploaded
+            as a CSV file and processed in the background by Discord.
+        role_ids
             The roles to be able to use this invite
+        reason
+            The reason for creating the invite
 
         Returns
         -------
@@ -457,7 +530,9 @@ class PartialChannel(PartialBase):
         if role_ids is not None:
             payload["role_ids"] = [str(int(role_id)) for role_id in role_ids]
 
-        if user_ids is not None:
+        if user_ids is not None and len(user_ids) <= 1000:
+            payload["target_user_ids"] = [str(int(user_id)) for user_id in user_ids]
+        elif user_ids is not None:
             csv_content = "\n".join(str(int(user_id)) for user_id in user_ids)
             multidata.attach(
                 "target_users_file",
@@ -472,14 +547,11 @@ class PartialChannel(PartialBase):
             "POST",
             f"/channels/{self.id}/invites",
             headers={"Content-Type": multidata.content_type},
-            data=multidata.finish()
+            data=multidata.finish(),
+            reason=reason
         )
 
-        from .invite import Invite
-        return Invite(
-            state=self._state,
-            data=r.response
-        )
+        return self._state.bot.create_invite_from_data(r.response)
 
     async def connect(
         self,
@@ -574,10 +646,14 @@ class PartialChannel(PartialBase):
         files: list[File] | None = MISSING,
         view: View | None = MISSING,
         tts: bool | None = False,
-        type: ResponseType | int = 4,  # noqa: A002
+        type: ResponseType | int = 4,  # ruff: ignore[builtin-argument-shadowing]
         poll: "Poll | None" = MISSING,
         flags: MessageFlags | None = MISSING,
         allowed_mentions: AllowedMentions | None = MISSING,
+        stickers: list["PartialSticker | Snowflake | int"] | None = MISSING,
+        nonce: int | str | None = MISSING,
+        enforce_nonce: bool = False,
+        shared_client_theme: "SharedClientTheme | None" = MISSING,
         delete_after: float | None = None
     ) -> "Message":
         """
@@ -585,29 +661,37 @@ class PartialChannel(PartialBase):
 
         Parameters
         ----------
-        content:
+        content
             Cotnent of the message
-        embed:
+        embed
             Includes an embed object
-        embeds:
+        embeds
             List of embed objects
-        file:
+        file
             A file object
-        files:
+        files
             A list of file objects
-        view:
+        view
             Send components to the message
-        tts:
+        tts
             If the message should be sent as a TTS message
-        type:
+        type
             The type of response to the message
-        allowed_mentions:
+        allowed_mentions
             The allowed mentions for the message
-        poll:
+        poll
             The poll to be sent
-        flags:
+        flags
             Flags of the message
-        delete_after:
+        stickers
+            Stickers from the guild to send with the message, max 3
+        nonce
+            Nonce to verify the message was sent, max 25 characters
+        enforce_nonce
+            Whether the nonce should be enforced, returning the existing message if it was already sent
+        shared_client_theme
+            Client theme to share with the message
+        delete_after
             How long to wait before deleting the message
 
         Returns
@@ -625,6 +709,10 @@ class PartialChannel(PartialBase):
             type=type,
             poll=poll,
             flags=flags,
+            stickers=stickers,
+            nonce=nonce,
+            enforce_nonce=enforce_nonce,
+            shared_client_theme=shared_client_theme,
             allowed_mentions=(
                 allowed_mentions or
                 self._state.bot._default_allowed_mentions
@@ -634,15 +722,10 @@ class PartialChannel(PartialBase):
         r = await self._state.query(
             "POST",
             f"/channels/{self.id}/messages",
-            data=payload.to_multipart(is_request=True),
-            headers={"Content-Type": payload.content_type}
+            **payload.to_request()
         )
 
-        from .message import Message
-        msg = Message(
-            state=self._state,
-            data=r.response
-        )
+        msg = self._state.bot.create_message_from_data(r.response)
 
         if delete_after is not None:
             await msg.delete(delay=float(delete_after))
@@ -655,32 +738,15 @@ class PartialChannel(PartialBase):
 
         Parameters
         ----------
-        channel_type:
+        channel_type
             The raw channel type from the API data
 
         Returns
         -------
             The channel class type
         """
-        match channel_type:
-            case x if x in (ChannelType.guild_text, ChannelType.guild_news):
-                return TextChannel
-            case ChannelType.guild_voice:
-                return VoiceChannel
-            case ChannelType.guild_category:
-                return CategoryChannel
-            case ChannelType.guild_news_thread:
-                return NewsThread
-            case ChannelType.guild_public_thread:
-                return PublicThread
-            case ChannelType.guild_private_thread:
-                return PrivateThread
-            case ChannelType.guild_stage_voice:
-                return StageChannel
-            case ChannelType.guild_forum:
-                return ForumChannel
-            case _:
-                return BaseChannel
+        # A dict lookup on the raw int, every channel and thread parse goes through here
+        return _CHANNEL_CLASSES.get(channel_type, BaseChannel)
 
     @classmethod
     def from_dict(
@@ -697,11 +763,11 @@ class PartialChannel(PartialBase):
 
         Parameters
         ----------
-        state:
+        state
             The state to use
-        data:
+        data
             Data provided by Discord API
-        guild_id:
+        guild_id
             The ID of the guild the channel belongs to, if any
 
         Returns
@@ -734,7 +800,7 @@ class PartialChannel(PartialBase):
         self,
         *,
         name: str | None = MISSING,
-        type: ChannelType | int | None = MISSING,  # noqa: A002
+        type: ChannelType | int | None = MISSING,  # ruff: ignore[builtin-argument-shadowing]
         position: int | None = MISSING,
         topic: str | None = MISSING,
         nsfw: bool | None = MISSING,
@@ -767,55 +833,55 @@ class PartialChannel(PartialBase):
 
         Parameters
         ----------
-        name:
+        name
             New name of the channel (All)
-        type:
+        type
             The new type of the channel (Text, Announcement)
-        position:
+        position
             The new position of the channel (All)
-        topic:
+        topic
             The new topic of the channel (Text, Announcement, Forum, Media)
-        nsfw:
+        nsfw
             If the channel should be NSFW (Text, Voice, Announcement, Stage, Forum, Media)
-        rate_limit_per_user:
+        rate_limit_per_user
             How long the slowdown should be (Text, Voice, Stage, Forum, Media)
-        bitrate:
+        bitrate
             The new bitrate of the channel (Voice, Stage)
-        user_limit:
+        user_limit
             The new user limit of the channel (Voice, Stage)
-        overwrites:
+        overwrites
             The new permission overwrites of the channel (All)
-        parent_id:
+        parent_id
             The new parent ID of the channel (Text, Voice, Announcement, Stage, Forum, Media)
-        rtc_region:
+        rtc_region
             The new RTC region of the channel (Voice, Stage)
-        video_quality_mode:
+        video_quality_mode
             The new video quality mode of the channel (Voice, Stage)
-        default_auto_archive_duration:
+        default_auto_archive_duration
             The new default auto archive duration of the channel (Text, Announcement, Forum, Media)
-        flags:
+        flags
             The new flags of the channel (Forum, Media)
-        available_tags:
+        available_tags
             The new available tags of the channel (Forum, Media)
-        default_reaction_emoji:
+        default_reaction_emoji
             The new default reaction emoji of the channel (Forum, Media)
-        default_thread_rate_limit_per_user:
+        default_thread_rate_limit_per_user
             The new default thread rate limit per user of the channel (Text, Forum, Media)
-        default_sort_order:
+        default_sort_order
             The new default sort order of the channel (Forum, Media)
-        default_forum_layout:
+        default_forum_layout
             The new default forum layout of the channel (Forum)
-        archived:
+        archived
             If the thread should be archived (Thread, Forum)
-        auto_archive_duration:
+        auto_archive_duration
             The new auto archive duration of the thread (Thread, Forum)
-        locked:
+        locked
             If the thread should be locked (Thread, Forum)
-        invitable:
+        invitable
             If the thread should be invitable by everyone (Thread)
-        applied_tags:
+        applied_tags
             The new applied tags of the forum thread (Forum, Media)
-        reason:
+        reason
             The reason for editing the channel (All)
 
         Returns
@@ -978,9 +1044,9 @@ class PartialChannel(PartialBase):
 
         Parameters
         ----------
-        overwrite:
+        overwrite
             The new overwrite permissions for the spesific role/user
-        reason:
+        reason
             The reason for editing the overwrite
         """
         await self._state.query(
@@ -993,7 +1059,7 @@ class PartialChannel(PartialBase):
 
     async def delete_permission(
         self,
-        id: Snowflake | int,  # noqa: A002
+        id: Snowflake | int,  # ruff: ignore[builtin-argument-shadowing]
         *,
         reason: str | None = None
     ) -> None:
@@ -1002,9 +1068,9 @@ class PartialChannel(PartialBase):
 
         Parameters
         ----------
-        id:
+        id
             The ID of the overwrite
-        reason:
+        reason
             The reason for deleting the overwrite
         """
         await self._state.query(
@@ -1013,6 +1079,67 @@ class PartialChannel(PartialBase):
             res_method="text",
             reason=reason
         )
+
+    async def fetch_member_permissions(
+        self,
+        member: Snowflake | int,
+        *,
+        implicit: bool = True
+    ) -> Permissions:
+        """
+        Fetches the computed permissions of a member in the channel.
+
+        Includes their roles and member-specific overwrites, threads use the parent channel's overwrites.
+
+        Parameters
+        ----------
+        member
+            The member to fetch the permissions of
+        implicit
+            Whether to apply implicit permission masking for missing `VIEW_CHANNEL` or voice/stage `CONNECT`.
+            Not applied by Discord when the target member is a bot.
+
+        Returns
+        -------
+            The member's channel permissions
+        """
+        r = await self._state.query(
+            "GET",
+            f"/channels/{self.id}/permissions/member/{int(member)}",
+            params={"implicit": "true" if implicit else "false"}
+        )
+
+        return Permissions(int(r.response["permissions"]))
+
+    async def fetch_role_permissions(
+        self,
+        role: Snowflake | int,
+        *,
+        implicit: bool = True
+    ) -> Permissions:
+        """
+        Fetches the permissions of a role together with `@everyone` in the channel, applying their overwrites.
+
+        Other roles and member-specific overwrites are not included, threads use the parent channel's overwrites.
+
+        Parameters
+        ----------
+        role
+            The role to fetch the permissions of
+        implicit
+            Whether to apply implicit permission masking for missing `VIEW_CHANNEL` or voice/stage `CONNECT`
+
+        Returns
+        -------
+            The role's channel permissions
+        """
+        r = await self._state.query(
+            "GET",
+            f"/channels/{self.id}/permissions/role/{int(role)}",
+            params={"implicit": "true" if implicit else "false"}
+        )
+
+        return Permissions(int(r.response["permissions"]))
 
     async def delete(
         self,
@@ -1024,7 +1151,7 @@ class PartialChannel(PartialBase):
 
         Parameters
         ----------
-        reason:
+        reason
             The reason for deleting the channel
         """
         await self._state.query(
@@ -1046,11 +1173,11 @@ class PartialChannel(PartialBase):
 
         Parameters
         ----------
-        name:
+        name
             The name of the webhook
-        avatar:
+        avatar
             The avatar of the webhook
-        reason:
+        reason
             The reason for creating the webhook that appears in audit logs
 
         Returns
@@ -1085,39 +1212,47 @@ class PartialChannel(PartialBase):
         auto_archive_duration: int | None = 4320,
         rate_limit_per_user: int | None = None,
         flags: MessageFlags | None = None,
-        applied_tags: list["ForumTag | int"] | None = None
+        applied_tags: list["ForumTag | int"] | None = None,
+        stickers: list["PartialSticker | Snowflake | int"] | None = None,
+        reason: str | None = None
     ) -> "ForumThread":
         """
         Create a forum or media thread in the channel.
 
         Parameters
         ----------
-        name:
+        name
             The name of the thread
-        content:
+        content
             The content of the message
-        embed:
+        embed
             Embed to be sent
-        embeds:
+        embeds
             List of embeds to be sent
-        file:
+        file
             File to be sent
-        files:
+        files
             List of files to be sent
-        allowed_mentions:
+        allowed_mentions
             The allowed mentions for the message
-        view:
+        view
             The view to be sent
-        auto_archive_duration:
+        auto_archive_duration
             The duration in minutes to automatically archive the thread after recent activity
-        rate_limit_per_user:
+        rate_limit_per_user
             How long the slowdown should be
-        applied_tags:
+        flags
+            Flags of the message
+        applied_tags
             The tags to be applied to the thread
+        stickers
+            Stickers from the guild to send with the message, max 3
+        reason
+            The reason for creating the thread
 
         Returns
         -------
-            _description_
+            The created thread
         """
         payload = {
             "name": name,
@@ -1152,6 +1287,11 @@ class PartialChannel(PartialBase):
         if flags is not None:
             payload["message"]["flags"] = int(flags)
 
+        if stickers is not None:
+            payload["message"]["sticker_ids"] = [
+                str(int(g)) for g in stickers
+            ]
+
         if temp_msg.embeds is not None:
             payload["message"]["embeds"] = [
                 e.to_dict() for e in temp_msg.embeds
@@ -1163,7 +1303,7 @@ class PartialChannel(PartialBase):
             for i, file in enumerate(temp_msg.files):
                 multidata.attach(
                     f"files[{i}]",
-                    file,  # type: ignore
+                    file,
                     filename=file.filename
                 )
 
@@ -1174,24 +1314,23 @@ class PartialChannel(PartialBase):
                 f"/channels/{self.id}/threads",
                 headers={"Content-Type": multidata.content_type},
                 data=multidata.finish(),
+                reason=reason
             )
         else:
             r = await self._state.query(
                 "POST",
                 f"/channels/{self.id}/threads",
-                json=payload
+                json=payload,
+                reason=reason
             )
 
-        return ForumThread(
-            state=self._state,
-            data=r.response
-        )
+        return self._state.bot.create_forum_thread_from_data(r.response)
 
     async def create_thread(
         self,
         name: str,
         *,
-        type: ChannelType | int = ChannelType.guild_private_thread,  # noqa: A002
+        type: ChannelType | int = ChannelType.guild_private_thread,  # ruff: ignore[builtin-argument-shadowing]
         auto_archive_duration: int | None = 4320,
         invitable: bool = True,
         rate_limit_per_user: timedelta | int | None = None,
@@ -1202,17 +1341,17 @@ class PartialChannel(PartialBase):
 
         Parameters
         ----------
-        name:
+        name
             The name of the thread
-        type:
+        type
             The type of thread to create
-        auto_archive_duration:
+        auto_archive_duration
             The duration in minutes to automatically archive the thread after recent activity
-        invitable:
+        invitable
             If the thread is invitable
-        rate_limit_per_user:
+        rate_limit_per_user
             How long the slowdown should be
-        reason:
+        reason
             The reason for creating the thread
 
         Returns
@@ -1221,7 +1360,7 @@ class PartialChannel(PartialBase):
 
         Raises
         ------
-        `ValueError`
+        ValueError
             - If the auto_archive_duration is not 60, 1440, 4320 or 10080
             - If the rate_limit_per_user is not between 0 and 21600 seconds
         """
@@ -1250,7 +1389,7 @@ class PartialChannel(PartialBase):
             reason=reason
         )
 
-        match r.response["type"]:
+        match ChannelType(r.response["type"]):
             case ChannelType.guild_public_thread:
                 class_ = PublicThread
 
@@ -1282,21 +1421,20 @@ class PartialChannel(PartialBase):
 
         Parameters
         ----------
-        before:
+        before
             Get messages before this message
-        after:
+        after
             Get messages after this message
-        around:
+        around
             Get messages around this message
-        limit:
+        limit
             The maximum amount of messages to fetch.
             `None` will fetch all users.
-        oldest_first:
+        oldest_first
             Whether to fetch the oldest messages first
 
         Yields
         ------
-        `Message`
             The message object
         """
         async def _get_history(limit: int, **kwargs) -> "HTTPResponse[dict]":
@@ -1373,10 +1511,6 @@ class PartialChannel(PartialBase):
         else:
             strategy, state = _before_http, None
 
-        # Must be imported here to avoid circular import
-        # From the top of the file
-        from .message import Message
-
         while True:
             http_limit: int = 100 if limit is None else min(limit, 100)
             if http_limit <= 0:
@@ -1392,10 +1526,8 @@ class PartialChannel(PartialBase):
 
             i = 0
             for msg in messages:
-                yield Message(
-                    state=self._state,
-                    data=msg,
-                    guild=self.guild
+                yield self._state.bot.create_message_from_data(
+                    msg, guild=self.guild
                 )
                 i += 1
 
@@ -1464,29 +1596,27 @@ class PartialChannel(PartialBase):
 
         Parameters
         ----------
-        check:
+        check
             A function to check if the message should be deleted
-        before:
+        before
             The message before which to delete
-        after:
+        after
             The message after which to delete
-        around:
+        around
             The message around which to delete
-        message_ids:
+        message_ids
             The message IDs to delete
-        limit:
+        limit
             The maximum amount of messages to delete
-        reason:
+        reason
             The reason for deleting the messages
-        return_messages:
+        return_messages
             Whether to return the deleted messages or just the count of deleted messages
 
         Returns
         -------
             Returns a list of messages deleted if return_messages is True, otherwise returns the count of deleted messages.
         """
-        msg_collector: list["Message"] = []
-
         async def _bulk_delete(messages: list["Message"]) -> None:
             if len(messages) > 1:
                 await self._state.query(
@@ -1516,8 +1646,20 @@ class PartialChannel(PartialBase):
             return len(message_ids)
 
         count = 0
+        total = 0
         minimum_time = int((time.time() - 14 * 24 * 60 * 60) * 1000 - 1420070400000) << 22
         strategy = _bulk_delete
+
+        msg_collector: "deque[Message] | list[Message]" = (
+            [] if return_messages else deque(maxlen=100)
+        )
+
+        def _tail(n: int) -> list["Message"]:
+            # `msg_collector` is either a `list` (already sliceable directly) or a
+            # `deque(maxlen=100)` (needs `list()` first, but that's at most 100 items)
+            if isinstance(msg_collector, deque):
+                return list(msg_collector)[-n:]
+            return msg_collector[-n:]
 
         async for message in self.fetch_history(
             before=before,
@@ -1526,8 +1668,7 @@ class PartialChannel(PartialBase):
             limit=limit
         ):
             if count == 100:
-                to_delete = msg_collector[-100:]
-                await strategy(to_delete)
+                await strategy(_tail(100))
                 count = 0
                 await asyncio.sleep(0.5)
 
@@ -1538,18 +1679,19 @@ class PartialChannel(PartialBase):
                 if count == 1:
                     await msg_collector[-1].delete()
                 elif count >= 2:
-                    await strategy(msg_collector[-count:])
+                    await strategy(_tail(count))
 
                 count = 0
                 strategy = _single_delete
 
             count += 1
+            total += 1
             msg_collector.append(message)
 
         if count != 0:
-            await strategy(msg_collector[-count:])
+            await strategy(_tail(count))
 
-        return msg_collector if return_messages else len(msg_collector)
+        return list(msg_collector) if return_messages else total
 
     async def join_thread(self) -> None:
         """ Make the bot join a thread. """
@@ -1576,7 +1718,7 @@ class PartialChannel(PartialBase):
 
         Parameters
         ----------
-        user_id:
+        user_id
             The user ID to add
         """
         await self._state.query(
@@ -1594,7 +1736,7 @@ class PartialChannel(PartialBase):
 
         Parameters
         ----------
-        user_id:
+        user_id
             The user ID to remove
         """
         await self._state.query(
@@ -1612,7 +1754,7 @@ class PartialChannel(PartialBase):
 
         Parameters
         ----------
-        user_id:
+        user_id
             The user ID to fetch
 
         Returns
@@ -1628,16 +1770,25 @@ class PartialChannel(PartialBase):
             params={"with_member": "true"}
         )
 
-        from .member import ThreadMember
-        return ThreadMember(
-            state=self._state,
-            guild=self.guild,
-            data=r.response,
+        return self._state.bot.create_thread_member_from_data(
+            r.response, guild=self.guild
         )
 
-    async def fetch_thread_members(self) -> list["ThreadMember"]:
+    async def fetch_thread_members(
+        self,
+        *,
+        after: Snowflake | int | None = None,
+        limit: int = 100
+    ) -> list["ThreadMember"]:
         """
-        Fetch all thread members.
+        Fetch thread members.
+
+        Parameters
+        ----------
+        after
+            Only fetch thread members after this user ID
+        limit
+            The maximum amount of thread members to fetch (1-100)
 
         Returns
         -------
@@ -1646,18 +1797,19 @@ class PartialChannel(PartialBase):
         if not self.guild:
             raise ValueError("Cannot fetch thread member without guild_id")
 
+        params = {"with_member": "true", "limit": int(limit)}
+        if after is not None:
+            params["after"] = int(after)
+
         r = await self._state.query(
             "GET",
             f"/channels/{self.id}/thread-members",
-            params={"with_member": "true"},
+            params=params,
         )
 
-        from .member import ThreadMember
         return [
-            ThreadMember(
-                state=self._state,
-                guild=self.guild,
-                data=data
+            self._state.bot.create_thread_member_from_data(
+                data, guild=self.guild
             )
             for data in r.response
         ]
@@ -1667,7 +1819,8 @@ class BaseChannel(PartialChannel):
     """ Represents a base channel object. """
 
     __slots__ = (
-        "_permission_overwrites",
+        "_raw_app_permissions",
+        "_raw_flags",
         "_raw_overwrites",
         "last_message_id",
         "name",
@@ -1684,10 +1837,12 @@ class BaseChannel(PartialChannel):
         data: dict,
         guild_id: int | None = None
     ):
+        resolved_guild_id = utils.get_int(data, "guild_id", default=guild_id)
+
         super().__init__(
             state=state,
             id=int(data["id"]),
-            guild_id=utils.get_int(data, "guild_id", default=guild_id)
+            guild_id=resolved_guild_id
         )
 
         self.name: str | None = data.get("name")
@@ -1708,12 +1863,26 @@ class BaseChannel(PartialChannel):
         self.parent_id: int | None = utils.get_int(data, "parent_id")
         """ The ID of the parent channel (if any). """
 
-        self.rate_limit_per_user: int = data.get("rate_limit_per_user", 0)
+        self.rate_limit_per_user: int = data.get("rate_limit_per_user") or 0
         """ The rate limit per user in seconds. """
 
+        self._raw_flags: int = data.get("flags", 0)
+
+        self._raw_app_permissions: int | None = (
+            int(data["app_permissions"])
+            if "app_permissions" in data else None
+        )
+
         self._raw_type: int = data["type"]
-        self._raw_overwrites: list[dict] = data.get("permission_overwrites", [])
-        self._permission_overwrites: list[PermissionOverwrite] | None = None
+
+        # Stored as compact int tuples (id, type, allow, deny)
+        raw_overwrites = tuple(
+            (int(g["id"]), int(g["type"]), int(g["allow"]), int(g["deny"]))
+            for g in data.get("permission_overwrites", [])
+        )
+        self._raw_overwrites: tuple[tuple[int, int, int, int], ...] = (
+            state.cache.intern_overwrites(resolved_guild_id, raw_overwrites)
+        )
 
     def __repr__(self) -> str:
         return f"<Channel id={self.id} name='{self.name}'>"
@@ -1724,13 +1893,27 @@ class BaseChannel(PartialChannel):
     @property
     def permission_overwrites(self) -> list[PermissionOverwrite]:
         """ Shows the permission overwrites for the channel. """
-        if self._permission_overwrites is None:
-            self._permission_overwrites = [
-                PermissionOverwrite.from_dict(g)
-                for g in self._raw_overwrites
-            ]
+        return [
+            PermissionOverwrite(
+                target=target_id,
+                allow=Permissions(allow),
+                deny=Permissions(deny),
+                target_type=PermissionType(target_type)
+            )
+            for target_id, target_type, allow, deny in self._raw_overwrites
+        ]
 
-        return self._permission_overwrites
+    @property
+    def flags(self) -> ChannelFlags:
+        """ The flags of the channel. """
+        return ChannelFlags(self._raw_flags)
+
+    @property
+    def app_permissions(self) -> Permissions | None:
+        """ The bot's permissions in this channel, only available on resolved channels from an interaction. """
+        if self._raw_app_permissions is None:
+            return None
+        return Permissions(self._raw_app_permissions)
 
     @property
     def mention(self) -> str:
@@ -1742,6 +1925,20 @@ class BaseChannel(PartialChannel):
         """ The channel's type. """
         return ChannelType(self._raw_type)
 
+    def is_obfuscated(self) -> bool:
+        """
+        Whether this channel's data is obfuscated because the bot lacks `VIEW_CHANNEL` access to it.
+
+        Obfuscated channels have their `name` replaced with `"___hidden___"` and other
+        sensitive fields nulled or reduced. Access is regained the moment the bot's
+        permissions change, at which point a `CHANNEL_UPDATE` event delivers full data.
+        """
+        return ChannelFlags.obfuscated in self.flags
+
+    def is_spoiler(self) -> bool:
+        """ If a channel is marked as fulyl spoiler or not. """
+        return ChannelFlags.is_spoiler_channel in self.flags
+
     def permissions_for(self, member: "Member") -> Permissions:
         """
         Returns the permissions for a member in the channel.
@@ -1750,83 +1947,81 @@ class BaseChannel(PartialChannel):
 
         Parameters
         ----------
-        member:
+        member
             The member to get the permissions for.
 
         Returns
         -------
             The permissions for the member in the channel.
         """
-        if getattr(self.guild, "owner_id", None) == member.id:
+        guild = self.guild
+
+        if getattr(guild, "owner_id", None) == member.id:
             return Permissions.all()
 
-        base: Permissions = getattr(
-            self.guild.default_role,
-            "permissions",
-            Permissions.none()
-        )
+        default_role = guild.default_role
 
-        for r in member.roles:
-            role = self.guild.get_role(r.id)
-            if role is None:
+        # Worked out on the raw ints, only the result is built into a Permissions object
+        base: int = getattr(default_role, "_raw_permissions", 0)
+
+        for r_id in member.role_ids:
+            if (role := guild.get_role(r_id)) is None:
                 continue
-            base |= getattr(role, "permissions", Permissions.none())
+            base |= getattr(role, "_raw_permissions", 0)
 
-        if Permissions.administrator in base:
+        if base & Permissions.administrator.value:
             return Permissions.all()
 
-        everyone = next((
-            g for g in self.permission_overwrites
-            if g.target.id == self.guild.default_role.id
-        ), None)
+        everyone_id = default_role.id
 
-        if everyone:
-            base = base.handle_overwrite(int(everyone.allow), int(everyone.deny))
-            overwrites = [
-                g for g in self.permission_overwrites
-                if g.target.id != everyone.target.id
-            ]
-        else:
-            overwrites = self.permission_overwrites
-
+        everyone_ow: tuple[int, int] | None = None
+        member_ow: tuple[int, int] | None = None
         allows, denies = 0, 0
-        member_role_ids = {r.id for r in member.roles}
 
-        for ow in overwrites:
-            if ow.is_role() and ow.target.id in member_role_ids:
-                allows |= int(ow.allow)
-                denies |= int(ow.deny)
+        for target_id, target_type, allow, deny in self._raw_overwrites:
+            if target_id == everyone_id:
+                everyone_ow = (allow, deny)
+            elif target_type == PermissionType.role.value and target_id in member.role_ids:
+                allows |= allow
+                denies |= deny
+            elif (
+                member_ow is None and
+                target_type == PermissionType.member.value and
+                target_id == member.id
+            ):
+                member_ow = (allow, deny)
 
-        base = base.handle_overwrite(allows, denies)
+        if everyone_ow:
+            base = (base & ~everyone_ow[1]) | everyone_ow[0]
 
-        for ow in overwrites:
-            if ow.is_member() and ow.target.id == member.id:
-                base = base.handle_overwrite(int(ow.allow), int(ow.deny))
-                break
+        base = (base & ~denies) | allows
+
+        if member_ow:
+            base = (base & ~member_ow[1]) | member_ow[0]
 
         if member.is_timed_out():
-            timeout_perm = (
-                Permissions.view_channel |
-                Permissions.read_message_history
-            )
+            # Timed out members keep at most these two, and only if they already had them
+            base &= Permissions.view_channel.value | Permissions.read_message_history.value
 
-            if Permissions.view_channel not in base:
-                timeout_perm &= ~Permissions.view_channel
-            if Permissions.read_message_history not in base:
-                timeout_perm &= ~Permissions.read_message_history
-
-            base = timeout_perm
-
-        return base
+        return Permissions(base)
 
 
 class TextChannel(BaseChannel):
     """ Represents a text channel. """
 
-    __slots__ = ()
+    __slots__ = (
+        "default_auto_archive_duration",
+        "default_thread_rate_limit_per_user",
+    )
 
     def __init__(self, *, state: "DiscordAPI", data: dict):
         super().__init__(state=state, data=data)
+
+        self.default_auto_archive_duration: int | None = data.get("default_auto_archive_duration")
+        """ The default auto archive duration in minutes for newly created threads, if set. """
+
+        self.default_thread_rate_limit_per_user: int = data.get("default_thread_rate_limit_per_user") or 0
+        """ The initial rate limit per user in seconds for newly created threads. """
 
     def __repr__(self) -> str:
         return f"<TextChannel id={self.id} name='{self.name}'>"
@@ -1843,7 +2038,6 @@ class DMChannel(BaseChannel):
     """ Represents a Direct Message channel. """
 
     __slots__ = (
-        "last_message",
         "last_pin_timestamp",
         "user",
     )
@@ -1857,8 +2051,8 @@ class DMChannel(BaseChannel):
         self.user: "User | None" = None
         """ The user in the DM channel. """
 
-        self.last_message: "PartialMessage | None" = None
-        """ The last message in the DM channel. """
+        self.last_pin_timestamp: datetime | None = None
+        """ The time of the last pinned message in the DM channel, if any. """
 
         self._from_data(data)
 
@@ -1866,21 +2060,22 @@ class DMChannel(BaseChannel):
         return f"<DMChannel id={self.id} name='{self.user}'>"
 
     def _from_data(self, data: dict) -> None:
-        if data.get("recipients"):
-            from .user import User
-            self.user = User(state=self._state, data=data["recipients"][0])
+        if recipients := data.get("recipients"):
+            self.user = self._state.bot.create_user_from_data(recipients[0])
             self.name = self.user.name
 
-        if data.get("last_message_id"):
-            from .message import PartialMessage
-            self.last_message = PartialMessage(
-                state=self._state,
-                channel_id=self.id,
-                id=int(data["last_message_id"])
-            )
+        if last_pin_timestamp := data.get("last_pin_timestamp"):
+            self.last_pin_timestamp = utils.parse_time(last_pin_timestamp)
 
-        if data.get("last_pin_timestamp"):
-            self.last_pin_timestamp = utils.parse_time(data["last_pin_timestamp"])
+    @property
+    def last_message(self) -> "PartialMessage | None":
+        """ The last message in the DM channel, if any. """
+        if not self.last_message_id:
+            return None
+
+        return self._state.bot.get_partial_message(
+            self.last_message_id, self.id
+        )
 
     @property
     def type(self) -> ChannelType:
@@ -1892,13 +2087,13 @@ class DMChannel(BaseChannel):
         """ The channel's mention. """
         return f"<@{self.id}>"
 
-    async def edit(self, *args, **kwargs) -> None:  # noqa: ANN002, ARG002
+    async def edit(self, *args, **kwargs) -> None:  # ruff: ignore[missing-type-args, unused-method-argument]
         """
         Only here to prevent errors.
 
         Raises
         ------
-        `TypeError`
+        TypeError
             If you try to edit a DM channel
         """
         raise TypeError("Cannot edit a DM channel")
@@ -1924,10 +2119,15 @@ class StoreChannel(BaseChannel):
 class GroupDMChannel(BaseChannel):
     """ Represents a group DM channel. """
 
-    __slots__ = ()
+    __slots__ = (
+        "application_id",
+    )
 
     def __init__(self, *, state: "DiscordAPI", data: dict):
         super().__init__(state=state, data=data)
+
+        self.application_id: int | None = utils.get_int(data, "application_id")
+        """ The ID of the application that created the group DM, if any. """
 
     def __repr__(self) -> str:
         return f"<GroupDMChannel id={self.id} name='{self.name}'>"
@@ -1983,7 +2183,7 @@ class CategoryChannel(BaseChannel):
             return []
 
         channels: list["BaseChannel | PartialChannel"] = [
-            g for g in guild.channels
+            g for g in guild._cache_channels.values()
             if g.parent_id == self.id
         ]
 
@@ -2010,21 +2210,21 @@ class CategoryChannel(BaseChannel):
 
         Parameters
         ----------
-        name:
+        name
             The name of the channel
-        topic:
+        topic
             The topic of the channel
-        rate_limit_per_user:
+        rate_limit_per_user
             The rate limit per user of the channel
-        overwrites:
+        overwrites
             The permission overwrites of the category
-        parent_id:
+        parent_id
             The Category ID where the channel will be placed
-        nsfw:
+        nsfw
             Whether the channel is NSFW or not
-        reason:
+        reason
             The reason for creating the text channel
-        **kwargs:
+        **kwargs
             Keyword arguments to pass to the channel, look above
 
         Returns
@@ -2047,25 +2247,25 @@ class CategoryChannel(BaseChannel):
 
         Parameters
         ----------
-        name:
+        name
             The name of the channel
-        bitrate:
+        bitrate
             The bitrate of the channel
-        user_limit:
+        user_limit
             The user limit of the channel
-        rate_limit_per_user:
+        rate_limit_per_user
             The rate limit per user of the channel
-        overwrites:
+        overwrites
             The permission overwrites of the category
-        position:
+        position
             The position of the channel
-        parent_id:
+        parent_id
             The Category ID where the channel will be placed
-        nsfw:
+        nsfw
             Whether the channel is NSFW or not
-        reason:
+        reason
             The reason for creating the voice channel
-        **kwargs:
+        **kwargs
             Keyword arguments to pass to the channel, look above
 
         Returns
@@ -2088,23 +2288,23 @@ class CategoryChannel(BaseChannel):
 
         Parameters
         ----------
-        name:
+        name
             The name of the channel
-        bitrate:
+        bitrate
             The bitrate of the channel
-        user_limit:
+        user_limit
             The user limit of the channel
-        overwrites:
+        overwrites
             The permission overwrites of the category
-        position:
+        position
             The position of the channel
-        video_quality_mode:
+        video_quality_mode
             The video quality mode of the channel
-        parent_id:
+        parent_id
             The Category ID where the channel will be placed
-        reason:
+        reason
             The reason for creating the stage channel
-        **kwargs:
+        **kwargs
             Keyword arguments to pass to the channel, look above
 
         Returns
@@ -2145,10 +2345,10 @@ class PartialThread(PartialChannel):
         self,
         *,
         state: "DiscordAPI",
-        id: int,  # noqa: A002
+        id: int,  # ruff: ignore[builtin-argument-shadowing]
         guild_id: int,
         parent_id: int,
-        type: ChannelType | int  # noqa: A002
+        type: ChannelType | int  # ruff: ignore[builtin-argument-shadowing]
     ):
         super().__init__(state=state, id=int(id), guild_id=int(guild_id))
 
@@ -2170,10 +2370,11 @@ class PublicThread(BaseChannel):
     """ Represents a public thread channel object. """
 
     __slots__ = (
-        "_metadata",
+        "_raw_timestamps",
+        "applied_tags",
         "archived",
         "auto_archive_duration",
-        "channel_id",
+        "invitable",
         "locked",
         "member_count",
         "message_count",
@@ -2188,46 +2389,57 @@ class PublicThread(BaseChannel):
         self.name: str = data["name"]
         """ The name of the thread. """
 
-        self.message_count: int = utils.get_int(data, "message_count") or 0
+        # Counts are always JSON integers, unlike IDs which are sent as strings
+        self.message_count: int = data.get("message_count") or 0
         """ The number of messages in the thread. """
 
-        self.member_count: int = utils.get_int(data, "member_count") or 0
+        self.member_count: int = data.get("member_count") or 0
         """ The number of members in the thread. """
 
-        self.rate_limit_per_user: int = utils.get_int(data, "rate_limit_per_user") or 0
-        """ The rate limit per user in seconds. """
-
-        self.total_message_sent: int = utils.get_int(data, "total_message_sent") or 0
+        self.total_message_sent: int = data.get("total_message_sent") or 0
         """ The total number of messages sent in the thread. """
 
-        self._metadata: dict = data.get("thread_metadata", {})
+        metadata: dict = data.get("thread_metadata", {})
 
-        self.locked: bool = self._metadata.get("locked", False)
+        self.locked: bool = metadata.get("locked", False)
         """ Whether the thread is locked. """
 
-        self.archived: bool = self._metadata.get("archived", False)
+        self.archived: bool = metadata.get("archived", False)
         """ Whether the thread is archived. """
 
-        self.auto_archive_duration: int = self._metadata.get("auto_archive_duration", 60)
+        self.auto_archive_duration: int = metadata.get("auto_archive_duration", 60)
         """ The duration in minutes to automatically archive the thread after recent activity. """
 
-        self.channel_id: int = int(data["id"])
-        """ The ID of the channel. """
+        self.invitable: bool = metadata.get("invitable", True)
+        """ Whether non-moderators can add other non-moderators to the thread, only for private threads. """
+
+        # archive_timestamp, create_timestamp
+        self._raw_timestamps: int = utils.pack_timestamps(
+            metadata.get("archive_timestamp"),
+            metadata.get("create_timestamp")
+        )
+
+        self.applied_tags: tuple[int, ...] = tuple(map(int, data.get("applied_tags", ())))
+        """ The IDs of the tags applied to the thread, only for forum and media threads. """
 
         self.newly_created: bool = data.get("newly_created", False)
         """ Whether the thread was newly created. """
 
-        self.guild_id: int | None = utils.get_int(data, "guild_id")
-        """ The ID of the guild the thread belongs to. """
-
         self.owner_id: int | None = utils.get_int(data, "owner_id")
         """ The ID of the user who owns the thread. """
 
-        self.last_message_id: int | None = utils.get_int(data, "last_message_id")
-        """ The ID of the last message in the thread. """
-
     def __repr__(self) -> str:
         return f"<PublicThread id={self.id} name='{self.name}'>"
+
+    @property
+    def archive_timestamp(self) -> datetime | None:
+        """ The time the thread's archive status was last changed. """
+        return utils.unpack_timestamp(self._raw_timestamps, 0)
+
+    @property
+    def create_timestamp(self) -> datetime | None:
+        """ The time the thread was created, only available for threads created after 2022-01-09. """
+        return utils.unpack_timestamp(self._raw_timestamps, 1)
 
     @property
     def type(self) -> ChannelType:
@@ -2235,17 +2447,20 @@ class PublicThread(BaseChannel):
         return ChannelType.guild_public_thread
 
     @property
+    def channel_id(self) -> int:
+        """ The ID of the channel (alias of `id`). """
+        return self.id
+
+    @property
     def guild(self) -> "Guild | PartialGuild | None":
         """ A partial guild object. """
         if not self.guild_id:
             return None
 
-        cache = self._state.cache.get_guild(self.guild_id)
-        if cache:
+        if cache := self._state.cache.get_guild(self.guild_id):
             return cache
 
-        from .guild import PartialGuild
-        return PartialGuild(state=self._state, id=self.guild_id)
+        return self._state.bot.get_partial_guild(self.guild_id)
 
     @property
     def owner(self) -> "PartialUser | None":
@@ -2253,8 +2468,7 @@ class PublicThread(BaseChannel):
         if not self.owner_id:
             return None
 
-        from .user import PartialUser
-        return PartialUser(state=self._state, id=self.owner_id)
+        return self._state.bot.get_partial_user(self.owner_id)
 
     @property
     def last_message(self) -> "PartialMessage | None":
@@ -2262,12 +2476,8 @@ class PublicThread(BaseChannel):
         if not self.last_message_id:
             return None
 
-        from .message import PartialMessage
-        return PartialMessage(
-            state=self._state,
-            channel_id=self.channel_id,
-            guild_id=self.guild_id,
-            id=self.last_message_id
+        return self._state.bot.get_partial_message(
+            self.last_message_id, self.channel_id, self.guild_id
         )
 
 
@@ -2321,13 +2531,13 @@ class ForumTag:
 
         Parameters
         ----------
-        name:
+        name
             The name of the tag
-        emoji_id:
+        emoji_id
             The emoji ID of the tag
-        emoji_name:
+        emoji_name
             The emoji name of the tag
-        moderated:
+        moderated
             If the tag is moderated
 
         Returns
@@ -2370,7 +2580,7 @@ class ForumTag:
 
         Parameters
         ----------
-        data:
+        data
             The dictionary to create the forum tag from
 
         Returns
@@ -2387,14 +2597,35 @@ class ForumTag:
 
         return self
 
+    @classmethod
+    def _from_compact(
+        cls,
+        id_: int | None,
+        name: str,
+        moderated: bool,
+        emoji_id: int | None,
+        emoji_name: str | None
+    ) -> Self:
+        """ Build a tag from the compact tuple form `ForumChannel` caches it as. """
+        self = cls.__new__(cls)
+        self.id = id_
+        self.name = name
+        self.moderated = moderated
+        self.emoji_id = emoji_id
+        self.emoji_name = emoji_name
+        return self
+
 
 class ForumChannel(PublicThread):
     """ Represents a forum channel object. """
 
     __slots__ = (
         "_raw_tags",
-        "_tags",
+        "default_auto_archive_duration",
+        "default_forum_layout",
         "default_reaction_emoji",
+        "default_sort_order",
+        "default_thread_rate_limit_per_user",
     )
 
     def __init__(self, state: "DiscordAPI", data: dict):
@@ -2402,8 +2633,30 @@ class ForumChannel(PublicThread):
         self.default_reaction_emoji: EmojiParser | None = None
         """ The default reaction emoji for the forum channel. """
 
-        self._raw_tags: list[dict] = data.get("available_tags", [])
-        self._tags: list[ForumTag] | None = None
+        self.default_auto_archive_duration: int | None = data.get("default_auto_archive_duration")
+        """ The default auto archive duration in minutes for newly created threads, if set. """
+
+        self.default_thread_rate_limit_per_user: int = data.get("default_thread_rate_limit_per_user") or 0
+        """ The initial rate limit per user in seconds for newly created threads. """
+
+        self.default_sort_order: SortOrderType | None = None
+        """ The default sort order of posts, `None` if not set by a channel admin. """
+
+        self.default_forum_layout: ForumLayoutType = ForumLayoutType(
+            data.get("default_forum_layout") or 0
+        )
+        """ The default layout used to display posts. """
+
+        self._raw_tags: tuple[tuple[int | None, str, bool, int | None, str | None], ...] = tuple(
+            (
+                utils.get_int(g, "id"),
+                g["name"],
+                g.get("moderated", False),
+                utils.get_int(g, "emoji_id"),
+                g.get("emoji_name"),
+            )
+            for g in data.get("available_tags", [])
+        )
 
         self._from_data(data)
 
@@ -2411,14 +2664,17 @@ class ForumChannel(PublicThread):
         return f"<ForumChannel id={self.id} name='{self.name}'>"
 
     def _from_data(self, data: dict) -> None:
-        if data.get("default_reaction_emoji"):
+        if default_reaction_emoji := data.get("default_reaction_emoji"):
             target = (
-                data["default_reaction_emoji"].get("id", None) or
-                data["default_reaction_emoji"].get("name", None)
+                default_reaction_emoji.get("emoji_id", None) or
+                default_reaction_emoji.get("emoji_name", None)
             )
 
             if target:
                 self.default_reaction_emoji = EmojiParser(target)
+
+        if (default_sort_order := data.get("default_sort_order")) is not None:
+            self.default_sort_order = SortOrderType(default_sort_order)
 
     @property
     def type(self) -> ChannelType:
@@ -2428,9 +2684,7 @@ class ForumChannel(PublicThread):
     @property
     def tags(self) -> list[ForumTag]:
         """ The available tags for the forum channel. """
-        if self._tags is None:
-            self._tags = [ForumTag(data=g) for g in self._raw_tags]
-        return self._tags
+        return list(itertools.starmap(ForumTag._from_compact, self._raw_tags))
 
 
 class ForumThread(PublicThread):
@@ -2449,12 +2703,8 @@ class ForumThread(PublicThread):
         return self.name
 
     def _from_data(self, data: dict) -> None:
-        from .message import Message
-
-        self.message: Message = Message(
-            state=self._state,
-            data=data["message"],
-            guild=self.guild
+        self.message: "Message" = self._state.bot.create_message_from_data(
+            data["message"], guild=self.guild
         )
 
     @property
@@ -2553,6 +2803,7 @@ class VoiceChannel(BaseChannel):
         "bitrate",
         "rtc_region",
         "user_limit",
+        "video_quality_mode",
     )
 
     def __init__(self, *, state: "DiscordAPI", data: dict):
@@ -2567,6 +2818,11 @@ class VoiceChannel(BaseChannel):
         self.rtc_region: str | None = data.get("rtc_region")
         """ The RTC region of the voice channel, if set. """
 
+        self.video_quality_mode: VideoQualityType = VideoQualityType(
+            data.get("video_quality_mode", 1)
+        )
+        """ The camera video quality mode of the voice channel. """
+
     def __repr__(self) -> str:
         return f"<VoiceChannel id={self.id} name='{self.name}'>"
 
@@ -2574,6 +2830,41 @@ class VoiceChannel(BaseChannel):
     def type(self) -> ChannelType:
         """ The channel's type. """
         return ChannelType.guild_voice
+
+    async def set_voice_status(
+        self,
+        status: str | None,
+        *,
+        reason: str | None = None
+    ) -> None:
+        """
+        Set the status of the voice channel.
+
+        Requires the `SET_VOICE_CHANNEL_STATUS` permission. If the bot is not
+        connected to the voice channel, `MANAGE_CHANNELS` is also required.
+
+        Parameters
+        ----------
+        status
+            The new status of the voice channel, up to 500 characters. Use `None` to clear it.
+        reason
+            The reason for setting the voice channel status
+
+        Raises
+        ------
+        ValueError
+            The status exceeds 500 characters
+        """
+        if status is not None and len(status) > 500:
+            raise ValueError("status must not exceed 500 characters")
+
+        await self._state.query(
+            "PUT",
+            f"/channels/{self.id}/voice-status",
+            json={"status": status},
+            res_method="text",
+            reason=reason
+        )
 
 
 class StageInstance(PartialBase):
@@ -2584,7 +2875,6 @@ class StageInstance(PartialBase):
     """
 
     __slots__ = (
-        "_guild",
         "_state",
         "channel_id",
         "guild_id",
@@ -2598,18 +2888,11 @@ class StageInstance(PartialBase):
         *,
         state: "DiscordAPI",
         data: dict,
-        guild: "PartialGuild | None" = None,
     ) -> None:
         super().__init__(id=int(data["id"]))
 
         self._state: "DiscordAPI" = state
-        self._guild: "PartialGuild | None" = guild
-        self._from_data(data)
 
-    def __repr__(self) -> str:
-        return f"<StageInstance id={self.id!r} topic={self.topic!r}>"
-
-    def _from_data(self, data: dict) -> None:
         self.channel_id: int = int(data["channel_id"])
         """ The ID of the stage channel. """
 
@@ -2625,24 +2908,25 @@ class StageInstance(PartialBase):
         self.guild_scheduled_event_id: int | None = utils.get_int(data, "guild_scheduled_event_id")
         """ The guild scheduled event ID associated with this stage instance. """
 
+    def __repr__(self) -> str:
+        return f"<StageInstance id={self.id!r} topic={self.topic!r}>"
+
     @property
     def guild(self) -> "Guild | PartialGuild | None":
         """ The guild this stage instance belongs to, or `None` if unknown. """
         if not self.guild_id:
             return None
 
-        cache = self._state.cache.get_guild(self.guild_id)
-        if cache:
+        if cache := self._state.cache.get_guild(self.guild_id):
             return cache
 
-        from .guild import PartialGuild
-        return PartialGuild(state=self._state, id=self.guild_id)
+        return self._state.bot.get_partial_guild(self.guild_id)
 
     @property
     def channel(self) -> "PartialChannel | StageChannel":
         """ The stage channel this instance is associated with. """
         return self.guild.get_channel(self.channel_id) or (
-            PartialChannel(state=self._state, id=self.channel_id)
+            self._state.bot.get_partial_channel(self.channel_id)
         )
 
     @property
@@ -2651,11 +2935,8 @@ class StageInstance(PartialBase):
         if not self.guild_scheduled_event_id:
             return None
 
-        from .guild import PartialScheduledEvent
-        return PartialScheduledEvent(
-            state=self._state,
-            id=self.guild_scheduled_event_id,
-            guild_id=self.guild_id
+        return self._state.bot.get_partial_scheduled_event(
+            self.guild_scheduled_event_id, self.guild_id
         )
 
     async def edit(
@@ -2670,11 +2951,11 @@ class StageInstance(PartialBase):
 
         Parameters
         ----------
-        topic:
+        topic
             The new topic of this stage instance.
-        privacy_level:
+        privacy_level
             The new privacy level of this stage instance.
-        reason:
+        reason
             The reason for editing the stage instance.
 
         Returns
@@ -2699,7 +2980,6 @@ class StageInstance(PartialBase):
         return self.__class__(
             state=self._state,
             data=r.response,
-            guild=self._guild,
         )
 
     async def delete(self, *, reason: str | None = None) -> None:
@@ -2708,7 +2988,7 @@ class StageInstance(PartialBase):
 
         Parameters
         ----------
-        reason:
+        reason
             The reason for deleting the stage instance
         """
         await self._state.query(
@@ -2739,17 +3019,11 @@ class StageChannel(VoiceChannel):
 
     @property
     def stage_instance(self) -> StageInstance | None:
-        """ The stage instance for this channel, if available and cached."""
+        """ The stage instance for this channel, if available and cached. """
         return self._stage_instance
 
     async def fetch_stage_instance(self) -> StageInstance:
-        """
-        Fetch the stage instance associated with this stage channel.
-
-        Returns
-        -------
-            The stage instance of the channel
-        """
+        """ Fetch the stage instance associated with this stage channel. """
         r = await self._state.query(
             "GET",
             f"/stage-instances/{self.id}"
@@ -2758,7 +3032,6 @@ class StageChannel(VoiceChannel):
         return StageInstance(
             state=self._state,
             data=r.response,
-            guild=self.guild
         )
 
     async def create_stage_instance(
@@ -2775,16 +3048,16 @@ class StageChannel(VoiceChannel):
 
         Parameters
         ----------
-        topic:
+        topic
             The topic of the stage instance
-        privacy_level:
+        privacy_level
             The privacy level of the stage instance.
             Defaults to `PrivacyLevelType.guild_only`
-        send_start_notification:
+        send_start_notification
             Whether to notify @everyone that the stage instance has started.
-        guild_scheduled_event:
+        guild_scheduled_event
             The guild scheduled event to associate with this stage instance.
-        reason:
+        reason
             The reason for creating the stage instance
 
         Returns
@@ -2815,225 +3088,19 @@ class StageChannel(VoiceChannel):
         self._stage_instance = StageInstance(
             state=self._state,
             data=r.response,
-            guild=self.guild
         )
         return self._stage_instance
 
 
-class PartialVoiceState(PartialBase):
-    """ Represents a partial voice state object. """
-
-    __slots__ = (
-        "_state",
-        "channel_id",
-        "guild_id",
-    )
-
-    def __init__(
-        self,
-        *,
-        state: "DiscordAPI",
-        id: int,  # noqa: A002
-        channel_id: int | None = None,
-        guild_id: int | None = None,
-    ):
-        self._state = state
-
-        self.id: int = int(id)
-        """ The ID of the user this voice state belongs to. """
-
-        self.channel_id: int | None = channel_id
-        """ The ID of the voice channel this user is in, if any. """
-
-        self.guild_id: int | None = guild_id
-        """ The ID of the guild this voice state is in, if any. """
-
-    def __repr__(self) -> str:
-        return f"<PartialVoiceState id={self.id} guild_id={self.guild_id}>"
-
-    def __str__(self) -> str:
-        return str(self.id)
-
-    @property
-    def channel(self) -> "BaseChannel | PartialChannel | None":
-        """
-        The voice channel this user is in, if any.
-
-        Returns a `PartialChannel` built from `channel_id` so it can be used
-        directly (e.g. ``await voice_state.channel.connect()``) even when the
-        full channel object is not cached.
-        """
-        if self.channel_id is None:
-            return None
-        return self._state.bot.get_partial_channel(
-            self.channel_id, guild_id=self.guild_id
-        )
-
-    async def fetch(self) -> "VoiceState":
-        """
-        Fetches the voice state of the member.
-
-        Returns
-        -------
-            The voice state of the member
-
-        Raises
-        ------
-        `NotFound`
-            - If the member is not in the guild
-            - If the member is not in a voice channel
-        """
-        if not self.guild_id:
-            raise ValueError("Cannot fetch voice state without guild_id")
-
-        r = await self._state.query(
-            "GET",
-            f"/guilds/{self.guild_id}/voice-states/{self.id}"
-        )
-
-        guild = self._state.cache.get_guild(self.guild_id)
-        channel = None
-        channel_id = utils.get_int(r.response, "channel_id")
-        if channel_id is not None:
-            channel = self._state.cache.get_channel(self.guild_id, channel_id)
-
-        return VoiceState(
-            state=self._state,
-            data=r.response,
-            guild=guild,
-            channel=channel
-        )
-
-    async def edit(
-        self,
-        *,
-        suppress: bool = MISSING,
-    ) -> None:
-        """
-        Updates the voice state of the member.
-
-        Parameters
-        ----------
-        suppress:
-            Whether to suppress the user
-        """
-        if not self.guild_id:
-            raise ValueError("Cannot update voice state without guild_id")
-
-        data: dict[str, Any] = {}
-
-        if suppress is not MISSING:
-            data["suppress"] = bool(suppress)
-
-        await self._state.query(
-            "PATCH",
-            f"/guilds/{self.guild_id}/voice-states/{int(self.id)}",
-            json=data,
-            res_method="text"
-        )
-
-
-class VoiceState(PartialVoiceState):
-    """ Represents a voice state object. """
-
-    __slots__ = (
-        "_channel",
-        "deaf",
-        "guild",
-        "member",
-        "mute",
-        "request_to_speak_timestamp",
-        "self_deaf",
-        "self_mute",
-        "self_stream",
-        "self_video",
-        "session_id",
-        "suppress",
-        "user",
-    )
-
-    def __init__(
-        self,
-        *,
-        state: "DiscordAPI",
-        data: dict,
-        guild: "PartialGuild | None",
-        channel: "BaseChannel | PartialChannel | None"
-    ):
-        from .user import PartialUser
-
-        super().__init__(
-            state=state,
-            id=int(data["user_id"]),
-            guild_id=utils.get_int(data, "guild_id"),
-            channel_id=utils.get_int(data, "channel_id")
-        )
-
-        self.session_id: str = data["session_id"]
-        """ The session ID of the voice state. """
-
-        self.user: PartialUser = PartialUser(state=state, id=int(data["user_id"]))
-        """ The user this voice state belongs to. """
-
-        self.member: "Member | None" = None
-        """ The member this voice state belongs to, if any. """
-
-        self._channel: "BaseChannel | PartialChannel | None" = channel
-
-        self.guild: "PartialGuild | None" = guild
-        """ The guild this voice state is in, if any. """
-
-        self.deaf: bool = data["deaf"]
-        """ Whether the user is deafened by the server. """
-
-        self.mute: bool = data["mute"]
-        """ Whether the user is muted by the server. """
-
-        self.self_deaf: bool = data["self_deaf"]
-        """ Whether the user is deafened by themselves. """
-
-        self.self_mute: bool = data["self_mute"]
-        """ Whether the user is muted by themselves. """
-
-        self.self_stream: bool = data.get("self_stream", False)
-        """ Whether the user is streaming. """
-
-        self.self_video: bool = data["self_video"]
-        """ Whether the user is using video. """
-
-        self.suppress: bool = data["suppress"]
-        """ Whether the user is suppressed by the server. """
-
-        self.request_to_speak_timestamp: datetime | None = None
-        """ The timestamp when the user requested to speak, if any. """
-
-        self._from_data(data)
-
-    def __repr__(self) -> str:
-        return f"<VoiceState id={self.user.id} session_id='{self.session_id}'>"
-
-    @property
-    def channel(self) -> "BaseChannel | PartialChannel | None":
-        """
-        The voice channel this user is in, if any.
-
-        Prefers the resolved channel object (when cached); otherwise falls back
-        to a `PartialChannel` built from `channel_id` so it remains usable.
-        """
-        if self._channel is not None:
-            return self._channel
-        return super().channel
-
-    def _from_data(self, data: dict) -> None:
-        if data.get("member") and self.guild:
-            from .member import Member
-            self.member = Member(
-                state=self._state,
-                guild=self.guild,
-                data=data["member"]
-            )
-
-        if data.get("request_to_speak_timestamp"):
-            self.request_to_speak_timestamp = utils.parse_time(
-                data["request_to_speak_timestamp"]
-            )
+# Defined last, as it needs every channel class above
+_CHANNEL_CLASSES: dict[int, type[BaseChannel]] = {
+    int(ChannelType.guild_text): TextChannel,
+    int(ChannelType.guild_news): TextChannel,
+    int(ChannelType.guild_voice): VoiceChannel,
+    int(ChannelType.guild_category): CategoryChannel,
+    int(ChannelType.guild_news_thread): NewsThread,
+    int(ChannelType.guild_public_thread): PublicThread,
+    int(ChannelType.guild_private_thread): PrivateThread,
+    int(ChannelType.guild_stage_voice): StageChannel,
+    int(ChannelType.guild_forum): ForumChannel,
+}

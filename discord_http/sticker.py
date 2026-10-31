@@ -1,6 +1,7 @@
 from typing import TYPE_CHECKING
 
 from . import utils
+from .asset import Asset
 from .enums import StickerType, StickerFormatType
 from .object import PartialBase
 
@@ -13,6 +14,7 @@ MISSING = utils.MISSING
 __all__ = (
     "PartialSticker",
     "Sticker",
+    "StickerPack",
 )
 
 
@@ -30,7 +32,7 @@ class PartialSticker(PartialBase):
         self,
         *,
         state: "DiscordAPI",
-        id: int,  # noqa: A002
+        id: int,  # ruff: ignore[builtin-argument-shadowing]
         name: str | None = None,
         guild_id: int | None = None,
         format_type: int | None = 1
@@ -62,10 +64,8 @@ class PartialSticker(PartialBase):
 
         self.guild_id = utils.get_int(r.response, "guild_id")
 
-        return Sticker(
-            state=self._state,
-            data=r.response,
-            guild=self.guild,
+        return self._state.bot.create_sticker_from_data(
+            r.response, guild=self.guild
         )
 
     @property
@@ -73,24 +73,18 @@ class PartialSticker(PartialBase):
         """
         The guild this sticker is in.
 
-        Returns
-        -------
-            The guild this sticker is in
-
         Raises
         ------
-        `ValueError`
+        ValueError
             guild_id is not defined, unable to create PartialGuild
         """
         if not self.guild_id:
             return None
 
-        cache = self._state.cache.get_guild(self.guild_id)
-        if cache:
+        if cache := self._state.cache.get_guild(self.guild_id):
             return cache
 
-        from .guild import PartialGuild
-        return PartialGuild(state=self._state, id=self.guild_id)
+        return self._state.bot.get_partial_guild(self.guild_id)
 
     async def edit(
         self,
@@ -106,15 +100,15 @@ class PartialSticker(PartialBase):
 
         Parameters
         ----------
-        guild_id:
+        guild_id
             Guild ID to edit the sticker from
-        name:
+        name
             Replacement name for the sticker
-        description:
+        description
             Replacement description for the sticker
-        tags:
+        tags
             Replacement tags for the sticker
-        reason:
+        reason
             The reason for editing the sticker
 
         Returns
@@ -123,11 +117,10 @@ class PartialSticker(PartialBase):
 
         Raises
         ------
-        `ValueError`
+        ValueError
             No guild_id was passed
         """
-        guild_id = guild_id or self.guild_id
-        if guild_id is None:
+        if (guild_id := guild_id or self.guild_id) is None:
             raise ValueError("guild_id is a required argument")
 
         payload = {}
@@ -148,10 +141,8 @@ class PartialSticker(PartialBase):
 
         self.guild_id = int(r.response["guild_id"])
 
-        return Sticker(
-            state=self._state,
-            data=r.response,
-            guild=self.guild,
+        return self._state.bot.create_sticker_from_data(
+            r.response, guild=self.guild
         )
 
     async def delete(
@@ -165,18 +156,17 @@ class PartialSticker(PartialBase):
 
         Parameters
         ----------
-        guild_id:
+        guild_id
             Guild ID to delete the sticker from
-        reason:
+        reason
             The reason for deleting the sticker
 
         Raises
         ------
-        `ValueError`
+        ValueError
             No guild_id was passed or guild_id is not defined
         """
-        guild_id = guild_id or self.guild_id
-        if guild_id is None:
+        if (guild_id := guild_id or self.guild_id) is None:
             raise ValueError(
                 "guild_id is a required argument "
                 "since it was not provided by object"
@@ -272,13 +262,13 @@ class Sticker(PartialSticker):
 
         Parameters
         ----------
-        name:
+        name
             Name of the sticker
-        description:
+        description
             Description of the sticker
-        tags:
+        tags
             Tags of the sticker
-        reason:
+        reason
             The reason for editing the sticker
 
         Returns
@@ -306,15 +296,90 @@ class Sticker(PartialSticker):
 
         Parameters
         ----------
-        reason:
+        reason
             The reason for deleting the sticker
 
         Raises
         ------
-        `ValueError`
+        ValueError
             Guild is not defined
         """
         if not self.guild:
             raise ValueError("Sticker is not in a guild")
 
         await super().delete(guild_id=self.guild.id, reason=reason)
+
+
+class StickerPack(PartialBase):
+    """ Represents a pack of standard stickers. """
+
+    BANNER_APPLICATION_ID: int = 710982414301790216
+
+    __slots__ = (
+        "_state",
+        "banner_asset_id",
+        "cover_sticker_id",
+        "description",
+        "name",
+        "sku_id",
+        "stickers",
+    )
+
+    def __init__(
+        self,
+        *,
+        state: "DiscordAPI",
+        data: dict
+    ):
+        super().__init__(id=int(data["id"]))
+        self._state = state
+
+        self.name: str = data["name"]
+        """ The name of the sticker pack. """
+
+        self.description: str = data["description"]
+        """ The description of the sticker pack. """
+
+        self.sku_id: int = int(data["sku_id"])
+        """ The ID of the sticker pack's SKU. """
+
+        self.cover_sticker_id: int | None = utils.get_int(data, "cover_sticker_id")
+        """ The ID of the sticker shown as the pack's icon, if any. """
+
+        self.banner_asset_id: int | None = utils.get_int(data, "banner_asset_id")
+        """ The ID of the sticker pack's banner image, if any. """
+
+        self.stickers: list[Sticker] = [
+            self._state.bot.create_sticker_from_data(g)
+            for g in data.get("stickers", [])
+        ]
+        """ The stickers in the pack. """
+
+    def __str__(self) -> str:
+        return self.name
+
+    def __repr__(self) -> str:
+        return f"<StickerPack id={self.id} name='{self.name}'>"
+
+    @property
+    def cover_sticker(self) -> Sticker | None:
+        """ The sticker shown as the pack's icon, if any. """
+        if not self.cover_sticker_id:
+            return None
+
+        return next((
+            g for g in self.stickers
+            if g.id == self.cover_sticker_id
+        ), None)
+
+    @property
+    def banner(self) -> Asset | None:
+        """ The banner of the sticker pack, if any. """
+        if not self.banner_asset_id:
+            return None
+
+        return Asset._from_application_asset(
+            self._state,
+            self.BANNER_APPLICATION_ID,
+            f"store/{self.banner_asset_id}"
+        )

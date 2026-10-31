@@ -1,7 +1,7 @@
 import logging
 
 from datetime import datetime, timedelta
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, NamedTuple
 
 from . import utils
 from .asset import Asset
@@ -26,11 +26,13 @@ if TYPE_CHECKING:
     from .channel import DMChannel, PartialChannel, Thread
     from .gateway.object import Presence
     from .http import DiscordAPI
-    from .message import Message
+    from .message import Message, Poll, SharedClientTheme
+    from .sticker import PartialSticker
 
 __all__ = (
     "Member",
     "PartialMember",
+    "PartialThreadMember",
     "ThreadMember",
 )
 
@@ -40,7 +42,6 @@ class PartialMember(PartialBase):
 
     __slots__ = (
         "_state",
-        "_user",
         "guild_id",
         "presence",
     )
@@ -49,13 +50,11 @@ class PartialMember(PartialBase):
         self,
         *,
         state: "DiscordAPI",
-        id: int,  # noqa: A002
+        id: int,  # ruff: ignore[builtin-argument-shadowing]
         guild_id: int,
     ):
         super().__init__(id=int(id))
         self._state = state
-
-        self._user = PartialUser(state=state, id=self.id)
 
         self.guild_id: int = int(guild_id)
         """ The ID of the guild the member belongs to. """
@@ -69,6 +68,14 @@ class PartialMember(PartialBase):
     def __str__(self) -> str:
         return "PartialMember"
 
+    @property
+    def _user(self) -> "PartialUser | User":
+        """ The (partial) user behind this member. """
+        if (cache := self._state.cache) is not None and (cached := cache.get_user(self.id)) is not None:
+            return cached
+
+        return self._state.bot.get_partial_user(self.id)
+
     def _update_presence(self, obj: "Presence | None") -> None:
         self.presence = obj
 
@@ -79,16 +86,20 @@ class PartialMember(PartialBase):
 
         If you are using gateway cache, it can return full object too
         """
-        cache = self._state.cache.get_guild(self.guild_id)
-        if cache:
+        if cache := self._state.cache.get_guild(self.guild_id):
             return cache
 
-        return PartialGuild(state=self._state, id=self.guild_id)
+        return self._state.bot.get_partial_guild(self.guild_id)
 
     @property
     def default_avatar(self) -> Asset:
         """ Alias for `User.default_avatar`. """
         return self._user.default_avatar
+
+    @property
+    def display_avatar(self) -> Asset:
+        """ The display avatar of the member. """
+        return self.default_avatar
 
     async def fetch(self) -> "Member":
         """ Fetches the member from the API. """
@@ -97,11 +108,37 @@ class PartialMember(PartialBase):
             f"/guilds/{self.guild_id}/members/{self.id}"
         )
 
-        return Member(
-            state=self._state,
-            guild=self.guild,
-            data=r.response
-        )
+        return self._state.bot.create_member_from_data(r.response, guild=self.guild)
+
+    async def fetch_permissions(
+        self,
+        channel: Snowflake | int | None = None,
+        *,
+        implicit: bool = True
+    ) -> Permissions:
+        """
+        Fetches the member permissions from the API, in the guild or in a channel if one is given.
+
+        Shortcut for `PartialGuild.fetch_member_permissions` and `PartialChannel.fetch_member_permissions`.
+
+        Parameters
+        ----------
+        channel
+            The channel to fetch the permissions in, `None` fetches the guild permissions
+        implicit
+            Whether to apply implicit permission masking for missing `VIEW_CHANNEL` or voice/stage `CONNECT`.
+            Only used when `channel` is given.
+
+        Returns
+        -------
+            The member's permissions
+        """
+        if channel is None:
+            return await self.guild.fetch_member_permissions(self.id)
+
+        return await self._state.bot.get_partial_channel(
+            int(channel), guild_id=self.guild_id
+        ).fetch_member_permissions(self.id, implicit=implicit)
 
     async def send(
         self,
@@ -114,9 +151,14 @@ class PartialMember(PartialBase):
         files: list[File] | None = MISSING,
         view: View | None = MISSING,
         tts: bool | None = False,
-        type: ResponseType | int = 4,  # noqa: A002
+        type: ResponseType | int = 4,  # ruff: ignore[builtin-argument-shadowing]
         flags: MessageFlags | None = MISSING,
         allowed_mentions: AllowedMentions | None = MISSING,
+        poll: "Poll | None" = MISSING,
+        stickers: list["PartialSticker | Snowflake | int"] | None = MISSING,
+        nonce: int | str | None = MISSING,
+        enforce_nonce: bool = False,
+        shared_client_theme: "SharedClientTheme | None" = MISSING,
         delete_after: float | None = None
     ) -> "Message":
         """
@@ -124,29 +166,39 @@ class PartialMember(PartialBase):
 
         Parameters
         ----------
-        content:
+        content
             Content of the message
-        channel_id:
+        channel_id
             Channel ID of the user, leave empty to create a DM
-        embed:
+        embed
             Embed of the message
-        embeds:
+        embeds
             Embeds of the message
-        file:
+        file
             File of the message
-        files:
+        files
             Files of the message
-        view:
+        view
             Components to add to the message
-        tts:
+        tts
             Whether the message should be sent as TTS
-        type:
+        type
             Type of the message
-        flags:
+        flags
             Flags of the message
-        allowed_mentions:
+        allowed_mentions
             Allowed mentions of the message
-        delete_after:
+        poll
+            The poll to be sent
+        stickers
+            Stickers from the guild to send with the message, max 3
+        nonce
+            Nonce to verify the message was sent, max 25 characters
+        enforce_nonce
+            Whether the nonce should be enforced, returning the existing message if it was already sent
+        shared_client_theme
+            Client theme to share with the message
+        delete_after
             How long to wait before deleting the message
 
         Returns
@@ -164,6 +216,11 @@ class PartialMember(PartialBase):
             tts=tts,
             type=type,
             flags=flags,
+            poll=poll,
+            stickers=stickers,
+            nonce=nonce,
+            enforce_nonce=enforce_nonce,
+            shared_client_theme=shared_client_theme,
             allowed_mentions=(
                 allowed_mentions or
                 self._state.bot._default_allowed_mentions
@@ -187,16 +244,16 @@ class PartialMember(PartialBase):
 
         Parameters
         ----------
-        reason:
+        reason
             The reason for banning the user
-        delete_message_days:
+        delete_message_days
             How many days of messages to delete
-        delete_message_seconds:
+        delete_message_seconds
             How many seconds of messages to delete
 
         Raises
         ------
-        `ValueError`
+        ValueError
             - If delete_message_days and delete_message_seconds are both specified
             - If delete_message_days is not between 0 and 7
             - If delete_message_seconds is not between 0 and 604,800
@@ -218,7 +275,7 @@ class PartialMember(PartialBase):
 
         Parameters
         ----------
-        reason:
+        reason
             The reason for unbanning the user
         """
         await self.guild.unban(self.id, reason=reason)
@@ -233,7 +290,7 @@ class PartialMember(PartialBase):
 
         Parameters
         ----------
-        reason:
+        reason
             The reason for kicking the user
         """
         await self.guild.kick(self.id, reason=reason)
@@ -258,27 +315,27 @@ class PartialMember(PartialBase):
 
         Parameters
         ----------
-        nick:
+        nick
             The new nickname of the member
-        roles:
+        roles
             Roles to make the member have
-        mute:
+        mute
             Whether to mute the member
-        deaf:
+        deaf
             Whether to deafen the member
-        communication_disabled_until:
+        communication_disabled_until
             How long to disable communication for (timeout)
-        channel_id:
+        channel_id
             The channel ID to move the member to
-        reason:
+        reason
             The reason for editing the member
-        banner:
+        banner
             The new guild banner for the bot (Application only).
-        avatar:
+        avatar
             The new avatar for the bot (Application only).
-        bio:
+        bio
             The new bio for the bot (Application only).
-        display_name:
+        display_name
             The new display name style for the bot (Application only).
 
         Returns
@@ -287,7 +344,7 @@ class PartialMember(PartialBase):
 
         Raises
         ------
-        `TypeError`
+        TypeError
             - If communication_disabled_until is not timedelta, datetime, or int
         """
         payload = {}
@@ -362,11 +419,7 @@ class PartialMember(PartialBase):
         else:
             raise ValueError("No parameters to edit were provided.")
 
-        return Member(
-            state=self._state,
-            guild=self.guild,
-            data=r.response
-        )
+        return self._state.bot.create_member_from_data(r.response, guild=self.guild)
 
     async def add_roles(
         self,
@@ -378,9 +431,9 @@ class PartialMember(PartialBase):
 
         Parameters
         ----------
-        *roles:
+        *roles
             Roles to add to the member
-        reason:
+        reason
             The reason for adding the roles
         """
         for role in roles:
@@ -390,6 +443,7 @@ class PartialMember(PartialBase):
             await self._state.query(
                 "PUT",
                 f"/guilds/{self.guild_id}/members/{self.id}/roles/{int(role)}",
+                res_method="text",
                 reason=reason
             )
 
@@ -403,9 +457,9 @@ class PartialMember(PartialBase):
 
         Parameters
         ----------
-        *roles:
+        *roles
             Roles to remove from the member
-        reason:
+        reason
             The reason for removing the roles
         """
         for role in roles:
@@ -415,6 +469,7 @@ class PartialMember(PartialBase):
             await self._state.query(
                 "DELETE",
                 f"/guilds/{self.guild_id}/members/{self.id}/roles/{int(role)}",
+                res_method="text",
                 reason=reason
             )
 
@@ -424,24 +479,27 @@ class PartialMember(PartialBase):
         return f"<@!{self.id}>"
 
 
+class _MemberExtra(NamedTuple):
+    """ Raw values for the fields most members don't have set at all. """
+    avatar: str | None
+    banner: str | None
+    avatar_decoration: dict | None
+    name_style: dict | None
+    nameplate: dict | None
+
+
 class Member(PartialMember):
     """ Represents a member of a guild. """
 
     __slots__ = (
+        "_extra",
+        "_raw_flags",
         "_raw_permissions",
-        "_role_ids",
-        "avatar",
-        "avatar_decoration",
-        "banner",
-        "communication_disabled_until",
-        "flags",
-        "joined_at",
-        "name_style",
-        "nameplate",
+        "_raw_timestamps",
+        "_user",
         "nick",
         "pending",
-        "premium_since",
-        "primary_guild",
+        "role_ids",
     )
 
     def __init__(
@@ -451,51 +509,28 @@ class Member(PartialMember):
         guild: Guild | PartialGuild,
         data: dict
     ):
+        real_user = state.bot.create_user_from_data(data["user"])
+
         super().__init__(
             state=state,
-            id=int(data["user"]["id"]),
+            id=real_user.id,
             guild_id=guild.id,
         )
 
-        self._user = User(state=state, data=data["user"])
+        self._user: User = real_user
+
         self._raw_permissions: int | None = utils.get_int(data, "permissions")
-        self._role_ids: tuple[int, ...] = tuple(int(r) for r in data["roles"])
 
-        self.avatar: Asset | None = None
-        """ The avatar of the member, if available. """
+        self.role_ids: tuple[int, ...] = state.cache.intern_role_ids(guild.id, data["roles"])
+        """ The role IDs of the member. """
 
-        self.banner: Asset | None = None
-        """ The banner of the member, if available. """
-
-        self.flags: GuildMemberFlags = GuildMemberFlags(data["flags"])
-        """ The flags of the member. """
+        self._raw_flags: int = data["flags"]
 
         self.pending: bool = data.get("pending", False)
         """ Whether the member is pending or not. """
 
         self.nick: str | None = data.get("nick")
         """ The nickname of the member, if available. """
-
-        self.joined_at: datetime | None = None
-        """ The time the member joined the guild, if None, Discord failed to provide data. """
-
-        self.communication_disabled_until: datetime | None = None
-        """ The time until the member is communication disabled (timeout). """
-
-        self.premium_since: datetime | None = None
-        """ The time the member started boosting the guild, if available. """
-
-        self.avatar_decoration: AvatarDecoration | None = None
-        """ The avatar decoration of the member, if available. """
-
-        self.nameplate: Nameplate | None = self._user.nameplate
-        """ The nameplate of the member, if available. """
-
-        self.primary_guild: PrimaryGuild | None = self._user.primary_guild
-        """ The primary guild of the member, if available. """
-
-        self.name_style: DisplayNameStyles | None = None
-        """ The display name style of the member, if any. """
 
         self._from_data(data)
 
@@ -509,38 +544,108 @@ class Member(PartialMember):
         return str(self._user)
 
     def _from_data(self, data: dict) -> None:
-        if data.get("joined_at"):
-            self.joined_at = utils.parse_time(data["joined_at"])
+        self._raw_timestamps: int = utils.pack_timestamps(
+            data.get("joined_at") or None,
+            data.get("premium_since") or None,
+            data.get("communication_disabled_until") or None
+        )
 
-        if data.get("avatar"):
-            self.avatar = Asset._from_guild_avatar(
-                self._state, self.guild.id, self.id, data["avatar"]
-            )
+        collectibles = data.get("collectibles", {}) or {}
 
-        if data.get("banner"):
-            self.banner = Asset._from_guild_banner(
-                self._state, self.guild.id, self.id, data["banner"]
-            )
+        # Checked as a plain tuple first, most members have none of these
+        extra = (
+            data.get("avatar"),
+            data.get("banner"),
+            data.get("avatar_decoration_data"),
+            data.get("display_name_styles"),
+            collectibles.get("nameplate"),
+        )
+        self._extra: _MemberExtra | None = _MemberExtra._make(extra) if any(extra) else None
 
-        if data.get("avatar_decoration_data"):
-            self.avatar_decoration = AvatarDecoration(
-                self._state, data["avatar_decoration_data"]
-            )
+    def _update_from_data(self, data: dict) -> None:
+        """
+        Refreshes the member in place from new data, used when a cached member is updated.
 
-        if data.get("communication_disabled_until"):
-            self.communication_disabled_until = utils.parse_time(
-                data["communication_disabled_until"]
-            )
+        Parameters
+        ----------
+        data
+            The raw member data, including the user
+        """
+        self._user = self._state.bot.create_user_from_data(data["user"])
+        self._raw_permissions = utils.get_int(data, "permissions")
+        self.role_ids = self._state.cache.intern_role_ids(self.guild_id, data["roles"])
+        self._raw_flags = data["flags"]
+        self.pending = data.get("pending", False)
+        self.nick = data.get("nick")
+        self._from_data(data)
 
-        if data.get("premium_since"):
-            self.premium_since = utils.parse_time(
-                data["premium_since"]
-            )
+    @property
+    def flags(self) -> GuildMemberFlags:
+        """ The flags of the member. """
+        return GuildMemberFlags(self._raw_flags)
 
-        if data.get("display_name_styles"):
-            self.name_style = DisplayNameStyles(
-                data=data["display_name_styles"]
-            )
+    @property
+    def avatar(self) -> Asset | None:
+        """ The avatar of the member, if available. """
+        avatar = self._extra.avatar if self._extra else None
+        if not avatar:
+            return None
+        return Asset._from_guild_avatar(
+            self._state, self.guild_id, self.id, avatar
+        )
+
+    @property
+    def banner(self) -> Asset | None:
+        """ The banner of the member, if available. """
+        banner = self._extra.banner if self._extra else None
+        if not banner:
+            return None
+        return Asset._from_guild_banner(
+            self._state, self.guild_id, self.id, banner
+        )
+
+    @property
+    def avatar_decoration(self) -> AvatarDecoration | None:
+        """ The avatar decoration of the member, if available. """
+        avatar_decoration = self._extra.avatar_decoration if self._extra else None
+        if not avatar_decoration:
+            return None
+        return AvatarDecoration(self._state, avatar_decoration)
+
+    @property
+    def joined_at(self) -> datetime | None:
+        """ The time the member joined the guild, if None, Discord failed to provide data. """
+        return utils.unpack_timestamp(self._raw_timestamps, 0)
+
+    @joined_at.setter
+    def joined_at(self, value: datetime | None) -> None:
+        self._raw_timestamps = utils.repack_timestamp(self._raw_timestamps, 0, value)
+
+    @property
+    def premium_since(self) -> datetime | None:
+        """ The time the member started boosting the guild, if available. """
+        return utils.unpack_timestamp(self._raw_timestamps, 1)
+
+    @property
+    def communication_disabled_until(self) -> datetime | None:
+        """ The time until the member is communication disabled (timeout). """
+        return utils.unpack_timestamp(self._raw_timestamps, 2)
+
+    @property
+    def name_style(self) -> DisplayNameStyles | None:
+        """ The display name style of the member, if any. """
+        name_style = self._extra.name_style if self._extra else None
+        if not name_style:
+            return None
+        return DisplayNameStyles(data=name_style)
+
+    @property
+    def nameplate(self) -> Nameplate | None:
+        """ The nameplate of the member, if available. """
+        nameplate = self._extra.nameplate if self._extra else None
+        if not nameplate:
+            return None
+        return Nameplate(state=self._state, data=nameplate)
 
     @property
     def roles(self) -> list[Role | PartialRole]:
@@ -548,8 +653,8 @@ class Member(PartialMember):
         guild = self.guild
         return [
             guild.get_role(r_id) or
-            PartialRole(state=self._state, id=r_id, guild_id=guild.id)
-            for r_id in self._role_ids
+            self._state.bot.get_partial_role(r_id, guild_id=guild.id)
+            for r_id in self.role_ids
         ]
 
     def is_default_avatar(self) -> bool:
@@ -565,17 +670,18 @@ class Member(PartialMember):
 
         Parameters
         ----------
-        role:
+        role
             The role to get. Can either be a role object or the Role ID
 
         Returns
         -------
             The role if found, else None
         """
-        return next((
-            r for r in self.roles
-            if r.id == int(role)
-        ), None)
+        if (role_id := int(role)) not in self.role_ids:
+            return None
+
+        guild = self.guild
+        return guild.get_role(role_id) or self._state.bot.get_partial_role(role_id, guild_id=guild.id)
 
     def is_timed_out(self) -> bool:
         """ Returns whether the member is timed out or not. """
@@ -590,13 +696,14 @@ class Member(PartialMember):
 
         This is only available if you are using gateway with guild cache.
         """
-        if getattr(self.guild, "owner_id", None) == self.id:
+        guild = self.guild
+        if getattr(guild, "owner_id", None) == self.id:
             return Permissions.all()
 
         base = Permissions.none()
 
-        for r in self.roles:
-            g_role = self.guild.get_role(r.id)
+        for r_id in self.role_ids:
+            g_role = guild.get_role(r_id)
             if isinstance(g_role, Role):
                 base |= g_role.permissions
 
@@ -637,23 +744,18 @@ class Member(PartialMember):
 
         Parameters
         ----------
-        *args:
+        *args
             Permissions to check
 
         Returns
         -------
             Whether the member has the permission(s)
         """
-        if (
-            Permissions.from_names("administrator") in
-            self.resolved_permissions
-        ):
+        resolved = self.resolved_permissions
+        if Permissions.administrator in resolved:
             return True
 
-        return (
-            Permissions.from_names(*args) in
-            self.resolved_permissions
-        )
+        return Permissions.from_names(*args) in resolved
 
     @property
     def name(self) -> str:
@@ -672,14 +774,7 @@ class Member(PartialMember):
 
     @property
     def discriminator(self) -> str | None:
-        """
-        Gives the discriminator of the member if available.
-
-        Returns
-        -------
-            Discriminator of a user who has yet to convert or a bot account.
-            If the user has converted to the new username, this will return None
-        """
+        """ Gives the discriminator of the member if available. """
         return self._user.discriminator
 
     @property
@@ -703,6 +798,11 @@ class Member(PartialMember):
         return self._user.global_name
 
     @property
+    def primary_guild(self) -> PrimaryGuild | None:
+        """ The primary guild of the member, if available. Shortcut for `User.primary_guild`. """
+        return self._user.primary_guild
+
+    @property
     def global_avatar(self) -> Asset | None:
         """ Shortcut for `User.avatar`. """
         return self._user.avatar
@@ -713,6 +813,11 @@ class Member(PartialMember):
         return self._user.banner
 
     @property
+    def global_nameplate(self) -> Nameplate | None:
+        """ Shortcut for `User.nameplate`. """
+        return self._user.nameplate
+
+    @property
     def display_name(self) -> str:
         """ The display name of the member. """
         return self.nick or self.global_name or self.name
@@ -721,6 +826,11 @@ class Member(PartialMember):
     def display_name_style(self) -> DisplayNameStyles | None:
         """ The currently displayed name style of the member. """
         return self.name_style or self._user.name_style
+
+    @property
+    def display_nameplate(self) -> Nameplate | None:
+        """ The currently displayed nameplate of the member. """
+        return self.nameplate or self.global_nameplate
 
     @property
     def display_banner(self) -> Asset | None:
@@ -746,9 +856,10 @@ class Member(PartialMember):
 
         Only usable if you are using gateway and caching
         """
-        if not isinstance(self.guild, Guild):
+        guild = self.guild
+        if not isinstance(guild, Guild):
             return None
-        return self.guild.get_member_top_role(self)
+        return guild.get_member_top_role(self)
 
 
 class PartialThreadMember(PartialMember):
@@ -794,6 +905,7 @@ class ThreadMember(Member):
     """ Represents a member of a thread. """
 
     __slots__ = (
+        "_thread_flags",
         "join_timestamp",
         "thread_id",
     )
@@ -817,8 +929,12 @@ class ThreadMember(Member):
         self.join_timestamp: datetime = utils.parse_time(data["join_timestamp"])
         """ The time the member joined the thread. """
 
-        self.flags: int = data["flags"]
+        self._thread_flags: int = data["flags"]
+
+    @property
+    def flags(self) -> int:
         """ The flags of the member in the thread. """
+        return self._thread_flags
 
     @property
     def thread(self) -> "PartialChannel | Thread":

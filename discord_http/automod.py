@@ -108,7 +108,7 @@ class AutoModRuleTriggers:
 
         Parameters
         ----------
-        data:
+        data
             The dictionary to create the auto moderation rule from
 
         Returns
@@ -138,7 +138,7 @@ class AutoModRuleAction:
     def __init__(
         self,
         *,
-        type: AutoModRuleActionType,  # noqa: A002
+        type: AutoModRuleActionType,  # ruff: ignore[builtin-argument-shadowing]
         channel_id: Snowflake | int | None = None,
         duration_seconds: int | None = None,
         custom_message: str | None = None,
@@ -146,7 +146,7 @@ class AutoModRuleAction:
         self.type: AutoModRuleActionType = type
         """ The type of action to take when the auto moderation rule is triggered. """
 
-        self.channel_id = channel_id
+        self.channel_id: Snowflake | int | None = channel_id
         """ The channel to send the alert message to if action type is send_alert_message. """
 
         self.duration_seconds: int | None = duration_seconds
@@ -195,7 +195,7 @@ class AutoModRuleAction:
 
         Parameters
         ----------
-        data:
+        data
             The dictionary to create the auto moderation rule action from
 
         Returns
@@ -217,7 +217,7 @@ class AutoModRuleAction:
 
         Parameters
         ----------
-        message:
+        message
             The message to block
 
         Returns
@@ -236,7 +236,7 @@ class AutoModRuleAction:
 
         Parameters
         ----------
-        channel:
+        channel
             The channel to send the alert message to
 
         Returns
@@ -255,7 +255,7 @@ class AutoModRuleAction:
 
         Parameters
         ----------
-        seconds:
+        seconds
             The number of seconds to timeout the user for
 
         Returns
@@ -280,7 +280,7 @@ class PartialAutoModRule(PartialBase):
         self,
         *,
         state: "DiscordAPI",
-        id: int,  # noqa: A002
+        id: int,  # ruff: ignore[builtin-argument-shadowing]
         guild_id: int
     ):
         super().__init__(id=int(id))
@@ -301,12 +301,10 @@ class PartialAutoModRule(PartialBase):
         if not self.guild_id:
             return None
 
-        cache = self._state.cache.get_guild(self.guild_id)
-        if cache:
+        if cache := self._state.cache.get_guild(self.guild_id):
             return cache
 
-        from .guild import PartialGuild
-        return PartialGuild(state=self._state, id=self.guild_id)
+        return self._state.bot.get_partial_guild(self.guild_id)
 
     async def fetch(self) -> "AutoModRule":
         """ Fetches more information about the automod rule. """
@@ -326,7 +324,7 @@ class PartialAutoModRule(PartialBase):
 
         Parameters
         ----------
-        reason:
+        reason
             Reason for deleting the automod
         """
         await self._state.query(
@@ -360,35 +358,35 @@ class PartialAutoModRule(PartialBase):
 
         Parameters
         ----------
-        name:
+        name
             Name of the automod
-        event_type:
+        event_type
             What type of event
-        keyword_filter:
+        keyword_filter
             Keywords to filter
-        regex_patterns:
+        regex_patterns
             Keywords in regex pattern to filter
-        presets:
+        presets
             Automod presets to include
-        allow_list:
+        allow_list
             List of keywords that are allowed
-        mention_total_limit:
+        mention_total_limit
             How many unique mentions allowed before trigger
-        mention_raid_protection_enabled:
+        mention_raid_protection_enabled
             If this should apply for raids
-        alert_channel:
+        alert_channel
             Where the action should be logged
-        timeout_seconds:
+        timeout_seconds
             How many seconds the user in question should be timed out
-        message:
+        message
             What message the user gets when action is taken
-        enabled:
+        enabled
             If the automod should be enabled or not
-        exempt_roles:
+        exempt_roles
             Which roles are allowed to bypass
-        exempt_channels:
+        exempt_channels
             Which channels are allowed to bypass
-        reason:
+        reason
             Reason for editing the automod
 
         Returns
@@ -473,12 +471,12 @@ class AutoModRule(PartialAutoModRule):
     """ Represents an auto moderation rule in a guild. """
 
     __slots__ = (
+        "_raw_exempt_channels",
+        "_raw_exempt_roles",
         "actions",
         "creator_id",
         "enabled",
         "event_type",
-        "exempt_channels",
-        "exempt_roles",
         "name",
         "trigger_metadata",
         "trigger_type",
@@ -520,17 +518,8 @@ class AutoModRule(PartialAutoModRule):
         self.enabled: bool = data.get("enabled", False)
         """ Whether the automod rule is enabled or not. """
 
-        self.exempt_roles: list[PartialRole] = [
-            PartialRole(state=state, id=int(g), guild_id=self.guild_id)
-            for g in data.get("exempt_roles", [])
-        ]
-        """ The roles that are exempt from the automod rule. """
-
-        self.exempt_channels: list[PartialChannel] = [
-            PartialChannel(state=state, id=int(g), guild_id=self.guild_id)
-            for g in data.get("exempt_channels", [])
-        ]
-        """ The channels that are exempt from the automod rule. """
+        self._raw_exempt_roles: list[int] = [int(g) for g in data.get("exempt_roles", [])]
+        self._raw_exempt_channels: list[int] = [int(g) for g in data.get("exempt_channels", [])]
 
         self._from_data(data)
 
@@ -541,15 +530,28 @@ class AutoModRule(PartialAutoModRule):
         return self.name
 
     def _from_data(self, data: dict) -> None:
-        if data.get("trigger_metadata"):
+        if trigger_metadata := data.get("trigger_metadata"):
             self.trigger_metadata = AutoModRuleTriggers.from_dict(
-                data["trigger_metadata"]
+                trigger_metadata
             )
 
     @property
     def creator(self) -> PartialUser:
         """ The user that created the automod rule in User object form. """
-        return PartialUser(
-            state=self._state,
-            id=self.creator_id
-        )
+        return self._state.bot.get_partial_user(self.creator_id)
+
+    @property
+    def exempt_roles(self) -> list[PartialRole]:
+        """ The roles that are exempt from the automod rule. """
+        return [
+            self._state.bot.get_partial_role(g, guild_id=self.guild_id)
+            for g in self._raw_exempt_roles
+        ]
+
+    @property
+    def exempt_channels(self) -> list[PartialChannel]:
+        """ The channels that are exempt from the automod rule. """
+        return [
+            self._state.bot.get_partial_channel(g, guild_id=self.guild_id)
+            for g in self._raw_exempt_channels
+        ]

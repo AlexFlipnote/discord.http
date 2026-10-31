@@ -10,7 +10,7 @@ from .role import PartialRole
 if TYPE_CHECKING:
     from .guild import Guild, PartialGuild
     from .http import DiscordAPI
-    from .user import User
+    from .user import PartialUser
 
 MISSING = utils.MISSING
 
@@ -19,6 +19,8 @@ __all__ = (
     "EmojiParser",
     "PartialEmoji",
 )
+
+_EMPTY_ROLES: tuple[int, ...] = ()
 
 
 class EmojiParser:
@@ -94,7 +96,7 @@ class EmojiParser:
 
         Parameters
         ----------
-        data:
+        data
             The dictionary to create the emoji from
 
         Returns
@@ -155,7 +157,7 @@ class PartialEmoji(PartialBase):
         self,
         *,
         state: "DiscordAPI",
-        id: int,  # noqa: A002
+        id: int,  # ruff: ignore[builtin-argument-shadowing]
         guild_id: int | None = None
     ):
         super().__init__(id=int(id))
@@ -176,12 +178,10 @@ class PartialEmoji(PartialBase):
         if not self.guild_id:
             return None
 
-        cache = self._state.cache.get_guild(self.guild_id)
-        if cache:
+        if cache := self._state.cache.get_guild(self.guild_id):
             return cache
 
-        from .guild import PartialGuild
-        return PartialGuild(state=self._state, id=self.guild_id)
+        return self._state.bot.get_partial_guild(self.guild_id)
 
     @property
     def url(self) -> str:
@@ -204,10 +204,8 @@ class PartialEmoji(PartialBase):
                 f"/guilds/{self.guild_id}/emojis/{self.id}"
             )
 
-            return Emoji(
-                state=self._state,
-                guild=self.guild,
-                data=r.response
+            return self._state.bot.create_emoji_from_data(
+                r.response, guild=self.guild
             )
 
         r = await self._state.query(
@@ -215,10 +213,7 @@ class PartialEmoji(PartialBase):
             f"/applications/{self._state.bot.application_id}/emojis/{self.id}"
         )
 
-        return Emoji(
-            state=self._state,
-            data=r.response
-        )
+        return self._state.bot.create_emoji_from_data(r.response)
 
     async def delete(
         self,
@@ -232,7 +227,7 @@ class PartialEmoji(PartialBase):
 
         Parameters
         ----------
-        reason:
+        reason
             The reason for deleting the emoji.
         """
         if self.guild_id:
@@ -262,11 +257,11 @@ class PartialEmoji(PartialBase):
 
         Parameters
         ----------
-        name:
+        name
             The new name of the emoji.
-        roles:
+        roles
             Roles that are allowed to use the emoji. (Only for guilds)
-        reason:
+        reason
             The reason for editing the emoji. (Only for guilds)
 
         Returns
@@ -297,10 +292,8 @@ class PartialEmoji(PartialBase):
                 reason=reason
             )
 
-            return Emoji(
-                state=self._state,
-                guild=self.guild,
-                data=r.response
+            return self._state.bot.create_emoji_from_data(
+                r.response, guild=self.guild
             )
 
         if not payload.get("name"):
@@ -314,22 +307,19 @@ class PartialEmoji(PartialBase):
             json={"name": payload["name"]},
         )
 
-        return Emoji(
-            state=self._state,
-            data=r.response
-        )
+        return self._state.bot.create_emoji_from_data(r.response)
 
 
 class Emoji(PartialEmoji):
     """ Represents a Discord emoji. """
     __slots__ = (
+        "_raw_roles",
         "animated",
         "available",
         "managed",
         "name",
         "require_colons",
-        "roles",
-        "user",
+        "user_id",
     )
 
     def __init__(
@@ -360,16 +350,26 @@ class Emoji(PartialEmoji):
         self.managed: bool = data.get("managed", False)
         """ Whether the emoji is managed by an integration or not. """
 
-        self.user: "User | None" = None
-        """ The user that created the emoji, if available. """
+        self.user_id: int | None = None
+        """ The ID of the user that created the emoji, if available. """
 
-        self.roles: list[PartialRole] = [
-            PartialRole(state=state, id=r, guild_id=guild.id)
-            for r in data.get("roles", [])
-        ]
-        """ The roles that are allowed to use the emoji. (Only for guilds). """
+        raw_roles = data.get("roles")
+        self._raw_roles: tuple[int, ...] = (
+            tuple(map(int, raw_roles)) if raw_roles else _EMPTY_ROLES
+        )
 
         self._from_data(data)
+
+    @property
+    def roles(self) -> list[PartialRole]:
+        """ The roles that are allowed to use the emoji. (Only for guilds). """
+        if not self.guild_id:
+            return []
+
+        return [
+            self._state.bot.get_partial_role(r, guild_id=self.guild_id)
+            for r in self._raw_roles
+        ]
 
     def __repr__(self) -> str:
         return f"<Emoji id={self.id} name='{self.name}' animated={self.animated}>"
@@ -378,9 +378,16 @@ class Emoji(PartialEmoji):
         return f"<{'a' if self.animated else ''}:{self.name}:{self.id}>"
 
     def _from_data(self, data: dict) -> None:
-        if data.get("user"):
-            from .user import User
-            self.user = User(state=self._state, data=data["user"])
+        if user := data.get("user"):
+            self.user_id = int(user["id"])
+
+    @property
+    def user(self) -> "PartialUser | None":
+        """ The user that created the emoji, if available. """
+        if not self.user_id:
+            return None
+
+        return self._state.bot.get_partial_user(self.user_id)
 
     @property
     def url(self) -> str:

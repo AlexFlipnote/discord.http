@@ -10,21 +10,27 @@ from .user import User
 if TYPE_CHECKING:
     from .http import DiscordAPI
     from .guild import PartialGuild, Guild
+    from .role import PartialRole
+
+__all__ = (
+    "Integration",
+    "IntegrationAccount",
+    "IntegrationApplication",
+    "PartialIntegration",
+)
 
 
 class IntegrationAccount:
     """ Represents an account associated with an integration. """
 
-    __slots__ = ("_state", "id", "name",)
+    __slots__ = ("id", "name",)
 
     def __init__(
         self,
         *,
-        state: "DiscordAPI",
+        state: "DiscordAPI",  # ruff: ignore[unused-method-argument]
         data: dict,
     ) -> None:
-        self._state = state
-
         self.name: str = data.get("name", "")
         """ The name of the account. """
 
@@ -63,7 +69,7 @@ class PartialIntegration(PartialBase):
         self,
         *,
         state: "DiscordAPI",
-        id: int,  # noqa: A002
+        id: int,  # ruff: ignore[builtin-argument-shadowing]
         guild_id: int,
         application_id: int | None = None,
     ) -> None:
@@ -87,15 +93,13 @@ class PartialIntegration(PartialBase):
 
     @property
     def guild(self) -> "PartialGuild | Guild":
-        """:class:`PartialGuild` | :class:`Guild`: The guild associated with this integration."""
-        cache = self._state.cache.get_guild(self.guild_id)
-        if cache:
+        """ The guild associated with this integration. """
+        if cache := self._state.cache.get_guild(self.guild_id):
             return cache
 
-        from .guild import PartialGuild
-        return PartialGuild(state=self._state, id=self.guild_id)
+        return self._state.bot.get_partial_guild(self.guild_id)
 
-    async def delete(self) -> None:
+    async def delete(self, *, reason: str | None = None) -> None:
         """
         Delete this integration for the guild.
 
@@ -103,11 +107,17 @@ class PartialIntegration(PartialBase):
         kicks the associated bot if there is one.
 
         This requires the `MANAGE_GUILD` permission.
+
+        Parameters
+        ----------
+        reason
+            The reason for deleting the integration
         """
         await self._state.query(
             "DELETE",
             f"/guilds/{self.guild.id}/integrations/{self.id}",
-            res_method="text"
+            res_method="text",
+            reason=reason
         )
 
 
@@ -145,8 +155,6 @@ class Integration(PartialIntegration):
             guild_id=guild.id,
             application_id=utils.get_int(data.get("application", {}), "id")
         )
-
-        self._state: "DiscordAPI" = state
 
         self.name: str = data["name"]
         """ The name of the integration. """
@@ -207,14 +215,14 @@ class Integration(PartialIntegration):
         return f"<Integration id={self.id} name={self.name} type={self.type}>"
 
     def _from_data(self, data: dict) -> None:
-        if data.get("user"):
-            self.user = User(state=self._state, data=data["user"])
+        if user := data.get("user"):
+            self.user = self._state.bot.create_user_from_data(user)
 
-        if data.get("account"):
-            self.account = IntegrationAccount(state=self._state, data=data["account"])
+        if account := data.get("account"):
+            self.account = IntegrationAccount(state=self._state, data=account)
 
-        if data.get("application"):
-            self.application = IntegrationApplication(state=self._state, data=data["application"])
+        if application := data.get("application"):
+            self.application = IntegrationApplication(state=self._state, data=application)
 
     @property
     def bot(self) -> User | None:
@@ -224,6 +232,14 @@ class Integration(PartialIntegration):
         The bot user associated with this integration, if available.
         """
         return self.application.bot if self.application else None
+
+    @property
+    def role(self) -> "PartialRole | None":
+        """ The partial role used for "subscribers" of this integration, if any. """
+        if not self.role_id:
+            return None
+
+        return self._state.bot.get_partial_role(self.role_id, guild_id=self.guild_id)
 
 
 class IntegrationApplication(PartialBase):
@@ -285,16 +301,13 @@ class IntegrationApplication(PartialBase):
 
     def _from_data(self, data: dict) -> None:
         """ Update the application with new data. """
-        if data.get("bot"):
-            self.bot = User(
-                state=self._state,
-                data=data["bot"]
-            )
+        if bot := data.get("bot"):
+            self.bot = self._state.bot.create_user_from_data(bot)
 
-        if data.get("icon"):
+        if icon := data.get("icon"):
             self.icon = Asset._from_icon(
                 state=self._state,
                 object_id=self.id,
-                icon_hash=data["icon"],
+                icon_hash=icon,
                 path="app"
             )

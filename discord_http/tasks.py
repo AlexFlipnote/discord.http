@@ -11,6 +11,12 @@ from . import utils
 
 _log = logging.getLogger(__name__)
 
+_DEFAULT_WHITELIST_EXCEPTIONS: tuple[type[Exception], ...] = (
+    OSError,
+    asyncio.TimeoutError,
+    aiohttp.ClientError,
+)
+
 
 class Sleeper:
     """ A helper class that handles sleeping until a specified datetime. """
@@ -21,7 +27,7 @@ class Sleeper:
     )
 
     def __init__(self, dt: datetime, *, loop: asyncio.AbstractEventLoop):
-        self.loop = loop
+        self.loop: asyncio.AbstractEventLoop = loop
         """ The event loop that the sleeper is using. """
 
         self.future: asyncio.Future = loop.create_future()
@@ -40,7 +46,7 @@ class Sleeper:
 
         Parameters
         ----------
-        dt:
+        dt
             The new time to wait until
         """
         self.handle.cancel()
@@ -51,23 +57,11 @@ class Sleeper:
         )
 
     def wait(self) -> asyncio.Future:
-        """
-        Wait for the timer to finish.
-
-        Returns
-        -------
-            The future that is waiting for the timer to finish
-        """
+        """ Wait for the timer to finish. """
         return self.future
 
     def done(self) -> bool:
-        """
-        Returns whether the timer is done or not.
-
-        Returns
-        -------
-            Whether the timer is done or not
-        """
+        """ Returns whether the timer is done or not. """
         return self.future.done()
 
     def cancel(self) -> None:
@@ -102,17 +96,14 @@ class Loop:
             raise ValueError("count must be greater than 0 or None")
 
         self._task: asyncio.Task | None = None
+        self._handle: Sleeper | None = None
         self._injected = None
 
         self._error: Callable = self._default_error
         self._before_loop: Callable = self._default_before_loop
         self._after_loop: Callable = self._default_after_loop
 
-        self._whitelist_exceptions: tuple[type[Exception], ...] = (
-            OSError,
-            asyncio.TimeoutError,
-            aiohttp.ClientError,
-        )
+        self._whitelist_exceptions: tuple[type[Exception], ...] = _DEFAULT_WHITELIST_EXCEPTIONS
 
         self.handle_interval(
             seconds=seconds,
@@ -129,7 +120,7 @@ class Loop:
         self._next_loop: datetime | None = None
         self._loop_count: int = 0
 
-    async def __call__(self, *args, **kwargs) -> Callable:  # noqa: ANN002
+    async def __call__(self, *args, **kwargs) -> Callable:  # ruff: ignore[missing-type-args]
         """ Calls the loop. """
         if self._injected is not None:
             args = (self._injected, *args)
@@ -154,6 +145,7 @@ class Loop:
         copy._before_loop = self._before_loop
         copy._after_loop = self._after_loop
         copy._error = self._error
+        copy._whitelist_exceptions = self._whitelist_exceptions
         setattr(obj, self.func.__name__, copy)
         return copy
 
@@ -175,47 +167,51 @@ class Loop:
     async def _default_after_loop(self) -> None:
         """ The default after_loop handler for the loop. """
 
-    async def _looper(self, *args, **kwargs) -> None:  # noqa: ANN002
+    async def _looper(self, *args, **kwargs) -> None:  # ruff: ignore[missing-type-args]
         """ Internal looper that handles the behaviour of the loop. """
-        await self._before_loop()
-        self._last_loop_failed = False
-
-        if self._is_explicit_time():
-            self._next_loop = self._next_sleep_time()
-        else:
-            self._next_loop = utils.utcnow()
-            await asyncio.sleep(0)
-
         try:
+            await self._before_loop()
+            self._last_loop_failed = False
+
+            if self._is_explicit_time():
+                self._next_loop = self._next_sleep_time()
+            else:
+                self._next_loop = utils.utcnow()
+                await asyncio.sleep(0)
+
             if self._should_stop:
                 return
 
             while True:
-                if self._is_explicit_time():
+                # A failed run already waited its 5s, retry it now instead of at the next slot
+                if self._is_explicit_time() and not self._last_loop_failed:
                     await self._try_sleep_until(self._next_loop)
+
+                    # Timers can fire slightly before the target (uvloop rounds to ms),
+                    # so top up with at least 1ms per sleep to avoid a 0ms spin
+                    while (remaining := (self._next_loop - utils.utcnow()).total_seconds()) > 0:
+                        await asyncio.sleep(max(remaining, 0.001))
 
                 if not self._last_loop_failed:
                     self._last_loop = self._next_loop
-                    self._next_loop = self._next_sleep_time()
-
-                    while (
-                        self._is_explicit_time() and
-                        self._next_loop <= self._last_loop
-                    ):
-                        _log.warning(
-                            f"task:{self.func.__name__} woke up a bit too early. "
-                            f"Sleeping until {self._next_loop} to avoid drifting."
-                        )
-                        await self._try_sleep_until(self._next_loop)
-                        self._next_loop = self._next_sleep_time()
+                    # Waking exactly on the slot would select it again,
+                    # so always schedule strictly after the slot we just ran
+                    self._next_loop = self._next_sleep_time(max(
+                        utils.utcnow(),
+                        self._last_loop + timedelta(microseconds=1)
+                    ))
 
                 try:
                     await self.func(*args, **kwargs)
                     self._last_loop_failed = False
-                except self._whitelist_exceptions:
+                except self._whitelist_exceptions as e:
                     self._last_loop_failed = True
                     if not self.reconnect:
                         raise
+                    _log.debug(
+                        f"task:{self.func.__name__} hit {e!r}, "
+                        "retrying in 5s..."
+                    )
                     await asyncio.sleep(5)
                 else:
                     if self._should_stop:
@@ -241,11 +237,12 @@ class Loop:
             await self._after_loop()
             if self._handle:
                 self._handle.cancel()
+                self._handle = None
             self._will_cancel = False
             self._loop_count = 0
             self._should_stop = False
 
-    def start(self, *args, **kwargs) -> asyncio.Task:  # noqa: ANN002
+    def start(self, *args, **kwargs) -> asyncio.Task:  # ruff: ignore[missing-type-args]
         """ Starts the loop. """
         if self._task and not self._task.done():
             raise RuntimeError("The loop is already running")
@@ -258,7 +255,20 @@ class Loop:
             self._looper(*args, **kwargs),
             name=f"discord.http/loop:{self.func.__name__}"
         )
+        self._task.add_done_callback(self._on_task_done)
         return self._task
+
+    def _on_task_done(self, task: asyncio.Task) -> None:
+        """ Fallback in case an exception escapes _looper's own handling (e.g. a buggy error handler). """
+        if task.cancelled():
+            return
+
+        if (exc := task.exception()) is not None:
+            _log.error(
+                f"Unhandled exception escaped background loop {self.func.__name__}",
+                exc_info=exc
+            )
+            exc.__traceback__ = None
 
     def stop(self) -> None:
         """ Stops the loop. """
@@ -355,7 +365,7 @@ class Loop:
                 )
                 continue
 
-            self._whitelist_exceptions += (e,)  # type: ignore
+            self._whitelist_exceptions += (e,)
 
     def remove_exception(self, *exceptions: Exception) -> None:
         """ Removes exceptions from the whitelist of exceptions that are ignored. """
@@ -366,11 +376,7 @@ class Loop:
 
     def reset_exceptions(self) -> None:
         """ Resets the whitelist of exceptions that are ignored back to the default. """
-        self._whitelist_exceptions = (
-            OSError,
-            asyncio.TimeoutError,
-            aiohttp.ClientError,
-        )
+        self._whitelist_exceptions = _DEFAULT_WHITELIST_EXCEPTIONS
 
     def _sort_static_times(
         self,
@@ -414,21 +420,21 @@ class Loop:
 
         Parameters
         ----------
-        seconds:
+        seconds
             Amount of seconds between each iteration of the loop
-        minutes:
+        minutes
             Amount of minutes between each iteration of the loop
-        hours:
+        hours
             Amount of hours between each iteration of the loop
-        time:
+        time
             The time of day to run the loop at
 
         Raises
         ------
-        `ValueError`
+        ValueError
             - The sleep timer cannot be 0
             - `count` must be greater than 0 or `None`
-        `TypeError`
+        TypeError
             `time` must be a `datetime.time` object
         """
         if time is None:
@@ -436,8 +442,7 @@ class Loop:
             minutes = minutes or 0.0
             hours = hours or 0.0
 
-            sleep = seconds + (minutes * 60.0) + (hours * 3600.0)
-            if sleep <= 0:
+            if (sleep := seconds + (minutes * 60.0) + (hours * 3600.0)) <= 0:
                 raise ValueError("The sleep timer cannot be 0")
 
             self._seconds = float(seconds)
@@ -463,7 +468,7 @@ class Loop:
 
         Parameters
         ----------
-        now:
+        now
             The current time
 
         Returns
@@ -488,9 +493,7 @@ class Loop:
         if now is None:
             now = utils.utcnow()
 
-        index = self._find_time_index(now)
-
-        if index is None:
+        if (index := self._find_time_index(now)) is None:
             time = self._time[0]
             tomorrow = now.astimezone(time.tzinfo) + timedelta(days=1)
             date = tomorrow.date()
@@ -516,17 +519,17 @@ def loop(
 
     Parameters
     ----------
-    seconds:
+    seconds
         The number of seconds between each iteration of the loop.
-    minutes:
+    minutes
         The number of minutes between each iteration of the loop.
-    hours:
+    hours
         The number of hours between each iteration of the loop.
-    time:
+    time
         The time of day to run the loop at. (UTC only)
-    count:
+    count
         The number of times to run the loop. If ``None``, the loop will run forever.
-    reconnect:
+    reconnect
         Whether the loop should reconnect if it fails or not.
     """
     def decorator(func: Callable) -> Loop:
