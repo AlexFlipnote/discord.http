@@ -176,7 +176,8 @@ class _FFmpegAudio(AudioSource):
                     await stdin.drain()
             elif isinstance(self._source, io.IOBase):
                 while True:
-                    chunk = self._source.read(_OGG_READ_CHUNK)
+                    # Off the loop, a real file or slow stream would stall pacing and heartbeats
+                    chunk = await asyncio.to_thread(self._source.read, _OGG_READ_CHUNK)
                     if not chunk:
                         break
                     stdin.write(chunk)
@@ -457,27 +458,29 @@ class AudioPlayer:
         # concurrently with its startup; sending speaking-off here would race
         # the new player's speaking-on and could leave the indicator stuck off.
         current = self.voice_client._player
-        if current is self or current is None:
-            try:
-                for _ in range(5):
-                    self.voice_client.send_audio_packet(OPUS_SILENCE, encode=False)
-            except Exception:
-                _log.exception("Failed to send trailing silence frames")
+        try:
+            if current is self or current is None:
+                try:
+                    for _ in range(5):
+                        self.voice_client.send_audio_packet(OPUS_SILENCE, encode=False)
+                except Exception:
+                    _log.exception("Failed to send trailing silence frames")
 
-            try:
-                await self.voice_client.speak(False)
-            except Exception:
-                _log.exception("Failed to disable speaking")
+                try:
+                    await self.voice_client.speak(False)
+                except Exception:
+                    _log.exception("Failed to disable speaking")
+        finally:
+            # Runs even when cancelled during speak(False), so ffmpeg never leaks
+            self.source.cleanup()
 
-        self.source.cleanup()
-
-        if self.after is not None:
-            try:
-                self.after(self._error)
-            except Exception:
-                _log.exception("Error calling the after callback")
-        elif self._error is not None:
-            _log.exception("Exception in audio player", exc_info=self._error)
+            if self.after is not None:
+                try:
+                    self.after(self._error)
+                except Exception:
+                    _log.exception("Error calling the after callback")
+            elif self._error is not None:
+                _log.exception("Exception in audio player", exc_info=self._error)
 
     def stop(self) -> None:
         """ Stop playback as soon as possible and resume any paused loop. """

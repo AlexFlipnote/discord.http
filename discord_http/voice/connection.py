@@ -282,10 +282,20 @@ class VoiceConnection:
         await self._state_event.wait()
         await self._server_event.wait()
 
+        # A previous handshake attempt that timed out leaves its socket behind,
+        # close it so its heartbeat can't later tear down the new connection
+        await self._close_socket()
         self.socket = VoiceSocket(self)
         await self.socket.connect()
 
         await self._connected_event.wait()
+
+    async def _close_socket(self) -> None:
+        """ Close and drop the current voice socket, if any, without triggering a reconnect. """
+        if self.socket is not None:
+            self.socket._request_close()
+            await self.socket.close()
+            self.socket = None
 
     def _on_socket_closed(self, close_code: int | None) -> None:
         """
@@ -404,10 +414,7 @@ class VoiceConnection:
 
         # Tear down the old socket/UDP locally WITHOUT sending op4, so the gateway
         # keeps our voice state and we can reuse the session id and token.
-        if self.socket is not None:
-            self.socket._request_close()
-            await self.socket.close()
-            self.socket = None
+        await self._close_socket()
 
         if self.transport is not None:
             self.transport.close()
@@ -442,10 +449,7 @@ class VoiceConnection:
             would be a no-op and yield no fresh VOICE_SERVER_UPDATE. Defaults to
             ``False`` so unrelated reconnects do not cause a visible leave/rejoin.
         """
-        if self.socket is not None:
-            self.socket._request_close()
-            await self.socket.close()
-            self.socket = None
+        await self._close_socket()
 
         if self.transport is not None:
             self.transport.close()
@@ -917,10 +921,7 @@ class VoiceConnection:
         self._closing = True
         self._cancel_reconnect_task()
 
-        if self.socket is not None:
-            self.socket._request_close()
-            await self.socket.close()
-            self.socket = None
+        await self._close_socket()
 
         self._clear_transport_state()
 

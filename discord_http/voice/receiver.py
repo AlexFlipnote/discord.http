@@ -268,8 +268,9 @@ class VoiceReceiver:
 
         Returns
         -------
-            The decoded signed 16-bit little-endian stereo PCM, or ``None`` when
-            libopus is unavailable and the packet must be dropped.
+            The decoded signed 16-bit little-endian stereo PCM, prefixed with one
+            concealment frame when a gap was detected. ``None`` when libopus is
+            unavailable or the packet arrived late and must be dropped.
         """
         if not opus.is_loaded():
             # PCM was requested but libopus is missing. Log once and drop rather
@@ -282,16 +283,24 @@ class VoiceReceiver:
         try:
             decoder = self._get_decoder(ssrc)
 
-            # Detect a sequence gap and conceal a single lost frame before
-            # decoding the packet we actually received. RTP sequence numbers are
-            # 16-bit and wrap, so compare modulo 2**16.
+            # RTP sequence numbers are 16-bit and wrap, so compare modulo 2**16.
+            # A delta in the upper half means the packet is late/duplicate.
+            concealed = b""
             last = self._last_seq.get(ssrc)
-            if last is not None and (sequence - last) & 0xFFFF > 1:
-                decoder.decode(None)
+            if last is not None:
+                delta = (sequence - last) & 0xFFFF
+                if delta == 0 or delta >= 0x8000:
+                    # ponytail: no jitter buffer, late packets are dropped as the
+                    # decoder has already moved past them
+                    return None
+                if delta > 1:
+                    # Conceal a single lost frame and keep it, so recordings
+                    # don't drift shorter than wall clock on loss
+                    concealed = decoder.decode(None)
 
             self._last_seq[ssrc] = sequence
 
-            return decoder.decode(payload)
+            return concealed + decoder.decode(payload)
         except Exception:
             _log.exception("Failed to Opus-decode received voice packet")
             return None

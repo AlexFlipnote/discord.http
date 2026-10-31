@@ -107,6 +107,9 @@ class DaveManager:
             return
 
         if not has_dave or davey is None:
+            # Same reset as the failed-session branch below
+            self._session = None
+            self._version = 0
             raise RuntimeError(
                 "Discord negotiated DAVE end-to-end encryption "
                 f"(protocol version {version}), but the optional 'davey' package is not "
