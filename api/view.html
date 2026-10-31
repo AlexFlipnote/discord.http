@@ -460,6 +460,12 @@
 <dd><p>The ID of the uploaded attachment, if the media was uploaded as one.</p>
 </dd></dl>
 
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.view.AttachmentComponent.content_scan_flags">
+<span class="sig-name descname"><span class="pre">content_scan_flags</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="flags.html#discord_http.flags.ContentScanFlags" title="discord_http.flags.ContentScanFlags"><span class="pre">ContentScanFlags</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/builtins/constants.html#None" title="(in Python v3.15)"><span class="pre">None</span></a></span><a class="headerlink" href="#discord_http.view.AttachmentComponent.content_scan_flags" title="Link to this definition">¶</a></dt>
+<dd><p>The flags from Discord’s content scanning, if the media has been scanned.</p>
+</dd></dl>
+
 <dl class="py method">
 <dt class="sig sig-object py" id="discord_http.view.AttachmentComponent.fetch">
 <span class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">fetch</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">use_cached</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#bytes" title="(in Python v3.15)"><span class="pre">bytes</span></a></span></span><a class="headerlink" href="#discord_http.view.AttachmentComponent.fetch" title="Link to this definition">¶</a></dt>
@@ -2063,6 +2069,12 @@ Set to <cite>None</cite> for the view to never time out on its own.</p></li>
 <dd><p>The accessory component for the section.</p>
 </dd></dl>
 
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.view.SectionComponent.type">
+<span class="sig-name descname"><span class="pre">type</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="enums.html#discord_http.enums.ComponentType" title="discord_http.enums.ComponentType"><span class="pre">ComponentType</span></a></span><a class="headerlink" href="#discord_http.view.SectionComponent.type" title="Link to this definition">¶</a></dt>
+<dd><p>The type of the component.</p>
+</dd></dl>
+
 <dl class="py method">
 <dt class="sig sig-object py" id="discord_http.view.SectionComponent.to_dict">
 <span class="sig-name descname"><span class="pre">to_dict</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#dict" title="(in Python v3.15)"><span class="pre">dict</span></a></span></span><a class="headerlink" href="#discord_http.view.SectionComponent.to_dict" title="Link to this definition">¶</a></dt>
@@ -2072,12 +2084,6 @@ Set to <cite>None</cite> for the view to never time out on its own.</p></li>
 <dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#dict" title="(in Python v3.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">dict</span></code></a></span></p>
 </dd>
 </dl>
-</dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="discord_http.view.SectionComponent.type">
-<span class="sig-name descname"><span class="pre">type</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="enums.html#discord_http.enums.ComponentType" title="discord_http.enums.ComponentType"><span class="pre">ComponentType</span></a></span><a class="headerlink" href="#discord_http.view.SectionComponent.type" title="Link to this definition">¶</a></dt>
-<dd><p>The type of the component.</p>
 </dd></dl>
 
 </dd></dl>
@@ -2802,6 +2808,7 @@ Set to <cite>None</cite> for the view to never time out on its own.</p></li>
 <li><a class="reference internal" href="#discord_http.view.AttachmentComponent.content_type"><code class="docutils literal notranslate"><span class="pre">AttachmentComponent.content_type</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.view.AttachmentComponent.flags"><code class="docutils literal notranslate"><span class="pre">AttachmentComponent.flags</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.view.AttachmentComponent.attachment_id"><code class="docutils literal notranslate"><span class="pre">AttachmentComponent.attachment_id</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.view.AttachmentComponent.content_scan_flags"><code class="docutils literal notranslate"><span class="pre">AttachmentComponent.content_scan_flags</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.view.AttachmentComponent.fetch"><code class="docutils literal notranslate"><span class="pre">AttachmentComponent.fetch()</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.view.AttachmentComponent.save"><code class="docutils literal notranslate"><span class="pre">AttachmentComponent.save()</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.view.AttachmentComponent.to_file"><code class="docutils literal notranslate"><span class="pre">AttachmentComponent.to_file()</span></code></a></li>
@@ -3018,8 +3025,8 @@ Set to <cite>None</cite> for the view to never time out on its own.</p></li>
 <li><a class="reference internal" href="#discord_http.view.SectionComponent"><code class="docutils literal notranslate"><span class="pre">SectionComponent</span></code></a><ul>
 <li><a class="reference internal" href="#discord_http.view.SectionComponent.components"><code class="docutils literal notranslate"><span class="pre">SectionComponent.components</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.view.SectionComponent.accessory"><code class="docutils literal notranslate"><span class="pre">SectionComponent.accessory</span></code></a></li>
-<li><a class="reference internal" href="#discord_http.view.SectionComponent.to_dict"><code class="docutils literal notranslate"><span class="pre">SectionComponent.to_dict()</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.view.SectionComponent.type"><code class="docutils literal notranslate"><span class="pre">SectionComponent.type</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.view.SectionComponent.to_dict"><code class="docutils literal notranslate"><span class="pre">SectionComponent.to_dict()</span></code></a></li>
 </ul>
 </li>
 <li><a class="reference internal" href="#discord_http.view.Select"><code class="docutils literal notranslate"><span class="pre">Select</span></code></a><ul>

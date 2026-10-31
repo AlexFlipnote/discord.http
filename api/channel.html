@@ -755,6 +755,28 @@ So be sure to use the correct parameters for the channel.</p>
 </dd></dl>
 
 <dl class="py method">
+<dt class="sig sig-object py" id="discord_http.channel.BaseChannel.fetch_member_permissions">
+<span class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">fetch_member_permissions</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">member</span></span></em>, <em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">implicit</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="flags.html#discord_http.flags.Permissions" title="discord_http.flags.Permissions"><span class="pre">Permissions</span></a></span></span><a class="headerlink" href="#discord_http.channel.BaseChannel.fetch_member_permissions" title="Link to this definition">¶</a></dt>
+<dd><p>Fetches the computed permissions of a member in the channel.</p>
+<p>Includes their roles and member-specific overwrites, threads use the parent channel’s overwrites.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>member</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference internal" href="object.html#discord_http.object.Snowflake" title="discord_http.object.Snowflake"><code class="xref py py-class docutils literal notranslate"><span class="pre">Snowflake</span></code></a> | <a class="reference external" href="https://docs.python.org/3/builtins/functions.html#int" title="(in Python v3.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a></span>) – The member to fetch the permissions of</p></li>
+<li><p><strong>implicit</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#bool" title="(in Python v3.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></a></span>) – Whether to apply implicit permission masking for missing <cite>VIEW_CHANNEL</cite> or voice/stage <cite>CONNECT</cite>.
+Not applied by Discord when the target member is a bot.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><a class="reference internal" href="flags.html#discord_http.flags.Permissions" title="discord_http.flags.Permissions"><code class="xref py py-class docutils literal notranslate"><span class="pre">Permissions</span></code></a></span></p>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The member’s channel permissions</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
 <dt class="sig sig-object py" id="discord_http.channel.BaseChannel.fetch_message">
 <span class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">fetch_message</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">message_id</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="message.html#discord_http.message.Message" title="discord_http.message.Message"><span class="pre">Message</span></a></span></span><a class="headerlink" href="#discord_http.channel.BaseChannel.fetch_message" title="Link to this definition">¶</a></dt>
 <dd><p>Fetch a message from the channel.</p>
@@ -788,6 +810,27 @@ So be sure to use the correct parameters for the channel.</p>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/collections.abc.html#collections.abc.AsyncIterator" title="(in Python v3.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">AsyncIterator</span></code></a>[<a class="reference internal" href="message.html#discord_http.message.MessagePin" title="discord_http.message.MessagePin"><code class="xref py py-class docutils literal notranslate"><span class="pre">MessagePin</span></code></a>]</span></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="discord_http.channel.BaseChannel.fetch_role_permissions">
+<span class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">fetch_role_permissions</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">role</span></span></em>, <em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">implicit</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="flags.html#discord_http.flags.Permissions" title="discord_http.flags.Permissions"><span class="pre">Permissions</span></a></span></span><a class="headerlink" href="#discord_http.channel.BaseChannel.fetch_role_permissions" title="Link to this definition">¶</a></dt>
+<dd><p>Fetches the permissions of a role together with <cite>&#64;everyone</cite> in the channel, applying their overwrites.</p>
+<p>Other roles and member-specific overwrites are not included, threads use the parent channel’s overwrites.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>role</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference internal" href="object.html#discord_http.object.Snowflake" title="discord_http.object.Snowflake"><code class="xref py py-class docutils literal notranslate"><span class="pre">Snowflake</span></code></a> | <a class="reference external" href="https://docs.python.org/3/builtins/functions.html#int" title="(in Python v3.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a></span>) – The role to fetch the permissions of</p></li>
+<li><p><strong>implicit</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#bool" title="(in Python v3.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></a></span>) – Whether to apply implicit permission masking for missing <cite>VIEW_CHANNEL</cite> or voice/stage <cite>CONNECT</cite></p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><a class="reference internal" href="flags.html#discord_http.flags.Permissions" title="discord_http.flags.Permissions"><code class="xref py py-class docutils literal notranslate"><span class="pre">Permissions</span></code></a></span></p>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The role’s channel permissions</p>
 </dd>
 </dl>
 </dd></dl>
@@ -1472,6 +1515,28 @@ So be sure to use the correct parameters for the channel.</p>
 </dd></dl>
 
 <dl class="py method">
+<dt class="sig sig-object py" id="discord_http.channel.CategoryChannel.fetch_member_permissions">
+<span class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">fetch_member_permissions</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">member</span></span></em>, <em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">implicit</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="flags.html#discord_http.flags.Permissions" title="discord_http.flags.Permissions"><span class="pre">Permissions</span></a></span></span><a class="headerlink" href="#discord_http.channel.CategoryChannel.fetch_member_permissions" title="Link to this definition">¶</a></dt>
+<dd><p>Fetches the computed permissions of a member in the channel.</p>
+<p>Includes their roles and member-specific overwrites, threads use the parent channel’s overwrites.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>member</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference internal" href="object.html#discord_http.object.Snowflake" title="discord_http.object.Snowflake"><code class="xref py py-class docutils literal notranslate"><span class="pre">Snowflake</span></code></a> | <a class="reference external" href="https://docs.python.org/3/builtins/functions.html#int" title="(in Python v3.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a></span>) – The member to fetch the permissions of</p></li>
+<li><p><strong>implicit</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#bool" title="(in Python v3.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></a></span>) – Whether to apply implicit permission masking for missing <cite>VIEW_CHANNEL</cite> or voice/stage <cite>CONNECT</cite>.
+Not applied by Discord when the target member is a bot.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><a class="reference internal" href="flags.html#discord_http.flags.Permissions" title="discord_http.flags.Permissions"><code class="xref py py-class docutils literal notranslate"><span class="pre">Permissions</span></code></a></span></p>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The member’s channel permissions</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
 <dt class="sig sig-object py" id="discord_http.channel.CategoryChannel.fetch_message">
 <span class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">fetch_message</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">message_id</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="message.html#discord_http.message.Message" title="discord_http.message.Message"><span class="pre">Message</span></a></span></span><a class="headerlink" href="#discord_http.channel.CategoryChannel.fetch_message" title="Link to this definition">¶</a></dt>
 <dd><p>Fetch a message from the channel.</p>
@@ -1505,6 +1570,27 @@ So be sure to use the correct parameters for the channel.</p>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/collections.abc.html#collections.abc.AsyncIterator" title="(in Python v3.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">AsyncIterator</span></code></a>[<a class="reference internal" href="message.html#discord_http.message.MessagePin" title="discord_http.message.MessagePin"><code class="xref py py-class docutils literal notranslate"><span class="pre">MessagePin</span></code></a>]</span></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="discord_http.channel.CategoryChannel.fetch_role_permissions">
+<span class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">fetch_role_permissions</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">role</span></span></em>, <em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">implicit</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="flags.html#discord_http.flags.Permissions" title="discord_http.flags.Permissions"><span class="pre">Permissions</span></a></span></span><a class="headerlink" href="#discord_http.channel.CategoryChannel.fetch_role_permissions" title="Link to this definition">¶</a></dt>
+<dd><p>Fetches the permissions of a role together with <cite>&#64;everyone</cite> in the channel, applying their overwrites.</p>
+<p>Other roles and member-specific overwrites are not included, threads use the parent channel’s overwrites.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>role</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference internal" href="object.html#discord_http.object.Snowflake" title="discord_http.object.Snowflake"><code class="xref py py-class docutils literal notranslate"><span class="pre">Snowflake</span></code></a> | <a class="reference external" href="https://docs.python.org/3/builtins/functions.html#int" title="(in Python v3.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a></span>) – The role to fetch the permissions of</p></li>
+<li><p><strong>implicit</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#bool" title="(in Python v3.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></a></span>) – Whether to apply implicit permission masking for missing <cite>VIEW_CHANNEL</cite> or voice/stage <cite>CONNECT</cite></p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><a class="reference internal" href="flags.html#discord_http.flags.Permissions" title="discord_http.flags.Permissions"><code class="xref py py-class docutils literal notranslate"><span class="pre">Permissions</span></code></a></span></p>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The role’s channel permissions</p>
 </dd>
 </dl>
 </dd></dl>
@@ -2203,6 +2289,28 @@ as a CSV file and processed in the background by Discord.</p></li>
 </dd></dl>
 
 <dl class="py method">
+<dt class="sig sig-object py" id="discord_http.channel.DMChannel.fetch_member_permissions">
+<span class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">fetch_member_permissions</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">member</span></span></em>, <em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">implicit</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="flags.html#discord_http.flags.Permissions" title="discord_http.flags.Permissions"><span class="pre">Permissions</span></a></span></span><a class="headerlink" href="#discord_http.channel.DMChannel.fetch_member_permissions" title="Link to this definition">¶</a></dt>
+<dd><p>Fetches the computed permissions of a member in the channel.</p>
+<p>Includes their roles and member-specific overwrites, threads use the parent channel’s overwrites.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>member</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference internal" href="object.html#discord_http.object.Snowflake" title="discord_http.object.Snowflake"><code class="xref py py-class docutils literal notranslate"><span class="pre">Snowflake</span></code></a> | <a class="reference external" href="https://docs.python.org/3/builtins/functions.html#int" title="(in Python v3.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a></span>) – The member to fetch the permissions of</p></li>
+<li><p><strong>implicit</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#bool" title="(in Python v3.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></a></span>) – Whether to apply implicit permission masking for missing <cite>VIEW_CHANNEL</cite> or voice/stage <cite>CONNECT</cite>.
+Not applied by Discord when the target member is a bot.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><a class="reference internal" href="flags.html#discord_http.flags.Permissions" title="discord_http.flags.Permissions"><code class="xref py py-class docutils literal notranslate"><span class="pre">Permissions</span></code></a></span></p>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The member’s channel permissions</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
 <dt class="sig sig-object py" id="discord_http.channel.DMChannel.fetch_message">
 <span class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">fetch_message</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">message_id</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="message.html#discord_http.message.Message" title="discord_http.message.Message"><span class="pre">Message</span></a></span></span><a class="headerlink" href="#discord_http.channel.DMChannel.fetch_message" title="Link to this definition">¶</a></dt>
 <dd><p>Fetch a message from the channel.</p>
@@ -2236,6 +2344,27 @@ as a CSV file and processed in the background by Discord.</p></li>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/collections.abc.html#collections.abc.AsyncIterator" title="(in Python v3.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">AsyncIterator</span></code></a>[<a class="reference internal" href="message.html#discord_http.message.MessagePin" title="discord_http.message.MessagePin"><code class="xref py py-class docutils literal notranslate"><span class="pre">MessagePin</span></code></a>]</span></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="discord_http.channel.DMChannel.fetch_role_permissions">
+<span class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">fetch_role_permissions</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">role</span></span></em>, <em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">implicit</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="flags.html#discord_http.flags.Permissions" title="discord_http.flags.Permissions"><span class="pre">Permissions</span></a></span></span><a class="headerlink" href="#discord_http.channel.DMChannel.fetch_role_permissions" title="Link to this definition">¶</a></dt>
+<dd><p>Fetches the permissions of a role together with <cite>&#64;everyone</cite> in the channel, applying their overwrites.</p>
+<p>Other roles and member-specific overwrites are not included, threads use the parent channel’s overwrites.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>role</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference internal" href="object.html#discord_http.object.Snowflake" title="discord_http.object.Snowflake"><code class="xref py py-class docutils literal notranslate"><span class="pre">Snowflake</span></code></a> | <a class="reference external" href="https://docs.python.org/3/builtins/functions.html#int" title="(in Python v3.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a></span>) – The role to fetch the permissions of</p></li>
+<li><p><strong>implicit</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#bool" title="(in Python v3.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></a></span>) – Whether to apply implicit permission masking for missing <cite>VIEW_CHANNEL</cite> or voice/stage <cite>CONNECT</cite></p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><a class="reference internal" href="flags.html#discord_http.flags.Permissions" title="discord_http.flags.Permissions"><code class="xref py py-class docutils literal notranslate"><span class="pre">Permissions</span></code></a></span></p>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The role’s channel permissions</p>
 </dd>
 </dl>
 </dd></dl>
@@ -2923,6 +3052,28 @@ So be sure to use the correct parameters for the channel.</p>
 </dd></dl>
 
 <dl class="py method">
+<dt class="sig sig-object py" id="discord_http.channel.DirectoryChannel.fetch_member_permissions">
+<span class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">fetch_member_permissions</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">member</span></span></em>, <em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">implicit</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="flags.html#discord_http.flags.Permissions" title="discord_http.flags.Permissions"><span class="pre">Permissions</span></a></span></span><a class="headerlink" href="#discord_http.channel.DirectoryChannel.fetch_member_permissions" title="Link to this definition">¶</a></dt>
+<dd><p>Fetches the computed permissions of a member in the channel.</p>
+<p>Includes their roles and member-specific overwrites, threads use the parent channel’s overwrites.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>member</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference internal" href="object.html#discord_http.object.Snowflake" title="discord_http.object.Snowflake"><code class="xref py py-class docutils literal notranslate"><span class="pre">Snowflake</span></code></a> | <a class="reference external" href="https://docs.python.org/3/builtins/functions.html#int" title="(in Python v3.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a></span>) – The member to fetch the permissions of</p></li>
+<li><p><strong>implicit</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#bool" title="(in Python v3.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></a></span>) – Whether to apply implicit permission masking for missing <cite>VIEW_CHANNEL</cite> or voice/stage <cite>CONNECT</cite>.
+Not applied by Discord when the target member is a bot.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><a class="reference internal" href="flags.html#discord_http.flags.Permissions" title="discord_http.flags.Permissions"><code class="xref py py-class docutils literal notranslate"><span class="pre">Permissions</span></code></a></span></p>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The member’s channel permissions</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
 <dt class="sig sig-object py" id="discord_http.channel.DirectoryChannel.fetch_message">
 <span class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">fetch_message</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">message_id</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="message.html#discord_http.message.Message" title="discord_http.message.Message"><span class="pre">Message</span></a></span></span><a class="headerlink" href="#discord_http.channel.DirectoryChannel.fetch_message" title="Link to this definition">¶</a></dt>
 <dd><p>Fetch a message from the channel.</p>
@@ -2956,6 +3107,27 @@ So be sure to use the correct parameters for the channel.</p>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/collections.abc.html#collections.abc.AsyncIterator" title="(in Python v3.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">AsyncIterator</span></code></a>[<a class="reference internal" href="message.html#discord_http.message.MessagePin" title="discord_http.message.MessagePin"><code class="xref py py-class docutils literal notranslate"><span class="pre">MessagePin</span></code></a>]</span></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="discord_http.channel.DirectoryChannel.fetch_role_permissions">
+<span class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">fetch_role_permissions</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">role</span></span></em>, <em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">implicit</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="flags.html#discord_http.flags.Permissions" title="discord_http.flags.Permissions"><span class="pre">Permissions</span></a></span></span><a class="headerlink" href="#discord_http.channel.DirectoryChannel.fetch_role_permissions" title="Link to this definition">¶</a></dt>
+<dd><p>Fetches the permissions of a role together with <cite>&#64;everyone</cite> in the channel, applying their overwrites.</p>
+<p>Other roles and member-specific overwrites are not included, threads use the parent channel’s overwrites.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>role</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference internal" href="object.html#discord_http.object.Snowflake" title="discord_http.object.Snowflake"><code class="xref py py-class docutils literal notranslate"><span class="pre">Snowflake</span></code></a> | <a class="reference external" href="https://docs.python.org/3/builtins/functions.html#int" title="(in Python v3.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a></span>) – The role to fetch the permissions of</p></li>
+<li><p><strong>implicit</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#bool" title="(in Python v3.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></a></span>) – Whether to apply implicit permission masking for missing <cite>VIEW_CHANNEL</cite> or voice/stage <cite>CONNECT</cite></p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><a class="reference internal" href="flags.html#discord_http.flags.Permissions" title="discord_http.flags.Permissions"><code class="xref py py-class docutils literal notranslate"><span class="pre">Permissions</span></code></a></span></p>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The role’s channel permissions</p>
 </dd>
 </dl>
 </dd></dl>
@@ -3727,6 +3899,28 @@ So be sure to use the correct parameters for the channel.</p>
 </dd></dl>
 
 <dl class="py method">
+<dt class="sig sig-object py" id="discord_http.channel.ForumChannel.fetch_member_permissions">
+<span class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">fetch_member_permissions</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">member</span></span></em>, <em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">implicit</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="flags.html#discord_http.flags.Permissions" title="discord_http.flags.Permissions"><span class="pre">Permissions</span></a></span></span><a class="headerlink" href="#discord_http.channel.ForumChannel.fetch_member_permissions" title="Link to this definition">¶</a></dt>
+<dd><p>Fetches the computed permissions of a member in the channel.</p>
+<p>Includes their roles and member-specific overwrites, threads use the parent channel’s overwrites.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>member</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference internal" href="object.html#discord_http.object.Snowflake" title="discord_http.object.Snowflake"><code class="xref py py-class docutils literal notranslate"><span class="pre">Snowflake</span></code></a> | <a class="reference external" href="https://docs.python.org/3/builtins/functions.html#int" title="(in Python v3.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a></span>) – The member to fetch the permissions of</p></li>
+<li><p><strong>implicit</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#bool" title="(in Python v3.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></a></span>) – Whether to apply implicit permission masking for missing <cite>VIEW_CHANNEL</cite> or voice/stage <cite>CONNECT</cite>.
+Not applied by Discord when the target member is a bot.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><a class="reference internal" href="flags.html#discord_http.flags.Permissions" title="discord_http.flags.Permissions"><code class="xref py py-class docutils literal notranslate"><span class="pre">Permissions</span></code></a></span></p>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The member’s channel permissions</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
 <dt class="sig sig-object py" id="discord_http.channel.ForumChannel.fetch_message">
 <span class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">fetch_message</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">message_id</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="message.html#discord_http.message.Message" title="discord_http.message.Message"><span class="pre">Message</span></a></span></span><a class="headerlink" href="#discord_http.channel.ForumChannel.fetch_message" title="Link to this definition">¶</a></dt>
 <dd><p>Fetch a message from the channel.</p>
@@ -3760,6 +3954,27 @@ So be sure to use the correct parameters for the channel.</p>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/collections.abc.html#collections.abc.AsyncIterator" title="(in Python v3.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">AsyncIterator</span></code></a>[<a class="reference internal" href="message.html#discord_http.message.MessagePin" title="discord_http.message.MessagePin"><code class="xref py py-class docutils literal notranslate"><span class="pre">MessagePin</span></code></a>]</span></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="discord_http.channel.ForumChannel.fetch_role_permissions">
+<span class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">fetch_role_permissions</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">role</span></span></em>, <em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">implicit</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="flags.html#discord_http.flags.Permissions" title="discord_http.flags.Permissions"><span class="pre">Permissions</span></a></span></span><a class="headerlink" href="#discord_http.channel.ForumChannel.fetch_role_permissions" title="Link to this definition">¶</a></dt>
+<dd><p>Fetches the permissions of a role together with <cite>&#64;everyone</cite> in the channel, applying their overwrites.</p>
+<p>Other roles and member-specific overwrites are not included, threads use the parent channel’s overwrites.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>role</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference internal" href="object.html#discord_http.object.Snowflake" title="discord_http.object.Snowflake"><code class="xref py py-class docutils literal notranslate"><span class="pre">Snowflake</span></code></a> | <a class="reference external" href="https://docs.python.org/3/builtins/functions.html#int" title="(in Python v3.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a></span>) – The role to fetch the permissions of</p></li>
+<li><p><strong>implicit</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#bool" title="(in Python v3.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></a></span>) – Whether to apply implicit permission masking for missing <cite>VIEW_CHANNEL</cite> or voice/stage <cite>CONNECT</cite></p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><a class="reference internal" href="flags.html#discord_http.flags.Permissions" title="discord_http.flags.Permissions"><code class="xref py py-class docutils literal notranslate"><span class="pre">Permissions</span></code></a></span></p>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The role’s channel permissions</p>
 </dd>
 </dl>
 </dd></dl>
@@ -4645,6 +4860,28 @@ So be sure to use the correct parameters for the channel.</p>
 </dd></dl>
 
 <dl class="py method">
+<dt class="sig sig-object py" id="discord_http.channel.ForumThread.fetch_member_permissions">
+<span class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">fetch_member_permissions</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">member</span></span></em>, <em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">implicit</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="flags.html#discord_http.flags.Permissions" title="discord_http.flags.Permissions"><span class="pre">Permissions</span></a></span></span><a class="headerlink" href="#discord_http.channel.ForumThread.fetch_member_permissions" title="Link to this definition">¶</a></dt>
+<dd><p>Fetches the computed permissions of a member in the channel.</p>
+<p>Includes their roles and member-specific overwrites, threads use the parent channel’s overwrites.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>member</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference internal" href="object.html#discord_http.object.Snowflake" title="discord_http.object.Snowflake"><code class="xref py py-class docutils literal notranslate"><span class="pre">Snowflake</span></code></a> | <a class="reference external" href="https://docs.python.org/3/builtins/functions.html#int" title="(in Python v3.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a></span>) – The member to fetch the permissions of</p></li>
+<li><p><strong>implicit</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#bool" title="(in Python v3.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></a></span>) – Whether to apply implicit permission masking for missing <cite>VIEW_CHANNEL</cite> or voice/stage <cite>CONNECT</cite>.
+Not applied by Discord when the target member is a bot.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><a class="reference internal" href="flags.html#discord_http.flags.Permissions" title="discord_http.flags.Permissions"><code class="xref py py-class docutils literal notranslate"><span class="pre">Permissions</span></code></a></span></p>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The member’s channel permissions</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
 <dt class="sig sig-object py" id="discord_http.channel.ForumThread.fetch_message">
 <span class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">fetch_message</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">message_id</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="message.html#discord_http.message.Message" title="discord_http.message.Message"><span class="pre">Message</span></a></span></span><a class="headerlink" href="#discord_http.channel.ForumThread.fetch_message" title="Link to this definition">¶</a></dt>
 <dd><p>Fetch a message from the channel.</p>
@@ -4678,6 +4915,27 @@ So be sure to use the correct parameters for the channel.</p>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/collections.abc.html#collections.abc.AsyncIterator" title="(in Python v3.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">AsyncIterator</span></code></a>[<a class="reference internal" href="message.html#discord_http.message.MessagePin" title="discord_http.message.MessagePin"><code class="xref py py-class docutils literal notranslate"><span class="pre">MessagePin</span></code></a>]</span></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="discord_http.channel.ForumThread.fetch_role_permissions">
+<span class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">fetch_role_permissions</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">role</span></span></em>, <em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">implicit</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="flags.html#discord_http.flags.Permissions" title="discord_http.flags.Permissions"><span class="pre">Permissions</span></a></span></span><a class="headerlink" href="#discord_http.channel.ForumThread.fetch_role_permissions" title="Link to this definition">¶</a></dt>
+<dd><p>Fetches the permissions of a role together with <cite>&#64;everyone</cite> in the channel, applying their overwrites.</p>
+<p>Other roles and member-specific overwrites are not included, threads use the parent channel’s overwrites.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>role</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference internal" href="object.html#discord_http.object.Snowflake" title="discord_http.object.Snowflake"><code class="xref py py-class docutils literal notranslate"><span class="pre">Snowflake</span></code></a> | <a class="reference external" href="https://docs.python.org/3/builtins/functions.html#int" title="(in Python v3.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a></span>) – The role to fetch the permissions of</p></li>
+<li><p><strong>implicit</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#bool" title="(in Python v3.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></a></span>) – Whether to apply implicit permission masking for missing <cite>VIEW_CHANNEL</cite> or voice/stage <cite>CONNECT</cite></p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><a class="reference internal" href="flags.html#discord_http.flags.Permissions" title="discord_http.flags.Permissions"><code class="xref py py-class docutils literal notranslate"><span class="pre">Permissions</span></code></a></span></p>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The role’s channel permissions</p>
 </dd>
 </dl>
 </dd></dl>
@@ -5436,6 +5694,28 @@ So be sure to use the correct parameters for the channel.</p>
 </dd></dl>
 
 <dl class="py method">
+<dt class="sig sig-object py" id="discord_http.channel.GroupDMChannel.fetch_member_permissions">
+<span class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">fetch_member_permissions</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">member</span></span></em>, <em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">implicit</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="flags.html#discord_http.flags.Permissions" title="discord_http.flags.Permissions"><span class="pre">Permissions</span></a></span></span><a class="headerlink" href="#discord_http.channel.GroupDMChannel.fetch_member_permissions" title="Link to this definition">¶</a></dt>
+<dd><p>Fetches the computed permissions of a member in the channel.</p>
+<p>Includes their roles and member-specific overwrites, threads use the parent channel’s overwrites.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>member</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference internal" href="object.html#discord_http.object.Snowflake" title="discord_http.object.Snowflake"><code class="xref py py-class docutils literal notranslate"><span class="pre">Snowflake</span></code></a> | <a class="reference external" href="https://docs.python.org/3/builtins/functions.html#int" title="(in Python v3.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a></span>) – The member to fetch the permissions of</p></li>
+<li><p><strong>implicit</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#bool" title="(in Python v3.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></a></span>) – Whether to apply implicit permission masking for missing <cite>VIEW_CHANNEL</cite> or voice/stage <cite>CONNECT</cite>.
+Not applied by Discord when the target member is a bot.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><a class="reference internal" href="flags.html#discord_http.flags.Permissions" title="discord_http.flags.Permissions"><code class="xref py py-class docutils literal notranslate"><span class="pre">Permissions</span></code></a></span></p>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The member’s channel permissions</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
 <dt class="sig sig-object py" id="discord_http.channel.GroupDMChannel.fetch_message">
 <span class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">fetch_message</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">message_id</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="message.html#discord_http.message.Message" title="discord_http.message.Message"><span class="pre">Message</span></a></span></span><a class="headerlink" href="#discord_http.channel.GroupDMChannel.fetch_message" title="Link to this definition">¶</a></dt>
 <dd><p>Fetch a message from the channel.</p>
@@ -5469,6 +5749,27 @@ So be sure to use the correct parameters for the channel.</p>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/collections.abc.html#collections.abc.AsyncIterator" title="(in Python v3.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">AsyncIterator</span></code></a>[<a class="reference internal" href="message.html#discord_http.message.MessagePin" title="discord_http.message.MessagePin"><code class="xref py py-class docutils literal notranslate"><span class="pre">MessagePin</span></code></a>]</span></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="discord_http.channel.GroupDMChannel.fetch_role_permissions">
+<span class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">fetch_role_permissions</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">role</span></span></em>, <em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">implicit</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="flags.html#discord_http.flags.Permissions" title="discord_http.flags.Permissions"><span class="pre">Permissions</span></a></span></span><a class="headerlink" href="#discord_http.channel.GroupDMChannel.fetch_role_permissions" title="Link to this definition">¶</a></dt>
+<dd><p>Fetches the permissions of a role together with <cite>&#64;everyone</cite> in the channel, applying their overwrites.</p>
+<p>Other roles and member-specific overwrites are not included, threads use the parent channel’s overwrites.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>role</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference internal" href="object.html#discord_http.object.Snowflake" title="discord_http.object.Snowflake"><code class="xref py py-class docutils literal notranslate"><span class="pre">Snowflake</span></code></a> | <a class="reference external" href="https://docs.python.org/3/builtins/functions.html#int" title="(in Python v3.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a></span>) – The role to fetch the permissions of</p></li>
+<li><p><strong>implicit</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#bool" title="(in Python v3.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></a></span>) – Whether to apply implicit permission masking for missing <cite>VIEW_CHANNEL</cite> or voice/stage <cite>CONNECT</cite></p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><a class="reference internal" href="flags.html#discord_http.flags.Permissions" title="discord_http.flags.Permissions"><code class="xref py py-class docutils literal notranslate"><span class="pre">Permissions</span></code></a></span></p>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The role’s channel permissions</p>
 </dd>
 </dl>
 </dd></dl>
@@ -6168,6 +6469,28 @@ So be sure to use the correct parameters for the channel.</p>
 </dd></dl>
 
 <dl class="py method">
+<dt class="sig sig-object py" id="discord_http.channel.NewsChannel.fetch_member_permissions">
+<span class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">fetch_member_permissions</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">member</span></span></em>, <em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">implicit</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="flags.html#discord_http.flags.Permissions" title="discord_http.flags.Permissions"><span class="pre">Permissions</span></a></span></span><a class="headerlink" href="#discord_http.channel.NewsChannel.fetch_member_permissions" title="Link to this definition">¶</a></dt>
+<dd><p>Fetches the computed permissions of a member in the channel.</p>
+<p>Includes their roles and member-specific overwrites, threads use the parent channel’s overwrites.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>member</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference internal" href="object.html#discord_http.object.Snowflake" title="discord_http.object.Snowflake"><code class="xref py py-class docutils literal notranslate"><span class="pre">Snowflake</span></code></a> | <a class="reference external" href="https://docs.python.org/3/builtins/functions.html#int" title="(in Python v3.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a></span>) – The member to fetch the permissions of</p></li>
+<li><p><strong>implicit</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#bool" title="(in Python v3.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></a></span>) – Whether to apply implicit permission masking for missing <cite>VIEW_CHANNEL</cite> or voice/stage <cite>CONNECT</cite>.
+Not applied by Discord when the target member is a bot.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><a class="reference internal" href="flags.html#discord_http.flags.Permissions" title="discord_http.flags.Permissions"><code class="xref py py-class docutils literal notranslate"><span class="pre">Permissions</span></code></a></span></p>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The member’s channel permissions</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
 <dt class="sig sig-object py" id="discord_http.channel.NewsChannel.fetch_message">
 <span class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">fetch_message</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">message_id</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="message.html#discord_http.message.Message" title="discord_http.message.Message"><span class="pre">Message</span></a></span></span><a class="headerlink" href="#discord_http.channel.NewsChannel.fetch_message" title="Link to this definition">¶</a></dt>
 <dd><p>Fetch a message from the channel.</p>
@@ -6201,6 +6524,27 @@ So be sure to use the correct parameters for the channel.</p>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/collections.abc.html#collections.abc.AsyncIterator" title="(in Python v3.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">AsyncIterator</span></code></a>[<a class="reference internal" href="message.html#discord_http.message.MessagePin" title="discord_http.message.MessagePin"><code class="xref py py-class docutils literal notranslate"><span class="pre">MessagePin</span></code></a>]</span></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="discord_http.channel.NewsChannel.fetch_role_permissions">
+<span class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">fetch_role_permissions</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">role</span></span></em>, <em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">implicit</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="flags.html#discord_http.flags.Permissions" title="discord_http.flags.Permissions"><span class="pre">Permissions</span></a></span></span><a class="headerlink" href="#discord_http.channel.NewsChannel.fetch_role_permissions" title="Link to this definition">¶</a></dt>
+<dd><p>Fetches the permissions of a role together with <cite>&#64;everyone</cite> in the channel, applying their overwrites.</p>
+<p>Other roles and member-specific overwrites are not included, threads use the parent channel’s overwrites.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>role</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference internal" href="object.html#discord_http.object.Snowflake" title="discord_http.object.Snowflake"><code class="xref py py-class docutils literal notranslate"><span class="pre">Snowflake</span></code></a> | <a class="reference external" href="https://docs.python.org/3/builtins/functions.html#int" title="(in Python v3.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a></span>) – The role to fetch the permissions of</p></li>
+<li><p><strong>implicit</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#bool" title="(in Python v3.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></a></span>) – Whether to apply implicit permission masking for missing <cite>VIEW_CHANNEL</cite> or voice/stage <cite>CONNECT</cite></p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><a class="reference internal" href="flags.html#discord_http.flags.Permissions" title="discord_http.flags.Permissions"><code class="xref py py-class docutils literal notranslate"><span class="pre">Permissions</span></code></a></span></p>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The role’s channel permissions</p>
 </dd>
 </dl>
 </dd></dl>
@@ -6936,6 +7280,28 @@ So be sure to use the correct parameters for the channel.</p>
 </dd></dl>
 
 <dl class="py method">
+<dt class="sig sig-object py" id="discord_http.channel.NewsThread.fetch_member_permissions">
+<span class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">fetch_member_permissions</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">member</span></span></em>, <em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">implicit</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="flags.html#discord_http.flags.Permissions" title="discord_http.flags.Permissions"><span class="pre">Permissions</span></a></span></span><a class="headerlink" href="#discord_http.channel.NewsThread.fetch_member_permissions" title="Link to this definition">¶</a></dt>
+<dd><p>Fetches the computed permissions of a member in the channel.</p>
+<p>Includes their roles and member-specific overwrites, threads use the parent channel’s overwrites.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>member</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference internal" href="object.html#discord_http.object.Snowflake" title="discord_http.object.Snowflake"><code class="xref py py-class docutils literal notranslate"><span class="pre">Snowflake</span></code></a> | <a class="reference external" href="https://docs.python.org/3/builtins/functions.html#int" title="(in Python v3.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a></span>) – The member to fetch the permissions of</p></li>
+<li><p><strong>implicit</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#bool" title="(in Python v3.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></a></span>) – Whether to apply implicit permission masking for missing <cite>VIEW_CHANNEL</cite> or voice/stage <cite>CONNECT</cite>.
+Not applied by Discord when the target member is a bot.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><a class="reference internal" href="flags.html#discord_http.flags.Permissions" title="discord_http.flags.Permissions"><code class="xref py py-class docutils literal notranslate"><span class="pre">Permissions</span></code></a></span></p>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The member’s channel permissions</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
 <dt class="sig sig-object py" id="discord_http.channel.NewsThread.fetch_message">
 <span class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">fetch_message</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">message_id</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="message.html#discord_http.message.Message" title="discord_http.message.Message"><span class="pre">Message</span></a></span></span><a class="headerlink" href="#discord_http.channel.NewsThread.fetch_message" title="Link to this definition">¶</a></dt>
 <dd><p>Fetch a message from the channel.</p>
@@ -6969,6 +7335,27 @@ So be sure to use the correct parameters for the channel.</p>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/collections.abc.html#collections.abc.AsyncIterator" title="(in Python v3.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">AsyncIterator</span></code></a>[<a class="reference internal" href="message.html#discord_http.message.MessagePin" title="discord_http.message.MessagePin"><code class="xref py py-class docutils literal notranslate"><span class="pre">MessagePin</span></code></a>]</span></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="discord_http.channel.NewsThread.fetch_role_permissions">
+<span class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">fetch_role_permissions</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">role</span></span></em>, <em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">implicit</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="flags.html#discord_http.flags.Permissions" title="discord_http.flags.Permissions"><span class="pre">Permissions</span></a></span></span><a class="headerlink" href="#discord_http.channel.NewsThread.fetch_role_permissions" title="Link to this definition">¶</a></dt>
+<dd><p>Fetches the permissions of a role together with <cite>&#64;everyone</cite> in the channel, applying their overwrites.</p>
+<p>Other roles and member-specific overwrites are not included, threads use the parent channel’s overwrites.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>role</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference internal" href="object.html#discord_http.object.Snowflake" title="discord_http.object.Snowflake"><code class="xref py py-class docutils literal notranslate"><span class="pre">Snowflake</span></code></a> | <a class="reference external" href="https://docs.python.org/3/builtins/functions.html#int" title="(in Python v3.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a></span>) – The role to fetch the permissions of</p></li>
+<li><p><strong>implicit</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#bool" title="(in Python v3.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></a></span>) – Whether to apply implicit permission masking for missing <cite>VIEW_CHANNEL</cite> or voice/stage <cite>CONNECT</cite></p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><a class="reference internal" href="flags.html#discord_http.flags.Permissions" title="discord_http.flags.Permissions"><code class="xref py py-class docutils literal notranslate"><span class="pre">Permissions</span></code></a></span></p>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The role’s channel permissions</p>
 </dd>
 </dl>
 </dd></dl>
@@ -7769,6 +8156,49 @@ So be sure to use the correct parameters for the channel.</p>
 </dd></dl>
 
 <dl class="py method">
+<dt class="sig sig-object py" id="discord_http.channel.PartialChannel.fetch_member_permissions">
+<span class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">fetch_member_permissions</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">member</span></span></em>, <em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">implicit</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="flags.html#discord_http.flags.Permissions" title="discord_http.flags.Permissions"><span class="pre">Permissions</span></a></span></span><a class="headerlink" href="#discord_http.channel.PartialChannel.fetch_member_permissions" title="Link to this definition">¶</a></dt>
+<dd><p>Fetches the computed permissions of a member in the channel.</p>
+<p>Includes their roles and member-specific overwrites, threads use the parent channel’s overwrites.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>member</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference internal" href="object.html#discord_http.object.Snowflake" title="discord_http.object.Snowflake"><code class="xref py py-class docutils literal notranslate"><span class="pre">Snowflake</span></code></a> | <a class="reference external" href="https://docs.python.org/3/builtins/functions.html#int" title="(in Python v3.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a></span>) – The member to fetch the permissions of</p></li>
+<li><p><strong>implicit</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#bool" title="(in Python v3.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></a></span>) – Whether to apply implicit permission masking for missing <cite>VIEW_CHANNEL</cite> or voice/stage <cite>CONNECT</cite>.
+Not applied by Discord when the target member is a bot.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><a class="reference internal" href="flags.html#discord_http.flags.Permissions" title="discord_http.flags.Permissions"><code class="xref py py-class docutils literal notranslate"><span class="pre">Permissions</span></code></a></span></p>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The member’s channel permissions</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="discord_http.channel.PartialChannel.fetch_role_permissions">
+<span class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">fetch_role_permissions</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">role</span></span></em>, <em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">implicit</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="flags.html#discord_http.flags.Permissions" title="discord_http.flags.Permissions"><span class="pre">Permissions</span></a></span></span><a class="headerlink" href="#discord_http.channel.PartialChannel.fetch_role_permissions" title="Link to this definition">¶</a></dt>
+<dd><p>Fetches the permissions of a role together with <cite>&#64;everyone</cite> in the channel, applying their overwrites.</p>
+<p>Other roles and member-specific overwrites are not included, threads use the parent channel’s overwrites.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>role</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference internal" href="object.html#discord_http.object.Snowflake" title="discord_http.object.Snowflake"><code class="xref py py-class docutils literal notranslate"><span class="pre">Snowflake</span></code></a> | <a class="reference external" href="https://docs.python.org/3/builtins/functions.html#int" title="(in Python v3.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a></span>) – The role to fetch the permissions of</p></li>
+<li><p><strong>implicit</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#bool" title="(in Python v3.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></a></span>) – Whether to apply implicit permission masking for missing <cite>VIEW_CHANNEL</cite> or voice/stage <cite>CONNECT</cite></p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><a class="reference internal" href="flags.html#discord_http.flags.Permissions" title="discord_http.flags.Permissions"><code class="xref py py-class docutils literal notranslate"><span class="pre">Permissions</span></code></a></span></p>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The role’s channel permissions</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
 <dt class="sig sig-object py" id="discord_http.channel.PartialChannel.delete">
 <span class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">delete</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">reason</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/builtins/constants.html#None" title="(in Python v3.15)"><span class="pre">None</span></a></span></span><a class="headerlink" href="#discord_http.channel.PartialChannel.delete" title="Link to this definition">¶</a></dt>
 <dd><p>Delete the channel.</p>
@@ -8379,6 +8809,28 @@ So be sure to use the correct parameters for the channel.</p>
 </dd></dl>
 
 <dl class="py method">
+<dt class="sig sig-object py" id="discord_http.channel.PartialThread.fetch_member_permissions">
+<span class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">fetch_member_permissions</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">member</span></span></em>, <em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">implicit</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="flags.html#discord_http.flags.Permissions" title="discord_http.flags.Permissions"><span class="pre">Permissions</span></a></span></span><a class="headerlink" href="#discord_http.channel.PartialThread.fetch_member_permissions" title="Link to this definition">¶</a></dt>
+<dd><p>Fetches the computed permissions of a member in the channel.</p>
+<p>Includes their roles and member-specific overwrites, threads use the parent channel’s overwrites.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>member</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference internal" href="object.html#discord_http.object.Snowflake" title="discord_http.object.Snowflake"><code class="xref py py-class docutils literal notranslate"><span class="pre">Snowflake</span></code></a> | <a class="reference external" href="https://docs.python.org/3/builtins/functions.html#int" title="(in Python v3.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a></span>) – The member to fetch the permissions of</p></li>
+<li><p><strong>implicit</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#bool" title="(in Python v3.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></a></span>) – Whether to apply implicit permission masking for missing <cite>VIEW_CHANNEL</cite> or voice/stage <cite>CONNECT</cite>.
+Not applied by Discord when the target member is a bot.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><a class="reference internal" href="flags.html#discord_http.flags.Permissions" title="discord_http.flags.Permissions"><code class="xref py py-class docutils literal notranslate"><span class="pre">Permissions</span></code></a></span></p>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The member’s channel permissions</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
 <dt class="sig sig-object py" id="discord_http.channel.PartialThread.fetch_message">
 <span class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">fetch_message</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">message_id</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="message.html#discord_http.message.Message" title="discord_http.message.Message"><span class="pre">Message</span></a></span></span><a class="headerlink" href="#discord_http.channel.PartialThread.fetch_message" title="Link to this definition">¶</a></dt>
 <dd><p>Fetch a message from the channel.</p>
@@ -8412,6 +8864,27 @@ So be sure to use the correct parameters for the channel.</p>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/collections.abc.html#collections.abc.AsyncIterator" title="(in Python v3.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">AsyncIterator</span></code></a>[<a class="reference internal" href="message.html#discord_http.message.MessagePin" title="discord_http.message.MessagePin"><code class="xref py py-class docutils literal notranslate"><span class="pre">MessagePin</span></code></a>]</span></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="discord_http.channel.PartialThread.fetch_role_permissions">
+<span class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">fetch_role_permissions</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">role</span></span></em>, <em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">implicit</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="flags.html#discord_http.flags.Permissions" title="discord_http.flags.Permissions"><span class="pre">Permissions</span></a></span></span><a class="headerlink" href="#discord_http.channel.PartialThread.fetch_role_permissions" title="Link to this definition">¶</a></dt>
+<dd><p>Fetches the permissions of a role together with <cite>&#64;everyone</cite> in the channel, applying their overwrites.</p>
+<p>Other roles and member-specific overwrites are not included, threads use the parent channel’s overwrites.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>role</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference internal" href="object.html#discord_http.object.Snowflake" title="discord_http.object.Snowflake"><code class="xref py py-class docutils literal notranslate"><span class="pre">Snowflake</span></code></a> | <a class="reference external" href="https://docs.python.org/3/builtins/functions.html#int" title="(in Python v3.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a></span>) – The role to fetch the permissions of</p></li>
+<li><p><strong>implicit</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#bool" title="(in Python v3.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></a></span>) – Whether to apply implicit permission masking for missing <cite>VIEW_CHANNEL</cite> or voice/stage <cite>CONNECT</cite></p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><a class="reference internal" href="flags.html#discord_http.flags.Permissions" title="discord_http.flags.Permissions"><code class="xref py py-class docutils literal notranslate"><span class="pre">Permissions</span></code></a></span></p>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The role’s channel permissions</p>
 </dd>
 </dl>
 </dd></dl>
@@ -9068,6 +9541,28 @@ So be sure to use the correct parameters for the channel.</p>
 </dd></dl>
 
 <dl class="py method">
+<dt class="sig sig-object py" id="discord_http.channel.PrivateThread.fetch_member_permissions">
+<span class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">fetch_member_permissions</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">member</span></span></em>, <em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">implicit</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="flags.html#discord_http.flags.Permissions" title="discord_http.flags.Permissions"><span class="pre">Permissions</span></a></span></span><a class="headerlink" href="#discord_http.channel.PrivateThread.fetch_member_permissions" title="Link to this definition">¶</a></dt>
+<dd><p>Fetches the computed permissions of a member in the channel.</p>
+<p>Includes their roles and member-specific overwrites, threads use the parent channel’s overwrites.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>member</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference internal" href="object.html#discord_http.object.Snowflake" title="discord_http.object.Snowflake"><code class="xref py py-class docutils literal notranslate"><span class="pre">Snowflake</span></code></a> | <a class="reference external" href="https://docs.python.org/3/builtins/functions.html#int" title="(in Python v3.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a></span>) – The member to fetch the permissions of</p></li>
+<li><p><strong>implicit</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#bool" title="(in Python v3.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></a></span>) – Whether to apply implicit permission masking for missing <cite>VIEW_CHANNEL</cite> or voice/stage <cite>CONNECT</cite>.
+Not applied by Discord when the target member is a bot.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><a class="reference internal" href="flags.html#discord_http.flags.Permissions" title="discord_http.flags.Permissions"><code class="xref py py-class docutils literal notranslate"><span class="pre">Permissions</span></code></a></span></p>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The member’s channel permissions</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
 <dt class="sig sig-object py" id="discord_http.channel.PrivateThread.fetch_message">
 <span class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">fetch_message</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">message_id</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="message.html#discord_http.message.Message" title="discord_http.message.Message"><span class="pre">Message</span></a></span></span><a class="headerlink" href="#discord_http.channel.PrivateThread.fetch_message" title="Link to this definition">¶</a></dt>
 <dd><p>Fetch a message from the channel.</p>
@@ -9101,6 +9596,27 @@ So be sure to use the correct parameters for the channel.</p>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/collections.abc.html#collections.abc.AsyncIterator" title="(in Python v3.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">AsyncIterator</span></code></a>[<a class="reference internal" href="message.html#discord_http.message.MessagePin" title="discord_http.message.MessagePin"><code class="xref py py-class docutils literal notranslate"><span class="pre">MessagePin</span></code></a>]</span></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="discord_http.channel.PrivateThread.fetch_role_permissions">
+<span class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">fetch_role_permissions</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">role</span></span></em>, <em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">implicit</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="flags.html#discord_http.flags.Permissions" title="discord_http.flags.Permissions"><span class="pre">Permissions</span></a></span></span><a class="headerlink" href="#discord_http.channel.PrivateThread.fetch_role_permissions" title="Link to this definition">¶</a></dt>
+<dd><p>Fetches the permissions of a role together with <cite>&#64;everyone</cite> in the channel, applying their overwrites.</p>
+<p>Other roles and member-specific overwrites are not included, threads use the parent channel’s overwrites.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>role</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference internal" href="object.html#discord_http.object.Snowflake" title="discord_http.object.Snowflake"><code class="xref py py-class docutils literal notranslate"><span class="pre">Snowflake</span></code></a> | <a class="reference external" href="https://docs.python.org/3/builtins/functions.html#int" title="(in Python v3.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a></span>) – The role to fetch the permissions of</p></li>
+<li><p><strong>implicit</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#bool" title="(in Python v3.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></a></span>) – Whether to apply implicit permission masking for missing <cite>VIEW_CHANNEL</cite> or voice/stage <cite>CONNECT</cite></p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><a class="reference internal" href="flags.html#discord_http.flags.Permissions" title="discord_http.flags.Permissions"><code class="xref py py-class docutils literal notranslate"><span class="pre">Permissions</span></code></a></span></p>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The role’s channel permissions</p>
 </dd>
 </dl>
 </dd></dl>
@@ -9955,6 +10471,28 @@ So be sure to use the correct parameters for the channel.</p>
 </dd></dl>
 
 <dl class="py method">
+<dt class="sig sig-object py" id="discord_http.channel.PublicThread.fetch_member_permissions">
+<span class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">fetch_member_permissions</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">member</span></span></em>, <em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">implicit</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="flags.html#discord_http.flags.Permissions" title="discord_http.flags.Permissions"><span class="pre">Permissions</span></a></span></span><a class="headerlink" href="#discord_http.channel.PublicThread.fetch_member_permissions" title="Link to this definition">¶</a></dt>
+<dd><p>Fetches the computed permissions of a member in the channel.</p>
+<p>Includes their roles and member-specific overwrites, threads use the parent channel’s overwrites.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>member</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference internal" href="object.html#discord_http.object.Snowflake" title="discord_http.object.Snowflake"><code class="xref py py-class docutils literal notranslate"><span class="pre">Snowflake</span></code></a> | <a class="reference external" href="https://docs.python.org/3/builtins/functions.html#int" title="(in Python v3.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a></span>) – The member to fetch the permissions of</p></li>
+<li><p><strong>implicit</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#bool" title="(in Python v3.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></a></span>) – Whether to apply implicit permission masking for missing <cite>VIEW_CHANNEL</cite> or voice/stage <cite>CONNECT</cite>.
+Not applied by Discord when the target member is a bot.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><a class="reference internal" href="flags.html#discord_http.flags.Permissions" title="discord_http.flags.Permissions"><code class="xref py py-class docutils literal notranslate"><span class="pre">Permissions</span></code></a></span></p>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The member’s channel permissions</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
 <dt class="sig sig-object py" id="discord_http.channel.PublicThread.fetch_message">
 <span class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">fetch_message</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">message_id</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="message.html#discord_http.message.Message" title="discord_http.message.Message"><span class="pre">Message</span></a></span></span><a class="headerlink" href="#discord_http.channel.PublicThread.fetch_message" title="Link to this definition">¶</a></dt>
 <dd><p>Fetch a message from the channel.</p>
@@ -9988,6 +10526,27 @@ So be sure to use the correct parameters for the channel.</p>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/collections.abc.html#collections.abc.AsyncIterator" title="(in Python v3.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">AsyncIterator</span></code></a>[<a class="reference internal" href="message.html#discord_http.message.MessagePin" title="discord_http.message.MessagePin"><code class="xref py py-class docutils literal notranslate"><span class="pre">MessagePin</span></code></a>]</span></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="discord_http.channel.PublicThread.fetch_role_permissions">
+<span class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">fetch_role_permissions</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">role</span></span></em>, <em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">implicit</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="flags.html#discord_http.flags.Permissions" title="discord_http.flags.Permissions"><span class="pre">Permissions</span></a></span></span><a class="headerlink" href="#discord_http.channel.PublicThread.fetch_role_permissions" title="Link to this definition">¶</a></dt>
+<dd><p>Fetches the permissions of a role together with <cite>&#64;everyone</cite> in the channel, applying their overwrites.</p>
+<p>Other roles and member-specific overwrites are not included, threads use the parent channel’s overwrites.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>role</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference internal" href="object.html#discord_http.object.Snowflake" title="discord_http.object.Snowflake"><code class="xref py py-class docutils literal notranslate"><span class="pre">Snowflake</span></code></a> | <a class="reference external" href="https://docs.python.org/3/builtins/functions.html#int" title="(in Python v3.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a></span>) – The role to fetch the permissions of</p></li>
+<li><p><strong>implicit</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#bool" title="(in Python v3.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></a></span>) – Whether to apply implicit permission masking for missing <cite>VIEW_CHANNEL</cite> or voice/stage <cite>CONNECT</cite></p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><a class="reference internal" href="flags.html#discord_http.flags.Permissions" title="discord_http.flags.Permissions"><code class="xref py py-class docutils literal notranslate"><span class="pre">Permissions</span></code></a></span></p>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The role’s channel permissions</p>
 </dd>
 </dl>
 </dd></dl>
@@ -10674,6 +11233,28 @@ So be sure to use the correct parameters for the channel.</p>
 </dd></dl>
 
 <dl class="py method">
+<dt class="sig sig-object py" id="discord_http.channel.StageChannel.fetch_member_permissions">
+<span class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">fetch_member_permissions</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">member</span></span></em>, <em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">implicit</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="flags.html#discord_http.flags.Permissions" title="discord_http.flags.Permissions"><span class="pre">Permissions</span></a></span></span><a class="headerlink" href="#discord_http.channel.StageChannel.fetch_member_permissions" title="Link to this definition">¶</a></dt>
+<dd><p>Fetches the computed permissions of a member in the channel.</p>
+<p>Includes their roles and member-specific overwrites, threads use the parent channel’s overwrites.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>member</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference internal" href="object.html#discord_http.object.Snowflake" title="discord_http.object.Snowflake"><code class="xref py py-class docutils literal notranslate"><span class="pre">Snowflake</span></code></a> | <a class="reference external" href="https://docs.python.org/3/builtins/functions.html#int" title="(in Python v3.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a></span>) – The member to fetch the permissions of</p></li>
+<li><p><strong>implicit</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#bool" title="(in Python v3.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></a></span>) – Whether to apply implicit permission masking for missing <cite>VIEW_CHANNEL</cite> or voice/stage <cite>CONNECT</cite>.
+Not applied by Discord when the target member is a bot.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><a class="reference internal" href="flags.html#discord_http.flags.Permissions" title="discord_http.flags.Permissions"><code class="xref py py-class docutils literal notranslate"><span class="pre">Permissions</span></code></a></span></p>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The member’s channel permissions</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
 <dt class="sig sig-object py" id="discord_http.channel.StageChannel.fetch_message">
 <span class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">fetch_message</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">message_id</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="message.html#discord_http.message.Message" title="discord_http.message.Message"><span class="pre">Message</span></a></span></span><a class="headerlink" href="#discord_http.channel.StageChannel.fetch_message" title="Link to this definition">¶</a></dt>
 <dd><p>Fetch a message from the channel.</p>
@@ -10707,6 +11288,27 @@ So be sure to use the correct parameters for the channel.</p>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/collections.abc.html#collections.abc.AsyncIterator" title="(in Python v3.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">AsyncIterator</span></code></a>[<a class="reference internal" href="message.html#discord_http.message.MessagePin" title="discord_http.message.MessagePin"><code class="xref py py-class docutils literal notranslate"><span class="pre">MessagePin</span></code></a>]</span></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="discord_http.channel.StageChannel.fetch_role_permissions">
+<span class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">fetch_role_permissions</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">role</span></span></em>, <em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">implicit</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="flags.html#discord_http.flags.Permissions" title="discord_http.flags.Permissions"><span class="pre">Permissions</span></a></span></span><a class="headerlink" href="#discord_http.channel.StageChannel.fetch_role_permissions" title="Link to this definition">¶</a></dt>
+<dd><p>Fetches the permissions of a role together with <cite>&#64;everyone</cite> in the channel, applying their overwrites.</p>
+<p>Other roles and member-specific overwrites are not included, threads use the parent channel’s overwrites.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>role</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference internal" href="object.html#discord_http.object.Snowflake" title="discord_http.object.Snowflake"><code class="xref py py-class docutils literal notranslate"><span class="pre">Snowflake</span></code></a> | <a class="reference external" href="https://docs.python.org/3/builtins/functions.html#int" title="(in Python v3.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a></span>) – The role to fetch the permissions of</p></li>
+<li><p><strong>implicit</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#bool" title="(in Python v3.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></a></span>) – Whether to apply implicit permission masking for missing <cite>VIEW_CHANNEL</cite> or voice/stage <cite>CONNECT</cite></p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><a class="reference internal" href="flags.html#discord_http.flags.Permissions" title="discord_http.flags.Permissions"><code class="xref py py-class docutils literal notranslate"><span class="pre">Permissions</span></code></a></span></p>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The role’s channel permissions</p>
 </dd>
 </dl>
 </dd></dl>
@@ -11604,6 +12206,28 @@ So be sure to use the correct parameters for the channel.</p>
 </dd></dl>
 
 <dl class="py method">
+<dt class="sig sig-object py" id="discord_http.channel.StoreChannel.fetch_member_permissions">
+<span class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">fetch_member_permissions</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">member</span></span></em>, <em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">implicit</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="flags.html#discord_http.flags.Permissions" title="discord_http.flags.Permissions"><span class="pre">Permissions</span></a></span></span><a class="headerlink" href="#discord_http.channel.StoreChannel.fetch_member_permissions" title="Link to this definition">¶</a></dt>
+<dd><p>Fetches the computed permissions of a member in the channel.</p>
+<p>Includes their roles and member-specific overwrites, threads use the parent channel’s overwrites.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>member</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference internal" href="object.html#discord_http.object.Snowflake" title="discord_http.object.Snowflake"><code class="xref py py-class docutils literal notranslate"><span class="pre">Snowflake</span></code></a> | <a class="reference external" href="https://docs.python.org/3/builtins/functions.html#int" title="(in Python v3.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a></span>) – The member to fetch the permissions of</p></li>
+<li><p><strong>implicit</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#bool" title="(in Python v3.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></a></span>) – Whether to apply implicit permission masking for missing <cite>VIEW_CHANNEL</cite> or voice/stage <cite>CONNECT</cite>.
+Not applied by Discord when the target member is a bot.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><a class="reference internal" href="flags.html#discord_http.flags.Permissions" title="discord_http.flags.Permissions"><code class="xref py py-class docutils literal notranslate"><span class="pre">Permissions</span></code></a></span></p>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The member’s channel permissions</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
 <dt class="sig sig-object py" id="discord_http.channel.StoreChannel.fetch_message">
 <span class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">fetch_message</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">message_id</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="message.html#discord_http.message.Message" title="discord_http.message.Message"><span class="pre">Message</span></a></span></span><a class="headerlink" href="#discord_http.channel.StoreChannel.fetch_message" title="Link to this definition">¶</a></dt>
 <dd><p>Fetch a message from the channel.</p>
@@ -11637,6 +12261,27 @@ So be sure to use the correct parameters for the channel.</p>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/collections.abc.html#collections.abc.AsyncIterator" title="(in Python v3.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">AsyncIterator</span></code></a>[<a class="reference internal" href="message.html#discord_http.message.MessagePin" title="discord_http.message.MessagePin"><code class="xref py py-class docutils literal notranslate"><span class="pre">MessagePin</span></code></a>]</span></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="discord_http.channel.StoreChannel.fetch_role_permissions">
+<span class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">fetch_role_permissions</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">role</span></span></em>, <em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">implicit</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="flags.html#discord_http.flags.Permissions" title="discord_http.flags.Permissions"><span class="pre">Permissions</span></a></span></span><a class="headerlink" href="#discord_http.channel.StoreChannel.fetch_role_permissions" title="Link to this definition">¶</a></dt>
+<dd><p>Fetches the permissions of a role together with <cite>&#64;everyone</cite> in the channel, applying their overwrites.</p>
+<p>Other roles and member-specific overwrites are not included, threads use the parent channel’s overwrites.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>role</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference internal" href="object.html#discord_http.object.Snowflake" title="discord_http.object.Snowflake"><code class="xref py py-class docutils literal notranslate"><span class="pre">Snowflake</span></code></a> | <a class="reference external" href="https://docs.python.org/3/builtins/functions.html#int" title="(in Python v3.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a></span>) – The role to fetch the permissions of</p></li>
+<li><p><strong>implicit</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#bool" title="(in Python v3.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></a></span>) – Whether to apply implicit permission masking for missing <cite>VIEW_CHANNEL</cite> or voice/stage <cite>CONNECT</cite></p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><a class="reference internal" href="flags.html#discord_http.flags.Permissions" title="discord_http.flags.Permissions"><code class="xref py py-class docutils literal notranslate"><span class="pre">Permissions</span></code></a></span></p>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The role’s channel permissions</p>
 </dd>
 </dl>
 </dd></dl>
@@ -12348,6 +12993,28 @@ So be sure to use the correct parameters for the channel.</p>
 </dd></dl>
 
 <dl class="py method">
+<dt class="sig sig-object py" id="discord_http.channel.TextChannel.fetch_member_permissions">
+<span class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">fetch_member_permissions</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">member</span></span></em>, <em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">implicit</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="flags.html#discord_http.flags.Permissions" title="discord_http.flags.Permissions"><span class="pre">Permissions</span></a></span></span><a class="headerlink" href="#discord_http.channel.TextChannel.fetch_member_permissions" title="Link to this definition">¶</a></dt>
+<dd><p>Fetches the computed permissions of a member in the channel.</p>
+<p>Includes their roles and member-specific overwrites, threads use the parent channel’s overwrites.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>member</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference internal" href="object.html#discord_http.object.Snowflake" title="discord_http.object.Snowflake"><code class="xref py py-class docutils literal notranslate"><span class="pre">Snowflake</span></code></a> | <a class="reference external" href="https://docs.python.org/3/builtins/functions.html#int" title="(in Python v3.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a></span>) – The member to fetch the permissions of</p></li>
+<li><p><strong>implicit</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#bool" title="(in Python v3.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></a></span>) – Whether to apply implicit permission masking for missing <cite>VIEW_CHANNEL</cite> or voice/stage <cite>CONNECT</cite>.
+Not applied by Discord when the target member is a bot.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><a class="reference internal" href="flags.html#discord_http.flags.Permissions" title="discord_http.flags.Permissions"><code class="xref py py-class docutils literal notranslate"><span class="pre">Permissions</span></code></a></span></p>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The member’s channel permissions</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
 <dt class="sig sig-object py" id="discord_http.channel.TextChannel.fetch_message">
 <span class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">fetch_message</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">message_id</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="message.html#discord_http.message.Message" title="discord_http.message.Message"><span class="pre">Message</span></a></span></span><a class="headerlink" href="#discord_http.channel.TextChannel.fetch_message" title="Link to this definition">¶</a></dt>
 <dd><p>Fetch a message from the channel.</p>
@@ -12381,6 +13048,27 @@ So be sure to use the correct parameters for the channel.</p>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/collections.abc.html#collections.abc.AsyncIterator" title="(in Python v3.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">AsyncIterator</span></code></a>[<a class="reference internal" href="message.html#discord_http.message.MessagePin" title="discord_http.message.MessagePin"><code class="xref py py-class docutils literal notranslate"><span class="pre">MessagePin</span></code></a>]</span></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="discord_http.channel.TextChannel.fetch_role_permissions">
+<span class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">fetch_role_permissions</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">role</span></span></em>, <em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">implicit</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="flags.html#discord_http.flags.Permissions" title="discord_http.flags.Permissions"><span class="pre">Permissions</span></a></span></span><a class="headerlink" href="#discord_http.channel.TextChannel.fetch_role_permissions" title="Link to this definition">¶</a></dt>
+<dd><p>Fetches the permissions of a role together with <cite>&#64;everyone</cite> in the channel, applying their overwrites.</p>
+<p>Other roles and member-specific overwrites are not included, threads use the parent channel’s overwrites.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>role</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference internal" href="object.html#discord_http.object.Snowflake" title="discord_http.object.Snowflake"><code class="xref py py-class docutils literal notranslate"><span class="pre">Snowflake</span></code></a> | <a class="reference external" href="https://docs.python.org/3/builtins/functions.html#int" title="(in Python v3.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a></span>) – The role to fetch the permissions of</p></li>
+<li><p><strong>implicit</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#bool" title="(in Python v3.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></a></span>) – Whether to apply implicit permission masking for missing <cite>VIEW_CHANNEL</cite> or voice/stage <cite>CONNECT</cite></p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><a class="reference internal" href="flags.html#discord_http.flags.Permissions" title="discord_http.flags.Permissions"><code class="xref py py-class docutils literal notranslate"><span class="pre">Permissions</span></code></a></span></p>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The role’s channel permissions</p>
 </dd>
 </dl>
 </dd></dl>
@@ -13116,6 +13804,28 @@ So be sure to use the correct parameters for the channel.</p>
 </dd></dl>
 
 <dl class="py method">
+<dt class="sig sig-object py" id="discord_http.channel.Thread.fetch_member_permissions">
+<span class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">fetch_member_permissions</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">member</span></span></em>, <em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">implicit</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="flags.html#discord_http.flags.Permissions" title="discord_http.flags.Permissions"><span class="pre">Permissions</span></a></span></span><a class="headerlink" href="#discord_http.channel.Thread.fetch_member_permissions" title="Link to this definition">¶</a></dt>
+<dd><p>Fetches the computed permissions of a member in the channel.</p>
+<p>Includes their roles and member-specific overwrites, threads use the parent channel’s overwrites.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>member</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference internal" href="object.html#discord_http.object.Snowflake" title="discord_http.object.Snowflake"><code class="xref py py-class docutils literal notranslate"><span class="pre">Snowflake</span></code></a> | <a class="reference external" href="https://docs.python.org/3/builtins/functions.html#int" title="(in Python v3.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a></span>) – The member to fetch the permissions of</p></li>
+<li><p><strong>implicit</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#bool" title="(in Python v3.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></a></span>) – Whether to apply implicit permission masking for missing <cite>VIEW_CHANNEL</cite> or voice/stage <cite>CONNECT</cite>.
+Not applied by Discord when the target member is a bot.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><a class="reference internal" href="flags.html#discord_http.flags.Permissions" title="discord_http.flags.Permissions"><code class="xref py py-class docutils literal notranslate"><span class="pre">Permissions</span></code></a></span></p>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The member’s channel permissions</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
 <dt class="sig sig-object py" id="discord_http.channel.Thread.fetch_message">
 <span class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">fetch_message</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">message_id</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="message.html#discord_http.message.Message" title="discord_http.message.Message"><span class="pre">Message</span></a></span></span><a class="headerlink" href="#discord_http.channel.Thread.fetch_message" title="Link to this definition">¶</a></dt>
 <dd><p>Fetch a message from the channel.</p>
@@ -13149,6 +13859,27 @@ So be sure to use the correct parameters for the channel.</p>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/collections.abc.html#collections.abc.AsyncIterator" title="(in Python v3.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">AsyncIterator</span></code></a>[<a class="reference internal" href="message.html#discord_http.message.MessagePin" title="discord_http.message.MessagePin"><code class="xref py py-class docutils literal notranslate"><span class="pre">MessagePin</span></code></a>]</span></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="discord_http.channel.Thread.fetch_role_permissions">
+<span class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">fetch_role_permissions</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">role</span></span></em>, <em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">implicit</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="flags.html#discord_http.flags.Permissions" title="discord_http.flags.Permissions"><span class="pre">Permissions</span></a></span></span><a class="headerlink" href="#discord_http.channel.Thread.fetch_role_permissions" title="Link to this definition">¶</a></dt>
+<dd><p>Fetches the permissions of a role together with <cite>&#64;everyone</cite> in the channel, applying their overwrites.</p>
+<p>Other roles and member-specific overwrites are not included, threads use the parent channel’s overwrites.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>role</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference internal" href="object.html#discord_http.object.Snowflake" title="discord_http.object.Snowflake"><code class="xref py py-class docutils literal notranslate"><span class="pre">Snowflake</span></code></a> | <a class="reference external" href="https://docs.python.org/3/builtins/functions.html#int" title="(in Python v3.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a></span>) – The role to fetch the permissions of</p></li>
+<li><p><strong>implicit</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#bool" title="(in Python v3.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></a></span>) – Whether to apply implicit permission masking for missing <cite>VIEW_CHANNEL</cite> or voice/stage <cite>CONNECT</cite></p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><a class="reference internal" href="flags.html#discord_http.flags.Permissions" title="discord_http.flags.Permissions"><code class="xref py py-class docutils literal notranslate"><span class="pre">Permissions</span></code></a></span></p>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The role’s channel permissions</p>
 </dd>
 </dl>
 </dd></dl>
@@ -13939,6 +14670,28 @@ So be sure to use the correct parameters for the channel.</p>
 </dd></dl>
 
 <dl class="py method">
+<dt class="sig sig-object py" id="discord_http.channel.VoiceChannel.fetch_member_permissions">
+<span class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">fetch_member_permissions</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">member</span></span></em>, <em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">implicit</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="flags.html#discord_http.flags.Permissions" title="discord_http.flags.Permissions"><span class="pre">Permissions</span></a></span></span><a class="headerlink" href="#discord_http.channel.VoiceChannel.fetch_member_permissions" title="Link to this definition">¶</a></dt>
+<dd><p>Fetches the computed permissions of a member in the channel.</p>
+<p>Includes their roles and member-specific overwrites, threads use the parent channel’s overwrites.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>member</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference internal" href="object.html#discord_http.object.Snowflake" title="discord_http.object.Snowflake"><code class="xref py py-class docutils literal notranslate"><span class="pre">Snowflake</span></code></a> | <a class="reference external" href="https://docs.python.org/3/builtins/functions.html#int" title="(in Python v3.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a></span>) – The member to fetch the permissions of</p></li>
+<li><p><strong>implicit</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#bool" title="(in Python v3.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></a></span>) – Whether to apply implicit permission masking for missing <cite>VIEW_CHANNEL</cite> or voice/stage <cite>CONNECT</cite>.
+Not applied by Discord when the target member is a bot.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><a class="reference internal" href="flags.html#discord_http.flags.Permissions" title="discord_http.flags.Permissions"><code class="xref py py-class docutils literal notranslate"><span class="pre">Permissions</span></code></a></span></p>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The member’s channel permissions</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
 <dt class="sig sig-object py" id="discord_http.channel.VoiceChannel.fetch_message">
 <span class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">fetch_message</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">message_id</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="message.html#discord_http.message.Message" title="discord_http.message.Message"><span class="pre">Message</span></a></span></span><a class="headerlink" href="#discord_http.channel.VoiceChannel.fetch_message" title="Link to this definition">¶</a></dt>
 <dd><p>Fetch a message from the channel.</p>
@@ -13972,6 +14725,27 @@ So be sure to use the correct parameters for the channel.</p>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/collections.abc.html#collections.abc.AsyncIterator" title="(in Python v3.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">AsyncIterator</span></code></a>[<a class="reference internal" href="message.html#discord_http.message.MessagePin" title="discord_http.message.MessagePin"><code class="xref py py-class docutils literal notranslate"><span class="pre">MessagePin</span></code></a>]</span></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="discord_http.channel.VoiceChannel.fetch_role_permissions">
+<span class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">fetch_role_permissions</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">role</span></span></em>, <em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">implicit</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="flags.html#discord_http.flags.Permissions" title="discord_http.flags.Permissions"><span class="pre">Permissions</span></a></span></span><a class="headerlink" href="#discord_http.channel.VoiceChannel.fetch_role_permissions" title="Link to this definition">¶</a></dt>
+<dd><p>Fetches the permissions of a role together with <cite>&#64;everyone</cite> in the channel, applying their overwrites.</p>
+<p>Other roles and member-specific overwrites are not included, threads use the parent channel’s overwrites.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>role</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference internal" href="object.html#discord_http.object.Snowflake" title="discord_http.object.Snowflake"><code class="xref py py-class docutils literal notranslate"><span class="pre">Snowflake</span></code></a> | <a class="reference external" href="https://docs.python.org/3/builtins/functions.html#int" title="(in Python v3.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a></span>) – The role to fetch the permissions of</p></li>
+<li><p><strong>implicit</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#bool" title="(in Python v3.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></a></span>) – Whether to apply implicit permission masking for missing <cite>VIEW_CHANNEL</cite> or voice/stage <cite>CONNECT</cite></p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><a class="reference internal" href="flags.html#discord_http.flags.Permissions" title="discord_http.flags.Permissions"><code class="xref py py-class docutils literal notranslate"><span class="pre">Permissions</span></code></a></span></p>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The role’s channel permissions</p>
 </dd>
 </dl>
 </dd></dl>
@@ -14498,8 +15272,10 @@ connected to the voice channel, <cite>MANAGE_CHANNELS</cite> is also required.</
 <li><a class="reference internal" href="#discord_http.channel.BaseChannel.fetch_archived_public_threads"><code class="docutils literal notranslate"><span class="pre">BaseChannel.fetch_archived_public_threads()</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.channel.BaseChannel.fetch_history"><code class="docutils literal notranslate"><span class="pre">BaseChannel.fetch_history()</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.channel.BaseChannel.fetch_invites"><code class="docutils literal notranslate"><span class="pre">BaseChannel.fetch_invites()</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.channel.BaseChannel.fetch_member_permissions"><code class="docutils literal notranslate"><span class="pre">BaseChannel.fetch_member_permissions()</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.channel.BaseChannel.fetch_message"><code class="docutils literal notranslate"><span class="pre">BaseChannel.fetch_message()</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.channel.BaseChannel.fetch_pins"><code class="docutils literal notranslate"><span class="pre">BaseChannel.fetch_pins()</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.channel.BaseChannel.fetch_role_permissions"><code class="docutils literal notranslate"><span class="pre">BaseChannel.fetch_role_permissions()</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.channel.BaseChannel.fetch_thread_member"><code class="docutils literal notranslate"><span class="pre">BaseChannel.fetch_thread_member()</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.channel.BaseChannel.fetch_thread_members"><code class="docutils literal notranslate"><span class="pre">BaseChannel.fetch_thread_members()</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.channel.BaseChannel.follow_announcement_channel"><code class="docutils literal notranslate"><span class="pre">BaseChannel.follow_announcement_channel()</span></code></a></li>
@@ -14540,8 +15316,10 @@ connected to the voice channel, <cite>MANAGE_CHANNELS</cite> is also required.</
 <li><a class="reference internal" href="#discord_http.channel.CategoryChannel.fetch_archived_public_threads"><code class="docutils literal notranslate"><span class="pre">CategoryChannel.fetch_archived_public_threads()</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.channel.CategoryChannel.fetch_history"><code class="docutils literal notranslate"><span class="pre">CategoryChannel.fetch_history()</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.channel.CategoryChannel.fetch_invites"><code class="docutils literal notranslate"><span class="pre">CategoryChannel.fetch_invites()</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.channel.CategoryChannel.fetch_member_permissions"><code class="docutils literal notranslate"><span class="pre">CategoryChannel.fetch_member_permissions()</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.channel.CategoryChannel.fetch_message"><code class="docutils literal notranslate"><span class="pre">CategoryChannel.fetch_message()</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.channel.CategoryChannel.fetch_pins"><code class="docutils literal notranslate"><span class="pre">CategoryChannel.fetch_pins()</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.channel.CategoryChannel.fetch_role_permissions"><code class="docutils literal notranslate"><span class="pre">CategoryChannel.fetch_role_permissions()</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.channel.CategoryChannel.fetch_thread_member"><code class="docutils literal notranslate"><span class="pre">CategoryChannel.fetch_thread_member()</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.channel.CategoryChannel.fetch_thread_members"><code class="docutils literal notranslate"><span class="pre">CategoryChannel.fetch_thread_members()</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.channel.CategoryChannel.flags"><code class="docutils literal notranslate"><span class="pre">CategoryChannel.flags</span></code></a></li>
@@ -14596,8 +15374,10 @@ connected to the voice channel, <cite>MANAGE_CHANNELS</cite> is also required.</
 <li><a class="reference internal" href="#discord_http.channel.DMChannel.fetch_archived_public_threads"><code class="docutils literal notranslate"><span class="pre">DMChannel.fetch_archived_public_threads()</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.channel.DMChannel.fetch_history"><code class="docutils literal notranslate"><span class="pre">DMChannel.fetch_history()</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.channel.DMChannel.fetch_invites"><code class="docutils literal notranslate"><span class="pre">DMChannel.fetch_invites()</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.channel.DMChannel.fetch_member_permissions"><code class="docutils literal notranslate"><span class="pre">DMChannel.fetch_member_permissions()</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.channel.DMChannel.fetch_message"><code class="docutils literal notranslate"><span class="pre">DMChannel.fetch_message()</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.channel.DMChannel.fetch_pins"><code class="docutils literal notranslate"><span class="pre">DMChannel.fetch_pins()</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.channel.DMChannel.fetch_role_permissions"><code class="docutils literal notranslate"><span class="pre">DMChannel.fetch_role_permissions()</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.channel.DMChannel.fetch_thread_member"><code class="docutils literal notranslate"><span class="pre">DMChannel.fetch_thread_member()</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.channel.DMChannel.fetch_thread_members"><code class="docutils literal notranslate"><span class="pre">DMChannel.fetch_thread_members()</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.channel.DMChannel.flags"><code class="docutils literal notranslate"><span class="pre">DMChannel.flags</span></code></a></li>
@@ -14645,8 +15425,10 @@ connected to the voice channel, <cite>MANAGE_CHANNELS</cite> is also required.</
 <li><a class="reference internal" href="#discord_http.channel.DirectoryChannel.fetch_archived_public_threads"><code class="docutils literal notranslate"><span class="pre">DirectoryChannel.fetch_archived_public_threads()</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.channel.DirectoryChannel.fetch_history"><code class="docutils literal notranslate"><span class="pre">DirectoryChannel.fetch_history()</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.channel.DirectoryChannel.fetch_invites"><code class="docutils literal notranslate"><span class="pre">DirectoryChannel.fetch_invites()</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.channel.DirectoryChannel.fetch_member_permissions"><code class="docutils literal notranslate"><span class="pre">DirectoryChannel.fetch_member_permissions()</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.channel.DirectoryChannel.fetch_message"><code class="docutils literal notranslate"><span class="pre">DirectoryChannel.fetch_message()</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.channel.DirectoryChannel.fetch_pins"><code class="docutils literal notranslate"><span class="pre">DirectoryChannel.fetch_pins()</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.channel.DirectoryChannel.fetch_role_permissions"><code class="docutils literal notranslate"><span class="pre">DirectoryChannel.fetch_role_permissions()</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.channel.DirectoryChannel.fetch_thread_member"><code class="docutils literal notranslate"><span class="pre">DirectoryChannel.fetch_thread_member()</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.channel.DirectoryChannel.fetch_thread_members"><code class="docutils literal notranslate"><span class="pre">DirectoryChannel.fetch_thread_members()</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.channel.DirectoryChannel.flags"><code class="docutils literal notranslate"><span class="pre">DirectoryChannel.flags</span></code></a></li>
@@ -14708,8 +15490,10 @@ connected to the voice channel, <cite>MANAGE_CHANNELS</cite> is also required.</
 <li><a class="reference internal" href="#discord_http.channel.ForumChannel.fetch_archived_public_threads"><code class="docutils literal notranslate"><span class="pre">ForumChannel.fetch_archived_public_threads()</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.channel.ForumChannel.fetch_history"><code class="docutils literal notranslate"><span class="pre">ForumChannel.fetch_history()</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.channel.ForumChannel.fetch_invites"><code class="docutils literal notranslate"><span class="pre">ForumChannel.fetch_invites()</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.channel.ForumChannel.fetch_member_permissions"><code class="docutils literal notranslate"><span class="pre">ForumChannel.fetch_member_permissions()</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.channel.ForumChannel.fetch_message"><code class="docutils literal notranslate"><span class="pre">ForumChannel.fetch_message()</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.channel.ForumChannel.fetch_pins"><code class="docutils literal notranslate"><span class="pre">ForumChannel.fetch_pins()</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.channel.ForumChannel.fetch_role_permissions"><code class="docutils literal notranslate"><span class="pre">ForumChannel.fetch_role_permissions()</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.channel.ForumChannel.fetch_thread_member"><code class="docutils literal notranslate"><span class="pre">ForumChannel.fetch_thread_member()</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.channel.ForumChannel.fetch_thread_members"><code class="docutils literal notranslate"><span class="pre">ForumChannel.fetch_thread_members()</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.channel.ForumChannel.flags"><code class="docutils literal notranslate"><span class="pre">ForumChannel.flags</span></code></a></li>
@@ -14786,8 +15570,10 @@ connected to the voice channel, <cite>MANAGE_CHANNELS</cite> is also required.</
 <li><a class="reference internal" href="#discord_http.channel.ForumThread.fetch_archived_public_threads"><code class="docutils literal notranslate"><span class="pre">ForumThread.fetch_archived_public_threads()</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.channel.ForumThread.fetch_history"><code class="docutils literal notranslate"><span class="pre">ForumThread.fetch_history()</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.channel.ForumThread.fetch_invites"><code class="docutils literal notranslate"><span class="pre">ForumThread.fetch_invites()</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.channel.ForumThread.fetch_member_permissions"><code class="docutils literal notranslate"><span class="pre">ForumThread.fetch_member_permissions()</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.channel.ForumThread.fetch_message"><code class="docutils literal notranslate"><span class="pre">ForumThread.fetch_message()</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.channel.ForumThread.fetch_pins"><code class="docutils literal notranslate"><span class="pre">ForumThread.fetch_pins()</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.channel.ForumThread.fetch_role_permissions"><code class="docutils literal notranslate"><span class="pre">ForumThread.fetch_role_permissions()</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.channel.ForumThread.fetch_thread_member"><code class="docutils literal notranslate"><span class="pre">ForumThread.fetch_thread_member()</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.channel.ForumThread.fetch_thread_members"><code class="docutils literal notranslate"><span class="pre">ForumThread.fetch_thread_members()</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.channel.ForumThread.flags"><code class="docutils literal notranslate"><span class="pre">ForumThread.flags</span></code></a></li>
@@ -14847,8 +15633,10 @@ connected to the voice channel, <cite>MANAGE_CHANNELS</cite> is also required.</
 <li><a class="reference internal" href="#discord_http.channel.GroupDMChannel.fetch_archived_public_threads"><code class="docutils literal notranslate"><span class="pre">GroupDMChannel.fetch_archived_public_threads()</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.channel.GroupDMChannel.fetch_history"><code class="docutils literal notranslate"><span class="pre">GroupDMChannel.fetch_history()</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.channel.GroupDMChannel.fetch_invites"><code class="docutils literal notranslate"><span class="pre">GroupDMChannel.fetch_invites()</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.channel.GroupDMChannel.fetch_member_permissions"><code class="docutils literal notranslate"><span class="pre">GroupDMChannel.fetch_member_permissions()</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.channel.GroupDMChannel.fetch_message"><code class="docutils literal notranslate"><span class="pre">GroupDMChannel.fetch_message()</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.channel.GroupDMChannel.fetch_pins"><code class="docutils literal notranslate"><span class="pre">GroupDMChannel.fetch_pins()</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.channel.GroupDMChannel.fetch_role_permissions"><code class="docutils literal notranslate"><span class="pre">GroupDMChannel.fetch_role_permissions()</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.channel.GroupDMChannel.fetch_thread_member"><code class="docutils literal notranslate"><span class="pre">GroupDMChannel.fetch_thread_member()</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.channel.GroupDMChannel.fetch_thread_members"><code class="docutils literal notranslate"><span class="pre">GroupDMChannel.fetch_thread_members()</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.channel.GroupDMChannel.flags"><code class="docutils literal notranslate"><span class="pre">GroupDMChannel.flags</span></code></a></li>
@@ -14898,8 +15686,10 @@ connected to the voice channel, <cite>MANAGE_CHANNELS</cite> is also required.</
 <li><a class="reference internal" href="#discord_http.channel.NewsChannel.fetch_archived_public_threads"><code class="docutils literal notranslate"><span class="pre">NewsChannel.fetch_archived_public_threads()</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.channel.NewsChannel.fetch_history"><code class="docutils literal notranslate"><span class="pre">NewsChannel.fetch_history()</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.channel.NewsChannel.fetch_invites"><code class="docutils literal notranslate"><span class="pre">NewsChannel.fetch_invites()</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.channel.NewsChannel.fetch_member_permissions"><code class="docutils literal notranslate"><span class="pre">NewsChannel.fetch_member_permissions()</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.channel.NewsChannel.fetch_message"><code class="docutils literal notranslate"><span class="pre">NewsChannel.fetch_message()</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.channel.NewsChannel.fetch_pins"><code class="docutils literal notranslate"><span class="pre">NewsChannel.fetch_pins()</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.channel.NewsChannel.fetch_role_permissions"><code class="docutils literal notranslate"><span class="pre">NewsChannel.fetch_role_permissions()</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.channel.NewsChannel.fetch_thread_member"><code class="docutils literal notranslate"><span class="pre">NewsChannel.fetch_thread_member()</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.channel.NewsChannel.fetch_thread_members"><code class="docutils literal notranslate"><span class="pre">NewsChannel.fetch_thread_members()</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.channel.NewsChannel.flags"><code class="docutils literal notranslate"><span class="pre">NewsChannel.flags</span></code></a></li>
@@ -14955,8 +15745,10 @@ connected to the voice channel, <cite>MANAGE_CHANNELS</cite> is also required.</
 <li><a class="reference internal" href="#discord_http.channel.NewsThread.fetch_archived_public_threads"><code class="docutils literal notranslate"><span class="pre">NewsThread.fetch_archived_public_threads()</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.channel.NewsThread.fetch_history"><code class="docutils literal notranslate"><span class="pre">NewsThread.fetch_history()</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.channel.NewsThread.fetch_invites"><code class="docutils literal notranslate"><span class="pre">NewsThread.fetch_invites()</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.channel.NewsThread.fetch_member_permissions"><code class="docutils literal notranslate"><span class="pre">NewsThread.fetch_member_permissions()</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.channel.NewsThread.fetch_message"><code class="docutils literal notranslate"><span class="pre">NewsThread.fetch_message()</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.channel.NewsThread.fetch_pins"><code class="docutils literal notranslate"><span class="pre">NewsThread.fetch_pins()</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.channel.NewsThread.fetch_role_permissions"><code class="docutils literal notranslate"><span class="pre">NewsThread.fetch_role_permissions()</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.channel.NewsThread.fetch_thread_member"><code class="docutils literal notranslate"><span class="pre">NewsThread.fetch_thread_member()</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.channel.NewsThread.fetch_thread_members"><code class="docutils literal notranslate"><span class="pre">NewsThread.fetch_thread_members()</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.channel.NewsThread.flags"><code class="docutils literal notranslate"><span class="pre">NewsThread.flags</span></code></a></li>
@@ -15020,6 +15812,8 @@ connected to the voice channel, <cite>MANAGE_CHANNELS</cite> is also required.</
 <li><a class="reference internal" href="#discord_http.channel.PartialChannel.typing"><code class="docutils literal notranslate"><span class="pre">PartialChannel.typing()</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.channel.PartialChannel.set_permission"><code class="docutils literal notranslate"><span class="pre">PartialChannel.set_permission()</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.channel.PartialChannel.delete_permission"><code class="docutils literal notranslate"><span class="pre">PartialChannel.delete_permission()</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.channel.PartialChannel.fetch_member_permissions"><code class="docutils literal notranslate"><span class="pre">PartialChannel.fetch_member_permissions()</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.channel.PartialChannel.fetch_role_permissions"><code class="docutils literal notranslate"><span class="pre">PartialChannel.fetch_role_permissions()</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.channel.PartialChannel.delete"><code class="docutils literal notranslate"><span class="pre">PartialChannel.delete()</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.channel.PartialChannel.create_webhook"><code class="docutils literal notranslate"><span class="pre">PartialChannel.create_webhook()</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.channel.PartialChannel.create_forum_or_media"><code class="docutils literal notranslate"><span class="pre">PartialChannel.create_forum_or_media()</span></code></a></li>
@@ -15055,8 +15849,10 @@ connected to the voice channel, <cite>MANAGE_CHANNELS</cite> is also required.</
 <li><a class="reference internal" href="#discord_http.channel.PartialThread.fetch_archived_public_threads"><code class="docutils literal notranslate"><span class="pre">PartialThread.fetch_archived_public_threads()</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.channel.PartialThread.fetch_history"><code class="docutils literal notranslate"><span class="pre">PartialThread.fetch_history()</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.channel.PartialThread.fetch_invites"><code class="docutils literal notranslate"><span class="pre">PartialThread.fetch_invites()</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.channel.PartialThread.fetch_member_permissions"><code class="docutils literal notranslate"><span class="pre">PartialThread.fetch_member_permissions()</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.channel.PartialThread.fetch_message"><code class="docutils literal notranslate"><span class="pre">PartialThread.fetch_message()</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.channel.PartialThread.fetch_pins"><code class="docutils literal notranslate"><span class="pre">PartialThread.fetch_pins()</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.channel.PartialThread.fetch_role_permissions"><code class="docutils literal notranslate"><span class="pre">PartialThread.fetch_role_permissions()</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.channel.PartialThread.fetch_thread_member"><code class="docutils literal notranslate"><span class="pre">PartialThread.fetch_thread_member()</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.channel.PartialThread.fetch_thread_members"><code class="docutils literal notranslate"><span class="pre">PartialThread.fetch_thread_members()</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.channel.PartialThread.follow_announcement_channel"><code class="docutils literal notranslate"><span class="pre">PartialThread.follow_announcement_channel()</span></code></a></li>
@@ -15101,8 +15897,10 @@ connected to the voice channel, <cite>MANAGE_CHANNELS</cite> is also required.</
 <li><a class="reference internal" href="#discord_http.channel.PrivateThread.fetch_archived_public_threads"><code class="docutils literal notranslate"><span class="pre">PrivateThread.fetch_archived_public_threads()</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.channel.PrivateThread.fetch_history"><code class="docutils literal notranslate"><span class="pre">PrivateThread.fetch_history()</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.channel.PrivateThread.fetch_invites"><code class="docutils literal notranslate"><span class="pre">PrivateThread.fetch_invites()</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.channel.PrivateThread.fetch_member_permissions"><code class="docutils literal notranslate"><span class="pre">PrivateThread.fetch_member_permissions()</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.channel.PrivateThread.fetch_message"><code class="docutils literal notranslate"><span class="pre">PrivateThread.fetch_message()</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.channel.PrivateThread.fetch_pins"><code class="docutils literal notranslate"><span class="pre">PrivateThread.fetch_pins()</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.channel.PrivateThread.fetch_role_permissions"><code class="docutils literal notranslate"><span class="pre">PrivateThread.fetch_role_permissions()</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.channel.PrivateThread.fetch_thread_member"><code class="docutils literal notranslate"><span class="pre">PrivateThread.fetch_thread_member()</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.channel.PrivateThread.fetch_thread_members"><code class="docutils literal notranslate"><span class="pre">PrivateThread.fetch_thread_members()</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.channel.PrivateThread.flags"><code class="docutils literal notranslate"><span class="pre">PrivateThread.flags</span></code></a></li>
@@ -15178,8 +15976,10 @@ connected to the voice channel, <cite>MANAGE_CHANNELS</cite> is also required.</
 <li><a class="reference internal" href="#discord_http.channel.PublicThread.fetch_archived_public_threads"><code class="docutils literal notranslate"><span class="pre">PublicThread.fetch_archived_public_threads()</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.channel.PublicThread.fetch_history"><code class="docutils literal notranslate"><span class="pre">PublicThread.fetch_history()</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.channel.PublicThread.fetch_invites"><code class="docutils literal notranslate"><span class="pre">PublicThread.fetch_invites()</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.channel.PublicThread.fetch_member_permissions"><code class="docutils literal notranslate"><span class="pre">PublicThread.fetch_member_permissions()</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.channel.PublicThread.fetch_message"><code class="docutils literal notranslate"><span class="pre">PublicThread.fetch_message()</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.channel.PublicThread.fetch_pins"><code class="docutils literal notranslate"><span class="pre">PublicThread.fetch_pins()</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.channel.PublicThread.fetch_role_permissions"><code class="docutils literal notranslate"><span class="pre">PublicThread.fetch_role_permissions()</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.channel.PublicThread.fetch_thread_member"><code class="docutils literal notranslate"><span class="pre">PublicThread.fetch_thread_member()</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.channel.PublicThread.fetch_thread_members"><code class="docutils literal notranslate"><span class="pre">PublicThread.fetch_thread_members()</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.channel.PublicThread.flags"><code class="docutils literal notranslate"><span class="pre">PublicThread.flags</span></code></a></li>
@@ -15227,8 +16027,10 @@ connected to the voice channel, <cite>MANAGE_CHANNELS</cite> is also required.</
 <li><a class="reference internal" href="#discord_http.channel.StageChannel.fetch_archived_public_threads"><code class="docutils literal notranslate"><span class="pre">StageChannel.fetch_archived_public_threads()</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.channel.StageChannel.fetch_history"><code class="docutils literal notranslate"><span class="pre">StageChannel.fetch_history()</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.channel.StageChannel.fetch_invites"><code class="docutils literal notranslate"><span class="pre">StageChannel.fetch_invites()</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.channel.StageChannel.fetch_member_permissions"><code class="docutils literal notranslate"><span class="pre">StageChannel.fetch_member_permissions()</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.channel.StageChannel.fetch_message"><code class="docutils literal notranslate"><span class="pre">StageChannel.fetch_message()</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.channel.StageChannel.fetch_pins"><code class="docutils literal notranslate"><span class="pre">StageChannel.fetch_pins()</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.channel.StageChannel.fetch_role_permissions"><code class="docutils literal notranslate"><span class="pre">StageChannel.fetch_role_permissions()</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.channel.StageChannel.fetch_thread_member"><code class="docutils literal notranslate"><span class="pre">StageChannel.fetch_thread_member()</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.channel.StageChannel.fetch_thread_members"><code class="docutils literal notranslate"><span class="pre">StageChannel.fetch_thread_members()</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.channel.StageChannel.flags"><code class="docutils literal notranslate"><span class="pre">StageChannel.flags</span></code></a></li>
@@ -15301,8 +16103,10 @@ connected to the voice channel, <cite>MANAGE_CHANNELS</cite> is also required.</
 <li><a class="reference internal" href="#discord_http.channel.StoreChannel.fetch_archived_public_threads"><code class="docutils literal notranslate"><span class="pre">StoreChannel.fetch_archived_public_threads()</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.channel.StoreChannel.fetch_history"><code class="docutils literal notranslate"><span class="pre">StoreChannel.fetch_history()</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.channel.StoreChannel.fetch_invites"><code class="docutils literal notranslate"><span class="pre">StoreChannel.fetch_invites()</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.channel.StoreChannel.fetch_member_permissions"><code class="docutils literal notranslate"><span class="pre">StoreChannel.fetch_member_permissions()</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.channel.StoreChannel.fetch_message"><code class="docutils literal notranslate"><span class="pre">StoreChannel.fetch_message()</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.channel.StoreChannel.fetch_pins"><code class="docutils literal notranslate"><span class="pre">StoreChannel.fetch_pins()</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.channel.StoreChannel.fetch_role_permissions"><code class="docutils literal notranslate"><span class="pre">StoreChannel.fetch_role_permissions()</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.channel.StoreChannel.fetch_thread_member"><code class="docutils literal notranslate"><span class="pre">StoreChannel.fetch_thread_member()</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.channel.StoreChannel.fetch_thread_members"><code class="docutils literal notranslate"><span class="pre">StoreChannel.fetch_thread_members()</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.channel.StoreChannel.flags"><code class="docutils literal notranslate"><span class="pre">StoreChannel.flags</span></code></a></li>
@@ -15354,8 +16158,10 @@ connected to the voice channel, <cite>MANAGE_CHANNELS</cite> is also required.</
 <li><a class="reference internal" href="#discord_http.channel.TextChannel.fetch_archived_public_threads"><code class="docutils literal notranslate"><span class="pre">TextChannel.fetch_archived_public_threads()</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.channel.TextChannel.fetch_history"><code class="docutils literal notranslate"><span class="pre">TextChannel.fetch_history()</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.channel.TextChannel.fetch_invites"><code class="docutils literal notranslate"><span class="pre">TextChannel.fetch_invites()</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.channel.TextChannel.fetch_member_permissions"><code class="docutils literal notranslate"><span class="pre">TextChannel.fetch_member_permissions()</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.channel.TextChannel.fetch_message"><code class="docutils literal notranslate"><span class="pre">TextChannel.fetch_message()</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.channel.TextChannel.fetch_pins"><code class="docutils literal notranslate"><span class="pre">TextChannel.fetch_pins()</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.channel.TextChannel.fetch_role_permissions"><code class="docutils literal notranslate"><span class="pre">TextChannel.fetch_role_permissions()</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.channel.TextChannel.fetch_thread_member"><code class="docutils literal notranslate"><span class="pre">TextChannel.fetch_thread_member()</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.channel.TextChannel.fetch_thread_members"><code class="docutils literal notranslate"><span class="pre">TextChannel.fetch_thread_members()</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.channel.TextChannel.flags"><code class="docutils literal notranslate"><span class="pre">TextChannel.flags</span></code></a></li>
@@ -15411,8 +16217,10 @@ connected to the voice channel, <cite>MANAGE_CHANNELS</cite> is also required.</
 <li><a class="reference internal" href="#discord_http.channel.Thread.fetch_archived_public_threads"><code class="docutils literal notranslate"><span class="pre">Thread.fetch_archived_public_threads()</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.channel.Thread.fetch_history"><code class="docutils literal notranslate"><span class="pre">Thread.fetch_history()</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.channel.Thread.fetch_invites"><code class="docutils literal notranslate"><span class="pre">Thread.fetch_invites()</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.channel.Thread.fetch_member_permissions"><code class="docutils literal notranslate"><span class="pre">Thread.fetch_member_permissions()</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.channel.Thread.fetch_message"><code class="docutils literal notranslate"><span class="pre">Thread.fetch_message()</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.channel.Thread.fetch_pins"><code class="docutils literal notranslate"><span class="pre">Thread.fetch_pins()</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.channel.Thread.fetch_role_permissions"><code class="docutils literal notranslate"><span class="pre">Thread.fetch_role_permissions()</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.channel.Thread.fetch_thread_member"><code class="docutils literal notranslate"><span class="pre">Thread.fetch_thread_member()</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.channel.Thread.fetch_thread_members"><code class="docutils literal notranslate"><span class="pre">Thread.fetch_thread_members()</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.channel.Thread.flags"><code class="docutils literal notranslate"><span class="pre">Thread.flags</span></code></a></li>
@@ -15477,8 +16285,10 @@ connected to the voice channel, <cite>MANAGE_CHANNELS</cite> is also required.</
 <li><a class="reference internal" href="#discord_http.channel.VoiceChannel.fetch_archived_public_threads"><code class="docutils literal notranslate"><span class="pre">VoiceChannel.fetch_archived_public_threads()</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.channel.VoiceChannel.fetch_history"><code class="docutils literal notranslate"><span class="pre">VoiceChannel.fetch_history()</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.channel.VoiceChannel.fetch_invites"><code class="docutils literal notranslate"><span class="pre">VoiceChannel.fetch_invites()</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.channel.VoiceChannel.fetch_member_permissions"><code class="docutils literal notranslate"><span class="pre">VoiceChannel.fetch_member_permissions()</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.channel.VoiceChannel.fetch_message"><code class="docutils literal notranslate"><span class="pre">VoiceChannel.fetch_message()</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.channel.VoiceChannel.fetch_pins"><code class="docutils literal notranslate"><span class="pre">VoiceChannel.fetch_pins()</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.channel.VoiceChannel.fetch_role_permissions"><code class="docutils literal notranslate"><span class="pre">VoiceChannel.fetch_role_permissions()</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.channel.VoiceChannel.fetch_thread_member"><code class="docutils literal notranslate"><span class="pre">VoiceChannel.fetch_thread_member()</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.channel.VoiceChannel.fetch_thread_members"><code class="docutils literal notranslate"><span class="pre">VoiceChannel.fetch_thread_members()</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.channel.VoiceChannel.flags"><code class="docutils literal notranslate"><span class="pre">VoiceChannel.flags</span></code></a></li>

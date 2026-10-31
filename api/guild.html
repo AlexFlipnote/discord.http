@@ -1107,6 +1107,23 @@ Can only be up to 24 hours in the future.</p></li>
 </dd></dl>
 
 <dl class="py method">
+<dt class="sig sig-object py" id="discord_http.guild.Guild.fetch_member_permissions">
+<span class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">fetch_member_permissions</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">member</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="flags.html#discord_http.flags.Permissions" title="discord_http.flags.Permissions"><span class="pre">Permissions</span></a></span></span><a class="headerlink" href="#discord_http.guild.Guild.fetch_member_permissions" title="Link to this definition">¶</a></dt>
+<dd><p>Fetches the computed guild permissions of a member, combining their roles with <cite>&#64;everyone</cite>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>member</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference internal" href="object.html#discord_http.object.Snowflake" title="discord_http.object.Snowflake"><code class="xref py py-class docutils literal notranslate"><span class="pre">Snowflake</span></code></a> | <a class="reference external" href="https://docs.python.org/3/builtins/functions.html#int" title="(in Python v3.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a></span>) – The member to fetch the permissions of</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><a class="reference internal" href="flags.html#discord_http.flags.Permissions" title="discord_http.flags.Permissions"><code class="xref py py-class docutils literal notranslate"><span class="pre">Permissions</span></code></a></span></p>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The member’s guild permissions</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
 <dt class="sig sig-object py" id="discord_http.guild.Guild.fetch_members">
 <span class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">fetch_members</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">limit</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1000</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">after</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/collections.abc.html#collections.abc.AsyncIterator" title="(in Python v3.15)"><span class="pre">AsyncIterator</span></a><span class="p"><span class="pre">[</span></span><a class="reference internal" href="member.html#discord_http.member.Member" title="discord_http.member.Member"><span class="pre">Member</span></a><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#discord_http.guild.Guild.fetch_members" title="Link to this definition">¶</a></dt>
 <dd><p>Fetches all the members in the guild.</p>
@@ -1178,6 +1195,24 @@ Can only be up to 24 hours in the future.</p></li>
 <dl class="field-list simple">
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#dict" title="(in Python v3.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">dict</span></code></a>[<a class="reference external" href="https://docs.python.org/3/builtins/functions.html#int" title="(in Python v3.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a>, <a class="reference external" href="https://docs.python.org/3/builtins/functions.html#int" title="(in Python v3.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a>]</span></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="discord_http.guild.Guild.fetch_role_permissions">
+<span class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">fetch_role_permissions</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">role</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="flags.html#discord_http.flags.Permissions" title="discord_http.flags.Permissions"><span class="pre">Permissions</span></a></span></span><a class="headerlink" href="#discord_http.guild.Guild.fetch_role_permissions" title="Link to this definition">¶</a></dt>
+<dd><p>Fetches the combined guild permissions of a role and <cite>&#64;everyone</cite>.</p>
+<p>Other roles and member-specific restrictions are not included.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>role</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference internal" href="object.html#discord_http.object.Snowflake" title="discord_http.object.Snowflake"><code class="xref py py-class docutils literal notranslate"><span class="pre">Snowflake</span></code></a> | <a class="reference external" href="https://docs.python.org/3/builtins/functions.html#int" title="(in Python v3.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a></span>) – The role to fetch the permissions of</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><a class="reference internal" href="flags.html#discord_http.flags.Permissions" title="discord_http.flags.Permissions"><code class="xref py py-class docutils literal notranslate"><span class="pre">Permissions</span></code></a></span></p>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The role’s guild permissions</p>
 </dd>
 </dl>
 </dd></dl>
@@ -3562,6 +3597,41 @@ Can only be up to 24 hours in the future.</p></li>
 </dd></dl>
 
 <dl class="py method">
+<dt class="sig sig-object py" id="discord_http.guild.PartialGuild.fetch_member_permissions">
+<span class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">fetch_member_permissions</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">member</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="flags.html#discord_http.flags.Permissions" title="discord_http.flags.Permissions"><span class="pre">Permissions</span></a></span></span><a class="headerlink" href="#discord_http.guild.PartialGuild.fetch_member_permissions" title="Link to this definition">¶</a></dt>
+<dd><p>Fetches the computed guild permissions of a member, combining their roles with <cite>&#64;everyone</cite>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>member</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference internal" href="object.html#discord_http.object.Snowflake" title="discord_http.object.Snowflake"><code class="xref py py-class docutils literal notranslate"><span class="pre">Snowflake</span></code></a> | <a class="reference external" href="https://docs.python.org/3/builtins/functions.html#int" title="(in Python v3.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a></span>) – The member to fetch the permissions of</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><a class="reference internal" href="flags.html#discord_http.flags.Permissions" title="discord_http.flags.Permissions"><code class="xref py py-class docutils literal notranslate"><span class="pre">Permissions</span></code></a></span></p>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The member’s guild permissions</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="discord_http.guild.PartialGuild.fetch_role_permissions">
+<span class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">fetch_role_permissions</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">role</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="flags.html#discord_http.flags.Permissions" title="discord_http.flags.Permissions"><span class="pre">Permissions</span></a></span></span><a class="headerlink" href="#discord_http.guild.PartialGuild.fetch_role_permissions" title="Link to this definition">¶</a></dt>
+<dd><p>Fetches the combined guild permissions of a role and <cite>&#64;everyone</cite>.</p>
+<p>Other roles and member-specific restrictions are not included.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>role</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference internal" href="object.html#discord_http.object.Snowflake" title="discord_http.object.Snowflake"><code class="xref py py-class docutils literal notranslate"><span class="pre">Snowflake</span></code></a> | <a class="reference external" href="https://docs.python.org/3/builtins/functions.html#int" title="(in Python v3.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a></span>) – The role to fetch the permissions of</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><a class="reference internal" href="flags.html#discord_http.flags.Permissions" title="discord_http.flags.Permissions"><code class="xref py py-class docutils literal notranslate"><span class="pre">Permissions</span></code></a></span></p>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The role’s guild permissions</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
 <dt class="sig sig-object py" id="discord_http.guild.PartialGuild.fetch_stickers">
 <span class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">fetch_stickers</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#list" title="(in Python v3.15)"><span class="pre">list</span></a><span class="p"><span class="pre">[</span></span><a class="reference internal" href="sticker.html#discord_http.sticker.Sticker" title="discord_http.sticker.Sticker"><span class="pre">Sticker</span></a><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#discord_http.guild.PartialGuild.fetch_stickers" title="Link to this definition">¶</a></dt>
 <dd><p>Fetches all the stickers in the guild.</p>
@@ -5199,12 +5269,14 @@ as the rest are only ever provided by Discord.</p>
 <li><a class="reference internal" href="#discord_http.guild.Guild.fetch_integrations"><code class="docutils literal notranslate"><span class="pre">Guild.fetch_integrations()</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.guild.Guild.fetch_invites"><code class="docutils literal notranslate"><span class="pre">Guild.fetch_invites()</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.guild.Guild.fetch_member"><code class="docutils literal notranslate"><span class="pre">Guild.fetch_member()</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.guild.Guild.fetch_member_permissions"><code class="docutils literal notranslate"><span class="pre">Guild.fetch_member_permissions()</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.guild.Guild.fetch_members"><code class="docutils literal notranslate"><span class="pre">Guild.fetch_members()</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.guild.Guild.fetch_onboarding"><code class="docutils literal notranslate"><span class="pre">Guild.fetch_onboarding()</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.guild.Guild.fetch_preview"><code class="docutils literal notranslate"><span class="pre">Guild.fetch_preview()</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.guild.Guild.fetch_public_threads"><code class="docutils literal notranslate"><span class="pre">Guild.fetch_public_threads()</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.guild.Guild.fetch_regions"><code class="docutils literal notranslate"><span class="pre">Guild.fetch_regions()</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.guild.Guild.fetch_role_member_counts"><code class="docutils literal notranslate"><span class="pre">Guild.fetch_role_member_counts()</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.guild.Guild.fetch_role_permissions"><code class="docutils literal notranslate"><span class="pre">Guild.fetch_role_permissions()</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.guild.Guild.fetch_roles"><code class="docutils literal notranslate"><span class="pre">Guild.fetch_roles()</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.guild.Guild.fetch_scheduled_event"><code class="docutils literal notranslate"><span class="pre">Guild.fetch_scheduled_event()</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.guild.Guild.fetch_scheduled_events_list"><code class="docutils literal notranslate"><span class="pre">Guild.fetch_scheduled_events_list()</span></code></a></li>
@@ -5481,6 +5553,8 @@ as the rest are only ever provided by Discord.</p>
 <li><a class="reference internal" href="#discord_http.guild.PartialGuild.create_automod_rule"><code class="docutils literal notranslate"><span class="pre">PartialGuild.create_automod_rule()</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.guild.PartialGuild.fetch_roles"><code class="docutils literal notranslate"><span class="pre">PartialGuild.fetch_roles()</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.guild.PartialGuild.fetch_role_member_counts"><code class="docutils literal notranslate"><span class="pre">PartialGuild.fetch_role_member_counts()</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.guild.PartialGuild.fetch_member_permissions"><code class="docutils literal notranslate"><span class="pre">PartialGuild.fetch_member_permissions()</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.guild.PartialGuild.fetch_role_permissions"><code class="docutils literal notranslate"><span class="pre">PartialGuild.fetch_role_permissions()</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.guild.PartialGuild.fetch_stickers"><code class="docutils literal notranslate"><span class="pre">PartialGuild.fetch_stickers()</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.guild.PartialGuild.fetch_scheduled_events_list"><code class="docutils literal notranslate"><span class="pre">PartialGuild.fetch_scheduled_events_list()</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.guild.PartialGuild.fetch_emojis"><code class="docutils literal notranslate"><span class="pre">PartialGuild.fetch_emojis()</span></code></a></li>

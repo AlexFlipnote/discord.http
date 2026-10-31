@@ -370,6 +370,28 @@
 </dd></dl>
 
 <dl class="py method">
+<dt class="sig sig-object py" id="discord_http.role.PartialRole.fetch_permissions">
+<span class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">fetch_permissions</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">channel</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">implicit</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="flags.html#discord_http.flags.Permissions" title="discord_http.flags.Permissions"><span class="pre">Permissions</span></a></span></span><a class="headerlink" href="#discord_http.role.PartialRole.fetch_permissions" title="Link to this definition">¶</a></dt>
+<dd><p>Fetches the role permissions from the API, in the guild or in a channel if one is given.</p>
+<p>Shortcut for <cite>PartialGuild.fetch_role_permissions</cite> and <cite>PartialChannel.fetch_role_permissions</cite>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>channel</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference internal" href="object.html#discord_http.object.Snowflake" title="discord_http.object.Snowflake"><code class="xref py py-class docutils literal notranslate"><span class="pre">Snowflake</span></code></a> | <a class="reference external" href="https://docs.python.org/3/builtins/functions.html#int" title="(in Python v3.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a> | <a class="reference external" href="https://docs.python.org/3/builtins/constants.html#None" title="(in Python v3.15)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></span>) – The channel to fetch the permissions in, <cite>None</cite> fetches the guild permissions</p></li>
+<li><p><strong>implicit</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#bool" title="(in Python v3.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></a></span>) – Whether to apply implicit permission masking for missing <cite>VIEW_CHANNEL</cite> or voice/stage <cite>CONNECT</cite>.
+Only used when <cite>channel</cite> is given.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><a class="reference internal" href="flags.html#discord_http.flags.Permissions" title="discord_http.flags.Permissions"><code class="xref py py-class docutils literal notranslate"><span class="pre">Permissions</span></code></a></span></p>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The role’s permissions</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
 <dt class="sig sig-object py" id="discord_http.role.PartialRole.delete">
 <span class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">delete</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">reason</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/builtins/constants.html#None" title="(in Python v3.15)"><span class="pre">None</span></a></span></span><a class="headerlink" href="#discord_http.role.PartialRole.delete" title="Link to this definition">¶</a></dt>
 <dd><p>Delete the role.</p>
@@ -649,6 +671,28 @@ The third value must be one of the following:
 </dl>
 </dd></dl>
 
+<dl class="py method">
+<dt class="sig sig-object py" id="discord_http.role.Role.fetch_permissions">
+<span class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">fetch_permissions</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">channel</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">implicit</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="flags.html#discord_http.flags.Permissions" title="discord_http.flags.Permissions"><span class="pre">Permissions</span></a></span></span><a class="headerlink" href="#discord_http.role.Role.fetch_permissions" title="Link to this definition">¶</a></dt>
+<dd><p>Fetches the role permissions from the API, in the guild or in a channel if one is given.</p>
+<p>Shortcut for <cite>PartialGuild.fetch_role_permissions</cite> and <cite>PartialChannel.fetch_role_permissions</cite>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>channel</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference internal" href="object.html#discord_http.object.Snowflake" title="discord_http.object.Snowflake"><code class="xref py py-class docutils literal notranslate"><span class="pre">Snowflake</span></code></a> | <a class="reference external" href="https://docs.python.org/3/builtins/functions.html#int" title="(in Python v3.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a> | <a class="reference external" href="https://docs.python.org/3/builtins/constants.html#None" title="(in Python v3.15)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></span>) – The channel to fetch the permissions in, <cite>None</cite> fetches the guild permissions</p></li>
+<li><p><strong>implicit</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#bool" title="(in Python v3.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></a></span>) – Whether to apply implicit permission masking for missing <cite>VIEW_CHANNEL</cite> or voice/stage <cite>CONNECT</cite>.
+Only used when <cite>channel</cite> is given.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><a class="reference internal" href="flags.html#discord_http.flags.Permissions" title="discord_http.flags.Permissions"><code class="xref py py-class docutils literal notranslate"><span class="pre">Permissions</span></code></a></span></p>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The role’s permissions</p>
+</dd>
+</dl>
+</dd></dl>
+
 <dl class="py property">
 <dt class="sig sig-object py" id="discord_http.role.Role.guild">
 <span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">guild</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="guild.html#discord_http.guild.Guild" title="discord_http.guild.Guild"><span class="pre">Guild</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="guild.html#discord_http.guild.PartialGuild" title="discord_http.guild.PartialGuild"><span class="pre">PartialGuild</span></a></span><a class="headerlink" href="#discord_http.role.Role.guild" title="Link to this definition">¶</a></dt>
@@ -814,6 +858,7 @@ The third value must be one of the following:
 <li><a class="reference internal" href="#discord_http.role.PartialRole.is_default_role"><code class="docutils literal notranslate"><span class="pre">PartialRole.is_default_role()</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.role.PartialRole.add_role"><code class="docutils literal notranslate"><span class="pre">PartialRole.add_role()</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.role.PartialRole.remove_role"><code class="docutils literal notranslate"><span class="pre">PartialRole.remove_role()</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.role.PartialRole.fetch_permissions"><code class="docutils literal notranslate"><span class="pre">PartialRole.fetch_permissions()</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.role.PartialRole.delete"><code class="docutils literal notranslate"><span class="pre">PartialRole.delete()</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.role.PartialRole.edit"><code class="docutils literal notranslate"><span class="pre">PartialRole.edit()</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.role.PartialRole.created_at"><code class="docutils literal notranslate"><span class="pre">PartialRole.created_at</span></code></a></li>
@@ -844,6 +889,7 @@ The third value must be one of the following:
 <li><a class="reference internal" href="#discord_http.role.Role.created_at"><code class="docutils literal notranslate"><span class="pre">Role.created_at</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.role.Role.delete"><code class="docutils literal notranslate"><span class="pre">Role.delete()</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.role.Role.edit"><code class="docutils literal notranslate"><span class="pre">Role.edit()</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.role.Role.fetch_permissions"><code class="docutils literal notranslate"><span class="pre">Role.fetch_permissions()</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.role.Role.guild"><code class="docutils literal notranslate"><span class="pre">Role.guild</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.role.Role.guild_id"><code class="docutils literal notranslate"><span class="pre">Role.guild_id</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.role.Role.id"><code class="docutils literal notranslate"><span class="pre">Role.id</span></code></a></li>

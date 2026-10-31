@@ -362,6 +362,8 @@
 </li>
           <li><a href="api/flags.html#discord_http.flags.ChannelFlags.add_flags">(discord_http.flags.ChannelFlags method)</a>
 </li>
+          <li><a href="api/flags.html#discord_http.flags.ContentScanFlags.add_flags">(discord_http.flags.ContentScanFlags method)</a>
+</li>
           <li><a href="api/flags.html#discord_http.flags.EmbedFlags.add_flags">(discord_http.flags.EmbedFlags method)</a>
 </li>
           <li><a href="api/flags.html#discord_http.flags.GuildInviteFlags.add_flags">(discord_http.flags.GuildInviteFlags method)</a>
@@ -563,6 +565,8 @@
           <li><a href="api/flags.html#discord_http.flags.BaseFlag.all">(discord_http.flags.BaseFlag class method)</a>
 </li>
           <li><a href="api/flags.html#discord_http.flags.ChannelFlags.all">(discord_http.flags.ChannelFlags class method)</a>
+</li>
+          <li><a href="api/flags.html#discord_http.flags.ContentScanFlags.all">(discord_http.flags.ContentScanFlags class method)</a>
 </li>
           <li><a href="api/flags.html#discord_http.flags.EmbedFlags.all">(discord_http.flags.EmbedFlags class method)</a>
 </li>
@@ -1559,6 +1563,8 @@
 </li>
         <li><a href="api/enums.html#discord_http.enums.MessageType.channel_pinned_message">channel_pinned_message (discord_http.enums.MessageType attribute)</a>
 </li>
+        <li><a href="api/enums.html#discord_http.enums.AuditLogType.channel_position_update">channel_position_update (discord_http.enums.AuditLogType attribute)</a>
+</li>
         <li><a href="api/enums.html#discord_http.enums.ComponentType.channel_select">channel_select (discord_http.enums.ComponentType attribute)</a>
 </li>
         <li><a href="api/context.html#discord_http.context.Context.channel_type">channel_type (discord_http.context.Context property)</a>
@@ -1795,6 +1801,24 @@
 </li>
         <li><a href="api/view.html#discord_http.view.ContainerComponent">ContainerComponent (class in discord_http.view)</a>
 </li>
+        <li><a href="api/flags.html#discord_http.flags.AttachmentFlags.contains_explicit_content">contains_explicit_content (discord_http.flags.AttachmentFlags attribute)</a>
+
+        <ul>
+          <li><a href="api/flags.html#discord_http.flags.EmbedFlags.contains_explicit_content">(discord_http.flags.EmbedFlags attribute)</a>
+</li>
+        </ul></li>
+        <li><a href="api/flags.html#discord_http.flags.AttachmentFlags.contains_gore_content">contains_gore_content (discord_http.flags.AttachmentFlags attribute)</a>
+
+        <ul>
+          <li><a href="api/flags.html#discord_http.flags.EmbedFlags.contains_gore_content">(discord_http.flags.EmbedFlags attribute)</a>
+</li>
+        </ul></li>
+        <li><a href="api/flags.html#discord_http.flags.AttachmentFlags.contains_self_harm_content">contains_self_harm_content (discord_http.flags.AttachmentFlags attribute)</a>
+
+        <ul>
+          <li><a href="api/flags.html#discord_http.flags.EmbedFlags.contains_self_harm_content">(discord_http.flags.EmbedFlags attribute)</a>
+</li>
+        </ul></li>
         <li><a href="gateway/object.html#discord_http.gateway.object.AutomodExecution.content">content (discord_http.gateway.object.AutomodExecution attribute)</a>
 
         <ul>
@@ -1810,6 +1834,8 @@
 </li>
         </ul></li>
         <li><a href="api/enums.html#discord_http.enums.ComponentType.content_inventory_entry">content_inventory_entry (discord_http.enums.ComponentType attribute)</a>
+</li>
+        <li><a href="api/view.html#discord_http.view.AttachmentComponent.content_scan_flags">content_scan_flags (discord_http.view.AttachmentComponent attribute)</a>
 </li>
         <li><a href="api/message.html#discord_http.message.Attachment.content_type">content_type (discord_http.message.Attachment attribute)</a>
 
@@ -1832,6 +1858,8 @@
         <li><a href="api/enums.html#discord_http.enums.ContentFilterLevel">ContentFilterLevel (class in discord_http.enums)</a>
 </li>
         <li><a href="api/view.html#discord_http.view.ContentInventoryEntry">ContentInventoryEntry (class in discord_http.view)</a>
+</li>
+        <li><a href="api/flags.html#discord_http.flags.ContentScanFlags">ContentScanFlags (class in discord_http.flags)</a>
 </li>
         <li><a href="api/context.html#discord_http.context.Context">Context (class in discord_http.context)</a>
 </li>
@@ -1874,6 +1902,8 @@
 </li>
           <li><a href="api/flags.html#discord_http.flags.ChannelFlags.copy">(discord_http.flags.ChannelFlags method)</a>
 </li>
+          <li><a href="api/flags.html#discord_http.flags.ContentScanFlags.copy">(discord_http.flags.ContentScanFlags method)</a>
+</li>
           <li><a href="api/flags.html#discord_http.flags.EmbedFlags.copy">(discord_http.flags.EmbedFlags method)</a>
 </li>
           <li><a href="api/flags.html#discord_http.flags.GuildInviteFlags.copy">(discord_http.flags.GuildInviteFlags method)</a>
@@ -1915,6 +1945,8 @@
           <li><a href="api/tasks.html#discord_http.tasks.Loop.count">(discord_http.tasks.Loop attribute)</a>
 </li>
         </ul></li>
+    </ul></td>
+    <td style="width: 33%; vertical-align: top;"><ul>
         <li><a href="gateway/object.html#discord_http.gateway.object.ChannelInfo.count">count() (discord_http.gateway.object.ChannelInfo method)</a>
 
         <ul>
@@ -1943,8 +1975,6 @@
           <li><a href="api/message.html#discord_http.message.RoleSubscriptionData.count">(discord_http.message.RoleSubscriptionData method)</a>
 </li>
         </ul></li>
-    </ul></td>
-    <td style="width: 33%; vertical-align: top;"><ul>
         <li><a href="api/entitlements.html#discord_http.entitlements.Subscription.country">country (discord_http.entitlements.Subscription attribute)</a>
 </li>
         <li><a href="api/user.html#discord_http.user.Application.cover_image">cover_image (discord_http.user.Application attribute)</a>
@@ -4100,6 +4130,48 @@
           <li><a href="api/guild.html#discord_http.guild.PartialGuild.fetch_member">(discord_http.guild.PartialGuild method)</a>
 </li>
         </ul></li>
+        <li><a href="api/channel.html#discord_http.channel.BaseChannel.fetch_member_permissions">fetch_member_permissions() (discord_http.channel.BaseChannel method)</a>
+
+        <ul>
+          <li><a href="api/channel.html#discord_http.channel.CategoryChannel.fetch_member_permissions">(discord_http.channel.CategoryChannel method)</a>
+</li>
+          <li><a href="api/channel.html#discord_http.channel.DirectoryChannel.fetch_member_permissions">(discord_http.channel.DirectoryChannel method)</a>
+</li>
+          <li><a href="api/channel.html#discord_http.channel.DMChannel.fetch_member_permissions">(discord_http.channel.DMChannel method)</a>
+</li>
+          <li><a href="api/channel.html#discord_http.channel.ForumChannel.fetch_member_permissions">(discord_http.channel.ForumChannel method)</a>
+</li>
+          <li><a href="api/channel.html#discord_http.channel.ForumThread.fetch_member_permissions">(discord_http.channel.ForumThread method)</a>
+</li>
+          <li><a href="api/channel.html#discord_http.channel.GroupDMChannel.fetch_member_permissions">(discord_http.channel.GroupDMChannel method)</a>
+</li>
+          <li><a href="api/channel.html#discord_http.channel.NewsChannel.fetch_member_permissions">(discord_http.channel.NewsChannel method)</a>
+</li>
+          <li><a href="api/channel.html#discord_http.channel.NewsThread.fetch_member_permissions">(discord_http.channel.NewsThread method)</a>
+</li>
+          <li><a href="api/channel.html#discord_http.channel.PartialChannel.fetch_member_permissions">(discord_http.channel.PartialChannel method)</a>
+</li>
+          <li><a href="api/channel.html#discord_http.channel.PartialThread.fetch_member_permissions">(discord_http.channel.PartialThread method)</a>
+</li>
+          <li><a href="api/channel.html#discord_http.channel.PrivateThread.fetch_member_permissions">(discord_http.channel.PrivateThread method)</a>
+</li>
+          <li><a href="api/channel.html#discord_http.channel.PublicThread.fetch_member_permissions">(discord_http.channel.PublicThread method)</a>
+</li>
+          <li><a href="api/channel.html#discord_http.channel.StageChannel.fetch_member_permissions">(discord_http.channel.StageChannel method)</a>
+</li>
+          <li><a href="api/channel.html#discord_http.channel.StoreChannel.fetch_member_permissions">(discord_http.channel.StoreChannel method)</a>
+</li>
+          <li><a href="api/channel.html#discord_http.channel.TextChannel.fetch_member_permissions">(discord_http.channel.TextChannel method)</a>
+</li>
+          <li><a href="api/channel.html#discord_http.channel.Thread.fetch_member_permissions">(discord_http.channel.Thread method)</a>
+</li>
+          <li><a href="api/channel.html#discord_http.channel.VoiceChannel.fetch_member_permissions">(discord_http.channel.VoiceChannel method)</a>
+</li>
+          <li><a href="api/guild.html#discord_http.guild.Guild.fetch_member_permissions">(discord_http.guild.Guild method)</a>
+</li>
+          <li><a href="api/guild.html#discord_http.guild.PartialGuild.fetch_member_permissions">(discord_http.guild.PartialGuild method)</a>
+</li>
+        </ul></li>
         <li><a href="api/guild.html#discord_http.guild.Guild.fetch_members">fetch_members() (discord_http.guild.Guild method)</a>
 
         <ul>
@@ -4152,6 +4224,20 @@
 
         <ul>
           <li><a href="api/guild.html#discord_http.guild.PartialGuild.fetch_onboarding">(discord_http.guild.PartialGuild method)</a>
+</li>
+        </ul></li>
+        <li><a href="api/member.html#discord_http.member.Member.fetch_permissions">fetch_permissions() (discord_http.member.Member method)</a>
+
+        <ul>
+          <li><a href="api/member.html#discord_http.member.PartialMember.fetch_permissions">(discord_http.member.PartialMember method)</a>
+</li>
+          <li><a href="api/member.html#discord_http.member.PartialThreadMember.fetch_permissions">(discord_http.member.PartialThreadMember method)</a>
+</li>
+          <li><a href="api/member.html#discord_http.member.ThreadMember.fetch_permissions">(discord_http.member.ThreadMember method)</a>
+</li>
+          <li><a href="api/role.html#discord_http.role.PartialRole.fetch_permissions">(discord_http.role.PartialRole method)</a>
+</li>
+          <li><a href="api/role.html#discord_http.role.Role.fetch_permissions">(discord_http.role.Role method)</a>
 </li>
         </ul></li>
         <li><a href="api/channel.html#discord_http.channel.BaseChannel.fetch_pins">fetch_pins() (discord_http.channel.BaseChannel method)</a>
@@ -4226,6 +4312,50 @@
           <li><a href="api/guild.html#discord_http.guild.PartialGuild.fetch_role_member_counts">(discord_http.guild.PartialGuild method)</a>
 </li>
         </ul></li>
+        <li><a href="api/channel.html#discord_http.channel.BaseChannel.fetch_role_permissions">fetch_role_permissions() (discord_http.channel.BaseChannel method)</a>
+
+        <ul>
+          <li><a href="api/channel.html#discord_http.channel.CategoryChannel.fetch_role_permissions">(discord_http.channel.CategoryChannel method)</a>
+</li>
+          <li><a href="api/channel.html#discord_http.channel.DirectoryChannel.fetch_role_permissions">(discord_http.channel.DirectoryChannel method)</a>
+</li>
+          <li><a href="api/channel.html#discord_http.channel.DMChannel.fetch_role_permissions">(discord_http.channel.DMChannel method)</a>
+</li>
+          <li><a href="api/channel.html#discord_http.channel.ForumChannel.fetch_role_permissions">(discord_http.channel.ForumChannel method)</a>
+</li>
+          <li><a href="api/channel.html#discord_http.channel.ForumThread.fetch_role_permissions">(discord_http.channel.ForumThread method)</a>
+</li>
+          <li><a href="api/channel.html#discord_http.channel.GroupDMChannel.fetch_role_permissions">(discord_http.channel.GroupDMChannel method)</a>
+</li>
+          <li><a href="api/channel.html#discord_http.channel.NewsChannel.fetch_role_permissions">(discord_http.channel.NewsChannel method)</a>
+</li>
+          <li><a href="api/channel.html#discord_http.channel.NewsThread.fetch_role_permissions">(discord_http.channel.NewsThread method)</a>
+</li>
+          <li><a href="api/channel.html#discord_http.channel.PartialChannel.fetch_role_permissions">(discord_http.channel.PartialChannel method)</a>
+</li>
+          <li><a href="api/channel.html#discord_http.channel.PartialThread.fetch_role_permissions">(discord_http.channel.PartialThread method)</a>
+</li>
+          <li><a href="api/channel.html#discord_http.channel.PrivateThread.fetch_role_permissions">(discord_http.channel.PrivateThread method)</a>
+</li>
+          <li><a href="api/channel.html#discord_http.channel.PublicThread.fetch_role_permissions">(discord_http.channel.PublicThread method)</a>
+</li>
+          <li><a href="api/channel.html#discord_http.channel.StageChannel.fetch_role_permissions">(discord_http.channel.StageChannel method)</a>
+</li>
+          <li><a href="api/channel.html#discord_http.channel.StoreChannel.fetch_role_permissions">(discord_http.channel.StoreChannel method)</a>
+</li>
+          <li><a href="api/channel.html#discord_http.channel.TextChannel.fetch_role_permissions">(discord_http.channel.TextChannel method)</a>
+</li>
+          <li><a href="api/channel.html#discord_http.channel.Thread.fetch_role_permissions">(discord_http.channel.Thread method)</a>
+</li>
+          <li><a href="api/channel.html#discord_http.channel.VoiceChannel.fetch_role_permissions">(discord_http.channel.VoiceChannel method)</a>
+</li>
+          <li><a href="api/guild.html#discord_http.guild.Guild.fetch_role_permissions">(discord_http.guild.Guild method)</a>
+</li>
+          <li><a href="api/guild.html#discord_http.guild.PartialGuild.fetch_role_permissions">(discord_http.guild.PartialGuild method)</a>
+</li>
+        </ul></li>
+    </ul></td>
+    <td style="width: 33%; vertical-align: top;"><ul>
         <li><a href="api/guild.html#discord_http.guild.Guild.fetch_roles">fetch_roles() (discord_http.guild.Guild method)</a>
 
         <ul>
@@ -4240,8 +4370,6 @@
           <li><a href="api/guild.html#discord_http.guild.PartialGuild.fetch_scheduled_event">(discord_http.guild.PartialGuild method)</a>
 </li>
         </ul></li>
-    </ul></td>
-    <td style="width: 33%; vertical-align: top;"><ul>
         <li><a href="api/guild.html#discord_http.guild.Guild.fetch_scheduled_events_list">fetch_scheduled_events_list() (discord_http.guild.Guild method)</a>
 
         <ul>
@@ -4722,6 +4850,8 @@
           <li><a href="api/flags.html#discord_http.flags.BaseFlag.from_names">(discord_http.flags.BaseFlag class method)</a>
 </li>
           <li><a href="api/flags.html#discord_http.flags.ChannelFlags.from_names">(discord_http.flags.ChannelFlags class method)</a>
+</li>
+          <li><a href="api/flags.html#discord_http.flags.ContentScanFlags.from_names">(discord_http.flags.ContentScanFlags class method)</a>
 </li>
           <li><a href="api/flags.html#discord_http.flags.EmbedFlags.from_names">(discord_http.flags.EmbedFlags class method)</a>
 </li>
@@ -5950,12 +6080,12 @@
 </li>
         <li><a href="api/user.html#discord_http.user.Application.integration_types_config">integration_types_config (discord_http.user.Application attribute)</a>
 </li>
-    </ul></td>
-    <td style="width: 33%; vertical-align: top;"><ul>
         <li><a href="api/enums.html#discord_http.enums.AuditLogType.integration_update">integration_update (discord_http.enums.AuditLogType attribute)</a>
 </li>
         <li><a href="api/integrations.html#discord_http.integrations.IntegrationAccount">IntegrationAccount (class in discord_http.integrations)</a>
 </li>
+    </ul></td>
+    <td style="width: 33%; vertical-align: top;"><ul>
         <li><a href="api/integrations.html#discord_http.integrations.IntegrationApplication">IntegrationApplication (class in discord_http.integrations)</a>
 </li>
         <li><a href="api/enums.html#discord_http.enums.IntegrationType">IntegrationType (class in discord_http.enums)</a>
@@ -6102,7 +6232,11 @@
         </ul></li>
         <li><a href="api/context.html#discord_http.context.Context.is_expired">is_expired() (discord_http.context.Context method)</a>
 </li>
+        <li><a href="api/flags.html#discord_http.flags.ContentScanFlags.is_explicit_content">is_explicit_content (discord_http.flags.ContentScanFlags attribute)</a>
+</li>
         <li><a href="api/message.html#discord_http.message.Poll.is_finalized">is_finalized (discord_http.message.Poll attribute)</a>
+</li>
+        <li><a href="api/flags.html#discord_http.flags.ContentScanFlags.is_gore_content">is_gore_content (discord_http.flags.ContentScanFlags attribute)</a>
 </li>
         <li><a href="api/flags.html#discord_http.flags.GuildMemberFlags.is_guest">is_guest (discord_http.flags.GuildMemberFlags attribute)</a>
 </li>
@@ -6169,6 +6303,8 @@
         <li><a href="api/flags.html#discord_http.flags.PermissionOverwrite.is_role">is_role() (discord_http.flags.PermissionOverwrite method)</a>
 </li>
         <li><a href="api/tasks.html#discord_http.tasks.Loop.is_running">is_running() (discord_http.tasks.Loop method)</a>
+</li>
+        <li><a href="api/flags.html#discord_http.flags.ContentScanFlags.is_self_harm_content">is_self_harm_content (discord_http.flags.ContentScanFlags attribute)</a>
 </li>
         <li><a href="api/client.html#discord_http.client.Client.is_shards_ready">is_shards_ready() (discord_http.client.Client method)</a>
 </li>
@@ -6610,6 +6746,8 @@
           <li><a href="api/flags.html#discord_http.flags.BaseFlag.list_names">(discord_http.flags.BaseFlag property)</a>
 </li>
           <li><a href="api/flags.html#discord_http.flags.ChannelFlags.list_names">(discord_http.flags.ChannelFlags property)</a>
+</li>
+          <li><a href="api/flags.html#discord_http.flags.ContentScanFlags.list_names">(discord_http.flags.ContentScanFlags property)</a>
 </li>
           <li><a href="api/flags.html#discord_http.flags.EmbedFlags.list_names">(discord_http.flags.EmbedFlags property)</a>
 </li>
@@ -7334,6 +7472,8 @@
 </li>
           <li><a href="api/flags.html#discord_http.flags.ChannelFlags.name">(discord_http.flags.ChannelFlags property)</a>
 </li>
+          <li><a href="api/flags.html#discord_http.flags.ContentScanFlags.name">(discord_http.flags.ContentScanFlags property)</a>
+</li>
           <li><a href="api/flags.html#discord_http.flags.EmbedFlags.name">(discord_http.flags.EmbedFlags property)</a>
 </li>
           <li><a href="api/flags.html#discord_http.flags.GuildInviteFlags.name">(discord_http.flags.GuildInviteFlags property)</a>
@@ -7629,6 +7769,8 @@
           <li><a href="api/flags.html#discord_http.flags.BaseFlag.none">(discord_http.flags.BaseFlag class method)</a>
 </li>
           <li><a href="api/flags.html#discord_http.flags.ChannelFlags.none">(discord_http.flags.ChannelFlags class method)</a>
+</li>
+          <li><a href="api/flags.html#discord_http.flags.ContentScanFlags.none">(discord_http.flags.ContentScanFlags class method)</a>
 </li>
           <li><a href="api/flags.html#discord_http.flags.EmbedFlags.none">(discord_http.flags.EmbedFlags class method)</a>
 </li>
@@ -8484,6 +8626,8 @@
 </li>
           <li><a href="api/flags.html#discord_http.flags.ChannelFlags.pretty_name">(discord_http.flags.ChannelFlags property)</a>
 </li>
+          <li><a href="api/flags.html#discord_http.flags.ContentScanFlags.pretty_name">(discord_http.flags.ContentScanFlags property)</a>
+</li>
           <li><a href="api/flags.html#discord_http.flags.EmbedFlags.pretty_name">(discord_http.flags.EmbedFlags property)</a>
 </li>
           <li><a href="api/flags.html#discord_http.flags.GuildInviteFlags.pretty_name">(discord_http.flags.GuildInviteFlags property)</a>
@@ -8936,6 +9080,8 @@
 </li>
           <li><a href="api/flags.html#discord_http.flags.ChannelFlags.remove_flags">(discord_http.flags.ChannelFlags method)</a>
 </li>
+          <li><a href="api/flags.html#discord_http.flags.ContentScanFlags.remove_flags">(discord_http.flags.ContentScanFlags method)</a>
+</li>
           <li><a href="api/flags.html#discord_http.flags.EmbedFlags.remove_flags">(discord_http.flags.EmbedFlags method)</a>
 </li>
           <li><a href="api/flags.html#discord_http.flags.GuildInviteFlags.remove_flags">(discord_http.flags.GuildInviteFlags method)</a>
@@ -9241,6 +9387,8 @@
           <li><a href="api/message.html#discord_http.message.WebhookMessage.role_mentions">(discord_http.message.WebhookMessage property)</a>
 </li>
         </ul></li>
+        <li><a href="api/enums.html#discord_http.enums.AuditLogType.role_position_update">role_position_update (discord_http.enums.AuditLogType attribute)</a>
+</li>
         <li><a href="api/enums.html#discord_http.enums.ComponentType.role_select">role_select (discord_http.enums.ComponentType attribute)</a>
 </li>
         <li><a href="api/message.html#discord_http.message.Message.role_subscription_data">role_subscription_data (discord_http.message.Message attribute)</a>
@@ -10513,14 +10661,14 @@
           <li><a href="api/colour.html#discord_http.colour.Colour.to_hex">(discord_http.colour.Colour method)</a>
 </li>
         </ul></li>
-    </ul></td>
-    <td style="width: 33%; vertical-align: top;"><ul>
         <li><a href="api/colour.html#discord_http.colour.Color.to_hsl">to_hsl() (discord_http.colour.Color method)</a>
 
         <ul>
           <li><a href="api/colour.html#discord_http.colour.Colour.to_hsl">(discord_http.colour.Colour method)</a>
 </li>
         </ul></li>
+    </ul></td>
+    <td style="width: 33%; vertical-align: top;"><ul>
         <li><a href="api/colour.html#discord_http.colour.Color.to_hsv">to_hsv() (discord_http.colour.Color method)</a>
 
         <ul>
@@ -10549,6 +10697,8 @@
           <li><a href="api/flags.html#discord_http.flags.BaseFlag.to_names">(discord_http.flags.BaseFlag method)</a>
 </li>
           <li><a href="api/flags.html#discord_http.flags.ChannelFlags.to_names">(discord_http.flags.ChannelFlags method)</a>
+</li>
+          <li><a href="api/flags.html#discord_http.flags.ContentScanFlags.to_names">(discord_http.flags.ContentScanFlags method)</a>
 </li>
           <li><a href="api/flags.html#discord_http.flags.EmbedFlags.to_names">(discord_http.flags.EmbedFlags method)</a>
 </li>
@@ -11297,6 +11447,8 @@
           <li><a href="api/flags.html#discord_http.flags.BaseFlag.value">(discord_http.flags.BaseFlag attribute)</a>
 </li>
           <li><a href="api/flags.html#discord_http.flags.ChannelFlags.value">(discord_http.flags.ChannelFlags attribute)</a>
+</li>
+          <li><a href="api/flags.html#discord_http.flags.ContentScanFlags.value">(discord_http.flags.ContentScanFlags attribute)</a>
 </li>
           <li><a href="api/flags.html#discord_http.flags.EmbedFlags.value">(discord_http.flags.EmbedFlags attribute)</a>
 </li>

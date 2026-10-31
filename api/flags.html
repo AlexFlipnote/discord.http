@@ -518,8 +518,23 @@
 <dd></dd></dl>
 
 <dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.flags.AttachmentFlags.contains_explicit_content">
+<span class="sig-name descname"><span class="pre">contains_explicit_content</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">&lt;AttachmentFlags.contains_explicit_content:</span> <span class="pre">16&gt;</span></span><a class="headerlink" href="#discord_http.flags.AttachmentFlags.contains_explicit_content" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
 <dt class="sig sig-object py" id="discord_http.flags.AttachmentFlags.is_animated">
 <span class="sig-name descname"><span class="pre">is_animated</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">&lt;AttachmentFlags.is_animated:</span> <span class="pre">32&gt;</span></span><a class="headerlink" href="#discord_http.flags.AttachmentFlags.is_animated" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.flags.AttachmentFlags.contains_gore_content">
+<span class="sig-name descname"><span class="pre">contains_gore_content</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">&lt;AttachmentFlags.contains_gore_content:</span> <span class="pre">64&gt;</span></span><a class="headerlink" href="#discord_http.flags.AttachmentFlags.contains_gore_content" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.flags.AttachmentFlags.contains_self_harm_content">
+<span class="sig-name descname"><span class="pre">contains_self_harm_content</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">&lt;AttachmentFlags.contains_self_harm_content:</span> <span class="pre">128&gt;</span></span><a class="headerlink" href="#discord_http.flags.AttachmentFlags.contains_self_harm_content" title="Link to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py method">
@@ -973,6 +988,163 @@ with a single <cite>&amp;</cite> against a precomputed “all known bits” valu
 </dd></dl>
 
 <dl class="py class">
+<dt class="sig sig-object py" id="discord_http.flags.ContentScanFlags">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">discord_http.flags.</span></span><span class="sig-name descname"><span class="pre">ContentScanFlags</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#discord_http.flags.ContentScanFlags" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#discord_http.flags.BaseFlag" title="discord_http.flags.BaseFlag"><code class="xref py py-class docutils literal notranslate"><span class="pre">BaseFlag</span></code></a></p>
+<p>Represents the content scan flags of an unfurled media item.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>value</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/functions.html#int" title="(in Python v3.15)"><em>int</em></a>)</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Self" title="(in Python v3.15)"><em>Self</em></a></p>
+</dd>
+</dl>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.flags.ContentScanFlags.is_explicit_content">
+<span class="sig-name descname"><span class="pre">is_explicit_content</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">&lt;ContentScanFlags.is_explicit_content:</span> <span class="pre">1&gt;</span></span><a class="headerlink" href="#discord_http.flags.ContentScanFlags.is_explicit_content" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.flags.ContentScanFlags.is_gore_content">
+<span class="sig-name descname"><span class="pre">is_gore_content</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">&lt;ContentScanFlags.is_gore_content:</span> <span class="pre">2&gt;</span></span><a class="headerlink" href="#discord_http.flags.ContentScanFlags.is_gore_content" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.flags.ContentScanFlags.is_self_harm_content">
+<span class="sig-name descname"><span class="pre">is_self_harm_content</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">&lt;ContentScanFlags.is_self_harm_content:</span> <span class="pre">4&gt;</span></span><a class="headerlink" href="#discord_http.flags.ContentScanFlags.is_self_harm_content" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="discord_http.flags.ContentScanFlags.add_flags">
+<span class="sig-name descname"><span class="pre">add_flags</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">flag_name</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Self" title="(in Python v3.15)"><span class="pre">Self</span></a></span></span><a class="headerlink" href="#discord_http.flags.ContentScanFlags.add_flags" title="Link to this definition">¶</a></dt>
+<dd><p>Add a flag by name.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>*flag_name</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">Self</span></code>, <a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>]</span>) – The flag to add</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">Self</span></code></span></p>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The flag with the added flag</p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/builtins/exceptions.html#ValueError" title="(in Python v3.15)"><strong>ValueError</strong></a> – The flag name is not a valid flag</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="discord_http.flags.ContentScanFlags.all">
+<span class="property"><span class="k"><span class="pre">classmethod</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">all</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Self" title="(in Python v3.15)"><span class="pre">Self</span></a></span></span><a class="headerlink" href="#discord_http.flags.ContentScanFlags.all" title="Link to this definition">¶</a></dt>
+<dd><p>Returns a flag with all the flags.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">Self</span></code></span></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="discord_http.flags.ContentScanFlags.copy">
+<span class="sig-name descname"><span class="pre">copy</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Self" title="(in Python v3.15)"><span class="pre">Self</span></a></span></span><a class="headerlink" href="#discord_http.flags.ContentScanFlags.copy" title="Link to this definition">¶</a></dt>
+<dd><p>Returns a copy of the flag.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">Self</span></code></span></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="discord_http.flags.ContentScanFlags.from_names">
+<span class="property"><span class="k"><span class="pre">classmethod</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">from_names</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Self" title="(in Python v3.15)"><span class="pre">Self</span></a></span></span><a class="headerlink" href="#discord_http.flags.ContentScanFlags.from_names" title="Link to this definition">¶</a></dt>
+<dd><p>Create a flag from names.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>*args</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></span>) – The names of the flags to create</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">Self</span></code></span></p>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The flag with the added flags</p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/builtins/exceptions.html#ValueError" title="(in Python v3.15)"><strong>ValueError</strong></a> – The flag name is not a valid flag</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="discord_http.flags.ContentScanFlags.list_names">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">list_names</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#list" title="(in Python v3.15)"><span class="pre">list</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)"><span class="pre">str</span></a><span class="p"><span class="pre">]</span></span></span><a class="headerlink" href="#discord_http.flags.ContentScanFlags.list_names" title="Link to this definition">¶</a></dt>
+<dd><p>A list of all the names of the flag.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="discord_http.flags.ContentScanFlags.name">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">name</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)"><span class="pre">str</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/builtins/constants.html#None" title="(in Python v3.15)"><span class="pre">None</span></a></span><a class="headerlink" href="#discord_http.flags.ContentScanFlags.name" title="Link to this definition">¶</a></dt>
+<dd><p>The name of the flag, or the <cite>|</cite>-joined names if it’s a combination.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="discord_http.flags.ContentScanFlags.none">
+<span class="property"><span class="k"><span class="pre">classmethod</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">none</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Self" title="(in Python v3.15)"><span class="pre">Self</span></a></span></span><a class="headerlink" href="#discord_http.flags.ContentScanFlags.none" title="Link to this definition">¶</a></dt>
+<dd><p>Returns a flag with no flags.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">Self</span></code></span></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="discord_http.flags.ContentScanFlags.pretty_name">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">pretty_name</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)"><span class="pre">str</span></a></span><a class="headerlink" href="#discord_http.flags.ContentScanFlags.pretty_name" title="Link to this definition">¶</a></dt>
+<dd><p>A pretty name for the flag.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="discord_http.flags.ContentScanFlags.remove_flags">
+<span class="sig-name descname"><span class="pre">remove_flags</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">flag_name</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Self" title="(in Python v3.15)"><span class="pre">Self</span></a></span></span><a class="headerlink" href="#discord_http.flags.ContentScanFlags.remove_flags" title="Link to this definition">¶</a></dt>
+<dd><p>Remove a flag by name.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>flag_name</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">Self</span></code>, <a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>]</span>) – The flag to remove</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">Self</span></code></span></p>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The flag with the removed flag</p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/builtins/exceptions.html#ValueError" title="(in Python v3.15)"><strong>ValueError</strong></a> – The flag name is not a valid flag</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="discord_http.flags.ContentScanFlags.to_names">
+<span class="sig-name descname"><span class="pre">to_names</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#list" title="(in Python v3.15)"><span class="pre">list</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)"><span class="pre">str</span></a><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#discord_http.flags.ContentScanFlags.to_names" title="Link to this definition">¶</a></dt>
+<dd><p>Returns the current names of the flag.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#list" title="(in Python v3.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">list</span></code></a>[<a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>]</span></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.flags.ContentScanFlags.value">
+<span class="sig-name descname"><span class="pre">value</span></span><a class="headerlink" href="#discord_http.flags.ContentScanFlags.value" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
 <dt class="sig sig-object py" id="discord_http.flags.EmbedFlags">
 <span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">discord_http.flags.</span></span><span class="sig-name descname"><span class="pre">EmbedFlags</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#discord_http.flags.EmbedFlags" title="Link to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#discord_http.flags.BaseFlag" title="discord_http.flags.BaseFlag"><code class="xref py py-class docutils literal notranslate"><span class="pre">BaseFlag</span></code></a></p>
@@ -986,8 +1158,23 @@ with a single <cite>&amp;</cite> against a precomputed “all known bits” valu
 </dd>
 </dl>
 <dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.flags.EmbedFlags.contains_explicit_content">
+<span class="sig-name descname"><span class="pre">contains_explicit_content</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">&lt;EmbedFlags.contains_explicit_content:</span> <span class="pre">16&gt;</span></span><a class="headerlink" href="#discord_http.flags.EmbedFlags.contains_explicit_content" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
 <dt class="sig sig-object py" id="discord_http.flags.EmbedFlags.is_content_inventory_entry">
 <span class="sig-name descname"><span class="pre">is_content_inventory_entry</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">&lt;EmbedFlags.is_content_inventory_entry:</span> <span class="pre">32&gt;</span></span><a class="headerlink" href="#discord_http.flags.EmbedFlags.is_content_inventory_entry" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.flags.EmbedFlags.contains_gore_content">
+<span class="sig-name descname"><span class="pre">contains_gore_content</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">&lt;EmbedFlags.contains_gore_content:</span> <span class="pre">64&gt;</span></span><a class="headerlink" href="#discord_http.flags.EmbedFlags.contains_gore_content" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.flags.EmbedFlags.contains_self_harm_content">
+<span class="sig-name descname"><span class="pre">contains_self_harm_content</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">&lt;EmbedFlags.contains_self_harm_content:</span> <span class="pre">128&gt;</span></span><a class="headerlink" href="#discord_http.flags.EmbedFlags.contains_self_harm_content" title="Link to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py method">
@@ -2981,7 +3168,10 @@ with a single <cite>&amp;</cite> against a precomputed “all known bits” valu
 <li><a class="reference internal" href="#discord_http.flags.AttachmentFlags.is_thumbnail"><code class="docutils literal notranslate"><span class="pre">AttachmentFlags.is_thumbnail</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.flags.AttachmentFlags.is_remix"><code class="docutils literal notranslate"><span class="pre">AttachmentFlags.is_remix</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.flags.AttachmentFlags.is_spoiler"><code class="docutils literal notranslate"><span class="pre">AttachmentFlags.is_spoiler</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.flags.AttachmentFlags.contains_explicit_content"><code class="docutils literal notranslate"><span class="pre">AttachmentFlags.contains_explicit_content</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.flags.AttachmentFlags.is_animated"><code class="docutils literal notranslate"><span class="pre">AttachmentFlags.is_animated</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.flags.AttachmentFlags.contains_gore_content"><code class="docutils literal notranslate"><span class="pre">AttachmentFlags.contains_gore_content</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.flags.AttachmentFlags.contains_self_harm_content"><code class="docutils literal notranslate"><span class="pre">AttachmentFlags.contains_self_harm_content</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.flags.AttachmentFlags.add_flags"><code class="docutils literal notranslate"><span class="pre">AttachmentFlags.add_flags()</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.flags.AttachmentFlags.all"><code class="docutils literal notranslate"><span class="pre">AttachmentFlags.all()</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.flags.AttachmentFlags.copy"><code class="docutils literal notranslate"><span class="pre">AttachmentFlags.copy()</span></code></a></li>
@@ -3028,8 +3218,28 @@ with a single <cite>&amp;</cite> against a precomputed “all known bits” valu
 <li><a class="reference internal" href="#discord_http.flags.ChannelFlags.value"><code class="docutils literal notranslate"><span class="pre">ChannelFlags.value</span></code></a></li>
 </ul>
 </li>
+<li><a class="reference internal" href="#discord_http.flags.ContentScanFlags"><code class="docutils literal notranslate"><span class="pre">ContentScanFlags</span></code></a><ul>
+<li><a class="reference internal" href="#discord_http.flags.ContentScanFlags.is_explicit_content"><code class="docutils literal notranslate"><span class="pre">ContentScanFlags.is_explicit_content</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.flags.ContentScanFlags.is_gore_content"><code class="docutils literal notranslate"><span class="pre">ContentScanFlags.is_gore_content</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.flags.ContentScanFlags.is_self_harm_content"><code class="docutils literal notranslate"><span class="pre">ContentScanFlags.is_self_harm_content</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.flags.ContentScanFlags.add_flags"><code class="docutils literal notranslate"><span class="pre">ContentScanFlags.add_flags()</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.flags.ContentScanFlags.all"><code class="docutils literal notranslate"><span class="pre">ContentScanFlags.all()</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.flags.ContentScanFlags.copy"><code class="docutils literal notranslate"><span class="pre">ContentScanFlags.copy()</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.flags.ContentScanFlags.from_names"><code class="docutils literal notranslate"><span class="pre">ContentScanFlags.from_names()</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.flags.ContentScanFlags.list_names"><code class="docutils literal notranslate"><span class="pre">ContentScanFlags.list_names</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.flags.ContentScanFlags.name"><code class="docutils literal notranslate"><span class="pre">ContentScanFlags.name</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.flags.ContentScanFlags.none"><code class="docutils literal notranslate"><span class="pre">ContentScanFlags.none()</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.flags.ContentScanFlags.pretty_name"><code class="docutils literal notranslate"><span class="pre">ContentScanFlags.pretty_name</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.flags.ContentScanFlags.remove_flags"><code class="docutils literal notranslate"><span class="pre">ContentScanFlags.remove_flags()</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.flags.ContentScanFlags.to_names"><code class="docutils literal notranslate"><span class="pre">ContentScanFlags.to_names()</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.flags.ContentScanFlags.value"><code class="docutils literal notranslate"><span class="pre">ContentScanFlags.value</span></code></a></li>
+</ul>
+</li>
 <li><a class="reference internal" href="#discord_http.flags.EmbedFlags"><code class="docutils literal notranslate"><span class="pre">EmbedFlags</span></code></a><ul>
+<li><a class="reference internal" href="#discord_http.flags.EmbedFlags.contains_explicit_content"><code class="docutils literal notranslate"><span class="pre">EmbedFlags.contains_explicit_content</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.flags.EmbedFlags.is_content_inventory_entry"><code class="docutils literal notranslate"><span class="pre">EmbedFlags.is_content_inventory_entry</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.flags.EmbedFlags.contains_gore_content"><code class="docutils literal notranslate"><span class="pre">EmbedFlags.contains_gore_content</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.flags.EmbedFlags.contains_self_harm_content"><code class="docutils literal notranslate"><span class="pre">EmbedFlags.contains_self_harm_content</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.flags.EmbedFlags.add_flags"><code class="docutils literal notranslate"><span class="pre">EmbedFlags.add_flags()</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.flags.EmbedFlags.all"><code class="docutils literal notranslate"><span class="pre">EmbedFlags.all()</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.flags.EmbedFlags.copy"><code class="docutils literal notranslate"><span class="pre">EmbedFlags.copy()</span></code></a></li>
