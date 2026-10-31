@@ -472,6 +472,7 @@ class AuditLogType(BaseEnum):
     channel_overwrite_create = 13
     channel_overwrite_update = 14
     channel_overwrite_delete = 15
+    channel_position_update = 16
     member_kick = 20
     member_prune = 21
     member_ban_add = 22
@@ -484,6 +485,7 @@ class AuditLogType(BaseEnum):
     role_create = 30
     role_update = 31
     role_delete = 32
+    role_position_update = 33
     invite_create = 40
     invite_update = 41
     invite_delete = 42

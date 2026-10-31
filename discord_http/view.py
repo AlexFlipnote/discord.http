@@ -17,6 +17,7 @@ from .enums import (
 )
 from .errors import HTTPException
 from .file import File
+from .flags import ContentScanFlags
 
 if TYPE_CHECKING:
     from . import Snowflake
@@ -133,6 +134,7 @@ class AttachmentComponent:
     __slots__ = (
         "_state",
         "attachment_id",
+        "content_scan_flags",
         "content_type",
         "filename",
         "flags",
@@ -196,6 +198,12 @@ class AttachmentComponent:
             if edata.get("attachment_id") else None
         )
         """ The ID of the uploaded attachment, if the media was uploaded as one. """
+
+        self.content_scan_flags: ContentScanFlags | None = (
+            ContentScanFlags(edata["content_scan_metadata"].get("flags", 0))
+            if edata.get("content_scan_metadata") else None
+        )
+        """ The flags from Discord's content scanning, if the media has been scanned. """
 
     def __str__(self) -> str:
         if self.filename:

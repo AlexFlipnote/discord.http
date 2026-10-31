@@ -18,7 +18,7 @@ __all__ = (
     "EmbedProvider",
 )
 
-EmbedTypes = Literal["rich", "image", "video", "gifv", "article", "link", "poll_result"]
+EmbedTypes = Literal["rich", "image", "video", "gifv", "article", "link", "poll_result", "components"]
 
 
 @dataclass(slots=True)
