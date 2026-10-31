@@ -2373,6 +2373,48 @@ class PartialGuild(PartialBase):
             for role_id, count in r.response.items()
         }
 
+    async def fetch_member_permissions(self, member: Snowflake | int) -> Permissions:
+        """
+        Fetches the computed guild permissions of a member, combining their roles with `@everyone`.
+
+        Parameters
+        ----------
+        member
+            The member to fetch the permissions of
+
+        Returns
+        -------
+            The member's guild permissions
+        """
+        r = await self._state.query(
+            "GET",
+            f"/guilds/{self.id}/permissions/member/{int(member)}"
+        )
+
+        return Permissions(int(r.response["permissions"]))
+
+    async def fetch_role_permissions(self, role: Snowflake | int) -> Permissions:
+        """
+        Fetches the combined guild permissions of a role and `@everyone`.
+
+        Other roles and member-specific restrictions are not included.
+
+        Parameters
+        ----------
+        role
+            The role to fetch the permissions of
+
+        Returns
+        -------
+            The role's guild permissions
+        """
+        r = await self._state.query(
+            "GET",
+            f"/guilds/{self.id}/permissions/role/{int(role)}"
+        )
+
+        return Permissions(int(r.response["permissions"]))
+
     async def fetch_stickers(self) -> list[Sticker]:
         """ Fetches all the stickers in the guild. """
         r = await self._state.query(

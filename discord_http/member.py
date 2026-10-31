@@ -110,6 +110,36 @@ class PartialMember(PartialBase):
 
         return self._state.bot.create_member_from_data(r.response, guild=self.guild)
 
+    async def fetch_permissions(
+        self,
+        channel: Snowflake | int | None = None,
+        *,
+        implicit: bool = True
+    ) -> Permissions:
+        """
+        Fetches the member permissions from the API, in the guild or in a channel if one is given.
+
+        Shortcut for `PartialGuild.fetch_member_permissions` and `PartialChannel.fetch_member_permissions`.
+
+        Parameters
+        ----------
+        channel
+            The channel to fetch the permissions in, `None` fetches the guild permissions
+        implicit
+            Whether to apply implicit permission masking for missing `VIEW_CHANNEL` or voice/stage `CONNECT`.
+            Only used when `channel` is given.
+
+        Returns
+        -------
+            The member's permissions
+        """
+        if channel is None:
+            return await self.guild.fetch_member_permissions(self.id)
+
+        return await self._state.bot.get_partial_channel(
+            int(channel), guild_id=self.guild_id
+        ).fetch_member_permissions(self.id, implicit=implicit)
+
     async def send(
         self,
         content: str | None = MISSING,

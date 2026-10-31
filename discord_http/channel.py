@@ -996,6 +996,67 @@ class PartialChannel(PartialBase):
             reason=reason
         )
 
+    async def fetch_member_permissions(
+        self,
+        member: Snowflake | int,
+        *,
+        implicit: bool = True
+    ) -> Permissions:
+        """
+        Fetches the computed permissions of a member in the channel.
+
+        Includes their roles and member-specific overwrites, threads use the parent channel's overwrites.
+
+        Parameters
+        ----------
+        member
+            The member to fetch the permissions of
+        implicit
+            Whether to apply implicit permission masking for missing `VIEW_CHANNEL` or voice/stage `CONNECT`.
+            Not applied by Discord when the target member is a bot.
+
+        Returns
+        -------
+            The member's channel permissions
+        """
+        r = await self._state.query(
+            "GET",
+            f"/channels/{self.id}/permissions/member/{int(member)}",
+            params={"implicit": "true" if implicit else "false"}
+        )
+
+        return Permissions(int(r.response["permissions"]))
+
+    async def fetch_role_permissions(
+        self,
+        role: Snowflake | int,
+        *,
+        implicit: bool = True
+    ) -> Permissions:
+        """
+        Fetches the permissions of a role together with `@everyone` in the channel, applying their overwrites.
+
+        Other roles and member-specific overwrites are not included, threads use the parent channel's overwrites.
+
+        Parameters
+        ----------
+        role
+            The role to fetch the permissions of
+        implicit
+            Whether to apply implicit permission masking for missing `VIEW_CHANNEL` or voice/stage `CONNECT`
+
+        Returns
+        -------
+            The role's channel permissions
+        """
+        r = await self._state.query(
+            "GET",
+            f"/channels/{self.id}/permissions/role/{int(role)}",
+            params={"implicit": "true" if implicit else "false"}
+        )
+
+        return Permissions(int(r.response["permissions"]))
+
     async def delete(
         self,
         *,
