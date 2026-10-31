@@ -4213,8 +4213,8 @@ class Guild(PartialGuild):
     )
 
     _GUILD_LIMITS: ClassVar[dict[int, _GuildLimits]] = {
-        0: _GuildLimits(emojis=50, stickers=5, bitrate=96_000, filesize=26_214_400, soundboards=8),
-        1: _GuildLimits(emojis=100, stickers=15, bitrate=128_000, filesize=26_214_400, soundboards=24),
+        0: _GuildLimits(emojis=50, stickers=5, bitrate=96_000, filesize=20_971_520, soundboards=8),
+        1: _GuildLimits(emojis=100, stickers=15, bitrate=128_000, filesize=20_971_520, soundboards=24),
         2: _GuildLimits(emojis=150, stickers=30, bitrate=256_000, filesize=52_428_800, soundboards=36),
         3: _GuildLimits(emojis=250, stickers=60, bitrate=384_000, filesize=104_857_600, soundboards=48),
     }
