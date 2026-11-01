@@ -9,11 +9,9 @@ import logging
 import os
 import time
 
-from discord_http import (
-    Context, Client, VoiceChannel, CallbackSink,
-    commands
-)
+from discord_http import Context, Client, VoiceChannel, commands
 from discord_http.gateway import Intents, GatewayCacheFlags
+from discord_http.voice import CallbackSink
 
 with open("./config.json") as f:
     config = json.load(f)

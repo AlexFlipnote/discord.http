@@ -150,10 +150,18 @@ class TestPlayWhileDisconnected(unittest.TestCase):
 class TestTopLevelExports(unittest.TestCase):
     def test_voice_helpers_stay_under_voice(self) -> None:
         import discord_http
+        import discord_http.voice
 
-        self.assertTrue(hasattr(discord_http, "VoiceClient"))
-        for name in ("is_loaded", "load_opus", "has_dave", "SAMPLE_RATE", "opus"):
+        for name in ("VoiceState", "PartialVoiceState"):
+            self.assertTrue(hasattr(discord_http, name), name)
+
+        for name in (
+            "VoiceClient", "AudioSource", "FFmpegOpusAudio", "FFmpegPCMAudio", "PCMAudio",
+            "PCMVolumeTransformer", "AudioSink", "CallbackSink", "WaveSink", "VoiceData",
+            "is_loaded", "load_opus", "has_dave", "SAMPLE_RATE", "opus",
+        ):
             self.assertFalse(hasattr(discord_http, name), name)
+            self.assertTrue(hasattr(discord_http.voice, name), name)
 
 
 class TestMoveWhileDisconnected(unittest.IsolatedAsyncioTestCase):

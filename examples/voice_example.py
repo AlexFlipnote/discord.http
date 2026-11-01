@@ -1,7 +1,8 @@
 import asyncio
 
-from discord_http import BaseChannel, Client, Context, PartialChannel, VoiceClient, WaveSink
+from discord_http import BaseChannel, Client, Context, PartialChannel
 from discord_http.gateway import GatewayCacheFlags, Intents
+from discord_http.voice import VoiceClient, WaveSink
 
 # Voice requires a gateway connection (to send the voice-state update) and the
 # guild_voice_states intent (so the bot receives its own voice server/state updates).

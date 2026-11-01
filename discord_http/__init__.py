@@ -32,10 +32,5 @@ from .sticker import *
 from .user import *
 from .utils import MISSING, DISCORD_EPOCH, _MissingType, DiscordTimestamp
 from .view import *
-# Only the user-facing voice classes, helpers like `load_opus` stay under `discord_http.voice`
-from .voice import (
-    AudioSink, AudioSource, CallbackSink, FFmpegOpusAudio, FFmpegPCMAudio,
-    PartialVoiceState, PCMAudio, PCMVolumeTransformer, VoiceClient, VoiceData,
-    VoiceState, WaveSink
-)
+from .voice import PartialVoiceState, VoiceState
 from .webhook import *
