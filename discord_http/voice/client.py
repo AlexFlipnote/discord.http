@@ -173,7 +173,15 @@ class VoiceClient:
         ----------
         channel:
             The channel to move to, either a channel object or its ID.
+
+        Raises
+        ------
+        `RuntimeError`
+            If the voice client is not connected.
         """
+        if not self.is_connected():
+            raise RuntimeError("Not connected to voice")
+
         if isinstance(channel, int):
             channel = self.bot.get_partial_channel(channel, guild_id=self.guild_id)
         await self.connection.move_to(channel)

@@ -153,3 +153,14 @@ class TestTopLevelExports(unittest.TestCase):
         self.assertTrue(hasattr(discord_http, "VoiceClient"))
         for name in ("is_loaded", "load_opus", "has_dave", "SAMPLE_RATE", "opus"):
             self.assertFalse(hasattr(discord_http, name), name)
+
+
+class TestMoveWhileDisconnected(unittest.IsolatedAsyncioTestCase):
+    async def test_move_to_raises_without_sending_op4(self) -> None:
+        vc = VoiceClient.__new__(VoiceClient)
+        vc.connection = mock.Mock(is_connected=mock.Mock(return_value=False), move_to=mock.AsyncMock())
+
+        with self.assertRaises(RuntimeError):
+            await vc.move_to(123)
+
+        vc.connection.move_to.assert_not_awaited()

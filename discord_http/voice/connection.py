@@ -329,9 +329,12 @@ class VoiceConnection:
         close_code:
             The websocket close code, if one was reported.
         """
-        if close_code == VoiceCloseCode.disconnected and self._move_target_channel_id is not None:
-            # Moving to a channel on another voice server: Discord closes the old
-            # socket between the VOICE_STATE_UPDATE and VOICE_SERVER_UPDATE, and
+        if (
+            close_code in (VoiceCloseCode.disconnected, VoiceCloseCode.call_terminated)
+            and self._move_target_channel_id is not None
+        ):
+            # Moving to another channel: Discord closes the old socket (4014 or
+            # 4022) between the VOICE_STATE_UPDATE and VOICE_SERVER_UPDATE, and
             # the server update then drives the migration
             _log.debug(f"Voice socket for guild {self.guild_id} closed during a move; awaiting the new server")
             return
@@ -569,8 +572,8 @@ class VoiceConnection:
             self._move_server_update_received = False
             self._schedule_server_migration()
 
-        # Removed from voice while a move was pending, the 4014 that came with it
-        # was ignored as part of the move, so tear down here instead
+        # Removed from voice while a move was pending, the 4014/4022 that came with
+        # it was ignored as part of the move, so tear down here instead
         if self.channel_id is None and self._move_target_channel_id is not None and not self._closing:
             self._move_target_channel_id = None
             self._move_server_update_received = False
@@ -717,6 +720,9 @@ class VoiceConnection:
         dave_version = int(data.get("dave_protocol_version", 0) or 0)
         self.dave_protocol_version = dave_version
         if dave_version > 0:
+            # New voice session: start from a fresh manager, the external sender
+            # kept for later MLS groups belongs to the previous session
+            self.dave_session = None
             await self.reinit_dave_session()
         elif self.dave_session is not None:
             # DAVE was negotiated off (version 0) but a prior connection left a

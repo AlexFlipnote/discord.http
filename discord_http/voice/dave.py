@@ -40,6 +40,7 @@ class DaveManager:
 
     __slots__ = (
         "_connection",
+        "_external_sender",
         "_pending_transitions",
         "_session",
         "_version",
@@ -49,6 +50,9 @@ class DaveManager:
         self._connection: "VoiceConnection" = connection
         self._session: "DaveSession | None" = None
         self._version: int = 0
+        # MLS_EXTERNAL_SENDER (25) is sent once per voice session, but every new
+        # MLS group (reinit) needs it, so keep it to re-apply
+        self._external_sender: bytes | None = None
         # transition_id -> protocol version. A dict rather than a single slot so
         # overlapping transitions (e.g. during member churn) cannot clobber each
         # other before their EXECUTE_TRANSITION arrives.
@@ -131,6 +135,9 @@ class DaveManager:
             self._session = None
             self._version = 0
             return
+
+        if self._external_sender is not None:
+            self._apply_external_sender()
 
         await self._send_key_package()
 
@@ -287,11 +294,20 @@ class DaveManager:
         await self.reinit(version)
 
     def _handle_external_sender(self, payload: bytes) -> None:
-        """ Handle MLS_EXTERNAL_SENDER (25): register the gateway's external sender. """
-        if self._session is None:
+        """ Handle MLS_EXTERNAL_SENDER (25): store and register the gateway's external sender. """
+        self._external_sender = bytes(payload)
+        if self._session is not None:
+            self._apply_external_sender()
+
+    def _apply_external_sender(self) -> None:
+        """ Register the stored external sender on the current MLS session. """
+        if self._session is None or self._external_sender is None:
             return
 
-        self._session.set_external_sender(payload)
+        try:
+            self._session.set_external_sender(self._external_sender)
+        except Exception as exc:
+            _log.warning(f"Failed to set DAVE external sender: {exc}")
 
     async def _handle_proposals(self, payload: bytes) -> None:
         """
@@ -318,7 +334,7 @@ class DaveManager:
         try:
             result = self._session.process_proposals(operation_type, proposals)
         except Exception as exc:
-            _log.debug(f"Failed to process MLS proposals: {exc}")
+            _log.warning(f"Failed to process MLS proposals: {exc}")
             await self._recover_from_invalid_commit()
             return
 
@@ -344,7 +360,7 @@ class DaveManager:
         try:
             self._session.process_commit(commit)
         except Exception as exc:
-            _log.debug(f"Failed to process MLS commit: {exc}")
+            _log.warning(f"Failed to process MLS commit: {exc}")
             await self._recover_from_invalid_commit()
             return
 
@@ -368,7 +384,7 @@ class DaveManager:
         try:
             self._session.process_welcome(welcome)
         except Exception as exc:
-            _log.debug(f"Failed to process MLS welcome: {exc}")
+            _log.warning(f"Failed to process MLS welcome: {exc}")
             await self._recover_from_invalid_commit()
             return
 

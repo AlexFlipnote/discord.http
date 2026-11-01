@@ -243,3 +243,49 @@ class TestVoiceCloseHandling(unittest.IsolatedAsyncioTestCase):
 
         connection._force_voice_refresh.assert_awaited_once()
         connection._connect.assert_awaited_once()
+
+
+class TestCallTerminatedDuringMove(unittest.IsolatedAsyncioTestCase):
+    def _connection(self) -> VoiceConnection:
+        return TestVoiceCloseHandling._connection(self)  # type: ignore[arg-type]
+
+    async def test_call_terminated_during_move_is_ignored(self) -> None:
+        """ Discord also closes the old socket with 4022 when moving. """
+        connection = self._connection()
+        connection._move_target_channel_id = 456
+
+        await connection._handle_close(4022)
+
+        connection._teardown_and_remove.assert_not_awaited()
+
+    async def test_call_terminated_without_move_tears_down(self) -> None:
+        connection = self._connection()
+
+        await connection._handle_close(4022)
+
+        connection._teardown_and_remove.assert_awaited_once()
+
+
+class TestSessionDescriptionDave(unittest.IsolatedAsyncioTestCase):
+    async def test_new_voice_session_gets_fresh_dave_manager(self) -> None:
+        """ The stored external sender belongs to the previous voice session. """
+        connection = object.__new__(VoiceConnection)
+        connection._connected_event = asyncio.Event()
+        connection.mode = None
+        stale = Mock()
+        connection.dave_session = stale
+
+        async def reinit() -> None:
+            self.assertIsNone(connection.dave_session)
+            connection.dave_session = Mock()
+
+        connection.reinit_dave_session = reinit  # type: ignore[method-assign]
+
+        await connection.on_session_description({
+            "secret_key": [0] * 32,
+            "mode": "aead_aes256_gcm_rtpsize",
+            "dave_protocol_version": 1,
+        })
+
+        self.assertIsNot(connection.dave_session, stale)
+        self.assertTrue(connection._connected_event.is_set())

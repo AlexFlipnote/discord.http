@@ -153,3 +153,76 @@ class TestDaveTransitions(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class _RecordingSession:
+    """ A stand-in for davey.DaveSession recording the external senders it was given. """
+
+    def __init__(self, *args) -> None:
+        self.external_senders: list[bytes] = []
+        self.ready = False
+
+    def set_external_sender(self, payload: bytes) -> None:
+        self.external_senders.append(payload)
+
+    def get_serialized_key_package(self) -> bytes:
+        return b"key-package"
+
+    def process_welcome(self, welcome: bytes) -> None:
+        raise ValueError("Failed to process welcome: NoExternalSender")
+
+
+class _FakeDavey:
+    DaveSession = _RecordingSession
+
+
+def _davey_manager() -> DaveManager:
+    manager, socket = _manager()
+    socket.send_binary = AsyncMock()  # type: ignore[attr-defined]
+    return manager
+
+
+class TestDaveExternalSender(unittest.IsolatedAsyncioTestCase):
+    def setUp(self) -> None:
+        for patcher in (patch("discord_http.voice.dave.davey", _FakeDavey), patch("discord_http.voice.dave.has_dave", True)):
+            patcher.start()
+            self.addCleanup(patcher.stop)
+
+    async def test_external_sender_survives_reinit(self) -> None:
+        """ Op 25 is sent once per voice session, every new MLS group needs it again. """
+        manager = _davey_manager()
+        await manager.reinit(1)
+        first = manager._session
+        manager._handle_external_sender(b"sender")
+
+        await manager.reinit(1)
+
+        self.assertIsNot(manager._session, first)
+        self.assertEqual(first.external_senders, [b"sender"])
+        self.assertEqual(manager._session.external_senders, [b"sender"])
+
+    async def test_external_sender_before_session_is_applied_on_reinit(self) -> None:
+        manager = _davey_manager()
+        manager._handle_external_sender(b"sender")
+
+        await manager.reinit(1)
+
+        self.assertEqual(manager._session.external_senders, [b"sender"])
+
+    async def test_external_sender_failure_is_logged_not_raised(self) -> None:
+        manager = _davey_manager()
+        await manager.reinit(1)
+        manager._session.set_external_sender = lambda _: (_ for _ in ()).throw(ValueError("bad"))
+
+        with self.assertLogs("discord_http.voice.dave", "WARNING"):
+            manager._handle_external_sender(b"sender")
+
+    async def test_mls_failure_is_a_warning(self) -> None:
+        """ A failed welcome ends in a 4006 and the bot leaving, so it must be visible. """
+        manager = _davey_manager()
+        await manager.reinit(1)
+
+        with self.assertLogs("discord_http.voice.dave", "WARNING") as logs:
+            await manager._handle_welcome(b"\x00\x01welcome")
+
+        self.assertIn("Failed to process MLS welcome", logs.output[0])
