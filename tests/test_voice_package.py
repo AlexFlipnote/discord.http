@@ -164,3 +164,87 @@ class TestMoveWhileDisconnected(unittest.IsolatedAsyncioTestCase):
             await vc.move_to(123)
 
         vc.connection.move_to.assert_not_awaited()
+
+
+class TestRtcpFilter(unittest.TestCase):
+    def _protocol(self):
+        from discord_http.voice.gateway_udp import VoiceUDPProtocol
+
+        unpack = mock.Mock()
+        proto = VoiceUDPProtocol(SimpleNamespace(voice_client=SimpleNamespace(_receiver=SimpleNamespace(unpack=unpack))))
+        return proto, unpack
+
+    def test_rtcp_feedback_is_dropped(self) -> None:
+        """ 205 (RTPFB/NACK) and 206 (PSFB/PLI) were reaching the RTP decrypt as InvalidTag. """
+        proto, unpack = self._protocol()
+        for packet_type in (192, 200, 204, 205, 206, 223):
+            proto.datagram_received(bytes([0x81, packet_type]) + b"\x00" * 30, ("", 0))
+        unpack.assert_not_called()
+
+    def test_opus_rtp_is_passed_on(self) -> None:
+        proto, unpack = self._protocol()
+        # Payload type 120 (0x78), with and without the marker bit
+        for second in (0x78, 0xF8):
+            proto.datagram_received(bytes([0x80, second]) + b"\x00" * 30, ("", 0))
+        self.assertEqual(unpack.call_count, 2)
+
+
+class TestDaveTransitionDropLogging(unittest.TestCase):
+    def _receiver(self, error: Exception) -> VoiceReceiver:
+        connection = mock.Mock(
+            encryptor=mock.Mock(decrypt=mock.Mock(return_value=b"opus")),
+            can_encrypt=mock.Mock(return_value=True),
+            dave_decrypt_opus=mock.Mock(side_effect=error),
+        )
+        rx = VoiceReceiver(SimpleNamespace(connection=connection))
+        rx.start(mock.Mock(wants_opus=mock.Mock(return_value=True)))
+        rx.add_ssrc(5, 100)
+        return rx
+
+    def _packet(self) -> bytes:
+        return bytes([0x80, 0x78]) + b"\x00\x01" + b"\x00" * 4 + (5).to_bytes(4, "big") + b"payload"
+
+    def test_unencrypted_transition_frame_is_debug(self) -> None:
+        rx = self._receiver(ValueError("Failed to decrypt: DecryptionFailed(UnencryptedWhenPassthroughDisabled)"))
+        with self.assertLogs("discord_http.voice.receiver", "DEBUG") as logs:
+            rx.unpack(self._packet())
+        self.assertTrue(all(r.levelname == "DEBUG" for r in logs.records))
+        rx.sink.write.assert_not_called()
+
+    def test_other_dave_failures_stay_errors(self) -> None:
+        rx = self._receiver(ValueError("Failed to decrypt: DecryptionFailed(InvalidTag)"))
+        with self.assertLogs("discord_http.voice.receiver", "ERROR"):
+            rx.unpack(self._packet())
+
+
+class TestRtpPadding(unittest.TestCase):
+    def _receiver(self, decrypted: bytes) -> VoiceReceiver:
+        connection = mock.Mock(
+            encryptor=mock.Mock(decrypt=mock.Mock(return_value=decrypted)),
+            can_encrypt=mock.Mock(return_value=True),
+            dave_decrypt_opus=mock.Mock(side_effect=lambda user, opus: opus),
+        )
+        rx = VoiceReceiver(SimpleNamespace(connection=connection))
+        rx.start(mock.Mock(wants_opus=mock.Mock(return_value=True)))
+        rx.add_ssrc(5, 100)
+        return rx
+
+    def _packet(self, padding: bool) -> bytes:
+        return bytes([0xA0 if padding else 0x80, 0x78]) + b"\x00\x01" + b"\x00" * 4 + (5).to_bytes(4, "big") + b"enc"
+
+    def test_padding_only_probe_is_dropped_before_dave(self) -> None:
+        """ Seen live: 255 bytes of 0xFF with the P bit set, sent when a client starts a new media session. """
+        rx = self._receiver(b"\xff" * 255)
+        rx.unpack(self._packet(padding=True))
+        rx.voice_client.connection.dave_decrypt_opus.assert_not_called()
+        rx.sink.write.assert_not_called()
+
+    def test_padding_is_stripped_from_audio(self) -> None:
+        rx = self._receiver(b"opus" + b"\x00\x00\x03")
+        rx.unpack(self._packet(padding=True))
+        rx.voice_client.connection.dave_decrypt_opus.assert_called_once_with(100, b"opus")
+
+    def test_no_padding_bit_leaves_payload(self) -> None:
+        rx = self._receiver(b"opus\x03")
+        rx.unpack(self._packet(padding=False))
+        rx.voice_client.connection.dave_decrypt_opus.assert_called_once_with(100, b"opus\x03")

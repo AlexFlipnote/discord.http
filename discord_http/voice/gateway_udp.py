@@ -90,9 +90,11 @@ class VoiceUDPProtocol(asyncio.DatagramProtocol):
             return
 
         # Drop RTCP control packets. For RTCP the second byte is the raw packet
-        # type (200-204); for RTP it is the marker bit plus a 7-bit payload type,
-        # so RTCP must be detected on the unmasked byte before any RTP masking.
-        if 200 <= data[1] <= 204:
+        # type; for RTP it is the marker bit plus a 7-bit payload type, so RTCP
+        # must be detected on the unmasked byte before any RTP masking. RFC 5761
+        # reserves 192-223 for RTCP when muxed with RTP, which also covers the
+        # 205 (RTPFB/NACK) and 206 (PSFB/PLI) feedback Discord sends to senders.
+        if 192 <= data[1] <= 223:
             return
 
         # Otherwise treat it as RTP and hand it to the receiver, which ignores

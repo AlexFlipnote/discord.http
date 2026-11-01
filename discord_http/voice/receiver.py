@@ -218,6 +218,13 @@ class VoiceReceiver:
             _log.exception("Failed to transport-decrypt incoming voice packet")
             return
 
+        # RTP padding (RFC 3550 5.1): the last payload byte is the padding length.
+        # Clients send padding-only packets as bandwidth probes, they carry no audio.
+        if packet[0] & 0x20 and payload:
+            payload = payload[:-payload[-1]] if payload[-1] <= len(payload) else b""
+            if not payload:
+                return
+
         # DAVE end-to-end decryption, applied whenever a session is active.
         # Decrypting requires knowing who the sender is, and RTP (UDP) has no
         # ordering guarantee against the SPEAKING event (voice websocket) that
@@ -236,8 +243,13 @@ class VoiceReceiver:
 
             try:
                 payload = connection.dave_decrypt_opus(user_id, payload)
-            except Exception:
-                _log.exception("Failed to DAVE-decrypt incoming voice packet")
+            except Exception as exc:
+                # A member joining sends plaintext until their DAVE transition
+                # completes, the protocol expects those frames to be dropped
+                if "UnencryptedWhenPassthroughDisabled" in str(exc):
+                    _log.debug(f"Dropped unencrypted frame from user {user_id} during a DAVE transition")
+                else:
+                    _log.exception("Failed to DAVE-decrypt incoming voice packet")
                 return
 
         if sink.wants_opus():
