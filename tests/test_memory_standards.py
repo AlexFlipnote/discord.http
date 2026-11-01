@@ -36,6 +36,25 @@ DICT_ALLOWED = {
     "discord_http.tasks.Loop",
     "discord_http.utils.CustomFormatter",
     "discord_http.utils.MultipartData",
+    "discord_http.utils.ExponentialBackoff",
+    # Voice objects live for a whole voice connection, at most a handful per guild
+    "discord_http.voice.client.VoiceClient",
+    "discord_http.voice.connection.VoiceConnection",
+    "discord_http.voice.gateway_udp.VoiceUDPProtocol",
+    "discord_http.voice.opus.Decoder",
+    "discord_http.voice.opus.Encoder",
+    "discord_http.voice.player.AudioPlayer",
+    "discord_http.voice.player.AudioSource",
+    "discord_http.voice.player.FFmpegOpusAudio",
+    "discord_http.voice.player.FFmpegPCMAudio",
+    "discord_http.voice.player.PCMAudio",
+    "discord_http.voice.player.PCMVolumeTransformer",
+    "discord_http.voice.player._FFmpegAudio",
+    "discord_http.voice.receiver.VoiceReceiver",
+    "discord_http.voice.sinks.AudioSink",
+    "discord_http.voice.sinks.CallbackSink",
+    "discord_http.voice.sinks.WaveSink",
+    "discord_http.voice.socket.VoiceSocket",
 }
 
 # Slots that intentionally replace a lazy property from the partial base class

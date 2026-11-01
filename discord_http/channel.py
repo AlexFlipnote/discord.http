@@ -35,6 +35,7 @@ if TYPE_CHECKING:
     from .message import PartialMessage, Message, MessagePin, Poll, SharedClientTheme
     from .sticker import PartialSticker
     from .user import PartialUser, User
+    from .voice.client import VoiceClient
 
 MISSING = utils.MISSING
 
@@ -551,6 +552,94 @@ class PartialChannel(PartialBase):
         )
 
         return self._state.bot.create_invite_from_data(r.response)
+
+    async def connect(
+        self,
+        *,
+        timeout: float = 30.0,
+        reconnect: bool = True,
+        reconnect_on_session_invalid: bool = False,
+        self_deaf: bool = False,
+        self_mute: bool = False
+    ) -> "VoiceClient":
+        """
+        Connect to this voice channel.
+
+        Parameters
+        ----------
+        timeout:
+            How long to wait, in seconds, for the voice handshake to complete.
+        reconnect:
+            Whether to automatically reconnect if the voice connection drops.
+        reconnect_on_session_invalid:
+            What to do when Discord invalidates the voice session (close code
+            4006), which most commonly happens when the channel empties out and
+            Discord tears down the DAVE/MLS session. By default (``False``) the
+            bot disconnects; set to ``True`` to attempt a full reconnect instead.
+        self_deaf:
+            Whether the bot should be self-deafened.
+        self_mute:
+            Whether the bot should be self-muted.
+
+        Returns
+        -------
+            The voice client for the connection.
+
+        Raises
+        ------
+        `TypeError`
+            If the channel is not a voice or stage channel.
+        `ValueError`
+            If the channel is not associated with a guild.
+        `NotImplementedError`
+            If the gateway is not available.
+        `RuntimeError`
+            If the bot is already connected to a voice channel in this guild.
+        """
+        if self.type not in (
+            ChannelType.unknown,
+            ChannelType.guild_voice,
+            ChannelType.guild_stage_voice
+        ):
+            raise TypeError("Cannot connect to a non-voice channel")
+
+        if not self.guild_id:
+            raise ValueError("Cannot connect to a voice channel without a guild")
+
+        client = self._state.bot
+
+        if not client.gateway:
+            raise NotImplementedError("gateway is not available")
+
+        if client.get_voice_client(self.guild_id) is not None:
+            raise RuntimeError("Already connected to a voice channel in this guild")
+
+        from .voice.client import VoiceClient
+
+        vc = VoiceClient(client, self)
+        client._add_voice_client(self.guild_id, vc)
+        try:
+            await vc.connect(
+                timeout=timeout,
+                reconnect=reconnect,
+                reconnect_on_session_invalid=reconnect_on_session_invalid,
+                self_deaf=self_deaf,
+                self_mute=self_mute
+            )
+        except BaseException:
+            # Catch BaseException, not just Exception: a timeout or a cancelled
+            # connect (asyncio.CancelledError is a BaseException on 3.11+) must
+            # still remove the half-registered voice client, otherwise the stale
+            # entry blocks future connect attempts in this guild. Disconnect too,
+            # so the bot leaves the channel and the half-open socket can't
+            # trigger a reconnect on its own later.
+            try:
+                await vc.disconnect(force=True)
+            finally:
+                client._remove_voice_client(self.guild_id)
+            raise
+
+        return vc
 
     async def send(
         self,
