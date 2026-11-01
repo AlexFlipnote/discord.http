@@ -272,6 +272,7 @@ class TestSessionDescriptionDave(unittest.IsolatedAsyncioTestCase):
         connection = object.__new__(VoiceConnection)
         connection._connected_event = asyncio.Event()
         connection.mode = None
+        connection.voice_client = Mock(is_playing=Mock(return_value=False), is_paused=Mock(return_value=False))
         stale = Mock()
         connection.dave_session = stale
 

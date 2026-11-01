@@ -3,6 +3,7 @@ import logging
 
 from typing import TYPE_CHECKING
 
+from ..enums import ChannelType
 from ..utils import URL, ExponentialBackoff
 from .dave import DaveManager, has_dave
 from .encryptor import Encryptor
@@ -190,10 +191,17 @@ class VoiceConnection:
         Raises
         ------
         RuntimeError
-            If no shard can be resolved for the guild.
+            If no shard can be resolved for the guild, or DAVE is required but ``davey`` is not installed.
         TimeoutError
             If the handshake does not complete within ``timeout``.
         """
+        # Discord refuses voice without DAVE (4017), stage channels aren't end-to-end encrypted
+        if not has_dave and self.voice_client.channel.type is not ChannelType.guild_stage_voice:
+            raise RuntimeError(
+                "Discord requires DAVE end-to-end encryption for voice, "
+                'install it with: pip install "discord.http[voice]"'
+            )
+
         await self._connect(
             timeout=timeout,
             reconnect=reconnect,
@@ -337,6 +345,14 @@ class VoiceConnection:
             # 4022) between the VOICE_STATE_UPDATE and VOICE_SERVER_UPDATE, and
             # the server update then drives the migration
             _log.debug(f"Voice socket for guild {self.guild_id} closed during a move; awaiting the new server")
+            return
+
+        if close_code == VoiceCloseCode.dave_required:
+            _log.error(
+                f"Voice connection for guild {self.guild_id} was refused (4017), Discord requires DAVE "
+                'end-to-end encryption, install it with: pip install "discord.http[voice]"'
+            )
+            await self._teardown_and_remove()
             return
 
         if close_code in (VoiceCloseCode.disconnected, VoiceCloseCode.call_terminated):
@@ -734,6 +750,12 @@ class VoiceConnection:
             self.dave_session = None
 
         self._connected_event.set()
+
+        # A new session means a new SSRC, re-announce it if audio is still playing
+        # (after a reconnect or move), otherwise nobody can map our packets to us
+        voice_client = self.voice_client
+        if voice_client.is_playing() or voice_client.is_paused():
+            await voice_client.speak(True)
 
     async def on_speaking(self, data: dict) -> None:
         """

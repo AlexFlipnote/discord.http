@@ -29,6 +29,7 @@ class VoiceCloseCode(BaseEnum):
     session_invalid = 4006
     disconnected = 4014
     voice_server_crashed = 4015
+    dave_required = 4017
     rate_limited = 4021
     call_terminated = 4022
 

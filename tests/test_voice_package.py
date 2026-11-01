@@ -5,6 +5,7 @@ from types import SimpleNamespace
 from unittest import mock
 
 from discord_http.channel import PartialChannel
+from discord_http.enums import ChannelType
 from discord_http.voice import connection as connection_mod, dave as dave_mod, receiver as receiver_mod
 from discord_http.voice.client import VoiceClient
 from discord_http.voice.connection import VoiceConnection
@@ -248,3 +249,61 @@ class TestRtpPadding(unittest.TestCase):
         rx = self._receiver(b"opus\x03")
         rx.unpack(self._packet(padding=False))
         rx.voice_client.connection.dave_decrypt_opus.assert_called_once_with(100, b"opus\x03")
+
+
+class TestSpeakingAfterNewSession(unittest.IsolatedAsyncioTestCase):
+    def _connection(self, playing: bool) -> VoiceConnection:
+        conn = VoiceConnection.__new__(VoiceConnection)
+        conn.mode = None
+        conn.dave_session = None
+        conn._connected_event = asyncio.Event()
+        conn.voice_client = mock.Mock(
+            is_playing=mock.Mock(return_value=playing),
+            is_paused=mock.Mock(return_value=False),
+            speak=mock.AsyncMock(),
+        )
+        return conn
+
+    async def test_resends_speaking_while_playing(self) -> None:
+        """ Seen live: after a reconnect the new SSRC was never announced and listeners dropped all audio. """
+        conn = self._connection(playing=True)
+        await conn.on_session_description({"secret_key": [0] * 32})
+        conn.voice_client.speak.assert_awaited_once_with(True)
+
+    async def test_no_speaking_without_player(self) -> None:
+        conn = self._connection(playing=False)
+        await conn.on_session_description({"secret_key": [0] * 32})
+        conn.voice_client.speak.assert_not_awaited()
+
+
+class TestDaveRequired(unittest.IsolatedAsyncioTestCase):
+    def _connection(self, channel_type: ChannelType) -> VoiceConnection:
+        conn = VoiceConnection.__new__(VoiceConnection)
+        conn.voice_client = mock.Mock(channel=mock.Mock(type=channel_type))
+        conn._connect = mock.AsyncMock()
+        return conn
+
+    async def test_connect_without_davey_fails_fast(self) -> None:
+        """ Seen live: without davey Discord closes with 4017 and connect() only timed out after 30s. """
+        conn = self._connection(ChannelType.guild_voice)
+        with mock.patch.object(connection_mod, "has_dave", False), self.assertRaises(RuntimeError):
+            await conn.connect()
+        conn._connect.assert_not_awaited()
+
+    async def test_stage_channel_does_not_need_davey(self) -> None:
+        conn = self._connection(ChannelType.guild_stage_voice)
+        with mock.patch.object(connection_mod, "has_dave", False):
+            await conn.connect()
+        conn._connect.assert_awaited_once()
+
+    async def test_dave_required_close_tears_down_without_reconnect(self) -> None:
+        conn = VoiceConnection.__new__(VoiceConnection)
+        conn.guild_id = 1
+        conn._move_target_channel_id = None
+        conn._teardown_and_remove = mock.AsyncMock()
+        conn._soft_reconnect = mock.AsyncMock()
+        conn._full_reconnect = mock.AsyncMock()
+        await conn._handle_close(4017)
+        conn._teardown_and_remove.assert_awaited_once()
+        conn._soft_reconnect.assert_not_awaited()
+        conn._full_reconnect.assert_not_awaited()
