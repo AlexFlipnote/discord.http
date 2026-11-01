@@ -464,7 +464,12 @@ class Shard:
         if self.debug_events:
             self.bot.dispatch("raw_socket_sent", message)
 
-        _log.debug(f"Sending message: {message}")
+        # IDENTIFY and RESUME carry the bot token, keep it out of the logs
+        if message.get("op") in (PayloadType.identify, PayloadType.resume):
+            _log.debug(f"Sending message: op {message['op']} (token redacted)")
+        else:
+            _log.debug(f"Sending message: {message}")
+
         await self.ws.send_json(message)
 
         self.status.update_send()
