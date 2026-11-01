@@ -4,7 +4,9 @@ import unittest
 from types import SimpleNamespace
 from unittest import mock
 
+from discord_http.channel import PartialChannel
 from discord_http.voice import connection as connection_mod, dave as dave_mod, receiver as receiver_mod
+from discord_http.voice.client import VoiceClient
 from discord_http.voice.connection import VoiceConnection
 from discord_http.voice.dave import DaveManager
 from discord_http.voice.player import AudioPlayer
@@ -117,3 +119,37 @@ class TestPlayerCleanupOnCancel(unittest.IsolatedAsyncioTestCase):
 
         source.cleanup.assert_called_once()
         after.assert_called_once_with(None)
+
+
+class TestFailedConnectLeavesChannel(unittest.IsolatedAsyncioTestCase):
+    async def test_timeout_disconnects_and_unregisters(self) -> None:
+        vc = mock.Mock(connect=mock.AsyncMock(side_effect=TimeoutError), disconnect=mock.AsyncMock())
+        bot = mock.Mock(gateway=object(), get_voice_client=mock.Mock(return_value=None))
+        channel = PartialChannel(state=SimpleNamespace(bot=bot), id=2, guild_id=1)  # type: ignore[arg-type]
+
+        with mock.patch("discord_http.voice.client.VoiceClient", return_value=vc), self.assertRaises(TimeoutError):
+            await channel.connect(timeout=0.1)
+
+        vc.disconnect.assert_awaited_once_with(force=True)
+        bot._remove_voice_client.assert_called_once_with(1)
+
+
+class TestPlayWhileDisconnected(unittest.TestCase):
+    def test_play_raises(self) -> None:
+        vc = VoiceClient.__new__(VoiceClient)
+        vc.connection = mock.Mock(is_connected=mock.Mock(return_value=False))
+        after = mock.Mock()
+
+        with self.assertRaises(RuntimeError):
+            vc.play(b"", after=after)
+
+        after.assert_not_called()
+
+
+class TestTopLevelExports(unittest.TestCase):
+    def test_voice_helpers_stay_under_voice(self) -> None:
+        import discord_http
+
+        self.assertTrue(hasattr(discord_http, "VoiceClient"))
+        for name in ("is_loaded", "load_opus", "has_dave", "SAMPLE_RATE", "opus"):
+            self.assertFalse(hasattr(discord_http, name), name)

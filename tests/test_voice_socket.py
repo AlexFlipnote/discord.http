@@ -1,8 +1,11 @@
 import unittest
 
+from types import SimpleNamespace
 from unittest.mock import AsyncMock
 
 import orjson
+
+from aiohttp import WSMsgType
 
 from discord_http.voice.enums import VoiceOpType
 from discord_http.voice.socket import VoiceSocket
@@ -47,3 +50,18 @@ class TestVoiceHeartbeat(unittest.IsolatedAsyncioTestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class TestVoiceCloseCode(unittest.IsolatedAsyncioTestCase):
+    async def test_close_code_comes_from_close_frame(self) -> None:
+        """ aiohttp reports 1006 when it can't echo the close, the frame has the real code. """
+        connection = _Connection()
+        socket = VoiceSocket(connection)  # type: ignore[arg-type]
+        socket.ws = SimpleNamespace(  # type: ignore[assignment]
+            receive=AsyncMock(return_value=SimpleNamespace(type=WSMsgType.CLOSE, data=4014, extra="")),
+            close_code=1006,
+        )
+
+        await socket._receive_loop()
+
+        self.assertEqual(connection.closed, [4014])

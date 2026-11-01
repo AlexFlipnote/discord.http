@@ -105,7 +105,7 @@ class VoiceSocket:
         if ws is None:
             return
 
-        close_code: int | None = None
+        frame_close_code: int | None = None
 
         try:
             while True:
@@ -118,6 +118,8 @@ class VoiceSocket:
                     self._dispatch_binary(msg.data)
 
                 elif msg.type in (WSMsgType.CLOSE, WSMsgType.CLOSING, WSMsgType.CLOSED):
+                    if msg.type is WSMsgType.CLOSE:
+                        frame_close_code = msg.data
                     # Discord's close reason (msg.extra) is invaluable for diagnosing
                     # voice failures (e.g. "E2EE/DAVE protocol required" for 4017),
                     # so surface it alongside the code.
@@ -137,7 +139,9 @@ class VoiceSocket:
         except Exception as exc:
             _log.debug(f"Voice socket for guild {self.connection.guild_id} receive loop ended", exc_info=exc)
 
-        close_code = ws.close_code
+        # Discord drops TCP right after its close frame, so aiohttp fails to echo
+        # the close and overwrites ws.close_code with 1006. Prefer the frame's code.
+        close_code = frame_close_code if frame_close_code is not None else ws.close_code
 
         if not self._closing:
             self.connection._on_socket_closed(close_code)

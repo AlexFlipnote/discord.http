@@ -272,8 +272,16 @@ class VoiceClient:
             The audio source, path, bytes, or stream to play.
         after:
             A callback invoked with any error once playback finishes.
+
+        Raises
+        ------
+        `RuntimeError`
+            If the voice client is not connected.
         """
         from .player import AudioPlayer, _resolve_source
+
+        if not self.is_connected():
+            raise RuntimeError("Not connected to voice")
 
         if self._player is not None:
             self._player.stop()

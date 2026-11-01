@@ -243,7 +243,10 @@ class VoiceConnection:
         """
         shard = self._get_shard()
         if shard is None:
-            raise RuntimeError(f"Could not resolve a shard for guild {self.guild_id}")
+            raise RuntimeError(
+                f"Could not resolve a gateway shard for guild {self.guild_id}, "
+                "wait until the bot is ready before using voice"
+            )
 
         self._reconnect = reconnect
         self._reconnect_on_session_invalid = reconnect_on_session_invalid
@@ -326,6 +329,13 @@ class VoiceConnection:
         close_code:
             The websocket close code, if one was reported.
         """
+        if close_code == VoiceCloseCode.disconnected and self._move_target_channel_id is not None:
+            # Moving to a channel on another voice server: Discord closes the old
+            # socket between the VOICE_STATE_UPDATE and VOICE_SERVER_UPDATE, and
+            # the server update then drives the migration
+            _log.debug(f"Voice socket for guild {self.guild_id} closed during a move; awaiting the new server")
+            return
+
         if close_code in (VoiceCloseCode.disconnected, VoiceCloseCode.call_terminated):
             _log.debug(f"Voice connection for guild {self.guild_id} disconnected (code {close_code}); tearing down")
             await self._teardown_and_remove()
@@ -363,7 +373,7 @@ class VoiceConnection:
             # The existing credentials are no longer usable; fall back to a full
             # reconnect that drops and re-acquires the gateway voice state.
             _log.debug(f"Soft reconnect for guild {self.guild_id} failed; falling back to rejoin")
-            await self._full_reconnect(close_code, force_refresh=True)
+            await self._full_reconnect(close_code)
             return
 
         if close_code in (VoiceCloseCode.normal, VoiceCloseCode.going_away):
@@ -374,6 +384,12 @@ class VoiceConnection:
         if not self._reconnect:
             _log.debug(f"Voice connection for guild {self.guild_id} closed (code {close_code}); reconnect disabled")
             await self._teardown_and_remove()
+            return
+
+        # The bot is still in the channel, so re-issuing op4 to it yields no new
+        # VOICE_SERVER_UPDATE. Reuse the current credentials first, then rejoin.
+        if await self._soft_reconnect():
+            _log.debug(f"Voice connection for guild {self.guild_id} recovered without rejoining")
             return
 
         await self._full_reconnect(close_code)
@@ -434,20 +450,18 @@ class VoiceConnection:
 
         return True
 
-    async def _full_reconnect(self, close_code: int | None, *, force_refresh: bool = False) -> None:
+    async def _full_reconnect(self, close_code: int | None) -> None:
         """
-        Re-issue op4 and run a fresh handshake, retrying with exponential backoff.
+        Leave and rejoin the channel, then run a fresh handshake, retrying with exponential backoff.
+
+        The leave is always needed: while the bot is still in the channel,
+        re-issuing op4 to it is a no-op and yields no fresh VOICE_SERVER_UPDATE.
+        Callers try `_soft_reconnect` first to avoid the visible rejoin.
 
         Parameters
         ----------
         close_code:
             The close code that triggered the reconnect, for logging.
-        force_refresh:
-            When ``True``, drop and re-acquire the gateway voice state (leave and
-            rejoin the channel) before each attempt. Needed for a 4006 where the
-            bot is still in the channel, so re-issuing op4 with the same channel
-            would be a no-op and yield no fresh VOICE_SERVER_UPDATE. Defaults to
-            ``False`` so unrelated reconnects do not cause a visible leave/rejoin.
         """
         await self._close_socket()
 
@@ -475,10 +489,7 @@ class VoiceConnection:
             await asyncio.sleep(delay)
 
             try:
-                if force_refresh:
-                    # Force Discord to allocate a fresh voice server before
-                    # rejoining (only needed for the 4006 leave/rejoin fallback).
-                    await self._force_voice_refresh()
+                await self._force_voice_refresh()
                 await self._connect(
                     reconnect=self._reconnect,
                     reconnect_on_session_invalid=self._reconnect_on_session_invalid,
@@ -557,6 +568,13 @@ class VoiceConnection:
             self._move_target_channel_id = None
             self._move_server_update_received = False
             self._schedule_server_migration()
+
+        # Removed from voice while a move was pending, the 4014 that came with it
+        # was ignored as part of the move, so tear down here instead
+        if self.channel_id is None and self._move_target_channel_id is not None and not self._closing:
+            self._move_target_channel_id = None
+            self._move_server_update_received = False
+            self._on_socket_closed(int(VoiceCloseCode.disconnected))
 
         # Track leave/rejoin so the reconnect bounce can await the leave ack.
         if self.channel_id is None:
@@ -643,7 +661,7 @@ class VoiceConnection:
             return
 
         _log.debug(f"Voice server migration for guild {self.guild_id} failed; refreshing voice state")
-        await self._full_reconnect(None, force_refresh=True)
+        await self._full_reconnect(None)
 
     async def on_ready(self, data: dict) -> None:
         """
@@ -936,7 +954,10 @@ class VoiceConnection:
         """
         shard = self._get_shard()
         if shard is None:
-            raise RuntimeError(f"Could not resolve a shard for guild {self.guild_id}")
+            raise RuntimeError(
+                f"Could not resolve a gateway shard for guild {self.guild_id}, "
+                "wait until the bot is ready before using voice"
+            )
 
         self._move_target_channel_id = channel.id
         self._move_server_update_received = False

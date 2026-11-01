@@ -2,6 +2,8 @@ import os
 import struct
 import unittest
 
+from cryptography.hazmat.primitives.ciphers.aead import AESGCM
+
 from discord_http.voice.encryptor import Encryptor
 
 
@@ -20,23 +22,22 @@ class TestVoiceEncryptor(unittest.TestCase):
         receiver = Encryptor(key)
         self.assertEqual(receiver.decrypt(packet), plaintext)
 
-    def test_roundtrip_with_extension(self) -> None:
+    def test_decrypt_client_packet_with_extension(self) -> None:
+        """ Only the extension preamble is AAD in rtpsize, its body is encrypted with the payload. """
         key = os.urandom(32)
 
         # base header with the extension bit (0x10) set on byte0
         base = struct.pack(">BBHII", 0x90, 0x78, 5, 6, 7)
         # one-byte RTP extension: 0xBE 0xDE profile, length = 1 word (4 bytes)
-        extension = b"\xbe\xde" + struct.pack(">H", 1) + b"\x01\x02\x03\x04"
-        header = base + extension
-        plaintext = b"another-opus-frame"
+        preamble = b"\xbe\xde" + struct.pack(">H", 1)
+        extension_body = b"\x01\x02\x03\x04"
+        opus_frame = b"another-opus-frame"
 
-        sender = Encryptor(key)
-        packet = sender.encrypt(header, plaintext)
+        nonce = struct.pack(">I", 9)
+        ciphertext = AESGCM(key).encrypt(nonce + b"\x00" * 8, extension_body + opus_frame, base + preamble)
+        packet = base + preamble + ciphertext + nonce
 
-        self.assertEqual(packet[:len(header)], header)
-
-        receiver = Encryptor(key)
-        self.assertEqual(receiver.decrypt(packet), plaintext)
+        self.assertEqual(Encryptor(key).decrypt(packet), opus_frame)
 
     def test_nonce_increments(self) -> None:
         key = os.urandom(32)

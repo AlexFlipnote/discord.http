@@ -68,7 +68,7 @@ class Encryptor:
 
         Returns
         -------
-            The decrypted payload, usually an Opus frame.
+            The decrypted payload with any RTP header extension body stripped, usually an Opus frame.
         """
         nonce_bytes = packet[-4:] + b"\x00" * 8
 
@@ -76,11 +76,14 @@ class Encryptor:
         csrc_count = packet[0] & 0x0F
         offset += csrc_count * 4
 
+        # In rtpsize modes only the 4-byte extension preamble (profile + length)
+        # is authenticated as AAD, the extension body is encrypted with the payload
+        extension_length = 0
         if packet[0] & 0x10:
-            length = struct.unpack(">H", packet[offset + 2:offset + 4])[0]
-            offset += 4 + length * 4
+            extension_length = struct.unpack(">H", packet[offset + 2:offset + 4])[0] * 4
+            offset += 4
 
         header = packet[:offset]
         ciphertext = packet[offset:-4]
 
-        return self._aead.decrypt(nonce_bytes, ciphertext, header)
+        return self._aead.decrypt(nonce_bytes, ciphertext, header)[extension_length:]

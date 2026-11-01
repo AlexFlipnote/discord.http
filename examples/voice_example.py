@@ -23,7 +23,6 @@ from discord_http.gateway import GatewayCacheFlags, Intents
 #   * DAVE end-to-end encryption (MLS) is optional and needs: pip install "discord.http[voice]"
 client = Client(
     token="BOT_TOKEN",
-    enable_gateway=True,
     intents=(
         Intents.guilds |
         Intents.guild_messages |

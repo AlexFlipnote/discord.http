@@ -290,8 +290,8 @@ class VoiceReceiver:
             if last is not None:
                 delta = (sequence - last) & 0xFFFF
                 if delta == 0 or delta >= 0x8000:
-                    # ponytail: no jitter buffer, late packets are dropped as the
-                    # decoder has already moved past them
+                    # No jitter buffer, late packets are dropped as the decoder
+                    # has already moved past them
                     return None
                 if delta > 1:
                     # Conceal a single lost frame and keep it, so recordings
