@@ -53,6 +53,51 @@ __all__ = (
 )
 
 
+def _prettify_content(
+    content: str,
+    *,
+    guild: "Guild | PartialGuild | None",
+    users: dict[int, str],
+    channels: dict[int, str]
+) -> str:
+    """
+    Replaces mentions in the content with their names, used by `pretty_content`.
+
+    Anything missing from `users` and `channels` is looked up in the guild cache,
+    mentions that can not be resolved are left as-is.
+    """
+    roles: dict[int, str] = {}
+
+    def _user(m: re.Match) -> str:
+        user_id = int(m.group(1))
+        if user_id not in users and guild:
+            member = guild.get_member(user_id)
+            if name := getattr(member, "display_name", None):
+                users[user_id] = name
+        return f"@{users[user_id]}" if user_id in users else m.group(0)
+
+    def _role(m: re.Match) -> str:
+        role_id = int(m.group(1))
+        if role_id not in roles and guild:
+            role = guild.get_role(role_id)
+            if isinstance(role, Role):
+                roles[role_id] = role.name
+        return f"@{roles[role_id]}" if role_id in roles else m.group(0)
+
+    def _channel(m: re.Match) -> str:
+        channel_id = int(m.group(1))
+        if channel_id not in channels and guild:
+            channel = guild.get_channel(channel_id)
+            if name := getattr(channel, "name", None):
+                channels[channel_id] = name
+        return f"#{channels[channel_id]}" if channel_id in channels else m.group(0)
+
+    content = utils.re_mention.sub(_user, content)
+    content = utils.re_role.sub(_role, content)
+    content = utils.re_slash_command.sub(r"/\1", content)
+    return utils.re_channel.sub(_channel, content)
+
+
 class MessageInteraction(PartialBase):
     """ Represents a message interaction. """
 
@@ -1671,6 +1716,8 @@ class MessageSnapshot:
         "content",
         "edited_timestamp",
         "embeds",
+        "guild_id",
+        "mentions",
         "stickers",
         "timestamp",
         "type",
@@ -1680,9 +1727,13 @@ class MessageSnapshot:
         self,
         *,
         state: "DiscordAPI",
-        data: dict
+        data: dict,
+        guild_id: int | None = None
     ):
         self._state = state
+
+        self.guild_id: int | None = guild_id
+        """ The ID of the guild the original message was sent in, if known. """
 
         self.type: MessageType = MessageType(0)
         """ The type of the message. """
@@ -1705,10 +1756,61 @@ class MessageSnapshot:
         self.stickers: list[PartialSticker] = []
         """ The stickers of the message. """
 
+        self.mentions: list["User"] = []
+        """ The users mentioned in the message. """
+
         self._from_data(data)
+
+    def __repr__(self) -> str:
+        return f"<MessageSnapshot type={self.type} guild_id={self.guild_id}>"
+
+    def __str__(self) -> str:
+        return self.content or ""
+
+    @property
+    def guild(self) -> "Guild | PartialGuild | None":
+        """ The guild the original message was sent in, if known. """
+        if not self.guild_id:
+            return None
+
+        if cache := self._state.cache.get_guild(self.guild_id):
+            return cache
+
+        return self._state.bot.get_partial_guild(self.guild_id)
+
+    @property
+    def pretty_content(self) -> str:
+        """
+        Same as content, but mentions are parsed if possible.
+
+        User, role and channel mentions are replaced with their names,
+        slash command mentions with `/command`,
+        mentions that can not be resolved are left as-is.
+        Roles and channels can only be resolved if the original guild is cached.
+        """
+        if not self.content:
+            return self.content
+
+        return _prettify_content(
+            self.content,
+            guild=self.guild,
+            users={u.id: u.display_name for u in self.mentions},
+            channels={}
+        )
+
+    @property
+    def escaped_content(self) -> str:
+        """ Same as content, but with markdown characters escaped, showing the message as it was written. """
+        return utils.escape_markdown(self.content)
 
     def _from_data(self, data: dict) -> None:
         message = data.get("message", {})
+
+        if mentions := message.get("mentions", None):
+            self.mentions = [
+                self._state.bot.create_user_from_data(m)
+                for m in mentions
+            ]
 
         self.type = MessageType(message.get("type", 0))
         self.content = message.get("content", "")
@@ -1928,7 +2030,8 @@ class Message(PartialMessage):
             self.resolved_forward.append(
                 MessageSnapshot(
                     state=self._state,
-                    data=m
+                    data=m,
+                    guild_id=self.reference.guild_id if self.reference else None
                 )
             )
 
@@ -2012,47 +2115,17 @@ class Message(PartialMessage):
         if not self.content:
             return self.content
 
-        guild = self.guild if self.guild_id else None
+        # Only pinged mentions are listed by Discord, so the rest falls back to cache
+        channels = (
+            {int(g["id"]): g["name"] for g in self._extra.mention_channels}
+            if self._extra and self._extra.mention_channels else {}
+        )
 
-        # Only pinged mentions are listed by Discord, so fall back to cache for the rest
-        users = {u.id: u.display_name for u in self.mentions}
-        roles = {
-            r.id: r.name for r in self.role_mentions
-            if isinstance(r, Role)
-        }
-        channels = {
-            c.id: name for c in self.channel_mentions
-            if (name := getattr(c, "name", None))
-        }
-        if self._extra and self._extra.mention_channels:
-            channels |= {int(g["id"]): g["name"] for g in self._extra.mention_channels}
-
-        def _user(m: re.Match) -> str:
-            user_id = int(m.group(1))
-            if user_id not in users and guild:
-                member = guild.get_member(user_id)
-                if name := getattr(member, "display_name", None):
-                    users[user_id] = name
-            return f"@{users[user_id]}" if user_id in users else m.group(0)
-
-        def _role(m: re.Match) -> str:
-            role_id = int(m.group(1))
-            if role_id not in roles and guild:
-                role = guild.get_role(role_id)
-                if isinstance(role, Role):
-                    roles[role_id] = role.name
-            return f"@{roles[role_id]}" if role_id in roles else m.group(0)
-
-        content = utils.re_mention.sub(_user, self.content)
-        content = utils.re_role.sub(_role, content)
-        content = utils.re_slash_command.sub(r"/\1", content)
-
-        return utils.re_channel.sub(
-            lambda m: (
-                f"#{channels[int(m.group(1))]}"
-                if int(m.group(1)) in channels else m.group(0)
-            ),
-            content
+        return _prettify_content(
+            self.content,
+            guild=self.guild if self.guild_id else None,
+            users={u.id: u.display_name for u in self.mentions},
+            channels=channels
         )
 
     @property
