@@ -8,15 +8,19 @@ An HTTP-first Python library for Discord bots, running on HTTP interactions, the
 - Offline mode for scripts and cron jobs, use the API without running a bot at all.
 - Plain Python types like `str`, `int` and `datetime`, with builders only where it is genuinely complex, like embeds or components.
 - Supports guild and user installs, fully type-hinted and kept in sync with the Discord API.
+- Voice support, play and receive audio with Discord's end-to-end encryption (DAVE) built in.
 - Small, deliberate dependency set, every dependency has to earn its place.
 - Familiar API for anyone coming from [discord.py](https://github.com/Rapptz/discord.py), so there is little to relearn.
 
 ## Requirements
 - Python 3.11 to 3.14
 - Recommended: a public HTTPS endpoint for Discord to send interactions to, usually a reverse proxy (nginx, apache2, etc.) in front of your bot. Without one, interactions arrive over the gateway instead, see [connection modes](#connection-modes) below.
+- For voice: [FFmpeg](https://ffmpeg.org/download.html) on your PATH to play audio. [libopus](https://opus-codec.org/downloads/) is only needed for volume control, raw PCM audio and decoding received audio, like recording to WAV.
 
 ## Installing
 Install with `pip install discord.http` (or `python -m pip install discord.http` if `pip` is not on your path).
+
+Want voice? Install with `pip install "discord.http[voice]"` instead, it adds [davey](https://pypi.org/project/davey/) for the end-to-end encryption Discord requires in voice channels.
 
 > [!NOTE]
 > Want to test the latest changes before the next release? Install the beta with `git+https://github.com/AlexFlipnote/discord.http@master` instead of `discord.http`. It can be unstable and unreliable, so use it at your own risk.
@@ -64,6 +68,35 @@ client = Client(
 @client.listener()
 async def on_message_create(msg: Message):
     print(f"{msg.author} sent a message in {msg.channel}")
+
+client.start()
+```
+
+### With voice
+Voice runs on the gateway, so it needs the `guilds` and `guild_voice_states` intents, and caching them so the bot knows which channel you are in. Install it with `pip install "discord.http[voice]"` and have FFmpeg on your PATH.
+
+```py <!-- DOCS: voice_example -->
+from discord_http import Context, Client
+from discord_http.gateway import Intents, GatewayCacheFlags
+
+client = Client(
+    token="Your bot token here",
+    intents=Intents.guilds | Intents.guild_voice_states,
+    gateway_cache=GatewayCacheFlags.guilds | GatewayCacheFlags.voice_states
+)
+
+@client.command()
+async def play(ctx: Context):
+    """ Join your voice channel and play a song """
+    voice_state = ctx.guild.get_member_voice_state(ctx.user.id)
+    if voice_state is None or voice_state.channel is None:
+        return ctx.response.send_message("Join a voice channel first")
+
+    async def call_after():
+        vc = await voice_state.channel.connect()
+        vc.play("song.mp3")
+
+    return ctx.response.send_message("Now playing!", call_after=call_after)
 
 client.start()
 ```

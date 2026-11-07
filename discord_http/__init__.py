@@ -32,5 +32,5 @@ from .sticker import *
 from .user import *
 from .utils import MISSING, DISCORD_EPOCH, _MissingType, DiscordTimestamp
 from .view import *
-from .voice import *
+from .voice import PartialVoiceState, VoiceState
 from .webhook import *

@@ -1,17 +1,17 @@
 from datetime import datetime
 from typing import TYPE_CHECKING, Any
 
-from . import utils
-from .object import PartialBase, Snowflake
-from .user import PartialUser
+from .. import utils
+from ..object import PartialBase, Snowflake
+from ..user import PartialUser
 
 MISSING = utils.MISSING
 
 if TYPE_CHECKING:
-    from .channel import BaseChannel, PartialChannel
-    from .guild import PartialGuild
-    from .http import DiscordAPI
-    from .member import Member, PartialMember
+    from ..channel import BaseChannel, PartialChannel
+    from ..guild import PartialGuild
+    from ..http import DiscordAPI
+    from ..member import Member, PartialMember
 
 __all__ = (
     "PartialVoiceState",
@@ -80,7 +80,7 @@ class PartialVoiceState(PartialBase):
         if not self.channel_id:
             return None
 
-        return self._state.bot.get_partial_channel(self.channel_id)
+        return self._state.bot.get_partial_channel(self.channel_id, guild_id=self.guild_id)
 
     @property
     def _route_id(self) -> str:
@@ -252,7 +252,7 @@ class VoiceState(PartialVoiceState):
             )
 
         if (member_data := data.get("member")) and (guild := self.guild) is not None:
-            from .member import Member  # Circular import
+            from ..member import Member  # Circular import
 
             if not isinstance(guild.get_member(self.id), Member):
                 self._member_data = self._state.bot.create_member_from_data(
@@ -292,7 +292,7 @@ class VoiceState(PartialVoiceState):
         if (guild := self.guild) is None:
             return None
 
-        from .member import Member  # Circular import
+        from ..member import Member  # Circular import
 
         cached_member = guild.get_member(self.id)
         if isinstance(cached_member, Member):

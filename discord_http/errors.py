@@ -16,18 +16,50 @@ __all__ = (
     "CommandOnCooldown",
     "DiscordException",
     "DiscordServerError",
+    "FFmpegError",
     "Forbidden",
     "HTTPException",
     "InvalidMember",
     "NotFound",
+    "OpusError",
+    "OpusNotLoaded",
     "Ratelimited",
     "Unauthorized",
     "UserMissingPermissions",
+    "VoiceConnectionClosed",
 )
 
 
 class DiscordException(Exception):  # ruff: ignore[error-suffix-on-exception-name]
     """ Base exception for discord_http. """
+
+
+class OpusError(DiscordException):
+    """ Raised when libopus returns an error code. """
+
+
+class OpusNotLoaded(DiscordException):
+    """ Raised when an Opus operation is attempted but libopus is not available. """
+
+
+class FFmpegError(DiscordException):
+    """ Raised when ffmpeg exits with an error while producing audio. """
+
+
+class VoiceConnectionClosed(DiscordException):
+    """ Raised when the voice websocket closes before the connection is established. """
+
+    def __init__(self, code: int | None, reason: str | None = None):
+        self.code: int | None = code
+        """ The websocket close code, or `None` if there was none. """
+
+        self.reason: str | None = reason
+        """ The close reason Discord gave, if any. """
+
+        message = f"Voice connection closed (code {code})"
+        if reason:
+            message += f": {reason}"
+        super().__init__(message)
 
 
 class CheckFailed(DiscordException):
