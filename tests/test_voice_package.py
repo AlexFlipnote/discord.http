@@ -59,26 +59,35 @@ class TestDaveMissingDavey(unittest.IsolatedAsyncioTestCase):
 
 class FakeSocket:
     instances: list["FakeSocket"] = []
+    # Whether opening the socket completes the handshake straight away
+    handshake_completes = False
 
     def __init__(self, connection: VoiceConnection) -> None:
         self.connection = connection
-        self.closed = False
+        self.closed = asyncio.Event()
+        self.close_code: int | None = None
+        self.close_reason: str | None = None
+        self.seq_ack = -1
         FakeSocket.instances.append(self)
 
-    async def connect(self) -> None:
-        pass
+    async def connect(self, *, resume: bool = False) -> None:
+        if FakeSocket.handshake_completes:
+            self.connection._connected_event.set()
 
     def _request_close(self) -> None:
         pass
 
     async def close(self) -> None:
-        self.closed = True
+        self.closed.set()
 
 
 class TestHandshakeSocketLeak(unittest.IsolatedAsyncioTestCase):
     async def test_retry_closes_previous_socket(self) -> None:
         conn = VoiceConnection.__new__(VoiceConnection)
         conn.socket = None
+        conn._closing = False
+        conn.token = "token"
+        conn.endpoint = "endpoint"
         conn._state_event = asyncio.Event()
         conn._server_event = asyncio.Event()
         conn._connected_event = asyncio.Event()
@@ -91,11 +100,14 @@ class TestHandshakeSocketLeak(unittest.IsolatedAsyncioTestCase):
             with self.assertRaises(TimeoutError):
                 await asyncio.wait_for(conn._wait_for_handshake(), 0.01)
 
-            conn._connected_event.set()
-            await conn._wait_for_handshake()
+            FakeSocket.handshake_completes = True
+            try:
+                await asyncio.wait_for(conn._wait_for_handshake(), 5)
+            finally:
+                FakeSocket.handshake_completes = False
 
         first, second = FakeSocket.instances
-        self.assertTrue(first.closed)
+        self.assertTrue(first.closed.is_set())
         self.assertIs(conn.socket, second)
 
 
@@ -220,10 +232,18 @@ class TestDaveTransitionDropLogging(unittest.TestCase):
         self.assertTrue(all(r.levelname == "DEBUG" for r in logs.records))
         rx.sink.write.assert_not_called()
 
-    def test_other_dave_failures_stay_errors(self) -> None:
+    def test_other_dave_failures_are_warnings(self) -> None:
         rx = self._receiver(ValueError("Failed to decrypt: DecryptionFailed(InvalidTag)"))
-        with self.assertLogs("discord_http.voice.receiver", "ERROR"):
+        with self.assertLogs("discord_http.voice.receiver", "WARNING"):
             rx.unpack(self._packet())
+
+    def test_repeated_dave_failures_are_rate_limited(self) -> None:
+        """ A desynced session fails every packet, ~50 a second per speaker. """
+        rx = self._receiver(ValueError("Failed to decrypt: DecryptionFailed(InvalidTag)"))
+        with self.assertLogs("discord_http.voice.receiver", "WARNING") as logs:
+            for _ in range(100):
+                rx.unpack(self._packet())
+        self.assertEqual(len(logs.records), 1)
 
 
 class TestRtpPadding(unittest.TestCase):
@@ -264,6 +284,7 @@ class TestSpeakingAfterNewSession(unittest.IsolatedAsyncioTestCase):
         conn = VoiceConnection.__new__(VoiceConnection)
         conn.mode = None
         conn.dave_session = None
+        conn._dave_lock = asyncio.Lock()
         conn._connected_event = asyncio.Event()
         conn.voice_client = mock.Mock(
             is_playing=mock.Mock(return_value=playing),

@@ -6,6 +6,16 @@ from unittest.mock import AsyncMock, Mock
 
 from discord_http.voice.connection import VoiceConnection
 
+
+def _voice_client(channel_id: int = 123) -> SimpleNamespace:
+    """ The voice client surface the connection touches on gateway updates. """
+    return SimpleNamespace(
+        _receiver=SimpleNamespace(reset=Mock()),
+        channel=SimpleNamespace(id=channel_id),
+        bot=SimpleNamespace(get_partial_channel=lambda cid, guild_id: SimpleNamespace(id=cid)),
+    )
+
+
 class TestVoiceServerMigration(unittest.IsolatedAsyncioTestCase):
     def _connection(self) -> VoiceConnection:
         connection = object.__new__(VoiceConnection)
@@ -20,6 +30,10 @@ class TestVoiceServerMigration(unittest.IsolatedAsyncioTestCase):
         connection._reconnect_task = None
         connection._move_target_channel_id = None
         connection._move_server_update_received = False
+        connection._update_event = asyncio.Event()
+        connection._self_mute = False
+        connection._self_deaf = False
+        connection.channel_id = 123
         return connection
 
     async def test_changed_server_credentials_schedule_migration(self) -> None:
@@ -62,8 +76,8 @@ class TestVoiceServerMigration(unittest.IsolatedAsyncioTestCase):
         """ Pair move updates before identifying a replacement voice session. """
         connection = self._connection()
         shard = SimpleNamespace(change_voice_state=AsyncMock())
-        receiver = SimpleNamespace(reset=Mock())
-        connection.voice_client = SimpleNamespace(_receiver=receiver)
+        connection.voice_client = _voice_client()
+        receiver = connection.voice_client._receiver
         connection._get_shard = Mock(return_value=shard)  # type: ignore[method-assign]
         connection._migrate_voice_server = AsyncMock()  # type: ignore[method-assign]
         connection.channel_id = 123
@@ -71,7 +85,8 @@ class TestVoiceServerMigration(unittest.IsolatedAsyncioTestCase):
         connection._left_event = asyncio.Event()
         connection._state_event = asyncio.Event()
 
-        await connection.move_to(SimpleNamespace(id=456))  # type: ignore[arg-type]
+        move = asyncio.create_task(connection.move_to(SimpleNamespace(id=456)))  # type: ignore[arg-type]
+        await asyncio.sleep(0)
         connection.on_voice_server_update({
             "token": "new-token",
             "endpoint": "old.discord.media:443",
@@ -85,6 +100,7 @@ class TestVoiceServerMigration(unittest.IsolatedAsyncioTestCase):
         task = connection._reconnect_task
         self.assertIsNotNone(task)
         await task
+        await move
 
         connection._migrate_voice_server.assert_awaited_once()
         self.assertEqual(connection.session_id, "new-session")
@@ -93,8 +109,8 @@ class TestVoiceServerMigration(unittest.IsolatedAsyncioTestCase):
         """ Do not reuse old credentials after the gateway acknowledges a move first. """
         connection = self._connection()
         shard = SimpleNamespace(change_voice_state=AsyncMock())
-        receiver = SimpleNamespace(reset=Mock())
-        connection.voice_client = SimpleNamespace(_receiver=receiver)
+        connection.voice_client = _voice_client()
+        receiver = connection.voice_client._receiver
         connection._get_shard = Mock(return_value=shard)  # type: ignore[method-assign]
         connection._migrate_voice_server = AsyncMock()  # type: ignore[method-assign]
         connection.channel_id = 123
@@ -102,8 +118,10 @@ class TestVoiceServerMigration(unittest.IsolatedAsyncioTestCase):
         connection._left_event = asyncio.Event()
         connection._state_event = asyncio.Event()
 
-        await connection.move_to(SimpleNamespace(id=456))  # type: ignore[arg-type]
+        move = asyncio.create_task(connection.move_to(SimpleNamespace(id=456)))  # type: ignore[arg-type]
+        await asyncio.sleep(0)
         connection.on_voice_state_update({"session_id": "new-session", "channel_id": "456"})
+        await move
 
         self.assertIsNone(connection._reconnect_task)
 
@@ -134,8 +152,8 @@ class TestVoiceServerMigration(unittest.IsolatedAsyncioTestCase):
         """ Reset SSRC state only after the gateway acknowledges a move. """
         connection = self._connection()
         shard = SimpleNamespace(change_voice_state=AsyncMock())
-        receiver = SimpleNamespace(reset=Mock())
-        connection.voice_client = SimpleNamespace(_receiver=receiver)
+        connection.voice_client = _voice_client()
+        receiver = connection.voice_client._receiver
         connection._get_shard = Mock(return_value=shard)  # type: ignore[method-assign]
         connection.channel_id = 123
         connection.session_id = "session"
@@ -143,15 +161,18 @@ class TestVoiceServerMigration(unittest.IsolatedAsyncioTestCase):
         connection._state_event = asyncio.Event()
         channel = SimpleNamespace(id=456)
 
-        await connection.move_to(channel)  # type: ignore[arg-type]
+        move = asyncio.create_task(connection.move_to(channel))  # type: ignore[arg-type]
+        await asyncio.sleep(0)
 
-        shard.change_voice_state.assert_awaited_once_with(guild_id=1, channel_id=456)
+        shard.change_voice_state.assert_awaited_once_with(guild_id=1, channel_id=456, self_mute=False, self_deaf=False)
         self.assertEqual(connection.channel_id, 123)
         receiver.reset.assert_not_called()
 
         connection.on_voice_state_update({"session_id": "session", "channel_id": "456"})
+        await move
 
         self.assertEqual(connection.channel_id, 456)
+        self.assertEqual(connection.voice_client.channel.id, 456)
         receiver.reset.assert_called_once_with()
 
 
@@ -168,6 +189,12 @@ class TestVoiceCloseHandling(unittest.IsolatedAsyncioTestCase):
         connection._reconnect_task = None
         connection._move_target_channel_id = None
         connection._move_server_update_received = False
+        connection._handshaking = False
+        connection._update_event = asyncio.Event()
+        connection.channel_id = 123
+        connection.token = "token"
+        connection.endpoint = "endpoint"
+        connection._socket_credentials = ("token", "endpoint")
         connection._soft_reconnect = AsyncMock(return_value=True)  # type: ignore[method-assign]
         connection._full_reconnect = AsyncMock()  # type: ignore[method-assign]
         connection._teardown_and_remove = AsyncMock()  # type: ignore[method-assign]
@@ -200,8 +227,50 @@ class TestVoiceCloseHandling(unittest.IsolatedAsyncioTestCase):
         connection._teardown_and_remove.assert_not_awaited()
         connection._full_reconnect.assert_not_awaited()
 
-    async def test_disconnected_without_move_tears_down(self) -> None:
+    async def test_kicked_tears_down(self) -> None:
+        """ A kick or deleted channel comes with a voice state update leaving the channel. """
         connection = self._connection()
+        connection.channel_id = None
+
+        await connection._handle_close(4014)
+
+        connection._teardown_and_remove.assert_awaited_once()
+        connection._soft_reconnect.assert_not_awaited()
+
+    async def test_moved_by_someone_else_follows(self) -> None:
+        """ Seen live: a moderator drag or join-to-create bot closed with 4022 and the bot left voice. """
+        connection = self._connection()
+        connection.channel_id = 456
+        connection.token = "new-token"
+
+        await connection._handle_close(4022)
+
+        connection._soft_reconnect.assert_awaited_once()
+        connection._teardown_and_remove.assert_not_awaited()
+
+    async def test_moved_with_reconnect_disabled_still_follows(self) -> None:
+        connection = self._connection()
+        connection._reconnect = False
+        connection.token = "new-token"
+
+        await connection._handle_close(4014)
+
+        connection._soft_reconnect.assert_awaited_once()
+        connection._teardown_and_remove.assert_not_awaited()
+
+    async def test_disconnected_but_still_in_voice_reconnects(self) -> None:
+        connection = self._connection()
+        connection._wait_for_new_server = AsyncMock()  # type: ignore[method-assign]
+
+        await connection._handle_close(4014)
+
+        connection._soft_reconnect.assert_awaited_once()
+        connection._teardown_and_remove.assert_not_awaited()
+
+    async def test_disconnected_but_still_in_voice_without_reconnect_tears_down(self) -> None:
+        connection = self._connection()
+        connection._reconnect = False
+        connection._wait_for_new_server = AsyncMock()  # type: ignore[method-assign]
 
         await connection._handle_close(4014)
 
@@ -260,6 +329,7 @@ class TestCallTerminatedDuringMove(unittest.IsolatedAsyncioTestCase):
 
     async def test_call_terminated_without_move_tears_down(self) -> None:
         connection = self._connection()
+        connection.channel_id = None
 
         await connection._handle_close(4022)
 
@@ -271,6 +341,7 @@ class TestSessionDescriptionDave(unittest.IsolatedAsyncioTestCase):
         """ The stored external sender belongs to the previous voice session. """
         connection = object.__new__(VoiceConnection)
         connection._connected_event = asyncio.Event()
+        connection._dave_lock = asyncio.Lock()
         connection.mode = None
         connection.voice_client = Mock(is_playing=Mock(return_value=False), is_paused=Mock(return_value=False))
         stale = Mock()

@@ -10,9 +10,13 @@ class _FakeSocket:
 
     def __init__(self) -> None:
         self.ready_ids: list[int] = []
+        self.invalid_ids: list[int] = []
 
     async def send_transition_ready(self, transition_id: int) -> None:
         self.ready_ids.append(transition_id)
+
+    async def send_invalid_commit_welcome(self, transition_id: int) -> None:
+        self.invalid_ids.append(transition_id)
 
 
 class _FakeSession:
@@ -20,10 +24,22 @@ class _FakeSession:
 
     def __init__(self) -> None:
         self.ready = True
+        self.can_encrypt = True
+        self.protocol_version = 1
         self.passthrough: bool | None = None
+        self.prepared: list[tuple[int, int]] = []
+        self.executed: list[int] = []
 
-    def set_passthrough_mode(self, passthrough_mode: bool) -> None:
+    def set_passthrough_mode(self, passthrough_mode: bool, transition_expiry: int | None = None) -> None:
         self.passthrough = passthrough_mode
+        self.expiry = transition_expiry
+
+    def prepare_transition(self, transition_id: int, protocol_version: int) -> None:
+        self.prepared.append((transition_id, protocol_version))
+
+    def execute_transition(self, transition_id: int) -> bool:
+        self.executed.append(transition_id)
+        return True
 
 
 class _FakeConnection:
@@ -32,8 +48,11 @@ class _FakeConnection:
     def __init__(self, channel_id: int | None = 1234) -> None:
         self.socket = _FakeSocket()
         self.channel_id = channel_id
+        self.guild_id = 1
         self.user_id = 5678
         self.dave_protocol_version = 0
+        self.connected_user_ids: set[int] = set()
+        self._dave_lock = asyncio.Lock()
 
 
 def _manager(channel_id: int | None = 1234) -> tuple[DaveManager, _FakeSocket]:
@@ -160,7 +179,11 @@ class _RecordingSession:
 
     def __init__(self, *args) -> None:
         self.external_senders: list[bytes] = []
+        self.reinits: list[int] = []
         self.ready = False
+
+    def reinit(self, protocol_version: int, *args) -> None:
+        self.reinits.append(protocol_version)
 
     def set_external_sender(self, payload: bytes) -> None:
         self.external_senders.append(payload)
@@ -168,7 +191,7 @@ class _RecordingSession:
     def get_serialized_key_package(self) -> bytes:
         return b"key-package"
 
-    def process_welcome(self, welcome: bytes) -> None:
+    def process_welcome(self, welcome: bytes, recognized_user_ids: list[int] | None = None) -> None:
         raise ValueError("Failed to process welcome: NoExternalSender")
 
 
@@ -188,8 +211,8 @@ class TestDaveExternalSender(unittest.IsolatedAsyncioTestCase):
             patcher.start()
             self.addCleanup(patcher.stop)
 
-    async def test_external_sender_survives_reinit(self) -> None:
-        """ Op 25 is sent once per voice session, every new MLS group needs it again. """
+    async def test_reinit_reuses_the_session(self) -> None:
+        """ davey's reinit keeps the current keys and the external sender until the next transition. """
         manager = _davey_manager()
         await manager.reinit(1)
         first = manager._session
@@ -197,9 +220,9 @@ class TestDaveExternalSender(unittest.IsolatedAsyncioTestCase):
 
         await manager.reinit(1)
 
-        self.assertIsNot(manager._session, first)
+        self.assertIs(manager._session, first)
+        self.assertEqual(first.reinits, [1])
         self.assertEqual(first.external_senders, [b"sender"])
-        self.assertEqual(manager._session.external_senders, [b"sender"])
 
     async def test_external_sender_before_session_is_applied_on_reinit(self) -> None:
         manager = _davey_manager()
