@@ -29,6 +29,10 @@ _TIMESTAMP_OFFSET = 4
 # The RTP sequence number is a 16-bit big-endian field occupying bytes 2..4.
 _SEQUENCE_OFFSET = 2
 
+# Per-packet failures are logged on the first occurrence and then once every
+# this many, a broken stream would otherwise log ~50 lines a second per speaker
+_LOG_EVERY = 500
+
 
 class VoiceReceiver:
     """ Consumes incoming RTP voice packets and dispatches audio to an :class:`AudioSink`. """
@@ -67,6 +71,9 @@ class VoiceReceiver:
         # Count of packets dropped because DAVE was active but the SSRC was
         # not yet mapped to a user, used to rate-limit the debug log.
         self._dave_unmapped_drops = 0
+
+        # Failure kind -> how many times it happened, used to rate-limit logs
+        self._failures: dict[str, int] = {}
 
     def start(self, sink: "AudioSink") -> None:
         """
@@ -118,6 +125,7 @@ class VoiceReceiver:
         self._decoders.clear()
         self._last_seq.clear()
         self._dave_unmapped_drops = 0
+        self._failures.clear()
 
     def is_listening(self) -> bool:
         """ Whether a sink is currently attached. """
@@ -154,6 +162,24 @@ class VoiceReceiver:
             decoder = self._decoders.pop(ssrc, None)
             if decoder is not None:
                 decoder.cleanup()
+
+    def _log_failure(self, kind: str, message: str, *, level: int = logging.WARNING) -> None:
+        """
+        Log a per-packet failure, rate-limited per kind.
+
+        Parameters
+        ----------
+        kind
+            What failed, failures of the same kind share a counter.
+        message
+            The message to log.
+        level
+            The logging level to use.
+        """
+        count = self._failures.get(kind, 0) + 1
+        self._failures[kind] = count
+        if count == 1 or count % _LOG_EVERY == 0:
+            _log.log(level, f"{message} (seen {count} time(s))")
 
     def _get_decoder(self, ssrc: int) -> Decoder:
         """
@@ -208,8 +234,12 @@ class VoiceReceiver:
 
         try:
             payload = encryptor.decrypt(packet)
-        except Exception:
-            _log.exception("Failed to transport-decrypt incoming voice packet")
+        except Exception as exc:
+            # Expected briefly after a reconnect, packets still carry the old key
+            self._log_failure("transport", f"Failed to transport-decrypt incoming voice packet: {exc!r}", level=logging.DEBUG)
+            return
+
+        if not payload:
             return
 
         # RTP padding (RFC 3550 5.1): the last payload byte is the padding length.
@@ -225,7 +255,18 @@ class VoiceReceiver:
         # maps the SSRC to a user. If the mapping has not arrived yet, drop the
         # packet rather than passing the still-encrypted payload along as if it
         # were plain Opus; losing a few leading frames is acceptable.
-        if connection.can_encrypt():
+        if not connection.can_encrypt():
+            # End-to-end encryption is negotiated but our session isn't ready
+            # (joining, or a group change), these frames are still ciphertext
+            if connection.is_undecryptable_dave_frame(payload):
+                self._log_failure(
+                    "dave_pending",
+                    "Dropped DAVE-encrypted voice while the DAVE session is not ready",
+                    level=logging.DEBUG,
+                )
+                return
+
+        else:
             if user_id is None:
                 self._dave_unmapped_drops += 1
                 if self._dave_unmapped_drops == 1 or self._dave_unmapped_drops % 100 == 0:
@@ -243,7 +284,7 @@ class VoiceReceiver:
                 if "UnencryptedWhenPassthroughDisabled" in str(exc):
                     _log.debug(f"Dropped unencrypted frame from user {user_id} during a DAVE transition")
                 else:
-                    _log.exception("Failed to DAVE-decrypt incoming voice packet")
+                    self._log_failure("dave", f"Failed to DAVE-decrypt incoming voice from user {user_id}: {exc!r}")
                 return
 
         if sink.wants_opus():
@@ -307,6 +348,6 @@ class VoiceReceiver:
             self._last_seq[ssrc] = sequence
 
             return concealed + decoder.decode(payload)
-        except Exception:
-            _log.exception("Failed to Opus-decode received voice packet")
+        except Exception as exc:
+            self._log_failure("opus", f"Failed to Opus-decode received voice packet: {exc!r}")
             return None

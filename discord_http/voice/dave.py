@@ -1,3 +1,4 @@
+import asyncio
 import logging
 
 from typing import TYPE_CHECKING
@@ -27,6 +28,16 @@ __all__ = (
 
 _log = logging.getLogger(__name__)
 
+# Every DAVE-encrypted frame ends with this marker
+_DAVE_MAGIC_MARKER = b"\xfa\xfa"
+
+# How long decryptors keep accepting plaintext after a downgrade is announced, in seconds
+_DOWNGRADE_PASSTHROUGH_EXPIRY = 24
+
+# Consecutive frames from one user that may fail to decrypt before we assume
+# our MLS state is out of sync and ask Discord to re-add us to the group
+_DECRYPT_FAILURE_TOLERANCE = 36
+
 
 def max_protocol_version() -> int:
     """ The maximum DAVE protocol version this installation can negotiate (``0`` if davey is absent). """
@@ -40,8 +51,12 @@ class DaveManager:
 
     __slots__ = (
         "_connection",
+        "_decrypt_failures",
         "_external_sender",
+        "_last_transition_id",
         "_pending_transitions",
+        "_recovery_task",
+        "_reinitializing",
         "_session",
         "_version",
     )
@@ -57,6 +72,14 @@ class DaveManager:
         # overlapping transitions (e.g. during member churn) cannot clobber each
         # other before their EXECUTE_TRANSITION arrives.
         self._pending_transitions: dict[int, int] = {}
+        # Set while we wait to be re-added after reporting a broken commit or
+        # welcome, so further failures in the same transition don't stack
+        # another reinit and key package on top
+        self._reinitializing: bool = False
+        self._last_transition_id: int | None = None
+        # user_id -> consecutive decrypt failures, only users currently failing
+        self._decrypt_failures: dict[int, int] = {}
+        self._recovery_task: asyncio.Task | None = None
 
     @property
     def ready(self) -> bool:
@@ -74,6 +97,28 @@ class DaveManager:
     def can_encrypt(self) -> bool:
         """ Whether end-to-end encryption is currently active and usable. """
         return self._version > 0 and self._session is not None and self.ready
+
+    def is_undecryptable(self, opus: bytes) -> bool:
+        """
+        Whether ``opus`` is end-to-end encrypted but our session can't decrypt it yet.
+
+        Parameters
+        ----------
+        opus
+            The received Opus payload.
+        """
+        return self._version > 0 and not self.ready and opus.endswith(_DAVE_MAGIC_MARKER)
+
+    def remove_user(self, user_id: int) -> None:
+        """
+        Forget per-user state for a user that left the call.
+
+        Parameters
+        ----------
+        user_id
+            The user that left.
+        """
+        self._decrypt_failures.pop(user_id, None)
 
     async def reinit(self, version: int) -> None:
         """
@@ -97,6 +142,7 @@ class DaveManager:
         self._version = version
         # Any pending transitions belong to the previous session; drop them.
         self._pending_transitions.clear()
+        self._decrypt_failures.clear()
 
         if version <= 0:
             self._session = None
@@ -146,12 +192,14 @@ class DaveManager:
         if self._session is None:
             return
 
-        key_package = self._session.get_serialized_key_package()
-        await self._connection.socket.send_binary(
-            int(VoiceOpType.dave_mls_key_package), key_package
-        )
+        socket = self._connection.socket
+        if socket is None:
+            return
 
-    def set_passthrough_mode(self, enabled: bool) -> None:
+        key_package = self._session.get_serialized_key_package()
+        await socket.send_binary(int(VoiceOpType.dave_mls_key_package), key_package)
+
+    def set_passthrough_mode(self, enabled: bool, expiry: int | None = None) -> None:
         """
         Toggle passthrough mode on the MLS session.
 
@@ -162,11 +210,14 @@ class DaveManager:
         ----------
         enabled
             ``True`` to pass media through unchanged, ``False`` to resume encryption.
+        expiry
+            How long, in seconds, plaintext keeps being accepted after the change.
+            ``None`` uses davey's default.
         """
         if self._session is None:
             return
 
-        self._session.set_passthrough_mode(enabled)
+        self._session.set_passthrough_mode(enabled, expiry)
 
     def encrypt_opus(self, opus: bytes) -> bytes:
         """
@@ -202,7 +253,46 @@ class DaveManager:
         """
         if not self.can_encrypt() or self._session is None or davey is None:
             return opus
-        return bytes(self._session.decrypt(user_id, davey.MediaType.audio, opus))
+
+        try:
+            decrypted = bytes(self._session.decrypt(user_id, davey.MediaType.audio, opus))
+        except Exception as exc:
+            # Plaintext from a member still joining is expected, not a desync
+            if "UnencryptedWhenPassthroughDisabled" not in str(exc):
+                failures = self._decrypt_failures.get(user_id, 0) + 1
+                self._decrypt_failures[user_id] = failures
+                if failures > _DECRYPT_FAILURE_TOLERANCE:
+                    self._schedule_decrypt_recovery()
+            raise
+
+        self._decrypt_failures.pop(user_id, None)
+        return decrypted
+
+    def _schedule_decrypt_recovery(self) -> None:
+        """ Ask to be re-added to the MLS group after persistent decrypt failures. """
+        if self._reinitializing or self._last_transition_id is None:
+            return
+        if self._recovery_task is not None and not self._recovery_task.done():
+            return
+
+        transition_id = self._last_transition_id
+        _log.warning(
+            f"DAVE decryption keeps failing in guild {self._connection.guild_id}; "
+            "asking Discord to re-add us to the group"
+        )
+        self._decrypt_failures.clear()
+        self._recovery_task = asyncio.create_task(
+            self._locked_recover(transition_id),
+            name=f"discord.http/voice/dave-{self._connection.guild_id}/recover"
+        )
+
+    async def _locked_recover(self, transition_id: int) -> None:
+        """ Run :meth:`_recover_from_invalid_commit` outside a frame handler, holding the DAVE lock. """
+        try:
+            async with self._connection._dave_lock:
+                await self._recover_from_invalid_commit(transition_id)
+        except Exception:
+            _log.exception("Failed to recover the DAVE session")
 
     async def handle_binary(self, opcode: int, payload: bytes) -> None:
         """
@@ -260,8 +350,16 @@ class DaveManager:
 
         if transition_id == 0:
             await self._execute_transition(transition_id, version)
-        else:
-            await self._connection.socket.send_transition_ready(transition_id)
+            return
+
+        if version == 0:
+            # Members that already downgraded send plaintext before our
+            # EXECUTE_TRANSITION arrives, accept it instead of dropping it
+            self.set_passthrough_mode(True, _DOWNGRADE_PASSTHROUGH_EXPIRY)
+
+        socket = self._connection.socket
+        if socket is not None:
+            await socket.send_transition_ready(transition_id)
 
     async def _handle_execute_transition(self, data: dict) -> None:
         """ Handle EXECUTE_TRANSITION (22): apply the pending version and passthrough state. """
@@ -277,8 +375,11 @@ class DaveManager:
     async def _execute_transition(self, transition_id: int, version: int) -> None:
         """ Apply a transition: switch protocol version and update passthrough mode. """
         self._version = version
+        self._connection.dave_protocol_version = version
         self.set_passthrough_mode(version == 0)
         self._pending_transitions.pop(transition_id, None)
+        if transition_id != 0:
+            self._last_transition_id = transition_id
         _log.debug(f"Executed DAVE transition {transition_id} to version {version}")
 
     async def _handle_prepare_epoch(self, data: dict) -> None:
@@ -291,6 +392,8 @@ class DaveManager:
 
         version = int(data.get("protocol_version", 0) or 0)
         self._connection.dave_protocol_version = version
+        # A brand new group starts clean, whatever recovery was in progress
+        self._reinitializing = False
         await self.reinit(version)
 
     def _handle_external_sender(self, payload: bytes) -> None:
@@ -331,18 +434,22 @@ class DaveManager:
             else davey.ProposalsOperationType.revoke
         )
 
+        # Only accept proposals adding users Discord told us are in the call,
+        # that is what stops the voice server quietly adding someone to the group
+        expected_user_ids = [*self._connection.connected_user_ids, self._connection.user_id]
+
         try:
-            result = self._session.process_proposals(operation_type, proposals)
+            result = self._session.process_proposals(operation_type, proposals, expected_user_ids=expected_user_ids)
         except Exception as exc:
+            # No transition to report yet, the commit that follows will fail
+            # too and recover with its transition id
             _log.warning(f"Failed to process MLS proposals: {exc}")
-            await self._recover_from_invalid_commit()
             return
 
         commit_welcome = self._extract_commit_welcome(result)
-        if commit_welcome is not None:
-            await self._connection.socket.send_binary(
-                int(VoiceOpType.dave_mls_commit_welcome), commit_welcome
-            )
+        socket = self._connection.socket
+        if commit_welcome is not None and socket is not None:
+            await socket.send_binary(int(VoiceOpType.dave_mls_commit_welcome), commit_welcome)
 
     async def _handle_commit(self, payload: bytes) -> None:
         """
@@ -361,12 +468,16 @@ class DaveManager:
             self._session.process_commit(commit)
         except Exception as exc:
             _log.warning(f"Failed to process MLS commit: {exc}")
-            await self._recover_from_invalid_commit()
+            await self._recover_from_invalid_commit(transition_id)
             return
+
+        self._reinitializing = False
 
         if transition_id != 0:
             self._pending_transitions[transition_id] = self._pending_transition_version(transition_id)
-            await self._connection.socket.send_transition_ready(transition_id)
+            socket = self._connection.socket
+            if socket is not None:
+                await socket.send_transition_ready(transition_id)
 
     async def _handle_welcome(self, payload: bytes) -> None:
         """
@@ -385,12 +496,16 @@ class DaveManager:
             self._session.process_welcome(welcome)
         except Exception as exc:
             _log.warning(f"Failed to process MLS welcome: {exc}")
-            await self._recover_from_invalid_commit()
+            await self._recover_from_invalid_commit(transition_id)
             return
+
+        self._reinitializing = False
 
         if transition_id != 0:
             self._pending_transitions[transition_id] = self._pending_transition_version(transition_id)
-            await self._connection.socket.send_transition_ready(transition_id)
+            socket = self._connection.socket
+            if socket is not None:
+                await socket.send_transition_ready(transition_id)
 
     def _pending_transition_version(self, transition_id: int) -> int:
         """
@@ -405,12 +520,33 @@ class DaveManager:
         """
         return self._pending_transitions.get(transition_id, self._version)
 
-    async def _recover_from_invalid_commit(self) -> None:
-        """ Notify the gateway of an invalid commit/welcome and reinitialise the session. """
-        await self._connection.socket.send_binary(
-            int(VoiceOpType.dave_mls_invalid_commit_welcome), b""
-        )
-        await self.reinit(self._version)
+    async def _recover_from_invalid_commit(self, transition_id: int) -> None:
+        """
+        Report a commit/welcome we couldn't apply and start over with a fresh session.
+
+        Discord then removes us from the MLS group and adds us back with a new
+        welcome. Only done once per failure, later failures are ignored until
+        a commit or welcome applies again.
+
+        Parameters
+        ----------
+        transition_id
+            The transition whose commit or welcome failed.
+        """
+        if self._reinitializing:
+            return
+
+        socket = self._connection.socket
+        if socket is None:
+            return
+
+        version = self._version or self._connection.dave_protocol_version
+        if version <= 0:
+            return
+
+        self._reinitializing = True
+        await socket.send_invalid_commit_welcome(transition_id)
+        await self.reinit(version)
 
     @staticmethod
     def _extract_commit_welcome(result: object) -> bytes | None:

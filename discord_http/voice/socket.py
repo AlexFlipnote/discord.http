@@ -216,6 +216,9 @@ class VoiceSocket:
             case VoiceOpType.resumed:
                 self._schedule(self.connection.on_resumed(data))
 
+            case VoiceOpType.clients_connect:
+                self._schedule(self.connection.on_clients_connect(data))
+
             case VoiceOpType.client_disconnect:
                 self._schedule(self.connection.on_client_disconnect(data))
 
@@ -456,6 +459,25 @@ class VoiceSocket:
         """
         await self._send_json({
             "op": int(VoiceOpType.dave_transition_ready),
+            "d": {
+                "transition_id": transition_id,
+            }
+        })
+
+    async def send_invalid_commit_welcome(self, transition_id: int) -> None:
+        """
+        Send the DAVE MLS_INVALID_COMMIT_WELCOME (op 31) frame.
+
+        Tells the voice gateway that a commit or welcome could not be applied,
+        so it removes and re-adds us to the MLS group. It is a JSON frame.
+
+        Parameters
+        ----------
+        transition_id
+            The id of the transition whose commit or welcome failed.
+        """
+        await self._send_json({
+            "op": int(VoiceOpType.dave_mls_invalid_commit_welcome),
             "d": {
                 "transition_id": transition_id,
             }

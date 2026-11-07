@@ -124,6 +124,12 @@ class VoiceConnection:
         # Set on every VOICE_STATE_UPDATE and VOICE_SERVER_UPDATE
         self._update_event: asyncio.Event = asyncio.Event()
 
+        # DAVE frames are handled one at a time and in order, the MLS state
+        # machine breaks if a commit is processed before the proposals it follows
+        self._dave_lock: asyncio.Lock = asyncio.Lock()
+        self.connected_user_ids: set[int] = set()
+        """ The users Discord reported in the call (ops 11 and 13), used to validate DAVE proposals. """
+
     @property
     def backoff(self) -> ExponentialBackoff:
         """ The exponential backoff for reconnects, built lazily from client settings. """
@@ -913,6 +919,7 @@ class VoiceConnection:
         # old mappings are stale. Not done on RESUMED (op 9), which continues the
         # same session with the same SSRCs.
         self.voice_client._receiver.reset()
+        self.connected_user_ids.clear()
 
         if self._closing:
             return
@@ -966,19 +973,20 @@ class VoiceConnection:
 
         dave_version = int(data.get("dave_protocol_version", 0) or 0)
         self.dave_protocol_version = dave_version
-        if dave_version > 0:
-            # New voice session: start from a fresh manager, the external sender
-            # kept for later MLS groups belongs to the previous session
-            self.dave_session = None
-            await self.reinit_dave_session()
-        elif self.dave_session is not None:
-            # DAVE was negotiated off (version 0) but a prior connection left a
-            # session behind. Tear down the MLS session so can_encrypt() and the
-            # opus wrappers don't keep using stale E2EE state. DaveManager has no
-            # dedicated close/cleanup; reinit(0) clears its internal session, then
-            # we drop the reference.
-            await self.dave_session.reinit(0)
-            self.dave_session = None
+        async with self._dave_lock:
+            if dave_version > 0:
+                # New voice session: start from a fresh manager, the external sender
+                # kept for later MLS groups belongs to the previous session
+                self.dave_session = None
+                await self.reinit_dave_session()
+            elif self.dave_session is not None:
+                # DAVE was negotiated off (version 0) but a prior connection left a
+                # session behind. Tear down the MLS session so can_encrypt() and the
+                # opus wrappers don't keep using stale E2EE state. DaveManager has no
+                # dedicated close/cleanup; reinit(0) clears its internal session, then
+                # we drop the reference.
+                await self.dave_session.reinit(0)
+                self.dave_session = None
 
         self._connected_event.set()
 
@@ -1004,6 +1012,18 @@ class VoiceConnection:
             # edge of speech, so a sink attached later still needs this mapping.
             self.voice_client._receiver.add_ssrc(int(ssrc), int(user_id))
 
+    async def on_clients_connect(self, data: dict) -> None:
+        """
+        Handle a CLIENTS_CONNECT (op 11) frame: remember who is in the call.
+
+        Parameters
+        ----------
+        data
+            The payload with the ``user_ids`` that are connected.
+        """
+        for user_id in data.get("user_ids", []):
+            self.connected_user_ids.add(int(user_id))
+
     async def on_client_disconnect(self, data: dict) -> None:
         """
         Handle a CLIENT_DISCONNECT (op 13) frame: forget the user's receive state.
@@ -1019,7 +1039,10 @@ class VoiceConnection:
         """
         user_id = data.get("user_id")
         if user_id is not None:
+            self.connected_user_ids.discard(int(user_id))
             self.voice_client._receiver.remove_user(int(user_id))
+            if self.dave_session is not None:
+                self.dave_session.remove_user(int(user_id))
 
     async def on_resumed(self, data: dict) -> None:  # noqa: ARG002
         """
@@ -1051,11 +1074,12 @@ class VoiceConnection:
             _log.warning(f"Received DAVE binary op {opcode} but the davey library is not available")
             return
 
-        if self.dave_session is None:
-            await self.reinit_dave_session()
+        async with self._dave_lock:
+            if self.dave_session is None:
+                await self.reinit_dave_session()
 
-        if self.dave_session is not None:
-            await self.dave_session.handle_binary(opcode, payload)
+            if self.dave_session is not None:
+                await self.dave_session.handle_binary(opcode, payload)
 
     async def on_dave_json(self, opcode: int, data: dict) -> None:
         """
@@ -1075,11 +1099,12 @@ class VoiceConnection:
             _log.warning(f"Received DAVE JSON op {opcode} but the davey library is not available")
             return
 
-        if self.dave_session is None:
-            await self.reinit_dave_session()
+        async with self._dave_lock:
+            if self.dave_session is None:
+                await self.reinit_dave_session()
 
-        if self.dave_session is not None:
-            await self.dave_session.handle_json(opcode, data)
+            if self.dave_session is not None:
+                await self.dave_session.handle_json(opcode, data)
 
     async def reinit_dave_session(self) -> None:
         """ Create or reset the DAVE session for the negotiated protocol version. """
@@ -1139,6 +1164,21 @@ class VoiceConnection:
         if self.dave_session is None:
             return opus
         return self.dave_session.decrypt_opus(user_id, opus)
+
+    def is_undecryptable_dave_frame(self, opus: bytes) -> bool:
+        """
+        Whether ``opus`` is a DAVE-encrypted frame that can't be decrypted yet.
+
+        True while end-to-end encryption is negotiated but our MLS session isn't
+        ready, for example during a group change. Such frames must be dropped,
+        passing them on would hand ciphertext to sinks as if it were Opus.
+
+        Parameters
+        ----------
+        opus
+            The received Opus payload, after transport decryption.
+        """
+        return self.dave_session is not None and self.dave_session.is_undecryptable(opus)
 
     def _cancel_reconnect_task(self) -> None:
         """ Cancel any pending reconnect task, unless it is the current task. """
