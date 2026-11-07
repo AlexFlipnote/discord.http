@@ -47,6 +47,15 @@ class VoiceSocket:
         self.seq_ack: int = -1
         """ The last sequence number received from the voice gateway. """
 
+        self.close_code: int | None = None
+        """ The close code once the socket has closed, if Discord sent one. """
+
+        self.close_reason: str | None = None
+        """ The close reason once the socket has closed, if Discord sent one. """
+
+        self.closed: asyncio.Event = asyncio.Event()
+        """ Set once the socket has closed, for whatever reason. """
+
         self._closing: bool = False
         self._resuming: bool = False
 
@@ -93,8 +102,15 @@ class VoiceSocket:
         self._closing = False
         self._resuming = resume
         endpoint = self.connection.endpoint
-        self.ws = await self.session.ws_connect(f"wss://{endpoint}/?v=8")
+        ws = await self.session.ws_connect(f"wss://{endpoint}/?v=8")
 
+        # close() ran while the websocket was opening, don't bring it back to life
+        if self._closing:
+            await ws.close()
+            self.closed.set()
+            return
+
+        self.ws = ws
         self._receive_task = asyncio.create_task(
             self._receive_loop(),
             name=f"discord.http/voice/socket-{self.connection.guild_id}/receive"
@@ -121,6 +137,7 @@ class VoiceSocket:
                 elif msg.type in (WSMsgType.CLOSE, WSMsgType.CLOSING, WSMsgType.CLOSED):
                     if msg.type is WSMsgType.CLOSE:
                         frame_close_code = msg.data
+                        self.close_reason = msg.extra or None
                     # Discord's close reason (msg.extra) is invaluable for diagnosing
                     # voice failures (e.g. "E2EE/DAVE protocol required" for 4017),
                     # so surface it alongside the code.
@@ -143,6 +160,8 @@ class VoiceSocket:
         # Discord drops TCP right after its close frame, so aiohttp fails to echo
         # the close and overwrites ws.close_code with 1006. Prefer the frame's code.
         close_code = frame_close_code if frame_close_code is not None else ws.close_code
+        self.close_code = close_code
+        self.closed.set()
 
         if not self._closing:
             self.connection._on_socket_closed(close_code)
@@ -491,3 +510,4 @@ class VoiceSocket:
         if self.ws is not None and not self.ws.closed:
             await self.ws.close()
         self.ws = None
+        self.closed.set()

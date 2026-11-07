@@ -1,9 +1,11 @@
 import asyncio
+import contextlib
 import logging
 
 from typing import TYPE_CHECKING
 
 from ..enums import ChannelType
+from ..errors import VoiceConnectionClosed
 from ..utils import URL, ExponentialBackoff
 from .dave import DaveManager, has_dave
 from .encryptor import Encryptor
@@ -113,6 +115,15 @@ class VoiceConnection:
         # from the client (mirroring how voice_reconnect_attempts is read).
         self._backoff: ExponentialBackoff | None = None
 
+        # True while connect() owns the handshake, it reports a close itself
+        # instead of letting the reconnect logic race it
+        self._handshaking: bool = False
+        # The (token, endpoint) the current socket identified with, compared
+        # against later voice server updates to spot moves and server changes
+        self._socket_credentials: tuple[str | None, str | None] = (None, None)
+        # Set on every VOICE_STATE_UPDATE and VOICE_SERVER_UPDATE
+        self._update_event: asyncio.Event = asyncio.Event()
+
     @property
     def backoff(self) -> ExponentialBackoff:
         """ The exponential backoff for reconnects, built lazily from client settings. """
@@ -195,6 +206,8 @@ class VoiceConnection:
             - If DAVE is required but ``davey`` is not installed
         TimeoutError
             If the handshake does not complete within ``timeout``.
+        VoiceConnectionClosed
+            If Discord closes the voice connection before it is established.
         """
         # Discord refuses voice without DAVE (4017), stage channels aren't end-to-end encrypted
         if not has_dave and self.voice_client.channel.type is not ChannelType.guild_stage_voice:
@@ -287,20 +300,151 @@ class VoiceConnection:
             self_deaf=self_deaf,
         )
 
-        await asyncio.wait_for(self._wait_for_handshake(), timeout)
+        self._handshaking = True
+        try:
+            await asyncio.wait_for(self._wait_for_handshake(), timeout)
+        finally:
+            self._handshaking = False
 
     async def _wait_for_handshake(self) -> None:
         """ Wait for the gateway handshake then drive the voice socket to connected. """
         await self._state_event.wait()
         await self._server_event.wait()
 
-        # A previous handshake attempt that timed out leaves its socket behind,
-        # close it so its heartbeat can't later tear down the new connection
-        await self._close_socket()
-        self.socket = VoiceSocket(self)
-        await self.socket.connect()
+        attempts = 3
+        for attempt in range(1, attempts + 1):
+            socket = await self._open_socket()
+            try:
+                await self._wait_connected(socket)
+                return
+            except VoiceConnectionClosed as exc:
+                # Join-to-create bots and moderators can move the bot while it's
+                # still connecting, which closes this socket. Discord then sends
+                # new credentials, so try again with those instead of failing
+                moved_codes = (
+                    VoiceCloseCode.session_invalid,
+                    VoiceCloseCode.disconnected,
+                    VoiceCloseCode.call_terminated,
+                )
+                if attempt == attempts or exc.code not in moved_codes:
+                    raise
 
-        await self._connected_event.wait()
+                previous = self._socket_credentials
+                await self._wait_for_new_server(previous)
+                if self.channel_id is None or (self.token, self.endpoint) == previous:
+                    raise
+
+                _log.debug(f"Voice connection for guild {self.guild_id} was moved while connecting; retrying")
+
+    def _check_closing(self) -> None:
+        """ Raise if the connection was disconnected, so an in-flight connect stops. """
+        if self._closing:
+            raise VoiceConnectionClosed(None, "Disconnected while connecting")
+
+    async def _open_socket(self, *, resume: bool = False) -> VoiceSocket:
+        """
+        Replace the voice socket with a fresh one and open it.
+
+        Parameters
+        ----------
+        resume
+            Whether to RESUME the session instead of IDENTIFYing.
+
+        Returns
+        -------
+            The newly opened socket.
+
+        Raises
+        ------
+        VoiceConnectionClosed
+            If the connection was disconnected while opening.
+        """
+        seq_ack = self.socket.seq_ack if self.socket is not None else -1
+
+        # A previous attempt can leave its socket behind, close it so its
+        # heartbeat can't later tear down the new connection
+        await self._close_socket()
+        self._check_closing()
+
+        self._connected_event.clear()
+        socket = VoiceSocket(self)
+        if resume:
+            # RESUME has to acknowledge what the old socket already received,
+            # otherwise Discord replays (or rejects) everything since the start
+            socket.seq_ack = seq_ack
+        self.socket = socket
+        self._socket_credentials = (self.token, self.endpoint)
+
+        await socket.connect(resume=resume)
+
+        if self._closing or self.socket is not socket:
+            socket._request_close()
+            await socket.close()
+            raise VoiceConnectionClosed(None, "Disconnected while connecting")
+
+        return socket
+
+    async def _wait_connected(self, socket: VoiceSocket, timeout: float | None = None) -> None:
+        """
+        Wait until the handshake on ``socket`` completes.
+
+        Parameters
+        ----------
+        socket
+            The socket the handshake is running on.
+        timeout
+            How long to wait, in seconds, or ``None`` to wait forever.
+
+        Raises
+        ------
+        VoiceConnectionClosed
+            - If the socket closes first
+            - If the connection was disconnected
+        TimeoutError
+            If the timeout passes first.
+        """
+        connected = asyncio.ensure_future(self._connected_event.wait())
+        closed = asyncio.ensure_future(socket.closed.wait())
+        try:
+            await asyncio.wait((connected, closed), timeout=timeout, return_when=asyncio.FIRST_COMPLETED)
+        finally:
+            connected.cancel()
+            closed.cancel()
+
+        self._check_closing()
+        if self._connected_event.is_set() and self.socket is socket:
+            return
+        if socket.closed.is_set():
+            raise VoiceConnectionClosed(socket.close_code, socket.close_reason)
+        raise TimeoutError
+
+    async def _wait_for_new_server(self, previous: tuple[str | None, str | None], timeout: float = 3.0) -> None:
+        """
+        Wait for a voice server update with credentials other than ``previous``.
+
+        Returns early if the bot is removed from voice in the meantime, and
+        quietly when the timeout passes, callers check what changed.
+
+        Parameters
+        ----------
+        previous
+            The ``(token, endpoint)`` the closed socket used.
+        timeout
+            How long to wait, in seconds.
+        """
+        loop = asyncio.get_running_loop()
+        deadline = loop.time() + timeout
+
+        while self.channel_id is not None and (self.endpoint is None or (self.token, self.endpoint) == previous):
+            remaining = deadline - loop.time()
+            if remaining <= 0:
+                return
+
+            self._update_event.clear()
+            try:
+                await asyncio.wait_for(self._update_event.wait(), remaining)
+            except TimeoutError:
+                return
 
     async def _close_socket(self) -> None:
         """ Close and drop the current voice socket, if any, without triggering a reconnect. """
@@ -318,7 +462,7 @@ class VoiceConnection:
         close_code
             The websocket close code, if one was reported.
         """
-        if self._closing:
+        if self._closing or self._handshaking:
             return
 
         if self._reconnect_task is not None and not self._reconnect_task.done():
@@ -357,8 +501,7 @@ class VoiceConnection:
             return
 
         if close_code in (VoiceCloseCode.disconnected, VoiceCloseCode.call_terminated):
-            _log.debug(f"Voice connection for guild {self.guild_id} disconnected (code {close_code}); tearing down")
-            await self._teardown_and_remove()
+            await self._handle_disconnected(close_code)
             return
 
         if close_code == VoiceCloseCode.rate_limited:
@@ -367,6 +510,11 @@ class VoiceConnection:
             return
 
         if close_code == VoiceCloseCode.voice_server_crashed:
+            if not self._reconnect:
+                _log.debug(f"Voice server for guild {self.guild_id} crashed (code {close_code}); reconnect disabled")
+                await self._teardown_and_remove()
+                return
+
             _log.debug(f"Voice server for guild {self.guild_id} crashed (code {close_code}); resuming")
             await self._resume()
             return
@@ -414,19 +562,74 @@ class VoiceConnection:
 
         await self._full_reconnect(close_code)
 
-    async def _resume(self) -> None:
-        """ Re-open the voice websocket and RESUME (op 7) the existing session. """
-        if self.socket is not None:
-            self.socket._request_close()
-            await self.socket.close()
+    async def _handle_disconnected(self, close_code: int | None) -> None:
+        """
+        Handle a 4014 or 4022 close that wasn't part of :meth:`move_to`.
 
+        Discord sends these when the bot is kicked or its channel is deleted,
+        but also when someone else moves it to another channel or Discord moves
+        the call to another voice server. Only the first two mean leaving, the
+        gateway updates that come with the close tell them apart.
+
+        Parameters
+        ----------
+        close_code
+            The close code, 4014 or 4022.
+        """
+        previous = self._socket_credentials
+        await self._wait_for_new_server(previous)
+
+        if self.channel_id is None:
+            _log.debug(f"Voice connection for guild {self.guild_id} disconnected (code {close_code}); tearing down")
+            await self._teardown_and_remove()
+            return
+
+        if (self.token, self.endpoint) != previous:
+            # Moved, follow it even with reconnect off, the bot is still in voice
+            _log.debug(f"Voice connection for guild {self.guild_id} was moved (code {close_code}); reconnecting")
+            if await self._soft_reconnect():
+                return
+            await self._full_reconnect(close_code)
+            return
+
+        if not self._reconnect:
+            _log.debug(f"Voice connection for guild {self.guild_id} closed (code {close_code}); reconnect disabled")
+            await self._teardown_and_remove()
+            return
+
+        _log.debug(
+            f"Voice connection for guild {self.guild_id} closed (code {close_code}) while still in voice; reconnecting"
+        )
+        if await self._soft_reconnect():
+            return
+        await self._full_reconnect(close_code)
+
+    async def _resume(self, timeout: float = 10.0) -> None:
+        """
+        Re-open the voice websocket and RESUME (op 7) the existing session.
+
+        Falls back to a fresh IDENTIFY, then a full rejoin, if Discord refuses.
+
+        Parameters
+        ----------
+        timeout
+            How long to wait for RESUMED, in seconds.
+        """
         try:
-            self._connected_event.clear()
-            self.socket = VoiceSocket(self)
-            await self.socket.connect(resume=True)
+            socket = await self._open_socket(resume=True)
+            await self._wait_connected(socket, timeout)
         except Exception as exc:
-            _log.debug(f"Voice resume for guild {self.guild_id} failed; falling back to full reconnect", exc_info=exc)
-            await self._full_reconnect(int(VoiceCloseCode.voice_server_crashed))
+            _log.debug(f"Voice resume for guild {self.guild_id} failed; reconnecting instead", exc_info=exc)
+        else:
+            return
+
+        if self._closing:
+            return
+
+        if await self._soft_reconnect():
+            return
+
+        await self._full_reconnect(int(VoiceCloseCode.voice_server_crashed))
 
     async def _soft_reconnect(self, timeout: float = 10.0) -> bool:
         """
@@ -445,7 +648,7 @@ class VoiceConnection:
         timeout
             How long to wait for the re-handshake to complete, in seconds.
         """
-        if not (self.session_id and self.token and self.endpoint):
+        if self._closing or not (self.session_id and self.token and self.endpoint):
             return False
 
         # Tear down the old socket/UDP locally WITHOUT sending op4, so the gateway
@@ -461,9 +664,8 @@ class VoiceConnection:
         self._connected_event.clear()
 
         try:
-            self.socket = VoiceSocket(self)
-            await self.socket.connect()
-            await asyncio.wait_for(self._connected_event.wait(), timeout)
+            socket = await self._open_socket()
+            await self._wait_connected(socket, timeout)
         except Exception as exc:
             _log.debug(f"Soft reconnect for guild {self.guild_id} did not complete", exc_info=exc)
             return False
@@ -572,6 +774,12 @@ class VoiceConnection:
         previous_channel_id = self.channel_id
         channel_id = data.get("channel_id")
         self.channel_id = int(channel_id) if channel_id is not None else None
+        self._update_event.set()
+
+        # Moved, by move_to() or by someone else. Keep the client's channel in
+        # sync, a later reconnect rejoins it and would otherwise pull the bot back
+        if self.channel_id is not None and self.channel_id != self.voice_client.channel.id:
+            self.voice_client.channel = self.client.get_partial_channel(self.channel_id, guild_id=self.guild_id)
 
         # Same-server moves do not produce a fresh voice READY. Use the gateway's
         # state acknowledgement as the authoritative move boundary and clear the
@@ -619,8 +827,17 @@ class VoiceConnection:
         was_connected = self.is_connected()
 
         self.token = data.get("token")
+        self._update_event.set()
 
         endpoint = data.get("endpoint")
+        if "endpoint" in data and not endpoint:
+            # The voice server went away, Discord sends another update with the
+            # new one. Until then there is nothing to connect to
+            _log.debug(f"Voice server for guild {self.guild_id} is unavailable; waiting for a new one")
+            self.endpoint = None
+            self._server_event.clear()
+            return
+
         if endpoint:
             # Discord sends the endpoint as "host:port" without a scheme, and the
             # port is NOT always 443 (e.g. "c-ams20-....discord.media:2053"). The
@@ -697,6 +914,9 @@ class VoiceConnection:
         # same session with the same SSRCs.
         self.voice_client._receiver.reset()
 
+        if self._closing:
+            return
+
         self.ssrc = int(data["ssrc"])
         ip = data["ip"]
         port = int(data["port"])
@@ -709,7 +929,17 @@ class VoiceConnection:
                 f"offered {modes}, supported {list(SUPPORTED_MODES)}"
             )
 
+        # A retried handshake gets a second READY, don't leak the first UDP socket
+        if self.transport is not None:
+            self.transport.close()
+            self.transport = None
+            self.udp = None
+
         self.transport, self.udp = await create_udp(self, ip, port)
+
+        if self._closing:
+            self._clear_transport_state()
+            return
 
         discovered_ip, discovered_port = await self.udp.discover_ip(self.ssrc)
         self.endpoint_ip = discovered_ip
@@ -952,6 +1182,10 @@ class VoiceConnection:
                 await shard.change_voice_state(guild_id=self.guild_id, channel_id=None)
         except Exception as exc:
             if not force:
+                # Still connected, undo the close so the connection keeps working
+                self._closing = False
+                if self.socket is not None:
+                    self.socket._closing = False
                 raise
             _log.debug(f"Failed to send voice disconnect for guild {self.guild_id}", exc_info=exc)
 
@@ -972,15 +1206,30 @@ class VoiceConnection:
 
         self._clear_transport_state()
 
-    async def move_to(self, channel: "PartialChannel") -> None:
+    async def move_to(self, channel: "PartialChannel", *, timeout: float = 10.0) -> None:
         """
         Move the connection to a different voice channel.
+
+        Returns once Discord confirms the move, the voice connection then
+        follows on its own.
 
         Parameters
         ----------
         channel
             The channel to move to.
+        timeout
+            How long to wait for Discord to confirm the move, in seconds.
+
+        Raises
+        ------
+        RuntimeError
+            If no shard can be resolved for the guild.
+        TimeoutError
+            If Discord didn't move the bot, for example without permission to join.
         """
+        if channel.id == self.channel_id:
+            return
+
         shard = self._get_shard()
         if shard is None:
             raise RuntimeError(
@@ -991,7 +1240,26 @@ class VoiceConnection:
         self._move_target_channel_id = channel.id
         self._move_server_update_received = False
         try:
-            await shard.change_voice_state(guild_id=self.guild_id, channel_id=channel.id)
-        except Exception:
-            self._move_target_channel_id = None
+            await shard.change_voice_state(
+                guild_id=self.guild_id,
+                channel_id=channel.id,
+                self_mute=self._self_mute,
+                self_deaf=self._self_deaf,
+            )
+
+            loop = asyncio.get_running_loop()
+            deadline = loop.time() + timeout
+            while self.channel_id != channel.id:
+                remaining = deadline - loop.time()
+                if remaining <= 0:
+                    raise TimeoutError(f"Discord did not move the bot to channel {channel.id}")
+                self._update_event.clear()
+                with contextlib.suppress(TimeoutError):
+                    await asyncio.wait_for(self._update_event.wait(), remaining)
+        except BaseException:
+            # A move that never happened must not leave the target behind, a
+            # later 4022 would otherwise be ignored as part of it
+            if self.channel_id != channel.id:
+                self._move_target_channel_id = None
+                self._move_server_update_received = False
             raise

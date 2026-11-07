@@ -372,7 +372,8 @@ class ExponentialBackoff:
 
     def delay(self) -> float:
         """ Return the next backoff delay and advance the internal exponent. """
-        self._exp += 1
+        # Capped so a long run of calls without reset() can't overflow the float maths
+        self._exp = min(self._exp + 1, 64)
         value = min(self.base * (2 ** (self._exp - 1)), self.max_delay)
 
         if self.jitter:

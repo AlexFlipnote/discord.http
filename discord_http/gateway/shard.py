@@ -1164,8 +1164,7 @@ class Shard:
         self._send_dispatch(event_name, guild)
 
     def _parse_voice_state_update(self, data: dict) -> None:
-        payload = self.parser.voice_state_update(data)
-
+        # The voice client goes first, so a cache parsing error can't stall its handshake
         bot_user = self.bot.application.bot if self.bot.application else None
         if (
             bot_user is not None
@@ -1174,17 +1173,25 @@ class Shard:
         ):
             vc = self.bot.get_voice_client(int(data["guild_id"]))
             if vc is not None:
-                vc.on_voice_state_update(data)
+                try:
+                    vc.on_voice_state_update(data)
+                except Exception:
+                    _log.exception(f"Voice client for guild {data['guild_id']} failed to handle a voice state update")
+
+        payload = self.parser.voice_state_update(data)
 
         if self.bot.has_any_dispatch("voice_state_update"):
             self._send_dispatch("voice_state_update", *payload)
 
     def _parse_voice_server_update(self, data: dict) -> None:
-        (payload,) = self.parser.voice_server_update(data)
-
         vc = self.bot.get_voice_client(int(data["guild_id"]))
         if vc is not None:
-            vc.on_voice_server_update(data)
+            try:
+                vc.on_voice_server_update(data)
+            except Exception:
+                _log.exception(f"Voice client for guild {data['guild_id']} failed to handle a voice server update")
+
+        (payload,) = self.parser.voice_server_update(data)
 
         if self.bot.has_any_dispatch("voice_server_update"):
             self._send_dispatch("voice_server_update", payload)

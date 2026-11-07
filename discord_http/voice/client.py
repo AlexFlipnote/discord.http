@@ -165,26 +165,32 @@ class VoiceClient:
         await self.connection.close_transport()
         self.bot._remove_voice_client(self.guild_id)
 
-    async def move_to(self, channel: "PartialChannel | int") -> None:
+    async def move_to(self, channel: "PartialChannel | int", *, timeout: float = 10.0) -> None:
         """
         Move to a different voice channel.
+
+        Returns once Discord confirms the move, the voice connection then follows on its own.
 
         Parameters
         ----------
         channel
             The channel to move to, either a channel object or its ID.
+        timeout
+            How long to wait for Discord to confirm the move, in seconds.
 
         Raises
         ------
-        `RuntimeError`
+        RuntimeError
             If the voice client is not connected.
+        TimeoutError
+            If Discord didn't move the bot, for example without permission to join the channel.
         """
         if not self.is_connected():
             raise RuntimeError("Not connected to voice")
 
         if isinstance(channel, int):
             channel = self.bot.get_partial_channel(channel, guild_id=self.guild_id)
-        await self.connection.move_to(channel)
+        await self.connection.move_to(channel, timeout=timeout)
         self.channel = channel
 
     def on_voice_state_update(self, data: dict) -> None:
@@ -283,7 +289,7 @@ class VoiceClient:
 
         Raises
         ------
-        `RuntimeError`
+        RuntimeError
             If the voice client is not connected.
         """
         from .player import AudioPlayer, _resolve_source
