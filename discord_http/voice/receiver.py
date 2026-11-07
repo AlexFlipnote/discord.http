@@ -255,7 +255,7 @@ class VoiceReceiver:
         # maps the SSRC to a user. If the mapping has not arrived yet, drop the
         # packet rather than passing the still-encrypted payload along as if it
         # were plain Opus; losing a few leading frames is acceptable.
-        if not connection.can_encrypt():
+        if not connection.can_decrypt():
             # End-to-end encryption is negotiated but our session isn't ready
             # (joining, or a group change), these frames are still ciphertext
             if connection.is_undecryptable_dave_frame(payload):

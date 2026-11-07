@@ -95,8 +95,12 @@ class DaveManager:
         return str(code) if code is not None else None
 
     def can_encrypt(self) -> bool:
-        """ Whether end-to-end encryption is currently active and usable. """
-        return self._version > 0 and self._session is not None and self.ready
+        """ Whether outgoing audio is end-to-end encrypted, which starts once a transition is executed. """
+        return self._version > 0 and self._session is not None and bool(self._session.can_encrypt)
+
+    def can_decrypt(self) -> bool:
+        """ Whether incoming audio can be end-to-end decrypted, which starts once a transition is prepared. """
+        return self._version > 0 and self.ready
 
     def is_undecryptable(self, opus: bytes) -> bool:
         """
@@ -167,11 +171,14 @@ class DaveManager:
             )
 
         try:
-            self._session = davey.DaveSession(
-                version,
-                self._connection.user_id,
-                channel_id,
-            )
+            if self._session is not None:
+                # Keeps the current keys until the next transition replaces them,
+                # so audio stays encrypted while the new group forms
+                self._session.reinit(version, self._connection.user_id, channel_id)
+            else:
+                self._session = davey.DaveSession(version, self._connection.user_id, channel_id)
+                if self._external_sender is not None:
+                    self._apply_external_sender()
         except Exception as exc:
             # Reset the version too: leaving it non-zero would make can_encrypt()
             # depend solely on a session that does not exist, and the encrypt
@@ -181,9 +188,6 @@ class DaveManager:
             self._session = None
             self._version = 0
             return
-
-        if self._external_sender is not None:
-            self._apply_external_sender()
 
         await self._send_key_package()
 
@@ -251,7 +255,7 @@ class DaveManager:
         -------
             The decrypted frame, or the input unchanged when E2EE is not active.
         """
-        if not self.can_encrypt() or self._session is None or davey is None:
+        if not self.can_decrypt() or self._session is None or davey is None:
             return opus
 
         try:
@@ -343,41 +347,74 @@ class DaveManager:
                 _log.debug(f"Unhandled DAVE JSON opcode {opcode}")
 
     async def _handle_prepare_transition(self, data: dict) -> None:
-        """ Handle PREPARE_TRANSITION (21): record the pending transition and acknowledge. """
+        """ Handle PREPARE_TRANSITION (21): prepare the session's keys for the transition and acknowledge it. """
         transition_id = int(data.get("transition_id", 0) or 0)
         version = int(data.get("protocol_version", 0) or 0)
-        self._pending_transitions[transition_id] = version
 
-        if transition_id == 0:
-            await self._execute_transition(transition_id, version)
-            return
-
-        if version == 0:
+        if version == 0 and transition_id != 0:
             # Members that already downgraded send plaintext before our
             # EXECUTE_TRANSITION arrives, accept it instead of dropping it
             self.set_passthrough_mode(True, _DOWNGRADE_PASSTHROUGH_EXPIRY)
 
+        try:
+            await self._prepare_transition(transition_id, version)
+        except Exception as exc:
+            _log.warning(f"Failed to prepare DAVE transition {transition_id}: {exc}")
+
+    async def _prepare_transition(self, transition_id: int, version: int) -> None:
+        """
+        Prepare a transition on the session, and acknowledge it unless it applies straight away.
+
+        Decryption keys switch here, the encryption key only once the
+        transition is executed, so everyone moves to the new key together.
+
+        Parameters
+        ----------
+        transition_id
+            The transition to prepare, ``0`` applies it immediately.
+        version
+            The protocol version being transitioned to.
+        """
+        if self._session is not None:
+            self._session.prepare_transition(transition_id, version)
+
+        if transition_id == 0:
+            self._apply_transition(transition_id, version)
+            return
+
+        self._pending_transitions[transition_id] = version
         socket = self._connection.socket
         if socket is not None:
             await socket.send_transition_ready(transition_id)
 
     async def _handle_execute_transition(self, data: dict) -> None:
-        """ Handle EXECUTE_TRANSITION (22): apply the pending version and passthrough state. """
+        """ Handle EXECUTE_TRANSITION (22): switch to the prepared transition's encryption key. """
         transition_id = int(data.get("transition_id", 0) or 0)
 
-        version = self._pending_transitions.get(transition_id)
-        if version is not None:
-            await self._execute_transition(transition_id, version)
+        version = self._pending_transitions.pop(transition_id, None)
+        if version is None:
+            _log.debug(f"Received EXECUTE_TRANSITION for unknown transition {transition_id}")
             return
 
-        _log.debug(f"Received EXECUTE_TRANSITION for unknown transition {transition_id}")
+        if self._session is not None:
+            self._session.execute_transition(transition_id)
 
-    async def _execute_transition(self, transition_id: int, version: int) -> None:
-        """ Apply a transition: switch protocol version and update passthrough mode. """
+        self._apply_transition(transition_id, version)
+
+    def _apply_transition(self, transition_id: int, version: int) -> None:
+        """
+        Record that a transition took effect.
+
+        Parameters
+        ----------
+        transition_id
+            The transition that took effect.
+        version
+            The protocol version now in use.
+        """
         self._version = version
         self._connection.dave_protocol_version = version
         self.set_passthrough_mode(version == 0)
-        self._pending_transitions.pop(transition_id, None)
         if transition_id != 0:
             self._last_transition_id = transition_id
         _log.debug(f"Executed DAVE transition {transition_id} to version {version}")
@@ -434,12 +471,12 @@ class DaveManager:
             else davey.ProposalsOperationType.revoke
         )
 
-        # Only accept proposals adding users Discord told us are in the call,
-        # that is what stops the voice server quietly adding someone to the group
-        expected_user_ids = [*self._connection.connected_user_ids, self._connection.user_id]
-
         try:
-            result = self._session.process_proposals(operation_type, proposals, expected_user_ids=expected_user_ids)
+            result = self._session.process_proposals(
+                operation_type,
+                proposals,
+                expected_user_ids=self._recognized_user_ids()
+            )
         except Exception as exc:
             # No transition to report yet, the commit that follows will fail
             # too and recover with its transition id
@@ -465,19 +502,16 @@ class DaveManager:
         commit = payload[2:]
 
         try:
-            self._session.process_commit(commit)
+            if not self._session.process_commit(commit):
+                # No group yet or nothing queued, davey says the commit isn't for us
+                _log.debug(f"Ignored MLS commit for transition {transition_id}")
+                return
         except Exception as exc:
             _log.warning(f"Failed to process MLS commit: {exc}")
             await self._recover_from_invalid_commit(transition_id)
             return
 
-        self._reinitializing = False
-
-        if transition_id != 0:
-            self._pending_transitions[transition_id] = self._pending_transition_version(transition_id)
-            socket = self._connection.socket
-            if socket is not None:
-                await socket.send_transition_ready(transition_id)
+        await self._prepare_joined_transition(transition_id)
 
     async def _handle_welcome(self, payload: bytes) -> None:
         """
@@ -493,32 +527,39 @@ class DaveManager:
         welcome = payload[2:]
 
         try:
-            self._session.process_welcome(welcome)
+            self._session.process_welcome(welcome, recognized_user_ids=self._recognized_user_ids())
         except Exception as exc:
             _log.warning(f"Failed to process MLS welcome: {exc}")
             await self._recover_from_invalid_commit(transition_id)
             return
 
+        await self._prepare_joined_transition(transition_id)
+
+    async def _prepare_joined_transition(self, transition_id: int) -> None:
+        """
+        Prepare the transition for a commit or welcome that applied.
+
+        Parameters
+        ----------
+        transition_id
+            The transition the commit or welcome belongs to.
+        """
+        if self._session is None:
+            return
+
         self._reinitializing = False
 
-        if transition_id != 0:
-            self._pending_transitions[transition_id] = self._pending_transition_version(transition_id)
-            socket = self._connection.socket
-            if socket is not None:
-                await socket.send_transition_ready(transition_id)
+        try:
+            await self._prepare_transition(transition_id, int(self._session.protocol_version))
+        except Exception as exc:
+            _log.warning(f"Failed to prepare DAVE transition {transition_id}: {exc}")
+            await self._recover_from_invalid_commit(transition_id)
 
-    def _pending_transition_version(self, transition_id: int) -> int:
-        """
-        Resolve the protocol version to record for a transition.
-
-        The transition is driven by an incoming commit/welcome. When
-        ``DAVE_PREPARE_TRANSITION`` already recorded the negotiated target
-        version for this ``transition_id``, preserve it so the later
-        ``EXECUTE_TRANSITION`` applies the negotiated epoch rather than the
-        current version. Otherwise (no matching pending transition, e.g. the
-        commit/welcome arrived first) fall back to the current version.
-        """
-        return self._pending_transitions.get(transition_id, self._version)
+    def _recognized_user_ids(self) -> list[int]:
+        """ The users allowed in the MLS group: everyone Discord reported in the call, plus us. """
+        # Checking proposals and welcomes against this is what stops the voice
+        # server quietly adding someone to the group
+        return [*self._connection.connected_user_ids, self._connection.user_id]
 
     async def _recover_from_invalid_commit(self, transition_id: int) -> None:
         """

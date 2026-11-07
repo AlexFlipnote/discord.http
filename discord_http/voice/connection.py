@@ -1121,13 +1121,16 @@ class VoiceConnection:
         await self.dave_session.reinit(self.dave_protocol_version)
 
     def can_encrypt(self) -> bool:
-        """ Whether a DAVE session is ready to encrypt Opus payloads. """
-        # Delegate rather than re-deriving: DaveManager also requires a non-zero
-        # protocol version, so after an EXECUTE_TRANSITION down to version 0 the
-        # session is still alive and ready but nothing is being encrypted. The
-        # receiver drops unmapped-SSRC packets based on this, so disagreeing here
-        # would drop plain Opus.
+        """ Whether outgoing Opus payloads are end-to-end encrypted. """
         return self.dave_session is not None and self.dave_session.can_encrypt()
+
+    def can_decrypt(self) -> bool:
+        """ Whether incoming Opus payloads are end-to-end encrypted and can be decrypted. """
+        # Delegate rather than re-deriving: DaveManager also requires a non-zero
+        # protocol version, so after a transition down to version 0 nothing is
+        # decrypted. The receiver drops unmapped-SSRC packets based on this, so
+        # disagreeing here would drop plain Opus.
+        return self.dave_session is not None and self.dave_session.can_decrypt()
 
     def dave_encrypt_opus(self, opus: bytes) -> bytes:
         """

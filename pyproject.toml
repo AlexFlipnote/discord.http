@@ -46,7 +46,7 @@ docs = [
     "sphinx-autodoc-typehints>=3.2.0",
 ]
 voice = [
-    "davey>=0.1.0",
+    "davey>=0.2.0,<0.3",
 ]
 
 [tool.setuptools]
