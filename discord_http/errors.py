@@ -16,6 +16,7 @@ __all__ = (
     "CommandOnCooldown",
     "DiscordException",
     "DiscordServerError",
+    "FFmpegError",
     "Forbidden",
     "HTTPException",
     "InvalidMember",
@@ -39,6 +40,10 @@ class OpusError(DiscordException):
 
 class OpusNotLoaded(DiscordException):
     """ Raised when an Opus operation is attempted but libopus is not available. """
+
+
+class FFmpegError(DiscordException):
+    """ Raised when ffmpeg exits with an error while producing audio. """
 
 
 class VoiceConnectionClosed(DiscordException):

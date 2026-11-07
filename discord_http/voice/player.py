@@ -1,7 +1,9 @@
 import abc
 import asyncio
+import contextlib
 import io
 import logging
+import math
 import os
 import shlex
 import shutil
@@ -11,8 +13,10 @@ from collections import deque
 from collections.abc import AsyncIterable, Callable
 from typing import TYPE_CHECKING
 
+from ..errors import FFmpegError
 from .oggparse import _HEADER_STRUCT, _OGG_MAGIC, OggPage
 from .opus import OPUS_SILENCE
+from .sinks import _schedule_if_awaitable
 
 if TYPE_CHECKING:
     from .client import VoiceClient
@@ -40,6 +44,16 @@ _OGG_READ_CHUNK = 8192
 _INT16_MIN = -32768
 _INT16_MAX = 32767
 
+# How many trailing lines of ffmpeg's stderr to keep for error messages
+_STDERR_TAIL_LINES = 10
+
+# Falling this far behind the pacing schedule (a slow source) re-anchors it
+# instead of sending the backlog in one burst, which Discord would mostly drop
+_MAX_PACING_LAG = 0.2
+
+# Keeps ffmpeg reaping tasks alive after their source is gone
+_reap_tasks: set[asyncio.Task] = set()
+
 
 class AudioSource(abc.ABC):
     """ An abstract audio source yielding one 20ms frame per :meth:`read` (Opus packet or 3840-byte s16le PCM). """
@@ -66,7 +80,12 @@ class PCMAudio(AudioSource):
 
     async def read(self) -> bytes:
         """ Read one 3840-byte PCM frame, or empty bytes at end of stream. """
-        ret = self.stream.read(FRAME_SIZE)
+        if isinstance(self.stream, io.BytesIO):
+            ret = self.stream.read(FRAME_SIZE)
+        else:
+            # Off the loop, a real file or slow stream would stall pacing and heartbeats
+            ret = await asyncio.to_thread(self.stream.read, FRAME_SIZE)
+
         if len(ret) != FRAME_SIZE:
             return b""
         return ret
@@ -98,6 +117,9 @@ class PCMVolumeTransformer(AudioSource):
         data = await self.original.read()
         if not data:
             return b""
+
+        if math.isclose(self._volume, 1.0):
+            return data
 
         samples = array("h")
         samples.frombytes(data)
@@ -135,8 +157,12 @@ class _FFmpegAudio(AudioSource):
 
         self._process: asyncio.subprocess.Process | None = None
         self._stdin_task: asyncio.Task[None] | None = None
+        self._stderr_task: asyncio.Task[None] | None = None
         self._stdout: asyncio.StreamReader | None = None
-        self._reap_task: asyncio.Task[None] | None = None
+        self._stderr_tail: deque[str] = deque(maxlen=_STDERR_TAIL_LINES)
+        self._stdin_error: Exception | None = None
+        self._closed = False
+        self._finished = False
 
     async def _spawn(self) -> None:
         """ Launch the ffmpeg subprocess and start the stdin pump if piping. """
@@ -155,12 +181,61 @@ class _FFmpegAudio(AudioSource):
             *self._args,
             stdin=stdin,
             stdout=asyncio.subprocess.PIPE,
-            stderr=asyncio.subprocess.DEVNULL,
+            stderr=asyncio.subprocess.PIPE,
         )
         self._stdout = self._process.stdout
+        self._stderr_task = asyncio.create_task(self._read_stderr())
 
         if self._pipe:
             self._stdin_task = asyncio.create_task(self._pump_stdin())
+
+    async def _read_stderr(self) -> None:
+        """ Keep the last lines of ffmpeg's stderr, and keep the pipe drained so ffmpeg never blocks on it. """
+        process = self._process
+        if process is None or process.stderr is None:
+            return
+
+        while line := await process.stderr.readline():
+            text = line.decode("utf-8", "replace").strip()
+            if text:
+                self._stderr_tail.append(text)
+
+    async def _finish(self) -> None:
+        """
+        Check how ffmpeg ended once its output is exhausted.
+
+        Raises
+        ------
+        FFmpegError
+            - If ffmpeg exited with an error
+            - If feeding it the input failed
+        """
+        if self._finished:
+            return
+        self._finished = True
+
+        process = self._process
+        if process is None:
+            return
+
+        try:
+            returncode = await asyncio.wait_for(process.wait(), 5)
+        except TimeoutError:
+            # Closed its output but kept running, cleanup() kills it
+            return
+
+        if self._stderr_task is not None:
+            with contextlib.suppress(Exception, asyncio.CancelledError):
+                await asyncio.wait_for(self._stderr_task, 1)
+
+        if self._stdin_error is not None:
+            raise FFmpegError(f"Failed to feed audio to ffmpeg: {self._stdin_error!r}") from self._stdin_error
+
+        if returncode != 0:
+            message = f"ffmpeg exited with code {returncode}"
+            if self._stderr_tail:
+                message += ": " + " | ".join(self._stderr_tail)
+            raise FFmpegError(message)
 
     async def _pump_stdin(self) -> None:
         """ Copy the piped source into ffmpeg stdin, then close it. """
@@ -185,6 +260,10 @@ class _FFmpegAudio(AudioSource):
         except (BrokenPipeError, ConnectionResetError):
             # ffmpeg may exit early (e.g. on stop); nothing more to feed.
             pass
+        except Exception as exc:
+            # The user's stream failed, ffmpeg only sees its input end early, so
+            # keep the error for _finish() to report through ``after``
+            self._stdin_error = exc
         finally:
             try:
                 stdin.close()
@@ -193,9 +272,13 @@ class _FFmpegAudio(AudioSource):
 
     def cleanup(self) -> None:
         """ Terminate the ffmpeg subprocess and cancel the stdin pump. """
-        if self._stdin_task is not None and not self._stdin_task.done():
-            self._stdin_task.cancel()
-            self._stdin_task = None
+        self._closed = True
+
+        for task in (self._stdin_task, self._stderr_task):
+            if task is not None and not task.done():
+                task.cancel()
+        self._stdin_task = None
+        self._stderr_task = None
 
         process = self._process
         if process is not None:
@@ -205,41 +288,47 @@ class _FFmpegAudio(AudioSource):
                 except ProcessLookupError:
                     pass
 
-            # Close the subprocess transport so its stdio pipe transports are
-            # released deterministically. On the Windows Proactor event loop an
-            # unclosed pipe transport otherwise triggers a ResourceWarning
-            # ("unclosed transport" / "I/O operation on closed pipe") when it is
-            # finalized by the garbage collector.
-            transport = getattr(process, "_transport", None)
-            if transport is not None:
-                try:
-                    transport.close()
-                except Exception:
-                    pass
-
-            # Reap the process so the OS releases it and the pipe transports
-            # finish closing. ``cleanup`` is synchronous, so schedule the wait on
-            # the running loop when there is one (there is none during a hard
-            # interpreter shutdown, where closing the transport above suffices).
+            # Reap the process before closing its transport: under uvloop, closing
+            # the transport first stops libuv watching the child, which then stays
+            # a zombie. ``cleanup`` is synchronous, so the wait runs as a task
             try:
                 loop = asyncio.get_running_loop()
             except RuntimeError:
                 loop = None
+
             if loop is not None:
-                # Keep a reference so the fire-and-forget reaping task is not
-                # garbage-collected before it completes.
-                self._reap_task = loop.create_task(self._reap_process(process))
+                task = loop.create_task(self._reap_process(process))
+                _reap_tasks.add(task)
+                task.add_done_callback(_reap_tasks.discard)
+            else:
+                # Hard interpreter shutdown, nothing left to wait with
+                self._close_transport(process)
 
         self._process = None
         self._stdout = None
 
     @staticmethod
-    async def _reap_process(process: "asyncio.subprocess.Process") -> None:
-        """ Await the ffmpeg subprocess so it is fully reaped after termination. """
+    def _close_transport(process: "asyncio.subprocess.Process") -> None:
+        """
+        Close the subprocess transport so its stdio pipes are released.
+
+        On the Windows Proactor event loop an unclosed pipe transport otherwise
+        triggers a ResourceWarning when the garbage collector finalizes it.
+        """
+        transport = getattr(process, "_transport", None)
+        if transport is not None:
+            with contextlib.suppress(Exception):
+                transport.close()
+
+    @classmethod
+    async def _reap_process(cls, process: "asyncio.subprocess.Process") -> None:
+        """ Wait for the killed ffmpeg to exit, then release its pipes. """
         try:
-            await process.wait()
+            await asyncio.wait_for(process.wait(), 5)
         except Exception:
             pass
+        finally:
+            cls._close_transport(process)
 
 
 class FFmpegPCMAudio(_FFmpegAudio):
@@ -265,16 +354,23 @@ class FFmpegPCMAudio(_FFmpegAudio):
 
     async def read(self) -> bytes:
         """ Read one 3840-byte PCM frame from ffmpeg, or empty bytes at EOF. """
+        if self._closed:
+            return b""
+
         if self._stdout is None:
             await self._spawn()
 
-        assert self._stdout is not None
+        stdout = self._stdout
+        if stdout is None:
+            return b""
+
         try:
-            return await self._stdout.readexactly(FRAME_SIZE)
+            return await stdout.readexactly(FRAME_SIZE)
         except asyncio.IncompleteReadError:
             # End of stream: discard any trailing partial frame and signal EOF.
             # The contract requires exactly FRAME_SIZE bytes or empty bytes; a
             # short PCM frame would be mis-encoded by libopus downstream.
+            await self._finish()
             return b""
 
 
@@ -314,8 +410,13 @@ class FFmpegOpusAudio(_FFmpegAudio):
 
     async def _fill_buffer(self) -> bool:
         """ Read one chunk from ffmpeg stdout into the buffer, returning ``False`` at end of stdout. """
-        assert self._stdout is not None
-        chunk = await self._stdout.read(_OGG_READ_CHUNK)
+        stdout = self._stdout
+        if stdout is None:
+            # cleanup() ran while a read was in flight
+            self._eof = True
+            return False
+
+        chunk = await stdout.read(_OGG_READ_CHUNK)
         if not chunk:
             self._eof = True
             return False
@@ -352,6 +453,9 @@ class FFmpegOpusAudio(_FFmpegAudio):
 
     async def read(self) -> bytes:
         """ Read one Opus packet from ffmpeg's Ogg stream, or empty bytes at EOF. """
+        if self._closed:
+            return b""
+
         if self._stdout is None:
             await self._spawn()
 
@@ -360,6 +464,8 @@ class FFmpegOpusAudio(_FFmpegAudio):
             if self._packets:
                 break
             if self._eof:
+                if not self._closed:
+                    await self._finish()
                 return b""
             await self._fill_buffer()
 
@@ -392,15 +498,52 @@ class AudioPlayer:
         self._resumed.set()
         self._end = asyncio.Event()
         self._error: Exception | None = None
+        self._started = False
 
     def start(self) -> None:
         """ Schedule the playback task on the voice client's event loop. """
         if self._task is not None:
             raise RuntimeError("Player has already been started")
         self._task = self._loop.create_task(self._run())
+        self._task.add_done_callback(self._on_task_done)
+
+    def _on_task_done(self, _task: asyncio.Task[None]) -> None:
+        """ Clean up a player that was stopped before its task ever ran. """
+        if self._started:
+            return
+
+        # A task cancelled before its first step never enters _run(), so its
+        # cleanup never ran: release the source and still tell ``after``
+        self._end.set()
+        try:
+            self.source.cleanup()
+        except Exception:
+            _log.exception("Failed to clean up the audio source")
+        self._call_after()
+
+    def _call_after(self) -> None:
+        """ Invoke ``after`` with the playback error, if any. """
+        if self.after is None:
+            if self._error is not None:
+                _log.exception("Exception in audio player", exc_info=self._error)
+            return
+
+        try:
+            result = self.after(self._error)
+        except Exception:
+            _log.exception("Error calling the after callback")
+            return
+
+        _schedule_if_awaitable(result, "after callback")
+
+    def _send_silence(self) -> None:
+        """ Send the five silence frames Discord asks for whenever audio stops, so clients don't interpolate. """
+        for _ in range(5):
+            self.voice_client.send_audio_packet(OPUS_SILENCE, encode=False)
 
     async def _run(self) -> None:
         """ Drive the playback loop with drift-corrected pacing. """
+        self._started = True
         try:
             await self.voice_client.speak(True)
 
@@ -409,7 +552,17 @@ class AudioPlayer:
 
             while not self._end.is_set():
                 if not self._resumed.is_set():
+                    self._send_silence()
+                    with contextlib.suppress(Exception):
+                        await self.voice_client.speak(False)
+
                     await self._resumed.wait()
+                    if self._end.is_set():
+                        break
+
+                    with contextlib.suppress(Exception):
+                        await self.voice_client.speak(True)
+
                     # Re-anchor pacing after a pause so we do not burst frames.
                     start = self._loop.time()
                     count = 0
@@ -432,8 +585,12 @@ class AudioPlayer:
                 self.voice_client.send_audio_packet(data, encode=not source.is_opus())
 
                 count += 1
-                deadline = start + count * self.DELAY
-                await asyncio.sleep(max(0.0, deadline - self._loop.time()))
+                now = self._loop.time()
+                delay = start + count * self.DELAY - now
+                if delay < -_MAX_PACING_LAG:
+                    start = now - count * self.DELAY
+                    delay = 0.0
+                await asyncio.sleep(max(0.0, delay))
         except Exception as exc:
             self._error = exc
         finally:
@@ -461,8 +618,7 @@ class AudioPlayer:
         try:
             if current is self or current is None:
                 try:
-                    for _ in range(5):
-                        self.voice_client.send_audio_packet(OPUS_SILENCE, encode=False)
+                    self._send_silence()
                 except Exception:
                     _log.exception("Failed to send trailing silence frames")
 
@@ -473,14 +629,7 @@ class AudioPlayer:
         finally:
             # Runs even when cancelled during speak(False), so ffmpeg never leaks
             self.source.cleanup()
-
-            if self.after is not None:
-                try:
-                    self.after(self._error)
-                except Exception:
-                    _log.exception("Error calling the after callback")
-            elif self._error is not None:
-                _log.exception("Exception in audio player", exc_info=self._error)
+            self._call_after()
 
     def stop(self) -> None:
         """ Stop playback as soon as possible and resume any paused loop. """
@@ -514,10 +663,11 @@ class AudioPlayer:
         source
             The new audio source to read from.
         """
-        self.pause()
-        self.source.cleanup()
+        # The playback loop notices the swap and discards any read still in
+        # flight on the old source, a paused player stays paused
+        old = self.source
         self.source = source
-        self.resume()
+        old.cleanup()
 
 
 AudioSourceInput = AudioSource | str | os.PathLike | bytes | bytearray | memoryview | io.IOBase | AsyncIterable[bytes]

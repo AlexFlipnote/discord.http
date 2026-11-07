@@ -285,7 +285,7 @@ class VoiceClient:
         audio
             The audio source, path, bytes, or stream to play.
         after
-            A callback invoked with any error once playback finishes.
+            A callback invoked with any error once playback finishes, it can also be ``async def``.
 
         Raises
         ------

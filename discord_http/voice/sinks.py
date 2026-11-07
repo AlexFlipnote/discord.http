@@ -1,4 +1,6 @@
 import abc
+import asyncio
+import inspect
 import io
 import logging
 import os
@@ -15,6 +17,37 @@ __all__ = (
 )
 
 _log = logging.getLogger(__name__)
+
+# Keeps tasks for async callbacks alive until they finish
+_callback_tasks: set[asyncio.Task] = set()
+
+
+def _schedule_if_awaitable(result: object, label: str) -> None:
+    """
+    Run ``result`` as a task when a callback returned an awaitable.
+
+    Lets user callbacks be ``async def``, which would otherwise be called and
+    never awaited.
+
+    Parameters
+    ----------
+    result
+        What the callback returned.
+    label
+        What the callback is, for the error log.
+    """
+    if not inspect.isawaitable(result):
+        return
+
+    async def _run() -> None:
+        try:
+            await result
+        except Exception:
+            _log.exception(f"Error in {label}")
+
+    task = asyncio.ensure_future(_run())
+    _callback_tasks.add(task)
+    task.add_done_callback(_callback_tasks.discard)
 
 
 @dataclass(slots=True)
@@ -83,7 +116,8 @@ class CallbackSink(AudioSink):
         Parameters
         ----------
         callback
-            The callable invoked as ``callback(user, data)`` for each chunk
+            The callable invoked as ``callback(user, data)`` for each chunk,
+            it can also be ``async def``
         opus
             Whether to request raw Opus payloads instead of decoded PCM
         """
@@ -105,7 +139,7 @@ class CallbackSink(AudioSink):
         data
             The voice data container holding the PCM and/or Opus payload
         """
-        self.callback(user, data)
+        _schedule_if_awaitable(self.callback(user, data), "audio sink callback")
 
 
 class WaveSink(AudioSink):
