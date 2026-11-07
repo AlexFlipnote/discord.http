@@ -30,7 +30,7 @@ class VoiceUDPProtocol(asyncio.DatagramProtocol):
 
         Parameters
         ----------
-        transport:
+        transport
             The datagram transport for this protocol.
         """
         # A DatagramProtocol is only ever driven by a DatagramTransport; the
@@ -44,7 +44,7 @@ class VoiceUDPProtocol(asyncio.DatagramProtocol):
 
         Parameters
         ----------
-        exc:
+        exc
             The exception reported by the transport.
         """
         _log.warning(f"Voice UDP error for guild {self.connection.guild_id}: {exc}")
@@ -55,7 +55,7 @@ class VoiceUDPProtocol(asyncio.DatagramProtocol):
 
         Parameters
         ----------
-        exc:
+        exc
             The exception that caused the loss, if any.
         """
         if exc is not None:
@@ -68,9 +68,9 @@ class VoiceUDPProtocol(asyncio.DatagramProtocol):
 
         Parameters
         ----------
-        data:
+        data
             The raw datagram payload.
-        addr:
+        addr
             The source address of the datagram.
         """
         if len(data) < 2:
@@ -107,7 +107,7 @@ class VoiceUDPProtocol(asyncio.DatagramProtocol):
 
         Parameters
         ----------
-        ssrc:
+        ssrc
             The SSRC assigned by the voice gateway.
 
         Returns
@@ -151,11 +151,11 @@ async def create_udp(
 
     Parameters
     ----------
-    connection:
+    connection
         The voice connection that owns the new protocol.
-    ip:
+    ip
         The voice server IP address to connect to.
-    port:
+    port
         The voice server UDP port to connect to.
 
     Returns

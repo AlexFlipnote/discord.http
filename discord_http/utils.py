@@ -350,11 +350,11 @@ class ExponentialBackoff:
 
     Parameters
     ----------
-    base:
+    base
         The base delay, in seconds, used as the multiplier for the exponent.
-    max_delay:
+    max_delay
         The maximum delay, in seconds, that any single call may return.
-    jitter:
+    jitter
         Whether to apply random jitter to each returned delay.
     """
 
@@ -371,14 +371,7 @@ class ExponentialBackoff:
         self._exp: int = 0
 
     def delay(self) -> float:
-        """
-        Return the next backoff delay and advance the internal exponent.
-
-        Returns
-        -------
-            The next delay, in seconds, capped at :attr:`max_delay` and
-            optionally jittered.
-        """
+        """ Return the next backoff delay and advance the internal exponent. """
         self._exp += 1
         value = min(self.base * (2 ** (self._exp - 1)), self.max_delay)
 

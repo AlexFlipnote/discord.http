@@ -23,36 +23,7 @@ _HEADER_STRUCT = struct.Struct("<xBQIIIB")
 
 
 class OggPage:
-    """
-    A single parsed Ogg page.
-
-    The page is read eagerly from ``stream``, which must be positioned right
-    after a found ``b"OggS"`` capture pattern. The fixed 23-byte header is read
-    via :class:`struct.Struct`, followed by the ``page_segments`` segment table
-    and the page body.
-
-    Reassembly of packets that may span pages is left to the caller; this
-    class only exposes the raw segment table and body, plus a convenience
-    :meth:`iter_packets` that walks the lacing values for a single page.
-
-    Attributes
-    ----------
-    header_type:
-        The page header type bitfield. Bit ``0x01`` means this page is a
-        continuation of a packet from the previous page.
-    granule_position:
-        The granule position of the page (codec-defined sample counter).
-    bitstream_serial_number:
-        The serial number identifying the logical bitstream.
-    page_sequence_number:
-        The monotonically increasing page sequence number.
-    crc_checksum:
-        The CRC checksum stored in the page header (not verified).
-    segtable:
-        The raw segment table (lacing values) as ``bytes``.
-    data:
-        The raw page body, whose length equals the sum of the lacing values.
-    """
+    """ A single Ogg page, read from a stream positioned right after the ``OggS`` capture pattern. """
 
     __slots__ = (
         "bitstream_serial_number",
@@ -70,20 +41,39 @@ class OggPage:
             raise ValueError("Incomplete Ogg page header")
 
         (
-            self.header_type,
-            self.granule_position,
-            self.bitstream_serial_number,
-            self.page_sequence_number,
-            self.crc_checksum,
+            header_type,
+            granule_position,
+            bitstream_serial_number,
+            page_sequence_number,
+            crc_checksum,
             page_segments,
         ) = _HEADER_STRUCT.unpack(header)
 
-        self.segtable = stream.read(page_segments)
+        self.header_type: int = header_type
+        """ The page header type bitfield, bit ``0x01`` means the page continues a packet from the previous page. """
+
+        self.granule_position: int = granule_position
+        """ The granule position of the page (codec-defined sample counter). """
+
+        self.bitstream_serial_number: int = bitstream_serial_number
+        """ The serial number identifying the logical bitstream. """
+
+        self.page_sequence_number: int = page_sequence_number
+        """ The monotonically increasing page sequence number. """
+
+        self.crc_checksum: int = crc_checksum
+        """ The CRC checksum stored in the page header (not verified). """
+
+        self.segtable: bytes = stream.read(page_segments)
+        """ The raw segment table (lacing values). """
+
         if len(self.segtable) < page_segments:
             raise ValueError("Incomplete Ogg page segment table")
 
         body_length = sum(self.segtable)
-        self.data = stream.read(body_length)
+        self.data: bytes = stream.read(body_length)
+        """ The raw page body, whose length equals the sum of the lacing values. """
+
         if len(self.data) < body_length:
             raise ValueError("Incomplete Ogg page body")
 
@@ -95,11 +85,6 @@ class OggPage:
         ``True`` when the accumulated chunk terminates a packet within this page
         (the lacing value was ``0-254``) and ``False`` when the packet continues
         into the next page (the final lacing value was exactly ``255``).
-
-        Yields
-        ------
-        tuple[bytes, bool]
-            A chunk of packet data and whether it completes the packet.
         """
         offset = 0
         partial = bytearray()

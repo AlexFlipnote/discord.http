@@ -87,7 +87,7 @@ class VoiceSocket:
 
         Parameters
         ----------
-        resume:
+        resume
             Whether to RESUME (op 7) an existing session rather than IDENTIFY (op 0).
         """
         self._closing = False
@@ -157,7 +157,7 @@ class VoiceSocket:
 
         Parameters
         ----------
-        raw:
+        raw
             The raw JSON text frame received from the voice gateway.
         """
         payload: dict = orjson.loads(raw)
@@ -221,7 +221,7 @@ class VoiceSocket:
 
         Parameters
         ----------
-        raw:
+        raw
             The raw binary frame: ``seq(2B >H) + opcode(1B) + payload``.
         """
         if len(raw) < 3:
@@ -240,7 +240,7 @@ class VoiceSocket:
 
         Parameters
         ----------
-        coro:
+        coro
             The coroutine to run independently of the receive loop.
         """
         task = asyncio.create_task(
@@ -256,7 +256,7 @@ class VoiceSocket:
 
         Parameters
         ----------
-        coro:
+        coro
             The coroutine to await.
         """
         try:
@@ -337,7 +337,7 @@ class VoiceSocket:
 
         Parameters
         ----------
-        payload:
+        payload
             The payload to serialise and send.
         """
         if self.ws is None or self.ws.closed:
@@ -370,11 +370,11 @@ class VoiceSocket:
 
         Parameters
         ----------
-        ip:
+        ip
             The externally discovered IP address.
-        port:
+        port
             The externally discovered UDP port.
-        mode:
+        mode
             The negotiated encryption mode.
         """
         await self._send_json({
@@ -395,11 +395,11 @@ class VoiceSocket:
 
         Parameters
         ----------
-        speaking:
+        speaking
             The speaking bitflag (1 to indicate microphone audio).
-        ssrc:
+        ssrc
             The SSRC of the connection.
-        delay:
+        delay
             The voice delay, in milliseconds.
         """
         await self._send_json({
@@ -432,7 +432,7 @@ class VoiceSocket:
 
         Parameters
         ----------
-        transition_id:
+        transition_id
             The id of the transition being acknowledged.
         """
         await self._send_json({
@@ -456,9 +456,9 @@ class VoiceSocket:
 
         Parameters
         ----------
-        opcode:
+        opcode
             The voice opcode for the binary frame.
-        payload:
+        payload
             The binary payload to send after the opcode.
         """
         if self.ws is None or self.ws.closed:

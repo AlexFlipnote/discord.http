@@ -113,17 +113,17 @@ class VoiceClient:
 
         Parameters
         ----------
-        timeout:
+        timeout
             The maximum time to wait for the handshake, in seconds.
-        reconnect:
+        reconnect
             Whether to attempt reconnection on failure.
-        reconnect_on_session_invalid:
+        reconnect_on_session_invalid
             Whether to reconnect when Discord invalidates the session (close code
             4006), e.g. after the channel empties and the DAVE session is torn
             down. Defaults to ``False`` (disconnect instead of reconnecting).
-        self_deaf:
+        self_deaf
             Whether to join self-deafened.
-        self_mute:
+        self_mute
             Whether to join self-muted.
         """
         await self.connection.connect(
@@ -152,7 +152,7 @@ class VoiceClient:
 
         Parameters
         ----------
-        force:
+        force
             Whether to force the disconnect even on error.
         """
         self._stop_media()
@@ -171,7 +171,7 @@ class VoiceClient:
 
         Parameters
         ----------
-        channel:
+        channel
             The channel to move to, either a channel object or its ID.
 
         Raises
@@ -193,7 +193,7 @@ class VoiceClient:
 
         Parameters
         ----------
-        data:
+        data
             The raw voice state update payload.
         """
         self.connection.on_voice_state_update(data)
@@ -204,7 +204,7 @@ class VoiceClient:
 
         Parameters
         ----------
-        data:
+        data
             The raw voice server update payload.
         """
         self.connection.on_voice_server_update(data)
@@ -215,7 +215,7 @@ class VoiceClient:
 
         Parameters
         ----------
-        speaking:
+        speaking
             Whether the bot is speaking.
         """
         if self.connection.socket is None or self.connection.ssrc is None:
@@ -236,9 +236,9 @@ class VoiceClient:
 
         Parameters
         ----------
-        data:
+        data
             The audio payload: PCM when ``encode`` is ``True`` else a raw Opus packet.
-        encode:
+        encode
             Whether ``data`` is PCM that must be Opus-encoded first.
         """
         connection = self.connection
@@ -276,9 +276,9 @@ class VoiceClient:
 
         Parameters
         ----------
-        audio:
+        audio
             The audio source, path, bytes, or stream to play.
-        after:
+        after
             A callback invoked with any error once playback finishes.
 
         Raises
@@ -329,7 +329,7 @@ class VoiceClient:
 
         Parameters
         ----------
-        sink:
+        sink
             The audio sink to write received audio into.
         """
         self._receiver.start(sink)

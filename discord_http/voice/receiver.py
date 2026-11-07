@@ -39,7 +39,7 @@ class VoiceReceiver:
 
         Parameters
         ----------
-        voice_client:
+        voice_client
             The voice client this receiver belongs to, used to reach the
             connection (encryptor, DAVE hooks) and event loop.
         """
@@ -74,7 +74,7 @@ class VoiceReceiver:
 
         Parameters
         ----------
-        sink:
+        sink
             The sink to receive decoded PCM or raw Opus audio.
         """
         # Tear down any in-progress session so its sink is cleaned up and stale
@@ -120,13 +120,7 @@ class VoiceReceiver:
         self._dave_unmapped_drops = 0
 
     def is_listening(self) -> bool:
-        """
-        Whether a sink is currently attached.
-
-        Returns
-        -------
-            ``True`` if listening, ``False`` otherwise.
-        """
+        """ Whether a sink is currently attached. """
         return self.sink is not None
 
     def add_ssrc(self, ssrc: int, user_id: int) -> None:
@@ -135,9 +129,9 @@ class VoiceReceiver:
 
         Parameters
         ----------
-        ssrc:
+        ssrc
             The RTP synchronisation source identifier.
-        user_id:
+        user_id
             The user ID that owns the SSRC.
         """
         self._ssrc_map[ssrc] = user_id
@@ -148,7 +142,7 @@ class VoiceReceiver:
 
         Parameters
         ----------
-        user_id:
+        user_id
             The user ID to forget.
         """
         stale = [ssrc for ssrc, uid in self._ssrc_map.items() if uid == user_id]
@@ -167,7 +161,7 @@ class VoiceReceiver:
 
         Parameters
         ----------
-        ssrc:
+        ssrc
             The RTP synchronisation source identifier to decode for.
 
         Returns
@@ -190,7 +184,7 @@ class VoiceReceiver:
 
         Parameters
         ----------
-        packet:
+        packet
             The raw RTP packet as received from the voice UDP socket.
         """
         sink = self.sink
@@ -271,11 +265,11 @@ class VoiceReceiver:
 
         Parameters
         ----------
-        ssrc:
+        ssrc
             The RTP synchronisation source identifier of the sender.
-        sequence:
+        sequence
             The RTP sequence number of the packet, used to detect gaps.
-        payload:
+        payload
             The Opus payload to decode.
 
         Returns

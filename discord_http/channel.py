@@ -567,18 +567,18 @@ class PartialChannel(PartialBase):
 
         Parameters
         ----------
-        timeout:
+        timeout
             How long to wait, in seconds, for the voice handshake to complete.
-        reconnect:
+        reconnect
             Whether to automatically reconnect if the voice connection drops.
-        reconnect_on_session_invalid:
+        reconnect_on_session_invalid
             What to do when Discord invalidates the voice session (close code
             4006), which most commonly happens when the channel empties out and
             Discord tears down the DAVE/MLS session. By default (``False``) the
             bot disconnects; set to ``True`` to attempt a full reconnect instead.
-        self_deaf:
+        self_deaf
             Whether the bot should be self-deafened.
-        self_mute:
+        self_mute
             Whether the bot should be self-muted.
 
         Returns
@@ -587,13 +587,13 @@ class PartialChannel(PartialBase):
 
         Raises
         ------
-        `TypeError`
+        TypeError
             If the channel is not a voice or stage channel.
-        `ValueError`
+        ValueError
             If the channel is not associated with a guild.
-        `NotImplementedError`
+        NotImplementedError
             If the gateway is not available.
-        `RuntimeError`
+        RuntimeError
             If the bot is already connected to a voice channel in this guild.
         """
         if self.type not in (

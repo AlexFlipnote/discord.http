@@ -81,7 +81,7 @@ def _configure_lib(lib: ctypes.CDLL) -> None:
 
     Parameters
     ----------
-    lib:
+    lib
         The freshly loaded libopus shared library.
     """
     lib.opus_strerror.argtypes = [ctypes.c_int]
@@ -146,7 +146,7 @@ def load_opus(name: str | None = None) -> None:
 
     Parameters
     ----------
-    name:
+    name
         An explicit path or library name to load. When omitted, the system
         library is located with :func:`ctypes.util.find_library`.
 
@@ -208,7 +208,7 @@ def _strerror(code: int) -> str:
 
     Parameters
     ----------
-    code:
+    code
         The negative error code returned by a libopus call.
 
     Returns
@@ -235,7 +235,7 @@ def _as_ubyte_ptr(data: bytes) -> "ctypes._Pointer[ctypes.c_ubyte]":
 
     Parameters
     ----------
-    data:
+    data
         The bytes to expose to libopus.
 
     Returns
@@ -252,7 +252,7 @@ def _as_int16_ptr(data: bytes) -> "ctypes._Pointer[ctypes.c_int16]":
 
     Parameters
     ----------
-    data:
+    data
         The raw PCM bytes to expose to libopus.
 
     Returns
@@ -269,7 +269,7 @@ def _check(code: int) -> int:
 
     Parameters
     ----------
-    code:
+    code
         The integer return value of a libopus call.
 
     Returns
@@ -317,9 +317,9 @@ class Encoder:
 
         Parameters
         ----------
-        pcm:
+        pcm
             The raw signed 16-bit little-endian stereo PCM data.
-        frame_size:
+        frame_size
             The number of samples per channel in the frame.
 
         Returns
@@ -382,7 +382,7 @@ class Decoder:
 
         Parameters
         ----------
-        data:
+        data
             The Opus packet to inspect.
 
         Returns
@@ -400,7 +400,7 @@ class Decoder:
 
         Parameters
         ----------
-        data:
+        data
             The Opus packet to inspect.
 
         Returns
@@ -417,10 +417,10 @@ class Decoder:
 
         Parameters
         ----------
-        data:
+        data
             The Opus packet to decode, or ``None`` to perform packet-loss
             concealment for a single 20ms frame.
-        fec:
+        fec
             Whether to decode using forward error correction.
 
         Returns

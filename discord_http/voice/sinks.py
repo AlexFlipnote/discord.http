@@ -46,10 +46,6 @@ class AudioSink(abc.ABC):
 
         When ``False`` (the default) the receiver decodes packets to PCM
         before handing them to :meth:`write`.
-
-        Returns
-        -------
-            ``True`` if the sink consumes Opus, ``False`` for PCM
         """
         return False
 
@@ -60,9 +56,9 @@ class AudioSink(abc.ABC):
 
         Parameters
         ----------
-        user:
+        user
             The user ID the audio belongs to, or ``None`` if unknown
-        data:
+        data
             The voice data container holding the PCM and/or Opus payload
         """
         raise NotImplementedError
@@ -86,22 +82,16 @@ class CallbackSink(AudioSink):
 
         Parameters
         ----------
-        callback:
+        callback
             The callable invoked as ``callback(user, data)`` for each chunk
-        opus:
+        opus
             Whether to request raw Opus payloads instead of decoded PCM
         """
         self.callback = callback
         self.opus = opus
 
     def wants_opus(self) -> bool:
-        """
-        Whether this sink wants raw Opus payloads instead of decoded PCM.
-
-        Returns
-        -------
-            The value of the ``opus`` flag passed at construction
-        """
+        """ Whether this sink wants raw Opus payloads instead of decoded PCM. """
         return self.opus
 
     def write(self, user: int | None, data: VoiceData) -> None:
@@ -110,9 +100,9 @@ class CallbackSink(AudioSink):
 
         Parameters
         ----------
-        user:
+        user
             The user ID the audio belongs to, or ``None`` if unknown
-        data:
+        data
             The voice data container holding the PCM and/or Opus payload
         """
         self.callback(user, data)
@@ -136,7 +126,7 @@ class WaveSink(AudioSink):
 
         Parameters
         ----------
-        destination:
+        destination
             A file path or writable binary stream to receive the WAV data
         """
         self.destination = destination
@@ -144,13 +134,7 @@ class WaveSink(AudioSink):
         self._finalized = False
 
     def wants_opus(self) -> bool:
-        """
-        Whether this sink wants raw Opus payloads instead of decoded PCM.
-
-        Returns
-        -------
-            Always ``False`` as the WAV file stores PCM
-        """
+        """ Whether this sink wants raw Opus payloads instead of decoded PCM. """
         return False
 
     def _ensure_open(self) -> wave.Wave_write:
@@ -174,11 +158,11 @@ class WaveSink(AudioSink):
 
         Parameters
         ----------
-        user:
+        user
             The user ID the audio belongs to, or ``None`` if unknown (unused;
             chunks from all speakers are appended to the same WAV stream in
             arrival order, without mixing)
-        data:
+        data
             The voice data container holding the PCM payload
         """
         if data.pcm is None:

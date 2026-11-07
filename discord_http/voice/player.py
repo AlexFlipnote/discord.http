@@ -511,7 +511,7 @@ class AudioPlayer:
 
         Parameters
         ----------
-        source:
+        source
             The new audio source to read from.
         """
         self.pause()
@@ -530,7 +530,7 @@ def _resolve_source(audio: object) -> AudioSource:
 
     Parameters
     ----------
-    audio:
+    audio
         One of: an :class:`AudioSource` (returned as-is); a ``str`` or
         :class:`os.PathLike` path/URL; raw ``bytes``/``bytearray``/``memoryview``;
         a readable :class:`io.IOBase` stream; or an :class:`~collections.abc.AsyncIterable`

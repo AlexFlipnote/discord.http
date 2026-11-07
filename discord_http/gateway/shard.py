@@ -1235,13 +1235,13 @@ class Shard:
 
         Parameters
         ----------
-        guild_id:
+        guild_id
             The guild to change the voice state in.
-        channel_id:
+        channel_id
             The voice channel to connect to, or ``None`` to disconnect.
-        self_mute:
+        self_mute
             Whether the bot is self-muted.
-        self_deaf:
+        self_deaf
             Whether the bot is self-deafened.
         """
         _log.debug(f"Changing voice state in Shard {self.shard_id} for guild {guild_id} to channel {channel_id}")

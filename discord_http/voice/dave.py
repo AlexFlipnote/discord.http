@@ -86,7 +86,7 @@ class DaveManager:
 
         Parameters
         ----------
-        version:
+        version
             The negotiated DAVE protocol version. ``0`` disables end-to-end encryption.
 
         Raises
@@ -160,7 +160,7 @@ class DaveManager:
 
         Parameters
         ----------
-        enabled:
+        enabled
             ``True`` to pass media through unchanged, ``False`` to resume encryption.
         """
         if self._session is None:
@@ -174,7 +174,7 @@ class DaveManager:
 
         Parameters
         ----------
-        opus:
+        opus
             The plaintext Opus frame.
 
         Returns
@@ -191,9 +191,9 @@ class DaveManager:
 
         Parameters
         ----------
-        user_id:
+        user_id
             The user the frame originated from.
-        opus:
+        opus
             The received Opus frame.
 
         Returns
@@ -210,9 +210,9 @@ class DaveManager:
 
         Parameters
         ----------
-        opcode:
+        opcode
             The voice opcode, expected to be one of the DAVE ops 21-31.
-        payload:
+        payload
             The raw binary payload following the opcode.
         """
         match opcode:
@@ -237,9 +237,9 @@ class DaveManager:
 
         Parameters
         ----------
-        opcode:
+        opcode
             The voice opcode, expected to be one of 21, 22 or 24.
-        data:
+        data
             The decoded JSON ``d`` payload of the frame.
         """
         match opcode:
@@ -423,7 +423,7 @@ class DaveManager:
 
         Parameters
         ----------
-        result:
+        result
             The value returned by ``davey``'s proposal processing.
 
         Returns

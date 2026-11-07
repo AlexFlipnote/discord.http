@@ -31,9 +31,9 @@ class Encryptor:
 
         Parameters
         ----------
-        header:
+        header
             The unencrypted RTP header, used as the additional authenticated data.
-        plaintext:
+        plaintext
             The payload to encrypt, usually an Opus frame.
 
         Returns
@@ -63,7 +63,7 @@ class Encryptor:
 
         Parameters
         ----------
-        packet:
+        packet
             The full received packet, including the header, ciphertext, and trailing nonce counter.
 
         Returns

@@ -175,23 +175,24 @@ class VoiceConnection:
 
         Parameters
         ----------
-        timeout:
+        timeout
             The maximum time to wait for the handshake, in seconds.
-        reconnect:
+        reconnect
             Whether to attempt reconnection on failure.
-        reconnect_on_session_invalid:
+        reconnect_on_session_invalid
             Whether to reconnect when Discord invalidates the session (close code
             4006), e.g. after the channel empties and the DAVE session is torn
             down. Defaults to ``False`` (disconnect instead of reconnecting).
-        self_deaf:
+        self_deaf
             Whether to join self-deafened.
-        self_mute:
+        self_mute
             Whether to join self-muted.
 
         Raises
         ------
         RuntimeError
-            If no shard can be resolved for the guild, or DAVE is required but ``davey`` is not installed.
+            - If no shard can be resolved for the guild
+            - If DAVE is required but ``davey`` is not installed
         TimeoutError
             If the handshake does not complete within ``timeout``.
         """
@@ -225,19 +226,19 @@ class VoiceConnection:
 
         Parameters
         ----------
-        timeout:
+        timeout
             The maximum time to wait for the handshake, in seconds.
-        reconnect:
+        reconnect
             Whether to attempt reconnection on failure.
-        reconnect_on_session_invalid:
+        reconnect_on_session_invalid
             Whether to reconnect when Discord invalidates the session (close code
             4006), e.g. after the channel empties and the DAVE session is torn
             down. Defaults to ``False`` (disconnect instead of reconnecting).
-        self_deaf:
+        self_deaf
             Whether to join self-deafened.
-        self_mute:
+        self_mute
             Whether to join self-muted.
-        preserve_backoff:
+        preserve_backoff
             Whether to keep the current exponential backoff instead of resetting
             it. ``_full_reconnect`` passes ``True`` so the delay keeps growing
             across retry attempts; a fresh connect resets it.
@@ -314,7 +315,7 @@ class VoiceConnection:
 
         Parameters
         ----------
-        close_code:
+        close_code
             The websocket close code, if one was reported.
         """
         if self._closing:
@@ -334,7 +335,7 @@ class VoiceConnection:
 
         Parameters
         ----------
-        close_code:
+        close_code
             The websocket close code, if one was reported.
         """
         if (
@@ -441,7 +442,7 @@ class VoiceConnection:
 
         Parameters
         ----------
-        timeout:
+        timeout
             How long to wait for the re-handshake to complete, in seconds.
         """
         if not (self.session_id and self.token and self.endpoint):
@@ -479,7 +480,7 @@ class VoiceConnection:
 
         Parameters
         ----------
-        close_code:
+        close_code
             The close code that triggered the reconnect, for logging.
         """
         await self._close_socket()
@@ -563,7 +564,7 @@ class VoiceConnection:
 
         Parameters
         ----------
-        data:
+        data
             The raw voice state update payload.
         """
         self.session_id = data.get("session_id") or self.session_id
@@ -610,7 +611,7 @@ class VoiceConnection:
 
         Parameters
         ----------
-        data:
+        data
             The raw voice server update payload.
         """
         previous_token = self.token
@@ -688,7 +689,7 @@ class VoiceConnection:
 
         Parameters
         ----------
-        data:
+        data
             The READY payload containing ssrc, ip, port and modes.
         """
         # A READY means a fresh session, so every SSRC is newly allocated and the
@@ -725,7 +726,7 @@ class VoiceConnection:
 
         Parameters
         ----------
-        data:
+        data
             The session description payload with the secret key and mode.
         """
         secret_key = bytes(data["secret_key"])
@@ -763,7 +764,7 @@ class VoiceConnection:
 
         Parameters
         ----------
-        data:
+        data
             The speaking payload with ssrc, user_id and speaking flags.
         """
         ssrc = data.get("ssrc")
@@ -783,7 +784,7 @@ class VoiceConnection:
 
         Parameters
         ----------
-        data:
+        data
             The client disconnect payload with the user_id that left.
         """
         user_id = data.get("user_id")
@@ -796,7 +797,7 @@ class VoiceConnection:
 
         Parameters
         ----------
-        data:
+        data
             The resumed payload.
         """
         _log.debug(f"Voice connection for guild {self.guild_id} resumed")
@@ -811,9 +812,9 @@ class VoiceConnection:
 
         Parameters
         ----------
-        opcode:
+        opcode
             The voice opcode of the binary frame.
-        payload:
+        payload
             The binary payload following the opcode.
         """
         if not has_dave:
@@ -835,9 +836,9 @@ class VoiceConnection:
 
         Parameters
         ----------
-        opcode:
+        opcode
             The voice opcode of the control frame.
-        data:
+        data
             The decoded JSON ``d`` payload.
         """
         if not has_dave:
@@ -879,7 +880,7 @@ class VoiceConnection:
 
         Parameters
         ----------
-        opus:
+        opus
             The Opus payload to encrypt.
 
         Returns
@@ -896,9 +897,9 @@ class VoiceConnection:
 
         Parameters
         ----------
-        user_id:
+        user_id
             The user ID the payload was received from.
-        opus:
+        opus
             The Opus payload to decrypt.
 
         Returns
@@ -934,7 +935,7 @@ class VoiceConnection:
 
         Parameters
         ----------
-        force:
+        force
             Whether to force the disconnect even if the gateway update fails.
         """
         self._closing = True
@@ -977,7 +978,7 @@ class VoiceConnection:
 
         Parameters
         ----------
-        channel:
+        channel
             The channel to move to.
         """
         shard = self._get_shard()

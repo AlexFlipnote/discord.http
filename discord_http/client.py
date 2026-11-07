@@ -319,7 +319,7 @@ class Client:
 
         Parameters
         ----------
-        guild_id:
+        guild_id
             The guild to get the voice client for.
 
         Returns
@@ -334,9 +334,9 @@ class Client:
 
         Parameters
         ----------
-        guild_id:
+        guild_id
             The guild to register the voice client for.
-        voice_client:
+        voice_client
             The voice client to register.
         """
         self._voice_clients[guild_id] = voice_client
@@ -347,7 +347,7 @@ class Client:
 
         Parameters
         ----------
-        guild_id:
+        guild_id
             The guild to remove the voice client for.
         """
         self._voice_clients.pop(guild_id, None)
