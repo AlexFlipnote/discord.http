@@ -1878,17 +1878,18 @@ class ActionRow(Item):
         items = []
 
         for c in data.get("components", []):
+            c = dict(c)  # Don't mutate the raw payload, it may be parsed again
             cls_ = cls._cls_table[c.get("type", 2)]
-            if c.get("url", None):
+            if c.get("url"):
                 cls_ = Link
                 try:
                     del c["style"]
                 except KeyError:
                     pass
 
-            if c.get("type", None):
+            if c.get("type"):
                 del c["type"]
-            if c.get("id", None):
+            if c.get("id"):
                 del c["id"]
 
             if cls_ in cls._default_value_dropdowns:
@@ -2335,6 +2336,7 @@ class View(InteractionStorage):
         cls_table = cls._get_cls_table()
 
         def _v2_resolver(c: dict) -> Item:
+            c = dict(c)  # Don't mutate the raw payload, it may be parsed again
             raw_type = c.get("type", 1)
             cls = cls_table[raw_type]
 
@@ -2351,6 +2353,7 @@ class View(InteractionStorage):
                     )
 
                 case int(ComponentType.section):
+                    c["accessory"] = dict(c["accessory"])
                     if c["accessory"].get("type", None) == int(ComponentType.button):
                         if c["accessory"].get("type", None):
                             del c["accessory"]["type"]
