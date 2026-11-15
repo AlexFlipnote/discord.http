@@ -1032,7 +1032,7 @@ class Attachment:
         """ Whether this attachment is a voice message. """
         return self.duration_secs is not None and "voice-message" in self.url
 
-    async def fetch(self, *, use_cached: bool = False) -> bytes:
+    async def fetch(self, *, use_cached: bool = False, max_size: int | None = None) -> bytes:
         """
         Fetches the file from the attachment URL and returns it as bytes.
 
@@ -1040,6 +1040,9 @@ class Attachment:
         ----------
         use_cached
             Whether to use the cached URL or not, defaults to `False`
+        max_size
+            Refuse a response larger than this many bytes instead of buffering it.
+            Not limited by default
 
         Returns
         -------
@@ -1049,11 +1052,14 @@ class Attachment:
         ------
         HTTPException
             If the request returned anything other than 2XX
+        ValueError
+            If the attachment is larger than `max_size`
         """
         r = await self._state.http.request(
             "GET",
             self.proxy_url if use_cached else self.url,
-            res_method="read"
+            res_method="read",
+            max_size=max_size
         )
 
         if r.status not in range(200, 300):

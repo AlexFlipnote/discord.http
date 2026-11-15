@@ -195,6 +195,7 @@ class HTTPClient:
         url: str,
         *,
         res_method: ResMethodTypes | None = "text",
+        max_size: int | None = None,
         **kwargs
     ) -> HTTPResponse:
         """
@@ -210,12 +211,21 @@ class HTTPClient:
             The URL to make the request to
         res_method
             The method to use to get the response, defaults to text
+        max_size
+            Refuse a response larger than this many bytes instead of buffering it.
+            Not limited by default
         **kwargs
             The keyword arguments to pass to the aiohttp.ClientSession.request method
 
         Returns
         -------
             The response from the request
+
+        Raises
+        ------
+        ValueError
+            - Invalid HTTP method or res_method
+            - The response is larger than `max_size`
         """
         if not res_method:
             res_method = "text"
@@ -230,6 +240,10 @@ class HTTPClient:
             )
 
         async with self.session.request(method.upper(), str(url), **kwargs) as res:
+            if max_size is not None:
+                # Read through the cap once, the branches below then find the body already loaded
+                await self._read_capped(res, max_size)
+
             match res_method:
                 case "read":
                     r = await res.read()
@@ -256,6 +270,37 @@ class HTTPClient:
                 reason=res.reason,
                 headers=res.headers
             )
+
+    @staticmethod
+    async def _read_capped(res: aiohttp.ClientResponse, max_size: int) -> None:
+        """
+        Load a response body, giving up as soon as it turns out larger than allowed.
+
+        Parameters
+        ----------
+        res
+            The response to read
+        max_size
+            The largest body to accept, in bytes
+
+        Raises
+        ------
+        ValueError
+            If the body is larger than `max_size`.
+        """
+        if (res.content_length or 0) > max_size:
+            raise ValueError(f"Response is larger than max_size ({res.content_length} > {max_size} bytes)")
+
+        chunks: list[bytes] = []
+        total = 0
+        async for chunk in res.content.iter_chunked(65536):
+            total += len(chunk)
+            if total > max_size:
+                raise ValueError(f"Response is larger than max_size ({max_size} bytes)")
+            chunks.append(chunk)
+
+        # What `read()`, `text()` and `json()` return from here on
+        res._body = b"".join(chunks)
 
     async def stream_request(
         self,
