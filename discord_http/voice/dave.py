@@ -1,5 +1,6 @@
 import asyncio
 import logging
+import time
 
 from typing import TYPE_CHECKING
 
@@ -38,6 +39,16 @@ _DOWNGRADE_PASSTHROUGH_EXPIRY = 24
 # our MLS state is out of sync and ask Discord to re-add us to the group
 _DECRYPT_FAILURE_TOLERANCE = 36
 
+# Another member's frames decrypting this recently means our MLS state is fine,
+# and the member whose frames keep failing is the one sending garbage, in seconds
+_HEALTHY_WINDOW = 5.0
+
+# Shortest and longest wait between two decrypt-failure recoveries, in seconds.
+# Every recovery makes Discord rebuild the MLS group for the whole call, so a
+# member must not be able to trigger them back to back
+_RECOVERY_COOLDOWN = 30.0
+_RECOVERY_COOLDOWN_MAX = 600.0
+
 
 def max_protocol_version() -> int:
     """ The maximum DAVE protocol version this installation can negotiate (``0`` if davey is absent). """
@@ -53,12 +64,16 @@ class DaveManager:
         "_connection",
         "_decrypt_failures",
         "_external_sender",
+        "_last_success",
         "_last_transition_id",
         "_pending_transitions",
+        "_recovery_allowed_at",
+        "_recovery_cooldown",
         "_recovery_task",
         "_reinitializing",
         "_session",
         "_version",
+        "_warned_downgrade",
     )
 
     def __init__(self, connection: "VoiceConnection"):
@@ -80,6 +95,11 @@ class DaveManager:
         # user_id -> consecutive decrypt failures, only users currently failing
         self._decrypt_failures: dict[int, int] = {}
         self._recovery_task: asyncio.Task | None = None
+        # (when, who) of the last frame that decrypted
+        self._last_success: tuple[float, int] = (0.0, 0)
+        self._recovery_allowed_at: float = 0.0
+        self._recovery_cooldown: float = _RECOVERY_COOLDOWN
+        self._warned_downgrade: bool = False
 
     @property
     def ready(self) -> bool:
@@ -266,18 +286,44 @@ class DaveManager:
                 failures = self._decrypt_failures.get(user_id, 0) + 1
                 self._decrypt_failures[user_id] = failures
                 if failures > _DECRYPT_FAILURE_TOLERANCE:
-                    self._schedule_decrypt_recovery()
+                    self._schedule_decrypt_recovery(user_id)
             raise
 
         self._decrypt_failures.pop(user_id, None)
+        self._last_success = (time.monotonic(), user_id)
         return decrypted
 
-    def _schedule_decrypt_recovery(self) -> None:
-        """ Ask to be re-added to the MLS group after persistent decrypt failures. """
+    def _schedule_decrypt_recovery(self, user_id: int) -> None:
+        """
+        Ask to be re-added to the MLS group after persistent decrypt failures.
+
+        Parameters
+        ----------
+        user_id
+            The user whose frames keep failing.
+        """
         if self._reinitializing or self._last_transition_id is None:
             return
         if self._recovery_task is not None and not self._recovery_task.done():
             return
+
+        now = time.monotonic()
+        succeeded_at, succeeded_user = self._last_success
+        if succeeded_user != user_id and now - succeeded_at < _HEALTHY_WINDOW:
+            # Someone else's audio still decrypts, so the keys are right and it is
+            # this member's frames that are broken. Keep dropping them
+            self._decrypt_failures.pop(user_id, None)
+            return
+
+        if now < self._recovery_allowed_at:
+            self._decrypt_failures.pop(user_id, None)
+            return
+
+        if now - self._recovery_allowed_at > self._recovery_cooldown:
+            # It has been quiet for a while, start over from the shortest wait
+            self._recovery_cooldown = _RECOVERY_COOLDOWN
+        self._recovery_allowed_at = now + self._recovery_cooldown
+        self._recovery_cooldown = min(self._recovery_cooldown * 2, _RECOVERY_COOLDOWN_MAX)
 
         transition_id = self._last_transition_id
         _log.warning(
@@ -351,6 +397,9 @@ class DaveManager:
         transition_id = int(data.get("transition_id", 0) or 0)
         version = int(data.get("protocol_version", 0) or 0)
 
+        if self._refuses_downgrade(version):
+            return
+
         if version == 0 and transition_id != 0:
             # Members that already downgraded send plaintext before our
             # EXECUTE_TRANSITION arrives, accept it instead of dropping it
@@ -396,6 +445,10 @@ class DaveManager:
             _log.debug(f"Received EXECUTE_TRANSITION for unknown transition {transition_id}")
             return
 
+        # Prepared before encryption was up, but it would take it down now
+        if self._refuses_downgrade(version):
+            return
+
         if self._session is not None:
             self._session.execute_transition(transition_id)
 
@@ -428,10 +481,39 @@ class DaveManager:
             return
 
         version = int(data.get("protocol_version", 0) or 0)
+        if self._refuses_downgrade(version):
+            return
+
         self._connection.dave_protocol_version = version
         # A brand new group starts clean, whatever recovery was in progress
         self._reinitializing = False
         await self.reinit(version)
+
+    def _refuses_downgrade(self, version: int) -> bool:
+        """
+        Whether a change to ``version`` would drop end-to-end encryption and is not allowed.
+
+        The voice server is exactly who DAVE keeps the audio from, so it does
+        not get to turn the encryption off unless the caller opted in.
+
+        Parameters
+        ----------
+        version
+            The protocol version the voice gateway wants to move to.
+        """
+        if version > 0 or self._version <= 0:
+            return False
+        if getattr(self._connection, "allow_dave_downgrade", False):
+            return False
+
+        if not self._warned_downgrade:
+            self._warned_downgrade = True
+            _log.warning(
+                f"Refused to turn off DAVE end-to-end encryption in guild {self._connection.guild_id}, "
+                "the voice gateway asked for unencrypted audio. "
+                "Pass allow_dave_downgrade=True to connect() to allow it"
+            )
+        return True
 
     def _handle_external_sender(self, payload: bytes) -> None:
         """ Handle MLS_EXTERNAL_SENDER (25): store and register the gateway's external sender. """

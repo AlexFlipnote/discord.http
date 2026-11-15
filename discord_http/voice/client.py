@@ -106,7 +106,8 @@ class VoiceClient:
         reconnect: bool = True,
         reconnect_on_session_invalid: bool = False,
         self_deaf: bool = False,
-        self_mute: bool = False
+        self_mute: bool = False,
+        allow_dave_downgrade: bool = False
     ) -> None:
         """
         Connect to the voice channel.
@@ -125,6 +126,10 @@ class VoiceClient:
             Whether to join self-deafened.
         self_mute
             Whether to join self-muted.
+        allow_dave_downgrade
+            Whether the voice server may switch an end-to-end encrypted call back
+            to unencrypted audio. Discord requires DAVE for voice channels, so
+            this is refused by default and the call stays encrypted.
         """
         await self.connection.connect(
             timeout=timeout,
@@ -132,6 +137,7 @@ class VoiceClient:
             reconnect_on_session_invalid=reconnect_on_session_invalid,
             self_deaf=self_deaf,
             self_mute=self_mute,
+            allow_dave_downgrade=allow_dave_downgrade,
         )
 
     def _stop_media(self) -> None:
@@ -256,6 +262,11 @@ class VoiceClient:
         # DAVE end-to-end encryption applies to the Opus payload before RTP framing.
         if connection.can_encrypt():
             opus = connection.dave_encrypt_opus(opus)
+        elif connection.dave_protocol_version > 0:
+            # Negotiated but not ready yet (still joining the MLS group). Members
+            # drop unencrypted frames anyway, sending them would only show the
+            # audio to the voice server
+            return
 
         connection.sequence = (connection.sequence + 1) % (2 ** 16)
 

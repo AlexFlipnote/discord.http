@@ -560,7 +560,8 @@ class PartialChannel(PartialBase):
         reconnect: bool = True,
         reconnect_on_session_invalid: bool = False,
         self_deaf: bool = False,
-        self_mute: bool = False
+        self_mute: bool = False,
+        allow_dave_downgrade: bool = False
     ) -> "VoiceClient":
         """
         Connect to this voice channel.
@@ -580,6 +581,10 @@ class PartialChannel(PartialBase):
             Whether the bot should be self-deafened.
         self_mute
             Whether the bot should be self-muted.
+        allow_dave_downgrade
+            Whether the voice server may switch an end-to-end encrypted call back
+            to unencrypted audio. Discord requires DAVE for voice channels, so
+            this is refused by default and the call stays encrypted.
 
         Returns
         -------
@@ -624,7 +629,8 @@ class PartialChannel(PartialBase):
                 reconnect=reconnect,
                 reconnect_on_session_invalid=reconnect_on_session_invalid,
                 self_deaf=self_deaf,
-                self_mute=self_mute
+                self_mute=self_mute,
+                allow_dave_downgrade=allow_dave_downgrade
             )
         except BaseException:
             # Catch BaseException, not just Exception: a timeout or a cancelled

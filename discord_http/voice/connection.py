@@ -91,6 +91,9 @@ class VoiceConnection:
         self.dave_protocol_version: int = 0
         """ The negotiated DAVE protocol version (0 if not in use). """
 
+        self.allow_dave_downgrade: bool = False
+        """ Whether the voice server may switch an end-to-end encrypted call back to unencrypted audio. """
+
         self._state_event: asyncio.Event = asyncio.Event()
         self._server_event: asyncio.Event = asyncio.Event()
         self._ready_event: asyncio.Event = asyncio.Event()
@@ -185,7 +188,8 @@ class VoiceConnection:
         reconnect: bool = True,
         reconnect_on_session_invalid: bool = False,
         self_deaf: bool = False,
-        self_mute: bool = False
+        self_mute: bool = False,
+        allow_dave_downgrade: bool = False
     ) -> None:
         """
         Establish the full voice connection.
@@ -204,6 +208,10 @@ class VoiceConnection:
             Whether to join self-deafened.
         self_mute
             Whether to join self-muted.
+        allow_dave_downgrade
+            Whether the voice server may switch an end-to-end encrypted call back
+            to unencrypted audio. Discord requires DAVE for voice channels, so
+            this is refused by default and the call stays encrypted.
 
         Raises
         ------
@@ -221,6 +229,8 @@ class VoiceConnection:
                 "Discord requires DAVE end-to-end encryption for voice, "
                 'install it with: pip install "discord.http[voice]"'
             )
+
+        self.allow_dave_downgrade = allow_dave_downgrade
 
         await self._connect(
             timeout=timeout,

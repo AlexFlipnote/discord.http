@@ -403,6 +403,51 @@ class TestDaveRecovery(unittest.IsolatedAsyncioTestCase):
         await asyncio.sleep(0.01)
         self.assertEqual(socket.invalid_ids, [3])
 
+    async def test_recoveries_are_spaced_out(self) -> None:
+        # Each one makes Discord rebuild the group for the whole call, a member
+        # sending broken frames must not be able to cause them back to back
+        manager, socket, _ = _dave()
+        manager._last_transition_id = 3
+
+        with mock.patch("discord_http.voice.dave.davey"):
+            for _ in range(3):
+                for _ in range(40):
+                    with self.assertRaises(ValueError):
+                        manager.decrypt_opus(42, b"frame")
+                await asyncio.sleep(0.01)
+                # What a commit or welcome applying does once Discord re-added us
+                manager._reinitializing = False
+
+        self.assertEqual(socket.invalid_ids, [3])
+
+        with mock.patch("discord_http.voice.dave.davey"):
+            manager._recovery_allowed_at = 0.0
+            for _ in range(40):
+                with self.assertRaises(ValueError):
+                    manager.decrypt_opus(42, b"frame")
+        await asyncio.sleep(0.01)
+        self.assertEqual(socket.invalid_ids, [3, 3])
+
+    async def test_one_broken_sender_does_not_trigger_recovery(self) -> None:
+        manager, socket, session = _dave()
+        manager._last_transition_id = 3
+
+        def decrypt(user_id, _media_type, packet):  # noqa: ANN001, ANN202
+            if user_id == 42:
+                raise ValueError("Failed to decrypt: DecryptionFailed(DecryptionFailure)")
+            return packet
+
+        session.decrypt = decrypt  # type: ignore[method-assign]
+
+        with mock.patch("discord_http.voice.dave.davey"):
+            for _ in range(200):
+                self.assertEqual(manager.decrypt_opus(7, b"fine"), b"fine")
+                with self.assertRaises(ValueError):
+                    manager.decrypt_opus(42, b"frame")
+
+        await asyncio.sleep(0.01)
+        self.assertEqual(socket.invalid_ids, [])
+
     async def test_welcome_prepares_its_transition_and_acks(self) -> None:
         """ davey 0.2 only installs keys once the transition is prepared. """
         manager, socket, session = _dave()
@@ -454,6 +499,56 @@ class TestReceiverDropsCiphertext(unittest.TestCase):
         rx.unpack(bytes([0x80, 0x78]) + b"\x00\x01" + b"\x00" * 4 + (5).to_bytes(4, "big") + b"x")
 
         sink.write.assert_not_called()
+
+
+class TestNoPlaintextWhileDaveIsPending(unittest.TestCase):
+    """ Once DAVE is negotiated nothing goes in or out unencrypted, ready or not. """
+
+    @staticmethod
+    def _packet() -> bytes:
+        return bytes([0x80, 0x78]) + b"\x00\x01" + b"\x00" * 4 + (5).to_bytes(4, "big") + b"x"
+
+    def _receive(self, version: int) -> mock.Mock:
+        connection = mock.Mock(
+            encryptor=mock.Mock(decrypt=mock.Mock(return_value=b"plain opus")),
+            can_decrypt=mock.Mock(return_value=False),
+            dave_protocol_version=version,
+        )
+        rx = VoiceReceiver(SimpleNamespace(connection=connection))  # type: ignore[arg-type]
+        sink = mock.Mock(wants_opus=mock.Mock(return_value=True))
+        rx.start(sink)
+        rx.unpack(self._packet())
+        return sink
+
+    def test_incoming_plaintext_is_dropped(self) -> None:
+        self._receive(1).write.assert_not_called()
+
+    def test_incoming_plaintext_passes_without_dave(self) -> None:
+        self._receive(0).write.assert_called_once()
+
+    def _send(self, version: int) -> mock.Mock:
+        from discord_http.voice.client import VoiceClient
+
+        transport = mock.Mock()
+        vc = VoiceClient.__new__(VoiceClient)
+        vc.guild_id = 1
+        vc.connection = mock.Mock(
+            encryptor=mock.Mock(encrypt=mock.Mock(return_value=b"packet")),
+            transport=transport,
+            ssrc=1,
+            sequence=0,
+            timestamp=0,
+            can_encrypt=mock.Mock(return_value=False),
+            dave_protocol_version=version,
+        )
+        vc.send_audio_packet(b"\xf8\xff\xfe", encode=False)
+        return transport
+
+    def test_outgoing_audio_is_held_back(self) -> None:
+        self._send(1).sendto.assert_not_called()
+
+    def test_outgoing_audio_flows_without_dave(self) -> None:
+        self._send(0).sendto.assert_called_once()
 
 
 class TestCallbackSink(unittest.IsolatedAsyncioTestCase):

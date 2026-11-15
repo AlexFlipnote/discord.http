@@ -257,11 +257,13 @@ class VoiceReceiver:
         # were plain Opus; losing a few leading frames is acceptable.
         if not connection.can_decrypt():
             # End-to-end encryption is negotiated but our session isn't ready
-            # (joining, or a group change), these frames are still ciphertext
-            if connection.is_undecryptable_dave_frame(payload):
+            # (joining, or a group change). Encrypted frames can't be read yet,
+            # and an unencrypted one here did not come through the E2EE session,
+            # so it can't be attributed to the member it claims to be from
+            if connection.dave_protocol_version > 0:
                 self._log_failure(
                     "dave_pending",
-                    "Dropped DAVE-encrypted voice while the DAVE session is not ready",
+                    "Dropped voice while the DAVE session is not ready",
                     level=logging.DEBUG,
                 )
                 return
