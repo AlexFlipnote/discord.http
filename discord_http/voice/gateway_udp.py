@@ -23,6 +23,7 @@ class VoiceUDPProtocol(asyncio.DatagramProtocol):
         """ The UDP datagram transport, if connected. """
 
         self._discovery_future: asyncio.Future[bytes] | None = None
+        self._discovery_ssrc: int | None = None
 
     def connection_made(self, transport: asyncio.BaseTransport) -> None:
         """
@@ -76,15 +77,17 @@ class VoiceUDPProtocol(asyncio.DatagramProtocol):
         if len(data) < 2:
             return
 
-        # IP discovery response: 2-byte big-endian type 0x0002 (bytes 0-1) and a
-        # fixed 74-byte length. Checking all three avoids matching a coincidental
-        # RTP packet whose second byte happens to be 0x02.
+        # IP discovery response: 2-byte big-endian type 0x0002 (bytes 0-1), a
+        # fixed 74-byte length, and the SSRC the request was sent for. Checking
+        # all of them avoids matching a coincidental RTP packet whose second byte
+        # happens to be 0x02, or a response that answers some other request.
         if (
             data[0] == 0x00
             and data[1] == 0x02
             and len(data) >= 74
             and self._discovery_future is not None
             and not self._discovery_future.done()
+            and struct.unpack_from(">I", data, 4)[0] == self._discovery_ssrc
         ):
             self._discovery_future.set_result(data)
             return
@@ -124,6 +127,7 @@ class VoiceUDPProtocol(asyncio.DatagramProtocol):
 
         loop = asyncio.get_running_loop()
         self._discovery_future = loop.create_future()
+        self._discovery_ssrc = ssrc
 
         request = struct.pack(">HHI", 0x1, 70, ssrc) + b"\x00" * 66
         self.transport.sendto(request)
