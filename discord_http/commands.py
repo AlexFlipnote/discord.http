@@ -276,6 +276,11 @@ _COMMAND_META_ATTR = "__discord_http_command_meta__"
 
 def _get_meta(func: Callable) -> _CommandMeta:
     """ Get (or lazily create) the typed `_CommandMeta` attached to a function by decorators. """
+    # A decorator placed above `@command()` or `@group()` gets the finished object,
+    # write to the metadata it actually reads instead of one nothing looks at
+    if isinstance(func, Command):
+        return func._meta
+
     meta = getattr(func, _COMMAND_META_ATTR, None)
     if meta is None:
         meta = _CommandMeta()
@@ -610,8 +615,27 @@ class Command:
 
         return result
 
+    def _guard_chain(self) -> list["Command"]:
+        """ The groups this command sits in, outermost first, followed by the command itself. """
+        chain: list[Command] = [self]
+        parent = self.parent
+        while parent is not None:
+            chain.append(parent)
+            parent = parent.parent
+        chain.reverse()
+        return chain
+
+    def _required_permissions(self, attr: str) -> Permissions | None:
+        """ The permissions required by this command and every group above it, combined. """
+        required: Permissions | None = None
+        for cmd in self._guard_chain():
+            perms: Permissions | None = getattr(cmd._meta, attr)
+            if perms is not None:
+                required = perms if required is None else required | perms
+        return required
+
     def _has_permissions(self, ctx: "Context") -> Permissions:
-        if (perms := self._meta.has_permissions) is None:
+        if (perms := self._required_permissions("has_permissions")) is None:
             return Permissions(0)
 
         resolved_perms: Permissions | None = getattr(
@@ -619,7 +643,8 @@ class Command:
         )
 
         if resolved_perms is None:
-            return Permissions(0)
+            # Outside a guild there are no permissions to hold, so nothing is granted
+            return perms
 
         if Permissions.administrator in resolved_perms:
             return Permissions(0)
@@ -630,7 +655,7 @@ class Command:
         ))
 
     def _bot_has_permissions(self, ctx: "Context") -> Permissions:
-        if (perms := self._meta.bot_has_permissions) is None:
+        if (perms := self._required_permissions("bot_has_permissions")) is None:
             return Permissions(0)
         if Permissions.administrator in ctx.app_permissions:
             return Permissions(0)
@@ -641,32 +666,34 @@ class Command:
         ))
 
     async def _command_checks(self, ctx: "Context") -> bool:
-        for g, is_coro in self._meta.checks:
-            with ctx.benchmark.measure(f"check:{g.__name__}", internal=True):
-                if is_coro:
-                    result = await g(ctx)
-                else:
-                    result = g(ctx)
+        for cmd in self._guard_chain():
+            for g, is_coro in cmd._meta.checks:
+                with ctx.benchmark.measure(f"check:{g.__name__}", internal=True):
+                    if is_coro:
+                        result = await g(ctx)
+                    else:
+                        result = g(ctx)
 
-            if result is not True:
-                raise CheckFailed(f"Check {g.__name__} failed.")
+                if result is not True:
+                    raise CheckFailed(f"Check {g.__name__} failed.")
 
         return True
 
     async def _before_invoke(self, ctx: "Context") -> bool:
-        if self._meta.before_invoke is None:
-            return True
+        for cmd in self._guard_chain():
+            if cmd._meta.before_invoke is None:
+                continue
 
-        func, is_coro = self._meta.before_invoke
+            func, is_coro = cmd._meta.before_invoke
 
-        with ctx.benchmark.measure("before_invoke", internal=True):
-            if is_coro:
-                result = await func(ctx)
-            else:
-                result = func(ctx)
+            with ctx.benchmark.measure("before_invoke", internal=True):
+                if is_coro:
+                    result = await func(ctx)
+                else:
+                    result = func(ctx)
 
-        if result is not True:
-            raise CheckFailed("Before invoke failed.")
+            if result is not True:
+                raise CheckFailed("Before invoke failed.")
 
         return True
 
@@ -683,17 +710,17 @@ class Command:
                 func(ctx)
 
     def _cooldown_checker(self, ctx: "Context") -> None:
-        if self.cooldown is None:
-            return
+        for cmd in self._guard_chain():
+            if cmd.cooldown is None:
+                continue
 
-        with ctx.benchmark.measure("cooldown_check", internal=True):
-            current = ctx.created_at.timestamp()
-            bucket = self.cooldown.get_bucket(ctx, current)
-            retry_after = bucket.update_rate_limit(current)
+            with ctx.benchmark.measure("cooldown_check", internal=True):
+                current = ctx.created_at.timestamp()
+                bucket = cmd.cooldown.get_bucket(ctx, current)
+                retry_after = bucket.update_rate_limit(current)
 
-        if retry_after is None:
-            return  # Not rate limited, good to go
-        raise CommandOnCooldown(bucket, retry_after)
+            if retry_after is not None:
+                raise CommandOnCooldown(bucket, retry_after)
 
     async def run(
         self,
@@ -989,6 +1016,21 @@ class SubGroup(Command):
         subs = [g for g in self.subcommands.values()]
         return f"<SubGroup name='{self.name}', subcommands={subs}>"
 
+    def _adopt_meta(self, func: Callable) -> None:
+        """
+        Take over what decorators attached to the function the group was declared with.
+
+        Checks, permissions and cooldowns set on a group apply to every command inside it.
+
+        Parameters
+        ----------
+        func
+            The function decorated with `group()`
+        """
+        meta = _get_meta(func)
+        self._meta = replace(meta, choices_params=dict(meta.choices_params))
+        self.cooldown = self._meta.cooldown
+
     def command(
         self,
         name: str | None = None,
@@ -1051,6 +1093,7 @@ class SubGroup(Command):
                 description=description,
                 parent=self
             )
+            subgroup._adopt_meta(func)
             self.subcommands[subgroup.name] = subgroup
             return subgroup
 
@@ -1426,7 +1469,13 @@ def cooldown(
         raise TypeError("Key must be a BucketType")
 
     def decorator(func: Callable) -> Callable:
-        _get_meta(func).cooldown = CooldownCache(Cooldown(rate, per), type)
+        cache = CooldownCache(Cooldown(rate, per), type)
+        _get_meta(func).cooldown = cache
+
+        built: object = func
+        if isinstance(built, Command):
+            # Already built, so the copy it took of its metadata needs the rule too
+            built.cooldown = cache
         return func
 
     return decorator
@@ -1621,13 +1670,15 @@ def group(
         Whether the command group can be installed by guilds or not
     """
     def decorator(func: Callable) -> SubGroup:
-        return SubGroup(
+        subgroup = SubGroup(
             name=name or func.__name__,
             description=description,
             guild_ids=guild_ids,
             guild_install=guild_install,
             user_install=user_install
         )
+        subgroup._adopt_meta(func)
+        return subgroup
 
     return decorator
 
