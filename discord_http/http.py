@@ -52,6 +52,7 @@ _MAJOR_PARAM_ROOTS = ("guilds", "channels", "webhooks", "stage-instances")
 major_param_re = re.compile(r"^/(" + "|".join(_MAJOR_PARAM_ROOTS) + r")/(\d+)(?=/|$)")
 id_segment_re = re.compile(r"(?<=/)\d+(?=/|$)")
 _token_route_re = re.compile(r"^/(interactions|webhooks)/(\d+)/([^/]+)")
+_encoded_dot_re = re.compile(r"%2e", re.IGNORECASE)
 _one_shot_route_re = re.compile(r"^/interactions/\d+/[^/]+/callback$")
 
 
@@ -311,6 +312,7 @@ class Ratelimit:
         "in_flight",
         "key",
         "limit",
+        "log_key",
         "remaining",
         "reset_after",
     )
@@ -318,6 +320,9 @@ class Ratelimit:
     def __init__(self, key: str):
         self.key: str = key
         """ The key of the ratelimit bucket, usually in the format "METHOD /path/:id". """
+
+        self.log_key: str = key
+        """ The key as it is written to logs, with any interaction or webhook token removed. """
 
         self.bucket_hash: str | None = None
         """ Discord's own bucket identifier from the `X-RateLimit-Bucket` header, if seen yet. """
@@ -382,7 +387,7 @@ class Ratelimit:
             new_bucket_hash != self.bucket_hash
         ):
             _log.debug(
-                f"Ratelimit bucket hash changed for key '{self.key}': "
+                f"Ratelimit bucket hash changed for key '{self.log_key}': "
                 f"{self.bucket_hash!r} -> {new_bucket_hash!r}"
             )
         if new_bucket_hash:
@@ -447,7 +452,7 @@ class Ratelimit:
                     self.in_flight += 1
                     return self
 
-                _log.debug(f"Ratelimit prevented ({self.key}), waiting {max(wait_time, 0):.2f}s...")
+                _log.debug(f"Ratelimit prevented ({self.log_key}), waiting {max(wait_time, 0):.2f}s...")
 
             # Sleep outside the lock so others can at least check the state
             await asyncio.sleep(max(wait_time, 0.1) + 0.1)
@@ -668,6 +673,37 @@ class DiscordAPI:
 
         return f"{method} {normalized}"
 
+    @staticmethod
+    def _validate_path(path: str) -> None:
+        """
+        Refuse a path the HTTP client would rewrite before sending it.
+
+        Dot segments are resolved and everything after a `#` is dropped when the
+        URL is built, so a value interpolated into a route could otherwise turn
+        the request into one for a different endpoint.
+
+        Parameters
+        ----------
+        path
+            The path to make the request to
+
+        Raises
+        ------
+        ValueError
+            - If the path contains a `#`
+            - If the path has a `.` or `..` segment, encoded or not
+        """
+        if "#" in path:
+            raise ValueError("API path cannot contain '#', URL encode it first")
+
+        # Only the encoded dot is decoded here, an encoded slash stays part of its segment
+        base_path = _encoded_dot_re.sub(".", path.partition("?")[0])
+        if "." in base_path and any(
+            segment in (".", "..")
+            for segment in base_path.split("/")
+        ):
+            raise ValueError("API path cannot contain '.' or '..' segments")
+
     def _route_template(self, method: str, path: str) -> str:
         """
         Get the route "shape" for the given method and path, with every id collapsed.
@@ -838,7 +874,8 @@ class DiscordAPI:
         Raises
         ------
         ValueError
-            Invalid HTTP method
+            - Invalid HTTP method
+            - The path would be rewritten by the HTTP client before it is sent
         DiscordServerError
             Something went wrong on Discord's end
         Forbidden
@@ -850,12 +887,19 @@ class DiscordAPI:
         HTTPException
             Something went wrong
         """
+        self._validate_path(path)
+
         extra_headers = kwargs.pop("headers", None)
         headers = (
             {**self._default_headers, **extra_headers}
             if extra_headers else
             dict(self._default_headers)
         )
+
+        is_webhook: bool = kwargs.pop("webhook", False)
+        if is_webhook:
+            # The token in the path is the credential, the bot token has no business here
+            headers.pop("Authorization", None)
 
         if (json_body := kwargs.pop("json", None)) is not None:
             kwargs["data"] = orjson.dumps(json_body)
@@ -870,15 +914,22 @@ class DiscordAPI:
         kwargs["headers"] = headers
 
         api_url = self.api_url
-        if kwargs.pop("webhook", False):
+        if is_webhook:
             api_url = self.base_url
 
         base_path = path.split("?")[0]
         exempt_from_global = base_path.startswith(("/interactions/", "/webhooks/"))
+        # Interaction and webhook tokens are credentials, keep them out of the logs
+        token_match = _token_route_re.match(base_path)
+        secret = token_match.group(3) if token_match else None
+        log_path = path.replace(secret, ":token") if secret else path
 
         # Resolved once per call and reused across retries, not re-resolved per retry
         route_template, bucket_key, fallback_key = self._resolve_bucket_key(method, path)
         ratelimit = self.get_ratelimit(bucket_key, migrate_from=fallback_key)
+        log_key = fallback_key.replace(secret, ":token") if secret else fallback_key
+        if secret:
+            ratelimit.log_key = ratelimit.key.replace(secret, ":token")
 
         async def _sleep(tries: int) -> None:
             await asyncio.sleep(1 + (tries * 2) + self.create_jitter())
@@ -912,7 +963,7 @@ class DiscordAPI:
 
                         _log.debug(
                             "HTTP %s (%s): %s (%s/%s, %.2fs until reset, took %.3fs)",
-                            method.upper(), r.status, path,
+                            method.upper(), r.status, log_path,
                             ratelimit.remaining, ratelimit.limit, ratelimit.reset_after,
                             req_elapsed
                         )
@@ -931,7 +982,7 @@ class DiscordAPI:
                                 ratelimit_tries += 1
                                 if ratelimit_tries > 10:
                                     # something is actually wrong, not just normal throttling
-                                    _log.error(f"Ratelimit hit ({fallback_key}) 10 times in a row, giving up")
+                                    _log.error(f"Ratelimit hit ({log_key}) 10 times in a row, giving up")
                                     raise Ratelimited(r)
 
                                 retry_after: float = response.get("retry_after", 1.0)
@@ -943,7 +994,7 @@ class DiscordAPI:
                                     if exempt_from_global:
                                         await asyncio.sleep(retry_after)
                                 else:
-                                    _log.warning(f"Ratelimit hit ({fallback_key}), waiting {retry_after}s...")
+                                    _log.warning(f"Ratelimit hit ({log_key}), waiting {retry_after}s...")
 
                                     async with ratelimit._lock:
                                         # Concurrent 429s can carry different retry_after values
@@ -961,7 +1012,7 @@ class DiscordAPI:
                                     raise DiscordServerError(r)
 
                                 _log.debug(
-                                    f"HTTP {method.upper()} {path} got {x}, "
+                                    f"HTTP {method.upper()} {log_path} got {x}, "
                                     f"retrying (attempt {error_tries + 1}/5)..."
                                 )
 
@@ -999,7 +1050,7 @@ class DiscordAPI:
                         )
                         if error_tries < 4 and retryable:
                             _log.debug(
-                                f"HTTP {method.upper()} {path} hit {e!r}, "
+                                f"HTTP {method.upper()} {log_path} hit {e!r}, "
                                 f"retrying (attempt {error_tries + 1}/5)..."
                             )
                             await _sleep(error_tries)

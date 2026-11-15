@@ -20,7 +20,8 @@ from types import UnionType
 from typing import Any, TYPE_CHECKING, get_origin, get_args, Union
 from urllib.parse import (
     urlparse, parse_qs, urlencode, urlunparse,
-    ParseResult, unquote, urljoin
+    ParseResult, unquote, urljoin,
+    quote as url_quote
 )
 
 from .file import File
@@ -765,6 +766,22 @@ def normalize_entity_id(
 
         case _:
             raise TypeError(f"Expected datetime, int, str, or Snowflake, got {type(entry)}")
+
+
+def quote_path(value: object) -> str:
+    """
+    Percent-encode a value so it stays a single path segment of an API route.
+
+    Parameters
+    ----------
+    value
+        The value to place in a route, like an invite code or a webhook token
+
+    Returns
+    -------
+        The value with every reserved character encoded, including `/`, `?` and `#`
+    """
+    return url_quote(str(value), safe="")
 
 
 def unicode_name(text: str) -> str:

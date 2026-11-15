@@ -225,7 +225,7 @@ class MessageReaction:
 
     async def add(self) -> None:
         """ Make the bot react with this emoji. """
-        parsed = self.emoji.to_reaction()
+        parsed = utils.quote_path(self.emoji.to_reaction())
         await self._state.query(
             "PUT",
             f"/channels/{self._channel_id}/messages/{self._message_id}/reactions/{parsed}/@me",
@@ -242,8 +242,8 @@ class MessageReaction:
             User ID to remove the reaction from
             If none provided, it will remove the reaction from the bot
         """
-        parsed = self.emoji.to_reaction()
-        target = str(user_id) if user_id is not None else "@me"
+        parsed = utils.quote_path(self.emoji.to_reaction())
+        target = str(int(user_id)) if user_id is not None else "@me"
         url = (
             f"/channels/{self._channel_id}/messages/{self._message_id}"
             f"/reactions/{parsed}/{target}"
@@ -295,7 +295,7 @@ class MessageReaction:
             return await self._state.query(
                 "GET",
                 f"/channels/{self._channel_id}/messages/"
-                f"{self._message_id}/reactions/{self.emoji.to_reaction()}",
+                f"{self._message_id}/reactions/{utils.quote_path(self.emoji.to_reaction())}",
                 params=params
             )
 
@@ -1320,7 +1320,7 @@ class PartialMessage(PartialBase):
             return await self._state.query(
                 "GET",
                 f"/channels/{self.channel_id}/polls/"
-                f"{self.id}/answers/{answer_id}",
+                f"{self.id}/answers/{int(answer_id)}",
                 params=params
             )
 
@@ -1605,7 +1605,7 @@ class PartialMessage(PartialBase):
         emoji
             Emoji to add to the message
         """
-        parsed = EmojiParser(emoji).to_reaction()
+        parsed = utils.quote_path(EmojiParser(emoji).to_reaction())
         await self._state.query(
             "PUT",
             f"/channels/{self.channel.id}/messages/{self.id}/reactions/{parsed}/@me",
@@ -1628,11 +1628,9 @@ class PartialMessage(PartialBase):
         user_id
             User ID to remove the reaction from
         """
-        parsed = EmojiParser(emoji).to_reaction()
-        url = (
-            f"/channels/{self.channel.id}/messages/{self.id}/reactions/{parsed}"
-            f"/{user_id}" if user_id is not None else "/@me"
-        )
+        parsed = utils.quote_path(EmojiParser(emoji).to_reaction())
+        target = str(int(user_id)) if user_id is not None else "@me"
+        url = f"/channels/{self.channel.id}/messages/{self.id}/reactions/{parsed}/{target}"
 
         await self._state.query(
             "DELETE",

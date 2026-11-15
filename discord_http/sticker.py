@@ -134,7 +134,7 @@ class PartialSticker(PartialBase):
 
         r = await self._state.query(
             "PATCH",
-            f"/guilds/{guild_id}/stickers/{self.id}",
+            f"/guilds/{int(guild_id)}/stickers/{self.id}",
             json=payload,
             reason=reason
         )
@@ -174,7 +174,7 @@ class PartialSticker(PartialBase):
 
         await self._state.query(
             "DELETE",
-            f"/guilds/{guild_id}/stickers/{self.id}",
+            f"/guilds/{int(guild_id)}/stickers/{self.id}",
             res_method="text",
             reason=reason
         )
