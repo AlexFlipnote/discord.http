@@ -441,5 +441,33 @@ class TestViewWaitStorage(unittest.IsolatedAsyncioTestCase):
         self.assertEqual(bot._view_storage, {})
 
 
+class _User:
+    def __init__(self, id_: int):
+        self.id = id_
+
+    def __int__(self) -> int:
+        return self.id
+
+
+class TestViewWaitUsers(unittest.IsolatedAsyncioTestCase):
+    async def _allowed(self, users) -> set[int]:
+        view = View()
+        await view.wait(_FakeCtx(_FakeBot()), users=users, timeout=0.01)
+        return view._user_ids
+
+    async def test_objects_ids_and_any_iterable_are_enforced(self) -> None:
+        for users in ([_User(5)], [5], (_User(5),), {5}, iter([5])):
+            with self.subTest(users=users):
+                self.assertEqual(await self._allowed(users), {5})
+
+    async def test_unusable_entries_raise_instead_of_opening_the_view(self) -> None:
+        for users in (["bob"], [None], [object()], [True]):
+            with self.subTest(users=users), self.assertRaises(TypeError):
+                await self._allowed(users)
+
+    async def test_no_users_means_no_restriction(self) -> None:
+        self.assertEqual(await self._allowed(None), set())
+
+
 if __name__ == "__main__":
     unittest.main()

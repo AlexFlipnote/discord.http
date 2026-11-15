@@ -4,7 +4,7 @@ import logging
 import secrets
 import time
 
-from collections.abc import Callable
+from collections.abc import Callable, Iterable
 from io import BytesIO
 from typing import TYPE_CHECKING, ClassVar
 
@@ -13,7 +13,7 @@ from .colour import Colour
 from .emoji import EmojiParser
 from .enums import (
     ButtonStyles, ComponentType, TextStyles,
-    ChannelType, SeparatorSpacingType
+    ChannelType, SeparatorSpacingType, InteractionType
 )
 from .errors import HTTPException
 from .file import File
@@ -1488,6 +1488,20 @@ class InteractionStorage:
                 self._timeout_task.cancel()
             self._timeout_task = None
 
+    def accepts(self, ctx: "Context") -> bool:  # noqa: ARG002
+        """
+        Whether an interaction on the stored message is meant for this storage.
+
+        A message can carry components that have nothing to do with whatever is
+        being waited for, those go to their own handlers instead.
+
+        Parameters
+        ----------
+        ctx
+            The context of the interaction that arrived
+        """
+        return True
+
     async def callback(
         self,
         ctx: "Context"
@@ -1518,7 +1532,7 @@ class InteractionStorage:
         ctx: "Context",
         *,
         call_after: Callable | None = None,
-        users: list["Snowflake"] | None = None,
+        users: Iterable["Snowflake | int"] | None = None,
         original_response: bool = False,
         custom_id: str | int | None = None,
         timeout: float | None = 60,
@@ -1546,7 +1560,8 @@ class InteractionStorage:
                     await ctx.response.edit_message(content="Hello world")
 
         users
-            List of users that are allowed to interact with the view
+            Users that are allowed to interact with the view, as objects or IDs.
+            Anyone else gets an ephemeral rejection.
         original_response
             Whether to force the original response to be used as the message target
         custom_id
@@ -1562,16 +1577,21 @@ class InteractionStorage:
         Raises
         ------
         TypeError
-            If `call_after` is provided and is not a coroutine function
+            - If `call_after` is provided and is not a coroutine function
+            - If `users` contains something that is not a user or an ID
         """
-        users = users or []
-
         if call_after is not None and not inspect.iscoroutinefunction(call_after):
             raise TypeError("call_after must be a coroutine function")
 
-        if users and isinstance(users, list):
-            self._users = [g for g in users if getattr(g, "id", None)]
-            self._user_ids = {g.id for g in self._users}
+        self._users = []
+        self._user_ids = set()
+        for user in users or ():
+            # Dropping an entry here would quietly open the view to everyone
+            if isinstance(user, bool) or not hasattr(user, "__int__"):
+                raise TypeError(f"users must contain user objects or IDs, not {type(user).__name__}")
+            self._user_ids.add(int(user))
+            if not isinstance(user, int):
+                self._users.append(user)
 
         self._call_after = call_after
         self._timeout = timeout
@@ -2187,6 +2207,38 @@ class View(InteractionStorage):
     def __repr__(self) -> str:
         return f"<View items={list(self.items)}>"
 
+    def accepts(self, ctx: "Context") -> bool:
+        """
+        Whether a component interaction came from one of this view's own components.
+
+        Parameters
+        ----------
+        ctx
+            The context of the interaction that arrived
+        """
+        if ctx.type != InteractionType.message_component:
+            return False
+
+        def _custom_ids(node: object) -> set[str]:
+            found: set[str] = set()
+            if isinstance(node, dict):
+                if isinstance(node.get("custom_id"), str):
+                    found.add(node["custom_id"])
+                for value in node.values():
+                    found |= _custom_ids(value)
+            elif isinstance(node, list):
+                for value in node:
+                    found |= _custom_ids(value)
+            return found
+
+        try:
+            custom_ids = _custom_ids(self.to_dict())
+        except Exception:
+            return True
+
+        # A view with no interactive components of its own is only there to wait on the message
+        return not custom_ids or ctx.custom_id in custom_ids
+
     def get_item(
         self,
         *,
@@ -2513,6 +2565,17 @@ class Modal(InteractionStorage):
 
         self.items: list[TextDisplayComponent | LabelComponent | FileUploadComponent] = []
         """ The items contained within the modal. """
+
+    def accepts(self, ctx: "Context") -> bool:
+        """
+        Whether an interaction is the submission of this modal.
+
+        Parameters
+        ----------
+        ctx
+            The context of the interaction that arrived
+        """
+        return ctx.type == InteractionType.modal_submit and ctx.custom_id == self.custom_id
 
     def add_item(
         self,
