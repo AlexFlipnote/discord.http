@@ -80,8 +80,8 @@ class DiscordHTTP(web.Application):
         self._endpoint_url_noticed: bool = False
 
         # Interactions already handled, kept for as long as their signature stays valid
-        self._seen_interactions: set[str] = set()
-        self._seen_interactions_expiry: deque[tuple[float, str]] = deque()
+        self._seen_interactions: set[int] = set()
+        self._seen_interactions_expiry: deque[tuple[float, int]] = deque()
         self._stale_warned_at: float | None = None
 
         # Silence aiohttp access logs
@@ -160,9 +160,12 @@ class DiscordHTTP(web.Application):
         if self.signature_max_age is None:
             return
 
-        interaction_id = data.get("id")
-        if not isinstance(interaction_id, str):
+        raw_id = data.get("id")
+        if not isinstance(raw_id, str) or not raw_id.isdigit():
             return
+
+        # Stored as int, it takes less memory
+        interaction_id = int(raw_id)
 
         now = time.monotonic()
         expiry = self._seen_interactions_expiry

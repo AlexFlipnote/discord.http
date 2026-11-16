@@ -1400,7 +1400,6 @@ class InteractionStorage:
         "_timeout_expiry",
         "_timeout_task",
         "_user_ids",
-        "_users",
     )
 
     def __init__(self):
@@ -1410,7 +1409,6 @@ class InteractionStorage:
         self._store_interaction: "Context | None" = None
 
         self._call_after: Callable | None = None
-        self._users: list["Snowflake"] = []
         self._user_ids: set[int] = set()
         self._timeout_bool = False
         self._timeout: float | None = None
@@ -1589,20 +1587,17 @@ class InteractionStorage:
         if call_after is not None and not inspect.iscoroutinefunction(call_after):
             raise TypeError("call_after must be a coroutine function")
 
-        self._users = []
         self._user_ids = set()
         for user in users or ():
-            if isinstance(user, str):
-                if not user.isdigit():
-                    raise TypeError(f"users must contain user objects or IDs, not {user!r}")
-                self._user_ids.add(int(user))
-                continue
             # Dropping an entry here would quietly open the view to everyone
-            if isinstance(user, bool) or not hasattr(user, "__int__"):
-                raise TypeError(f"users must contain user objects or IDs, not {type(user).__name__}")
-            self._user_ids.add(int(user))
-            if not isinstance(user, int):
-                self._users.append(user)
+            if isinstance(user, str) and user.isdigit():
+                self._user_ids.add(int(user))
+            elif isinstance(user, int) and not isinstance(user, bool):
+                self._user_ids.add(user)
+            elif isinstance(user_id := getattr(user, "id", None), int):
+                self._user_ids.add(user_id)
+            else:
+                raise TypeError(f"users must contain user objects or IDs, not {user!r}")
 
         self._call_after = call_after
         self._timeout = timeout

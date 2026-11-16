@@ -516,7 +516,7 @@ class TestNoPlaintextWhileDaveIsPending(unittest.TestCase):
             encryptor=mock.Mock(decrypt=mock.Mock(return_value=b"plain opus")),
             can_decrypt=mock.Mock(return_value=False),
         )
-        rx = VoiceReceiver(SimpleNamespace(connection=connection))  # type: ignore[arg-type]
+        rx = VoiceReceiver(SimpleNamespace(connection=connection, guild_id=1))  # type: ignore[arg-type]
         sink = mock.Mock(wants_opus=mock.Mock(return_value=True))
         rx.start(sink)
         for version in versions:

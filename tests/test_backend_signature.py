@@ -88,12 +88,12 @@ class TestRequestSignature(unittest.IsolatedAsyncioTestCase):
 
     async def test_seen_interactions_are_forgotten_once_expired(self) -> None:
         self.assertEqual(await self._post(*self._signed("1")), 200)
-        self.assertIn("1", self.backend._seen_interactions)
+        self.assertIn(1, self.backend._seen_interactions)
 
         # As if the window it is remembered for had passed
-        self.backend._seen_interactions_expiry[0] = (0.0, "1")
+        self.backend._seen_interactions_expiry[0] = (0.0, 1)
         self.assertEqual(await self._post(*self._signed("2")), 200)
-        self.assertEqual(self.backend._seen_interactions, {"2"})
+        self.assertEqual(self.backend._seen_interactions, {2})
 
 
 if __name__ == "__main__":

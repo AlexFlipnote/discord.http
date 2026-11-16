@@ -267,8 +267,8 @@ class VoiceReceiver:
                 self._dave_pending_drops += 1
                 if self._dave_pending_drops == 250:
                     _log.warning(
-                        "Dropped 250 received voice packets in a row, DAVE end-to-end "
-                        "encryption is negotiated but the session can't decrypt yet"
+                        f"Dropped 250 received voice packets in a row in guild {self.voice_client.guild_id}, "
+                        "DAVE end-to-end encryption is negotiated but the session can't decrypt yet"
                     )
                 self._log_failure(
                     "dave_pending",
