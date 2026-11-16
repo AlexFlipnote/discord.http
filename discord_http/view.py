@@ -1532,7 +1532,7 @@ class InteractionStorage:
         ctx: "Context",
         *,
         call_after: Callable | None = None,
-        users: Iterable["Snowflake | int"] | None = None,
+        users: Iterable["Snowflake | int | str"] | None = None,
         original_response: bool = False,
         custom_id: str | int | None = None,
         timeout: float | None = 60,
@@ -1560,7 +1560,8 @@ class InteractionStorage:
                     await ctx.response.edit_message(content="Hello world")
 
         users
-            Users that are allowed to interact with the view, as objects or IDs.
+            Users that are allowed to interact with the view, as objects or IDs
+            (`int` or a string of digits).
             Anyone else gets an ephemeral rejection.
         original_response
             Whether to force the original response to be used as the message target
@@ -1586,6 +1587,11 @@ class InteractionStorage:
         self._users = []
         self._user_ids = set()
         for user in users or ():
+            if isinstance(user, str):
+                if not user.isdigit():
+                    raise TypeError(f"users must contain user objects or IDs, not {user!r}")
+                self._user_ids.add(int(user))
+                continue
             # Dropping an entry here would quietly open the view to everyone
             if isinstance(user, bool) or not hasattr(user, "__int__"):
                 raise TypeError(f"users must contain user objects or IDs, not {type(user).__name__}")
@@ -2219,22 +2225,17 @@ class View(InteractionStorage):
         if ctx.type != InteractionType.message_component:
             return False
 
-        def _custom_ids(node: object) -> set[str]:
-            found: set[str] = set()
-            if isinstance(node, dict):
-                if isinstance(node.get("custom_id"), str):
-                    found.add(node["custom_id"])
-                for value in node.values():
-                    found |= _custom_ids(value)
-            elif isinstance(node, list):
-                for value in node:
-                    found |= _custom_ids(value)
-            return found
-
-        try:
-            custom_ids = _custom_ids(self.to_dict())
-        except Exception:
-            return True
+        # Rows, sections and containers nest their components
+        custom_ids: set[str] = set()
+        stack: list[object] = list(self.items)
+        while stack:
+            item = stack.pop()
+            if (custom_id := getattr(item, "custom_id", None)) is not None:
+                custom_ids.add(str(custom_id))
+            stack.extend(getattr(item, "components", ()))
+            stack.extend(getattr(item, "items", ()))
+            if (accessory := getattr(item, "accessory", None)) is not None:
+                stack.append(accessory)
 
         # A view with no interactive components of its own is only there to wait on the message
         return not custom_ids or ctx.custom_id in custom_ids

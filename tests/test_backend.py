@@ -244,6 +244,19 @@ class TestStoredViewOnlyTakesItsOwnInteractions(unittest.TestCase):
         self._click("yes")
         self.assertIsNotNone(view._store_interaction)
 
+    def test_view_accepts_finds_nested_components(self) -> None:
+        from types import SimpleNamespace
+        from discord_http.enums import InteractionType
+        from discord_http.view import ActionRow, Button, ContainerComponent, SectionComponent, View
+
+        view = View(ContainerComponent(
+            ActionRow(Button(label="A", custom_id="row")),
+            SectionComponent("text", accessory=Button(label="B", custom_id="side")),
+        ))
+        for custom_id, expected in (("row", True), ("side", True), ("other", False)):
+            ctx = SimpleNamespace(type=InteractionType.message_component, custom_id=custom_id)
+            self.assertEqual(view.accepts(ctx), expected)  # type: ignore[arg-type]
+
 
 class TestGatewayInteractions(unittest.TestCase):
     """ Interactions over the gateway run like HTTP ones, but respond through the callback endpoint. """

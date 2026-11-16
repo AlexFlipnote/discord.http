@@ -456,7 +456,7 @@ class TestViewWaitUsers(unittest.IsolatedAsyncioTestCase):
         return view._user_ids
 
     async def test_objects_ids_and_any_iterable_are_enforced(self) -> None:
-        for users in ([_User(5)], [5], (_User(5),), {5}, iter([5])):
+        for users in ([_User(5)], [5], ["5"], (_User(5),), {5}, iter([5])):
             with self.subTest(users=users):
                 self.assertEqual(await self._allowed(users), {5})
 
