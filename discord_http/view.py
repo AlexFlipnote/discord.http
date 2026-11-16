@@ -217,6 +217,10 @@ class AttachmentComponent:
         """
         Fetches the file from the attachment URL and returns it as bytes.
 
+        Media that was not uploaded to Discord points at whatever URL the author
+        of the message chose. That is always fetched through Discord's proxy, so
+        the bot never connects to a host picked by a user.
+
         Parameters
         ----------
         use_cached
@@ -231,9 +235,10 @@ class AttachmentComponent:
         HTTPException
             If the request returned anything other than 2XX
         """
+        external = self.attachment_id is None
         r = await self._state.http.request(
             "GET",
-            (self.proxy_url or self.url) if use_cached else self.url,
+            (self.proxy_url or self.url) if (use_cached or external) else self.url,
             res_method="read"
         )
 
