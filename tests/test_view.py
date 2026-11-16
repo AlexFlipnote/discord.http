@@ -1,15 +1,17 @@
 import asyncio
+import io
 import unittest
 
 from unittest import mock
 
 from discord_http import (
     ActionRow, Button, ButtonStyles, CheckboxGroupComponent, ComponentOption,
-    ContainerComponent, Link, Modal, Premium, RadioComponent, Select,
+    ContainerComponent, File, Link, Modal, Premium, RadioComponent, Select,
     TextDisplayComponent, View,
 )
 from discord_http.view import (
-    CheckpointComponent, FileComponent, LabelComponent, TextInputComponent, ThumbnailComponent,
+    AttachmentComponent, CheckpointComponent, FileComponent, LabelComponent,
+    MediaGalleryComponent, MediaGalleryItem, TextInputComponent, ThumbnailComponent,
 )
 
 
@@ -305,6 +307,26 @@ class TestViewFromDictUnfurledMedia(unittest.IsolatedAsyncioTestCase):
             "type": 11, "media": {"url": "https://cdn.example/a.png"},
             "description": "alt", "spoiler": True,
         })
+
+
+    async def test_gallery_items_keep_their_attachment(self) -> None:
+        view = View.from_dict(state=None, data={"components": [  # type: ignore[arg-type]
+            {"type": 12, "items": [{"media": self._media(), "description": "alt"}]},
+        ]})
+        item = view.items[0].items[0]
+        self.assertIsInstance(item.url, AttachmentComponent)
+        self.assertEqual(item.url.proxy_url, "https://proxy.example/a.png")
+        self.assertEqual(item.to_dict()["media"], {"url": "https://cdn.example/a.png"})
+
+
+class TestMediaGalleryFiles(unittest.TestCase):
+    def test_file_item_points_at_the_attachment(self) -> None:
+        file = File(io.BytesIO(b"x"), filename="a.png")
+        self.assertEqual(MediaGalleryItem(file).to_dict()["media"], {"url": "attachment://a.png"})
+        self.assertEqual(
+            MediaGalleryComponent(file).to_dict()["items"][0]["media"],
+            {"url": "attachment://a.png"},
+        )
 
 
 class TestLabelComponentToDict(unittest.TestCase):

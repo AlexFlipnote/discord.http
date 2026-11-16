@@ -535,7 +535,7 @@ class TestNoPlaintextWhileDaveIsPending(unittest.TestCase):
             self._receive(*[1] * 600, 0, *[1] * 600)
         self.assertEqual(len(logs.output), 2)
 
-    def _send(self, *versions: int) -> mock.Mock:
+    def _send(self, *versions: int, others: set[int] | None = None) -> mock.Mock:
         """ Send one packet per entry, with DAVE at that protocol version. """
         from discord_http.voice.client import VoiceClient
 
@@ -550,6 +550,8 @@ class TestNoPlaintextWhileDaveIsPending(unittest.TestCase):
             sequence=0,
             timestamp=0,
             can_encrypt=mock.Mock(return_value=False),
+            user_id=1,
+            connected_user_ids={2} if others is None else {1, *others},
         )
         for version in versions:
             vc.connection.dave_protocol_version = version
@@ -568,6 +570,10 @@ class TestNoPlaintextWhileDaveIsPending(unittest.TestCase):
         with self.assertLogs("discord_http.voice.client", level="WARNING") as logs:
             self._send(*[1] * 300, 0, *[1] * 300)
         self.assertEqual(len(logs.output), 2)
+
+    def test_alone_in_the_channel_holds_audio_without_warning(self) -> None:
+        with self.assertNoLogs("discord_http.voice.client", level="WARNING"):
+            self._send(*[1] * 600, others=set()).sendto.assert_not_called()
 
     def test_outgoing_audio_flows_without_dave(self) -> None:
         self._send(0).sendto.assert_called_once()

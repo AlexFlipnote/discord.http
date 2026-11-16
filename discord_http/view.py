@@ -1945,7 +1945,7 @@ class MediaGalleryItem:
         description: str | None = None,
         spoiler: bool = False
     ):
-        self.url: File | Asset | AttachmentComponent | str = str(url)
+        self.url: File | Asset | AttachmentComponent | str = url
         """ The URL of the media item, can be a file, asset, attachment component, or a string URL. """
 
         self.description: str | None = description

@@ -263,6 +263,11 @@ class VoiceClient:
             # Negotiated but not ready yet (still joining the MLS group). Members
             # drop unencrypted frames anyway, sending them would only show the
             # audio to the voice server
+            if not connection.connected_user_ids - {connection.user_id}:
+                # Alone in the channel, the MLS group only forms once someone joins
+                self._held_packets = 0
+                return
+
             self._held_packets += 1
             if self._held_packets == 250:  # 5 seconds of 20 ms frames
                 _log.warning(
