@@ -156,6 +156,7 @@ class TestTokensStayOutOfLogs(_PathTest):
         self.assertEqual(_redact("DELETE /webhooks/1/abc/messages/2"), "DELETE /webhooks/1/:token/messages/2")
         self.assertEqual(_redact("POST #a1b2:9:abc"), "POST #a1b2:9::token")
         self.assertEqual(_redact("GET /channels/1/messages/2"), "GET /channels/1/messages/2")
+        self.assertEqual(_redact("POST /webhooks/1/abc?wait=true"), "POST /webhooks/1/:token?wait=true")
 
 
 if __name__ == "__main__":

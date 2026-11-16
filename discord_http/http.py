@@ -54,7 +54,7 @@ id_segment_re = re.compile(r"(?<=/)\d+(?=/|$)")
 _token_route_re = re.compile(r"^/(interactions|webhooks)/(\d+)/([^/]+)")
 _encoded_dot_re = re.compile(r"%2e", re.IGNORECASE)
 # The token after an interaction/webhook id, in a path or in a "#hash:id:token" bucket key
-_token_log_re = re.compile(r"((?:/(?:interactions|webhooks)/|:)\d+[/:])[^/\s]+")
+_token_log_re = re.compile(r"((?:/(?:interactions|webhooks)/|:)\d+[/:])[^/?\s]+")
 _one_shot_route_re = re.compile(r"^/interactions/\d+/[^/]+/callback$")
 
 
