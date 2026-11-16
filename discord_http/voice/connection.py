@@ -91,9 +91,6 @@ class VoiceConnection:
         self.dave_protocol_version: int = 0
         """ The negotiated DAVE protocol version (0 if not in use). """
 
-        self.allow_dave_downgrade: bool = False
-        """ Whether the voice server may switch an end-to-end encrypted call back to unencrypted audio. """
-
         self._state_event: asyncio.Event = asyncio.Event()
         self._server_event: asyncio.Event = asyncio.Event()
         self._ready_event: asyncio.Event = asyncio.Event()
@@ -188,8 +185,7 @@ class VoiceConnection:
         reconnect: bool = True,
         reconnect_on_session_invalid: bool = False,
         self_deaf: bool = False,
-        self_mute: bool = False,
-        allow_dave_downgrade: bool = False
+        self_mute: bool = False
     ) -> None:
         """
         Establish the full voice connection.
@@ -208,10 +204,6 @@ class VoiceConnection:
             Whether to join self-deafened.
         self_mute
             Whether to join self-muted.
-        allow_dave_downgrade
-            Whether the voice server may switch an end-to-end encrypted call back
-            to unencrypted audio. Discord requires DAVE for voice channels, so
-            this is refused by default and the call stays encrypted.
 
         Raises
         ------
@@ -229,8 +221,6 @@ class VoiceConnection:
                 "Discord requires DAVE end-to-end encryption for voice, "
                 'install it with: pip install "discord.http[voice]"'
             )
-
-        self.allow_dave_downgrade = allow_dave_downgrade
 
         await self._connect(
             timeout=timeout,
@@ -1177,21 +1167,6 @@ class VoiceConnection:
         if self.dave_session is None:
             return opus
         return self.dave_session.decrypt_opus(user_id, opus)
-
-    def is_undecryptable_dave_frame(self, opus: bytes) -> bool:
-        """
-        Whether ``opus`` is a DAVE-encrypted frame that can't be decrypted yet.
-
-        True while end-to-end encryption is negotiated but our MLS session isn't
-        ready, for example during a group change. Such frames must be dropped,
-        passing them on would hand ciphertext to sinks as if it were Opus.
-
-        Parameters
-        ----------
-        opus
-            The received Opus payload, after transport decryption.
-        """
-        return self.dave_session is not None and self.dave_session.is_undecryptable(opus)
 
     def _cancel_reconnect_task(self) -> None:
         """ Cancel any pending reconnect task, unless it is the current task. """

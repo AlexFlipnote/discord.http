@@ -477,12 +477,14 @@ class TestDaveRecovery(unittest.IsolatedAsyncioTestCase):
         self.assertEqual(session.prepared, [(0, 1)])
         self.assertEqual(socket.ready_ids, [])
 
-    def test_undecryptable_frames_are_recognised(self) -> None:
-        manager = DaveManager(SimpleNamespace())  # type: ignore[arg-type]
+    def test_downgrade_is_followed_with_a_warning(self) -> None:
+        manager, _, _ = _dave()
+        manager._session = None
         manager._version = 1
 
-        self.assertTrue(manager.is_undecryptable(b"ciphertext\xfa\xfa"))
-        self.assertFalse(manager.is_undecryptable(b"plain opus"))
+        with self.assertLogs("discord_http.voice.dave", level="WARNING"):
+            manager._apply_transition(0, 0)
+        self.assertEqual(manager._version, 0)
 
 
 class TestReceiverDropsCiphertext(unittest.TestCase):
@@ -490,7 +492,7 @@ class TestReceiverDropsCiphertext(unittest.TestCase):
         connection = mock.Mock(
             encryptor=mock.Mock(decrypt=mock.Mock(return_value=b"ciphertext\xfa\xfa")),
             can_encrypt=mock.Mock(return_value=False),
-            is_undecryptable_dave_frame=mock.Mock(return_value=True),
+            dave_protocol_version=1,
         )
         rx = VoiceReceiver(SimpleNamespace(connection=connection))  # type: ignore[arg-type]
         sink = mock.Mock(wants_opus=mock.Mock(return_value=True))
@@ -526,12 +528,13 @@ class TestNoPlaintextWhileDaveIsPending(unittest.TestCase):
     def test_incoming_plaintext_passes_without_dave(self) -> None:
         self._receive(0).write.assert_called_once()
 
-    def _send(self, version: int) -> mock.Mock:
+    def _send(self, version: int, packets: int = 1) -> mock.Mock:
         from discord_http.voice.client import VoiceClient
 
         transport = mock.Mock()
         vc = VoiceClient.__new__(VoiceClient)
         vc.guild_id = 1
+        vc._held_packets = 0
         vc.connection = mock.Mock(
             encryptor=mock.Mock(encrypt=mock.Mock(return_value=b"packet")),
             transport=transport,
@@ -541,11 +544,17 @@ class TestNoPlaintextWhileDaveIsPending(unittest.TestCase):
             can_encrypt=mock.Mock(return_value=False),
             dave_protocol_version=version,
         )
-        vc.send_audio_packet(b"\xf8\xff\xfe", encode=False)
+        for _ in range(packets):
+            vc.send_audio_packet(b"\xf8\xff\xfe", encode=False)
         return transport
 
     def test_outgoing_audio_is_held_back(self) -> None:
         self._send(1).sendto.assert_not_called()
+
+    def test_audio_held_for_five_seconds_warns_once(self) -> None:
+        with self.assertLogs("discord_http.voice.client", level="WARNING") as logs:
+            self._send(1, packets=600)
+        self.assertEqual(len(logs.output), 1)
 
     def test_outgoing_audio_flows_without_dave(self) -> None:
         self._send(0).sendto.assert_called_once()

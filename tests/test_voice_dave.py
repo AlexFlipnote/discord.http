@@ -51,7 +51,6 @@ class _FakeConnection:
         self.guild_id = 1
         self.user_id = 5678
         self.dave_protocol_version = 0
-        self.allow_dave_downgrade = True
         self.connected_user_ids: set[int] = set()
         self._dave_lock = asyncio.Lock()
 
@@ -129,54 +128,6 @@ class TestDaveTransitions(unittest.TestCase):
         self.assertEqual(manager._version, 0)
         self.assertTrue(manager.ready)
         self.assertFalse(manager.can_encrypt())
-
-    def test_downgrade_is_refused_unless_allowed(self) -> None:
-        # The voice server is who the encryption is meant to keep out, it does
-        # not get to switch it off on its own
-        manager, socket = _manager()
-        manager._connection.allow_dave_downgrade = False
-        session = _FakeSession()
-        manager._session = session  # type: ignore[assignment]
-        manager._version = 1
-
-        with self.assertLogs("discord_http.voice.dave", level="WARNING") as logs:
-            asyncio.run(manager._handle_prepare_transition({"transition_id": 3, "protocol_version": 0}))
-            asyncio.run(manager._handle_execute_transition({"transition_id": 3}))
-            asyncio.run(manager._handle_prepare_transition({"transition_id": 0, "protocol_version": 0}))
-
-        self.assertEqual(len(logs.output), 1)
-        self.assertEqual(socket.ready_ids, [])
-        self.assertEqual(session.prepared, [])
-        self.assertIsNone(session.passthrough)
-        self.assertEqual(manager._version, 1)
-        self.assertTrue(manager.can_encrypt())
-
-    def test_downgrade_prepared_early_is_refused_when_executed(self) -> None:
-        manager, _ = _manager()
-        manager._connection.allow_dave_downgrade = False
-        manager._session = _FakeSession()  # type: ignore[assignment]
-
-        # Version is still 0 here, so preparing it changes nothing yet
-        asyncio.run(manager._handle_prepare_transition({"transition_id": 2, "protocol_version": 0}))
-        manager._version = 1
-
-        with self.assertLogs("discord_http.voice.dave", level="WARNING"):
-            asyncio.run(manager._handle_execute_transition({"transition_id": 2}))
-        self.assertEqual(manager._version, 1)
-
-    def test_new_unencrypted_group_is_refused_unless_allowed(self) -> None:
-        manager, _ = _manager()
-        manager._connection.allow_dave_downgrade = False
-        manager._version = 1
-
-        with (
-            patch.object(DaveManager, "reinit", new_callable=AsyncMock) as reinit,
-            self.assertLogs("discord_http.voice.dave", level="WARNING"),
-        ):
-            asyncio.run(manager._handle_prepare_epoch({"epoch": 1, "protocol_version": 0}))
-
-        reinit.assert_not_called()
-        self.assertEqual(manager._version, 1)
 
     def test_prepare_epoch_one_reinitializes_new_group(self) -> None:
         """ Reinitialize DAVE when epoch one announces a new MLS group. """
