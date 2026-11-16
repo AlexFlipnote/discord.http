@@ -510,16 +510,18 @@ class TestNoPlaintextWhileDaveIsPending(unittest.TestCase):
     def _packet() -> bytes:
         return bytes([0x80, 0x78]) + b"\x00\x01" + b"\x00" * 4 + (5).to_bytes(4, "big") + b"x"
 
-    def _receive(self, version: int) -> mock.Mock:
+    def _receive(self, *versions: int) -> mock.Mock:
+        """ Receive one packet per entry, with DAVE at that protocol version. """
         connection = mock.Mock(
             encryptor=mock.Mock(decrypt=mock.Mock(return_value=b"plain opus")),
             can_decrypt=mock.Mock(return_value=False),
-            dave_protocol_version=version,
         )
         rx = VoiceReceiver(SimpleNamespace(connection=connection))  # type: ignore[arg-type]
         sink = mock.Mock(wants_opus=mock.Mock(return_value=True))
         rx.start(sink)
-        rx.unpack(self._packet())
+        for version in versions:
+            connection.dave_protocol_version = version
+            rx.unpack(self._packet())
         return sink
 
     def test_incoming_plaintext_is_dropped(self) -> None:
@@ -528,7 +530,13 @@ class TestNoPlaintextWhileDaveIsPending(unittest.TestCase):
     def test_incoming_plaintext_passes_without_dave(self) -> None:
         self._receive(0).write.assert_called_once()
 
-    def _send(self, version: int, packets: int = 1) -> mock.Mock:
+    def test_incoming_drops_warn_once_per_stall(self) -> None:
+        with self.assertLogs("discord_http.voice.receiver", level="WARNING") as logs:
+            self._receive(*[1] * 600, 0, *[1] * 600)
+        self.assertEqual(len(logs.output), 2)
+
+    def _send(self, *versions: int) -> mock.Mock:
+        """ Send one packet per entry, with DAVE at that protocol version. """
         from discord_http.voice.client import VoiceClient
 
         transport = mock.Mock()
@@ -542,9 +550,9 @@ class TestNoPlaintextWhileDaveIsPending(unittest.TestCase):
             sequence=0,
             timestamp=0,
             can_encrypt=mock.Mock(return_value=False),
-            dave_protocol_version=version,
         )
-        for _ in range(packets):
+        for version in versions:
+            vc.connection.dave_protocol_version = version
             vc.send_audio_packet(b"\xf8\xff\xfe", encode=False)
         return transport
 
@@ -553,8 +561,13 @@ class TestNoPlaintextWhileDaveIsPending(unittest.TestCase):
 
     def test_audio_held_for_five_seconds_warns_once(self) -> None:
         with self.assertLogs("discord_http.voice.client", level="WARNING") as logs:
-            self._send(1, packets=600)
+            self._send(*[1] * 600)
         self.assertEqual(len(logs.output), 1)
+
+    def test_stall_after_a_downgrade_warns_again(self) -> None:
+        with self.assertLogs("discord_http.voice.client", level="WARNING") as logs:
+            self._send(*[1] * 300, 0, *[1] * 300)
+        self.assertEqual(len(logs.output), 2)
 
     def test_outgoing_audio_flows_without_dave(self) -> None:
         self._send(0).sendto.assert_called_once()

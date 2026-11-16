@@ -259,7 +259,6 @@ class VoiceClient:
         # DAVE end-to-end encryption applies to the Opus payload before RTP framing.
         if connection.can_encrypt():
             opus = connection.dave_encrypt_opus(opus)
-            self._held_packets = 0
         elif connection.dave_protocol_version > 0:
             # Negotiated but not ready yet (still joining the MLS group). Members
             # drop unencrypted frames anyway, sending them would only show the
@@ -272,6 +271,7 @@ class VoiceClient:
                 )
             return
 
+        self._held_packets = 0
         connection.sequence = (connection.sequence + 1) % (2 ** 16)
 
         header = bytearray(12)
