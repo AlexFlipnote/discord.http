@@ -18,7 +18,6 @@ from .enums import (
 from .errors import HTTPException
 from .file import File
 from .flags import ContentScanFlags
-from .utils import MISSING
 
 if TYPE_CHECKING:
     from . import Snowflake
@@ -1533,7 +1532,7 @@ class InteractionStorage:
         ctx: "Context",
         *,
         call_after: Callable | None = None,
-        users: Iterable["Snowflake | int"] | None = MISSING,
+        users: Iterable["Snowflake | int"] | None = None,
         original_response: bool = False,
         custom_id: str | int | None = None,
         timeout: float | None = 60,
@@ -1563,7 +1562,6 @@ class InteractionStorage:
         users
             Users that are allowed to interact with the view, as objects or IDs.
             Anyone else gets an ephemeral rejection.
-            Defaults to the user behind `ctx`, pass `None` to let anyone interact.
         original_response
             Whether to force the original response to be used as the message target
         custom_id
@@ -1584,10 +1582,6 @@ class InteractionStorage:
         """
         if call_after is not None and not inspect.iscoroutinefunction(call_after):
             raise TypeError("call_after must be a coroutine function")
-
-        if users is MISSING:
-            # Whoever opened the prompt is the one expected to answer it
-            users = [ctx.user]
 
         self._users = []
         self._user_ids = set()

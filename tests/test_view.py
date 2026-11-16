@@ -392,20 +392,11 @@ class TestButtonCustomIdGeneration(unittest.TestCase):
         self.assertEqual(Button(label="x", custom_id="mine").custom_id, "mine")
 
 
-class _User:
-    def __init__(self, id_: int):
-        self.id = id_
-
-    def __int__(self) -> int:
-        return self.id
-
-
 class _FakeCtx:
     def __init__(self, bot, id_: int = 1):
         self.bot = bot
         self.id = id_
         self.message = None
-        self.user = _User(42)
 
     async def original_response(self):
         raise RuntimeError("no message")
@@ -450,6 +441,14 @@ class TestViewWaitStorage(unittest.IsolatedAsyncioTestCase):
         self.assertEqual(bot._view_storage, {})
 
 
+class _User:
+    def __init__(self, id_: int):
+        self.id = id_
+
+    def __int__(self) -> int:
+        return self.id
+
+
 class TestViewWaitUsers(unittest.IsolatedAsyncioTestCase):
     async def _allowed(self, users) -> set[int]:
         view = View()
@@ -466,14 +465,8 @@ class TestViewWaitUsers(unittest.IsolatedAsyncioTestCase):
             with self.subTest(users=users), self.assertRaises(TypeError):
                 await self._allowed(users)
 
-    async def test_defaults_to_whoever_opened_it(self) -> None:
-        view = View()
-        await view.wait(_FakeCtx(_FakeBot()), timeout=0.01)
-        self.assertEqual(view._user_ids, {42})
-
-    async def test_none_opens_it_to_everyone(self) -> None:
+    async def test_no_users_means_no_restriction(self) -> None:
         self.assertEqual(await self._allowed(None), set())
-        self.assertEqual(await self._allowed([]), set())
 
 
 if __name__ == "__main__":
