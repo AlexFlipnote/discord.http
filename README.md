@@ -118,17 +118,17 @@ async def main():
 client.offline_run(main)
 ```
 
-Need help with hosting or the endpoint URL? See the [getting started guide](https://discordhttp.alexflipnote.dev/pages/getting_started.html).
+Need help with hosting or the endpoint URL? See the [getting started guide](https://discordhttp.org/pages/getting_started.html).
 
 ## Contributing
-Contributions are welcome! Have a look at the [contributing guide](https://discordhttp.alexflipnote.dev/pages/contribute.html) and the [style guide](https://discordhttp.alexflipnote.dev/pages/format.html) before opening a pull request.
+Contributions are welcome! Have a look at the [contributing guide](https://discordhttp.org/pages/contribute.html) and the [style guide](https://discordhttp.org/pages/format.html) before opening a pull request.
 
 Automated tests use Python's built-in `unittest` module, run them from the project root with:
 - `make test`
 - or `python -m unittest discover -s tests -p "test_*.py"`
 
 ## Resources
-- [Library documentation](https://discordhttp.alexflipnote.dev)
+- [Library documentation](https://discordhttp.org)
 - [Discord API documentation](https://docs.discord.com/developers/intro)
 - [Discord server](https://discord.gg/yqb7vATbjH)
 - [discord.http Bot example](https://github.com/AlexFlipnote/discord_bot.http)

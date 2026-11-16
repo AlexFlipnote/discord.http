@@ -3,6 +3,7 @@
 v2_testing.py
 config.json
 tests/**/*.json
+.cloudflare/
 uv.lock
 
 # Byte-compiled / optimized / DLL files
