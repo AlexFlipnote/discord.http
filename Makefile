@@ -4,7 +4,7 @@ ifdef HAS_UV
     RUN := uv run
     VENV_CMD := uv venv
     INSTALL_DEV_CMD := uv sync --all-extras
-    INSTALL_DOCS_CMD := uv sync --all-extras
+    INSTALL_DOCS_CMD := uv sync --extra docs --extra voice
 else
     RUN :=
     VENV_CMD := python -m venv .venv
