@@ -260,6 +260,11 @@ class DiscordHTTP(web.Application):
                 if not local_view and ctx.message.interaction:
                     local_view = self.bot._view_storage.get(ctx.message.interaction.id, None)
 
+                # Found through the message alone, so it may be waiting on something
+                # other than what was just used, a different button for example
+                if local_view is not None and not local_view.accepts(ctx):
+                    local_view = None
+
             if local_view:
                 with ctx.benchmark.measure("view:callback", internal=True):
                     payload = await local_view.callback(ctx)
