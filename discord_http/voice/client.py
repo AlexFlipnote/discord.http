@@ -42,6 +42,9 @@ class VoiceClient:
         self._player: "AudioPlayer | None" = None
         self._encoder: "Encoder | None" = None
 
+        # Packets dropped in a row because DAVE could not encrypt them yet
+        self._held_packets: int = 0
+
         # Built eagerly rather than in listen(): Discord only sends SPEAKING on
         # the leading edge of speech, so a receiver created later would miss the
         # SSRC mapping for anyone already talking, and they would stay unmapped
@@ -256,7 +259,19 @@ class VoiceClient:
         # DAVE end-to-end encryption applies to the Opus payload before RTP framing.
         if connection.can_encrypt():
             opus = connection.dave_encrypt_opus(opus)
+        elif connection.dave_protocol_version > 0:
+            # Negotiated but not ready yet (still joining the MLS group). Members
+            # drop unencrypted frames anyway, sending them would only show the
+            # audio to the voice server
+            self._held_packets += 1
+            if self._held_packets == 250:  # 5 seconds of 20 ms frames
+                _log.warning(
+                    f"Holding back audio in guild {self.guild_id} for 5s, DAVE end-to-end "
+                    "encryption is negotiated but the session can't encrypt yet"
+                )
+            return
 
+        self._held_packets = 0
         connection.sequence = (connection.sequence + 1) % (2 ** 16)
 
         header = bytearray(12)

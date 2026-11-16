@@ -72,6 +72,9 @@ class VoiceReceiver:
         # not yet mapped to a user, used to rate-limit the debug log.
         self._dave_unmapped_drops = 0
 
+        # Packets dropped in a row because DAVE could not decrypt them yet
+        self._dave_pending_drops = 0
+
         # Failure kind -> how many times it happened, used to rate-limit logs
         self._failures: dict[str, int] = {}
 
@@ -257,16 +260,26 @@ class VoiceReceiver:
         # were plain Opus; losing a few leading frames is acceptable.
         if not connection.can_decrypt():
             # End-to-end encryption is negotiated but our session isn't ready
-            # (joining, or a group change), these frames are still ciphertext
-            if connection.is_undecryptable_dave_frame(payload):
+            # (joining, or a group change). Encrypted frames can't be read yet,
+            # and an unencrypted one here did not come through the E2EE session,
+            # so it can't be attributed to the member it claims to be from
+            if connection.dave_protocol_version > 0:
+                self._dave_pending_drops += 1
+                if self._dave_pending_drops == 250:
+                    _log.warning(
+                        "Dropped 250 received voice packets in a row, DAVE end-to-end "
+                        "encryption is negotiated but the session can't decrypt yet"
+                    )
                 self._log_failure(
                     "dave_pending",
-                    "Dropped DAVE-encrypted voice while the DAVE session is not ready",
+                    "Dropped voice while the DAVE session is not ready",
                     level=logging.DEBUG,
                 )
                 return
+            self._dave_pending_drops = 0
 
         else:
+            self._dave_pending_drops = 0
             if user_id is None:
                 self._dave_unmapped_drops += 1
                 if self._dave_unmapped_drops == 1 or self._dave_unmapped_drops % 100 == 0:

@@ -1168,21 +1168,6 @@ class VoiceConnection:
             return opus
         return self.dave_session.decrypt_opus(user_id, opus)
 
-    def is_undecryptable_dave_frame(self, opus: bytes) -> bool:
-        """
-        Whether ``opus`` is a DAVE-encrypted frame that can't be decrypted yet.
-
-        True while end-to-end encryption is negotiated but our MLS session isn't
-        ready, for example during a group change. Such frames must be dropped,
-        passing them on would hand ciphertext to sinks as if it were Opus.
-
-        Parameters
-        ----------
-        opus
-            The received Opus payload, after transport decryption.
-        """
-        return self.dave_session is not None and self.dave_session.is_undecryptable(opus)
-
     def _cancel_reconnect_task(self) -> None:
         """ Cancel any pending reconnect task, unless it is the current task. """
         if self._reconnect_task is not None and self._reconnect_task is not asyncio.current_task():
