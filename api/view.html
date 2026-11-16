@@ -470,6 +470,9 @@
 <dt class="sig sig-object py" id="discord_http.view.AttachmentComponent.fetch">
 <span class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">fetch</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">use_cached</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#bytes" title="(in Python v3.15)"><span class="pre">bytes</span></a></span></span><a class="headerlink" href="#discord_http.view.AttachmentComponent.fetch" title="Link to this definition">¶</a></dt>
 <dd><p>Fetches the file from the attachment URL and returns it as bytes.</p>
+<p>Media that was not uploaded to Discord points at whatever URL the author
+of the message chose. That is always fetched through Discord’s proxy, so
+the bot never connects to a host picked by a user.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>use_cached</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#bool" title="(in Python v3.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></a></span>) – Whether to use the cached URL or not, defaults to <cite>False</cite></p>
@@ -1700,7 +1703,9 @@ The new context does follow with the call_after function, example:</p>
 </pre></div>
 </div>
 </p></li>
-<li><p><strong>users</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#list" title="(in Python v3.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">list</span></code></a>[<a class="reference internal" href="object.html#discord_http.object.Snowflake" title="discord_http.object.Snowflake"><code class="xref py py-class docutils literal notranslate"><span class="pre">Snowflake</span></code></a>] | <a class="reference external" href="https://docs.python.org/3/builtins/constants.html#None" title="(in Python v3.15)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></span>) – List of users that are allowed to interact with the view</p></li>
+<li><p><strong>users</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/collections.abc.html#collections.abc.Iterable" title="(in Python v3.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Iterable</span></code></a>[<a class="reference internal" href="object.html#discord_http.object.Snowflake" title="discord_http.object.Snowflake"><code class="xref py py-class docutils literal notranslate"><span class="pre">Snowflake</span></code></a> | <a class="reference external" href="https://docs.python.org/3/builtins/functions.html#int" title="(in Python v3.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a> | <a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>] | <a class="reference external" href="https://docs.python.org/3/builtins/constants.html#None" title="(in Python v3.15)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></span>) – Users that are allowed to interact with the view, as objects or IDs
+(<cite>int</cite> or a string of digits).
+Anyone else gets an ephemeral rejection.</p></li>
 <li><p><strong>original_response</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#bool" title="(in Python v3.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></a></span>) – Whether to force the original response to be used as the message target</p></li>
 <li><p><strong>custom_id</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a> | <a class="reference external" href="https://docs.python.org/3/builtins/functions.html#int" title="(in Python v3.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a> | <a class="reference external" href="https://docs.python.org/3/builtins/constants.html#None" title="(in Python v3.15)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></span>) – Custom ID of the view, if not provided, it will use Context.id or Context.message</p></li>
 <li><p><strong>timeout</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#float" title="(in Python v3.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></a> | <a class="reference external" href="https://docs.python.org/3/builtins/constants.html#None" title="(in Python v3.15)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></span>) – How long it should take until the code simply times out.
@@ -1714,7 +1719,11 @@ Set to <cite>None</cite> for the view to never time out on its own.</p></li>
 <dd class="field-odd"><p>Returns the new context of the interaction, or <cite>None</cite> if timed out</p>
 </dd>
 <dt class="field-even">Raises<span class="colon">:</span></dt>
-<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/builtins/exceptions.html#TypeError" title="(in Python v3.15)"><strong>TypeError</strong></a> – If <cite>call_after</cite> is provided and is not a coroutine function</p>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/builtins/exceptions.html#TypeError" title="(in Python v3.15)"><strong>TypeError</strong></a> – <ul class="simple">
+<li><p>If <cite>call_after</cite> is provided and is not a coroutine function
+    - If <cite>users</cite> contains something that is not a user or an ID</p></li>
+</ul>
+</p>
 </dd>
 </dl>
 </dd></dl>
@@ -1735,6 +1744,20 @@ Set to <cite>None</cite> for the view to never time out on its own.</p></li>
 <dt class="sig sig-object py" id="discord_http.view.Modal.items">
 <span class="sig-name descname"><span class="pre">items</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#list" title="(in Python v3.15)"><span class="pre">list</span></a><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#discord_http.view.TextDisplayComponent" title="discord_http.view.TextDisplayComponent"><span class="pre">TextDisplayComponent</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="#discord_http.view.LabelComponent" title="discord_http.view.LabelComponent"><span class="pre">LabelComponent</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="#discord_http.view.FileUploadComponent" title="discord_http.view.FileUploadComponent"><span class="pre">FileUploadComponent</span></a><span class="p"><span class="pre">]</span></span></span><a class="headerlink" href="#discord_http.view.Modal.items" title="Link to this definition">¶</a></dt>
 <dd><p>The items contained within the modal.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="discord_http.view.Modal.accepts">
+<span class="sig-name descname"><span class="pre">accepts</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ctx</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#bool" title="(in Python v3.15)"><span class="pre">bool</span></a></span></span><a class="headerlink" href="#discord_http.view.Modal.accepts" title="Link to this definition">¶</a></dt>
+<dd><p>Whether an interaction is the submission of this modal.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>ctx</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference internal" href="context.html#discord_http.context.Context" title="discord_http.context.Context"><code class="xref py py-class docutils literal notranslate"><span class="pre">Context</span></code></a></span>) – The context of the interaction that arrived</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#bool" title="(in Python v3.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></a></span></p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py method">
@@ -2069,12 +2092,6 @@ Set to <cite>None</cite> for the view to never time out on its own.</p></li>
 <dd><p>The accessory component for the section.</p>
 </dd></dl>
 
-<dl class="py attribute">
-<dt class="sig sig-object py" id="discord_http.view.SectionComponent.type">
-<span class="sig-name descname"><span class="pre">type</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="enums.html#discord_http.enums.ComponentType" title="discord_http.enums.ComponentType"><span class="pre">ComponentType</span></a></span><a class="headerlink" href="#discord_http.view.SectionComponent.type" title="Link to this definition">¶</a></dt>
-<dd><p>The type of the component.</p>
-</dd></dl>
-
 <dl class="py method">
 <dt class="sig sig-object py" id="discord_http.view.SectionComponent.to_dict">
 <span class="sig-name descname"><span class="pre">to_dict</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#dict" title="(in Python v3.15)"><span class="pre">dict</span></a></span></span><a class="headerlink" href="#discord_http.view.SectionComponent.to_dict" title="Link to this definition">¶</a></dt>
@@ -2084,6 +2101,12 @@ Set to <cite>None</cite> for the view to never time out on its own.</p></li>
 <dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#dict" title="(in Python v3.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">dict</span></code></a></span></p>
 </dd>
 </dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.view.SectionComponent.type">
+<span class="sig-name descname"><span class="pre">type</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="enums.html#discord_http.enums.ComponentType" title="discord_http.enums.ComponentType"><span class="pre">ComponentType</span></a></span><a class="headerlink" href="#discord_http.view.SectionComponent.type" title="Link to this definition">¶</a></dt>
+<dd><p>The type of the component.</p>
 </dd></dl>
 
 </dd></dl>
@@ -2614,7 +2637,9 @@ The new context does follow with the call_after function, example:</p>
 </pre></div>
 </div>
 </p></li>
-<li><p><strong>users</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#list" title="(in Python v3.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">list</span></code></a>[<a class="reference internal" href="object.html#discord_http.object.Snowflake" title="discord_http.object.Snowflake"><code class="xref py py-class docutils literal notranslate"><span class="pre">Snowflake</span></code></a>] | <a class="reference external" href="https://docs.python.org/3/builtins/constants.html#None" title="(in Python v3.15)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></span>) – List of users that are allowed to interact with the view</p></li>
+<li><p><strong>users</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/collections.abc.html#collections.abc.Iterable" title="(in Python v3.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Iterable</span></code></a>[<a class="reference internal" href="object.html#discord_http.object.Snowflake" title="discord_http.object.Snowflake"><code class="xref py py-class docutils literal notranslate"><span class="pre">Snowflake</span></code></a> | <a class="reference external" href="https://docs.python.org/3/builtins/functions.html#int" title="(in Python v3.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a> | <a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>] | <a class="reference external" href="https://docs.python.org/3/builtins/constants.html#None" title="(in Python v3.15)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></span>) – Users that are allowed to interact with the view, as objects or IDs
+(<cite>int</cite> or a string of digits).
+Anyone else gets an ephemeral rejection.</p></li>
 <li><p><strong>original_response</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#bool" title="(in Python v3.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></a></span>) – Whether to force the original response to be used as the message target</p></li>
 <li><p><strong>custom_id</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a> | <a class="reference external" href="https://docs.python.org/3/builtins/functions.html#int" title="(in Python v3.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a> | <a class="reference external" href="https://docs.python.org/3/builtins/constants.html#None" title="(in Python v3.15)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></span>) – Custom ID of the view, if not provided, it will use Context.id or Context.message</p></li>
 <li><p><strong>timeout</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#float" title="(in Python v3.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></a> | <a class="reference external" href="https://docs.python.org/3/builtins/constants.html#None" title="(in Python v3.15)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></span>) – How long it should take until the code simply times out.
@@ -2628,7 +2653,11 @@ Set to <cite>None</cite> for the view to never time out on its own.</p></li>
 <dd class="field-odd"><p>Returns the new context of the interaction, or <cite>None</cite> if timed out</p>
 </dd>
 <dt class="field-even">Raises<span class="colon">:</span></dt>
-<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/builtins/exceptions.html#TypeError" title="(in Python v3.15)"><strong>TypeError</strong></a> – If <cite>call_after</cite> is provided and is not a coroutine function</p>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/builtins/exceptions.html#TypeError" title="(in Python v3.15)"><strong>TypeError</strong></a> – <ul class="simple">
+<li><p>If <cite>call_after</cite> is provided and is not a coroutine function
+    - If <cite>users</cite> contains something that is not a user or an ID</p></li>
+</ul>
+</p>
 </dd>
 </dl>
 </dd></dl>
@@ -2637,6 +2666,20 @@ Set to <cite>None</cite> for the view to never time out on its own.</p></li>
 <dt class="sig sig-object py" id="discord_http.view.View.items">
 <span class="sig-name descname"><span class="pre">items</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#list" title="(in Python v3.15)"><span class="pre">list</span></a><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#discord_http.view.Item" title="discord_http.view.Item"><span class="pre">Item</span></a><span class="p"><span class="pre">]</span></span></span><a class="headerlink" href="#discord_http.view.View.items" title="Link to this definition">¶</a></dt>
 <dd><p>The items contained within the view, can be buttons, selects, links, etc.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="discord_http.view.View.accepts">
+<span class="sig-name descname"><span class="pre">accepts</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ctx</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#bool" title="(in Python v3.15)"><span class="pre">bool</span></a></span></span><a class="headerlink" href="#discord_http.view.View.accepts" title="Link to this definition">¶</a></dt>
+<dd><p>Whether a component interaction came from one of this view’s own components.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>ctx</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference internal" href="context.html#discord_http.context.Context" title="discord_http.context.Context"><code class="xref py py-class docutils literal notranslate"><span class="pre">Context</span></code></a></span>) – The context of the interaction that arrived</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#bool" title="(in Python v3.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></a></span></p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py method">
@@ -2980,6 +3023,7 @@ Set to <cite>None</cite> for the view to never time out on its own.</p></li>
 <li><a class="reference internal" href="#discord_http.view.Modal.title"><code class="docutils literal notranslate"><span class="pre">Modal.title</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.view.Modal.custom_id"><code class="docutils literal notranslate"><span class="pre">Modal.custom_id</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.view.Modal.items"><code class="docutils literal notranslate"><span class="pre">Modal.items</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.view.Modal.accepts"><code class="docutils literal notranslate"><span class="pre">Modal.accepts()</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.view.Modal.add_item"><code class="docutils literal notranslate"><span class="pre">Modal.add_item()</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.view.Modal.to_dict"><code class="docutils literal notranslate"><span class="pre">Modal.to_dict()</span></code></a></li>
 </ul>
@@ -3025,8 +3069,8 @@ Set to <cite>None</cite> for the view to never time out on its own.</p></li>
 <li><a class="reference internal" href="#discord_http.view.SectionComponent"><code class="docutils literal notranslate"><span class="pre">SectionComponent</span></code></a><ul>
 <li><a class="reference internal" href="#discord_http.view.SectionComponent.components"><code class="docutils literal notranslate"><span class="pre">SectionComponent.components</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.view.SectionComponent.accessory"><code class="docutils literal notranslate"><span class="pre">SectionComponent.accessory</span></code></a></li>
-<li><a class="reference internal" href="#discord_http.view.SectionComponent.type"><code class="docutils literal notranslate"><span class="pre">SectionComponent.type</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.view.SectionComponent.to_dict"><code class="docutils literal notranslate"><span class="pre">SectionComponent.to_dict()</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.view.SectionComponent.type"><code class="docutils literal notranslate"><span class="pre">SectionComponent.type</span></code></a></li>
 </ul>
 </li>
 <li><a class="reference internal" href="#discord_http.view.Select"><code class="docutils literal notranslate"><span class="pre">Select</span></code></a><ul>
@@ -3101,6 +3145,7 @@ Set to <cite>None</cite> for the view to never time out on its own.</p></li>
 <li><a class="reference internal" href="#discord_http.view.View.on_timeout"><code class="docutils literal notranslate"><span class="pre">View.on_timeout()</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.view.View.wait"><code class="docutils literal notranslate"><span class="pre">View.wait()</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.view.View.items"><code class="docutils literal notranslate"><span class="pre">View.items</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.view.View.accepts"><code class="docutils literal notranslate"><span class="pre">View.accepts()</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.view.View.get_item"><code class="docutils literal notranslate"><span class="pre">View.get_item()</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.view.View.add_item"><code class="docutils literal notranslate"><span class="pre">View.add_item()</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.view.View.remove_items"><code class="docutils literal notranslate"><span class="pre">View.remove_items()</span></code></a></li>

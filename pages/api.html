@@ -401,6 +401,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../api/backend.html">Backend</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="../api/backend.html#module-discord_http.backend">discord_http.backend module</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="../api/backend.html#discord_http.backend.DiscordHTTP"><code class="docutils literal notranslate"><span class="pre">DiscordHTTP</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../api/backend.html#discord_http.backend.DiscordHTTP.signature_max_age"><code class="docutils literal notranslate"><span class="pre">DiscordHTTP.signature_max_age</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="../api/backend.html#discord_http.backend.DiscordHTTP.bot"><code class="docutils literal notranslate"><span class="pre">DiscordHTTP.bot</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="../api/backend.html#discord_http.backend.DiscordHTTP.debug_events"><code class="docutils literal notranslate"><span class="pre">DiscordHTTP.debug_events</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="../api/backend.html#discord_http.backend.DiscordHTTP.host"><code class="docutils literal notranslate"><span class="pre">DiscordHTTP.host</span></code></a></li>
@@ -470,6 +471,7 @@
 <li class="toctree-l4"><a class="reference internal" href="../api/channel.html#discord_http.channel.BaseChannel.add_thread_member"><code class="docutils literal notranslate"><span class="pre">BaseChannel.add_thread_member()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="../api/channel.html#discord_http.channel.BaseChannel.bulk_delete_messages"><code class="docutils literal notranslate"><span class="pre">BaseChannel.bulk_delete_messages()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="../api/channel.html#discord_http.channel.BaseChannel.channel"><code class="docutils literal notranslate"><span class="pre">BaseChannel.channel</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/channel.html#discord_http.channel.BaseChannel.connect"><code class="docutils literal notranslate"><span class="pre">BaseChannel.connect()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="../api/channel.html#discord_http.channel.BaseChannel.create_forum_or_media"><code class="docutils literal notranslate"><span class="pre">BaseChannel.create_forum_or_media()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="../api/channel.html#discord_http.channel.BaseChannel.create_invite"><code class="docutils literal notranslate"><span class="pre">BaseChannel.create_invite()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="../api/channel.html#discord_http.channel.BaseChannel.create_thread"><code class="docutils literal notranslate"><span class="pre">BaseChannel.create_thread()</span></code></a></li>
@@ -514,6 +516,7 @@
 <li class="toctree-l4"><a class="reference internal" href="../api/channel.html#discord_http.channel.CategoryChannel.app_permissions"><code class="docutils literal notranslate"><span class="pre">CategoryChannel.app_permissions</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="../api/channel.html#discord_http.channel.CategoryChannel.bulk_delete_messages"><code class="docutils literal notranslate"><span class="pre">CategoryChannel.bulk_delete_messages()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="../api/channel.html#discord_http.channel.CategoryChannel.channel"><code class="docutils literal notranslate"><span class="pre">CategoryChannel.channel</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/channel.html#discord_http.channel.CategoryChannel.connect"><code class="docutils literal notranslate"><span class="pre">CategoryChannel.connect()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="../api/channel.html#discord_http.channel.CategoryChannel.create_forum_or_media"><code class="docutils literal notranslate"><span class="pre">CategoryChannel.create_forum_or_media()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="../api/channel.html#discord_http.channel.CategoryChannel.create_invite"><code class="docutils literal notranslate"><span class="pre">CategoryChannel.create_invite()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="../api/channel.html#discord_http.channel.CategoryChannel.create_thread"><code class="docutils literal notranslate"><span class="pre">CategoryChannel.create_thread()</span></code></a></li>
@@ -573,6 +576,7 @@
 <li class="toctree-l4"><a class="reference internal" href="../api/channel.html#discord_http.channel.DMChannel.app_permissions"><code class="docutils literal notranslate"><span class="pre">DMChannel.app_permissions</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="../api/channel.html#discord_http.channel.DMChannel.bulk_delete_messages"><code class="docutils literal notranslate"><span class="pre">DMChannel.bulk_delete_messages()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="../api/channel.html#discord_http.channel.DMChannel.channel"><code class="docutils literal notranslate"><span class="pre">DMChannel.channel</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/channel.html#discord_http.channel.DMChannel.connect"><code class="docutils literal notranslate"><span class="pre">DMChannel.connect()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="../api/channel.html#discord_http.channel.DMChannel.create_forum_or_media"><code class="docutils literal notranslate"><span class="pre">DMChannel.create_forum_or_media()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="../api/channel.html#discord_http.channel.DMChannel.create_invite"><code class="docutils literal notranslate"><span class="pre">DMChannel.create_invite()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="../api/channel.html#discord_http.channel.DMChannel.create_thread"><code class="docutils literal notranslate"><span class="pre">DMChannel.create_thread()</span></code></a></li>
@@ -623,6 +627,7 @@
 <li class="toctree-l4"><a class="reference internal" href="../api/channel.html#discord_http.channel.DirectoryChannel.app_permissions"><code class="docutils literal notranslate"><span class="pre">DirectoryChannel.app_permissions</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="../api/channel.html#discord_http.channel.DirectoryChannel.bulk_delete_messages"><code class="docutils literal notranslate"><span class="pre">DirectoryChannel.bulk_delete_messages()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="../api/channel.html#discord_http.channel.DirectoryChannel.channel"><code class="docutils literal notranslate"><span class="pre">DirectoryChannel.channel</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/channel.html#discord_http.channel.DirectoryChannel.connect"><code class="docutils literal notranslate"><span class="pre">DirectoryChannel.connect()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="../api/channel.html#discord_http.channel.DirectoryChannel.create_forum_or_media"><code class="docutils literal notranslate"><span class="pre">DirectoryChannel.create_forum_or_media()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="../api/channel.html#discord_http.channel.DirectoryChannel.create_invite"><code class="docutils literal notranslate"><span class="pre">DirectoryChannel.create_invite()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="../api/channel.html#discord_http.channel.DirectoryChannel.create_thread"><code class="docutils literal notranslate"><span class="pre">DirectoryChannel.create_thread()</span></code></a></li>
@@ -687,6 +692,7 @@
 <li class="toctree-l4"><a class="reference internal" href="../api/channel.html#discord_http.channel.ForumChannel.bulk_delete_messages"><code class="docutils literal notranslate"><span class="pre">ForumChannel.bulk_delete_messages()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="../api/channel.html#discord_http.channel.ForumChannel.channel"><code class="docutils literal notranslate"><span class="pre">ForumChannel.channel</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="../api/channel.html#discord_http.channel.ForumChannel.channel_id"><code class="docutils literal notranslate"><span class="pre">ForumChannel.channel_id</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/channel.html#discord_http.channel.ForumChannel.connect"><code class="docutils literal notranslate"><span class="pre">ForumChannel.connect()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="../api/channel.html#discord_http.channel.ForumChannel.create_forum_or_media"><code class="docutils literal notranslate"><span class="pre">ForumChannel.create_forum_or_media()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="../api/channel.html#discord_http.channel.ForumChannel.create_invite"><code class="docutils literal notranslate"><span class="pre">ForumChannel.create_invite()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="../api/channel.html#discord_http.channel.ForumChannel.create_thread"><code class="docutils literal notranslate"><span class="pre">ForumChannel.create_thread()</span></code></a></li>
@@ -767,6 +773,7 @@
 <li class="toctree-l4"><a class="reference internal" href="../api/channel.html#discord_http.channel.ForumThread.bulk_delete_messages"><code class="docutils literal notranslate"><span class="pre">ForumThread.bulk_delete_messages()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="../api/channel.html#discord_http.channel.ForumThread.channel"><code class="docutils literal notranslate"><span class="pre">ForumThread.channel</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="../api/channel.html#discord_http.channel.ForumThread.channel_id"><code class="docutils literal notranslate"><span class="pre">ForumThread.channel_id</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/channel.html#discord_http.channel.ForumThread.connect"><code class="docutils literal notranslate"><span class="pre">ForumThread.connect()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="../api/channel.html#discord_http.channel.ForumThread.create_forum_or_media"><code class="docutils literal notranslate"><span class="pre">ForumThread.create_forum_or_media()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="../api/channel.html#discord_http.channel.ForumThread.create_invite"><code class="docutils literal notranslate"><span class="pre">ForumThread.create_invite()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="../api/channel.html#discord_http.channel.ForumThread.create_thread"><code class="docutils literal notranslate"><span class="pre">ForumThread.create_thread()</span></code></a></li>
@@ -831,6 +838,7 @@
 <li class="toctree-l4"><a class="reference internal" href="../api/channel.html#discord_http.channel.GroupDMChannel.app_permissions"><code class="docutils literal notranslate"><span class="pre">GroupDMChannel.app_permissions</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="../api/channel.html#discord_http.channel.GroupDMChannel.bulk_delete_messages"><code class="docutils literal notranslate"><span class="pre">GroupDMChannel.bulk_delete_messages()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="../api/channel.html#discord_http.channel.GroupDMChannel.channel"><code class="docutils literal notranslate"><span class="pre">GroupDMChannel.channel</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/channel.html#discord_http.channel.GroupDMChannel.connect"><code class="docutils literal notranslate"><span class="pre">GroupDMChannel.connect()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="../api/channel.html#discord_http.channel.GroupDMChannel.create_forum_or_media"><code class="docutils literal notranslate"><span class="pre">GroupDMChannel.create_forum_or_media()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="../api/channel.html#discord_http.channel.GroupDMChannel.create_invite"><code class="docutils literal notranslate"><span class="pre">GroupDMChannel.create_invite()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="../api/channel.html#discord_http.channel.GroupDMChannel.create_thread"><code class="docutils literal notranslate"><span class="pre">GroupDMChannel.create_thread()</span></code></a></li>
@@ -884,6 +892,7 @@
 <li class="toctree-l4"><a class="reference internal" href="../api/channel.html#discord_http.channel.NewsChannel.app_permissions"><code class="docutils literal notranslate"><span class="pre">NewsChannel.app_permissions</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="../api/channel.html#discord_http.channel.NewsChannel.bulk_delete_messages"><code class="docutils literal notranslate"><span class="pre">NewsChannel.bulk_delete_messages()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="../api/channel.html#discord_http.channel.NewsChannel.channel"><code class="docutils literal notranslate"><span class="pre">NewsChannel.channel</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/channel.html#discord_http.channel.NewsChannel.connect"><code class="docutils literal notranslate"><span class="pre">NewsChannel.connect()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="../api/channel.html#discord_http.channel.NewsChannel.create_forum_or_media"><code class="docutils literal notranslate"><span class="pre">NewsChannel.create_forum_or_media()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="../api/channel.html#discord_http.channel.NewsChannel.create_invite"><code class="docutils literal notranslate"><span class="pre">NewsChannel.create_invite()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="../api/channel.html#discord_http.channel.NewsChannel.create_thread"><code class="docutils literal notranslate"><span class="pre">NewsChannel.create_thread()</span></code></a></li>
@@ -942,6 +951,7 @@
 <li class="toctree-l4"><a class="reference internal" href="../api/channel.html#discord_http.channel.NewsThread.bulk_delete_messages"><code class="docutils literal notranslate"><span class="pre">NewsThread.bulk_delete_messages()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="../api/channel.html#discord_http.channel.NewsThread.channel"><code class="docutils literal notranslate"><span class="pre">NewsThread.channel</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="../api/channel.html#discord_http.channel.NewsThread.channel_id"><code class="docutils literal notranslate"><span class="pre">NewsThread.channel_id</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/channel.html#discord_http.channel.NewsThread.connect"><code class="docutils literal notranslate"><span class="pre">NewsThread.connect()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="../api/channel.html#discord_http.channel.NewsThread.create_forum_or_media"><code class="docutils literal notranslate"><span class="pre">NewsThread.create_forum_or_media()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="../api/channel.html#discord_http.channel.NewsThread.create_invite"><code class="docutils literal notranslate"><span class="pre">NewsThread.create_invite()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="../api/channel.html#discord_http.channel.NewsThread.create_thread"><code class="docutils literal notranslate"><span class="pre">NewsThread.create_thread()</span></code></a></li>
@@ -1016,6 +1026,7 @@
 <li class="toctree-l4"><a class="reference internal" href="../api/channel.html#discord_http.channel.PartialChannel.fetch_archived_public_threads"><code class="docutils literal notranslate"><span class="pre">PartialChannel.fetch_archived_public_threads()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="../api/channel.html#discord_http.channel.PartialChannel.fetch_archived_private_threads"><code class="docutils literal notranslate"><span class="pre">PartialChannel.fetch_archived_private_threads()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="../api/channel.html#discord_http.channel.PartialChannel.create_invite"><code class="docutils literal notranslate"><span class="pre">PartialChannel.create_invite()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/channel.html#discord_http.channel.PartialChannel.connect"><code class="docutils literal notranslate"><span class="pre">PartialChannel.connect()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="../api/channel.html#discord_http.channel.PartialChannel.send"><code class="docutils literal notranslate"><span class="pre">PartialChannel.send()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="../api/channel.html#discord_http.channel.PartialChannel.from_dict"><code class="docutils literal notranslate"><span class="pre">PartialChannel.from_dict()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="../api/channel.html#discord_http.channel.PartialChannel.fetch"><code class="docutils literal notranslate"><span class="pre">PartialChannel.fetch()</span></code></a></li>
@@ -1047,6 +1058,7 @@
 <li class="toctree-l4"><a class="reference internal" href="../api/channel.html#discord_http.channel.PartialThread.add_thread_member"><code class="docutils literal notranslate"><span class="pre">PartialThread.add_thread_member()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="../api/channel.html#discord_http.channel.PartialThread.bulk_delete_messages"><code class="docutils literal notranslate"><span class="pre">PartialThread.bulk_delete_messages()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="../api/channel.html#discord_http.channel.PartialThread.channel"><code class="docutils literal notranslate"><span class="pre">PartialThread.channel</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/channel.html#discord_http.channel.PartialThread.connect"><code class="docutils literal notranslate"><span class="pre">PartialThread.connect()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="../api/channel.html#discord_http.channel.PartialThread.create_forum_or_media"><code class="docutils literal notranslate"><span class="pre">PartialThread.create_forum_or_media()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="../api/channel.html#discord_http.channel.PartialThread.create_invite"><code class="docutils literal notranslate"><span class="pre">PartialThread.create_invite()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="../api/channel.html#discord_http.channel.PartialThread.create_thread"><code class="docutils literal notranslate"><span class="pre">PartialThread.create_thread()</span></code></a></li>
@@ -1094,6 +1106,7 @@
 <li class="toctree-l4"><a class="reference internal" href="../api/channel.html#discord_http.channel.PrivateThread.bulk_delete_messages"><code class="docutils literal notranslate"><span class="pre">PrivateThread.bulk_delete_messages()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="../api/channel.html#discord_http.channel.PrivateThread.channel"><code class="docutils literal notranslate"><span class="pre">PrivateThread.channel</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="../api/channel.html#discord_http.channel.PrivateThread.channel_id"><code class="docutils literal notranslate"><span class="pre">PrivateThread.channel_id</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/channel.html#discord_http.channel.PrivateThread.connect"><code class="docutils literal notranslate"><span class="pre">PrivateThread.connect()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="../api/channel.html#discord_http.channel.PrivateThread.create_forum_or_media"><code class="docutils literal notranslate"><span class="pre">PrivateThread.create_forum_or_media()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="../api/channel.html#discord_http.channel.PrivateThread.create_invite"><code class="docutils literal notranslate"><span class="pre">PrivateThread.create_invite()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="../api/channel.html#discord_http.channel.PrivateThread.create_thread"><code class="docutils literal notranslate"><span class="pre">PrivateThread.create_thread()</span></code></a></li>
@@ -1174,6 +1187,7 @@
 <li class="toctree-l4"><a class="reference internal" href="../api/channel.html#discord_http.channel.PublicThread.app_permissions"><code class="docutils literal notranslate"><span class="pre">PublicThread.app_permissions</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="../api/channel.html#discord_http.channel.PublicThread.bulk_delete_messages"><code class="docutils literal notranslate"><span class="pre">PublicThread.bulk_delete_messages()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="../api/channel.html#discord_http.channel.PublicThread.channel"><code class="docutils literal notranslate"><span class="pre">PublicThread.channel</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/channel.html#discord_http.channel.PublicThread.connect"><code class="docutils literal notranslate"><span class="pre">PublicThread.connect()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="../api/channel.html#discord_http.channel.PublicThread.create_forum_or_media"><code class="docutils literal notranslate"><span class="pre">PublicThread.create_forum_or_media()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="../api/channel.html#discord_http.channel.PublicThread.create_invite"><code class="docutils literal notranslate"><span class="pre">PublicThread.create_invite()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="../api/channel.html#discord_http.channel.PublicThread.create_thread"><code class="docutils literal notranslate"><span class="pre">PublicThread.create_thread()</span></code></a></li>
@@ -1225,6 +1239,7 @@
 <li class="toctree-l4"><a class="reference internal" href="../api/channel.html#discord_http.channel.StageChannel.bitrate"><code class="docutils literal notranslate"><span class="pre">StageChannel.bitrate</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="../api/channel.html#discord_http.channel.StageChannel.bulk_delete_messages"><code class="docutils literal notranslate"><span class="pre">StageChannel.bulk_delete_messages()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="../api/channel.html#discord_http.channel.StageChannel.channel"><code class="docutils literal notranslate"><span class="pre">StageChannel.channel</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/channel.html#discord_http.channel.StageChannel.connect"><code class="docutils literal notranslate"><span class="pre">StageChannel.connect()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="../api/channel.html#discord_http.channel.StageChannel.create_forum_or_media"><code class="docutils literal notranslate"><span class="pre">StageChannel.create_forum_or_media()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="../api/channel.html#discord_http.channel.StageChannel.create_invite"><code class="docutils literal notranslate"><span class="pre">StageChannel.create_invite()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="../api/channel.html#discord_http.channel.StageChannel.create_thread"><code class="docutils literal notranslate"><span class="pre">StageChannel.create_thread()</span></code></a></li>
@@ -1301,6 +1316,7 @@
 <li class="toctree-l4"><a class="reference internal" href="../api/channel.html#discord_http.channel.StoreChannel.app_permissions"><code class="docutils literal notranslate"><span class="pre">StoreChannel.app_permissions</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="../api/channel.html#discord_http.channel.StoreChannel.bulk_delete_messages"><code class="docutils literal notranslate"><span class="pre">StoreChannel.bulk_delete_messages()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="../api/channel.html#discord_http.channel.StoreChannel.channel"><code class="docutils literal notranslate"><span class="pre">StoreChannel.channel</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/channel.html#discord_http.channel.StoreChannel.connect"><code class="docutils literal notranslate"><span class="pre">StoreChannel.connect()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="../api/channel.html#discord_http.channel.StoreChannel.create_forum_or_media"><code class="docutils literal notranslate"><span class="pre">StoreChannel.create_forum_or_media()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="../api/channel.html#discord_http.channel.StoreChannel.create_invite"><code class="docutils literal notranslate"><span class="pre">StoreChannel.create_invite()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="../api/channel.html#discord_http.channel.StoreChannel.create_thread"><code class="docutils literal notranslate"><span class="pre">StoreChannel.create_thread()</span></code></a></li>
@@ -1356,6 +1372,7 @@
 <li class="toctree-l4"><a class="reference internal" href="../api/channel.html#discord_http.channel.TextChannel.app_permissions"><code class="docutils literal notranslate"><span class="pre">TextChannel.app_permissions</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="../api/channel.html#discord_http.channel.TextChannel.bulk_delete_messages"><code class="docutils literal notranslate"><span class="pre">TextChannel.bulk_delete_messages()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="../api/channel.html#discord_http.channel.TextChannel.channel"><code class="docutils literal notranslate"><span class="pre">TextChannel.channel</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/channel.html#discord_http.channel.TextChannel.connect"><code class="docutils literal notranslate"><span class="pre">TextChannel.connect()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="../api/channel.html#discord_http.channel.TextChannel.create_forum_or_media"><code class="docutils literal notranslate"><span class="pre">TextChannel.create_forum_or_media()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="../api/channel.html#discord_http.channel.TextChannel.create_invite"><code class="docutils literal notranslate"><span class="pre">TextChannel.create_invite()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="../api/channel.html#discord_http.channel.TextChannel.create_thread"><code class="docutils literal notranslate"><span class="pre">TextChannel.create_thread()</span></code></a></li>
@@ -1414,6 +1431,7 @@
 <li class="toctree-l4"><a class="reference internal" href="../api/channel.html#discord_http.channel.Thread.bulk_delete_messages"><code class="docutils literal notranslate"><span class="pre">Thread.bulk_delete_messages()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="../api/channel.html#discord_http.channel.Thread.channel"><code class="docutils literal notranslate"><span class="pre">Thread.channel</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="../api/channel.html#discord_http.channel.Thread.channel_id"><code class="docutils literal notranslate"><span class="pre">Thread.channel_id</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/channel.html#discord_http.channel.Thread.connect"><code class="docutils literal notranslate"><span class="pre">Thread.connect()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="../api/channel.html#discord_http.channel.Thread.create_forum_or_media"><code class="docutils literal notranslate"><span class="pre">Thread.create_forum_or_media()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="../api/channel.html#discord_http.channel.Thread.create_invite"><code class="docutils literal notranslate"><span class="pre">Thread.create_invite()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="../api/channel.html#discord_http.channel.Thread.create_thread"><code class="docutils literal notranslate"><span class="pre">Thread.create_thread()</span></code></a></li>
@@ -1483,6 +1501,7 @@
 <li class="toctree-l4"><a class="reference internal" href="../api/channel.html#discord_http.channel.VoiceChannel.app_permissions"><code class="docutils literal notranslate"><span class="pre">VoiceChannel.app_permissions</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="../api/channel.html#discord_http.channel.VoiceChannel.bulk_delete_messages"><code class="docutils literal notranslate"><span class="pre">VoiceChannel.bulk_delete_messages()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="../api/channel.html#discord_http.channel.VoiceChannel.channel"><code class="docutils literal notranslate"><span class="pre">VoiceChannel.channel</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/channel.html#discord_http.channel.VoiceChannel.connect"><code class="docutils literal notranslate"><span class="pre">VoiceChannel.connect()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="../api/channel.html#discord_http.channel.VoiceChannel.create_forum_or_media"><code class="docutils literal notranslate"><span class="pre">VoiceChannel.create_forum_or_media()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="../api/channel.html#discord_http.channel.VoiceChannel.create_invite"><code class="docutils literal notranslate"><span class="pre">VoiceChannel.create_invite()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="../api/channel.html#discord_http.channel.VoiceChannel.create_thread"><code class="docutils literal notranslate"><span class="pre">VoiceChannel.create_thread()</span></code></a></li>
@@ -1561,6 +1580,9 @@
 <li class="toctree-l4"><a class="reference internal" href="../api/client.html#discord_http.client.Client.sync"><code class="docutils literal notranslate"><span class="pre">Client.sync</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="../api/client.html#discord_http.client.Client.debug_events"><code class="docutils literal notranslate"><span class="pre">Client.debug_events</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="../api/client.html#discord_http.client.Client.enable_gateway"><code class="docutils literal notranslate"><span class="pre">Client.enable_gateway</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/client.html#discord_http.client.Client.voice_reconnect_attempts"><code class="docutils literal notranslate"><span class="pre">Client.voice_reconnect_attempts</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/client.html#discord_http.client.Client.voice_reconnect_base"><code class="docutils literal notranslate"><span class="pre">Client.voice_reconnect_base</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/client.html#discord_http.client.Client.voice_reconnect_max_delay"><code class="docutils literal notranslate"><span class="pre">Client.voice_reconnect_max_delay</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="../api/client.html#discord_http.client.Client.playing_status"><code class="docutils literal notranslate"><span class="pre">Client.playing_status</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="../api/client.html#discord_http.client.Client.guild_ready_timeout"><code class="docutils literal notranslate"><span class="pre">Client.guild_ready_timeout</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="../api/client.html#discord_http.client.Client.chunk_guilds_on_startup"><code class="docutils literal notranslate"><span class="pre">Client.chunk_guilds_on_startup</span></code></a></li>
@@ -1580,6 +1602,7 @@
 <li class="toctree-l4"><a class="reference internal" href="../api/client.html#discord_http.client.Client.cache"><code class="docutils literal notranslate"><span class="pre">Client.cache</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="../api/client.html#discord_http.client.Client.state"><code class="docutils literal notranslate"><span class="pre">Client.state</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="../api/client.html#discord_http.client.Client.backend"><code class="docutils literal notranslate"><span class="pre">Client.backend</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/client.html#discord_http.client.Client.get_voice_client"><code class="docutils literal notranslate"><span class="pre">Client.get_voice_client()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="../api/client.html#discord_http.client.Client.update_me"><code class="docutils literal notranslate"><span class="pre">Client.update_me()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="../api/client.html#discord_http.client.Client.application_id"><code class="docutils literal notranslate"><span class="pre">Client.application_id</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="../api/client.html#discord_http.client.Client.public_key"><code class="docutils literal notranslate"><span class="pre">Client.public_key</span></code></a></li>
@@ -1587,6 +1610,7 @@
 <li class="toctree-l4"><a class="reference internal" href="../api/client.html#discord_http.client.Client.query_members"><code class="docutils literal notranslate"><span class="pre">Client.query_members()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="../api/client.html#discord_http.client.Client.sync_commands"><code class="docutils literal notranslate"><span class="pre">Client.sync_commands()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="../api/client.html#discord_http.client.Client.user"><code class="docutils literal notranslate"><span class="pre">Client.user</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/client.html#discord_http.client.Client.voice_clients"><code class="docutils literal notranslate"><span class="pre">Client.voice_clients</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="../api/client.html#discord_http.client.Client.guilds"><code class="docutils literal notranslate"><span class="pre">Client.guilds</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="../api/client.html#discord_http.client.Client.get_guild"><code class="docutils literal notranslate"><span class="pre">Client.get_guild()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="../api/client.html#discord_http.client.Client.is_ready"><code class="docutils literal notranslate"><span class="pre">Client.is_ready()</span></code></a></li>
@@ -3297,6 +3321,12 @@
 <li class="toctree-l4"><a class="reference internal" href="../api/errors.html#discord_http.errors.DiscordServerError.text"><code class="docutils literal notranslate"><span class="pre">DiscordServerError.text</span></code></a></li>
 </ul>
 </li>
+<li class="toctree-l3"><a class="reference internal" href="../api/errors.html#discord_http.errors.FFmpegError"><code class="docutils literal notranslate"><span class="pre">FFmpegError</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../api/errors.html#discord_http.errors.FFmpegError.add_note"><code class="docutils literal notranslate"><span class="pre">FFmpegError.add_note()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/errors.html#discord_http.errors.FFmpegError.args"><code class="docutils literal notranslate"><span class="pre">FFmpegError.args</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/errors.html#discord_http.errors.FFmpegError.with_traceback"><code class="docutils literal notranslate"><span class="pre">FFmpegError.with_traceback()</span></code></a></li>
+</ul>
+</li>
 <li class="toctree-l3"><a class="reference internal" href="../api/errors.html#discord_http.errors.Forbidden"><code class="docutils literal notranslate"><span class="pre">Forbidden</span></code></a><ul>
 <li class="toctree-l4"><a class="reference internal" href="../api/errors.html#discord_http.errors.Forbidden.add_note"><code class="docutils literal notranslate"><span class="pre">Forbidden.add_note()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="../api/errors.html#discord_http.errors.Forbidden.args"><code class="docutils literal notranslate"><span class="pre">Forbidden.args</span></code></a></li>
@@ -3309,10 +3339,10 @@
 </li>
 <li class="toctree-l3"><a class="reference internal" href="../api/errors.html#discord_http.errors.HTTPException"><code class="docutils literal notranslate"><span class="pre">HTTPException</span></code></a><ul>
 <li class="toctree-l4"><a class="reference internal" href="../api/errors.html#discord_http.errors.HTTPException.request"><code class="docutils literal notranslate"><span class="pre">HTTPException.request</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="../api/errors.html#discord_http.errors.HTTPException.status"><code class="docutils literal notranslate"><span class="pre">HTTPException.status</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="../api/errors.html#discord_http.errors.HTTPException.add_note"><code class="docutils literal notranslate"><span class="pre">HTTPException.add_note()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="../api/errors.html#discord_http.errors.HTTPException.args"><code class="docutils literal notranslate"><span class="pre">HTTPException.args</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="../api/errors.html#discord_http.errors.HTTPException.with_traceback"><code class="docutils literal notranslate"><span class="pre">HTTPException.with_traceback()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/errors.html#discord_http.errors.HTTPException.status"><code class="docutils literal notranslate"><span class="pre">HTTPException.status</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="../api/errors.html#discord_http.errors.HTTPException.text"><code class="docutils literal notranslate"><span class="pre">HTTPException.text</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="../api/errors.html#discord_http.errors.HTTPException.code"><code class="docutils literal notranslate"><span class="pre">HTTPException.code</span></code></a></li>
 </ul>
@@ -3331,6 +3361,18 @@
 <li class="toctree-l4"><a class="reference internal" href="../api/errors.html#discord_http.errors.NotFound.status"><code class="docutils literal notranslate"><span class="pre">NotFound.status</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="../api/errors.html#discord_http.errors.NotFound.code"><code class="docutils literal notranslate"><span class="pre">NotFound.code</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="../api/errors.html#discord_http.errors.NotFound.text"><code class="docutils literal notranslate"><span class="pre">NotFound.text</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../api/errors.html#discord_http.errors.OpusError"><code class="docutils literal notranslate"><span class="pre">OpusError</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../api/errors.html#discord_http.errors.OpusError.add_note"><code class="docutils literal notranslate"><span class="pre">OpusError.add_note()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/errors.html#discord_http.errors.OpusError.args"><code class="docutils literal notranslate"><span class="pre">OpusError.args</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/errors.html#discord_http.errors.OpusError.with_traceback"><code class="docutils literal notranslate"><span class="pre">OpusError.with_traceback()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../api/errors.html#discord_http.errors.OpusNotLoaded"><code class="docutils literal notranslate"><span class="pre">OpusNotLoaded</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../api/errors.html#discord_http.errors.OpusNotLoaded.add_note"><code class="docutils literal notranslate"><span class="pre">OpusNotLoaded.add_note()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/errors.html#discord_http.errors.OpusNotLoaded.args"><code class="docutils literal notranslate"><span class="pre">OpusNotLoaded.args</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/errors.html#discord_http.errors.OpusNotLoaded.with_traceback"><code class="docutils literal notranslate"><span class="pre">OpusNotLoaded.with_traceback()</span></code></a></li>
 </ul>
 </li>
 <li class="toctree-l3"><a class="reference internal" href="../api/errors.html#discord_http.errors.Ratelimited"><code class="docutils literal notranslate"><span class="pre">Ratelimited</span></code></a><ul>
@@ -3358,6 +3400,14 @@
 <li class="toctree-l4"><a class="reference internal" href="../api/errors.html#discord_http.errors.UserMissingPermissions.add_note"><code class="docutils literal notranslate"><span class="pre">UserMissingPermissions.add_note()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="../api/errors.html#discord_http.errors.UserMissingPermissions.args"><code class="docutils literal notranslate"><span class="pre">UserMissingPermissions.args</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="../api/errors.html#discord_http.errors.UserMissingPermissions.with_traceback"><code class="docutils literal notranslate"><span class="pre">UserMissingPermissions.with_traceback()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../api/errors.html#discord_http.errors.VoiceConnectionClosed"><code class="docutils literal notranslate"><span class="pre">VoiceConnectionClosed</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../api/errors.html#discord_http.errors.VoiceConnectionClosed.code"><code class="docutils literal notranslate"><span class="pre">VoiceConnectionClosed.code</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/errors.html#discord_http.errors.VoiceConnectionClosed.reason"><code class="docutils literal notranslate"><span class="pre">VoiceConnectionClosed.reason</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/errors.html#discord_http.errors.VoiceConnectionClosed.add_note"><code class="docutils literal notranslate"><span class="pre">VoiceConnectionClosed.add_note()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/errors.html#discord_http.errors.VoiceConnectionClosed.args"><code class="docutils literal notranslate"><span class="pre">VoiceConnectionClosed.args</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/errors.html#discord_http.errors.VoiceConnectionClosed.with_traceback"><code class="docutils literal notranslate"><span class="pre">VoiceConnectionClosed.with_traceback()</span></code></a></li>
 </ul>
 </li>
 </ul>
@@ -4714,6 +4764,7 @@
 </ul>
 </li>
 <li class="toctree-l3"><a class="reference internal" href="../api/message.html#discord_http.message.MessageSnapshot"><code class="docutils literal notranslate"><span class="pre">MessageSnapshot</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../api/message.html#discord_http.message.MessageSnapshot.guild_id"><code class="docutils literal notranslate"><span class="pre">MessageSnapshot.guild_id</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="../api/message.html#discord_http.message.MessageSnapshot.type"><code class="docutils literal notranslate"><span class="pre">MessageSnapshot.type</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="../api/message.html#discord_http.message.MessageSnapshot.content"><code class="docutils literal notranslate"><span class="pre">MessageSnapshot.content</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="../api/message.html#discord_http.message.MessageSnapshot.timestamp"><code class="docutils literal notranslate"><span class="pre">MessageSnapshot.timestamp</span></code></a></li>
@@ -4721,6 +4772,10 @@
 <li class="toctree-l4"><a class="reference internal" href="../api/message.html#discord_http.message.MessageSnapshot.embeds"><code class="docutils literal notranslate"><span class="pre">MessageSnapshot.embeds</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="../api/message.html#discord_http.message.MessageSnapshot.attachments"><code class="docutils literal notranslate"><span class="pre">MessageSnapshot.attachments</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="../api/message.html#discord_http.message.MessageSnapshot.stickers"><code class="docutils literal notranslate"><span class="pre">MessageSnapshot.stickers</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/message.html#discord_http.message.MessageSnapshot.mentions"><code class="docutils literal notranslate"><span class="pre">MessageSnapshot.mentions</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/message.html#discord_http.message.MessageSnapshot.guild"><code class="docutils literal notranslate"><span class="pre">MessageSnapshot.guild</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/message.html#discord_http.message.MessageSnapshot.pretty_content"><code class="docutils literal notranslate"><span class="pre">MessageSnapshot.pretty_content</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/message.html#discord_http.message.MessageSnapshot.escaped_content"><code class="docutils literal notranslate"><span class="pre">MessageSnapshot.escaped_content</span></code></a></li>
 </ul>
 </li>
 <li class="toctree-l3"><a class="reference internal" href="../api/message.html#discord_http.message.PartialMessage"><code class="docutils literal notranslate"><span class="pre">PartialMessage</span></code></a><ul>
@@ -5479,6 +5534,7 @@
 <li class="toctree-l4"><a class="reference internal" href="../api/view.html#discord_http.view.Modal.title"><code class="docutils literal notranslate"><span class="pre">Modal.title</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="../api/view.html#discord_http.view.Modal.custom_id"><code class="docutils literal notranslate"><span class="pre">Modal.custom_id</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="../api/view.html#discord_http.view.Modal.items"><code class="docutils literal notranslate"><span class="pre">Modal.items</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/view.html#discord_http.view.Modal.accepts"><code class="docutils literal notranslate"><span class="pre">Modal.accepts()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="../api/view.html#discord_http.view.Modal.add_item"><code class="docutils literal notranslate"><span class="pre">Modal.add_item()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="../api/view.html#discord_http.view.Modal.to_dict"><code class="docutils literal notranslate"><span class="pre">Modal.to_dict()</span></code></a></li>
 </ul>
@@ -5524,8 +5580,8 @@
 <li class="toctree-l3"><a class="reference internal" href="../api/view.html#discord_http.view.SectionComponent"><code class="docutils literal notranslate"><span class="pre">SectionComponent</span></code></a><ul>
 <li class="toctree-l4"><a class="reference internal" href="../api/view.html#discord_http.view.SectionComponent.components"><code class="docutils literal notranslate"><span class="pre">SectionComponent.components</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="../api/view.html#discord_http.view.SectionComponent.accessory"><code class="docutils literal notranslate"><span class="pre">SectionComponent.accessory</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="../api/view.html#discord_http.view.SectionComponent.type"><code class="docutils literal notranslate"><span class="pre">SectionComponent.type</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="../api/view.html#discord_http.view.SectionComponent.to_dict"><code class="docutils literal notranslate"><span class="pre">SectionComponent.to_dict()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/view.html#discord_http.view.SectionComponent.type"><code class="docutils literal notranslate"><span class="pre">SectionComponent.type</span></code></a></li>
 </ul>
 </li>
 <li class="toctree-l3"><a class="reference internal" href="../api/view.html#discord_http.view.Select"><code class="docutils literal notranslate"><span class="pre">Select</span></code></a><ul>
@@ -5600,6 +5656,7 @@
 <li class="toctree-l4"><a class="reference internal" href="../api/view.html#discord_http.view.View.on_timeout"><code class="docutils literal notranslate"><span class="pre">View.on_timeout()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="../api/view.html#discord_http.view.View.wait"><code class="docutils literal notranslate"><span class="pre">View.wait()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="../api/view.html#discord_http.view.View.items"><code class="docutils literal notranslate"><span class="pre">View.items</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/view.html#discord_http.view.View.accepts"><code class="docutils literal notranslate"><span class="pre">View.accepts()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="../api/view.html#discord_http.view.View.get_item"><code class="docutils literal notranslate"><span class="pre">View.get_item()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="../api/view.html#discord_http.view.View.add_item"><code class="docutils literal notranslate"><span class="pre">View.add_item()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="../api/view.html#discord_http.view.View.remove_items"><code class="docutils literal notranslate"><span class="pre">View.remove_items()</span></code></a></li>
@@ -5612,41 +5669,267 @@
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../api/voice.html">Voice</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="../api/voice.html#module-discord_http.voice">discord_http.voice module</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="../api/voice.html#discord_http.voice.PartialVoiceState"><code class="docutils literal notranslate"><span class="pre">PartialVoiceState</span></code></a><ul>
-<li class="toctree-l4"><a class="reference internal" href="../api/voice.html#discord_http.voice.PartialVoiceState.id"><code class="docutils literal notranslate"><span class="pre">PartialVoiceState.id</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="../api/voice.html#discord_http.voice.PartialVoiceState.channel_id"><code class="docutils literal notranslate"><span class="pre">PartialVoiceState.channel_id</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="../api/voice.html#discord_http.voice.PartialVoiceState.guild_id"><code class="docutils literal notranslate"><span class="pre">PartialVoiceState.guild_id</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="../api/voice.html#discord_http.voice.PartialVoiceState.member_id"><code class="docutils literal notranslate"><span class="pre">PartialVoiceState.member_id</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="../api/voice.html#discord_http.voice.PartialVoiceState.guild"><code class="docutils literal notranslate"><span class="pre">PartialVoiceState.guild</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="../api/voice.html#discord_http.voice.PartialVoiceState.member"><code class="docutils literal notranslate"><span class="pre">PartialVoiceState.member</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="../api/voice.html#discord_http.voice.PartialVoiceState.channel"><code class="docutils literal notranslate"><span class="pre">PartialVoiceState.channel</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="../api/voice.html#discord_http.voice.PartialVoiceState.fetch"><code class="docutils literal notranslate"><span class="pre">PartialVoiceState.fetch()</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="../api/voice.html#discord_http.voice.PartialVoiceState.edit"><code class="docutils literal notranslate"><span class="pre">PartialVoiceState.edit()</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="../api/voice.html#discord_http.voice.PartialVoiceState.created_at"><code class="docutils literal notranslate"><span class="pre">PartialVoiceState.created_at</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../api/voice.html#module-discord_http.voice.client">discord_http.voice.client module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../api/voice.html#discord_http.voice.client.VoiceClient"><code class="docutils literal notranslate"><span class="pre">VoiceClient</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../api/voice.html#discord_http.voice.client.VoiceClient.bot"><code class="docutils literal notranslate"><span class="pre">VoiceClient.bot</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/voice.html#discord_http.voice.client.VoiceClient.channel"><code class="docutils literal notranslate"><span class="pre">VoiceClient.channel</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/voice.html#discord_http.voice.client.VoiceClient.guild_id"><code class="docutils literal notranslate"><span class="pre">VoiceClient.guild_id</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/voice.html#discord_http.voice.client.VoiceClient.connection"><code class="docutils literal notranslate"><span class="pre">VoiceClient.connection</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/voice.html#discord_http.voice.client.VoiceClient.loop"><code class="docutils literal notranslate"><span class="pre">VoiceClient.loop</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/voice.html#discord_http.voice.client.VoiceClient.user_id"><code class="docutils literal notranslate"><span class="pre">VoiceClient.user_id</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/voice.html#discord_http.voice.client.VoiceClient.ssrc"><code class="docutils literal notranslate"><span class="pre">VoiceClient.ssrc</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/voice.html#discord_http.voice.client.VoiceClient.secret_key"><code class="docutils literal notranslate"><span class="pre">VoiceClient.secret_key</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/voice.html#discord_http.voice.client.VoiceClient.latency"><code class="docutils literal notranslate"><span class="pre">VoiceClient.latency</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/voice.html#discord_http.voice.client.VoiceClient.average_latency"><code class="docutils literal notranslate"><span class="pre">VoiceClient.average_latency</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/voice.html#discord_http.voice.client.VoiceClient.voice_privacy_code"><code class="docutils literal notranslate"><span class="pre">VoiceClient.voice_privacy_code</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/voice.html#discord_http.voice.client.VoiceClient.endpoint"><code class="docutils literal notranslate"><span class="pre">VoiceClient.endpoint</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/voice.html#discord_http.voice.client.VoiceClient.session_id"><code class="docutils literal notranslate"><span class="pre">VoiceClient.session_id</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/voice.html#discord_http.voice.client.VoiceClient.is_connected"><code class="docutils literal notranslate"><span class="pre">VoiceClient.is_connected()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/voice.html#discord_http.voice.client.VoiceClient.connect"><code class="docutils literal notranslate"><span class="pre">VoiceClient.connect()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/voice.html#discord_http.voice.client.VoiceClient.disconnect"><code class="docutils literal notranslate"><span class="pre">VoiceClient.disconnect()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/voice.html#discord_http.voice.client.VoiceClient.move_to"><code class="docutils literal notranslate"><span class="pre">VoiceClient.move_to()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/voice.html#discord_http.voice.client.VoiceClient.on_voice_state_update"><code class="docutils literal notranslate"><span class="pre">VoiceClient.on_voice_state_update()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/voice.html#discord_http.voice.client.VoiceClient.on_voice_server_update"><code class="docutils literal notranslate"><span class="pre">VoiceClient.on_voice_server_update()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/voice.html#discord_http.voice.client.VoiceClient.speak"><code class="docutils literal notranslate"><span class="pre">VoiceClient.speak()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/voice.html#discord_http.voice.client.VoiceClient.send_audio_packet"><code class="docutils literal notranslate"><span class="pre">VoiceClient.send_audio_packet()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/voice.html#discord_http.voice.client.VoiceClient.play"><code class="docutils literal notranslate"><span class="pre">VoiceClient.play()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/voice.html#discord_http.voice.client.VoiceClient.pause"><code class="docutils literal notranslate"><span class="pre">VoiceClient.pause()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/voice.html#discord_http.voice.client.VoiceClient.resume"><code class="docutils literal notranslate"><span class="pre">VoiceClient.resume()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/voice.html#discord_http.voice.client.VoiceClient.stop"><code class="docutils literal notranslate"><span class="pre">VoiceClient.stop()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/voice.html#discord_http.voice.client.VoiceClient.is_playing"><code class="docutils literal notranslate"><span class="pre">VoiceClient.is_playing()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/voice.html#discord_http.voice.client.VoiceClient.is_paused"><code class="docutils literal notranslate"><span class="pre">VoiceClient.is_paused()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/voice.html#discord_http.voice.client.VoiceClient.listen"><code class="docutils literal notranslate"><span class="pre">VoiceClient.listen()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/voice.html#discord_http.voice.client.VoiceClient.stop_listening"><code class="docutils literal notranslate"><span class="pre">VoiceClient.stop_listening()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/voice.html#discord_http.voice.client.VoiceClient.is_listening"><code class="docutils literal notranslate"><span class="pre">VoiceClient.is_listening()</span></code></a></li>
 </ul>
 </li>
-<li class="toctree-l3"><a class="reference internal" href="../api/voice.html#discord_http.voice.VoiceState"><code class="docutils literal notranslate"><span class="pre">VoiceState</span></code></a><ul>
-<li class="toctree-l4"><a class="reference internal" href="../api/voice.html#discord_http.voice.VoiceState.session_id"><code class="docutils literal notranslate"><span class="pre">VoiceState.session_id</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="../api/voice.html#discord_http.voice.VoiceState.deaf"><code class="docutils literal notranslate"><span class="pre">VoiceState.deaf</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="../api/voice.html#discord_http.voice.VoiceState.mute"><code class="docutils literal notranslate"><span class="pre">VoiceState.mute</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="../api/voice.html#discord_http.voice.VoiceState.self_deaf"><code class="docutils literal notranslate"><span class="pre">VoiceState.self_deaf</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="../api/voice.html#discord_http.voice.VoiceState.self_mute"><code class="docutils literal notranslate"><span class="pre">VoiceState.self_mute</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="../api/voice.html#discord_http.voice.VoiceState.self_stream"><code class="docutils literal notranslate"><span class="pre">VoiceState.self_stream</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="../api/voice.html#discord_http.voice.VoiceState.channel_id"><code class="docutils literal notranslate"><span class="pre">VoiceState.channel_id</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="../api/voice.html#discord_http.voice.VoiceState.created_at"><code class="docutils literal notranslate"><span class="pre">VoiceState.created_at</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="../api/voice.html#discord_http.voice.VoiceState.edit"><code class="docutils literal notranslate"><span class="pre">VoiceState.edit()</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="../api/voice.html#discord_http.voice.VoiceState.fetch"><code class="docutils literal notranslate"><span class="pre">VoiceState.fetch()</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="../api/voice.html#discord_http.voice.VoiceState.guild_id"><code class="docutils literal notranslate"><span class="pre">VoiceState.guild_id</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="../api/voice.html#discord_http.voice.VoiceState.id"><code class="docutils literal notranslate"><span class="pre">VoiceState.id</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="../api/voice.html#discord_http.voice.VoiceState.member_id"><code class="docutils literal notranslate"><span class="pre">VoiceState.member_id</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="../api/voice.html#discord_http.voice.VoiceState.self_video"><code class="docutils literal notranslate"><span class="pre">VoiceState.self_video</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="../api/voice.html#discord_http.voice.VoiceState.suppress"><code class="docutils literal notranslate"><span class="pre">VoiceState.suppress</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="../api/voice.html#discord_http.voice.VoiceState.request_to_speak_timestamp"><code class="docutils literal notranslate"><span class="pre">VoiceState.request_to_speak_timestamp</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="../api/voice.html#discord_http.voice.VoiceState.user"><code class="docutils literal notranslate"><span class="pre">VoiceState.user</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="../api/voice.html#discord_http.voice.VoiceState.guild"><code class="docutils literal notranslate"><span class="pre">VoiceState.guild</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="../api/voice.html#discord_http.voice.VoiceState.channel"><code class="docutils literal notranslate"><span class="pre">VoiceState.channel</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="../api/voice.html#discord_http.voice.VoiceState.member"><code class="docutils literal notranslate"><span class="pre">VoiceState.member</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../api/voice.html#module-discord_http.voice.connection">discord_http.voice.connection module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../api/voice.html#discord_http.voice.connection.VoiceConnection"><code class="docutils literal notranslate"><span class="pre">VoiceConnection</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../api/voice.html#discord_http.voice.connection.VoiceConnection.voice_client"><code class="docutils literal notranslate"><span class="pre">VoiceConnection.voice_client</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/voice.html#discord_http.voice.connection.VoiceConnection.guild_id"><code class="docutils literal notranslate"><span class="pre">VoiceConnection.guild_id</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/voice.html#discord_http.voice.connection.VoiceConnection.channel_id"><code class="docutils literal notranslate"><span class="pre">VoiceConnection.channel_id</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/voice.html#discord_http.voice.connection.VoiceConnection.user_id"><code class="docutils literal notranslate"><span class="pre">VoiceConnection.user_id</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/voice.html#discord_http.voice.connection.VoiceConnection.socket"><code class="docutils literal notranslate"><span class="pre">VoiceConnection.socket</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/voice.html#discord_http.voice.connection.VoiceConnection.udp"><code class="docutils literal notranslate"><span class="pre">VoiceConnection.udp</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/voice.html#discord_http.voice.connection.VoiceConnection.transport"><code class="docutils literal notranslate"><span class="pre">VoiceConnection.transport</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/voice.html#discord_http.voice.connection.VoiceConnection.encryptor"><code class="docutils literal notranslate"><span class="pre">VoiceConnection.encryptor</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/voice.html#discord_http.voice.connection.VoiceConnection.token"><code class="docutils literal notranslate"><span class="pre">VoiceConnection.token</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/voice.html#discord_http.voice.connection.VoiceConnection.endpoint"><code class="docutils literal notranslate"><span class="pre">VoiceConnection.endpoint</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/voice.html#discord_http.voice.connection.VoiceConnection.session_id"><code class="docutils literal notranslate"><span class="pre">VoiceConnection.session_id</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/voice.html#discord_http.voice.connection.VoiceConnection.server_id"><code class="docutils literal notranslate"><span class="pre">VoiceConnection.server_id</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/voice.html#discord_http.voice.connection.VoiceConnection.ssrc"><code class="docutils literal notranslate"><span class="pre">VoiceConnection.ssrc</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/voice.html#discord_http.voice.connection.VoiceConnection.secret_key"><code class="docutils literal notranslate"><span class="pre">VoiceConnection.secret_key</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/voice.html#discord_http.voice.connection.VoiceConnection.endpoint_ip"><code class="docutils literal notranslate"><span class="pre">VoiceConnection.endpoint_ip</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/voice.html#discord_http.voice.connection.VoiceConnection.endpoint_port"><code class="docutils literal notranslate"><span class="pre">VoiceConnection.endpoint_port</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/voice.html#discord_http.voice.connection.VoiceConnection.mode"><code class="docutils literal notranslate"><span class="pre">VoiceConnection.mode</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/voice.html#discord_http.voice.connection.VoiceConnection.sequence"><code class="docutils literal notranslate"><span class="pre">VoiceConnection.sequence</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/voice.html#discord_http.voice.connection.VoiceConnection.timestamp"><code class="docutils literal notranslate"><span class="pre">VoiceConnection.timestamp</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/voice.html#discord_http.voice.connection.VoiceConnection.dave_session"><code class="docutils literal notranslate"><span class="pre">VoiceConnection.dave_session</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/voice.html#discord_http.voice.connection.VoiceConnection.dave_protocol_version"><code class="docutils literal notranslate"><span class="pre">VoiceConnection.dave_protocol_version</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/voice.html#discord_http.voice.connection.VoiceConnection.connected_user_ids"><code class="docutils literal notranslate"><span class="pre">VoiceConnection.connected_user_ids</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/voice.html#discord_http.voice.connection.VoiceConnection.backoff"><code class="docutils literal notranslate"><span class="pre">VoiceConnection.backoff</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/voice.html#discord_http.voice.connection.VoiceConnection.client"><code class="docutils literal notranslate"><span class="pre">VoiceConnection.client</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/voice.html#discord_http.voice.connection.VoiceConnection.latency"><code class="docutils literal notranslate"><span class="pre">VoiceConnection.latency</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/voice.html#discord_http.voice.connection.VoiceConnection.average_latency"><code class="docutils literal notranslate"><span class="pre">VoiceConnection.average_latency</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/voice.html#discord_http.voice.connection.VoiceConnection.voice_privacy_code"><code class="docutils literal notranslate"><span class="pre">VoiceConnection.voice_privacy_code</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/voice.html#discord_http.voice.connection.VoiceConnection.is_connected"><code class="docutils literal notranslate"><span class="pre">VoiceConnection.is_connected()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/voice.html#discord_http.voice.connection.VoiceConnection.connect"><code class="docutils literal notranslate"><span class="pre">VoiceConnection.connect()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/voice.html#discord_http.voice.connection.VoiceConnection.on_voice_state_update"><code class="docutils literal notranslate"><span class="pre">VoiceConnection.on_voice_state_update()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/voice.html#discord_http.voice.connection.VoiceConnection.on_voice_server_update"><code class="docutils literal notranslate"><span class="pre">VoiceConnection.on_voice_server_update()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/voice.html#discord_http.voice.connection.VoiceConnection.on_ready"><code class="docutils literal notranslate"><span class="pre">VoiceConnection.on_ready()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/voice.html#discord_http.voice.connection.VoiceConnection.on_session_description"><code class="docutils literal notranslate"><span class="pre">VoiceConnection.on_session_description()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/voice.html#discord_http.voice.connection.VoiceConnection.on_speaking"><code class="docutils literal notranslate"><span class="pre">VoiceConnection.on_speaking()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/voice.html#discord_http.voice.connection.VoiceConnection.on_clients_connect"><code class="docutils literal notranslate"><span class="pre">VoiceConnection.on_clients_connect()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/voice.html#discord_http.voice.connection.VoiceConnection.on_client_disconnect"><code class="docutils literal notranslate"><span class="pre">VoiceConnection.on_client_disconnect()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/voice.html#discord_http.voice.connection.VoiceConnection.on_resumed"><code class="docutils literal notranslate"><span class="pre">VoiceConnection.on_resumed()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/voice.html#discord_http.voice.connection.VoiceConnection.on_dave_binary"><code class="docutils literal notranslate"><span class="pre">VoiceConnection.on_dave_binary()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/voice.html#discord_http.voice.connection.VoiceConnection.on_dave_json"><code class="docutils literal notranslate"><span class="pre">VoiceConnection.on_dave_json()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/voice.html#discord_http.voice.connection.VoiceConnection.reinit_dave_session"><code class="docutils literal notranslate"><span class="pre">VoiceConnection.reinit_dave_session()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/voice.html#discord_http.voice.connection.VoiceConnection.can_encrypt"><code class="docutils literal notranslate"><span class="pre">VoiceConnection.can_encrypt()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/voice.html#discord_http.voice.connection.VoiceConnection.can_decrypt"><code class="docutils literal notranslate"><span class="pre">VoiceConnection.can_decrypt()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/voice.html#discord_http.voice.connection.VoiceConnection.dave_encrypt_opus"><code class="docutils literal notranslate"><span class="pre">VoiceConnection.dave_encrypt_opus()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/voice.html#discord_http.voice.connection.VoiceConnection.dave_decrypt_opus"><code class="docutils literal notranslate"><span class="pre">VoiceConnection.dave_decrypt_opus()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/voice.html#discord_http.voice.connection.VoiceConnection.disconnect"><code class="docutils literal notranslate"><span class="pre">VoiceConnection.disconnect()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/voice.html#discord_http.voice.connection.VoiceConnection.close_transport"><code class="docutils literal notranslate"><span class="pre">VoiceConnection.close_transport()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/voice.html#discord_http.voice.connection.VoiceConnection.move_to"><code class="docutils literal notranslate"><span class="pre">VoiceConnection.move_to()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../api/voice.html#module-discord_http.voice.player">discord_http.voice.player module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../api/voice.html#discord_http.voice.player.AudioPlayer"><code class="docutils literal notranslate"><span class="pre">AudioPlayer</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../api/voice.html#discord_http.voice.player.AudioPlayer.DELAY"><code class="docutils literal notranslate"><span class="pre">AudioPlayer.DELAY</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/voice.html#discord_http.voice.player.AudioPlayer.start"><code class="docutils literal notranslate"><span class="pre">AudioPlayer.start()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/voice.html#discord_http.voice.player.AudioPlayer.stop"><code class="docutils literal notranslate"><span class="pre">AudioPlayer.stop()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/voice.html#discord_http.voice.player.AudioPlayer.pause"><code class="docutils literal notranslate"><span class="pre">AudioPlayer.pause()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/voice.html#discord_http.voice.player.AudioPlayer.resume"><code class="docutils literal notranslate"><span class="pre">AudioPlayer.resume()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/voice.html#discord_http.voice.player.AudioPlayer.is_playing"><code class="docutils literal notranslate"><span class="pre">AudioPlayer.is_playing()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/voice.html#discord_http.voice.player.AudioPlayer.is_paused"><code class="docutils literal notranslate"><span class="pre">AudioPlayer.is_paused()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/voice.html#discord_http.voice.player.AudioPlayer.set_source"><code class="docutils literal notranslate"><span class="pre">AudioPlayer.set_source()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../api/voice.html#discord_http.voice.player.AudioSource"><code class="docutils literal notranslate"><span class="pre">AudioSource</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../api/voice.html#discord_http.voice.player.AudioSource.read"><code class="docutils literal notranslate"><span class="pre">AudioSource.read()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/voice.html#discord_http.voice.player.AudioSource.is_opus"><code class="docutils literal notranslate"><span class="pre">AudioSource.is_opus()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/voice.html#discord_http.voice.player.AudioSource.cleanup"><code class="docutils literal notranslate"><span class="pre">AudioSource.cleanup()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../api/voice.html#discord_http.voice.player.AudioSourceInput"><code class="docutils literal notranslate"><span class="pre">AudioSourceInput</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../api/voice.html#discord_http.voice.player.FFmpegOpusAudio"><code class="docutils literal notranslate"><span class="pre">FFmpegOpusAudio</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../api/voice.html#discord_http.voice.player.FFmpegOpusAudio.read"><code class="docutils literal notranslate"><span class="pre">FFmpegOpusAudio.read()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/voice.html#discord_http.voice.player.FFmpegOpusAudio.is_opus"><code class="docutils literal notranslate"><span class="pre">FFmpegOpusAudio.is_opus()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/voice.html#discord_http.voice.player.FFmpegOpusAudio.cleanup"><code class="docutils literal notranslate"><span class="pre">FFmpegOpusAudio.cleanup()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../api/voice.html#discord_http.voice.player.FFmpegPCMAudio"><code class="docutils literal notranslate"><span class="pre">FFmpegPCMAudio</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../api/voice.html#discord_http.voice.player.FFmpegPCMAudio.read"><code class="docutils literal notranslate"><span class="pre">FFmpegPCMAudio.read()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/voice.html#discord_http.voice.player.FFmpegPCMAudio.cleanup"><code class="docutils literal notranslate"><span class="pre">FFmpegPCMAudio.cleanup()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/voice.html#discord_http.voice.player.FFmpegPCMAudio.is_opus"><code class="docutils literal notranslate"><span class="pre">FFmpegPCMAudio.is_opus()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../api/voice.html#discord_http.voice.player.PCMAudio"><code class="docutils literal notranslate"><span class="pre">PCMAudio</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../api/voice.html#discord_http.voice.player.PCMAudio.read"><code class="docutils literal notranslate"><span class="pre">PCMAudio.read()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/voice.html#discord_http.voice.player.PCMAudio.cleanup"><code class="docutils literal notranslate"><span class="pre">PCMAudio.cleanup()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/voice.html#discord_http.voice.player.PCMAudio.is_opus"><code class="docutils literal notranslate"><span class="pre">PCMAudio.is_opus()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../api/voice.html#discord_http.voice.player.PCMVolumeTransformer"><code class="docutils literal notranslate"><span class="pre">PCMVolumeTransformer</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../api/voice.html#discord_http.voice.player.PCMVolumeTransformer.volume"><code class="docutils literal notranslate"><span class="pre">PCMVolumeTransformer.volume</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/voice.html#discord_http.voice.player.PCMVolumeTransformer.read"><code class="docutils literal notranslate"><span class="pre">PCMVolumeTransformer.read()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/voice.html#discord_http.voice.player.PCMVolumeTransformer.cleanup"><code class="docutils literal notranslate"><span class="pre">PCMVolumeTransformer.cleanup()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/voice.html#discord_http.voice.player.PCMVolumeTransformer.is_opus"><code class="docutils literal notranslate"><span class="pre">PCMVolumeTransformer.is_opus()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../api/voice.html#module-discord_http.voice.receiver">discord_http.voice.receiver module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../api/voice.html#discord_http.voice.receiver.VoiceReceiver"><code class="docutils literal notranslate"><span class="pre">VoiceReceiver</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../api/voice.html#discord_http.voice.receiver.VoiceReceiver.voice_client"><code class="docutils literal notranslate"><span class="pre">VoiceReceiver.voice_client</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/voice.html#discord_http.voice.receiver.VoiceReceiver.sink"><code class="docutils literal notranslate"><span class="pre">VoiceReceiver.sink</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/voice.html#discord_http.voice.receiver.VoiceReceiver.start"><code class="docutils literal notranslate"><span class="pre">VoiceReceiver.start()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/voice.html#discord_http.voice.receiver.VoiceReceiver.stop"><code class="docutils literal notranslate"><span class="pre">VoiceReceiver.stop()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/voice.html#discord_http.voice.receiver.VoiceReceiver.reset"><code class="docutils literal notranslate"><span class="pre">VoiceReceiver.reset()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/voice.html#discord_http.voice.receiver.VoiceReceiver.is_listening"><code class="docutils literal notranslate"><span class="pre">VoiceReceiver.is_listening()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/voice.html#discord_http.voice.receiver.VoiceReceiver.add_ssrc"><code class="docutils literal notranslate"><span class="pre">VoiceReceiver.add_ssrc()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/voice.html#discord_http.voice.receiver.VoiceReceiver.remove_user"><code class="docutils literal notranslate"><span class="pre">VoiceReceiver.remove_user()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/voice.html#discord_http.voice.receiver.VoiceReceiver.unpack"><code class="docutils literal notranslate"><span class="pre">VoiceReceiver.unpack()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../api/voice.html#module-discord_http.voice.sinks">discord_http.voice.sinks module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../api/voice.html#discord_http.voice.sinks.AudioSink"><code class="docutils literal notranslate"><span class="pre">AudioSink</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../api/voice.html#discord_http.voice.sinks.AudioSink.wants_opus"><code class="docutils literal notranslate"><span class="pre">AudioSink.wants_opus()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/voice.html#discord_http.voice.sinks.AudioSink.write"><code class="docutils literal notranslate"><span class="pre">AudioSink.write()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/voice.html#discord_http.voice.sinks.AudioSink.cleanup"><code class="docutils literal notranslate"><span class="pre">AudioSink.cleanup()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../api/voice.html#discord_http.voice.sinks.CallbackSink"><code class="docutils literal notranslate"><span class="pre">CallbackSink</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../api/voice.html#discord_http.voice.sinks.CallbackSink.wants_opus"><code class="docutils literal notranslate"><span class="pre">CallbackSink.wants_opus()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/voice.html#discord_http.voice.sinks.CallbackSink.write"><code class="docutils literal notranslate"><span class="pre">CallbackSink.write()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/voice.html#discord_http.voice.sinks.CallbackSink.cleanup"><code class="docutils literal notranslate"><span class="pre">CallbackSink.cleanup()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../api/voice.html#discord_http.voice.sinks.VoiceData"><code class="docutils literal notranslate"><span class="pre">VoiceData</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../api/voice.html#discord_http.voice.sinks.VoiceData.user"><code class="docutils literal notranslate"><span class="pre">VoiceData.user</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/voice.html#discord_http.voice.sinks.VoiceData.pcm"><code class="docutils literal notranslate"><span class="pre">VoiceData.pcm</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/voice.html#discord_http.voice.sinks.VoiceData.opus"><code class="docutils literal notranslate"><span class="pre">VoiceData.opus</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/voice.html#discord_http.voice.sinks.VoiceData.timestamp"><code class="docutils literal notranslate"><span class="pre">VoiceData.timestamp</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/voice.html#discord_http.voice.sinks.VoiceData.ssrc"><code class="docutils literal notranslate"><span class="pre">VoiceData.ssrc</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../api/voice.html#discord_http.voice.sinks.WaveSink"><code class="docutils literal notranslate"><span class="pre">WaveSink</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../api/voice.html#discord_http.voice.sinks.WaveSink.wants_opus"><code class="docutils literal notranslate"><span class="pre">WaveSink.wants_opus()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/voice.html#discord_http.voice.sinks.WaveSink.write"><code class="docutils literal notranslate"><span class="pre">WaveSink.write()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/voice.html#discord_http.voice.sinks.WaveSink.cleanup"><code class="docutils literal notranslate"><span class="pre">WaveSink.cleanup()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../api/voice.html#module-discord_http.voice.dave">discord_http.voice.dave module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../api/voice.html#discord_http.voice.dave.DaveManager"><code class="docutils literal notranslate"><span class="pre">DaveManager</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../api/voice.html#discord_http.voice.dave.DaveManager.ready"><code class="docutils literal notranslate"><span class="pre">DaveManager.ready</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/voice.html#discord_http.voice.dave.DaveManager.voice_privacy_code"><code class="docutils literal notranslate"><span class="pre">DaveManager.voice_privacy_code</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/voice.html#discord_http.voice.dave.DaveManager.can_encrypt"><code class="docutils literal notranslate"><span class="pre">DaveManager.can_encrypt()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/voice.html#discord_http.voice.dave.DaveManager.can_decrypt"><code class="docutils literal notranslate"><span class="pre">DaveManager.can_decrypt()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/voice.html#discord_http.voice.dave.DaveManager.remove_user"><code class="docutils literal notranslate"><span class="pre">DaveManager.remove_user()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/voice.html#discord_http.voice.dave.DaveManager.reinit"><code class="docutils literal notranslate"><span class="pre">DaveManager.reinit()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/voice.html#discord_http.voice.dave.DaveManager.set_passthrough_mode"><code class="docutils literal notranslate"><span class="pre">DaveManager.set_passthrough_mode()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/voice.html#discord_http.voice.dave.DaveManager.encrypt_opus"><code class="docutils literal notranslate"><span class="pre">DaveManager.encrypt_opus()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/voice.html#discord_http.voice.dave.DaveManager.decrypt_opus"><code class="docutils literal notranslate"><span class="pre">DaveManager.decrypt_opus()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/voice.html#discord_http.voice.dave.DaveManager.handle_binary"><code class="docutils literal notranslate"><span class="pre">DaveManager.handle_binary()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/voice.html#discord_http.voice.dave.DaveManager.handle_json"><code class="docutils literal notranslate"><span class="pre">DaveManager.handle_json()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../api/voice.html#discord_http.voice.dave.max_protocol_version"><code class="docutils literal notranslate"><span class="pre">max_protocol_version()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../api/voice.html#module-discord_http.voice.opus">discord_http.voice.opus module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../api/voice.html#discord_http.voice.opus.OPUS_SILENCE"><code class="docutils literal notranslate"><span class="pre">OPUS_SILENCE</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../api/voice.html#discord_http.voice.opus.SAMPLES_PER_FRAME"><code class="docutils literal notranslate"><span class="pre">SAMPLES_PER_FRAME</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../api/voice.html#discord_http.voice.opus.SAMPLE_RATE"><code class="docutils literal notranslate"><span class="pre">SAMPLE_RATE</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../api/voice.html#discord_http.voice.opus.Decoder"><code class="docutils literal notranslate"><span class="pre">Decoder</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../api/voice.html#discord_http.voice.opus.Decoder.packet_get_nb_frames"><code class="docutils literal notranslate"><span class="pre">Decoder.packet_get_nb_frames()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/voice.html#discord_http.voice.opus.Decoder.packet_get_samples_per_frame"><code class="docutils literal notranslate"><span class="pre">Decoder.packet_get_samples_per_frame()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/voice.html#discord_http.voice.opus.Decoder.decode"><code class="docutils literal notranslate"><span class="pre">Decoder.decode()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/voice.html#discord_http.voice.opus.Decoder.cleanup"><code class="docutils literal notranslate"><span class="pre">Decoder.cleanup()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../api/voice.html#discord_http.voice.opus.Encoder"><code class="docutils literal notranslate"><span class="pre">Encoder</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../api/voice.html#discord_http.voice.opus.Encoder.application"><code class="docutils literal notranslate"><span class="pre">Encoder.application</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/voice.html#discord_http.voice.opus.Encoder.encode"><code class="docutils literal notranslate"><span class="pre">Encoder.encode()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/voice.html#discord_http.voice.opus.Encoder.cleanup"><code class="docutils literal notranslate"><span class="pre">Encoder.cleanup()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../api/voice.html#discord_http.voice.opus.OpusError"><code class="docutils literal notranslate"><span class="pre">OpusError</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../api/voice.html#discord_http.voice.opus.OpusError.add_note"><code class="docutils literal notranslate"><span class="pre">OpusError.add_note()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/voice.html#discord_http.voice.opus.OpusError.args"><code class="docutils literal notranslate"><span class="pre">OpusError.args</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/voice.html#discord_http.voice.opus.OpusError.with_traceback"><code class="docutils literal notranslate"><span class="pre">OpusError.with_traceback()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../api/voice.html#discord_http.voice.opus.OpusNotLoaded"><code class="docutils literal notranslate"><span class="pre">OpusNotLoaded</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../api/voice.html#discord_http.voice.opus.OpusNotLoaded.add_note"><code class="docutils literal notranslate"><span class="pre">OpusNotLoaded.add_note()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/voice.html#discord_http.voice.opus.OpusNotLoaded.args"><code class="docutils literal notranslate"><span class="pre">OpusNotLoaded.args</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/voice.html#discord_http.voice.opus.OpusNotLoaded.with_traceback"><code class="docutils literal notranslate"><span class="pre">OpusNotLoaded.with_traceback()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../api/voice.html#discord_http.voice.opus.is_loaded"><code class="docutils literal notranslate"><span class="pre">is_loaded()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../api/voice.html#discord_http.voice.opus.load_opus"><code class="docutils literal notranslate"><span class="pre">load_opus()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../api/voice.html#module-discord_http.voice.enums">discord_http.voice.enums module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../api/voice.html#discord_http.voice.enums.VoiceOpType"><code class="docutils literal notranslate"><span class="pre">VoiceOpType</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../api/voice.html#discord_http.voice.enums.VoiceOpType.identify"><code class="docutils literal notranslate"><span class="pre">VoiceOpType.identify</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/voice.html#discord_http.voice.enums.VoiceOpType.select_protocol"><code class="docutils literal notranslate"><span class="pre">VoiceOpType.select_protocol</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/voice.html#discord_http.voice.enums.VoiceOpType.ready"><code class="docutils literal notranslate"><span class="pre">VoiceOpType.ready</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/voice.html#discord_http.voice.enums.VoiceOpType.heartbeat"><code class="docutils literal notranslate"><span class="pre">VoiceOpType.heartbeat</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/voice.html#discord_http.voice.enums.VoiceOpType.session_description"><code class="docutils literal notranslate"><span class="pre">VoiceOpType.session_description</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/voice.html#discord_http.voice.enums.VoiceOpType.speaking"><code class="docutils literal notranslate"><span class="pre">VoiceOpType.speaking</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/voice.html#discord_http.voice.enums.VoiceOpType.heartbeat_ack"><code class="docutils literal notranslate"><span class="pre">VoiceOpType.heartbeat_ack</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/voice.html#discord_http.voice.enums.VoiceOpType.resume"><code class="docutils literal notranslate"><span class="pre">VoiceOpType.resume</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/voice.html#discord_http.voice.enums.VoiceOpType.hello"><code class="docutils literal notranslate"><span class="pre">VoiceOpType.hello</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/voice.html#discord_http.voice.enums.VoiceOpType.resumed"><code class="docutils literal notranslate"><span class="pre">VoiceOpType.resumed</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/voice.html#discord_http.voice.enums.VoiceOpType.clients_connect"><code class="docutils literal notranslate"><span class="pre">VoiceOpType.clients_connect</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/voice.html#discord_http.voice.enums.VoiceOpType.client_disconnect"><code class="docutils literal notranslate"><span class="pre">VoiceOpType.client_disconnect</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/voice.html#discord_http.voice.enums.VoiceOpType.dave_prepare_transition"><code class="docutils literal notranslate"><span class="pre">VoiceOpType.dave_prepare_transition</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/voice.html#discord_http.voice.enums.VoiceOpType.dave_execute_transition"><code class="docutils literal notranslate"><span class="pre">VoiceOpType.dave_execute_transition</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/voice.html#discord_http.voice.enums.VoiceOpType.dave_transition_ready"><code class="docutils literal notranslate"><span class="pre">VoiceOpType.dave_transition_ready</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/voice.html#discord_http.voice.enums.VoiceOpType.dave_prepare_epoch"><code class="docutils literal notranslate"><span class="pre">VoiceOpType.dave_prepare_epoch</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/voice.html#discord_http.voice.enums.VoiceOpType.dave_mls_external_sender"><code class="docutils literal notranslate"><span class="pre">VoiceOpType.dave_mls_external_sender</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/voice.html#discord_http.voice.enums.VoiceOpType.dave_mls_key_package"><code class="docutils literal notranslate"><span class="pre">VoiceOpType.dave_mls_key_package</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/voice.html#discord_http.voice.enums.VoiceOpType.dave_mls_proposals"><code class="docutils literal notranslate"><span class="pre">VoiceOpType.dave_mls_proposals</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/voice.html#discord_http.voice.enums.VoiceOpType.dave_mls_commit_welcome"><code class="docutils literal notranslate"><span class="pre">VoiceOpType.dave_mls_commit_welcome</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/voice.html#discord_http.voice.enums.VoiceOpType.dave_mls_announce_commit_transition"><code class="docutils literal notranslate"><span class="pre">VoiceOpType.dave_mls_announce_commit_transition</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/voice.html#discord_http.voice.enums.VoiceOpType.dave_mls_welcome"><code class="docutils literal notranslate"><span class="pre">VoiceOpType.dave_mls_welcome</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/voice.html#discord_http.voice.enums.VoiceOpType.dave_mls_invalid_commit_welcome"><code class="docutils literal notranslate"><span class="pre">VoiceOpType.dave_mls_invalid_commit_welcome</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/voice.html#discord_http.voice.enums.VoiceOpType.pretty_name"><code class="docutils literal notranslate"><span class="pre">VoiceOpType.pretty_name</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/voice.html#discord_http.voice.enums.VoiceOpType.random"><code class="docutils literal notranslate"><span class="pre">VoiceOpType.random()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/voice.html#discord_http.voice.enums.VoiceOpType.try_get"><code class="docutils literal notranslate"><span class="pre">VoiceOpType.try_get()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/voice.html#discord_http.voice.enums.VoiceOpType.names"><code class="docutils literal notranslate"><span class="pre">VoiceOpType.names()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/voice.html#discord_http.voice.enums.VoiceOpType.values"><code class="docutils literal notranslate"><span class="pre">VoiceOpType.values()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/voice.html#discord_http.voice.enums.VoiceOpType.to_dict"><code class="docutils literal notranslate"><span class="pre">VoiceOpType.to_dict()</span></code></a></li>
 </ul>
 </li>
 </ul>

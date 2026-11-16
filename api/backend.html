@@ -304,6 +304,15 @@
 </dd>
 </dl>
 <dl class="py attribute">
+<dt class="sig sig-object py" id="discord_http.backend.DiscordHTTP.signature_max_age">
+<span class="sig-name descname"><span class="pre">signature_max_age</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#float" title="(in Python v3.15)"><span class="pre">float</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/builtins/constants.html#None" title="(in Python v3.15)"><span class="pre">None</span></a></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">300.0</span></span><a class="headerlink" href="#discord_http.backend.DiscordHTTP.signature_max_age" title="Link to this definition">¶</a></dt>
+<dd><p>How far the signed timestamp of a request may be from the local clock, in seconds.</p>
+<p>A request older than this is refused even with a valid signature, so a
+captured request can’t be sent again later. The default leaves plenty of
+room for a drifting system clock, <cite>None</cite> turns the check off.</p>
+</dd></dl>
+
+<dl class="py attribute">
 <dt class="sig sig-object py" id="discord_http.backend.DiscordHTTP.bot">
 <span class="sig-name descname"><span class="pre">bot</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="client.html#discord_http.client.Client" title="discord_http.client.Client"><span class="pre">Client</span></a></span><a class="headerlink" href="#discord_http.backend.DiscordHTTP.bot" title="Link to this definition">¶</a></dt>
 <dd><p>The bot instance that is using this HTTP server.</p>
@@ -757,6 +766,7 @@ Remember that it must return <cite>dict</cite></p>
 <li><a class="reference internal" href="#">Backend</a><ul>
 <li><a class="reference internal" href="#module-discord_http.backend">discord_http.backend module</a><ul>
 <li><a class="reference internal" href="#discord_http.backend.DiscordHTTP"><code class="docutils literal notranslate"><span class="pre">DiscordHTTP</span></code></a><ul>
+<li><a class="reference internal" href="#discord_http.backend.DiscordHTTP.signature_max_age"><code class="docutils literal notranslate"><span class="pre">DiscordHTTP.signature_max_age</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.backend.DiscordHTTP.bot"><code class="docutils literal notranslate"><span class="pre">DiscordHTTP.bot</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.backend.DiscordHTTP.debug_events"><code class="docutils literal notranslate"><span class="pre">DiscordHTTP.debug_events</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.backend.DiscordHTTP.host"><code class="docutils literal notranslate"><span class="pre">DiscordHTTP.host</span></code></a></li>

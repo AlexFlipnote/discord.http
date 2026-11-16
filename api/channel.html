@@ -469,6 +469,40 @@ permissions change, at which point a <cite>CHANNEL_UPDATE</cite> event delivers 
 </dd></dl>
 
 <dl class="py method">
+<dt class="sig sig-object py" id="discord_http.channel.BaseChannel.connect">
+<span class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">connect</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">timeout</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">30.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">reconnect</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">reconnect_on_session_invalid</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">self_deaf</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">self_mute</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="voice.html#discord_http.voice.client.VoiceClient" title="discord_http.voice.client.VoiceClient"><span class="pre">VoiceClient</span></a></span></span><a class="headerlink" href="#discord_http.channel.BaseChannel.connect" title="Link to this definition">¶</a></dt>
+<dd><p>Connect to this voice channel.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>timeout</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#float" title="(in Python v3.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></a></span>) – How long to wait, in seconds, for the voice handshake to complete.</p></li>
+<li><p><strong>reconnect</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#bool" title="(in Python v3.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></a></span>) – Whether to automatically reconnect if the voice connection drops.</p></li>
+<li><p><strong>reconnect_on_session_invalid</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#bool" title="(in Python v3.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></a></span>) – What to do when Discord invalidates the voice session (close code
+4006), which most commonly happens when the channel empties out and
+Discord tears down the DAVE/MLS session. By default (<code class="docutils literal notranslate"><span class="pre">False</span></code>) the
+bot disconnects; set to <code class="docutils literal notranslate"><span class="pre">True</span></code> to attempt a full reconnect instead.</p></li>
+<li><p><strong>self_deaf</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#bool" title="(in Python v3.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></a></span>) – Whether the bot should be self-deafened.</p></li>
+<li><p><strong>self_mute</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#bool" title="(in Python v3.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></a></span>) – Whether the bot should be self-muted.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><a class="reference internal" href="voice.html#discord_http.voice.client.VoiceClient" title="discord_http.voice.client.VoiceClient"><code class="xref py py-class docutils literal notranslate"><span class="pre">VoiceClient</span></code></a></span></p>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The voice client for the connection.</p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p><a class="reference external" href="https://docs.python.org/3/builtins/exceptions.html#TypeError" title="(in Python v3.15)"><strong>TypeError</strong></a> – If the channel is not a voice or stage channel.</p></li>
+<li><p><a class="reference external" href="https://docs.python.org/3/builtins/exceptions.html#ValueError" title="(in Python v3.15)"><strong>ValueError</strong></a> – If the channel is not associated with a guild.</p></li>
+<li><p><a class="reference external" href="https://docs.python.org/3/builtins/exceptions.html#NotImplementedError" title="(in Python v3.15)"><strong>NotImplementedError</strong></a> – If the gateway is not available.</p></li>
+<li><p><a class="reference external" href="https://docs.python.org/3/builtins/exceptions.html#RuntimeError" title="(in Python v3.15)"><strong>RuntimeError</strong></a> – If the bot is already connected to a voice channel in this guild.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
 <dt class="sig sig-object py" id="discord_http.channel.BaseChannel.create_forum_or_media">
 <span class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">create_forum_or_media</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span></em>, <em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">content</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">embed</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">embeds</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">file</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">files</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">allowed_mentions</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">view</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">auto_archive_duration</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">4320</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rate_limit_per_user</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">flags</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">applied_tags</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stickers</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">reason</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#discord_http.channel.ForumThread" title="discord_http.channel.ForumThread"><span class="pre">ForumThread</span></a></span></span><a class="headerlink" href="#discord_http.channel.BaseChannel.create_forum_or_media" title="Link to this definition">¶</a></dt>
 <dd><p>Create a forum or media thread in the channel.</p>
@@ -1226,6 +1260,40 @@ Not applied by Discord when the target member is a bot.</p></li>
 <span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">channel</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="#discord_http.channel.BaseChannel" title="discord_http.channel.BaseChannel"><span class="pre">BaseChannel</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="#discord_http.channel.CategoryChannel" title="discord_http.channel.CategoryChannel"><span class="pre">CategoryChannel</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="#discord_http.channel.PartialChannel" title="discord_http.channel.PartialChannel"><span class="pre">PartialChannel</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/builtins/constants.html#None" title="(in Python v3.15)"><span class="pre">None</span></a></span><a class="headerlink" href="#discord_http.channel.CategoryChannel.channel" title="Link to this definition">¶</a></dt>
 <dd><p>The channel the thread is in.</p>
 <p>Only returns a full object if cache is enabled for guild and channel.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="discord_http.channel.CategoryChannel.connect">
+<span class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">connect</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">timeout</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">30.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">reconnect</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">reconnect_on_session_invalid</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">self_deaf</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">self_mute</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="voice.html#discord_http.voice.client.VoiceClient" title="discord_http.voice.client.VoiceClient"><span class="pre">VoiceClient</span></a></span></span><a class="headerlink" href="#discord_http.channel.CategoryChannel.connect" title="Link to this definition">¶</a></dt>
+<dd><p>Connect to this voice channel.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>timeout</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#float" title="(in Python v3.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></a></span>) – How long to wait, in seconds, for the voice handshake to complete.</p></li>
+<li><p><strong>reconnect</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#bool" title="(in Python v3.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></a></span>) – Whether to automatically reconnect if the voice connection drops.</p></li>
+<li><p><strong>reconnect_on_session_invalid</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#bool" title="(in Python v3.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></a></span>) – What to do when Discord invalidates the voice session (close code
+4006), which most commonly happens when the channel empties out and
+Discord tears down the DAVE/MLS session. By default (<code class="docutils literal notranslate"><span class="pre">False</span></code>) the
+bot disconnects; set to <code class="docutils literal notranslate"><span class="pre">True</span></code> to attempt a full reconnect instead.</p></li>
+<li><p><strong>self_deaf</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#bool" title="(in Python v3.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></a></span>) – Whether the bot should be self-deafened.</p></li>
+<li><p><strong>self_mute</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#bool" title="(in Python v3.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></a></span>) – Whether the bot should be self-muted.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><a class="reference internal" href="voice.html#discord_http.voice.client.VoiceClient" title="discord_http.voice.client.VoiceClient"><code class="xref py py-class docutils literal notranslate"><span class="pre">VoiceClient</span></code></a></span></p>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The voice client for the connection.</p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p><a class="reference external" href="https://docs.python.org/3/builtins/exceptions.html#TypeError" title="(in Python v3.15)"><strong>TypeError</strong></a> – If the channel is not a voice or stage channel.</p></li>
+<li><p><a class="reference external" href="https://docs.python.org/3/builtins/exceptions.html#ValueError" title="(in Python v3.15)"><strong>ValueError</strong></a> – If the channel is not associated with a guild.</p></li>
+<li><p><a class="reference external" href="https://docs.python.org/3/builtins/exceptions.html#NotImplementedError" title="(in Python v3.15)"><strong>NotImplementedError</strong></a> – If the gateway is not available.</p></li>
+<li><p><a class="reference external" href="https://docs.python.org/3/builtins/exceptions.html#RuntimeError" title="(in Python v3.15)"><strong>RuntimeError</strong></a> – If the bot is already connected to a voice channel in this guild.</p></li>
+</ul>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py method">
@@ -2048,6 +2116,40 @@ permissions change, at which point a <cite>CHANNEL_UPDATE</cite> event delivers 
 </dd></dl>
 
 <dl class="py method">
+<dt class="sig sig-object py" id="discord_http.channel.DMChannel.connect">
+<span class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">connect</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">timeout</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">30.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">reconnect</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">reconnect_on_session_invalid</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">self_deaf</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">self_mute</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="voice.html#discord_http.voice.client.VoiceClient" title="discord_http.voice.client.VoiceClient"><span class="pre">VoiceClient</span></a></span></span><a class="headerlink" href="#discord_http.channel.DMChannel.connect" title="Link to this definition">¶</a></dt>
+<dd><p>Connect to this voice channel.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>timeout</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#float" title="(in Python v3.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></a></span>) – How long to wait, in seconds, for the voice handshake to complete.</p></li>
+<li><p><strong>reconnect</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#bool" title="(in Python v3.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></a></span>) – Whether to automatically reconnect if the voice connection drops.</p></li>
+<li><p><strong>reconnect_on_session_invalid</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#bool" title="(in Python v3.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></a></span>) – What to do when Discord invalidates the voice session (close code
+4006), which most commonly happens when the channel empties out and
+Discord tears down the DAVE/MLS session. By default (<code class="docutils literal notranslate"><span class="pre">False</span></code>) the
+bot disconnects; set to <code class="docutils literal notranslate"><span class="pre">True</span></code> to attempt a full reconnect instead.</p></li>
+<li><p><strong>self_deaf</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#bool" title="(in Python v3.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></a></span>) – Whether the bot should be self-deafened.</p></li>
+<li><p><strong>self_mute</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#bool" title="(in Python v3.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></a></span>) – Whether the bot should be self-muted.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><a class="reference internal" href="voice.html#discord_http.voice.client.VoiceClient" title="discord_http.voice.client.VoiceClient"><code class="xref py py-class docutils literal notranslate"><span class="pre">VoiceClient</span></code></a></span></p>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The voice client for the connection.</p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p><a class="reference external" href="https://docs.python.org/3/builtins/exceptions.html#TypeError" title="(in Python v3.15)"><strong>TypeError</strong></a> – If the channel is not a voice or stage channel.</p></li>
+<li><p><a class="reference external" href="https://docs.python.org/3/builtins/exceptions.html#ValueError" title="(in Python v3.15)"><strong>ValueError</strong></a> – If the channel is not associated with a guild.</p></li>
+<li><p><a class="reference external" href="https://docs.python.org/3/builtins/exceptions.html#NotImplementedError" title="(in Python v3.15)"><strong>NotImplementedError</strong></a> – If the gateway is not available.</p></li>
+<li><p><a class="reference external" href="https://docs.python.org/3/builtins/exceptions.html#RuntimeError" title="(in Python v3.15)"><strong>RuntimeError</strong></a> – If the bot is already connected to a voice channel in this guild.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
 <dt class="sig sig-object py" id="discord_http.channel.DMChannel.create_forum_or_media">
 <span class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">create_forum_or_media</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span></em>, <em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">content</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">embed</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">embeds</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">file</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">files</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">allowed_mentions</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">view</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">auto_archive_duration</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">4320</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rate_limit_per_user</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">flags</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">applied_tags</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stickers</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">reason</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#discord_http.channel.ForumThread" title="discord_http.channel.ForumThread"><span class="pre">ForumThread</span></a></span></span><a class="headerlink" href="#discord_http.channel.DMChannel.create_forum_or_media" title="Link to this definition">¶</a></dt>
 <dd><p>Create a forum or media thread in the channel.</p>
@@ -2763,6 +2865,40 @@ permissions change, at which point a <cite>CHANNEL_UPDATE</cite> event delivers 
 <span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">channel</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="#discord_http.channel.BaseChannel" title="discord_http.channel.BaseChannel"><span class="pre">BaseChannel</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="#discord_http.channel.CategoryChannel" title="discord_http.channel.CategoryChannel"><span class="pre">CategoryChannel</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="#discord_http.channel.PartialChannel" title="discord_http.channel.PartialChannel"><span class="pre">PartialChannel</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/builtins/constants.html#None" title="(in Python v3.15)"><span class="pre">None</span></a></span><a class="headerlink" href="#discord_http.channel.DirectoryChannel.channel" title="Link to this definition">¶</a></dt>
 <dd><p>The channel the thread is in.</p>
 <p>Only returns a full object if cache is enabled for guild and channel.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="discord_http.channel.DirectoryChannel.connect">
+<span class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">connect</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">timeout</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">30.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">reconnect</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">reconnect_on_session_invalid</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">self_deaf</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">self_mute</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="voice.html#discord_http.voice.client.VoiceClient" title="discord_http.voice.client.VoiceClient"><span class="pre">VoiceClient</span></a></span></span><a class="headerlink" href="#discord_http.channel.DirectoryChannel.connect" title="Link to this definition">¶</a></dt>
+<dd><p>Connect to this voice channel.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>timeout</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#float" title="(in Python v3.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></a></span>) – How long to wait, in seconds, for the voice handshake to complete.</p></li>
+<li><p><strong>reconnect</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#bool" title="(in Python v3.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></a></span>) – Whether to automatically reconnect if the voice connection drops.</p></li>
+<li><p><strong>reconnect_on_session_invalid</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#bool" title="(in Python v3.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></a></span>) – What to do when Discord invalidates the voice session (close code
+4006), which most commonly happens when the channel empties out and
+Discord tears down the DAVE/MLS session. By default (<code class="docutils literal notranslate"><span class="pre">False</span></code>) the
+bot disconnects; set to <code class="docutils literal notranslate"><span class="pre">True</span></code> to attempt a full reconnect instead.</p></li>
+<li><p><strong>self_deaf</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#bool" title="(in Python v3.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></a></span>) – Whether the bot should be self-deafened.</p></li>
+<li><p><strong>self_mute</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#bool" title="(in Python v3.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></a></span>) – Whether the bot should be self-muted.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><a class="reference internal" href="voice.html#discord_http.voice.client.VoiceClient" title="discord_http.voice.client.VoiceClient"><code class="xref py py-class docutils literal notranslate"><span class="pre">VoiceClient</span></code></a></span></p>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The voice client for the connection.</p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p><a class="reference external" href="https://docs.python.org/3/builtins/exceptions.html#TypeError" title="(in Python v3.15)"><strong>TypeError</strong></a> – If the channel is not a voice or stage channel.</p></li>
+<li><p><a class="reference external" href="https://docs.python.org/3/builtins/exceptions.html#ValueError" title="(in Python v3.15)"><strong>ValueError</strong></a> – If the channel is not associated with a guild.</p></li>
+<li><p><a class="reference external" href="https://docs.python.org/3/builtins/exceptions.html#NotImplementedError" title="(in Python v3.15)"><strong>NotImplementedError</strong></a> – If the gateway is not available.</p></li>
+<li><p><a class="reference external" href="https://docs.python.org/3/builtins/exceptions.html#RuntimeError" title="(in Python v3.15)"><strong>RuntimeError</strong></a> – If the bot is already connected to a voice channel in this guild.</p></li>
+</ul>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py method">
@@ -3604,6 +3740,40 @@ permissions change, at which point a <cite>CHANNEL_UPDATE</cite> event delivers 
 <dt class="sig sig-object py" id="discord_http.channel.ForumChannel.channel_id">
 <span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">channel_id</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#int" title="(in Python v3.15)"><span class="pre">int</span></a></span><a class="headerlink" href="#discord_http.channel.ForumChannel.channel_id" title="Link to this definition">¶</a></dt>
 <dd><p>The ID of the channel (alias of <cite>id</cite>).</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="discord_http.channel.ForumChannel.connect">
+<span class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">connect</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">timeout</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">30.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">reconnect</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">reconnect_on_session_invalid</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">self_deaf</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">self_mute</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="voice.html#discord_http.voice.client.VoiceClient" title="discord_http.voice.client.VoiceClient"><span class="pre">VoiceClient</span></a></span></span><a class="headerlink" href="#discord_http.channel.ForumChannel.connect" title="Link to this definition">¶</a></dt>
+<dd><p>Connect to this voice channel.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>timeout</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#float" title="(in Python v3.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></a></span>) – How long to wait, in seconds, for the voice handshake to complete.</p></li>
+<li><p><strong>reconnect</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#bool" title="(in Python v3.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></a></span>) – Whether to automatically reconnect if the voice connection drops.</p></li>
+<li><p><strong>reconnect_on_session_invalid</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#bool" title="(in Python v3.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></a></span>) – What to do when Discord invalidates the voice session (close code
+4006), which most commonly happens when the channel empties out and
+Discord tears down the DAVE/MLS session. By default (<code class="docutils literal notranslate"><span class="pre">False</span></code>) the
+bot disconnects; set to <code class="docutils literal notranslate"><span class="pre">True</span></code> to attempt a full reconnect instead.</p></li>
+<li><p><strong>self_deaf</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#bool" title="(in Python v3.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></a></span>) – Whether the bot should be self-deafened.</p></li>
+<li><p><strong>self_mute</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#bool" title="(in Python v3.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></a></span>) – Whether the bot should be self-muted.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><a class="reference internal" href="voice.html#discord_http.voice.client.VoiceClient" title="discord_http.voice.client.VoiceClient"><code class="xref py py-class docutils literal notranslate"><span class="pre">VoiceClient</span></code></a></span></p>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The voice client for the connection.</p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p><a class="reference external" href="https://docs.python.org/3/builtins/exceptions.html#TypeError" title="(in Python v3.15)"><strong>TypeError</strong></a> – If the channel is not a voice or stage channel.</p></li>
+<li><p><a class="reference external" href="https://docs.python.org/3/builtins/exceptions.html#ValueError" title="(in Python v3.15)"><strong>ValueError</strong></a> – If the channel is not associated with a guild.</p></li>
+<li><p><a class="reference external" href="https://docs.python.org/3/builtins/exceptions.html#NotImplementedError" title="(in Python v3.15)"><strong>NotImplementedError</strong></a> – If the gateway is not available.</p></li>
+<li><p><a class="reference external" href="https://docs.python.org/3/builtins/exceptions.html#RuntimeError" title="(in Python v3.15)"><strong>RuntimeError</strong></a> – If the bot is already connected to a voice channel in this guild.</p></li>
+</ul>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py method">
@@ -4568,6 +4738,40 @@ permissions change, at which point a <cite>CHANNEL_UPDATE</cite> event delivers 
 </dd></dl>
 
 <dl class="py method">
+<dt class="sig sig-object py" id="discord_http.channel.ForumThread.connect">
+<span class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">connect</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">timeout</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">30.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">reconnect</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">reconnect_on_session_invalid</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">self_deaf</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">self_mute</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="voice.html#discord_http.voice.client.VoiceClient" title="discord_http.voice.client.VoiceClient"><span class="pre">VoiceClient</span></a></span></span><a class="headerlink" href="#discord_http.channel.ForumThread.connect" title="Link to this definition">¶</a></dt>
+<dd><p>Connect to this voice channel.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>timeout</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#float" title="(in Python v3.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></a></span>) – How long to wait, in seconds, for the voice handshake to complete.</p></li>
+<li><p><strong>reconnect</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#bool" title="(in Python v3.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></a></span>) – Whether to automatically reconnect if the voice connection drops.</p></li>
+<li><p><strong>reconnect_on_session_invalid</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#bool" title="(in Python v3.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></a></span>) – What to do when Discord invalidates the voice session (close code
+4006), which most commonly happens when the channel empties out and
+Discord tears down the DAVE/MLS session. By default (<code class="docutils literal notranslate"><span class="pre">False</span></code>) the
+bot disconnects; set to <code class="docutils literal notranslate"><span class="pre">True</span></code> to attempt a full reconnect instead.</p></li>
+<li><p><strong>self_deaf</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#bool" title="(in Python v3.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></a></span>) – Whether the bot should be self-deafened.</p></li>
+<li><p><strong>self_mute</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#bool" title="(in Python v3.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></a></span>) – Whether the bot should be self-muted.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><a class="reference internal" href="voice.html#discord_http.voice.client.VoiceClient" title="discord_http.voice.client.VoiceClient"><code class="xref py py-class docutils literal notranslate"><span class="pre">VoiceClient</span></code></a></span></p>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The voice client for the connection.</p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p><a class="reference external" href="https://docs.python.org/3/builtins/exceptions.html#TypeError" title="(in Python v3.15)"><strong>TypeError</strong></a> – If the channel is not a voice or stage channel.</p></li>
+<li><p><a class="reference external" href="https://docs.python.org/3/builtins/exceptions.html#ValueError" title="(in Python v3.15)"><strong>ValueError</strong></a> – If the channel is not associated with a guild.</p></li>
+<li><p><a class="reference external" href="https://docs.python.org/3/builtins/exceptions.html#NotImplementedError" title="(in Python v3.15)"><strong>NotImplementedError</strong></a> – If the gateway is not available.</p></li>
+<li><p><a class="reference external" href="https://docs.python.org/3/builtins/exceptions.html#RuntimeError" title="(in Python v3.15)"><strong>RuntimeError</strong></a> – If the bot is already connected to a voice channel in this guild.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
 <dt class="sig sig-object py" id="discord_http.channel.ForumThread.create_forum_or_media">
 <span class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">create_forum_or_media</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span></em>, <em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">content</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">embed</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">embeds</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">file</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">files</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">allowed_mentions</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">view</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">auto_archive_duration</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">4320</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rate_limit_per_user</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">flags</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">applied_tags</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stickers</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">reason</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#discord_http.channel.ForumThread" title="discord_http.channel.ForumThread"><span class="pre">ForumThread</span></a></span></span><a class="headerlink" href="#discord_http.channel.ForumThread.create_forum_or_media" title="Link to this definition">¶</a></dt>
 <dd><p>Create a forum or media thread in the channel.</p>
@@ -5408,6 +5612,40 @@ permissions change, at which point a <cite>CHANNEL_UPDATE</cite> event delivers 
 </dd></dl>
 
 <dl class="py method">
+<dt class="sig sig-object py" id="discord_http.channel.GroupDMChannel.connect">
+<span class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">connect</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">timeout</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">30.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">reconnect</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">reconnect_on_session_invalid</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">self_deaf</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">self_mute</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="voice.html#discord_http.voice.client.VoiceClient" title="discord_http.voice.client.VoiceClient"><span class="pre">VoiceClient</span></a></span></span><a class="headerlink" href="#discord_http.channel.GroupDMChannel.connect" title="Link to this definition">¶</a></dt>
+<dd><p>Connect to this voice channel.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>timeout</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#float" title="(in Python v3.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></a></span>) – How long to wait, in seconds, for the voice handshake to complete.</p></li>
+<li><p><strong>reconnect</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#bool" title="(in Python v3.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></a></span>) – Whether to automatically reconnect if the voice connection drops.</p></li>
+<li><p><strong>reconnect_on_session_invalid</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#bool" title="(in Python v3.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></a></span>) – What to do when Discord invalidates the voice session (close code
+4006), which most commonly happens when the channel empties out and
+Discord tears down the DAVE/MLS session. By default (<code class="docutils literal notranslate"><span class="pre">False</span></code>) the
+bot disconnects; set to <code class="docutils literal notranslate"><span class="pre">True</span></code> to attempt a full reconnect instead.</p></li>
+<li><p><strong>self_deaf</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#bool" title="(in Python v3.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></a></span>) – Whether the bot should be self-deafened.</p></li>
+<li><p><strong>self_mute</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#bool" title="(in Python v3.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></a></span>) – Whether the bot should be self-muted.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><a class="reference internal" href="voice.html#discord_http.voice.client.VoiceClient" title="discord_http.voice.client.VoiceClient"><code class="xref py py-class docutils literal notranslate"><span class="pre">VoiceClient</span></code></a></span></p>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The voice client for the connection.</p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p><a class="reference external" href="https://docs.python.org/3/builtins/exceptions.html#TypeError" title="(in Python v3.15)"><strong>TypeError</strong></a> – If the channel is not a voice or stage channel.</p></li>
+<li><p><a class="reference external" href="https://docs.python.org/3/builtins/exceptions.html#ValueError" title="(in Python v3.15)"><strong>ValueError</strong></a> – If the channel is not associated with a guild.</p></li>
+<li><p><a class="reference external" href="https://docs.python.org/3/builtins/exceptions.html#NotImplementedError" title="(in Python v3.15)"><strong>NotImplementedError</strong></a> – If the gateway is not available.</p></li>
+<li><p><a class="reference external" href="https://docs.python.org/3/builtins/exceptions.html#RuntimeError" title="(in Python v3.15)"><strong>RuntimeError</strong></a> – If the bot is already connected to a voice channel in this guild.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
 <dt class="sig sig-object py" id="discord_http.channel.GroupDMChannel.create_forum_or_media">
 <span class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">create_forum_or_media</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span></em>, <em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">content</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">embed</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">embeds</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">file</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">files</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">allowed_mentions</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">view</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">auto_archive_duration</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">4320</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rate_limit_per_user</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">flags</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">applied_tags</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stickers</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">reason</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#discord_http.channel.ForumThread" title="discord_http.channel.ForumThread"><span class="pre">ForumThread</span></a></span></span><a class="headerlink" href="#discord_http.channel.GroupDMChannel.create_forum_or_media" title="Link to this definition">¶</a></dt>
 <dd><p>Create a forum or media thread in the channel.</p>
@@ -6180,6 +6418,40 @@ permissions change, at which point a <cite>CHANNEL_UPDATE</cite> event delivers 
 <span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">channel</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="#discord_http.channel.BaseChannel" title="discord_http.channel.BaseChannel"><span class="pre">BaseChannel</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="#discord_http.channel.CategoryChannel" title="discord_http.channel.CategoryChannel"><span class="pre">CategoryChannel</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="#discord_http.channel.PartialChannel" title="discord_http.channel.PartialChannel"><span class="pre">PartialChannel</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/builtins/constants.html#None" title="(in Python v3.15)"><span class="pre">None</span></a></span><a class="headerlink" href="#discord_http.channel.NewsChannel.channel" title="Link to this definition">¶</a></dt>
 <dd><p>The channel the thread is in.</p>
 <p>Only returns a full object if cache is enabled for guild and channel.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="discord_http.channel.NewsChannel.connect">
+<span class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">connect</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">timeout</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">30.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">reconnect</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">reconnect_on_session_invalid</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">self_deaf</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">self_mute</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="voice.html#discord_http.voice.client.VoiceClient" title="discord_http.voice.client.VoiceClient"><span class="pre">VoiceClient</span></a></span></span><a class="headerlink" href="#discord_http.channel.NewsChannel.connect" title="Link to this definition">¶</a></dt>
+<dd><p>Connect to this voice channel.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>timeout</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#float" title="(in Python v3.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></a></span>) – How long to wait, in seconds, for the voice handshake to complete.</p></li>
+<li><p><strong>reconnect</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#bool" title="(in Python v3.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></a></span>) – Whether to automatically reconnect if the voice connection drops.</p></li>
+<li><p><strong>reconnect_on_session_invalid</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#bool" title="(in Python v3.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></a></span>) – What to do when Discord invalidates the voice session (close code
+4006), which most commonly happens when the channel empties out and
+Discord tears down the DAVE/MLS session. By default (<code class="docutils literal notranslate"><span class="pre">False</span></code>) the
+bot disconnects; set to <code class="docutils literal notranslate"><span class="pre">True</span></code> to attempt a full reconnect instead.</p></li>
+<li><p><strong>self_deaf</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#bool" title="(in Python v3.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></a></span>) – Whether the bot should be self-deafened.</p></li>
+<li><p><strong>self_mute</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#bool" title="(in Python v3.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></a></span>) – Whether the bot should be self-muted.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><a class="reference internal" href="voice.html#discord_http.voice.client.VoiceClient" title="discord_http.voice.client.VoiceClient"><code class="xref py py-class docutils literal notranslate"><span class="pre">VoiceClient</span></code></a></span></p>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The voice client for the connection.</p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p><a class="reference external" href="https://docs.python.org/3/builtins/exceptions.html#TypeError" title="(in Python v3.15)"><strong>TypeError</strong></a> – If the channel is not a voice or stage channel.</p></li>
+<li><p><a class="reference external" href="https://docs.python.org/3/builtins/exceptions.html#ValueError" title="(in Python v3.15)"><strong>ValueError</strong></a> – If the channel is not associated with a guild.</p></li>
+<li><p><a class="reference external" href="https://docs.python.org/3/builtins/exceptions.html#NotImplementedError" title="(in Python v3.15)"><strong>NotImplementedError</strong></a> – If the gateway is not available.</p></li>
+<li><p><a class="reference external" href="https://docs.python.org/3/builtins/exceptions.html#RuntimeError" title="(in Python v3.15)"><strong>RuntimeError</strong></a> – If the bot is already connected to a voice channel in this guild.</p></li>
+</ul>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py method">
@@ -6985,6 +7257,40 @@ permissions change, at which point a <cite>CHANNEL_UPDATE</cite> event delivers 
 <dt class="sig sig-object py" id="discord_http.channel.NewsThread.channel_id">
 <span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">channel_id</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#int" title="(in Python v3.15)"><span class="pre">int</span></a></span><a class="headerlink" href="#discord_http.channel.NewsThread.channel_id" title="Link to this definition">¶</a></dt>
 <dd><p>The ID of the channel (alias of <cite>id</cite>).</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="discord_http.channel.NewsThread.connect">
+<span class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">connect</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">timeout</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">30.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">reconnect</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">reconnect_on_session_invalid</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">self_deaf</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">self_mute</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="voice.html#discord_http.voice.client.VoiceClient" title="discord_http.voice.client.VoiceClient"><span class="pre">VoiceClient</span></a></span></span><a class="headerlink" href="#discord_http.channel.NewsThread.connect" title="Link to this definition">¶</a></dt>
+<dd><p>Connect to this voice channel.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>timeout</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#float" title="(in Python v3.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></a></span>) – How long to wait, in seconds, for the voice handshake to complete.</p></li>
+<li><p><strong>reconnect</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#bool" title="(in Python v3.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></a></span>) – Whether to automatically reconnect if the voice connection drops.</p></li>
+<li><p><strong>reconnect_on_session_invalid</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#bool" title="(in Python v3.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></a></span>) – What to do when Discord invalidates the voice session (close code
+4006), which most commonly happens when the channel empties out and
+Discord tears down the DAVE/MLS session. By default (<code class="docutils literal notranslate"><span class="pre">False</span></code>) the
+bot disconnects; set to <code class="docutils literal notranslate"><span class="pre">True</span></code> to attempt a full reconnect instead.</p></li>
+<li><p><strong>self_deaf</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#bool" title="(in Python v3.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></a></span>) – Whether the bot should be self-deafened.</p></li>
+<li><p><strong>self_mute</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#bool" title="(in Python v3.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></a></span>) – Whether the bot should be self-muted.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><a class="reference internal" href="voice.html#discord_http.voice.client.VoiceClient" title="discord_http.voice.client.VoiceClient"><code class="xref py py-class docutils literal notranslate"><span class="pre">VoiceClient</span></code></a></span></p>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The voice client for the connection.</p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p><a class="reference external" href="https://docs.python.org/3/builtins/exceptions.html#TypeError" title="(in Python v3.15)"><strong>TypeError</strong></a> – If the channel is not a voice or stage channel.</p></li>
+<li><p><a class="reference external" href="https://docs.python.org/3/builtins/exceptions.html#ValueError" title="(in Python v3.15)"><strong>ValueError</strong></a> – If the channel is not associated with a guild.</p></li>
+<li><p><a class="reference external" href="https://docs.python.org/3/builtins/exceptions.html#NotImplementedError" title="(in Python v3.15)"><strong>NotImplementedError</strong></a> – If the gateway is not available.</p></li>
+<li><p><a class="reference external" href="https://docs.python.org/3/builtins/exceptions.html#RuntimeError" title="(in Python v3.15)"><strong>RuntimeError</strong></a> – If the bot is already connected to a voice channel in this guild.</p></li>
+</ul>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py method">
@@ -7988,6 +8294,40 @@ as a CSV file and processed in the background by Discord.</p></li>
 </dd></dl>
 
 <dl class="py method">
+<dt class="sig sig-object py" id="discord_http.channel.PartialChannel.connect">
+<span class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">connect</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">timeout</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">30.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">reconnect</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">reconnect_on_session_invalid</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">self_deaf</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">self_mute</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="voice.html#discord_http.voice.client.VoiceClient" title="discord_http.voice.client.VoiceClient"><span class="pre">VoiceClient</span></a></span></span><a class="headerlink" href="#discord_http.channel.PartialChannel.connect" title="Link to this definition">¶</a></dt>
+<dd><p>Connect to this voice channel.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>timeout</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#float" title="(in Python v3.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></a></span>) – How long to wait, in seconds, for the voice handshake to complete.</p></li>
+<li><p><strong>reconnect</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#bool" title="(in Python v3.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></a></span>) – Whether to automatically reconnect if the voice connection drops.</p></li>
+<li><p><strong>reconnect_on_session_invalid</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#bool" title="(in Python v3.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></a></span>) – What to do when Discord invalidates the voice session (close code
+4006), which most commonly happens when the channel empties out and
+Discord tears down the DAVE/MLS session. By default (<code class="docutils literal notranslate"><span class="pre">False</span></code>) the
+bot disconnects; set to <code class="docutils literal notranslate"><span class="pre">True</span></code> to attempt a full reconnect instead.</p></li>
+<li><p><strong>self_deaf</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#bool" title="(in Python v3.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></a></span>) – Whether the bot should be self-deafened.</p></li>
+<li><p><strong>self_mute</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#bool" title="(in Python v3.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></a></span>) – Whether the bot should be self-muted.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><a class="reference internal" href="voice.html#discord_http.voice.client.VoiceClient" title="discord_http.voice.client.VoiceClient"><code class="xref py py-class docutils literal notranslate"><span class="pre">VoiceClient</span></code></a></span></p>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The voice client for the connection.</p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p><a class="reference external" href="https://docs.python.org/3/builtins/exceptions.html#TypeError" title="(in Python v3.15)"><strong>TypeError</strong></a> – If the channel is not a voice or stage channel.</p></li>
+<li><p><a class="reference external" href="https://docs.python.org/3/builtins/exceptions.html#ValueError" title="(in Python v3.15)"><strong>ValueError</strong></a> – If the channel is not associated with a guild.</p></li>
+<li><p><a class="reference external" href="https://docs.python.org/3/builtins/exceptions.html#NotImplementedError" title="(in Python v3.15)"><strong>NotImplementedError</strong></a> – If the gateway is not available.</p></li>
+<li><p><a class="reference external" href="https://docs.python.org/3/builtins/exceptions.html#RuntimeError" title="(in Python v3.15)"><strong>RuntimeError</strong></a> – If the bot is already connected to a voice channel in this guild.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
 <dt class="sig sig-object py" id="discord_http.channel.PartialChannel.send">
 <span class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">send</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">content</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">&lt;MISSING&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">embed</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">&lt;MISSING&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">embeds</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">&lt;MISSING&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">file</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">&lt;MISSING&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">files</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">&lt;MISSING&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">view</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">&lt;MISSING&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tts</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">type</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">4</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">poll</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">&lt;MISSING&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">flags</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">&lt;MISSING&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">allowed_mentions</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">&lt;MISSING&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stickers</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">&lt;MISSING&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">nonce</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">&lt;MISSING&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">enforce_nonce</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">shared_client_theme</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">&lt;MISSING&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">delete_after</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="message.html#discord_http.message.Message" title="discord_http.message.Message"><span class="pre">Message</span></a></span></span><a class="headerlink" href="#discord_http.channel.PartialChannel.send" title="Link to this definition">¶</a></dt>
 <dd><p>Send a message to the channel.</p>
@@ -8520,6 +8860,40 @@ Not applied by Discord when the target member is a bot.</p></li>
 <span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">channel</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="#discord_http.channel.BaseChannel" title="discord_http.channel.BaseChannel"><span class="pre">BaseChannel</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="#discord_http.channel.CategoryChannel" title="discord_http.channel.CategoryChannel"><span class="pre">CategoryChannel</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="#discord_http.channel.PartialChannel" title="discord_http.channel.PartialChannel"><span class="pre">PartialChannel</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/builtins/constants.html#None" title="(in Python v3.15)"><span class="pre">None</span></a></span><a class="headerlink" href="#discord_http.channel.PartialThread.channel" title="Link to this definition">¶</a></dt>
 <dd><p>The channel the thread is in.</p>
 <p>Only returns a full object if cache is enabled for guild and channel.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="discord_http.channel.PartialThread.connect">
+<span class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">connect</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">timeout</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">30.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">reconnect</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">reconnect_on_session_invalid</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">self_deaf</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">self_mute</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="voice.html#discord_http.voice.client.VoiceClient" title="discord_http.voice.client.VoiceClient"><span class="pre">VoiceClient</span></a></span></span><a class="headerlink" href="#discord_http.channel.PartialThread.connect" title="Link to this definition">¶</a></dt>
+<dd><p>Connect to this voice channel.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>timeout</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#float" title="(in Python v3.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></a></span>) – How long to wait, in seconds, for the voice handshake to complete.</p></li>
+<li><p><strong>reconnect</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#bool" title="(in Python v3.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></a></span>) – Whether to automatically reconnect if the voice connection drops.</p></li>
+<li><p><strong>reconnect_on_session_invalid</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#bool" title="(in Python v3.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></a></span>) – What to do when Discord invalidates the voice session (close code
+4006), which most commonly happens when the channel empties out and
+Discord tears down the DAVE/MLS session. By default (<code class="docutils literal notranslate"><span class="pre">False</span></code>) the
+bot disconnects; set to <code class="docutils literal notranslate"><span class="pre">True</span></code> to attempt a full reconnect instead.</p></li>
+<li><p><strong>self_deaf</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#bool" title="(in Python v3.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></a></span>) – Whether the bot should be self-deafened.</p></li>
+<li><p><strong>self_mute</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#bool" title="(in Python v3.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></a></span>) – Whether the bot should be self-muted.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><a class="reference internal" href="voice.html#discord_http.voice.client.VoiceClient" title="discord_http.voice.client.VoiceClient"><code class="xref py py-class docutils literal notranslate"><span class="pre">VoiceClient</span></code></a></span></p>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The voice client for the connection.</p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p><a class="reference external" href="https://docs.python.org/3/builtins/exceptions.html#TypeError" title="(in Python v3.15)"><strong>TypeError</strong></a> – If the channel is not a voice or stage channel.</p></li>
+<li><p><a class="reference external" href="https://docs.python.org/3/builtins/exceptions.html#ValueError" title="(in Python v3.15)"><strong>ValueError</strong></a> – If the channel is not associated with a guild.</p></li>
+<li><p><a class="reference external" href="https://docs.python.org/3/builtins/exceptions.html#NotImplementedError" title="(in Python v3.15)"><strong>NotImplementedError</strong></a> – If the gateway is not available.</p></li>
+<li><p><a class="reference external" href="https://docs.python.org/3/builtins/exceptions.html#RuntimeError" title="(in Python v3.15)"><strong>RuntimeError</strong></a> – If the bot is already connected to a voice channel in this guild.</p></li>
+</ul>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py method">
@@ -9246,6 +9620,40 @@ Not applied by Discord when the target member is a bot.</p></li>
 <dt class="sig sig-object py" id="discord_http.channel.PrivateThread.channel_id">
 <span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">channel_id</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#int" title="(in Python v3.15)"><span class="pre">int</span></a></span><a class="headerlink" href="#discord_http.channel.PrivateThread.channel_id" title="Link to this definition">¶</a></dt>
 <dd><p>The ID of the channel (alias of <cite>id</cite>).</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="discord_http.channel.PrivateThread.connect">
+<span class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">connect</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">timeout</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">30.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">reconnect</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">reconnect_on_session_invalid</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">self_deaf</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">self_mute</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="voice.html#discord_http.voice.client.VoiceClient" title="discord_http.voice.client.VoiceClient"><span class="pre">VoiceClient</span></a></span></span><a class="headerlink" href="#discord_http.channel.PrivateThread.connect" title="Link to this definition">¶</a></dt>
+<dd><p>Connect to this voice channel.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>timeout</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#float" title="(in Python v3.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></a></span>) – How long to wait, in seconds, for the voice handshake to complete.</p></li>
+<li><p><strong>reconnect</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#bool" title="(in Python v3.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></a></span>) – Whether to automatically reconnect if the voice connection drops.</p></li>
+<li><p><strong>reconnect_on_session_invalid</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#bool" title="(in Python v3.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></a></span>) – What to do when Discord invalidates the voice session (close code
+4006), which most commonly happens when the channel empties out and
+Discord tears down the DAVE/MLS session. By default (<code class="docutils literal notranslate"><span class="pre">False</span></code>) the
+bot disconnects; set to <code class="docutils literal notranslate"><span class="pre">True</span></code> to attempt a full reconnect instead.</p></li>
+<li><p><strong>self_deaf</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#bool" title="(in Python v3.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></a></span>) – Whether the bot should be self-deafened.</p></li>
+<li><p><strong>self_mute</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#bool" title="(in Python v3.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></a></span>) – Whether the bot should be self-muted.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><a class="reference internal" href="voice.html#discord_http.voice.client.VoiceClient" title="discord_http.voice.client.VoiceClient"><code class="xref py py-class docutils literal notranslate"><span class="pre">VoiceClient</span></code></a></span></p>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The voice client for the connection.</p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p><a class="reference external" href="https://docs.python.org/3/builtins/exceptions.html#TypeError" title="(in Python v3.15)"><strong>TypeError</strong></a> – If the channel is not a voice or stage channel.</p></li>
+<li><p><a class="reference external" href="https://docs.python.org/3/builtins/exceptions.html#ValueError" title="(in Python v3.15)"><strong>ValueError</strong></a> – If the channel is not associated with a guild.</p></li>
+<li><p><a class="reference external" href="https://docs.python.org/3/builtins/exceptions.html#NotImplementedError" title="(in Python v3.15)"><strong>NotImplementedError</strong></a> – If the gateway is not available.</p></li>
+<li><p><a class="reference external" href="https://docs.python.org/3/builtins/exceptions.html#RuntimeError" title="(in Python v3.15)"><strong>RuntimeError</strong></a> – If the bot is already connected to a voice channel in this guild.</p></li>
+</ul>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py method">
@@ -10185,6 +10593,40 @@ permissions change, at which point a <cite>CHANNEL_UPDATE</cite> event delivers 
 </dd></dl>
 
 <dl class="py method">
+<dt class="sig sig-object py" id="discord_http.channel.PublicThread.connect">
+<span class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">connect</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">timeout</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">30.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">reconnect</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">reconnect_on_session_invalid</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">self_deaf</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">self_mute</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="voice.html#discord_http.voice.client.VoiceClient" title="discord_http.voice.client.VoiceClient"><span class="pre">VoiceClient</span></a></span></span><a class="headerlink" href="#discord_http.channel.PublicThread.connect" title="Link to this definition">¶</a></dt>
+<dd><p>Connect to this voice channel.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>timeout</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#float" title="(in Python v3.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></a></span>) – How long to wait, in seconds, for the voice handshake to complete.</p></li>
+<li><p><strong>reconnect</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#bool" title="(in Python v3.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></a></span>) – Whether to automatically reconnect if the voice connection drops.</p></li>
+<li><p><strong>reconnect_on_session_invalid</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#bool" title="(in Python v3.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></a></span>) – What to do when Discord invalidates the voice session (close code
+4006), which most commonly happens when the channel empties out and
+Discord tears down the DAVE/MLS session. By default (<code class="docutils literal notranslate"><span class="pre">False</span></code>) the
+bot disconnects; set to <code class="docutils literal notranslate"><span class="pre">True</span></code> to attempt a full reconnect instead.</p></li>
+<li><p><strong>self_deaf</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#bool" title="(in Python v3.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></a></span>) – Whether the bot should be self-deafened.</p></li>
+<li><p><strong>self_mute</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#bool" title="(in Python v3.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></a></span>) – Whether the bot should be self-muted.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><a class="reference internal" href="voice.html#discord_http.voice.client.VoiceClient" title="discord_http.voice.client.VoiceClient"><code class="xref py py-class docutils literal notranslate"><span class="pre">VoiceClient</span></code></a></span></p>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The voice client for the connection.</p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p><a class="reference external" href="https://docs.python.org/3/builtins/exceptions.html#TypeError" title="(in Python v3.15)"><strong>TypeError</strong></a> – If the channel is not a voice or stage channel.</p></li>
+<li><p><a class="reference external" href="https://docs.python.org/3/builtins/exceptions.html#ValueError" title="(in Python v3.15)"><strong>ValueError</strong></a> – If the channel is not associated with a guild.</p></li>
+<li><p><a class="reference external" href="https://docs.python.org/3/builtins/exceptions.html#NotImplementedError" title="(in Python v3.15)"><strong>NotImplementedError</strong></a> – If the gateway is not available.</p></li>
+<li><p><a class="reference external" href="https://docs.python.org/3/builtins/exceptions.html#RuntimeError" title="(in Python v3.15)"><strong>RuntimeError</strong></a> – If the bot is already connected to a voice channel in this guild.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
 <dt class="sig sig-object py" id="discord_http.channel.PublicThread.create_forum_or_media">
 <span class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">create_forum_or_media</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span></em>, <em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">content</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">embed</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">embeds</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">file</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">files</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">allowed_mentions</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">view</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">auto_archive_duration</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">4320</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rate_limit_per_user</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">flags</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">applied_tags</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stickers</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">reason</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#discord_http.channel.ForumThread" title="discord_http.channel.ForumThread"><span class="pre">ForumThread</span></a></span></span><a class="headerlink" href="#discord_http.channel.PublicThread.create_forum_or_media" title="Link to this definition">¶</a></dt>
 <dd><p>Create a forum or media thread in the channel.</p>
@@ -10944,6 +11386,40 @@ permissions change, at which point a <cite>CHANNEL_UPDATE</cite> event delivers 
 <span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">channel</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="#discord_http.channel.BaseChannel" title="discord_http.channel.BaseChannel"><span class="pre">BaseChannel</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="#discord_http.channel.CategoryChannel" title="discord_http.channel.CategoryChannel"><span class="pre">CategoryChannel</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="#discord_http.channel.PartialChannel" title="discord_http.channel.PartialChannel"><span class="pre">PartialChannel</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/builtins/constants.html#None" title="(in Python v3.15)"><span class="pre">None</span></a></span><a class="headerlink" href="#discord_http.channel.StageChannel.channel" title="Link to this definition">¶</a></dt>
 <dd><p>The channel the thread is in.</p>
 <p>Only returns a full object if cache is enabled for guild and channel.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="discord_http.channel.StageChannel.connect">
+<span class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">connect</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">timeout</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">30.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">reconnect</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">reconnect_on_session_invalid</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">self_deaf</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">self_mute</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="voice.html#discord_http.voice.client.VoiceClient" title="discord_http.voice.client.VoiceClient"><span class="pre">VoiceClient</span></a></span></span><a class="headerlink" href="#discord_http.channel.StageChannel.connect" title="Link to this definition">¶</a></dt>
+<dd><p>Connect to this voice channel.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>timeout</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#float" title="(in Python v3.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></a></span>) – How long to wait, in seconds, for the voice handshake to complete.</p></li>
+<li><p><strong>reconnect</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#bool" title="(in Python v3.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></a></span>) – Whether to automatically reconnect if the voice connection drops.</p></li>
+<li><p><strong>reconnect_on_session_invalid</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#bool" title="(in Python v3.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></a></span>) – What to do when Discord invalidates the voice session (close code
+4006), which most commonly happens when the channel empties out and
+Discord tears down the DAVE/MLS session. By default (<code class="docutils literal notranslate"><span class="pre">False</span></code>) the
+bot disconnects; set to <code class="docutils literal notranslate"><span class="pre">True</span></code> to attempt a full reconnect instead.</p></li>
+<li><p><strong>self_deaf</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#bool" title="(in Python v3.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></a></span>) – Whether the bot should be self-deafened.</p></li>
+<li><p><strong>self_mute</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#bool" title="(in Python v3.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></a></span>) – Whether the bot should be self-muted.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><a class="reference internal" href="voice.html#discord_http.voice.client.VoiceClient" title="discord_http.voice.client.VoiceClient"><code class="xref py py-class docutils literal notranslate"><span class="pre">VoiceClient</span></code></a></span></p>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The voice client for the connection.</p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p><a class="reference external" href="https://docs.python.org/3/builtins/exceptions.html#TypeError" title="(in Python v3.15)"><strong>TypeError</strong></a> – If the channel is not a voice or stage channel.</p></li>
+<li><p><a class="reference external" href="https://docs.python.org/3/builtins/exceptions.html#ValueError" title="(in Python v3.15)"><strong>ValueError</strong></a> – If the channel is not associated with a guild.</p></li>
+<li><p><a class="reference external" href="https://docs.python.org/3/builtins/exceptions.html#NotImplementedError" title="(in Python v3.15)"><strong>NotImplementedError</strong></a> – If the gateway is not available.</p></li>
+<li><p><a class="reference external" href="https://docs.python.org/3/builtins/exceptions.html#RuntimeError" title="(in Python v3.15)"><strong>RuntimeError</strong></a> – If the bot is already connected to a voice channel in this guild.</p></li>
+</ul>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py method">
@@ -11920,6 +12396,40 @@ Defaults to <cite>PrivacyLevelType.guild_only</cite></p></li>
 </dd></dl>
 
 <dl class="py method">
+<dt class="sig sig-object py" id="discord_http.channel.StoreChannel.connect">
+<span class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">connect</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">timeout</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">30.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">reconnect</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">reconnect_on_session_invalid</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">self_deaf</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">self_mute</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="voice.html#discord_http.voice.client.VoiceClient" title="discord_http.voice.client.VoiceClient"><span class="pre">VoiceClient</span></a></span></span><a class="headerlink" href="#discord_http.channel.StoreChannel.connect" title="Link to this definition">¶</a></dt>
+<dd><p>Connect to this voice channel.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>timeout</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#float" title="(in Python v3.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></a></span>) – How long to wait, in seconds, for the voice handshake to complete.</p></li>
+<li><p><strong>reconnect</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#bool" title="(in Python v3.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></a></span>) – Whether to automatically reconnect if the voice connection drops.</p></li>
+<li><p><strong>reconnect_on_session_invalid</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#bool" title="(in Python v3.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></a></span>) – What to do when Discord invalidates the voice session (close code
+4006), which most commonly happens when the channel empties out and
+Discord tears down the DAVE/MLS session. By default (<code class="docutils literal notranslate"><span class="pre">False</span></code>) the
+bot disconnects; set to <code class="docutils literal notranslate"><span class="pre">True</span></code> to attempt a full reconnect instead.</p></li>
+<li><p><strong>self_deaf</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#bool" title="(in Python v3.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></a></span>) – Whether the bot should be self-deafened.</p></li>
+<li><p><strong>self_mute</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#bool" title="(in Python v3.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></a></span>) – Whether the bot should be self-muted.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><a class="reference internal" href="voice.html#discord_http.voice.client.VoiceClient" title="discord_http.voice.client.VoiceClient"><code class="xref py py-class docutils literal notranslate"><span class="pre">VoiceClient</span></code></a></span></p>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The voice client for the connection.</p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p><a class="reference external" href="https://docs.python.org/3/builtins/exceptions.html#TypeError" title="(in Python v3.15)"><strong>TypeError</strong></a> – If the channel is not a voice or stage channel.</p></li>
+<li><p><a class="reference external" href="https://docs.python.org/3/builtins/exceptions.html#ValueError" title="(in Python v3.15)"><strong>ValueError</strong></a> – If the channel is not associated with a guild.</p></li>
+<li><p><a class="reference external" href="https://docs.python.org/3/builtins/exceptions.html#NotImplementedError" title="(in Python v3.15)"><strong>NotImplementedError</strong></a> – If the gateway is not available.</p></li>
+<li><p><a class="reference external" href="https://docs.python.org/3/builtins/exceptions.html#RuntimeError" title="(in Python v3.15)"><strong>RuntimeError</strong></a> – If the bot is already connected to a voice channel in this guild.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
 <dt class="sig sig-object py" id="discord_http.channel.StoreChannel.create_forum_or_media">
 <span class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">create_forum_or_media</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span></em>, <em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">content</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">embed</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">embeds</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">file</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">files</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">allowed_mentions</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">view</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">auto_archive_duration</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">4320</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rate_limit_per_user</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">flags</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">applied_tags</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stickers</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">reason</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#discord_http.channel.ForumThread" title="discord_http.channel.ForumThread"><span class="pre">ForumThread</span></a></span></span><a class="headerlink" href="#discord_http.channel.StoreChannel.create_forum_or_media" title="Link to this definition">¶</a></dt>
 <dd><p>Create a forum or media thread in the channel.</p>
@@ -12704,6 +13214,40 @@ permissions change, at which point a <cite>CHANNEL_UPDATE</cite> event delivers 
 <span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">channel</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="#discord_http.channel.BaseChannel" title="discord_http.channel.BaseChannel"><span class="pre">BaseChannel</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="#discord_http.channel.CategoryChannel" title="discord_http.channel.CategoryChannel"><span class="pre">CategoryChannel</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="#discord_http.channel.PartialChannel" title="discord_http.channel.PartialChannel"><span class="pre">PartialChannel</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/builtins/constants.html#None" title="(in Python v3.15)"><span class="pre">None</span></a></span><a class="headerlink" href="#discord_http.channel.TextChannel.channel" title="Link to this definition">¶</a></dt>
 <dd><p>The channel the thread is in.</p>
 <p>Only returns a full object if cache is enabled for guild and channel.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="discord_http.channel.TextChannel.connect">
+<span class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">connect</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">timeout</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">30.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">reconnect</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">reconnect_on_session_invalid</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">self_deaf</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">self_mute</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="voice.html#discord_http.voice.client.VoiceClient" title="discord_http.voice.client.VoiceClient"><span class="pre">VoiceClient</span></a></span></span><a class="headerlink" href="#discord_http.channel.TextChannel.connect" title="Link to this definition">¶</a></dt>
+<dd><p>Connect to this voice channel.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>timeout</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#float" title="(in Python v3.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></a></span>) – How long to wait, in seconds, for the voice handshake to complete.</p></li>
+<li><p><strong>reconnect</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#bool" title="(in Python v3.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></a></span>) – Whether to automatically reconnect if the voice connection drops.</p></li>
+<li><p><strong>reconnect_on_session_invalid</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#bool" title="(in Python v3.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></a></span>) – What to do when Discord invalidates the voice session (close code
+4006), which most commonly happens when the channel empties out and
+Discord tears down the DAVE/MLS session. By default (<code class="docutils literal notranslate"><span class="pre">False</span></code>) the
+bot disconnects; set to <code class="docutils literal notranslate"><span class="pre">True</span></code> to attempt a full reconnect instead.</p></li>
+<li><p><strong>self_deaf</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#bool" title="(in Python v3.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></a></span>) – Whether the bot should be self-deafened.</p></li>
+<li><p><strong>self_mute</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#bool" title="(in Python v3.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></a></span>) – Whether the bot should be self-muted.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><a class="reference internal" href="voice.html#discord_http.voice.client.VoiceClient" title="discord_http.voice.client.VoiceClient"><code class="xref py py-class docutils literal notranslate"><span class="pre">VoiceClient</span></code></a></span></p>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The voice client for the connection.</p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p><a class="reference external" href="https://docs.python.org/3/builtins/exceptions.html#TypeError" title="(in Python v3.15)"><strong>TypeError</strong></a> – If the channel is not a voice or stage channel.</p></li>
+<li><p><a class="reference external" href="https://docs.python.org/3/builtins/exceptions.html#ValueError" title="(in Python v3.15)"><strong>ValueError</strong></a> – If the channel is not associated with a guild.</p></li>
+<li><p><a class="reference external" href="https://docs.python.org/3/builtins/exceptions.html#NotImplementedError" title="(in Python v3.15)"><strong>NotImplementedError</strong></a> – If the gateway is not available.</p></li>
+<li><p><a class="reference external" href="https://docs.python.org/3/builtins/exceptions.html#RuntimeError" title="(in Python v3.15)"><strong>RuntimeError</strong></a> – If the bot is already connected to a voice channel in this guild.</p></li>
+</ul>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py method">
@@ -13509,6 +14053,40 @@ permissions change, at which point a <cite>CHANNEL_UPDATE</cite> event delivers 
 <dt class="sig sig-object py" id="discord_http.channel.Thread.channel_id">
 <span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">channel_id</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#int" title="(in Python v3.15)"><span class="pre">int</span></a></span><a class="headerlink" href="#discord_http.channel.Thread.channel_id" title="Link to this definition">¶</a></dt>
 <dd><p>The ID of the channel (alias of <cite>id</cite>).</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="discord_http.channel.Thread.connect">
+<span class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">connect</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">timeout</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">30.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">reconnect</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">reconnect_on_session_invalid</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">self_deaf</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">self_mute</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="voice.html#discord_http.voice.client.VoiceClient" title="discord_http.voice.client.VoiceClient"><span class="pre">VoiceClient</span></a></span></span><a class="headerlink" href="#discord_http.channel.Thread.connect" title="Link to this definition">¶</a></dt>
+<dd><p>Connect to this voice channel.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>timeout</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#float" title="(in Python v3.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></a></span>) – How long to wait, in seconds, for the voice handshake to complete.</p></li>
+<li><p><strong>reconnect</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#bool" title="(in Python v3.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></a></span>) – Whether to automatically reconnect if the voice connection drops.</p></li>
+<li><p><strong>reconnect_on_session_invalid</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#bool" title="(in Python v3.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></a></span>) – What to do when Discord invalidates the voice session (close code
+4006), which most commonly happens when the channel empties out and
+Discord tears down the DAVE/MLS session. By default (<code class="docutils literal notranslate"><span class="pre">False</span></code>) the
+bot disconnects; set to <code class="docutils literal notranslate"><span class="pre">True</span></code> to attempt a full reconnect instead.</p></li>
+<li><p><strong>self_deaf</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#bool" title="(in Python v3.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></a></span>) – Whether the bot should be self-deafened.</p></li>
+<li><p><strong>self_mute</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#bool" title="(in Python v3.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></a></span>) – Whether the bot should be self-muted.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><a class="reference internal" href="voice.html#discord_http.voice.client.VoiceClient" title="discord_http.voice.client.VoiceClient"><code class="xref py py-class docutils literal notranslate"><span class="pre">VoiceClient</span></code></a></span></p>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The voice client for the connection.</p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p><a class="reference external" href="https://docs.python.org/3/builtins/exceptions.html#TypeError" title="(in Python v3.15)"><strong>TypeError</strong></a> – If the channel is not a voice or stage channel.</p></li>
+<li><p><a class="reference external" href="https://docs.python.org/3/builtins/exceptions.html#ValueError" title="(in Python v3.15)"><strong>ValueError</strong></a> – If the channel is not associated with a guild.</p></li>
+<li><p><a class="reference external" href="https://docs.python.org/3/builtins/exceptions.html#NotImplementedError" title="(in Python v3.15)"><strong>NotImplementedError</strong></a> – If the gateway is not available.</p></li>
+<li><p><a class="reference external" href="https://docs.python.org/3/builtins/exceptions.html#RuntimeError" title="(in Python v3.15)"><strong>RuntimeError</strong></a> – If the bot is already connected to a voice channel in this guild.</p></li>
+</ul>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py method">
@@ -14381,6 +14959,40 @@ permissions change, at which point a <cite>CHANNEL_UPDATE</cite> event delivers 
 <span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">channel</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="#discord_http.channel.BaseChannel" title="discord_http.channel.BaseChannel"><span class="pre">BaseChannel</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="#discord_http.channel.CategoryChannel" title="discord_http.channel.CategoryChannel"><span class="pre">CategoryChannel</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="#discord_http.channel.PartialChannel" title="discord_http.channel.PartialChannel"><span class="pre">PartialChannel</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/builtins/constants.html#None" title="(in Python v3.15)"><span class="pre">None</span></a></span><a class="headerlink" href="#discord_http.channel.VoiceChannel.channel" title="Link to this definition">¶</a></dt>
 <dd><p>The channel the thread is in.</p>
 <p>Only returns a full object if cache is enabled for guild and channel.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="discord_http.channel.VoiceChannel.connect">
+<span class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">connect</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">timeout</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">30.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">reconnect</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">reconnect_on_session_invalid</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">self_deaf</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">self_mute</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="voice.html#discord_http.voice.client.VoiceClient" title="discord_http.voice.client.VoiceClient"><span class="pre">VoiceClient</span></a></span></span><a class="headerlink" href="#discord_http.channel.VoiceChannel.connect" title="Link to this definition">¶</a></dt>
+<dd><p>Connect to this voice channel.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>timeout</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#float" title="(in Python v3.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></a></span>) – How long to wait, in seconds, for the voice handshake to complete.</p></li>
+<li><p><strong>reconnect</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#bool" title="(in Python v3.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></a></span>) – Whether to automatically reconnect if the voice connection drops.</p></li>
+<li><p><strong>reconnect_on_session_invalid</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#bool" title="(in Python v3.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></a></span>) – What to do when Discord invalidates the voice session (close code
+4006), which most commonly happens when the channel empties out and
+Discord tears down the DAVE/MLS session. By default (<code class="docutils literal notranslate"><span class="pre">False</span></code>) the
+bot disconnects; set to <code class="docutils literal notranslate"><span class="pre">True</span></code> to attempt a full reconnect instead.</p></li>
+<li><p><strong>self_deaf</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#bool" title="(in Python v3.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></a></span>) – Whether the bot should be self-deafened.</p></li>
+<li><p><strong>self_mute</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#bool" title="(in Python v3.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></a></span>) – Whether the bot should be self-muted.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><a class="reference internal" href="voice.html#discord_http.voice.client.VoiceClient" title="discord_http.voice.client.VoiceClient"><code class="xref py py-class docutils literal notranslate"><span class="pre">VoiceClient</span></code></a></span></p>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The voice client for the connection.</p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p><a class="reference external" href="https://docs.python.org/3/builtins/exceptions.html#TypeError" title="(in Python v3.15)"><strong>TypeError</strong></a> – If the channel is not a voice or stage channel.</p></li>
+<li><p><a class="reference external" href="https://docs.python.org/3/builtins/exceptions.html#ValueError" title="(in Python v3.15)"><strong>ValueError</strong></a> – If the channel is not associated with a guild.</p></li>
+<li><p><a class="reference external" href="https://docs.python.org/3/builtins/exceptions.html#NotImplementedError" title="(in Python v3.15)"><strong>NotImplementedError</strong></a> – If the gateway is not available.</p></li>
+<li><p><a class="reference external" href="https://docs.python.org/3/builtins/exceptions.html#RuntimeError" title="(in Python v3.15)"><strong>RuntimeError</strong></a> – If the bot is already connected to a voice channel in this guild.</p></li>
+</ul>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py method">
@@ -15259,6 +15871,7 @@ connected to the voice channel, <cite>MANAGE_CHANNELS</cite> is also required.</
 <li><a class="reference internal" href="#discord_http.channel.BaseChannel.add_thread_member"><code class="docutils literal notranslate"><span class="pre">BaseChannel.add_thread_member()</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.channel.BaseChannel.bulk_delete_messages"><code class="docutils literal notranslate"><span class="pre">BaseChannel.bulk_delete_messages()</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.channel.BaseChannel.channel"><code class="docutils literal notranslate"><span class="pre">BaseChannel.channel</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.channel.BaseChannel.connect"><code class="docutils literal notranslate"><span class="pre">BaseChannel.connect()</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.channel.BaseChannel.create_forum_or_media"><code class="docutils literal notranslate"><span class="pre">BaseChannel.create_forum_or_media()</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.channel.BaseChannel.create_invite"><code class="docutils literal notranslate"><span class="pre">BaseChannel.create_invite()</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.channel.BaseChannel.create_thread"><code class="docutils literal notranslate"><span class="pre">BaseChannel.create_thread()</span></code></a></li>
@@ -15303,6 +15916,7 @@ connected to the voice channel, <cite>MANAGE_CHANNELS</cite> is also required.</
 <li><a class="reference internal" href="#discord_http.channel.CategoryChannel.app_permissions"><code class="docutils literal notranslate"><span class="pre">CategoryChannel.app_permissions</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.channel.CategoryChannel.bulk_delete_messages"><code class="docutils literal notranslate"><span class="pre">CategoryChannel.bulk_delete_messages()</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.channel.CategoryChannel.channel"><code class="docutils literal notranslate"><span class="pre">CategoryChannel.channel</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.channel.CategoryChannel.connect"><code class="docutils literal notranslate"><span class="pre">CategoryChannel.connect()</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.channel.CategoryChannel.create_forum_or_media"><code class="docutils literal notranslate"><span class="pre">CategoryChannel.create_forum_or_media()</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.channel.CategoryChannel.create_invite"><code class="docutils literal notranslate"><span class="pre">CategoryChannel.create_invite()</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.channel.CategoryChannel.create_thread"><code class="docutils literal notranslate"><span class="pre">CategoryChannel.create_thread()</span></code></a></li>
@@ -15362,6 +15976,7 @@ connected to the voice channel, <cite>MANAGE_CHANNELS</cite> is also required.</
 <li><a class="reference internal" href="#discord_http.channel.DMChannel.app_permissions"><code class="docutils literal notranslate"><span class="pre">DMChannel.app_permissions</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.channel.DMChannel.bulk_delete_messages"><code class="docutils literal notranslate"><span class="pre">DMChannel.bulk_delete_messages()</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.channel.DMChannel.channel"><code class="docutils literal notranslate"><span class="pre">DMChannel.channel</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.channel.DMChannel.connect"><code class="docutils literal notranslate"><span class="pre">DMChannel.connect()</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.channel.DMChannel.create_forum_or_media"><code class="docutils literal notranslate"><span class="pre">DMChannel.create_forum_or_media()</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.channel.DMChannel.create_invite"><code class="docutils literal notranslate"><span class="pre">DMChannel.create_invite()</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.channel.DMChannel.create_thread"><code class="docutils literal notranslate"><span class="pre">DMChannel.create_thread()</span></code></a></li>
@@ -15412,6 +16027,7 @@ connected to the voice channel, <cite>MANAGE_CHANNELS</cite> is also required.</
 <li><a class="reference internal" href="#discord_http.channel.DirectoryChannel.app_permissions"><code class="docutils literal notranslate"><span class="pre">DirectoryChannel.app_permissions</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.channel.DirectoryChannel.bulk_delete_messages"><code class="docutils literal notranslate"><span class="pre">DirectoryChannel.bulk_delete_messages()</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.channel.DirectoryChannel.channel"><code class="docutils literal notranslate"><span class="pre">DirectoryChannel.channel</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.channel.DirectoryChannel.connect"><code class="docutils literal notranslate"><span class="pre">DirectoryChannel.connect()</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.channel.DirectoryChannel.create_forum_or_media"><code class="docutils literal notranslate"><span class="pre">DirectoryChannel.create_forum_or_media()</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.channel.DirectoryChannel.create_invite"><code class="docutils literal notranslate"><span class="pre">DirectoryChannel.create_invite()</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.channel.DirectoryChannel.create_thread"><code class="docutils literal notranslate"><span class="pre">DirectoryChannel.create_thread()</span></code></a></li>
@@ -15476,6 +16092,7 @@ connected to the voice channel, <cite>MANAGE_CHANNELS</cite> is also required.</
 <li><a class="reference internal" href="#discord_http.channel.ForumChannel.bulk_delete_messages"><code class="docutils literal notranslate"><span class="pre">ForumChannel.bulk_delete_messages()</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.channel.ForumChannel.channel"><code class="docutils literal notranslate"><span class="pre">ForumChannel.channel</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.channel.ForumChannel.channel_id"><code class="docutils literal notranslate"><span class="pre">ForumChannel.channel_id</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.channel.ForumChannel.connect"><code class="docutils literal notranslate"><span class="pre">ForumChannel.connect()</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.channel.ForumChannel.create_forum_or_media"><code class="docutils literal notranslate"><span class="pre">ForumChannel.create_forum_or_media()</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.channel.ForumChannel.create_invite"><code class="docutils literal notranslate"><span class="pre">ForumChannel.create_invite()</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.channel.ForumChannel.create_thread"><code class="docutils literal notranslate"><span class="pre">ForumChannel.create_thread()</span></code></a></li>
@@ -15556,6 +16173,7 @@ connected to the voice channel, <cite>MANAGE_CHANNELS</cite> is also required.</
 <li><a class="reference internal" href="#discord_http.channel.ForumThread.bulk_delete_messages"><code class="docutils literal notranslate"><span class="pre">ForumThread.bulk_delete_messages()</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.channel.ForumThread.channel"><code class="docutils literal notranslate"><span class="pre">ForumThread.channel</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.channel.ForumThread.channel_id"><code class="docutils literal notranslate"><span class="pre">ForumThread.channel_id</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.channel.ForumThread.connect"><code class="docutils literal notranslate"><span class="pre">ForumThread.connect()</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.channel.ForumThread.create_forum_or_media"><code class="docutils literal notranslate"><span class="pre">ForumThread.create_forum_or_media()</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.channel.ForumThread.create_invite"><code class="docutils literal notranslate"><span class="pre">ForumThread.create_invite()</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.channel.ForumThread.create_thread"><code class="docutils literal notranslate"><span class="pre">ForumThread.create_thread()</span></code></a></li>
@@ -15620,6 +16238,7 @@ connected to the voice channel, <cite>MANAGE_CHANNELS</cite> is also required.</
 <li><a class="reference internal" href="#discord_http.channel.GroupDMChannel.app_permissions"><code class="docutils literal notranslate"><span class="pre">GroupDMChannel.app_permissions</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.channel.GroupDMChannel.bulk_delete_messages"><code class="docutils literal notranslate"><span class="pre">GroupDMChannel.bulk_delete_messages()</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.channel.GroupDMChannel.channel"><code class="docutils literal notranslate"><span class="pre">GroupDMChannel.channel</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.channel.GroupDMChannel.connect"><code class="docutils literal notranslate"><span class="pre">GroupDMChannel.connect()</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.channel.GroupDMChannel.create_forum_or_media"><code class="docutils literal notranslate"><span class="pre">GroupDMChannel.create_forum_or_media()</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.channel.GroupDMChannel.create_invite"><code class="docutils literal notranslate"><span class="pre">GroupDMChannel.create_invite()</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.channel.GroupDMChannel.create_thread"><code class="docutils literal notranslate"><span class="pre">GroupDMChannel.create_thread()</span></code></a></li>
@@ -15673,6 +16292,7 @@ connected to the voice channel, <cite>MANAGE_CHANNELS</cite> is also required.</
 <li><a class="reference internal" href="#discord_http.channel.NewsChannel.app_permissions"><code class="docutils literal notranslate"><span class="pre">NewsChannel.app_permissions</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.channel.NewsChannel.bulk_delete_messages"><code class="docutils literal notranslate"><span class="pre">NewsChannel.bulk_delete_messages()</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.channel.NewsChannel.channel"><code class="docutils literal notranslate"><span class="pre">NewsChannel.channel</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.channel.NewsChannel.connect"><code class="docutils literal notranslate"><span class="pre">NewsChannel.connect()</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.channel.NewsChannel.create_forum_or_media"><code class="docutils literal notranslate"><span class="pre">NewsChannel.create_forum_or_media()</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.channel.NewsChannel.create_invite"><code class="docutils literal notranslate"><span class="pre">NewsChannel.create_invite()</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.channel.NewsChannel.create_thread"><code class="docutils literal notranslate"><span class="pre">NewsChannel.create_thread()</span></code></a></li>
@@ -15731,6 +16351,7 @@ connected to the voice channel, <cite>MANAGE_CHANNELS</cite> is also required.</
 <li><a class="reference internal" href="#discord_http.channel.NewsThread.bulk_delete_messages"><code class="docutils literal notranslate"><span class="pre">NewsThread.bulk_delete_messages()</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.channel.NewsThread.channel"><code class="docutils literal notranslate"><span class="pre">NewsThread.channel</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.channel.NewsThread.channel_id"><code class="docutils literal notranslate"><span class="pre">NewsThread.channel_id</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.channel.NewsThread.connect"><code class="docutils literal notranslate"><span class="pre">NewsThread.connect()</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.channel.NewsThread.create_forum_or_media"><code class="docutils literal notranslate"><span class="pre">NewsThread.create_forum_or_media()</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.channel.NewsThread.create_invite"><code class="docutils literal notranslate"><span class="pre">NewsThread.create_invite()</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.channel.NewsThread.create_thread"><code class="docutils literal notranslate"><span class="pre">NewsThread.create_thread()</span></code></a></li>
@@ -15805,6 +16426,7 @@ connected to the voice channel, <cite>MANAGE_CHANNELS</cite> is also required.</
 <li><a class="reference internal" href="#discord_http.channel.PartialChannel.fetch_archived_public_threads"><code class="docutils literal notranslate"><span class="pre">PartialChannel.fetch_archived_public_threads()</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.channel.PartialChannel.fetch_archived_private_threads"><code class="docutils literal notranslate"><span class="pre">PartialChannel.fetch_archived_private_threads()</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.channel.PartialChannel.create_invite"><code class="docutils literal notranslate"><span class="pre">PartialChannel.create_invite()</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.channel.PartialChannel.connect"><code class="docutils literal notranslate"><span class="pre">PartialChannel.connect()</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.channel.PartialChannel.send"><code class="docutils literal notranslate"><span class="pre">PartialChannel.send()</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.channel.PartialChannel.from_dict"><code class="docutils literal notranslate"><span class="pre">PartialChannel.from_dict()</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.channel.PartialChannel.fetch"><code class="docutils literal notranslate"><span class="pre">PartialChannel.fetch()</span></code></a></li>
@@ -15836,6 +16458,7 @@ connected to the voice channel, <cite>MANAGE_CHANNELS</cite> is also required.</
 <li><a class="reference internal" href="#discord_http.channel.PartialThread.add_thread_member"><code class="docutils literal notranslate"><span class="pre">PartialThread.add_thread_member()</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.channel.PartialThread.bulk_delete_messages"><code class="docutils literal notranslate"><span class="pre">PartialThread.bulk_delete_messages()</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.channel.PartialThread.channel"><code class="docutils literal notranslate"><span class="pre">PartialThread.channel</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.channel.PartialThread.connect"><code class="docutils literal notranslate"><span class="pre">PartialThread.connect()</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.channel.PartialThread.create_forum_or_media"><code class="docutils literal notranslate"><span class="pre">PartialThread.create_forum_or_media()</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.channel.PartialThread.create_invite"><code class="docutils literal notranslate"><span class="pre">PartialThread.create_invite()</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.channel.PartialThread.create_thread"><code class="docutils literal notranslate"><span class="pre">PartialThread.create_thread()</span></code></a></li>
@@ -15883,6 +16506,7 @@ connected to the voice channel, <cite>MANAGE_CHANNELS</cite> is also required.</
 <li><a class="reference internal" href="#discord_http.channel.PrivateThread.bulk_delete_messages"><code class="docutils literal notranslate"><span class="pre">PrivateThread.bulk_delete_messages()</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.channel.PrivateThread.channel"><code class="docutils literal notranslate"><span class="pre">PrivateThread.channel</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.channel.PrivateThread.channel_id"><code class="docutils literal notranslate"><span class="pre">PrivateThread.channel_id</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.channel.PrivateThread.connect"><code class="docutils literal notranslate"><span class="pre">PrivateThread.connect()</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.channel.PrivateThread.create_forum_or_media"><code class="docutils literal notranslate"><span class="pre">PrivateThread.create_forum_or_media()</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.channel.PrivateThread.create_invite"><code class="docutils literal notranslate"><span class="pre">PrivateThread.create_invite()</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.channel.PrivateThread.create_thread"><code class="docutils literal notranslate"><span class="pre">PrivateThread.create_thread()</span></code></a></li>
@@ -15963,6 +16587,7 @@ connected to the voice channel, <cite>MANAGE_CHANNELS</cite> is also required.</
 <li><a class="reference internal" href="#discord_http.channel.PublicThread.app_permissions"><code class="docutils literal notranslate"><span class="pre">PublicThread.app_permissions</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.channel.PublicThread.bulk_delete_messages"><code class="docutils literal notranslate"><span class="pre">PublicThread.bulk_delete_messages()</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.channel.PublicThread.channel"><code class="docutils literal notranslate"><span class="pre">PublicThread.channel</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.channel.PublicThread.connect"><code class="docutils literal notranslate"><span class="pre">PublicThread.connect()</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.channel.PublicThread.create_forum_or_media"><code class="docutils literal notranslate"><span class="pre">PublicThread.create_forum_or_media()</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.channel.PublicThread.create_invite"><code class="docutils literal notranslate"><span class="pre">PublicThread.create_invite()</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.channel.PublicThread.create_thread"><code class="docutils literal notranslate"><span class="pre">PublicThread.create_thread()</span></code></a></li>
@@ -16014,6 +16639,7 @@ connected to the voice channel, <cite>MANAGE_CHANNELS</cite> is also required.</
 <li><a class="reference internal" href="#discord_http.channel.StageChannel.bitrate"><code class="docutils literal notranslate"><span class="pre">StageChannel.bitrate</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.channel.StageChannel.bulk_delete_messages"><code class="docutils literal notranslate"><span class="pre">StageChannel.bulk_delete_messages()</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.channel.StageChannel.channel"><code class="docutils literal notranslate"><span class="pre">StageChannel.channel</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.channel.StageChannel.connect"><code class="docutils literal notranslate"><span class="pre">StageChannel.connect()</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.channel.StageChannel.create_forum_or_media"><code class="docutils literal notranslate"><span class="pre">StageChannel.create_forum_or_media()</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.channel.StageChannel.create_invite"><code class="docutils literal notranslate"><span class="pre">StageChannel.create_invite()</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.channel.StageChannel.create_thread"><code class="docutils literal notranslate"><span class="pre">StageChannel.create_thread()</span></code></a></li>
@@ -16090,6 +16716,7 @@ connected to the voice channel, <cite>MANAGE_CHANNELS</cite> is also required.</
 <li><a class="reference internal" href="#discord_http.channel.StoreChannel.app_permissions"><code class="docutils literal notranslate"><span class="pre">StoreChannel.app_permissions</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.channel.StoreChannel.bulk_delete_messages"><code class="docutils literal notranslate"><span class="pre">StoreChannel.bulk_delete_messages()</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.channel.StoreChannel.channel"><code class="docutils literal notranslate"><span class="pre">StoreChannel.channel</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.channel.StoreChannel.connect"><code class="docutils literal notranslate"><span class="pre">StoreChannel.connect()</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.channel.StoreChannel.create_forum_or_media"><code class="docutils literal notranslate"><span class="pre">StoreChannel.create_forum_or_media()</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.channel.StoreChannel.create_invite"><code class="docutils literal notranslate"><span class="pre">StoreChannel.create_invite()</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.channel.StoreChannel.create_thread"><code class="docutils literal notranslate"><span class="pre">StoreChannel.create_thread()</span></code></a></li>
@@ -16145,6 +16772,7 @@ connected to the voice channel, <cite>MANAGE_CHANNELS</cite> is also required.</
 <li><a class="reference internal" href="#discord_http.channel.TextChannel.app_permissions"><code class="docutils literal notranslate"><span class="pre">TextChannel.app_permissions</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.channel.TextChannel.bulk_delete_messages"><code class="docutils literal notranslate"><span class="pre">TextChannel.bulk_delete_messages()</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.channel.TextChannel.channel"><code class="docutils literal notranslate"><span class="pre">TextChannel.channel</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.channel.TextChannel.connect"><code class="docutils literal notranslate"><span class="pre">TextChannel.connect()</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.channel.TextChannel.create_forum_or_media"><code class="docutils literal notranslate"><span class="pre">TextChannel.create_forum_or_media()</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.channel.TextChannel.create_invite"><code class="docutils literal notranslate"><span class="pre">TextChannel.create_invite()</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.channel.TextChannel.create_thread"><code class="docutils literal notranslate"><span class="pre">TextChannel.create_thread()</span></code></a></li>
@@ -16203,6 +16831,7 @@ connected to the voice channel, <cite>MANAGE_CHANNELS</cite> is also required.</
 <li><a class="reference internal" href="#discord_http.channel.Thread.bulk_delete_messages"><code class="docutils literal notranslate"><span class="pre">Thread.bulk_delete_messages()</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.channel.Thread.channel"><code class="docutils literal notranslate"><span class="pre">Thread.channel</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.channel.Thread.channel_id"><code class="docutils literal notranslate"><span class="pre">Thread.channel_id</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.channel.Thread.connect"><code class="docutils literal notranslate"><span class="pre">Thread.connect()</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.channel.Thread.create_forum_or_media"><code class="docutils literal notranslate"><span class="pre">Thread.create_forum_or_media()</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.channel.Thread.create_invite"><code class="docutils literal notranslate"><span class="pre">Thread.create_invite()</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.channel.Thread.create_thread"><code class="docutils literal notranslate"><span class="pre">Thread.create_thread()</span></code></a></li>
@@ -16272,6 +16901,7 @@ connected to the voice channel, <cite>MANAGE_CHANNELS</cite> is also required.</
 <li><a class="reference internal" href="#discord_http.channel.VoiceChannel.app_permissions"><code class="docutils literal notranslate"><span class="pre">VoiceChannel.app_permissions</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.channel.VoiceChannel.bulk_delete_messages"><code class="docutils literal notranslate"><span class="pre">VoiceChannel.bulk_delete_messages()</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.channel.VoiceChannel.channel"><code class="docutils literal notranslate"><span class="pre">VoiceChannel.channel</span></code></a></li>
+<li><a class="reference internal" href="#discord_http.channel.VoiceChannel.connect"><code class="docutils literal notranslate"><span class="pre">VoiceChannel.connect()</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.channel.VoiceChannel.create_forum_or_media"><code class="docutils literal notranslate"><span class="pre">VoiceChannel.create_forum_or_media()</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.channel.VoiceChannel.create_invite"><code class="docutils literal notranslate"><span class="pre">VoiceChannel.create_invite()</span></code></a></li>
 <li><a class="reference internal" href="#discord_http.channel.VoiceChannel.create_thread"><code class="docutils literal notranslate"><span class="pre">VoiceChannel.create_thread()</span></code></a></li>

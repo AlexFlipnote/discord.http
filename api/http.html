@@ -406,7 +406,11 @@ it is used internally by <code class="xref py py-class docutils literal notransl
 </dd>
 <dt class="field-even">Raises<span class="colon">:</span></dt>
 <dd class="field-even"><ul class="simple">
-<li><p><a class="reference external" href="https://docs.python.org/3/builtins/exceptions.html#ValueError" title="(in Python v3.15)"><strong>ValueError</strong></a> – Invalid HTTP method</p></li>
+<li><p><a class="reference external" href="https://docs.python.org/3/builtins/exceptions.html#ValueError" title="(in Python v3.15)"><strong>ValueError</strong></a> – <ul>
+<li><p>Invalid HTTP method
+    - The path would be rewritten by the HTTP client before it is sent</p></li>
+</ul>
+</p></li>
 <li><p><a class="reference internal" href="errors.html#discord_http.errors.DiscordServerError" title="discord_http.errors.DiscordServerError"><strong>DiscordServerError</strong></a> – Something went wrong on Discord’s end</p></li>
 <li><p><a class="reference internal" href="errors.html#discord_http.errors.Forbidden" title="discord_http.errors.Forbidden"><strong>Forbidden</strong></a> – You are not allowed to do this</p></li>
 <li><p><a class="reference internal" href="errors.html#discord_http.errors.NotFound" title="discord_http.errors.NotFound"><strong>NotFound</strong></a> – The resource was not found</p></li>

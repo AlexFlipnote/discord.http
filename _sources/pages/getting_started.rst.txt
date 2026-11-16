@@ -58,6 +58,11 @@ After that, you need to install the library, you can do so by using ``pip instal
   use ``pip3 install discord.http`` instead. In some rare cases if that does not work,
   try ``python -m pip install discord.http`` or ``python3 -m pip install discord.http``.
 
+Want voice? Install with ``pip install "discord.http[voice]"`` instead, it adds `davey <https://pypi.org/project/davey/>`_
+for the end-to-end encryption Discord requires in voice channels. Playing audio also needs
+`FFmpeg <https://ffmpeg.org/download.html>`_ on your PATH, and `libopus <https://opus-codec.org/downloads/>`_ is only needed
+for volume control, raw PCM audio and decoding received audio, like recording to WAV.
+
 Discord bot
 ~~~~~~~~~~~
 If you do not have a bot already on Discord, next step is to create one. (Can also use an existing bot if you have one)
@@ -195,6 +200,33 @@ This is great for cron jobs, one-off scripts and admin tools:
   :literal:
 
 Keep in mind that offline mode can only talk to the Discord API, it does not receive any interactions or events.
+
+Voice
+-----
+Voice runs on the gateway, so it needs the ``guilds`` and ``guild_voice_states`` intents,
+and caching them so the bot knows which channel you are in.
+Install it with ``pip install "discord.http[voice]"`` and have FFmpeg on your PATH:
+
+.. include:: ../../README.md
+  :start-after: <!-- DOCS: voice_example -->
+  :end-before: ```
+  :literal:
+
+``play()`` takes a file path, URL, bytes or a file object, and FFmpeg turns it into audio Discord understands.
+
+If you need libopus (volume control, raw PCM audio or decoding received audio), it is loaded
+automatically the first time it is needed. On Linux, installing ``libopus0`` (or your distro's
+equivalent) is enough. On macOS and Windows it is often not found on its own, so load it yourself
+before connecting:
+
+.. code-block:: python
+
+  from discord_http.voice import load_opus
+
+  load_opus("/opt/homebrew/lib/libopus.dylib")  # macOS (Homebrew)
+  load_opus("C:/path/to/opus.dll")  # Windows
+
+Playing files and URLs with ``play()`` never needs libopus, FFmpeg handles the encoding.
 
 Python logging
 --------------
