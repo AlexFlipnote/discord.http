@@ -82,11 +82,7 @@ class Client:
     loop
         Event loop to use, if not provided, it will use `asyncio.get_running_loop()`
     allowed_mentions
-        Allowed mentions to use for every message that does not set its own.
-        If not provided, users and the replied-to user can be mentioned, while
-        `@everyone`, `@here` and role mentions in the content are left inert, so
-        echoing text from a user can't ping a whole server.
-        Pass `AllowedMentions.all()` for Discord's own default.
+        Allowed mentions to use, if not provided, it will use `AllowedMentions.all()`
     automatic_shards
         Whether to automatically shard the bot or not
     playing_status
@@ -174,7 +170,7 @@ class Client:
 
         # Cache level, keep them at top
         self._view_storage: dict[str | int, InteractionStorage] = {}
-        self._default_allowed_mentions = allowed_mentions or AllowedMentions(everyone=False, roles=False)
+        self._default_allowed_mentions = allowed_mentions or AllowedMentions.all()
 
         self._cogs: dict[str, list[Cog]] = {}
 

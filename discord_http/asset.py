@@ -59,7 +59,7 @@ class Asset:
         shorten = self.url.replace(self.BASE, "").replace(self.PROXY, "")
         return f"<Asset url={shorten}>"
 
-    async def fetch(self, *, fallback: bool = False, max_size: int | None = None) -> bytes:
+    async def fetch(self, *, fallback: bool = False) -> bytes:
         """
         Fetches the asset.
 
@@ -68,16 +68,13 @@ class Asset:
         fallback
             Whether to fallback to a missing texture if the asset returns anything but `HTTP 2XX`.
             Defaults to `False`.
-        max_size
-            Refuse a response larger than this many bytes instead of buffering it.
-            Not limited by default
 
         Returns
         -------
             The asset data
         """
         r = await self._state.http.request(
-            "GET", self.url, res_method="read", max_size=max_size
+            "GET", self.url, res_method="read"
         )
 
         if r.status not in range(200, 300):

@@ -213,7 +213,7 @@ class AttachmentComponent:
     def __repr__(self) -> str:
         return f"<AttachmentComponent url={self.url}>"
 
-    async def fetch(self, *, use_cached: bool = False, max_size: int | None = None) -> bytes:
+    async def fetch(self, *, use_cached: bool = False) -> bytes:
         """
         Fetches the file from the attachment URL and returns it as bytes.
 
@@ -225,9 +225,6 @@ class AttachmentComponent:
         ----------
         use_cached
             Whether to use the cached URL or not, defaults to `False`
-        max_size
-            Refuse a response larger than this many bytes instead of buffering it.
-            Not limited by default
 
         Returns
         -------
@@ -237,15 +234,12 @@ class AttachmentComponent:
         ------
         HTTPException
             If the request returned anything other than 2XX
-        ValueError
-            If the file is larger than `max_size`
         """
         external = self.attachment_id is None
         r = await self._state.http.request(
             "GET",
             (self.proxy_url or self.url) if (use_cached or external) else self.url,
-            res_method="read",
-            max_size=max_size
+            res_method="read"
         )
 
         if r.status not in range(200, 300):
