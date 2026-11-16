@@ -240,7 +240,7 @@ class PartialWebhook(PartialBase):
 
         r = await self._state.query(
             "POST",
-            f"/webhooks/{self.id}/{self.token}",
+            f"/webhooks/{self.id}/{utils.quote_path(self.token)}",
             webhook=True,
             params=params,
             data=multidata.finish(),
@@ -291,7 +291,7 @@ class PartialWebhook(PartialBase):
 
         await self._state.query(
             "POST",
-            f"/webhooks/{self.id}/{self.token}/slack",
+            f"/webhooks/{self.id}/{utils.quote_path(self.token)}/slack",
             webhook=True,
             params=params,
             json=payload,
@@ -333,7 +333,7 @@ class PartialWebhook(PartialBase):
 
         await self._state.query(
             "POST",
-            f"/webhooks/{self.id}/{self.token}/github",
+            f"/webhooks/{self.id}/{utils.quote_path(self.token)}/github",
             webhook=True,
             params=params,
             json=payload,
@@ -365,7 +365,7 @@ class PartialWebhook(PartialBase):
 
         await self._state.query(
             "DELETE",
-            f"/webhooks/{self.id}/{self.token}",
+            f"/webhooks/{self.id}/{utils.quote_path(self.token)}",
             res_method="text",
             reason=reason
         )
@@ -405,9 +405,8 @@ class PartialWebhook(PartialBase):
 
         api_url = f"/webhooks/{self.id}"
 
-        if channel_id is not MISSING and self.token is MISSING:
+        if channel_id is not MISSING:
             payload["channel_id"] = str(channel_id)
-            api_url += f"/{self.token}"
 
         r = await self._state.query(
             "PATCH",

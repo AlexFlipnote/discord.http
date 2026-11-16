@@ -90,7 +90,7 @@ class PartialInvite:
         """ Fetches the invite details. """
         r = await self._state.query(
             "GET",
-            f"/invites/{self.code}"
+            f"/invites/{utils.quote_path(self.code)}"
         )
 
         return self._state.bot.create_invite_from_data(r.response)
@@ -99,7 +99,7 @@ class PartialInvite:
         """ Fetch the list of users allowed to use this invite. """
         r = await self._state.query(
             "GET",
-            f"/invites/{self.code}/target-users",
+            f"/invites/{utils.quote_path(self.code)}/target-users",
             res_method="text"
         )
 
@@ -130,7 +130,7 @@ class PartialInvite:
 
         await self._state.query(
             "PUT",
-            f"/invites/{self.code}/target-users",
+            f"/invites/{utils.quote_path(self.code)}/target-users",
             headers={"Content-Type": multidata.content_type},
             data=multidata.finish(),
             res_method="text"
@@ -147,7 +147,7 @@ class PartialInvite:
         """
         await self._state.query(
             "PUT",
-            f"/invites/{self.code}/target-users/{int(user)}",
+            f"/invites/{utils.quote_path(self.code)}/target-users/{int(user)}",
             res_method="text"
         )
 
@@ -162,7 +162,7 @@ class PartialInvite:
         """
         await self._state.query(
             "DELETE",
-            f"/invites/{self.code}/target-users/{int(user)}",
+            f"/invites/{utils.quote_path(self.code)}/target-users/{int(user)}",
             res_method="text"
         )
 
@@ -185,7 +185,7 @@ class PartialInvite:
 
         await self._state.query(
             "POST",
-            f"/invites/{self.code}/target-users/bulk-add",
+            f"/invites/{utils.quote_path(self.code)}/target-users/bulk-add",
             json={"user_ids": [str(int(g)) for g in user_ids]},
             res_method="text"
         )
@@ -209,7 +209,7 @@ class PartialInvite:
 
         await self._state.query(
             "POST",
-            f"/invites/{self.code}/target-users/bulk-delete",
+            f"/invites/{utils.quote_path(self.code)}/target-users/bulk-delete",
             json={"user_ids": [str(int(g)) for g in user_ids]},
             res_method="text"
         )
@@ -218,7 +218,7 @@ class PartialInvite:
         """ Fetch the status of the target users file processing job. """
         r = await self._state.query(
             "GET",
-            f"/invites/{self.code}/target-users/job-status"
+            f"/invites/{utils.quote_path(self.code)}/target-users/job-status"
         )
 
         return InviteTargetUsersJobStatus(
@@ -252,7 +252,7 @@ class PartialInvite:
         """
         data = await self._state.query(
             "DELETE",
-            f"/invites/{self.code}",
+            f"/invites/{utils.quote_path(self.code)}",
             reason=reason
         )
 

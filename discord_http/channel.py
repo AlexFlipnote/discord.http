@@ -276,7 +276,7 @@ class PartialChannel(PartialBase):
         """
         r = await self._state.query(
             "GET",
-            f"/channels/{self.id}/messages/{message_id}"
+            f"/channels/{self.id}/messages/{int(message_id)}"
         )
 
         return self._state.bot.create_message_from_data(
@@ -1728,7 +1728,7 @@ class PartialChannel(PartialBase):
         """
         await self._state.query(
             "PUT",
-            f"/channels/{self.id}/thread-members/{user_id}",
+            f"/channels/{self.id}/thread-members/{int(user_id)}",
             res_method="text"
         )
 
@@ -1746,7 +1746,7 @@ class PartialChannel(PartialBase):
         """
         await self._state.query(
             "DELETE",
-            f"/channels/{self.id}/thread-members/{user_id}",
+            f"/channels/{self.id}/thread-members/{int(user_id)}",
             res_method="text"
         )
 
@@ -1771,7 +1771,7 @@ class PartialChannel(PartialBase):
 
         r = await self._state.query(
             "GET",
-            f"/channels/{self.id}/thread-members/{user_id}",
+            f"/channels/{self.id}/thread-members/{int(user_id)}",
             params={"with_member": "true"}
         )
 

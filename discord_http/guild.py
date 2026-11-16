@@ -746,7 +746,7 @@ class PartialGuildTemplate:
         """ Fetches the guild template. """
         r = await self._state.query(
             "GET",
-            f"/guilds/templates/{self.code}"
+            f"/guilds/templates/{utils.quote_path(self.code)}"
         )
 
         return GuildTemplate(state=self._state, data=r.response)
@@ -758,7 +758,7 @@ class PartialGuildTemplate:
 
         r = await self._state.query(
             "PUT",
-            f"/guilds/{self.guild_id}/templates/{self.code}"
+            f"/guilds/{self.guild_id}/templates/{utils.quote_path(self.code)}"
         )
 
         return GuildTemplate(state=self._state, data=r.response)
@@ -795,7 +795,7 @@ class PartialGuildTemplate:
 
         r = await self._state.query(
             "PATCH",
-            f"/guilds/{self.guild_id}/templates/{self.code}",
+            f"/guilds/{self.guild_id}/templates/{utils.quote_path(self.code)}",
             json=payload
         )
 
@@ -808,7 +808,7 @@ class PartialGuildTemplate:
 
         await self._state.query(
             "DELETE",
-            f"/guilds/{self.guild_id}/templates/{self.code}",
+            f"/guilds/{self.guild_id}/templates/{utils.quote_path(self.code)}",
             res_method="text"
         )
 
@@ -3512,7 +3512,7 @@ class PartialGuild(PartialBase):
         """
         r = await self._state.query(
             "GET",
-            f"/guilds/{self.id}/members/{member_id}"
+            f"/guilds/{self.id}/members/{int(member_id)}"
         )
 
         return self._state.bot.create_member_from_data(r.response, guild=self)
@@ -3560,7 +3560,7 @@ class PartialGuild(PartialBase):
 
             data = await self._state.query(
                 "GET",
-                f"/guilds/{self.id}/members?limit={http_limit}&after={after_id}",
+                f"/guilds/{self.id}/members?limit={http_limit}&after={int(after_id)}",
             )
 
             if not data.response:

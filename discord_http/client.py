@@ -2013,7 +2013,7 @@ class Client:
         """
         r = await self.state.query(
             "GET",
-            f"/sticker-packs/{pack_id}"
+            f"/sticker-packs/{int(pack_id)}"
         )
 
         return StickerPack(state=self.state, data=r.response)
