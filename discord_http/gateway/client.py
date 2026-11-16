@@ -14,8 +14,9 @@ from .object import PlayingStatus
 from .shard import Shard
 
 if TYPE_CHECKING:
-    from ..client import GatewayCacheFlags, Client, Intents
+    from ..client import Client
     from ..object import Snowflake
+    from .flags import GatewayCacheFlags, Intents
 
 _log = logging.getLogger("discord_http")
 
