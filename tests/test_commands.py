@@ -8,7 +8,7 @@ from discord_http import (
     Attachment, Member, Permissions, Role, TextChannel, User, VoiceChannel,
 )
 from discord_http.commands import (
-    Choice, Command, Range, SubGroup, allow_contexts, bot_has_permissions,
+    Choice, Command, Range, SubGroup, after_invoke, allow_contexts, bot_has_permissions,
     check, cooldown, default_permissions, group, has_permissions, locales,
     _get_meta, _COMMAND_META_ATTR,
 )
@@ -481,6 +481,46 @@ class TestGuardPlacement(unittest.IsolatedAsyncioTestCase):
         run._cooldown_checker(ctx)
         with self.assertRaises(CommandOnCooldown):
             run._cooldown_checker(ctx)
+
+    def test_blocked_subcommand_does_not_use_the_group_cooldown(self) -> None:
+        async def tools(ctx) -> None:
+            pass
+
+        grp = group()(cooldown(2, 60)(tools))
+
+        @grp.command()
+        @cooldown(1, 60)
+        async def slow(ctx) -> None:
+            pass
+
+        @grp.command()
+        async def fast(ctx) -> None:
+            pass
+
+        ctx = self._ctx()
+        slow._cooldown_checker(ctx)
+        for _ in range(3):
+            with self.assertRaises(CommandOnCooldown):
+                slow._cooldown_checker(ctx)
+        fast._cooldown_checker(ctx)
+        with self.assertRaises(CommandOnCooldown):
+            fast._cooldown_checker(ctx)
+
+    async def test_group_after_invoke_runs_after_the_subcommand_one(self) -> None:
+        calls: list[str] = []
+
+        async def tools(ctx) -> None:
+            pass
+
+        grp = group()(after_invoke(lambda ctx: calls.append("group"))(tools))
+
+        @grp.command()
+        @after_invoke(lambda ctx: calls.append("run"))
+        async def run(ctx) -> None:
+            pass
+
+        await run._after_invoke(self._ctx())
+        self.assertEqual(calls, ["run", "group"])
 
     def test_group_default_permissions_are_registered(self) -> None:
         async def admin(ctx) -> None:

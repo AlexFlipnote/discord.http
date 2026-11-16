@@ -698,29 +698,36 @@ class Command:
         return True
 
     async def _after_invoke(self, ctx: "Context") -> None:
-        if self._meta.after_invoke is None:
-            return
-
-        func, is_coro = self._meta.after_invoke
-
-        with ctx.benchmark.measure("after_invoke"):
-            if is_coro:
-                await func(ctx)
-            else:
-                func(ctx)
-
-    def _cooldown_checker(self, ctx: "Context") -> None:
-        for cmd in self._guard_chain():
-            if cmd.cooldown is None:
+        # Innermost first, the reverse of before_invoke
+        for cmd in reversed(self._guard_chain()):
+            if cmd._meta.after_invoke is None:
                 continue
 
-            with ctx.benchmark.measure("cooldown_check", internal=True):
-                current = ctx.created_at.timestamp()
-                bucket = cmd.cooldown.get_bucket(ctx, current)
-                retry_after = bucket.update_rate_limit(current)
+            func, is_coro = cmd._meta.after_invoke
 
-            if retry_after is not None:
-                raise CommandOnCooldown(bucket, retry_after)
+            with ctx.benchmark.measure("after_invoke"):
+                if is_coro:
+                    await func(ctx)
+                else:
+                    func(ctx)
+
+    def _cooldown_checker(self, ctx: "Context") -> None:
+        with ctx.benchmark.measure("cooldown_check", internal=True):
+            current = ctx.created_at.timestamp()
+            buckets = [
+                cmd.cooldown.get_bucket(ctx, current)
+                for cmd in self._guard_chain()
+                if cmd.cooldown is not None
+            ]
+
+            # Check every bucket before taking a token from any, so a blocked
+            # subcommand does not use up its group's cooldown for its siblings
+            for bucket in buckets:
+                if bucket.get_tokens(current) == 0:
+                    raise CommandOnCooldown(bucket, bucket.get_retry_after(current))
+
+            for bucket in buckets:
+                bucket.update_rate_limit(current)
 
     async def run(
         self,
@@ -1471,12 +1478,9 @@ def cooldown(
     def decorator(func: Callable) -> Callable:
         cache = CooldownCache(Cooldown(rate, per), type)
         _get_meta(func).cooldown = cache
-
-        built: object = func
-        if isinstance(built, Command):
-            # Already built, so the copy it took of its metadata needs the rule too
-            built.cooldown = cache
-        return func
+        if isinstance(func, Command):
+            func.cooldown = cache
+        return func  # type: ignore[return-value]
 
     return decorator
 
