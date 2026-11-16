@@ -5,7 +5,7 @@ import sys
 import time
 import zlib
 
-from aiohttp import WSMsgType, ClientWebSocketResponse, ClientSession
+from aiohttp import WSMsgType, ClientError, ClientWebSocketResponse, ClientSession
 from collections.abc import Callable
 from datetime import datetime, UTC
 from typing import Any, TYPE_CHECKING, overload, Literal
@@ -352,6 +352,9 @@ class Shard:
         self._connection = None
         self._should_kill = False
         self._reconnect_attempts: int = 0
+        # Stays set across reconnects, unlike `_identified`. Until the first READY
+        # the launcher owns retrying, after it the shard has to look after itself
+        self._was_ready: bool = False
         self._replaying: bool = False
 
         self._buffer: bytearray = bytearray()
@@ -461,11 +464,17 @@ class Shard:
         if ratelimit:
             await self._ratelimiter.block()
 
-        if self.debug_events:
-            self.bot.dispatch("raw_socket_sent", message)
+        # IDENTIFY and RESUME carry the bot token, keep it out of the logs and
+        # away from debug listeners, which mostly exist to print what they get
+        has_token = message.get("op") in (PayloadType.identify, PayloadType.resume)
 
-        # IDENTIFY and RESUME carry the bot token, keep it out of the logs
-        if message.get("op") in (PayloadType.identify, PayloadType.resume):
+        if self.debug_events:
+            visible = message
+            if has_token and isinstance(message.get("d"), dict):
+                visible = {**message, "d": {**message["d"], "token": "[redacted]"}}
+            self.bot.dispatch("raw_socket_sent", visible)
+
+        if has_token:
             _log.debug(f"Sending message: op {message['op']} (token redacted)")
         else:
             _log.debug(f"Sending message: {message}")
@@ -594,6 +603,7 @@ class Shard:
                 self.status.update_ready_data(data)
                 self._expected_guild_count = len(data.get("guilds") or [])
                 self._identified.set()
+                self._was_ready = True
                 self._reconnect_attempts = 0
 
                 if self._ready_task is not None and not self._ready_task.done():
@@ -938,6 +948,28 @@ class Shard:
                     self.connect()
 
         except Exception as e:
+            if (
+                self._was_ready and
+                not self._should_kill and
+                isinstance(e, (ClientError, OSError, TimeoutError))
+            ):
+                # The websocket could not be opened again: an outage, a reset at the
+                # wrong moment, a 5xx on the upgrade. None of that is a reason to
+                # stop for good, keep the session and try again
+                self._reconnect_attempts += 1
+                backoff = min(2 ** min(self._reconnect_attempts - 1, 6), 60)
+                delay = backoff + backoff * 0.25 * self.bot.state.create_jitter()
+                self._dispatch_close_reason(
+                    f"Shard {self.shard_id} could not connect ({e!r}), "
+                    f"trying again in {delay:.1f}s (attempt {self._reconnect_attempts})",
+                    ShardCloseType.reconnect,
+                    exception=e
+                )
+                await asyncio.sleep(delay)
+                if not self._should_kill:
+                    self.connect()
+                return
+
             self._reset_instance()
             _log.error(f"Shard {self.shard_id} crashed completly", exc_info=e)
             self._dispatch_close_reason(
@@ -1227,7 +1259,7 @@ class Shard:
         await self.send_message({
             "op": int(PayloadType.presence),
             "d": status.to_dict()
-        })
+        }, ratelimit=True)
 
     async def change_voice_state(
         self,
@@ -1260,7 +1292,7 @@ class Shard:
                 "self_mute": bool(self_mute),
                 "self_deaf": bool(self_deaf)
             }
-        })
+        }, ratelimit=True)
 
     async def request_soundboard_sounds(self, *guild_ids: Snowflake | int) -> None:
         """
