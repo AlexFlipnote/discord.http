@@ -54,6 +54,13 @@ class TestRequestSignature(unittest.IsolatedAsyncioTestCase):
         self.assertEqual(await self._post(*self._signed(age=3600)), 401)
         self.assertEqual(await self._post(*self._signed(age=-3600)), 401)
 
+    async def test_stale_requests_warn_once(self) -> None:
+        with self.assertLogs("discord_http.backend", level="WARNING") as logs:
+            for i in range(3):
+                await self._post(*self._signed(str(i), age=3600))
+        self.assertEqual(len(logs.output), 1)
+        self.assertIn("NTP", logs.output[0])
+
     async def test_drifting_clock_is_tolerated(self) -> None:
         self.assertEqual(await self._post(*self._signed("1", age=120)), 200)
         self.assertEqual(await self._post(*self._signed("2", age=-120)), 200)

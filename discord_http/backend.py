@@ -82,16 +82,24 @@ class DiscordHTTP(web.Application):
         # Interactions already handled, kept for as long as their signature stays valid
         self._seen_interactions: set[str] = set()
         self._seen_interactions_expiry: deque[tuple[float, str]] = deque()
+        self._stale_warned_at: float | None = None
 
         # Silence aiohttp access logs
         logging.getLogger("aiohttp.server").setLevel(logging.ERROR)
         logging.getLogger("aiohttp.access").setLevel(logging.ERROR)
 
-    async def _validate_request(self, request: web.Request) -> None:
+    async def _validate_request(self, request: web.Request, *, check_age: bool = False) -> None:
         """
         Used to validate requests sent by Discord Webhooks.
 
         This should NOT be modified, unless you know what you're doing
+
+        Parameters
+        ----------
+        request
+            The incoming request
+        check_age
+            Whether to refuse a request signed more than `signature_max_age` away from now
         """
         if not self.verify_key:
             # Probably has not cached yet, but check again
@@ -111,13 +119,6 @@ class DiscordHTTP(web.Application):
         if len(signature) != 128 or not timestamp.isascii() or not timestamp.isdigit():
             raise HTTPUnauthorized(text="invalid request signature")
 
-        if (
-            self.signature_max_age is not None and
-            abs(time.time() - int(timestamp)) > self.signature_max_age
-        ):
-            _log.debug(f"Rejecting request, its signed timestamp is too far from now ({timestamp})")
-            raise HTTPUnauthorized(text="request timestamp is too old")
-
         try:
             data = await request.read()
             self.verify_key.verify(
@@ -130,6 +131,19 @@ class DiscordHTTP(web.Application):
         except Exception as e:
             _log.debug("Failed to read request body for signature verification", exc_info=e)
             raise HTTPBadRequest(text="invalid request body")
+
+        # After the signature, so only requests Discord really signed count here
+        if check_age and self.signature_max_age is not None:
+            drift = time.time() - int(timestamp)
+            if abs(drift) > self.signature_max_age:
+                now = time.monotonic()
+                if self._stale_warned_at is None or now - self._stale_warned_at > 300:
+                    self._stale_warned_at = now
+                    _log.warning(
+                        f"Refused an interaction signed {drift:.0f}s away from the local clock. "
+                        "If every interaction is refused, check the system clock (NTP)"
+                    )
+                raise HTTPUnauthorized(text="request timestamp is too old")
 
     def _reject_replay(self, data: dict) -> None:
         """
@@ -390,7 +404,7 @@ class DiscordHTTP(web.Application):
         Please do not touch this function, unless you know what you're doing
         """
         # Validate signature
-        await self._validate_request(request)
+        await self._validate_request(request, check_age=True)
 
         try:
             data = orjson.loads(await request.read())
