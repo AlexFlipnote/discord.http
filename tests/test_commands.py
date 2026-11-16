@@ -1,15 +1,18 @@
+import contextlib
 import unittest
 
+from datetime import UTC, datetime
 from types import SimpleNamespace
 
 from discord_http import (
     Attachment, Member, Permissions, Role, TextChannel, User, VoiceChannel,
 )
 from discord_http.commands import (
-    Choice, Command, Range, SubGroup, allow_contexts, bot_has_permissions,
-    default_permissions, has_permissions, locales, _get_meta,
-    _COMMAND_META_ATTR,
+    Choice, Command, Range, SubGroup, after_invoke, allow_contexts, bot_has_permissions,
+    check, cooldown, default_permissions, group, has_permissions, locales,
+    _get_meta, _COMMAND_META_ATTR,
 )
+from discord_http.errors import CheckFailed, CommandOnCooldown
 from discord_http.enums import ChannelType, CommandOptionType, InteractionContextType
 
 
@@ -238,10 +241,11 @@ class TestCommandPermissionsChecks(unittest.TestCase):
         ctx = SimpleNamespace(user=SimpleNamespace(resolved_permissions=Permissions.none()))
         self.assertEqual(cmd._has_permissions(ctx), Permissions(0))
 
-    def test_has_permissions_returns_zero_without_resolved_permissions(self) -> None:
+    def test_has_permissions_is_missing_everything_outside_a_guild(self) -> None:
+        # A DM user has no resolved permissions, that must not read as "has them all"
         cmd = self._cmd(has_permissions("manage_messages"))
         ctx = SimpleNamespace(user=SimpleNamespace())
-        self.assertEqual(cmd._has_permissions(ctx), Permissions(0))
+        self.assertIn("manage_messages", cmd._has_permissions(ctx).to_names())
 
     def test_has_permissions_administrator_bypasses_everything(self) -> None:
         cmd = self._cmd(has_permissions("manage_messages"))
@@ -400,6 +404,132 @@ class TestSubGroupOptionsRecursiveStripping(unittest.TestCase):
         option = parent.options[0]
         for key in ("nsfw", "integration_types", "contexts", "default_member_permissions"):
             self.assertNotIn(key, option)
+
+
+class TestGuardPlacement(unittest.IsolatedAsyncioTestCase):
+    """ Guards apply wherever the decorator sits, and group guards cover the commands inside. """
+
+    @staticmethod
+    def _ctx(**user) -> SimpleNamespace:
+        benchmark = SimpleNamespace(measure=lambda *_a, **_k: contextlib.nullcontext())
+        return SimpleNamespace(
+            user=SimpleNamespace(**user),
+            app_permissions=Permissions.none(),
+            benchmark=benchmark,
+            created_at=datetime.now(UTC),
+            guild=None,
+            channel=None,
+        )
+
+    def test_decorators_above_command_reach_the_command(self) -> None:
+        async def f(ctx) -> None:
+            pass
+
+        cmd = _make_command(f)
+        has_permissions("administrator")(cmd)
+        default_permissions("administrator")(cmd)
+        allow_contexts(bot_dm=False)(cmd)
+        cooldown(1, 60)(cmd)
+        check(lambda ctx: False)(cmd)
+
+        self.assertIn("administrator", cmd._has_permissions(self._ctx()).to_names())
+        self.assertIsNotNone(cmd.cooldown)
+        self.assertEqual(len(cmd._meta.checks), 1)
+        self.assertEqual(cmd.to_dict()["contexts"], [0, 2])
+        self.assertIsNotNone(cmd.to_dict()["default_member_permissions"])
+        self.assertFalse(hasattr(cmd, _COMMAND_META_ATTR))
+
+    async def test_group_guards_cover_subcommands(self) -> None:
+        async def admin(ctx) -> None:
+            pass
+
+        for placement in ("below", "above"):
+            with self.subTest(placement=placement):
+                if placement == "below":
+                    grp = group()(has_permissions("administrator")(admin))
+                else:
+                    grp = has_permissions("administrator")(group()(admin))
+
+                @grp.command()
+                async def wipe(ctx) -> None:
+                    pass
+
+                nobody = self._ctx(resolved_permissions=Permissions.none())
+                self.assertIn("administrator", wipe._has_permissions(nobody).to_names())
+
+                boss = self._ctx(resolved_permissions=Permissions.from_names("administrator"))
+                self.assertEqual(wipe._has_permissions(boss), Permissions(0))
+
+    async def test_group_checks_and_cooldown_cover_subcommands(self) -> None:
+        async def tools(ctx) -> None:
+            pass
+
+        grp = group()(cooldown(1, 60)(check(lambda ctx: ctx.allowed)(tools)))
+
+        @grp.command()
+        async def run(ctx) -> None:
+            pass
+
+        ctx = self._ctx()
+        ctx.allowed = False
+        with self.assertRaises(CheckFailed):
+            await run._command_checks(ctx)
+
+        ctx.allowed = True
+        self.assertTrue(await run._command_checks(ctx))
+
+        run._cooldown_checker(ctx)
+        with self.assertRaises(CommandOnCooldown):
+            run._cooldown_checker(ctx)
+
+    def test_blocked_subcommand_does_not_use_the_group_cooldown(self) -> None:
+        async def tools(ctx) -> None:
+            pass
+
+        grp = group()(cooldown(2, 60)(tools))
+
+        @grp.command()
+        @cooldown(1, 60)
+        async def slow(ctx) -> None:
+            pass
+
+        @grp.command()
+        async def fast(ctx) -> None:
+            pass
+
+        ctx = self._ctx()
+        slow._cooldown_checker(ctx)
+        for _ in range(3):
+            with self.assertRaises(CommandOnCooldown):
+                slow._cooldown_checker(ctx)
+        fast._cooldown_checker(ctx)
+        with self.assertRaises(CommandOnCooldown):
+            fast._cooldown_checker(ctx)
+
+    async def test_group_after_invoke_runs_after_the_subcommand_one(self) -> None:
+        calls: list[str] = []
+
+        async def tools(ctx) -> None:
+            pass
+
+        grp = group()(after_invoke(lambda ctx: calls.append("group"))(tools))
+
+        @grp.command()
+        @after_invoke(lambda ctx: calls.append("run"))
+        async def run(ctx) -> None:
+            pass
+
+        await run._after_invoke(self._ctx())
+        self.assertEqual(calls, ["run", "group"])
+
+    def test_group_default_permissions_are_registered(self) -> None:
+        async def admin(ctx) -> None:
+            pass
+
+        grp = group()(default_permissions("administrator")(allow_contexts(bot_dm=False)(admin)))
+        data = grp.to_dict()
+        self.assertEqual(data["default_member_permissions"], str(Permissions.administrator.value))
+        self.assertEqual(data["contexts"], [0, 2])
 
 
 class TestIntegrationContexts(unittest.TestCase):

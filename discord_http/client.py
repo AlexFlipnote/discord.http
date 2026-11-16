@@ -1434,6 +1434,7 @@ class Client:
                 name=name or func.__name__,
                 description=description
             )
+            subgroup._adopt_meta(func)
             self.add_command(subgroup)
             return subgroup
 
