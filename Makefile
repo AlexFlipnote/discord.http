@@ -9,7 +9,7 @@ else
     RUN :=
     VENV_CMD := python -m venv .venv
     INSTALL_DEV_CMD := pip install .[dev]
-    INSTALL_DOCS_CMD := pip install .[docs]
+    INSTALL_DOCS_CMD := pip install .[docs,voice]
 endif
 
 target:
