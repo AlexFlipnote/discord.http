@@ -44,6 +44,9 @@ FRAME_SIZE = SAMPLES_PER_FRAME * CHANNELS * SAMPLE_SIZE
 OPUS_SILENCE = b"\xf8\xff\xfe"
 """ The magic Opus frame that encodes silence. """
 
+MAX_PACKET_SIZE = 4000
+""" The output buffer size libopus recommends for a single encoded packet, in bytes. """
+
 
 # Opus application types.
 OPUS_APPLICATION_VOIP = 2048
@@ -329,9 +332,16 @@ class Encoder:
         Raises
         ------
         OpusError
-            If libopus fails to encode the frame.
+            - If ``pcm`` is not exactly one frame long
+            - If libopus fails to encode the frame
         """
-        max_data_bytes = len(pcm)
+        # libopus reads frame_size samples per channel no matter how much it was
+        # given, a short buffer would have it encode whatever memory follows
+        expected = frame_size * CHANNELS * SAMPLE_SIZE
+        if len(pcm) != expected:
+            raise OpusError(f"PCM frame must be exactly {expected} bytes, got {len(pcm)}")
+
+        max_data_bytes = MAX_PACKET_SIZE
         pcm_ptr = _as_int16_ptr(pcm)
         output = (ctypes.c_ubyte * max_data_bytes)()
 

@@ -280,6 +280,14 @@ class VoiceClient:
         """
         Play an audio source over the connection.
 
+        A string is handed to ffmpeg as its input, and ffmpeg opens whatever it
+        names: local files, HTTP(S) and every other protocol it was built with.
+        Do not pass text a user typed without checking it first, otherwise they
+        can make the machine the bot runs on read its own files or reach hosts
+        only it can see. ffmpeg can be limited to a set of protocols with
+        ``before_options="-protocol_whitelist http,https,tcp,tls,crypto"``
+        on :class:`FFmpegOpusAudio` or :class:`FFmpegPCMAudio`.
+
         Parameters
         ----------
         audio
