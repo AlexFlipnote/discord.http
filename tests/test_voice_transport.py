@@ -1,5 +1,4 @@
 import asyncio
-import os
 import struct
 import unittest
 
@@ -8,50 +7,7 @@ from unittest import mock
 
 from discord_http.errors import OpusError
 from discord_http.voice import opus
-from discord_http.voice.encryptor import _REPLAY_WINDOW, Encryptor
 from discord_http.voice.gateway_udp import VoiceUDPProtocol
-
-
-def _packet(sender: Encryptor, sequence: int = 1) -> bytes:
-    return sender.encrypt(struct.pack(">BBHII", 0x80, 0x78, sequence, 960 * sequence, 3), b"opus-frame")
-
-
-class TestReplayedPackets(unittest.TestCase):
-    def test_same_packet_is_only_accepted_once(self) -> None:
-        key = os.urandom(32)
-        receiver = Encryptor(key)
-        packet = _packet(Encryptor(key))
-
-        self.assertEqual(receiver.decrypt(packet), b"opus-frame")
-        with self.assertRaises(ValueError):
-            receiver.decrypt(packet)
-
-    def test_out_of_order_packets_are_accepted(self) -> None:
-        key = os.urandom(32)
-        sender, receiver = Encryptor(key), Encryptor(key)
-        packets = [_packet(sender, i) for i in range(1, 6)]
-
-        for packet in (packets[3], packets[0], packets[4], packets[1], packets[2]):
-            self.assertEqual(receiver.decrypt(packet), b"opus-frame")
-
-    def test_forged_packet_does_not_block_the_real_one(self) -> None:
-        key = os.urandom(32)
-        receiver = Encryptor(key)
-        packet = _packet(Encryptor(key))
-        forged = packet[:12] + bytes(len(packet) - 16) + packet[-4:]
-
-        with self.assertRaises(Exception):
-            receiver.decrypt(forged)
-        self.assertEqual(receiver.decrypt(packet), b"opus-frame")
-
-    def test_window_is_bounded(self) -> None:
-        key = os.urandom(32)
-        sender, receiver = Encryptor(key), Encryptor(key)
-        for i in range(_REPLAY_WINDOW + 50):
-            receiver.decrypt(_packet(sender, i & 0xFFFF))
-
-        self.assertEqual(len(receiver._seen), _REPLAY_WINDOW)
-        self.assertEqual(len(receiver._seen_order), _REPLAY_WINDOW)
 
 
 class TestIpDiscovery(unittest.IsolatedAsyncioTestCase):

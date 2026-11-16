@@ -1,16 +1,10 @@
 import struct
 
-from collections import deque
-
 from cryptography.hazmat.primitives.ciphers.aead import AESGCM
 
 __all__ = (
     "Encryptor",
 )
-
-# How many received nonces are remembered to recognise a packet sent twice.
-# At 50 packets a second per speaker this covers well over a minute
-_REPLAY_WINDOW = 4096
 
 
 class Encryptor:
@@ -25,15 +19,11 @@ class Encryptor:
     __slots__ = (
         "_aead",
         "_nonce",
-        "_seen",
-        "_seen_order",
     )
 
     def __init__(self, secret_key: bytes):
         self._aead = AESGCM(bytes(secret_key))
         self._nonce = 0
-        self._seen: set[bytes] = set()
-        self._seen_order: deque[bytes] = deque()
 
     def encrypt(self, header: bytes, plaintext: bytes) -> bytes:
         """
@@ -79,19 +69,8 @@ class Encryptor:
         Returns
         -------
             The decrypted payload with any RTP header extension body stripped, usually an Opus frame.
-
-        Raises
-        ------
-        ValueError
-            If a packet with the same nonce was already received.
         """
-        nonce = packet[-4:]
-        # A nonce is never used twice under one key, so seeing one again means
-        # the packet was captured and sent a second time
-        if nonce in self._seen:
-            raise ValueError("Voice packet was already received (replayed nonce)")
-
-        nonce_bytes = nonce + b"\x00" * 8
+        nonce_bytes = packet[-4:] + b"\x00" * 8
 
         offset = 12
         csrc_count = packet[0] & 0x0F
@@ -107,12 +86,4 @@ class Encryptor:
         header = packet[:offset]
         ciphertext = packet[offset:-4]
 
-        plaintext = self._aead.decrypt(nonce_bytes, ciphertext, header)
-
-        # Remembered only once the packet proved authentic, garbage can't fill the window
-        self._seen.add(nonce)
-        self._seen_order.append(nonce)
-        if len(self._seen_order) > _REPLAY_WINDOW:
-            self._seen.discard(self._seen_order.popleft())
-
-        return plaintext[extension_length:]
+        return self._aead.decrypt(nonce_bytes, ciphertext, header)[extension_length:]

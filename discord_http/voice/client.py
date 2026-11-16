@@ -285,7 +285,7 @@ class VoiceClient:
         Do not pass text a user typed without checking it first, otherwise they
         can make the machine the bot runs on read its own files or reach hosts
         only it can see. ffmpeg can be limited to a set of protocols with
-        ``before_options="-protocol_whitelist file,http,https,tcp,tls,crypto"``
+        ``before_options="-protocol_whitelist http,https,tcp,tls,crypto"``
         on :class:`FFmpegOpusAudio` or :class:`FFmpegPCMAudio`.
 
         Parameters
