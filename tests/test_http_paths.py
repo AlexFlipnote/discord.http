@@ -151,6 +151,12 @@ class TestTokensStayOutOfLogs(_PathTest):
         self.assertIn("/webhooks/1/:token", output)
         self.assertNotIn("SECRET-TOKEN", output)
 
+    def test_redact_covers_paths_and_hash_keys(self) -> None:
+        from discord_http.http import _redact
+        self.assertEqual(_redact("DELETE /webhooks/1/abc/messages/2"), "DELETE /webhooks/1/:token/messages/2")
+        self.assertEqual(_redact("POST #a1b2:9:abc"), "POST #a1b2:9::token")
+        self.assertEqual(_redact("GET /channels/1/messages/2"), "GET /channels/1/messages/2")
+
 
 if __name__ == "__main__":
     unittest.main()

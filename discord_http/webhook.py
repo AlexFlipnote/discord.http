@@ -405,9 +405,8 @@ class PartialWebhook(PartialBase):
 
         api_url = f"/webhooks/{self.id}"
 
-        if channel_id is not MISSING and self.token is MISSING:
+        if channel_id is not MISSING:
             payload["channel_id"] = str(channel_id)
-            api_url += f"/{self.token}"
 
         r = await self._state.query(
             "PATCH",

@@ -53,7 +53,14 @@ major_param_re = re.compile(r"^/(" + "|".join(_MAJOR_PARAM_ROOTS) + r")/(\d+)(?=
 id_segment_re = re.compile(r"(?<=/)\d+(?=/|$)")
 _token_route_re = re.compile(r"^/(interactions|webhooks)/(\d+)/([^/]+)")
 _encoded_dot_re = re.compile(r"%2e", re.IGNORECASE)
+# The token after an interaction/webhook id, in a path or in a "#hash:id:token" bucket key
+_token_log_re = re.compile(r"((?:/(?:interactions|webhooks)/|:)\d+[/:])[^/\s]+")
 _one_shot_route_re = re.compile(r"^/interactions/\d+/[^/]+/callback$")
+
+
+def _redact(text: str) -> str:
+    """ Replace interaction and webhook tokens with `:token`, for log lines. """
+    return _token_log_re.sub(r"\1:token", text)
 
 
 def _try_json(data: str) -> dict | str:
@@ -312,7 +319,6 @@ class Ratelimit:
         "in_flight",
         "key",
         "limit",
-        "log_key",
         "remaining",
         "reset_after",
     )
@@ -320,9 +326,6 @@ class Ratelimit:
     def __init__(self, key: str):
         self.key: str = key
         """ The key of the ratelimit bucket, usually in the format "METHOD /path/:id". """
-
-        self.log_key: str = key
-        """ The key as it is written to logs, with any interaction or webhook token removed. """
 
         self.bucket_hash: str | None = None
         """ Discord's own bucket identifier from the `X-RateLimit-Bucket` header, if seen yet. """
@@ -387,7 +390,7 @@ class Ratelimit:
             new_bucket_hash != self.bucket_hash
         ):
             _log.debug(
-                f"Ratelimit bucket hash changed for key '{self.log_key}': "
+                f"Ratelimit bucket hash changed for key '{_redact(self.key)}': "
                 f"{self.bucket_hash!r} -> {new_bucket_hash!r}"
             )
         if new_bucket_hash:
@@ -452,7 +455,7 @@ class Ratelimit:
                     self.in_flight += 1
                     return self
 
-                _log.debug(f"Ratelimit prevented ({self.log_key}), waiting {max(wait_time, 0):.2f}s...")
+                _log.debug(f"Ratelimit prevented ({_redact(self.key)}), waiting {max(wait_time, 0):.2f}s...")
 
             # Sleep outside the lock so others can at least check the state
             await asyncio.sleep(max(wait_time, 0.1) + 0.1)
@@ -920,16 +923,12 @@ class DiscordAPI:
         base_path = path.split("?")[0]
         exempt_from_global = base_path.startswith(("/interactions/", "/webhooks/"))
         # Interaction and webhook tokens are credentials, keep them out of the logs
-        token_match = _token_route_re.match(base_path)
-        secret = token_match.group(3) if token_match else None
-        log_path = path.replace(secret, ":token") if secret else path
+        log_path = _redact(path)
 
         # Resolved once per call and reused across retries, not re-resolved per retry
         route_template, bucket_key, fallback_key = self._resolve_bucket_key(method, path)
         ratelimit = self.get_ratelimit(bucket_key, migrate_from=fallback_key)
-        log_key = fallback_key.replace(secret, ":token") if secret else fallback_key
-        if secret:
-            ratelimit.log_key = ratelimit.key.replace(secret, ":token")
+        log_key = _redact(fallback_key)
 
         async def _sleep(tries: int) -> None:
             await asyncio.sleep(1 + (tries * 2) + self.create_jitter())

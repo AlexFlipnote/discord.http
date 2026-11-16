@@ -739,11 +739,6 @@ class PartialGuildTemplate:
     def __repr__(self) -> str:
         return f"<PartialGuildTemplate code='{self.code}'>"
 
-    @property
-    def _route_code(self) -> str:
-        """ The template code, encoded for use in an API route. """
-        return utils.quote_path(self.code)
-
     def __str__(self) -> str:
         return self.code
 
@@ -751,7 +746,7 @@ class PartialGuildTemplate:
         """ Fetches the guild template. """
         r = await self._state.query(
             "GET",
-            f"/guilds/templates/{self._route_code}"
+            f"/guilds/templates/{utils.quote_path(self.code)}"
         )
 
         return GuildTemplate(state=self._state, data=r.response)
@@ -763,7 +758,7 @@ class PartialGuildTemplate:
 
         r = await self._state.query(
             "PUT",
-            f"/guilds/{self.guild_id}/templates/{self._route_code}"
+            f"/guilds/{self.guild_id}/templates/{utils.quote_path(self.code)}"
         )
 
         return GuildTemplate(state=self._state, data=r.response)
@@ -800,7 +795,7 @@ class PartialGuildTemplate:
 
         r = await self._state.query(
             "PATCH",
-            f"/guilds/{self.guild_id}/templates/{self._route_code}",
+            f"/guilds/{self.guild_id}/templates/{utils.quote_path(self.code)}",
             json=payload
         )
 
@@ -813,7 +808,7 @@ class PartialGuildTemplate:
 
         await self._state.query(
             "DELETE",
-            f"/guilds/{self.guild_id}/templates/{self._route_code}",
+            f"/guilds/{self.guild_id}/templates/{utils.quote_path(self.code)}",
             res_method="text"
         )
 

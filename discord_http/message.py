@@ -2333,7 +2333,7 @@ class WebhookMessage(Message):
 
         r = await self._state.query(
             "PATCH",
-            f"/webhooks/{self.application_id}/{self.token}/messages/{self.id}",
+            f"/webhooks/{self.application_id}/{utils.quote_path(self.token)}/messages/{self.id}",
             webhook=True,
             **payload.to_request()
         )
@@ -2363,7 +2363,7 @@ class WebhookMessage(Message):
         async def _delete() -> None:
             await self._state.query(
                 "DELETE",
-                f"/webhooks/{self.application_id}/{self.token}/messages/{self.id}",
+                f"/webhooks/{self.application_id}/{utils.quote_path(self.token)}/messages/{self.id}",
                 reason=reason,
                 webhook=True,
                 res_method="text"
