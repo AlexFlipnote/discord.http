@@ -10,6 +10,7 @@ from cryptography.hazmat.primitives.asymmetric.ed25519 import Ed25519PublicKey
 from typing import TYPE_CHECKING
 
 from aiohttp import web
+from aiohttp.http_exceptions import BadHttpMessage
 from aiohttp.web_exceptions import (
     HTTPUnauthorized, HTTPBadRequest,
     HTTPInternalServerError
@@ -34,6 +35,11 @@ _log = logging.getLogger(__name__)
 __all__ = (
     "DiscordHTTP",
 )
+
+
+def _drop_bad_http_message(record: logging.LogRecord) -> bool:
+    """ Drops malformed HTTP from scanners, aiohttp rejects it before it reaches us. """
+    return not (record.exc_info and isinstance(record.exc_info[1], BadHttpMessage))
 
 
 class DiscordHTTP(web.Application):
@@ -87,6 +93,7 @@ class DiscordHTTP(web.Application):
         # Silence aiohttp access logs
         logging.getLogger("aiohttp.server").setLevel(logging.ERROR)
         logging.getLogger("aiohttp.access").setLevel(logging.ERROR)
+        logging.getLogger("aiohttp.server").addFilter(_drop_bad_http_message)
 
     async def _validate_request(self, request: web.Request, *, check_age: bool = False) -> None:
         """
