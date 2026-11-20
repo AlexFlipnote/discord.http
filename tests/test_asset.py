@@ -1,6 +1,11 @@
 import unittest
 
+from multidict import CIMultiDict, CIMultiDictProxy
+
+from discord_http import utils
 from discord_http.asset import Asset
+from discord_http.errors import HTTPException
+from discord_http.http import HTTPResponse
 
 
 class FakeState:
@@ -163,6 +168,57 @@ class TestWithStaticFormat(unittest.TestCase):
         result = asset.with_static_format("png")
         self.assertFalse(result.animated)
         self.assertTrue(result.url.split("?")[0].endswith(".png"))
+
+
+class _FakeHTTP:
+    def __init__(self, status: int, body: bytes):
+        self.status = status
+        self.body = body
+        self.calls: list[tuple[tuple, dict]] = []
+
+    async def request(self, *args, **kwargs) -> HTTPResponse:
+        self.calls.append((args, kwargs))
+        return HTTPResponse(
+            status=self.status,
+            response=self.body,
+            reason="OK" if self.status == 200 else "Not Found",
+            res_method="read",
+            headers=CIMultiDictProxy(CIMultiDict()),
+        )
+
+
+class _FakeFetchState:
+    def __init__(self, status: int, body: bytes):
+        self.http = _FakeHTTP(status, body)
+
+
+class TestAssetFetch(unittest.IsolatedAsyncioTestCase):
+    """ `Asset.fetch` returns the bytes only for an `HTTP 2XX`; anything else
+    raises, or returns the missing texture when `fallback=True`. """
+
+    def _asset(self, status: int, body: bytes) -> Asset:
+        return Asset(
+            state=_FakeFetchState(status, body),  # type: ignore[arg-type]
+            url="https://cdn.discordapp.com/avatars/1/abc.png",
+            key="abc",
+        )
+
+    async def test_2xx_returns_the_asset_bytes(self) -> None:
+        asset = self._asset(200, b"png-bytes")
+        data = await asset.fetch()
+        self.assertEqual(data, b"png-bytes")
+        self.assertEqual(
+            asset._state.http.calls,
+            [(("GET", asset.url), {"res_method": "read"})],
+        )
+
+    async def test_non_2xx_raises_http_exception(self) -> None:
+        with self.assertRaises(HTTPException):
+            await self._asset(404, b"404 page").fetch()
+
+    async def test_non_2xx_with_fallback_returns_missing_texture(self) -> None:
+        data = await self._asset(404, b"404 page").fetch(fallback=True)
+        self.assertEqual(data, utils.create_missing_texture())
 
 
 if __name__ == "__main__":
