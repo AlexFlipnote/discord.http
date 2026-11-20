@@ -88,6 +88,10 @@ class TestPlayerSetSource(unittest.IsolatedAsyncioTestCase):
 
 @unittest.skipIf(shutil.which("ffmpeg") is None, "ffmpeg is not installed")
 class TestFFmpegErrors(unittest.IsolatedAsyncioTestCase):
+    async def asyncSetUp(self) -> None:
+        # Spawning ffmpeg blocks the loop for ~0.3s on Windows, which trips debug mode's slow callback warning
+        asyncio.get_running_loop().slow_callback_duration = 1.0
+
     async def test_missing_file_raises_instead_of_finishing_silently(self) -> None:
         source = FFmpegOpusAudio("this-file-does-not-exist.mp3")
         try:
