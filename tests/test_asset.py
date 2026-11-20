@@ -174,8 +174,10 @@ class _FakeHTTP:
     def __init__(self, status: int, body: bytes):
         self.status = status
         self.body = body
+        self.calls: list[tuple[tuple, dict]] = []
 
     async def request(self, *args, **kwargs) -> HTTPResponse:
+        self.calls.append((args, kwargs))
         return HTTPResponse(
             status=self.status,
             response=self.body,
@@ -202,8 +204,13 @@ class TestAssetFetch(unittest.IsolatedAsyncioTestCase):
         )
 
     async def test_2xx_returns_the_asset_bytes(self) -> None:
-        data = await self._asset(200, b"png-bytes").fetch()
+        asset = self._asset(200, b"png-bytes")
+        data = await asset.fetch()
         self.assertEqual(data, b"png-bytes")
+        self.assertEqual(
+            asset._state.http.calls,
+            [(("GET", asset.url), {"res_method": "read"})],
+        )
 
     async def test_non_2xx_raises_http_exception(self) -> None:
         with self.assertRaises(HTTPException):
