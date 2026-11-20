@@ -131,4 +131,4 @@ Automated tests use Python's built-in `unittest` module, run them from the proje
 - [Library documentation](https://discordhttp.org)
 - [Discord API documentation](https://docs.discord.com/developers/intro)
 - [Discord server](https://discord.gg/yqb7vATbjH)
-- [discord.http Bot example](https://github.com/AlexFlipnote/discord_bot.http)
+- [discord.http Bot example](https://github.com/AlexFlipnote/discord_bot.py)
