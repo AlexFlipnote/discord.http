@@ -292,14 +292,26 @@ class HTTPClient:
         Yields
         ------
             Chunks of the response as bytes
+
+        Raises
+        ------
+        ValueError
+            If the HTTP method is invalid.
+        HTTPException
+            If the response is anything but `HTTP 2XX`.
         """
         if method.upper() not in MethodTypes.__args__:
             raise ValueError(f"Invalid HTTP method: {method}")
 
         async with self.session.request(method.upper(), str(url), **kwargs) as res:
             if res.status not in range(200, 300):
-                error_text = await res.text()
-                raise ValueError(f"Stream request failed with status {res.status}: {error_text}")
+                raise HTTPException(HTTPResponse(
+                    status=res.status,
+                    response=await res.read(),
+                    reason=res.reason,
+                    res_method="read",
+                    headers=res.headers,
+                ))
 
             async for chunk in res.content.iter_chunked(chunk_size):
                 yield chunk

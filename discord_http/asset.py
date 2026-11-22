@@ -153,18 +153,15 @@ class Asset:
         """
         url = utils.URL(self.url)
         path, _ = os.path.splitext(url.path)
-        prev_size = url.query.get("size")
         is_animated = self.animated
 
         if format is not MISSING:
+            # update_path keeps the query string, so an existing ?size= carries over
             url = url.update_path(f"{path}.{format}")
             if format in ("png", "jpg", "jpeg", "webp"):
                 is_animated = False
             elif format == "gif":
                 is_animated = True
-
-            if prev_size is not None:
-                url = url.update_query(size=prev_size)
 
         if size is not MISSING:
             url = url.update_query(size=size)

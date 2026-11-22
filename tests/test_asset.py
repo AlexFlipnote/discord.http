@@ -1,5 +1,12 @@
+import asyncio
+import os
+import tempfile
+import threading
+import types
 import unittest
 
+from collections.abc import Callable
+from unittest import mock
 from multidict import CIMultiDict, CIMultiDictProxy
 
 from discord_http import utils
@@ -219,6 +226,102 @@ class TestAssetFetch(unittest.IsolatedAsyncioTestCase):
     async def test_non_2xx_with_fallback_returns_missing_texture(self) -> None:
         data = await self._asset(404, b"404 page").fetch(fallback=True)
         self.assertEqual(data, utils.create_missing_texture())
+
+    async def test_3xx_raises_http_exception(self) -> None:
+        with self.assertRaises(HTTPException):
+            await self._asset(300, b"redirect").fetch()
+
+    async def test_3xx_with_fallback_returns_missing_texture(self) -> None:
+        data = await self._asset(300, b"redirect").fetch(fallback=True)
+        self.assertEqual(data, utils.create_missing_texture())
+
+
+class _FakeStreamHTTP:
+    def __init__(self, chunks: list[bytes]):
+        self.chunks = chunks
+
+    async def stream_request(self, *args, **kwargs):
+        for chunk in self.chunks:
+            yield chunk
+
+
+class _FakeSaveState:
+    def __init__(self, chunks: list[bytes]):
+        self.http = _FakeStreamHTTP(chunks)
+        self.bot = types.SimpleNamespace(loop=asyncio.get_running_loop())
+
+
+class TestAssetSave(unittest.IsolatedAsyncioTestCase):
+    """ `Asset.save` writes every streamed chunk to disk and returns the
+    exact number of bytes written. """
+
+    def setUp(self) -> None:
+        self._tmp = tempfile.TemporaryDirectory()
+        self.path = os.path.join(self._tmp.name, "asset.png")
+
+    def tearDown(self) -> None:
+        self._tmp.cleanup()
+
+    def _asset(self, chunks: list[bytes]) -> Asset:
+        return Asset(
+            state=_FakeSaveState(chunks),  # type: ignore[arg-type]
+            url="https://cdn.discordapp.com/avatars/1/abc.png",
+            key="abc",
+        )
+
+    async def test_empty_asset_returns_zero(self) -> None:
+        self.assertEqual(await self._asset([]).save(self.path), 0)
+        self.assertEqual(os.path.getsize(self.path), 0)
+
+    async def test_returns_bytes_written_across_chunks(self) -> None:
+        written = await self._asset([b"ab", b"cde"]).save(self.path)
+        self.assertEqual(written, 5)
+        with open(self.path, "rb") as f:
+            self.assertEqual(f.read(), b"abcde")
+
+    async def test_cancel_waits_for_write_then_reraises(self) -> None:
+        started = threading.Event()
+        release = threading.Event()
+        finished = threading.Event()
+
+        def slow_write(chunk: bytes) -> int:
+            started.set()
+            release.wait(5)
+            finished.set()
+            return len(chunk)
+
+        task = asyncio.create_task(self._save_with_write(slow_write))
+        await asyncio.to_thread(started.wait, 5)
+        task.cancel()
+        await asyncio.sleep(0)
+        self.assertFalse(task.done())  # Still waiting on the in-flight write
+        release.set()
+        with self.assertRaises(asyncio.CancelledError):
+            await task
+        self.assertTrue(finished.is_set())
+
+    async def test_cancel_wins_over_failing_write(self) -> None:
+        started = threading.Event()
+        release = threading.Event()
+
+        def failing_write(chunk: bytes) -> int:
+            started.set()
+            release.wait(5)
+            raise OSError("disk full")
+
+        task = asyncio.create_task(self._save_with_write(failing_write))
+        await asyncio.to_thread(started.wait, 5)
+        task.cancel()
+        await asyncio.sleep(0)
+        release.set()
+        with self.assertRaises(asyncio.CancelledError):
+            await task
+
+    async def _save_with_write(self, write: Callable[[bytes], int]) -> int:
+        fake_file = mock.MagicMock()
+        fake_file.__enter__.return_value.write.side_effect = write
+        with mock.patch("discord_http.asset.open", return_value=fake_file, create=True):
+            return await self._asset([b"chunk"]).save(self.path)
 
 
 if __name__ == "__main__":
