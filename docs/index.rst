@@ -72,5 +72,3 @@ Automatically generated documentation index for your convenience:
   pages/format
   pages/contribute
   pages/license
-  pages/discord
-  pages/github

@@ -1,11 +1,12 @@
 import os
 import sys
+from datetime import datetime
 
 sys.path.insert(0, os.path.abspath(".."))
 sys.path.append(os.path.abspath("extensions"))
 
 project = "discord_http"
-copyright = "2024, AlexFlipnote"
+copyright = f"2024-{datetime.now().year}, AlexFlipnote"
 author = "AlexFlipnote"
 release = "0.0.1"
 
@@ -20,17 +21,37 @@ extensions = [
     "sphinx_autodoc_typehints",
     "myst_parser",
     "seo_support",
+    "flipnote",
 ]
 
-exclude_patterns = ["_build", "Thumbs.db", ".DS_Store"]
-pygments_style = "sphinx"
-
+exclude_patterns = ["_build", "theme", "Thumbs.db", ".DS_Store"]
 html_static_path = ["_static"]
-html_theme = "furo"
+html_theme = "flipnote"
 html_title = "discord.http docs"
+html_short_title = "discord.http"
 html_favicon = "favicon.ico"
 master_doc = "index"
 suppress_warnings = ["ref.python"]
+
+# theme/, registered by extensions/flipnote.py
+html_theme_options = {
+    "nav_links": [
+        ("Getting started", "pages/getting_started"),
+        ("API", "pages/api"),
+        ("Events", "pages/events"),
+    ],
+    "nav_more": [
+        ("Gateway", "pages/gateway"),
+        ("HTTP backend", "pages/backend"),
+        ("Style guide", "pages/format"),
+        ("Contributing", "pages/contribute"),
+        ("License", "pages/license"),
+    ],
+    "github_url": "https://github.com/AlexFlipnote/discord.http",
+    "discord_url": "https://discord.gg/yqb7vATbjH",
+}
+
+toc_object_entries_show_parents = "hide"
 
 typehints_use_signature_return = True
 napoleon_use_ivar = True

@@ -1,0 +1,225 @@
+{%- extends "basic/layout.html" %}
+
+{%- macro nav_link(item) -%}
+  {%- set doc = item[1] -%}
+  <a href="{{ pathto(doc) }}"{% if pagename == doc or (panel and panel.section and panel.section.docname == doc) %} aria-current="page"{% endif %}>{{ item[0] }}</a>
+{%- endmacro %}
+
+{%- block css %}
+    <link rel="preload" href="{{ pathto('_static/fonts/google-sans-flex.woff2', 1) }}" as="font" type="font/woff2" crossorigin>
+    <link rel="preload" href="{{ pathto('_static/fonts/source-code-pro.woff2', 1) }}" as="font" type="font/woff2" crossorigin>
+    {#- theme.css replaces Pygments' and basic's CSS -#}
+    {%- for css in css_files %}
+      {%- if css|attr("filename") %}
+        {%- if "pygments.css" not in css.filename and "basic.css" not in css.filename %}
+    {{ css_tag(css) }}
+        {%- endif %}
+      {%- else %}
+    <link rel="stylesheet" href="{{ pathto(css, 1)|e }}" type="text/css" />
+      {%- endif %}
+    {%- endfor %}
+{%- endblock %}
+
+{%- block extrahead %}
+    <meta name="theme-color" content="#303030">
+    <!-- Before the first paint so the theme never flashes -->
+    <script>
+      (() => {
+        const root = document.documentElement
+        root.classList.add("js")
+        let choice = null
+        try { choice = localStorage.getItem("theme") } catch {}
+        if (choice !== "light" && choice !== "dark") choice = "system"
+        const theme = choice === "system" ? (matchMedia("(prefers-color-scheme: light)").matches ? "light" : "dark") : choice
+        root.dataset.themeChoice = choice
+        root.dataset.theme = theme
+        document.querySelector("meta[name=theme-color]").content = theme === "light" ? "#f5f5f5" : "#303030"
+      })()
+    </script>
+    <!-- Prerender on hover, the API pages and indexes run into megabytes so those are only fetched -->
+    {%- set heavy = '"' ~ content_root ~ 'api/*", "' ~ content_root ~ 'gateway/*", "' ~ content_root ~ 'pages/api.html", "' ~ content_root ~ 'genindex.html", "' ~ content_root ~ 'py-modindex.html"' %}
+    <script type="speculationrules">
+      {
+        "prerender": [{
+          "where": { "and": [
+            { "href_matches": "{{ content_root }}*", "relative_to": "document" },
+            { "not": { "href_matches": [{{ heavy }}], "relative_to": "document" } }
+          ] },
+          "eagerness": "moderate"
+        }],
+        "prefetch": [{ "where": { "href_matches": [{{ heavy }}], "relative_to": "document" }, "eagerness": "moderate" }]
+      }
+    </script>
+    <script src="{{ pathto('_static/js/theme.js', 1) }}" defer></script>
+    {{ super() }}
+{%- endblock %}
+
+{%- block header %}
+<nav class="navbar">
+  <div class="navbar-inner">
+    <button class="navbar-hamburger" aria-label="Menu" aria-expanded="false" aria-controls="navbar-links">
+      <svg viewBox="0 0 24 24" aria-hidden="true">
+        <line class="burger-top" x1="4" y1="7" x2="20" y2="7"/>
+        <line class="burger-middle" x1="4" y1="12" x2="20" y2="12"/>
+        <line class="burger-bottom" x1="4" y1="17" x2="20" y2="17"/>
+      </svg>
+    </button>
+    <a href="{{ pathto(root_doc) }}" class="navbar-title">
+      {%- if favicon_url %}
+      <img class="navbar-logo" src="{{ favicon_url|e }}" alt="" width="40" height="40">
+      {%- endif %}
+      {{ shorttitle|e }}
+    </a>
+    <div class="navbar-backdrop" aria-hidden="true"></div>
+    <div class="navbar-links" id="navbar-links">
+      {%- for item in theme_nav_links %}
+      {{ nav_link(item) }}
+      {%- endfor %}
+      {%- if theme_nav_more %}
+      <div class="navbar-more">
+        <button class="navbar-more-button" type="button" aria-expanded="false" aria-controls="navbar-more-menu">More</button>
+        <div class="navbar-more-menu" id="navbar-more-menu">
+          {%- for item in theme_nav_more %}
+          {{ nav_link(item) }}
+          {%- endfor %}
+          {%- if theme_github_url %}
+          <a href="{{ theme_github_url }}" target="_blank" rel="noopener" class="navbar-external">GitHub</a>
+          {%- endif %}
+          {%- if theme_discord_url %}
+          <a href="{{ theme_discord_url }}" target="_blank" rel="noopener" class="navbar-external">Discord</a>
+          {%- endif %}
+        </div>
+      </div>
+      {%- endif %}
+    </div>
+    <div class="navbar-actions">
+      <button class="navbar-action search-button" aria-label="Search" title="Search (Ctrl+K)" aria-haspopup="dialog"
+        data-index="{{ pathto('searchindex.js', 1) }}" data-search="{{ pathto('search') }}">
+        <svg viewBox="0 0 24 24" aria-hidden="true">
+          <circle cx="11" cy="11" r="7"/>
+          <path d="m20 20-3.5-3.5"/>
+        </svg>
+      </button>
+      {%- if panel and (panel.pages or panel.contents) %}
+      <button class="navbar-action panel-button" aria-label="Contents" title="Contents" aria-expanded="false" aria-controls="panel">
+        <svg viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M9 6h11M9 12h11M9 18h11"/>
+          <path d="M4.5 6h.01M4.5 12h.01M4.5 18h.01"/>
+        </svg>
+      </button>
+      {%- endif %}
+      <button class="navbar-action theme-button" aria-label="Theme" title="Theme">
+        <svg class="theme-system" viewBox="0 0 24 24" aria-hidden="true">
+          <rect x="3" y="4" width="18" height="12" rx="2"/>
+          <path d="M8 20h8M12 16v4"/>
+        </svg>
+        <svg class="theme-light" viewBox="0 0 24 24" aria-hidden="true">
+          <circle cx="12" cy="12" r="4"/>
+          <path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/>
+        </svg>
+        <svg class="theme-dark" viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M20.5 14.5A8.5 8.5 0 0 1 9.5 3.5a8.5 8.5 0 1 0 11 11z"/>
+        </svg>
+      </button>
+    </div>
+  </div>
+</nav>
+{%- endblock %}
+
+{%- block relbar1 %}{% endblock %}
+{%- block relbar2 %}{% endblock %}
+{#- The footer is inside .page, below -#}
+{%- block footer %}{% endblock %}
+
+{%- block content %}
+<div class="page">
+  <div class="layout">
+    <main class="content" id="content">
+      {%- if parents %}
+      <nav class="breadcrumbs" aria-label="Breadcrumbs">
+        {%- for parent in parents %}
+        <a href="{{ parent.link|e }}">{{ parent.title }}</a>
+        {%- endfor %}
+      </nav>
+      {%- endif %}
+      <article class="body" role="main">
+        {% block body %}{% endblock %}
+      </article>
+      {%- if prev or next %}
+      <nav class="pager" aria-label="Pages">
+        {%- if prev %}
+        <a class="pager-prev" href="{{ prev.link|e }}">
+          <span class="pager-label">Previous</span>
+          <span class="pager-title">{{ prev.title }}</span>
+        </a>
+        {%- endif %}
+        {%- if next %}
+        <a class="pager-next" href="{{ next.link|e }}">
+          <span class="pager-label">Next</span>
+          <span class="pager-title">{{ next.title }}</span>
+        </a>
+        {%- endif %}
+      </nav>
+      {%- endif %}
+    </main>
+
+    {%- if panel and (panel.pages or panel.contents) %}
+    <div class="panel-backdrop" aria-hidden="true"></div>
+    <aside class="panel" id="panel" aria-label="Contents">
+      <div class="panel-inner">
+        {%- if panel.section %}
+        <a class="panel-section{% if panel.section.current %} current{% endif %}" href="{{ panel.section.link }}">{{ panel.section.title }}</a>
+        <ul class="panel-pages">
+          {%- for page in panel.pages %}
+          <li{% if page.current %} class="current"{% endif %}>
+            <a href="{{ page.link }}"{% if page.current %} aria-current="page"{% endif %}>{{ page.title }}</a>
+            {%- if page.current and panel.contents %}
+            <div class="panel-contents">{{ panel.contents }}</div>
+            {%- endif %}
+          </li>
+          {%- endfor %}
+        </ul>
+        {%- if panel.section.current and panel.contents %}
+        <p class="panel-title">On this page</p>
+        <div class="panel-contents">{{ panel.contents }}</div>
+        {%- endif %}
+        {%- else %}
+        <p class="panel-title">On this page</p>
+        <div class="panel-contents">{{ panel.contents }}</div>
+        {%- endif %}
+      </div>
+    </aside>
+    {%- endif %}
+  </div>
+
+  <footer class="footer">
+    &copy; {{ copyright|e }}. Built with <a href="https://www.sphinx-doc.org/" target="_blank" rel="noopener">Sphinx</a>.
+    <div class="footer-links">
+      {%- if theme_discord_url %}
+      <a href="{{ theme_discord_url }}" target="_blank" rel="noopener" aria-label="Discord">
+        <svg class="footer-discord" viewBox="0 0 126.644 96" aria-hidden="true"><path d="M81.15,0c-1.2376,2.1973-2.3489,4.4704-3.3591,6.794-9.5975-1.4396-19.3718-1.4396-28.9945,0-.985-2.3236-2.1216-4.5967-3.3591-6.794-9.0166,1.5407-17.8059,4.2431-26.1405,8.0568C2.779,32.5304-1.6914,56.3725.5312,79.8863c9.6732,7.1476,20.5083,12.603,32.0505,16.0884,2.6014-3.4854,4.8998-7.1981,6.8698-11.0623-3.738-1.3891-7.3497-3.1318-10.8098-5.1523.9092-.6567,1.7932-1.3386,2.6519-1.9953,20.281,9.547,43.7696,9.547,64.0758,0,.8587.7072,1.7427,1.3891,2.6519,1.9953-3.4601,2.0457-7.0718,3.7632-10.835,5.1776,1.97,3.8642,4.2683,7.5769,6.8698,11.0623,11.5419-3.4854,22.3769-8.9156,32.0509-16.0631,2.626-27.2771-4.496-50.9172-18.817-71.8548C98.9811,4.2684,90.1918,1.5659,81.1752.0505l-.0252-.0505ZM42.2802,65.4144c-6.2383,0-11.4159-5.6575-11.4159-12.6535s4.9755-12.6788,11.3907-12.6788,11.5169,5.708,11.4159,12.6788c-.101,6.9708-5.026,12.6535-11.3907,12.6535ZM84.3576,65.4144c-6.2637,0-11.3907-5.6575-11.3907-12.6535s4.9755-12.6788,11.3907-12.6788,11.4917,5.708,11.3906,12.6788c-.101,6.9708-5.026,12.6535-11.3906,12.6535Z"/></svg>
+      </a>
+      {%- endif %}
+      {%- if theme_github_url %}
+      <a href="{{ theme_github_url }}" target="_blank" rel="noopener" aria-label="Source on GitHub">
+        <svg class="footer-github" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 0a12 12 0 1 0 0 24 12 12 0 0 0 0-24zm3.163 21.783h-.093a.513.513 0 0 1-.382-.14.513.513 0 0 1-.14-.372v-1.406c.006-.467.01-.94.01-1.416a3.693 3.693 0 0 0-.151-1.028 1.832 1.832 0 0 0-.542-.875 8.014 8.014 0 0 0 2.038-.471 4.051 4.051 0 0 0 1.466-.964c.407-.427.71-.943.885-1.506a6.77 6.77 0 0 0 .3-2.130 4.138 4.138 0 0 0-.26-1.476 3.892 3.892 0 0 0-.795-1.284 2.810 2.810 0 0 0 .162-.582c.033-.2.05-.402.05-.604 0-.26-.03-.52-.09-.773a5.309 5.309 0 0 0-.221-.763.293.293 0 0 0-.111-.02h-.11c-.23.002-.456.04-.674.111a5.340 5.340 0 0 0-.703.26 6.503 6.503 0 0 0-.661.343c-.215.127-.405.249-.573.362a9.578 9.578 0 0 0-5.143 0 13.507 13.507 0 0 0-.572-.362 6.022 6.022 0 0 0-.672-.342 4.516 4.516 0 0 0-.705-.261 2.203 2.203 0 0 0-.662-.111h-.11a.290.290 0 0 0-.11.02 5.844 5.844 0 0 0-.23.763c-.054.254-.08.513-.081.773 0 .202.017.404.051.604.033.199.086.394.16.582A3.888 3.888 0 0 0 5.702 10a4.142 4.142 0 0 0-.263 1.476 6.871 6.871 0 0 0 .292 2.120c.181.563.483 1.080.884 1.516.415.422.915.75 1.466.964.653.25 1.337.41 2.033.476a1.828 1.828 0 0 0-.452.633 2.990 2.990 0 0 0-.2.744 2.754 2.754 0 0 1-1.175.27 1.788 1.788 0 0 1-1.065-.3 2.904 2.904 0 0 1-.752-.824 3.100 3.100 0 0 0-.292-.382 2.693 2.693 0 0 0-.372-.343 1.841 1.841 0 0 0-.432-.24 1.200 1.200 0 0 0-.481-.101c-.04.001-.08.005-.12.01a.649.649 0 0 0-.162.02.408.408 0 0 0-.13.06.116.116 0 0 0-.06.1.330.330 0 0 0 .14.242c.093.074.17.131.232.171l.03.021c.133.103.261.214.382.333.112.098.213.209.3.33.09.119.168.246.231.381.073.134.15.288.231.463.188.474.522.875.954 1.145.453.243.961.364 1.476.351.174 0 .349-.01.522-.03.172-.028.343-.057.515-.091v1.743a.500.500 0 0 1-.533.521h-.062a10.286 10.286 0 1 1 6.324 0v.005z"/></svg>
+      </a>
+      {%- endif %}
+    </div>
+  </footer>
+</div>
+
+<dialog class="search-modal" aria-label="Search">
+  <div class="search-field">
+    <svg viewBox="0 0 24 24" aria-hidden="true">
+      <circle cx="11" cy="11" r="7"/>
+      <path d="m20 20-3.5-3.5"/>
+    </svg>
+    <input class="search-input" type="search" placeholder="Search the docs" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"
+      role="combobox" aria-expanded="true" aria-controls="search-results" aria-autocomplete="list">
+    <kbd class="search-esc">Esc</kbd>
+  </div>
+  <ul class="search-results" id="search-results" role="listbox"></ul>
+  <p class="search-note"></p>
+</dialog>
+{%- endblock %}

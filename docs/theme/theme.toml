@@ -1,0 +1,14 @@
+[theme]
+inherit = "basic"
+stylesheets = ["css/theme.css"]
+sidebars = []
+pygments_style = { default = "default" }
+
+[options]
+# The search dialog takes "/"
+enable_search_shortcuts = "False"
+# [title, docname] pairs
+nav_links = ""
+nav_more = ""
+github_url = ""
+discord_url = ""
