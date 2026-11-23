@@ -40,7 +40,6 @@ dev = [
     "ruff>=0.11.13",
 ]
 docs = [
-    "furo>=2024.8.6",
     "myst-parser>=4.0.1",
     "sphinx>=8.2.3",
     "sphinx-autodoc-typehints>=3.2.0",
