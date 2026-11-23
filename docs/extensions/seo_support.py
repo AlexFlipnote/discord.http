@@ -14,9 +14,9 @@ def setup(app: Sphinx) -> dict:
 
 
 def add_seo_tags(
-    app: Sphinx,
+    _app: Sphinx,
     pagename: str,
-    templatename: str,
+    _templatename: str,
     context: dict,
     doctree: document | None
 ) -> None:
