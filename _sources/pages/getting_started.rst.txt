@@ -188,6 +188,11 @@ This what the ``[ INFO ]`` messages mean:
 2. Showing that the bot is now ready to receive interactions from Discord API, and the host and port it is serving on.
 3. Confirming that the URL you provided in the bot's application page is correct, working and Discord API can reach it.
 
+.. tip::
+  Want to see how a full bot is put together? Have a look at `discord_bot.py <https://github.com/AlexFlipnote/discord_bot.py>`_,
+  a ready-to-use example bot built with discord.http. It uses cogs, events, config files and comes with Docker and pm2 setups,
+  so it is a great starting point for your own bot.
+
 Offline mode
 ------------
 Not every job needs a running bot. ``Client.offline_run()`` logs in, runs your function once and then exits,
