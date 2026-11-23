@@ -1,5 +1,3 @@
-/* ---------- Colours ---------- */
-
 :root {
   --bg: #303030;
   --surface: #212121;
@@ -46,6 +44,9 @@
   --font-mono: "Source Code Pro", ui-monospace, Consolas, Menlo, monospace;
   --navbar-height: 4.5rem;
   --ease: cubic-bezier(0.16, 1, 0.3, 1);
+
+  /* Icons */
+  --icon-open-in-new: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'><path d='M5,21q-0.83,0-1.41-0.59T3,19V5Q3,4.17 3.59,3.59T5,3h7V5H5V19H19V12h2v7q0,0.82-0.59,1.41T19,21H5Zm4.7-5.3L8.3,14.3L17.6,5H14V3h7v7H19V6.4L9.7,15.7Z'/></svg>");
 }
 
 :root[data-theme="light"] {
@@ -392,8 +393,15 @@ input {
 }
 
 .navbar-external::after {
-  content: " ↗";
-  color: var(--font-tertiary);
+  content: "";
+  display: inline-block;
+  width: .8em;
+  height: .8em;
+  margin-left: .3em;
+  vertical-align: -.05em;
+  background-color: var(--font-tertiary);
+  -webkit-mask: var(--icon-open-in-new) center / contain no-repeat;
+  mask: var(--icon-open-in-new) center / contain no-repeat;
 }
 
 /* The menu overlaps the button so moving down to it keeps the hover */
@@ -1115,10 +1123,15 @@ a.headerlink:hover {
 
 /* Not on the many type links to Python's docs */
 .body a.reference.external:not(:has(img, code)):not(.sig a, dl.field-list a)::after {
-  content: "↗";
-  margin-left: .125rem;
-  font-size: .75em;
-  vertical-align: .25em;
+  content: "";
+  display: inline-block;
+  width: .8em;
+  height: .8em;
+  margin-left: .2em;
+  vertical-align: -.05em;
+  background-color: currentColor;
+  -webkit-mask: var(--icon-open-in-new) center / contain no-repeat;
+  mask: var(--icon-open-in-new) center / contain no-repeat;
   opacity: .6;
 }
 
