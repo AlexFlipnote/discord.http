@@ -1425,6 +1425,15 @@ dl.py > dd {
   margin: 0 0 0 2rem;
 }
 
+/* Undocumented members (e.g. enum values) have an empty dd, so stack them tightly */
+dl.py:has(> dd:empty) {
+  margin-bottom: .25rem;
+}
+
+dl.py:has(> dd:empty) > dt {
+  margin-bottom: 0;
+}
+
 .sig-name {
   font-weight: 700;
   color: var(--code-name);
