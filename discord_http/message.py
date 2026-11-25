@@ -1028,10 +1028,6 @@ class Attachment:
             self.filename.startswith("SPOILER_")
         )
 
-    def is_voice_message(self) -> bool:
-        """ Whether this attachment is a voice message. """
-        return self.duration_secs is not None and "voice-message" in self.url
-
     async def fetch(self, *, use_cached: bool = False) -> bytes:
         """
         Fetches the file from the attachment URL and returns it as bytes.
@@ -2091,16 +2087,6 @@ class Message(PartialMessage):
                     mention_user = self._state.bot.create_user_from_data(m)
                     self.mentions.append(mention_user)
 
-    def is_system(self) -> bool:
-        """ Returns whether the message is a system message. """
-        return self.type not in (
-            MessageType.default,
-            MessageType.reply,
-            MessageType.chat_input_command,
-            MessageType.context_menu_command,
-            MessageType.thread_starter_message
-        )
-
     @property
     def pretty_content(self) -> str:
         """
@@ -2267,6 +2253,20 @@ class Message(PartialMessage):
             )
             for gid, cid, mid in utils.re_jump_url.findall(self.content)
         ]
+
+    def is_system(self) -> bool:
+        """ Returns whether the message is a system message. """
+        return self.type not in (
+            MessageType.default,
+            MessageType.reply,
+            MessageType.chat_input_command,
+            MessageType.context_menu_command,
+            MessageType.thread_starter_message
+        )
+
+    def is_voice_message(self) -> bool:
+        """ Whether this message is a voice message. """
+        return MessageFlags.is_voice_message in self.flags
 
 
 class WebhookMessage(Message):
