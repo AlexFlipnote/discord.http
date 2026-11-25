@@ -13,7 +13,8 @@ from .colour import Colour
 from .emoji import EmojiParser
 from .enums import (
     ButtonStyles, ComponentType, TextStyles,
-    ChannelType, SeparatorSpacingType, InteractionType
+    ChannelType, SeparatorSpacingType, InteractionType,
+    MenuActionItemStyles
 )
 from .errors import HTTPException
 from .file import File
@@ -38,6 +39,7 @@ _components_action_row = (
     ComponentType.role_select,
     ComponentType.mentionable_select,
     ComponentType.channel_select,
+    ComponentType.overflow_menu,
 )
 
 _components_v2 = (
@@ -108,7 +110,10 @@ __all__ = (
     "MediaGalleryComponent",
     "MediaGalleryItem",
     "MentionableSelect",
+    "MenuActionItem",
     "Modal",
+    "OverflowMenuComponent",
+    "OverflowMenuGroup",
     "Premium",
     "RadioComponent",
     "RoleSelect",
@@ -621,6 +626,303 @@ class Link(Button):
 
     def __repr__(self) -> str:
         return f"<Link url='{self.url}'>"
+
+
+class MenuActionItem(Item):
+    """ Represents an action item inside an overflow menu. """
+
+    __slots__ = (
+        "custom_id",
+        "description",
+        "disabled",
+        "emoji",
+        "label",
+        "style",
+        "url",
+    )
+
+    def __init__(
+        self,
+        *,
+        label: str,
+        style: MenuActionItemStyles | str | int = MenuActionItemStyles.default,
+        custom_id: str | None = None,
+        description: str | None = None,
+        url: str | None = None,
+        emoji: str | dict | None = None,
+        disabled: bool = False
+    ):
+        super().__init__(type=ComponentType.menu_action_item)
+
+        self.label: str = label
+        """ The label of the menu item. """
+
+        self.description: str | None = description
+        """ The description shown below the label. """
+
+        self.url: str | None = url
+        """ The URL of the menu item, only required for link items. """
+
+        self.emoji: str | dict | None = emoji
+        """ The emoji associated with the menu item. """
+
+        self.disabled: bool = disabled
+        """ Whether the menu item is disabled or not. """
+
+        self.style: MenuActionItemStyles | str | int = style
+        """ The style of the menu item. """
+
+        self.custom_id: str | None = str(custom_id) if custom_id else None
+        """ The custom ID of the menu item. """
+
+        match style:
+            case x if isinstance(x, MenuActionItemStyles):
+                pass
+
+            case x if isinstance(x, int):
+                self.style = MenuActionItemStyles(style)
+
+            case x if isinstance(x, str):
+                try:
+                    self.style = MenuActionItemStyles[style]  # type: ignore
+                except KeyError:
+                    self.style = MenuActionItemStyles.default
+
+            case _:
+                self.style = MenuActionItemStyles.default
+
+        # Link items open a URL instead of sending an interaction
+        if self.style == MenuActionItemStyles.link:
+            self.custom_id = None
+        elif self.custom_id is None:
+            self.custom_id = _garbage_id()
+
+    def __repr__(self) -> str:
+        return f"<MenuActionItem label='{self.label}' style={self.style}>"
+
+    def to_dict(self) -> dict:
+        """ Returns a dict representation of the menu item. """
+        if not self.label:
+            raise ValueError("label is required for menu action items")
+        if self.style == MenuActionItemStyles.link and not self.url:
+            raise ValueError("url is required for link menu action items")
+        if self.custom_id and self.url:
+            raise ValueError("Cannot have both custom_id and url")
+
+        payload = {
+            "type": int(self.type),
+            "style": int(self.style),
+            "label": self.label,
+            "disabled": self.disabled,
+        }
+
+        if self.description is not None:
+            payload["description"] = self.description
+
+        if self.emoji:
+            if isinstance(self.emoji, str):
+                payload["emoji"] = EmojiParser(self.emoji).to_dict()
+            elif isinstance(self.emoji, dict):
+                payload["emoji"] = self.emoji
+
+        if self.custom_id:
+            if len(self.custom_id) > 100:
+                raise ValueError("menu action item custom_id must be 100 characters or less")
+            payload["custom_id"] = self.custom_id
+
+        if self.url:
+            if len(self.url) > 512:
+                raise ValueError("menu action item url must be 512 characters or less")
+            payload["url"] = self.url
+
+        return payload
+
+    @classmethod
+    def from_dict(cls, data: dict) -> "MenuActionItem":
+        """ Returns a menu action item from a dict provided by Discord. """
+        return cls(
+            label=data.get("label", ""),
+            style=data.get("style", int(MenuActionItemStyles.default)),
+            custom_id=data.get("custom_id"),
+            description=data.get("description"),
+            url=data.get("url"),
+            emoji=data.get("emoji"),
+            disabled=data.get("disabled", False),
+        )
+
+
+class OverflowMenuGroup:
+    """ Represents a group of action items inside an overflow menu. """
+
+    __slots__ = (
+        "components",
+        "label",
+    )
+
+    def __init__(
+        self,
+        *components: MenuActionItem,
+        label: str | None = None
+    ):
+        self.components: list[MenuActionItem] = list(components)
+        """ The menu action items contained within the group. """
+
+        self.label: str | None = label
+        """ The label shown above the group. """
+
+    def __repr__(self) -> str:
+        return f"<OverflowMenuGroup label='{self.label}' components={self.components}>"
+
+    def add_item(self, item: MenuActionItem) -> MenuActionItem:
+        """
+        Add a menu action item to the group.
+
+        Parameters
+        ----------
+        item
+            The menu action item to add
+
+        Returns
+        -------
+            Returns the item that was added
+        """
+        self.components.append(item)
+        return item
+
+    def to_dict(self) -> dict:
+        """ Returns a dict representation of the group. """
+        if not self.components:
+            raise ValueError("Cannot have an overflow menu group with no items")
+
+        for i in self.components:
+            if not isinstance(i, MenuActionItem):
+                raise TypeError("Overflow menu groups can only contain MenuActionItem")
+
+        payload: dict = {
+            "components": [g.to_dict() for g in self.components]
+        }
+
+        if self.label is not None:
+            payload["label"] = self.label
+
+        return payload
+
+    @classmethod
+    def from_dict(cls, data: dict) -> "OverflowMenuGroup":
+        """ Returns an overflow menu group from a dict provided by Discord. """
+        return cls(
+            *[MenuActionItem.from_dict(g) for g in data.get("components", [])],
+            label=data.get("label")
+        )
+
+
+class OverflowMenuComponent(Item):
+    """
+    Represents an overflow menu component in a message.
+
+    Can be used like a button inside action rows and as a section accessory.
+    On click, it shows a menu of grouped menu action items.
+    Requires components v2.
+
+    If you only need one group, you can pass the items directly
+    and they will be put inside a single unlabeled group, example:
+
+    .. code-block:: python
+
+        OverflowMenuComponent(
+            MenuActionItem(label="Edit", custom_id="edit"),
+            MenuActionItem(label="Delete", custom_id="delete", style="danger"),
+        )
+    """
+
+    __slots__ = ("groups",)
+
+    def __init__(
+        self,
+        *groups: OverflowMenuGroup | MenuActionItem
+    ):
+        super().__init__(type=ComponentType.overflow_menu)
+
+        self.groups: list[OverflowMenuGroup] = []
+        """ The groups of menu action items contained within the overflow menu. """
+
+        for g in groups:
+            if isinstance(g, OverflowMenuGroup):
+                self.groups.append(g)
+            else:
+                self.add_item(g)
+
+    def __repr__(self) -> str:
+        return f"<OverflowMenuComponent groups={self.groups}>"
+
+    def add_item(self, item: MenuActionItem) -> MenuActionItem:
+        """
+        Add a menu action item to the last group of the overflow menu.
+
+        If the overflow menu has no groups yet, an unlabeled one is created.
+
+        Parameters
+        ----------
+        item
+            The menu action item to add
+
+        Returns
+        -------
+            Returns the item that was added
+
+        Raises
+        ------
+        TypeError
+            If the item is not a MenuActionItem
+        """
+        if not isinstance(item, MenuActionItem):
+            raise TypeError("Overflow menus can only contain OverflowMenuGroup or MenuActionItem")
+
+        if not self.groups:
+            self.groups.append(OverflowMenuGroup())
+
+        return self.groups[-1].add_item(item)
+
+    def add_group(
+        self,
+        *items: MenuActionItem,
+        label: str | None = None
+    ) -> OverflowMenuGroup:
+        """
+        Add a group of menu action items to the overflow menu.
+
+        Parameters
+        ----------
+        items
+            The menu action items to put in the group
+        label
+            The label shown above the group
+
+        Returns
+        -------
+            Returns the group that was added
+        """
+        group = OverflowMenuGroup(*items, label=label)
+        self.groups.append(group)
+        return group
+
+    def to_dict(self) -> dict:
+        """ Returns a dict representation of the overflow menu. """
+        if not self.groups:
+            raise ValueError("Cannot have an overflow menu with no groups")
+
+        return {
+            "type": int(self.type),
+            "groups": [g.to_dict() for g in self.groups]
+        }
+
+    @classmethod
+    def from_dict(cls, data: dict) -> "OverflowMenuComponent":
+        """ Returns an overflow menu from a dict provided by Discord. """
+        return cls(*[
+            OverflowMenuGroup.from_dict(g)
+            for g in data.get("groups", [])
+        ])
 
 
 class Select(Item):
@@ -1726,14 +2028,20 @@ class SectionComponent(Item):
         # This might change later if SectionComponent starts
         # accepting more than just TextDisplayComponent
         *components: TextDisplayComponent | str,
-        accessory: Button | ThumbnailComponent | AttachmentComponent | Asset | File | str
+        accessory: (
+            Button | OverflowMenuComponent | ThumbnailComponent |
+            AttachmentComponent | Asset | File | str
+        )
     ):
         super().__init__(type=ComponentType.section)
 
         self.components: list[TextDisplayComponent | str] = list(components)
         """ The components contained within the section. """
 
-        self.accessory: Button | ThumbnailComponent | AttachmentComponent | Asset | File | str = accessory
+        self.accessory: (
+            Button | OverflowMenuComponent | ThumbnailComponent |
+            AttachmentComponent | Asset | File | str
+        ) = accessory
         """ The accessory component for the section. """
 
     def __repr__(self) -> str:
@@ -1797,11 +2105,11 @@ class ActionRow(Item):
 
     def __init__(
         self,
-        *components: Button | Select | Link
+        *components: Button | Select | Link | OverflowMenuComponent
     ):
         super().__init__(type=ComponentType.action_row)
 
-        self.components: list[Button | Select | Link] = list(components)
+        self.components: list[Button | Select | Link | OverflowMenuComponent] = list(components)
         """ The components contained within the action row. """
 
     def __repr__(self) -> str:
@@ -1809,7 +2117,7 @@ class ActionRow(Item):
 
     def add_item(
         self,
-        item: Button | Select | Link
+        item: Button | Select | Link | OverflowMenuComponent
     ) -> None:
         """
         Add an item to the action row.
@@ -1904,6 +2212,10 @@ class ActionRow(Item):
         items = []
 
         for c in data.get("components", []):
+            if c.get("type") == int(ComponentType.overflow_menu):
+                items.append(OverflowMenuComponent.from_dict(c))
+                continue
+
             c = dict(c)  # Don't mutate the raw payload, it may be parsed again
             cls_ = cls._cls_table[c.get("type", 2)]
             if c.get("url"):
@@ -2234,6 +2546,7 @@ class View(InteractionStorage):
                 custom_ids.add(str(custom_id))
             stack.extend(getattr(item, "components", ()))
             stack.extend(getattr(item, "items", ()))
+            stack.extend(getattr(item, "groups", ()))
             if (accessory := getattr(item, "accessory", None)) is not None:
                 stack.append(accessory)
 
@@ -2414,6 +2727,8 @@ class View(InteractionStorage):
                             del c["accessory"]["id"]
 
                         acc_obj = Button(**c["accessory"])
+                    elif c["accessory"].get("type", None) == int(ComponentType.overflow_menu):
+                        acc_obj = OverflowMenuComponent.from_dict(c["accessory"])
                     else:
                         acc_obj = ThumbnailComponent(
                             AttachmentComponent(state=state, data=c["accessory"]),

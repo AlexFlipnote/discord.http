@@ -11,7 +11,7 @@ from discord_http import (
 )
 from discord_http.view import (
     AttachmentComponent, CheckpointComponent, FileComponent, LabelComponent,
-    MediaGalleryComponent, MediaGalleryItem, TextInputComponent, ThumbnailComponent,
+    MediaGalleryComponent, MediaGalleryItem, OverflowMenuComponent, TextInputComponent, ThumbnailComponent,
 )
 
 
@@ -493,3 +493,119 @@ class TestViewWaitUsers(unittest.IsolatedAsyncioTestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class TestOverflowMenu(unittest.TestCase):
+    def _menu(self) -> OverflowMenuComponent:
+        from discord_http import MenuActionItem, MenuActionItemStyles, OverflowMenuComponent, OverflowMenuGroup
+        return OverflowMenuComponent(
+            OverflowMenuGroup(
+                MenuActionItem(label="Edit", custom_id="edit", description="Change it"),
+                MenuActionItem(label="Delete", style=MenuActionItemStyles.danger, custom_id="delete"),
+                label="Manage",
+            ),
+            OverflowMenuGroup(
+                MenuActionItem(label="Docs", style="link", url="https://example.com"),
+            ),
+        )
+
+    def test_to_dict_matches_api_shape(self) -> None:
+        self.assertEqual(self._menu().to_dict(), {
+            "type": 25,
+            "groups": [
+                {
+                    "label": "Manage",
+                    "components": [
+                        {"type": 26, "style": 1, "label": "Edit", "disabled": False,
+                         "description": "Change it", "custom_id": "edit"},
+                        {"type": 26, "style": 2, "label": "Delete", "disabled": False, "custom_id": "delete"},
+                    ],
+                },
+                {
+                    "components": [
+                        {"type": 26, "style": 3, "label": "Docs", "disabled": False, "url": "https://example.com"},
+                    ],
+                },
+            ],
+        })
+
+    def test_item_style_coercion_and_custom_ids(self) -> None:
+        from discord_http import MenuActionItem, MenuActionItemStyles
+        self.assertEqual(MenuActionItem(label="a", style=2).style, MenuActionItemStyles.danger)
+        self.assertEqual(MenuActionItem(label="a", style="nope").style, MenuActionItemStyles.default)
+        self.assertIsNotNone(MenuActionItem(label="a").custom_id)
+        self.assertIsNone(MenuActionItem(label="a", style="link", custom_id="x", url="https://x").custom_id)
+
+    def test_invalid_menus_raise(self) -> None:
+        from discord_http import MenuActionItem, OverflowMenuComponent, OverflowMenuGroup
+        with self.assertRaises(ValueError):
+            OverflowMenuComponent().to_dict()
+        with self.assertRaises(ValueError):
+            OverflowMenuComponent(OverflowMenuGroup()).to_dict()
+        with self.assertRaises(ValueError):
+            MenuActionItem(label="a", style="link").to_dict()
+        with self.assertRaises(ValueError):
+            MenuActionItem(label="a", custom_id="x", url="https://x").to_dict()
+        with self.assertRaises(TypeError):
+            OverflowMenuGroup(Button(label="nope")).to_dict()  # type: ignore[arg-type]
+
+    def test_add_group(self) -> None:
+        from discord_http import MenuActionItem, OverflowMenuComponent
+        menu = OverflowMenuComponent()
+        group = menu.add_group(MenuActionItem(label="a", custom_id="a"), label="g")
+        self.assertIs(menu.groups[0], group)
+        self.assertEqual(menu.to_dict()["groups"][0]["label"], "g")
+
+    def test_allowed_in_action_row_and_section(self) -> None:
+        from discord_http.view import SectionComponent
+        menu = self._menu()
+        self.assertEqual(ActionRow(Button(label="b"), menu).to_dict()["components"][1]["type"], 25)
+        self.assertEqual(SectionComponent("text", accessory=menu).to_dict()["accessory"]["type"], 25)
+
+    def test_round_trips_through_view_from_dict(self) -> None:
+        from discord_http.view import OverflowMenuComponent, SectionComponent
+        menu = self._menu()
+        data = {"components": [
+            {"type": 1, "id": 1, "components": [{**menu.to_dict(), "id": 2}]},
+            {"type": 9, "id": 3, "components": [{"type": 10, "id": 4, "content": "hi"}],
+             "accessory": menu.to_dict()},
+        ]}
+        view = View.from_dict(state=None, data=data)  # type: ignore[arg-type]
+        row, section = view.items
+        self.assertIsInstance(row.components[0], OverflowMenuComponent)  # type: ignore[attr-defined]
+        self.assertIsInstance(section, SectionComponent)
+        self.assertEqual(row.components[0].to_dict(), menu.to_dict())  # type: ignore[attr-defined]
+        self.assertEqual(section.accessory.to_dict(), menu.to_dict())  # type: ignore[attr-defined]
+
+    def test_view_accepts_menu_item_custom_ids(self) -> None:
+        from types import SimpleNamespace
+        from discord_http.enums import InteractionType
+        from discord_http.view import SectionComponent
+        view = View(
+            ActionRow(self._menu()),
+            ContainerComponent(SectionComponent("text", accessory=self._menu())),
+        )
+        for custom_id, expected in (("edit", True), ("delete", True), ("other", False)):
+            ctx = SimpleNamespace(type=InteractionType.message_component, custom_id=custom_id)
+            self.assertEqual(view.accepts(ctx), expected)  # type: ignore[arg-type]
+
+    def test_loose_items_become_a_single_group(self) -> None:
+        from discord_http import MenuActionItem
+        a, b = MenuActionItem(label="a", custom_id="a"), MenuActionItem(label="b", custom_id="b")
+        menu = OverflowMenuComponent(a, b)
+        self.assertEqual(len(menu.groups), 1)
+        self.assertEqual(menu.groups[0].components, [a, b])
+        self.assertNotIn("label", menu.to_dict()["groups"][0])
+
+    def test_add_item_appends_to_last_group(self) -> None:
+        from discord_http import MenuActionItem
+        menu = OverflowMenuComponent()
+        first = menu.add_item(MenuActionItem(label="a", custom_id="a"))
+        group = menu.add_group(label="Second")
+        menu.add_item(MenuActionItem(label="b", custom_id="b"))
+        self.assertEqual(menu.groups[0].components, [first])
+        self.assertEqual([i.custom_id for i in group.components], ["b"])
+
+    def test_add_item_rejects_non_menu_items(self) -> None:
+        with self.assertRaises(TypeError):
+            OverflowMenuComponent(Button(label="nope"))  # type: ignore[arg-type]

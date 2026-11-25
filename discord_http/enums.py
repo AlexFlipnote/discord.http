@@ -39,6 +39,7 @@ __all__ = (
     "InviteType",
     "Locale",
     "MFALevel",
+    "MenuActionItemStyles",
     "MessageReferenceType",
     "MessageType",
     "NSFWLevel",
@@ -932,6 +933,9 @@ class ComponentType(BaseEnum):
     checkbox_group = 22
     checkbox = 23
 
+    overflow_menu = 25
+    menu_action_item = 26
+
 
 class SeparatorSpacingType(BaseEnum):
     """ Represents the spacing size of a separator component. """
@@ -957,6 +961,18 @@ class ButtonStyles(BaseEnum):
     destructive = 4
     red = 4
     url = 5
+
+
+class MenuActionItemStyles(BaseEnum):
+    """ Represents the visual style of a menu action item inside an overflow menu. """
+    default = 1
+    danger = 2
+    link = 3
+
+    # Aliases
+    red = 2
+    destructive = 2
+    url = 3
 
 
 class TextStyles(BaseEnum):
