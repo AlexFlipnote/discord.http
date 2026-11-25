@@ -5,6 +5,7 @@ from collections.abc import AsyncIterator, Callable
 from datetime import timedelta, datetime
 from io import BytesIO
 from typing import TYPE_CHECKING, NamedTuple, Self
+from typing_extensions import deprecated
 
 from . import utils
 from .colour import Colour
@@ -1027,6 +1028,11 @@ class Attachment:
             AttachmentFlags.is_spoiler in self.flags or
             self.filename.startswith("SPOILER_")
         )
+
+    @deprecated("Outdated method of checking, use `Message.is_voice_message()` instead.")
+    def is_voice_message(self) -> bool:
+        """ Whether this attachment is a voice message. """
+        return self.duration_secs is not None and "voice-message" in self.url
 
     async def fetch(self, *, use_cached: bool = False) -> bytes:
         """
