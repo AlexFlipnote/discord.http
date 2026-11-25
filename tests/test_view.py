@@ -609,3 +609,93 @@ class TestOverflowMenu(unittest.TestCase):
     def test_add_item_rejects_non_menu_items(self) -> None:
         with self.assertRaises(TypeError):
             OverflowMenuComponent(Button(label="nope"))  # type: ignore[arg-type]
+
+
+class TestViewFindRemoveCustomId(unittest.TestCase):
+    def _view(self) -> View:
+        from discord_http import MenuActionItem
+        from discord_http.view import SectionComponent
+        return View(
+            ActionRow(Button(label="a", custom_id="row_a"), Button(label="b", custom_id="row_b")),
+            ContainerComponent(
+                ActionRow(Select(custom_id="select")),
+                SectionComponent("text", accessory=Button(label="c", custom_id="accessory")),
+                SectionComponent("text", accessory=OverflowMenuComponent(
+                    MenuActionItem(label="x", custom_id="acc_menu_x"),
+                    MenuActionItem(label="y", custom_id="acc_menu_y"),
+                )),
+            ),
+            ActionRow(OverflowMenuComponent(MenuActionItem(label="z", custom_id="only_item"))),
+        )
+
+    def test_find_reaches_every_level(self) -> None:
+        view = self._view()
+        for custom_id in ("row_b", "select", "accessory", "acc_menu_y", "only_item"):
+            found = view.find_custom_id(custom_id)
+            self.assertIsNotNone(found, custom_id)
+            self.assertEqual(found.custom_id, custom_id)  # type: ignore[union-attr]
+        self.assertIsNone(view.find_custom_id("missing"))
+
+    def test_found_item_edits_in_place(self) -> None:
+        view = self._view()
+        view.find_custom_id("row_a").disabled = True  # type: ignore[union-attr]
+        self.assertTrue(view.to_dict()[0]["components"][0]["disabled"])
+
+    def test_remove_from_row_keeps_row_with_items_left(self) -> None:
+        view = self._view()
+        removed = view.remove_custom_id("row_a")
+        self.assertEqual(removed.custom_id, "row_a")  # type: ignore[union-attr]
+        self.assertIsNone(view.find_custom_id("row_a"))
+        self.assertEqual(len(view.items), 3)
+
+    def test_remove_last_item_prunes_empty_parents(self) -> None:
+        view = self._view()
+        view.remove_custom_id("only_item")  # item -> group -> menu -> row all empty now
+        self.assertEqual(len(view.items), 2)
+        view.remove_custom_id("select")  # row inside the container goes, container stays
+        self.assertEqual(len(view.items[1].items), 2)  # type: ignore[attr-defined]
+        view.to_dict()
+
+    def test_remove_inside_accessory_menu(self) -> None:
+        view = self._view()
+        view.remove_custom_id("acc_menu_x")
+        self.assertIsNone(view.find_custom_id("acc_menu_x"))
+        self.assertIsNotNone(view.find_custom_id("acc_menu_y"))
+
+    def test_remove_accessory_raises(self) -> None:
+        with self.assertRaises(ValueError):
+            self._view().remove_custom_id("accessory")
+
+    def test_remove_missing_returns_none(self) -> None:
+        self.assertIsNone(self._view().remove_custom_id("missing"))
+
+    def test_replace_keeps_position(self) -> None:
+        view = self._view()
+        new = Button(label="new", custom_id="row_new")
+        old = view.replace_custom_id("row_a", new)
+        self.assertEqual(old.custom_id, "row_a")  # type: ignore[union-attr]
+        self.assertIs(view.items[0].components[0], new)  # type: ignore[attr-defined]
+
+    def test_replace_works_on_accessory(self) -> None:
+        view = self._view()
+        new = Button(label="new", custom_id="acc_new")
+        view.replace_custom_id("accessory", new)
+        self.assertIs(view.items[1].items[1].accessory, new)  # type: ignore[attr-defined]
+        self.assertIsNone(view.replace_custom_id("missing", new))
+
+    def test_walk_yields_components_only(self) -> None:
+        from discord_http import MenuActionItem
+        from discord_http.view import OverflowMenuGroup
+        nodes = list(self._view().walk())
+        self.assertFalse(any(isinstance(g, OverflowMenuGroup) for g in nodes))
+        self.assertEqual(sum(isinstance(g, MenuActionItem) for g in nodes), 3)
+        self.assertEqual(sum(isinstance(g, Select) for g in nodes), 1)
+
+    def test_disable_all_and_back(self) -> None:
+        view = self._view()
+        self.assertIs(view.disable_all(), view)
+        toggles = [g for g in view.walk() if hasattr(g, "disabled")]
+        self.assertEqual(len(toggles), 7)
+        self.assertTrue(all(g.disabled for g in toggles))  # type: ignore[attr-defined]
+        view.disable_all(False)
+        self.assertFalse(any(g.disabled for g in toggles))  # type: ignore[attr-defined]

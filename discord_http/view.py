@@ -4,7 +4,7 @@ import logging
 import secrets
 import time
 
-from collections.abc import Callable, Iterable
+from collections.abc import Callable, Iterable, Iterator
 from io import BytesIO
 from typing import TYPE_CHECKING, ClassVar
 
@@ -2511,6 +2511,42 @@ class ContainerComponent(Item):
         return payload
 
 
+_TreeNode = tuple[object, list | None, list[tuple[object, list | None]]]
+
+
+def _walk_tree(items: list) -> Iterator[_TreeNode]:
+    """
+    Walks every node in a list of components, depth first.
+
+    Yields the node, the list that holds it (`None` for a section accessory)
+    and its ancestors from the root as `(node, list that holds it)` pairs.
+    """
+    def visit(
+        node: object,
+        owner: list | None,
+        ancestors: list[tuple[object, list | None]]
+    ) -> Iterator[_TreeNode]:
+        yield node, owner, ancestors
+
+        inner = [*ancestors, (node, owner)]
+
+        # Rows, sections, containers, menus and groups nest their components
+        for attr in ("components", "items", "groups"):
+            children = getattr(node, attr, None)
+            if not isinstance(children, list):
+                continue
+            for child in list(children):
+                if isinstance(child, Item | OverflowMenuGroup):
+                    yield from visit(child, children, inner)
+
+        accessory = getattr(node, "accessory", None)
+        if isinstance(accessory, Item):
+            yield from visit(accessory, None, inner)
+
+    for item in list(items):
+        yield from visit(item, items, [])
+
+
 class View(InteractionStorage):
     """ Represents a view component in a message. """
 
@@ -2537,21 +2573,162 @@ class View(InteractionStorage):
         if ctx.type != InteractionType.message_component:
             return False
 
-        # Rows, sections and containers nest their components
-        custom_ids: set[str] = set()
-        stack: list[object] = list(self.items)
-        while stack:
-            item = stack.pop()
-            if (custom_id := getattr(item, "custom_id", None)) is not None:
-                custom_ids.add(str(custom_id))
-            stack.extend(getattr(item, "components", ()))
-            stack.extend(getattr(item, "items", ()))
-            stack.extend(getattr(item, "groups", ()))
-            if (accessory := getattr(item, "accessory", None)) is not None:
-                stack.append(accessory)
+        custom_ids: set[str] = {
+            str(custom_id)
+            for node, _, _ in _walk_tree(self.items)
+            if (custom_id := getattr(node, "custom_id", None)) is not None
+        }
 
         # A view with no interactive components of its own is only there to wait on the message
         return not custom_ids or ctx.custom_id in custom_ids
+
+    def find_custom_id(self, custom_id: str) -> Item | None:
+        """
+        Find a component anywhere in the view by its custom ID.
+
+        This looks inside action rows, sections (including accessories),
+        containers and overflow menus.
+
+        Parameters
+        ----------
+        custom_id
+            The custom ID of the component
+
+        Returns
+        -------
+            Returns the component if found, otherwise `None`
+        """
+        for node, _, _ in _walk_tree(self.items):
+            if getattr(node, "custom_id", None) == str(custom_id):
+                return node  # type: ignore[return-value]
+
+        return None
+
+    def remove_custom_id(self, custom_id: str) -> Item | None:
+        """
+        Remove a component anywhere in the view by its custom ID.
+
+        This looks inside action rows, sections (including accessories),
+        containers and overflow menus.
+
+        Action rows, overflow menu groups and overflow menus that end up empty
+        are removed as well, since Discord does not accept them empty.
+
+        Parameters
+        ----------
+        custom_id
+            The custom ID of the component
+
+        Returns
+        -------
+            Returns the removed component if found, otherwise `None`
+
+        Raises
+        ------
+        ValueError
+            If the component is a section accessory, which a section always needs.
+            Replace `SectionComponent.accessory` instead.
+        """
+        for node, owner, ancestors in _walk_tree(self.items):
+            if getattr(node, "custom_id", None) != str(custom_id):
+                continue
+
+            if owner is None:
+                raise ValueError(
+                    f"Component with custom_id '{custom_id}' is a section accessory and cannot be removed, "
+                    "replace SectionComponent.accessory instead"
+                )
+
+            owner.remove(node)
+
+            # Clean up parents that are now empty, innermost first
+            for parent, parent_owner in reversed(ancestors):
+                if parent_owner is None:
+                    break
+
+                match parent:
+                    case ActionRow() | OverflowMenuGroup() if not parent.components:
+                        parent_owner.remove(parent)
+                    case OverflowMenuComponent() if not parent.groups:
+                        parent_owner.remove(parent)
+                    case _:
+                        break
+
+            return node  # type: ignore[return-value]
+
+        return None
+
+    def replace_custom_id(self, custom_id: str, item: Item) -> Item | None:
+        """
+        Replace a component anywhere in the view by its custom ID, keeping its position.
+
+        This also works on section accessories, which cannot be removed.
+
+        Parameters
+        ----------
+        custom_id
+            The custom ID of the component to replace
+        item
+            The component to put in its place
+
+        Returns
+        -------
+            Returns the replaced component if found, otherwise `None`
+        """
+        for node, owner, ancestors in _walk_tree(self.items):
+            if getattr(node, "custom_id", None) != str(custom_id):
+                continue
+
+            if owner is None:
+                ancestors[-1][0].accessory = item  # type: ignore[attr-defined]
+            else:
+                owner[owner.index(node)] = item
+
+            return node  # type: ignore[return-value]
+
+        return None
+
+    def walk(self) -> Iterator[Item]:
+        """
+        Iterate over every component in the view, depth first.
+
+        This goes inside action rows, sections (including accessories),
+        containers and overflow menus, example:
+
+        .. code-block:: python
+
+            selects = [g for g in view.walk() if isinstance(g, Select)]
+
+        Yields
+        ------
+            Every component in the view
+        """
+        for node, _, _ in _walk_tree(self.items):
+            if isinstance(node, Item):
+                yield node
+
+    def disable_all(self, disabled: bool = True) -> "View":
+        """
+        Disable every button, select and menu item in the view.
+
+        Parameters
+        ----------
+        disabled
+            Set to `False` to enable them all again instead
+
+        Returns
+        -------
+            Returns the view itself, so it can be passed straight into a response, example:
+
+            .. code-block:: python
+
+                return ctx.response.edit_message(view=view.disable_all())
+        """
+        for node in self.walk():
+            if hasattr(node, "disabled"):
+                node.disabled = disabled  # type: ignore[attr-defined]
+
+        return self
 
     def get_item(
         self,
